@@ -125,41 +125,43 @@ describe("user_levels テーブルのRLSテスト", () => {
     expect(after?.[0].level).toBe(3);
   });
 
-  test("認証済みユーザーは自分のレベル情報を更新できない（通常は更新機能がないため）", async () => {
-    const { data, error } = await user1.client
+  test("認証済みユーザーは自分のレベル情報を更新できる（last_notified_level更新のため）", async () => {
+    const { error } = await user1.client
       .from("user_levels")
       .update({ xp: 200, level: 3 })
       .eq("user_id", user1.user.userId);
 
-    // 直接更新は許可されていない（ビジネスロジックで制御される）
-    expect(data).toBeNull();
+    expect(error).toBeNull();
 
     const { data: after } = await user1.client
       .from("user_levels")
       .select("*")
       .eq("user_id", user1.user.userId);
     expect(after).toBeTruthy();
-    expect(after?.[0].xp).toBe(150);
-    expect(after?.[0].level).toBe(2);
+    expect(after?.[0].xp).toBe(200);
+    expect(after?.[0].level).toBe(3);
   });
 
-  test("認証済みユーザーはuser_levelsにINSERTできない", async () => {
-    const testUserId = crypto.randomUUID();
-    const { data } = await user1.client.from("user_levels").insert({
+  test("認証済みユーザーは自分のuser_levelsレコードをINSERTできる", async () => {
+    const testUserId = user1.user.userId;
+
+    await adminClient.from("user_levels").delete().eq("user_id", testUserId);
+
+    const { error } = await user1.client.from("user_levels").insert({
       user_id: testUserId,
       xp: 100,
       level: 1,
     });
 
-    // 一般ユーザーは新しいレコードを作成できない
-    expect(data).toBeNull();
+    expect(error).toBeNull();
 
-    // user_levelsに新しいレコードは存在しないはず
     const { data: after } = await user1.client
       .from("user_levels")
       .select("*")
       .eq("user_id", testUserId);
     expect(after).toBeTruthy();
+    expect(after?.[0].xp).toBe(100);
+    expect(after?.[0].level).toBe(1);
   });
 
   test("認証済みユーザーはuser_levelsからDELETEできない", async () => {

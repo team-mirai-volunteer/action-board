@@ -4,13 +4,18 @@ import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastProvider, ToastViewport } from "@/components/ui/toast";
 import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 //metadata.tsxでmetadataを管理
-export const generateMetadata = generateRootMetadata;
+export const metadata = {
+  title: "チームみらい アクションボード",
+  description:
+    "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
+};
 
 // Next.js 15でのviewport設定
 export const viewport = {
@@ -56,6 +61,9 @@ export default function RootLayout({
           </main>
           <Footer />
           <Toaster />
+          <ToastProvider>
+            <ToastViewport />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

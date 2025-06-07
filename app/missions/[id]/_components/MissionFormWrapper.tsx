@@ -1,9 +1,13 @@
 "use client";
 
+import { LevelUpDialog } from "@/components/level-up-dialog";
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
+import { XpProgressToast } from "@/components/xp-progress-toast";
+import { useXpProgressAnimation } from "@/hooks/useXpProgressAnimation";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import type { UserLevel } from "@/lib/services/userLevel";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
@@ -32,7 +36,26 @@ export function MissionFormWrapper({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [missionResult, setMissionResult] = useState<{
+    success: boolean;
+    xpGranted?: number;
+    userLevel?: UserLevel;
+    error?: string;
+  } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const {
+    isToastOpen,
+    toastData,
+    isLevelUpDialogOpen,
+    levelUpData,
+    startXpAnimation,
+    handleLevelUp,
+    checkLevelUp,
+    handleLevelUpDialogClose,
+    handleToastClose,
+    handleAnimationComplete,
+  } = useXpProgressAnimation();
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -46,6 +69,7 @@ export function MissionFormWrapper({
         formRef.current?.reset();
         // ArtifactFormのstateをクリアするためにkeyを更新
         setFormKey((prev) => prev + 1);
+        setMissionResult(result);
         // ダイアログを表示
         setIsDialogOpen(true);
       } else {
@@ -62,6 +86,18 @@ export function MissionFormWrapper({
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
+
+    if (
+      missionResult?.success &&
+      missionResult.xpGranted &&
+      missionResult.userLevel
+    ) {
+      startXpAnimation(
+        missionResult.userLevel as UserLevel,
+        missionResult.xpGranted,
+      );
+    }
+
     // 達成履歴を更新
     if (onSubmissionSuccess) {
       onSubmissionSuccess();
@@ -147,6 +183,33 @@ export function MissionFormWrapper({
         onClose={handleDialogClose}
         mission={mission}
       />
+
+      {toastData && (
+        <XpProgressToast
+          isOpen={isToastOpen}
+          onOpenChange={handleToastClose}
+          userLevel={toastData.userLevel}
+          xpGranted={toastData.xpGranted}
+          startLevel={toastData.startLevel}
+          startLevelStartXp={toastData.startLevelStartXp}
+          nextLevelRequiredXp={toastData.nextLevelRequiredXp}
+          xpRangeForCurrentLevel={toastData.xpRangeForCurrentLevel}
+          isMultiLevel={toastData.isMultiLevel}
+          stages={toastData.stages}
+          finalLevel={toastData.finalLevel}
+          onLevelUp={checkLevelUp}
+          onAnimationComplete={handleAnimationComplete}
+        />
+      )}
+
+      {levelUpData && (
+        <LevelUpDialog
+          isOpen={isLevelUpDialogOpen}
+          onClose={handleLevelUpDialogClose}
+          newLevel={levelUpData.newLevel}
+          pointsToNextLevel={levelUpData.pointsToNextLevel}
+        />
+      )}
     </>
   );
 }
