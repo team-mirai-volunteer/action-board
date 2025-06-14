@@ -332,6 +332,33 @@ export type Database = {
           },
         ];
       };
+      posting_shapes: {
+        Row: {
+          coordinates: Json;
+          created_at: string | null;
+          id: string;
+          properties: Json | null;
+          type: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          coordinates: Json;
+          created_at?: string | null;
+          id: string;
+          properties?: Json | null;
+          type: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          coordinates?: Json;
+          created_at?: string | null;
+          id?: string;
+          properties?: Json | null;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       private_users: {
         Row: {
           address_prefecture: string;

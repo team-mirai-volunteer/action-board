@@ -182,7 +182,7 @@ supabase migration up
 migrationファイルの追加や編集で、テーブルの追加や更新を行った場合は、型定義を生成してください。
 
 ```
-npx supabase gen types typescript --local > utils/types/supabase.ts
+npx supabase gen types typescript --local > lib/types/supabase.ts
 ```
 
 ## E2Eテスト
