@@ -246,6 +246,52 @@ export type Database = {
           },
         ];
       };
+      mission_quiz_questions: {
+        Row: {
+          created_at: string;
+          id: string;
+          mission_id: string;
+          question_id: string;
+          question_order: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          mission_id: string;
+          question_id: string;
+          question_order: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          mission_id?: string;
+          question_id?: string;
+          question_order?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mission_quiz_questions_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_questions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       missions: {
         Row: {
           artifact_label: string | null;
@@ -427,6 +473,182 @@ export type Database = {
           x_username?: string | null;
         };
         Relationships: [];
+      };
+      quiz_answers: {
+        Row: {
+          answered_at: string;
+          id: string;
+          is_correct: boolean;
+          question_id: string;
+          session_id: string;
+          user_answer: number;
+        };
+        Insert: {
+          answered_at?: string;
+          id?: string;
+          is_correct: boolean;
+          question_id: string;
+          session_id: string;
+          user_answer: number;
+        };
+        Update: {
+          answered_at?: string;
+          id?: string;
+          is_correct?: boolean;
+          question_id?: string;
+          session_id?: string;
+          user_answer?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_answers_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quiz_answers_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_sessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quiz_categories: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          display_order: number;
+          id: string;
+          is_active: boolean;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          display_order?: number;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          display_order?: number;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      quiz_questions: {
+        Row: {
+          category_id: string;
+          correct_answer: number;
+          created_at: string;
+          difficulty: number;
+          explanation: string | null;
+          id: string;
+          is_active: boolean;
+          option1: string;
+          option2: string;
+          option3: string;
+          option4: string;
+          question: string;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          correct_answer: number;
+          created_at?: string;
+          difficulty?: number;
+          explanation?: string | null;
+          id?: string;
+          is_active?: boolean;
+          option1: string;
+          option2: string;
+          option3: string;
+          option4: string;
+          question: string;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string;
+          correct_answer?: number;
+          created_at?: string;
+          difficulty?: number;
+          explanation?: string | null;
+          id?: string;
+          is_active?: boolean;
+          option1?: string;
+          option2?: string;
+          option3?: string;
+          option4?: string;
+          question?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quiz_sessions: {
+        Row: {
+          completed_at: string | null;
+          correct_answers: number;
+          created_at: string;
+          id: string;
+          mission_id: string | null;
+          total_questions: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          completed_at?: string | null;
+          correct_answers?: number;
+          created_at?: string;
+          id?: string;
+          mission_id?: string | null;
+          total_questions?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          completed_at?: string | null;
+          correct_answers?: number;
+          created_at?: string;
+          id?: string;
+          mission_id?: string | null;
+          total_questions?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_sessions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       user_levels: {
         Row: {

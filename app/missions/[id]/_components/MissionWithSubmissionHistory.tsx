@@ -18,6 +18,14 @@ type Props = {
   initialUserAchievementCount: number;
   initialSubmissions: SubmissionData[];
   missionId: string;
+  preloadedQuizQuestions?:
+    | {
+        id: string;
+        question: string;
+        options: string[];
+        difficulty: number;
+      }[]
+    | null;
 };
 
 export function MissionWithSubmissionHistory({
@@ -27,6 +35,7 @@ export function MissionWithSubmissionHistory({
   initialUserAchievementCount,
   initialSubmissions,
   missionId,
+  preloadedQuizQuestions,
 }: Props) {
   const [submissions, setSubmissions] =
     useState<SubmissionData[]>(initialSubmissions);
@@ -182,6 +191,7 @@ export function MissionWithSubmissionHistory({
           authUser={authUser}
           userAchievementCount={userAchievementCount}
           onSubmissionSuccess={refreshSubmissions}
+          preloadedQuizQuestions={preloadedQuizQuestions}
         />
       )}
 

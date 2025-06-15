@@ -1,5 +1,3 @@
-"use client";
-
 import { YouTubeSubscribeButton } from "@/app/missions/[id]/_components/YouTubeSubscribeButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,11 +35,8 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       <CardContent>
         <div
           className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
-          ref={(el) => {
-            if (el && mission.content) {
-              el.innerHTML = mission.content;
-            }
-          }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+          dangerouslySetInnerHTML={{ __html: mission.content || "" }}
         />
 
         {/* YouTubeチャンネル登録ミッションの場合のみ、YouTube登録ボタンを表示 */}
