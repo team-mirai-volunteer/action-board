@@ -103,14 +103,11 @@ export function MissionFormWrapper({
       correctAnswer?: number;
     }>;
   }) => {
-    console.log("Quiz completed with results:", results);
-
     // エラー状態をクリア（新しいクイズ結果が得られたため）
     setErrorMessage(null);
 
     setQuizResults(results);
     setQuizPassed(results.passed);
-    console.log("State updated - quizPassed:", results.passed);
 
     // スクロール位置をリセット
     scrollToTop();
@@ -118,18 +115,12 @@ export function MissionFormWrapper({
 
   // クイズミッション達成時の処理
   const handleQuizSubmit = async () => {
-    console.log("handleQuizSubmit called", { quizPassed, quizResults });
-
     // 連続報告を防ぐため、提出中や結果がない場合は早期リターン
     if (isSubmitting || !quizPassed || !quizResults) {
-      console.log(
-        "Early return: already submitting, quiz not passed, or no results",
-      );
       return;
     }
 
     try {
-      console.log("Starting quiz submission...");
       setIsSubmitting(true);
       setErrorMessage(null);
 
@@ -142,18 +133,9 @@ export function MissionFormWrapper({
         `クイズ結果: ${quizResults.correctAnswers}/${quizResults.totalQuestions}問正解`,
       );
 
-      console.log("Calling achieveMissionAction with formData:", {
-        missionId: mission.id,
-        requiredArtifactType: ARTIFACT_TYPES.QUIZ.key,
-        artifactDescription: `クイズ結果: ${quizResults.correctAnswers}/${quizResults.totalQuestions}問正解`,
-      });
-
       const result = await achieveMissionAction(formData);
-      console.log("achieveMissionAction result:", result);
 
       if (result.success) {
-        console.log("Success! Showing toast and dialog");
-
         // 即座にクイズの状態をリセット（連続報告を防ぐ）
         setQuizResults(null);
         setQuizPassed(false);
@@ -265,13 +247,6 @@ export function MissionFormWrapper({
 
   return (
     <>
-      {errorMessage && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 mb-4">
-          <AlertCircle className="h-4 w-4 flex-shrink-0" />
-          <span className="text-sm">{errorMessage}</span>
-        </div>
-      )}
-
       {!hasReachedUserMaxAchievements &&
         userAchievementCount > 0 &&
         mission?.max_achievement_count !== null && (

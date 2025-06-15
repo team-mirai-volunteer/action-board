@@ -43,7 +43,6 @@ interface MissionQuizQuestionResult {
 async function getQuestionsByMission(
   missionId: string,
 ): Promise<QuizQuestion[]> {
-  console.log("Fetching quiz questions for mission:", missionId);
   const supabase = await createServiceClient();
 
   // ミッションに紐づく問題を取得（mission_quiz_questionsテーブル経由）
@@ -77,8 +76,6 @@ async function getQuestionsByMission(
     );
   }
 
-  console.log("Retrieved quiz questions:", data?.length || 0);
-
   if (!data || data.length === 0) {
     console.warn("No quiz questions found for mission:", missionId);
     return [];
@@ -88,9 +85,6 @@ async function getQuestionsByMission(
     const q = Array.isArray(item.quiz_questions)
       ? item.quiz_questions[0]
       : item.quiz_questions;
-    // const category = Array.isArray(q.quiz_categories)
-    //   ? q.quiz_categories[0]?.name
-    //   : q.quiz_categories?.name;
     return {
       id: q.id,
       question: q.question,
@@ -98,7 +92,6 @@ async function getQuestionsByMission(
       difficulty: q.difficulty,
       correct_answer: q.correct_answer,
       explanation: q.explanation,
-      // category: category || null,
     };
   });
 }
@@ -426,19 +419,14 @@ export const achieveMissionAction = async (formData: FormData) => {
         artifactPayload.image_storage_path = null;
       }
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
-      console.log("Processing QUIZ artifact type");
       artifactTypeLabel = "QUIZ";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
-        console.log("QUIZ validation passed, setting artifact data:", {
-          artifactDescription: validatedArtifactDescription,
-        });
         // クイズ結果をdescriptionに格納（既にvalidatedArtifactDescriptionに含まれている）
         // CHECK制約回避のためtext_contentにも格納
         artifactPayload.text_content =
           validatedArtifactDescription || "クイズ完了";
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
-        console.log("Final QUIZ artifactPayload:", artifactPayload);
       }
     } else {
       // その他のタイプは全てnullに
@@ -473,9 +461,6 @@ export const achieveMissionAction = async (formData: FormData) => {
         error: validationError,
       };
     }
-
-    // insert前にpayloadと分岐情報を出力
-    console.log(`[Artifact Insert] type=${artifactTypeLabel}`, artifactPayload);
 
     const { data: newArtifact, error: artifactError } = await supabase
       .from("mission_artifacts")
