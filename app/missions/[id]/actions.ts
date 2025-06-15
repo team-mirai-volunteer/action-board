@@ -15,8 +15,9 @@ interface QuizQuestion {
   question: string;
   options: string[];
   difficulty: number;
-  correct_answer?: number;
-  explanation?: string;
+  correct_answer: number;
+  explanation: string | null;
+  category?: string; // カテゴリー名を追加
 }
 
 // データベースから取得されるクイズ問題の型
@@ -59,7 +60,10 @@ async function getQuestionsByMission(
         option4,
         correct_answer,
         explanation,
-        difficulty
+        difficulty,
+        quiz_categories (
+          name
+        )
       )
     `)
     .eq("mission_id", missionId)
@@ -84,6 +88,9 @@ async function getQuestionsByMission(
     const q = Array.isArray(item.quiz_questions)
       ? item.quiz_questions[0]
       : item.quiz_questions;
+    // const category = Array.isArray(q.quiz_categories) 
+    //   ? q.quiz_categories[0]?.name 
+    //   : q.quiz_categories?.name;
     return {
       id: q.id,
       question: q.question,
@@ -91,6 +98,7 @@ async function getQuestionsByMission(
       difficulty: q.difficulty,
       correct_answer: q.correct_answer,
       explanation: q.explanation,
+      // category: category || null,
     };
   });
 }
@@ -715,8 +723,6 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 // ミッションのクイズ問題を取得する
 export const getQuizQuestionsAction = async (missionId: string) => {
   try {
-    const supabase = createClient();
-
     // ミッションに紐づく問題を取得
     const questions = await getQuestionsByMission(missionId);
 

@@ -71,7 +71,7 @@ COMMENT ON COLUMN mission_quiz_questions.created_at IS '作成日時(UTC)';
 CREATE TABLE quiz_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    mission_id UUID REFERENCES missions(id) ON DELETE CASCADE,
+    mission_id UUID REFERENCES missions(id) NOT NULL ON DELETE CASCADE,
     total_questions INTEGER NOT NULL DEFAULT 3,
     correct_answers INTEGER NOT NULL DEFAULT 0,
     completed_at TIMESTAMPTZ,

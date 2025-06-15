@@ -38,6 +38,20 @@ export function MissionFormWrapper({
   onSubmissionSuccess,
   preloadedQuizQuestions,
 }: Props) {
+  // ミッションタイトルからカテゴリーを推測する関数
+  const getCategoryFromMissionTitle = (title: string): string => {
+    if (title.includes('政策') || title.includes('マニフェスト')) {
+      return '政策・マニフェスト';
+    }
+    if (title.includes('チームみらい')) {
+      return 'チームみらい';
+    }
+    if (title.includes('公職選挙法')) {
+      return '公職選挙法';
+    }
+    return 'その他';
+  };
+
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
 
@@ -291,6 +305,7 @@ export function MissionFormWrapper({
               onSubmitAchievement={handleQuizSubmit}
               isSubmittingAchievement={isSubmitting}
               buttonLabel={buttonLabel}
+              category={getCategoryFromMissionTitle(mission.title)}
             />
 
             {errorMessage && (

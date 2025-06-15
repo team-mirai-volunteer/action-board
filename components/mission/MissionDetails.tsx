@@ -35,8 +35,11 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       <CardContent>
         <div
           className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-          dangerouslySetInnerHTML={{ __html: mission.content || "" }}
+          ref={(el) => {
+            if (el && mission.content) {
+              el.innerHTML = mission.content;
+            }
+          }}
         />
 
         {/* YouTubeチャンネル登録ミッションの場合のみ、YouTube登録ボタンを表示 */}

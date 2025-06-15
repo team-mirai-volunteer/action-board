@@ -45,6 +45,7 @@ interface QuizComponentProps {
   isSubmittingAchievement?: boolean;
   buttonLabel?: string;
   onAchievementSuccess?: () => void;
+  category?: string; // カテゴリー名を追加
 }
 
 export default function QuizComponent({
@@ -56,7 +57,22 @@ export default function QuizComponent({
   isSubmittingAchievement = false,
   buttonLabel = "達成を報告する",
   onAchievementSuccess,
+  category,
 }: QuizComponentProps) {
+  // カテゴリーによる達成メッセージを生成する関数
+  const getAchievementMessage = (categoryName?: string) => {
+    switch (categoryName) {
+      case '政策・マニフェスト':
+        return 'ミッション達成！政策・マニフェストマスターですね！';
+      case 'チームみらい':
+        return 'ミッション達成！チームみらいマスターですね！';
+      case '公職選挙法':
+        return 'ミッション達成！公職選挙法マスターですね！';
+      default:
+        return 'ミッション達成！クイズマスターですね！';
+    }
+  };
+
   // クライアントサイドかどうかを判定
   const [isClient, setIsClient] = useState(false);
 
@@ -121,7 +137,11 @@ export default function QuizComponent({
 
   // クライアントサイドでマウントされた後にシャッフルを実行
   useEffect(() => {
-    if (isClient && preloadedQuestions && preloadedQuestions.length > 0) {
+    if (isClient && preloadedQuestions) {
+      if (preloadedQuestions.length === 0) {
+        setIsLoading(false);
+        return;
+      }
       const shuffledQuestions = preloadedQuestions.map((q) =>
         createShuffledQuestion(q, true),
       );
@@ -325,7 +345,7 @@ export default function QuizComponent({
                 </div>
               </div>
               {result.passed ? (
-                <div>ミッション達成！公職選挙法マスターですね！</div>
+                <div>{getAchievementMessage(category)}</div>
               ) : (
                 <div className="text-red-600">
                   全問正解が必要です。再挑戦してください
