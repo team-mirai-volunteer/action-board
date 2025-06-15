@@ -62,14 +62,14 @@ export default function QuizComponent({
   // カテゴリーによる達成メッセージを生成する関数
   const getAchievementMessage = (categoryName?: string) => {
     switch (categoryName) {
-      case '政策・マニフェスト':
-        return 'ミッション達成！政策・マニフェストマスターですね！';
-      case 'チームみらい':
-        return 'ミッション達成！チームみらいマスターですね！';
-      case '公職選挙法':
-        return 'ミッション達成！公職選挙法マスターですね！';
+      case "政策・マニフェスト":
+        return "ミッション達成！政策・マニフェストマスターですね！";
+      case "チームみらい":
+        return "ミッション達成！チームみらいマスターですね！";
+      case "公職選挙法":
+        return "ミッション達成！公職選挙法マスターですね！";
       default:
-        return 'ミッション達成！クイズマスターですね！';
+        return "ミッション達成！クイズマスターですね！";
     }
   };
 

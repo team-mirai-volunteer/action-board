@@ -88,8 +88,8 @@ async function getQuestionsByMission(
     const q = Array.isArray(item.quiz_questions)
       ? item.quiz_questions[0]
       : item.quiz_questions;
-    // const category = Array.isArray(q.quiz_categories) 
-    //   ? q.quiz_categories[0]?.name 
+    // const category = Array.isArray(q.quiz_categories)
+    //   ? q.quiz_categories[0]?.name
     //   : q.quiz_categories?.name;
     return {
       id: q.id,
