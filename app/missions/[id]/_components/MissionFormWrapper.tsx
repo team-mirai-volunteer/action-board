@@ -322,6 +322,12 @@ export function MissionFormWrapper({
               ※
               成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
             </p>
+            {errorMessage && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
+                <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                {errorMessage}
+              </div>
+            )}
           </form>
         ))}
 
