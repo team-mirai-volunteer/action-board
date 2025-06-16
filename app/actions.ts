@@ -580,7 +580,7 @@ export async function handleLineAuthAction(
           email,
           email_confirm: true,
           user_metadata: {
-            sub: "", // 後で設定
+            sub: "",
             name,
             email,
             provider: "line",
