@@ -8,7 +8,7 @@ export async function signInWithLine() {
   // LINE Web Login API の認証URL作成
   const clientId = process.env.NEXT_PUBLIC_LINE_CLIENT_ID;
   const redirectUri = `${window.location.origin}/api/auth/callback/line`;
-  const state = Math.random().toString(36).substring(2, 15);
+  const state = crypto.randomUUID();
 
   // stateをセッションストレージに保存（CSRF対策）
   sessionStorage.setItem("lineLoginState", state);
