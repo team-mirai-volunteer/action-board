@@ -4,16 +4,13 @@ import { MissionAchievementTotalCard } from "./total-card";
 
 interface UserMissionAchievementsProps {
   achievements: MissionAchievementSummary[];
+  totalCount: number;
 }
 
 export function UserMissionAchievements({
   achievements,
+  totalCount,
 }: UserMissionAchievementsProps) {
-  const totalCount = achievements.reduce(
-    (sum, achievement) => sum + achievement.achievement_count,
-    0,
-  );
-
   return (
     <div className="w-full">
       <div className="flex flex-row justify-between items-center mb-4">

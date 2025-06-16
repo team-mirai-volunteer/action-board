@@ -8,7 +8,7 @@ export interface MissionAchievementSummary {
   achievement_count: number;
 }
 
-export async function getUserMissionAchievements(
+export async function getUserRepeatableMissionAchievements(
   userId: string,
 ): Promise<MissionAchievementSummary[]> {
   const supabase = await createServerClient();
@@ -54,4 +54,22 @@ export async function getUserMissionAchievements(
   return Object.values(achievementCounts).filter(
     (achievement) => achievement.achievement_count > 0,
   );
+}
+
+export async function getUserTotalAchievementCount(
+  userId: string,
+): Promise<number> {
+  const supabase = await createServerClient();
+
+  const { count, error } = await supabase
+    .from("achievements")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Failed to fetch user total achievement count:", error);
+    return 0;
+  }
+
+  return count || 0;
 }

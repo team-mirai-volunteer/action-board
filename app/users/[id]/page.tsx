@@ -1,7 +1,10 @@
 import Levels from "@/components/levels";
 import { Card } from "@/components/ui/card";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import { getUserMissionAchievements } from "@/lib/services/userMissionAchievement";
+import {
+  getUserRepeatableMissionAchievements,
+  getUserTotalAchievementCount,
+} from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
 import UserDetailActivities from "./user-detail-activities";
 
@@ -41,7 +44,8 @@ export default async function UserDetailPage({ params }: Props) {
     .eq("user_id", id);
 
   // ミッション達成状況取得
-  const missionAchievements = await getUserMissionAchievements(id);
+  const missionAchievements = await getUserRepeatableMissionAchievements(id);
+  const totalAchievementCount = await getUserTotalAchievementCount(id);
 
   return (
     <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
@@ -80,9 +84,12 @@ export default async function UserDetailPage({ params }: Props) {
           </div>
         )}
       </div>
-      {missionAchievements.length > 0 && (
+      {totalAchievementCount > 0 && (
         <Card className="w-full p-4 mt-4">
-          <UserMissionAchievements achievements={missionAchievements} />
+          <UserMissionAchievements
+            achievements={missionAchievements}
+            totalCount={totalAchievementCount}
+          />
         </Card>
       )}
       <Card className="w-full p-4 mt-4">
