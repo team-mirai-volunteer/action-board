@@ -5,6 +5,7 @@ import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
+import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
@@ -427,7 +428,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       }
 
       // ポスティング用のポイント計算とXP付与
-      const pointsPerUnit = 5; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
+      const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
       const totalPoints = validatedData.postingCount * pointsPerUnit;
 
       // 通常のXP（ミッション難易度ベース）に加えて、ポスティングボーナスXPを付与

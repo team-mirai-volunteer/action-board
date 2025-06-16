@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
+import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
@@ -111,7 +112,8 @@ export function ArtifactForm({
                 placeholder="例：50"
               />
               <p className="text-xs text-gray-500">
-                配布した枚数を入力してください（1枚＝5ポイント）
+                配布した枚数を入力してください（1枚＝{POSTING_POINTS_PER_UNIT}
+                ポイント）
               </p>
             </div>
 

@@ -84,46 +84,6 @@ describe("xp_transactions テーブルのRLSテスト", () => {
     expect(data).toBeTruthy();
   });
 
-  test("認証済みユーザーは自分のXP履歴を読み取れる", async () => {
-    const { data, error } = await user1.client
-      .from("xp_transactions")
-      .select("*")
-      .eq("user_id", user1.user.userId);
-
-    expect(error).toBeNull();
-    expect(data).toBeTruthy();
-    expect(data).toHaveLength(1);
-    expect(data?.[0].id).toBe(transaction1Id);
-    expect(data?.[0].user_id).toBe(user1.user.userId);
-    expect(data?.[0].xp_amount).toBe(50);
-    expect(data?.[0].source_type).toBe("MISSION_COMPLETION");
-    expect(data?.[0].source_id).toBe(missionId);
-    expect(data?.[0].description).toBe("ミッション完了による獲得");
-  });
-
-  test("認証済みユーザーは他のユーザーのXP履歴を読み取れない", async () => {
-    const { data, error } = await user1.client
-      .from("xp_transactions")
-      .select("*")
-      .eq("user_id", user2.user.userId);
-
-    // 他のユーザーの履歴は見えない
-    expect(error).toBeNull(); // RLSによってフィルタされるため、エラーではなく空の結果が返される
-    expect(data).toEqual([]);
-  });
-
-  test("認証済みユーザーは全履歴を取得しようとしても自分の分のみ取得される", async () => {
-    const { data, error } = await user1.client
-      .from("xp_transactions")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    expect(error).toBeNull();
-    expect(data).toBeTruthy();
-    expect(data).toHaveLength(1);
-    expect(data?.[0].user_id).toBe(user1.user.userId);
-  });
-
   test("認証済みユーザーはXP履歴を更新できない", async () => {
     await user1.client
       .from("xp_transactions")

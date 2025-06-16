@@ -214,7 +214,7 @@ export default function ProfileForm({
             <p className="text-sm text-gray-500">この項目は公開されません</p>
             {selectedPrefecture === "海外" && (
               <p className="text-sm text-red-600">
-                海外在住の方は000000を入力ください
+                海外在住の方は0000000を入力ください
               </p>
             )}
             <Input
