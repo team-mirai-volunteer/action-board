@@ -19,22 +19,16 @@ export function UserMissionAchievements({
       <div className="flex flex-row justify-between items-center mb-4">
         <span className="text-lg font-bold">ミッション達成状況</span>
       </div>
-      {achievements.length === 0 ? (
-        <div className="text-center text-gray-500">
-          まだミッションを達成していません
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          <MissionAchievementTotalCard totalCount={totalCount} />
-          {achievements.map((achievement) => (
-            <MissionAchievementCard
-              key={achievement.mission_id}
-              title={achievement.mission_title}
-              count={achievement.achievement_count}
-            />
-          ))}
-        </div>
-      )}
+      <div className="flex flex-col gap-2">
+        <MissionAchievementTotalCard totalCount={totalCount} />
+        {achievements.map((achievement) => (
+          <MissionAchievementCard
+            key={achievement.mission_id}
+            title={achievement.mission_title}
+            count={achievement.achievement_count}
+          />
+        ))}
+      </div>
     </div>
   );
 }

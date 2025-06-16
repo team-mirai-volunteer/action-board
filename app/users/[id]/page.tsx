@@ -80,9 +80,11 @@ export default async function UserDetailPage({ params }: Props) {
           </div>
         )}
       </div>
-      <Card className="w-full p-4 mt-4">
-        <UserMissionAchievements achievements={missionAchievements} />
-      </Card>
+      {missionAchievements.length > 0 && (
+        <Card className="w-full p-4 mt-4">
+          <UserMissionAchievements achievements={missionAchievements} />
+        </Card>
+      )}
       <Card className="w-full p-4 mt-4">
         <div className="flex flex-row justify-between items-center mb-2">
           <span className="text-lg font-bold">活動タイムライン</span>
