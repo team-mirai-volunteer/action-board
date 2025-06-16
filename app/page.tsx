@@ -22,6 +22,7 @@ export const generateMetadata = generateRootMetadata;
 
 export default async function Home() {
   const supabase = await createClient();
+  const shareUrl = process.env.SITE_URL || "https://team-mirai.com/";
 
   const {
     data: { user },
@@ -94,7 +95,7 @@ export default async function Home() {
       <section className="py-12 md:py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <Card className="p-6 md:p-8 shadow-md rounded-xl">
-            <ShareButtons />
+            <ShareButtons url={shareUrl} />
           </Card>
         </div>
       </section>

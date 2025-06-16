@@ -16,7 +16,6 @@ interface ShareButtonsProps {
 const ShareButtons: FC<ShareButtonsProps> = ({
   title = "みらいアクションボードでできることを発見しよう！",
   url,
-  className = "",
 }) => {
   // URLが指定されていない場合は現在のページのURLを使用
   const shareUrl =
@@ -55,7 +54,7 @@ const ShareButtons: FC<ShareButtonsProps> = ({
   };
 
   return (
-    <div className={`${className}`}>
+    <>
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold">📣 このページをシェアしよう！</h3>
         <p className="text-sm text-muted-foreground">
@@ -68,7 +67,9 @@ const ShareButtons: FC<ShareButtonsProps> = ({
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-[#06c755] hover:bg-[#06c755]/90 text-white border-none"
-          onClick={() => window.open(getLineShareUrl(), "_blank")}
+          onClick={() =>
+            window.open(getLineShareUrl(), "_blank", "noopener,noreferrer")
+          }
           aria-label="LINEでシェア"
         >
           <svg
@@ -90,7 +91,9 @@ const ShareButtons: FC<ShareButtonsProps> = ({
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-black hover:bg-gray-800 text-white border-none"
-          onClick={() => window.open(getTwitterShareUrl(), "_blank")}
+          onClick={() =>
+            window.open(getTwitterShareUrl(), "_blank", "noopener,noreferrer")
+          }
           aria-label="Xでシェア"
         >
           <img
@@ -109,7 +112,9 @@ const ShareButtons: FC<ShareButtonsProps> = ({
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-[#1877f2] hover:bg-[#1877f2]/90 text-white border-none"
-          onClick={() => window.open(getFacebookShareUrl(), "_blank")}
+          onClick={() =>
+            window.open(getFacebookShareUrl(), "_blank", "noopener,noreferrer")
+          }
           aria-label="Facebookでシェア"
         >
           <FacebookIcon className="h-5 w-5" />
@@ -126,7 +131,7 @@ const ShareButtons: FC<ShareButtonsProps> = ({
           <CopyIcon className="h-5 w-5" />
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 

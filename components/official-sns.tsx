@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { BookOpenIcon, FacebookIcon } from "lucide-react";
+import { FacebookIcon } from "lucide-react";
 import type { FC } from "react";
 
 interface OfficialSnsProps {
@@ -32,7 +32,7 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-[#06c755] hover:bg-[#06c755]/90 text-white border-none"
-          onClick={() => window.open(LINE_URL, "_blank")}
+          onClick={() => window.open(LINE_URL, "_blank", "noopener,noreferrer")}
           aria-label="公式LINE"
         >
           <svg
@@ -54,7 +54,9 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-[#ff0000] hover:bg-[#ff0000]/90 text-white border-none"
-          onClick={() => window.open(YOUTUBE_URL, "_blank")}
+          onClick={() =>
+            window.open(YOUTUBE_URL, "_blank", "noopener,noreferrer")
+          }
           aria-label="公式YouTube"
         >
           <svg
@@ -76,7 +78,7 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-black hover:bg-gray-800 text-white border-none"
-          onClick={() => window.open(X_URL, "_blank")}
+          onClick={() => window.open(X_URL, "_blank", "noopener,noreferrer")}
           aria-label="公式X(旧Twitter)"
         >
           <img
@@ -95,7 +97,9 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 text-white border-none"
-          onClick={() => window.open(INSTAGRAM_URL, "_blank")}
+          onClick={() =>
+            window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer")
+          }
           aria-label="公式Instagram"
         >
           <img
@@ -114,7 +118,9 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-[#1877f2] hover:bg-[#1877f2]/90 text-white border-none"
-          onClick={() => window.open(FACEBOOK_URL, "_blank")}
+          onClick={() =>
+            window.open(FACEBOOK_URL, "_blank", "noopener,noreferrer")
+          }
           aria-label="公式Facebook"
         >
           <FacebookIcon className="h-5 w-5" />
@@ -125,7 +131,7 @@ const OfficialSns: FC<OfficialSnsProps> = () => {
           size="icon"
           variant="outline"
           className="rounded-full h-10 w-10 bg-white hover:bg-gray-100 text-black border border-gray-300"
-          onClick={() => window.open(NOTE_URL, "_blank")}
+          onClick={() => window.open(NOTE_URL, "_blank", "noopener,noreferrer")}
           aria-label="公式note"
         >
           <img
