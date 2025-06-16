@@ -45,6 +45,7 @@ function SignUpFormContent({
   months,
   days,
   formattedDate,
+  passwordError,
 }: {
   isTermsAgreed: boolean;
   isPrivacyAgreed: boolean;
@@ -66,6 +67,7 @@ function SignUpFormContent({
   months: number[];
   days: number[];
   formattedDate: string;
+  passwordError: string | null;
 }) {
   const { pending } = useFormStatus();
 
@@ -97,6 +99,11 @@ function SignUpFormContent({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {passwordError && (
+          <p className="text-primary text-sm font-medium mb-2">
+            {passwordError}
+          </p>
+        )}
 
         <Label htmlFor="date_of_birth">
           生年月日（満18歳以上である必要があります）
@@ -270,6 +277,7 @@ export default function SignUpForm({
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [ageError, setAgeError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState(1990);
   const [selectedMonth, setSelectedMonth] = useState(1);
@@ -393,6 +401,7 @@ export default function SignUpForm({
         months={months}
         days={days}
         formattedDate={formattedDate}
+        passwordError={passwordError}
       />
     </form>
   );
