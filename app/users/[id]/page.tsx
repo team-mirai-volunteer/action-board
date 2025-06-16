@@ -30,22 +30,26 @@ export default async function UserDetailPage({ params }: Props) {
     .single();
   if (!user) return <div>ユーザーが見つかりません</div>;
 
-  // 活動タイムライン取得
-  const { data: timeline } = await supabase
-    .from("activity_timeline_view")
-    .select("*")
-    .eq("user_id", id)
-    .order("created_at", { ascending: false })
-    .limit(PAGE_SIZE);
-
-  const { count } = await supabase
-    .from("activity_timeline_view")
-    .select("*", { count: "exact" })
-    .eq("user_id", id);
-
-  // ミッション達成状況取得
-  const missionAchievements = await getUserRepeatableMissionAchievements(id);
-  const totalAchievementCount = await getUserTotalAchievementCount(id);
+  // 並列でデータを取得
+  const [
+    { data: timeline },
+    { count },
+    missionAchievements,
+    totalAchievementCount,
+  ] = await Promise.all([
+    supabase
+      .from("activity_timeline_view")
+      .select("*")
+      .eq("user_id", id)
+      .order("created_at", { ascending: false })
+      .limit(PAGE_SIZE),
+    supabase
+      .from("activity_timeline_view")
+      .select("*", { count: "exact" })
+      .eq("user_id", id),
+    getUserRepeatableMissionAchievements(id),
+    getUserTotalAchievementCount(id),
+  ]);
 
   return (
     <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
