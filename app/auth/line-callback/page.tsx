@@ -13,17 +13,60 @@ function LineCallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        // まずLINE側からのエラーパラメータをチェック
+        const error = searchParams.get("error");
+        const errorDescription = searchParams.get("error_description");
+
+        if (error) {
+          let errorMessage = "LINE認証に失敗しました";
+
+          switch (error) {
+            case "access_denied":
+              errorMessage =
+                "LINE認証がキャンセルされました。再度お試しください。";
+              break;
+            case "invalid_request":
+              errorMessage =
+                "認証リクエストが無効です。管理者にお問い合わせください。";
+              break;
+            case "unauthorized_client":
+              errorMessage =
+                "認証設定に問題があります。管理者にお問い合わせください。";
+              break;
+            case "unsupported_response_type":
+              errorMessage =
+                "サポートされていない認証方式です。管理者にお問い合わせください。";
+              break;
+            case "invalid_scope":
+              errorMessage =
+                "認証スコープが無効です。管理者にお問い合わせください。";
+              break;
+            case "server_error":
+              errorMessage =
+                "LINE側でエラーが発生しました。しばらく経ってから再度お試しください。";
+              break;
+            case "temporarily_unavailable":
+              errorMessage =
+                "LINE認証が一時的に利用できません。しばらく経ってから再度お試しください。";
+              break;
+            default:
+              errorMessage = errorDescription || `LINE認証エラー: ${error}`;
+          }
+
+          throw new Error(errorMessage);
+        }
+
         const code = searchParams.get("code");
         const state = searchParams.get("state");
         const storedState = sessionStorage.getItem("lineLoginState");
 
         // CSRF対策: stateの検証
         if (!state || state !== storedState) {
-          throw new Error("Invalid state parameter");
+          throw new Error("セキュリティエラー: 認証状態が無効です");
         }
 
         if (!code) {
-          throw new Error("Authorization code not received");
+          throw new Error("認証コードが取得できませんでした");
         }
 
         // セッションストレージからサインアップ時のデータを取得
