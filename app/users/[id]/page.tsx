@@ -1,6 +1,8 @@
 import Levels from "@/components/levels";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/client";
+import { UserMissionAchievements } from "@/components/user-mission-achievements";
+import { getUserMissionAchievements } from "@/lib/services/userMissionAchievement";
+import { createClient } from "@/lib/supabase/server";
 import UserDetailActivities from "./user-detail-activities";
 
 const PAGE_SIZE = 20;
@@ -15,7 +17,7 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // ユーザー情報取得
   const { data: user } = await supabase
@@ -37,6 +39,9 @@ export default async function UserDetailPage({ params }: Props) {
     .from("activity_timeline_view")
     .select("*", { count: "exact" })
     .eq("user_id", id);
+
+  // ミッション達成状況取得
+  const missionAchievements = await getUserMissionAchievements(id);
 
   return (
     <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
@@ -75,6 +80,9 @@ export default async function UserDetailPage({ params }: Props) {
           </div>
         )}
       </div>
+      <Card className="w-full p-4 mt-4">
+        <UserMissionAchievements achievements={missionAchievements} />
+      </Card>
       <Card className="w-full p-4 mt-4">
         <div className="flex flex-row justify-between items-center mb-2">
           <span className="text-lg font-bold">活動タイムライン</span>
