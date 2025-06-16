@@ -70,6 +70,60 @@ export type Database = {
           },
         ];
       };
+      admin_boundaries: {
+        Row: {
+          additional_code: string | null;
+          area_name: string | null;
+          city_name: string | null;
+          created_at: string;
+          district_name: string | null;
+          full_address: string;
+          geojson: Json;
+          geometry: unknown | null;
+          id: string;
+          is_merged: boolean | null;
+          original_count: number | null;
+          prefecture_code: string;
+          prefecture_name: string;
+          properties: Json | null;
+          updated_at: string;
+        };
+        Insert: {
+          additional_code?: string | null;
+          area_name?: string | null;
+          city_name?: string | null;
+          created_at?: string;
+          district_name?: string | null;
+          full_address: string;
+          geojson: Json;
+          geometry?: unknown | null;
+          id?: string;
+          is_merged?: boolean | null;
+          original_count?: number | null;
+          prefecture_code: string;
+          prefecture_name: string;
+          properties?: Json | null;
+          updated_at?: string;
+        };
+        Update: {
+          additional_code?: string | null;
+          area_name?: string | null;
+          city_name?: string | null;
+          created_at?: string;
+          district_name?: string | null;
+          full_address?: string;
+          geojson?: Json;
+          geometry?: unknown | null;
+          id?: string;
+          is_merged?: boolean | null;
+          original_count?: number | null;
+          prefecture_code?: string;
+          prefecture_name?: string;
+          properties?: Json | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       daily_action_summary: {
         Row: {
           count: number;
@@ -335,11 +389,11 @@ export type Database = {
       posting_shapes: {
         Row: {
           coordinates: Json;
-          created_at: string;
+          created_at: string | null;
           id: string;
           properties: Json | null;
           type: string;
-          updated_at: string;
+          updated_at: string | null;
         };
         Insert: {
           coordinates: Json;
@@ -628,6 +682,38 @@ export type Database = {
           xp: number;
           updated_at: string;
         }[];
+      };
+      gtrgm_compress: {
+        Args: { "": unknown };
+        Returns: unknown;
+      };
+      gtrgm_decompress: {
+        Args: { "": unknown };
+        Returns: unknown;
+      };
+      gtrgm_in: {
+        Args: { "": unknown };
+        Returns: unknown;
+      };
+      gtrgm_options: {
+        Args: { "": unknown };
+        Returns: undefined;
+      };
+      gtrgm_out: {
+        Args: { "": unknown };
+        Returns: unknown;
+      };
+      set_limit: {
+        Args: { "": number };
+        Returns: number;
+      };
+      show_limit: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
+      show_trgm: {
+        Args: { "": string };
+        Returns: string[];
       };
     };
     Enums: {

@@ -9,9 +9,15 @@ import {
 } from "@/lib/services/posting";
 import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
 import type { Json } from "@/lib/types/supabase";
-import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
+import type {
+  Layer,
+  GeoJSON as LeafletGeoJSON,
+  Map as LeafletMap,
+  Marker,
+  Path,
+} from "leaflet";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
@@ -32,6 +38,7 @@ type LeafletWindow = Window & { L: typeof import("leaflet") };
 export default function PostingPageClient(_props: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
+  const [geoJsonLayer, setGeoJsonLayer] = useState<LeafletGeoJSON | null>(null);
   const autoSave = true;
 
   useEffect(() => {
