@@ -477,14 +477,21 @@ export async function handleLineAuthAction(
     } = validationResult.data;
 
     // 1. LINE APIでトークンと交換
+    const clientId = process.env.NEXT_PUBLIC_LINE_CLIENT_ID;
+    const clientSecret = process.env.LINE_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      throw new Error("LINE認証の環境変数が設定されていません");
+    }
+
     const origin = (await headers()).get("origin");
     const redirectUri = `${origin || "http://localhost:3000"}/api/auth/callback/line`;
     const tokenParams = {
       grant_type: "authorization_code",
       code: validatedCode,
       redirect_uri: redirectUri,
-      client_id: process.env.NEXT_PUBLIC_LINE_CLIENT_ID || "",
-      client_secret: process.env.LINE_CLIENT_SECRET || "",
+      client_id: clientId,
+      client_secret: clientSecret,
     };
 
     const tokenResponse = await fetch("https://api.line.me/oauth2/v2.1/token", {
