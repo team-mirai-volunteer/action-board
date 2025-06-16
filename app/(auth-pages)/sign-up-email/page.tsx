@@ -1,8 +1,8 @@
 import type { Message } from "@/components/form-message";
 import Image from "next/image";
-import TwoStepSignUpForm from "./TwoStepSignUpForm";
+import EmailSignUpForm from "./EmailSignUpForm";
 
-export default async function Signup(props: {
+export default async function EmailSignup(props: {
   searchParams: Promise<Message & { ref?: string }>;
 }) {
   const searchParams = await props.searchParams;
@@ -13,7 +13,7 @@ export default async function Signup(props: {
       <div className="flex justify-center items-center m-4">
         <Image src="/img/logo.png" alt="logo" width={114} height={96} />
       </div>
-      <TwoStepSignUpForm
+      <EmailSignUpForm
         searchParams={searchParams}
         referralCode={referralCode}
       />
