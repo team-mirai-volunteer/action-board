@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateAge } from "@/lib/utils/utils";
+import { passwordSchema } from "@/lib/validation/auth";
 import Link from "next/link";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -302,6 +303,32 @@ export default function SignUpForm({
   );
 
   const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
+
+  // パスワードチェック関数
+  const verifyPassword = useCallback((password: string): boolean => {
+    if (!password) return false;
+    const result = passwordSchema.safeParse(password);
+    if (!result.success) {
+      const invalid = result.error.errors.find(
+        (err) =>
+          // XXX この書き方いいかどうかは微妙だが、passwordSchemaを利用したい。
+          err.message.includes("無効") || err.message.includes("32"),
+      );
+      if (invalid) {
+        setPasswordError(invalid.message);
+        setIsFormValid(false);
+        return false;
+      }
+    }
+    setPasswordError(null);
+    setIsFormValid(true);
+    return true;
+  }, []);
+
+  // パスワードチェック
+  useEffect(() => {
+    verifyPassword(password);
+  }, [password, verifyPassword]);
 
   // 年齢チェック関数
   const verifyAge = useCallback((birthdate: string): boolean => {
