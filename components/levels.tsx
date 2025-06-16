@@ -57,7 +57,12 @@ export default async function Levels({
   if (clickable) {
     return (
       <section className="bg-gradient-hero flex justify-center py-6 px-4">
-        <Link href={`/users/${userId}`}>{cardContent}</Link>
+        <Link
+          href={`/users/${userId}`}
+          aria-label={`${profile.name}さんのプロフィールへ`}
+        >
+          {cardContent}
+        </Link>
       </section>
     );
   }
