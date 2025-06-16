@@ -299,7 +299,7 @@ export default function TwoStepSignUpForm({
   const [isAgeValid, setIsAgeValid] = useState(false);
 
   // 年月日の選択肢を生成
-  const birthYearThreshold = 2007;
+  const birthYearThreshold = new Date().getFullYear() - 18;
   const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const days = Array.from(
