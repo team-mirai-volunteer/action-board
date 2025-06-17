@@ -309,16 +309,9 @@ export default function SignUpForm({
     if (!password) return false;
     const result = passwordAlertlessSchema.safeParse(password);
     if (!result.success) {
-      const invalid = result.error.errors.find(
-        (err) =>
-          // XXX この書き方いいかどうかは微妙だが、passwordSchemaを利用したい。
-          err.message.includes("無効") || err.message.includes("32"),
-      );
-      if (invalid) {
-        setPasswordError(invalid.message);
-        setIsFormValid(false);
-        return false;
-      }
+      setPasswordError(result.error.errors[0].message);
+      setIsFormValid(false);
+      return false;
     }
     setPasswordError(null);
     setIsFormValid(true);
