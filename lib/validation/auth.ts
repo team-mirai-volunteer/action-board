@@ -30,17 +30,7 @@ export const passwordAlertlessSchema = z
   });
 
 // パスワードのバリデーションスキーマ（再利用可能）
-export const passwordSchema = z
-  .string()
-  .nonempty({ message: "パスワードを入力してください" })
-  .min(8, { message: "パスワードは8文字以上で入力してください" })
-  .max(32, { message: "パスワードは32文字以下で入力してください" })
-  .regex(ALLOWED_PASSWORD_CHARS_REGEX, {
-    message: "パスワードに無効な文字が含まれています",
-  })
-  .regex(ALPHANUMERIC_REQUIRED_REGEX, {
-    message: "パスワードには英字と数字の両方を含めてください",
-  });
+export const passwordSchema = passwordAlertlessSchema.and(passwordAlertSchema);
 
 export const signUpAndLoginFormSchema = z.object({
   email: emailSchema,
