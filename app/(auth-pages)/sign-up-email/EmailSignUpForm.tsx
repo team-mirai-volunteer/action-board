@@ -5,9 +5,10 @@ import { FormMessage, type Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { passwordAlertlessSchema } from "@/lib/validation/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 interface EmailSignUpFormProps {
@@ -20,11 +21,13 @@ function EmailSignUpFormContent({
   password,
   setEmail,
   setPassword,
+  passwordError,
 }: {
   email: string;
   password: string;
   setEmail: (value: string) => void;
   setPassword: (value: string) => void;
+  passwordError: string | null;
 }) {
   const { pending } = useFormStatus();
 
@@ -55,6 +58,9 @@ function EmailSignUpFormContent({
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      {passwordError && (
+        <p className="text-primary text-sm font-medium mb-2">{passwordError}</p>
+      )}
 
       <SubmitButton
         pendingText="アカウント作成中..."
@@ -79,6 +85,7 @@ export default function EmailSignUpForm({
   // フォームの状態管理
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [sessionData, setSessionData] = useState<{
     dateOfBirth?: string;
     referralCode?: string;
@@ -95,6 +102,26 @@ export default function EmailSignUpForm({
       router.push("/sign-up");
     }
   }, [router]);
+
+  // パスワードチェック関数
+  const verifyPassword = useCallback((password: string): boolean => {
+    if (!password) {
+      setPasswordError(null);
+      return false;
+    }
+    const result = passwordAlertlessSchema.safeParse(password);
+    if (!result.success) {
+      setPasswordError(result.error.errors[0].message);
+      return false;
+    }
+    setPasswordError(null);
+    return true;
+  }, []);
+
+  // パスワードチェック
+  useEffect(() => {
+    verifyPassword(password);
+  }, [password, verifyPassword]);
 
   // サーバーから返されたフォームデータで状態を復元
   useEffect(() => {
@@ -140,6 +167,7 @@ export default function EmailSignUpForm({
         password={password}
         setEmail={setEmail}
         setPassword={setPassword}
+        passwordError={passwordError}
       />
     </form>
   );
