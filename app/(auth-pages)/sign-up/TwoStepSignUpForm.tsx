@@ -14,6 +14,7 @@ import {
 import { signInWithLine } from "@/lib/auth/line-auth";
 import { calculateAge } from "@/lib/utils/utils";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 interface TwoStepSignUpFormProps {
@@ -204,6 +205,7 @@ function LoginSelectionPhase({
   onBack: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleLINELogin = async () => {
     try {
@@ -260,7 +262,7 @@ function LoginSelectionPhase({
               referralCode: referralCode,
             }),
           );
-          window.location.href = "/sign-up-email";
+          router.push("/sign-up-email");
         }}
       >
         メールアドレスとパスワードで作成

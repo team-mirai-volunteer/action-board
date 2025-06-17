@@ -6,6 +6,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -70,6 +71,8 @@ export default function EmailSignUpForm({
   searchParams,
   referralCode,
 }: EmailSignUpFormProps) {
+  const router = useRouter();
+
   // useActionStateを使用してフォームの状態とメッセージを管理
   const [state, formAction] = useActionState(emailSignUpActionWithState, null);
 
@@ -89,9 +92,9 @@ export default function EmailSignUpForm({
       setSessionData(parsed);
     } else {
       // sessionStorageにデータがない場合は /sign-up にリダイレクト
-      window.location.href = "/sign-up";
+      router.push("/sign-up");
     }
-  }, []);
+  }, [router]);
 
   // サーバーから返されたフォームデータで状態を復元
   useEffect(() => {
