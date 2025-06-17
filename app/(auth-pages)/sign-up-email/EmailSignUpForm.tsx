@@ -22,12 +22,14 @@ function EmailSignUpFormContent({
   setEmail,
   setPassword,
   passwordError,
+  isFormValid,
 }: {
   email: string;
   password: string;
   setEmail: (value: string) => void;
   setPassword: (value: string) => void;
   passwordError: string | null;
+  isFormValid: boolean;
 }) {
   const { pending } = useFormStatus();
 
@@ -64,7 +66,7 @@ function EmailSignUpFormContent({
 
       <SubmitButton
         pendingText="アカウント作成中..."
-        disabled={!email || !password || pending}
+        disabled={!email || !password || !isFormValid || pending}
         className="mt-4"
       >
         アカウントを作成
@@ -86,6 +88,7 @@ export default function EmailSignUpForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isFormValid, setIsFormValid] = useState(true);
   const [sessionData, setSessionData] = useState<{
     dateOfBirth?: string;
     referralCode?: string;
@@ -105,16 +108,15 @@ export default function EmailSignUpForm({
 
   // パスワードチェック関数
   const verifyPassword = useCallback((password: string): boolean => {
-    if (!password) {
-      setPasswordError(null);
-      return false;
-    }
+    if (!password) return false;
     const result = passwordAlertlessSchema.safeParse(password);
     if (!result.success) {
       setPasswordError(result.error.errors[0].message);
+      setIsFormValid(false);
       return false;
     }
     setPasswordError(null);
+    setIsFormValid(true);
     return true;
   }, []);
 
@@ -168,6 +170,7 @@ export default function EmailSignUpForm({
         setEmail={setEmail}
         setPassword={setPassword}
         passwordError={passwordError}
+        isFormValid={isFormValid}
       />
     </form>
   );
