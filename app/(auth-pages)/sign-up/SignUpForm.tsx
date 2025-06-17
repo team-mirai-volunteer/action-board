@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateAge } from "@/lib/utils/utils";
-import { passwordSchema } from "@/lib/validation/auth";
+import { passwordAlertlessSchema, passwordSchema } from "@/lib/validation/auth";
 import Link from "next/link";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -307,7 +307,7 @@ export default function SignUpForm({
   // パスワードチェック関数
   const verifyPassword = useCallback((password: string): boolean => {
     if (!password) return false;
-    const result = passwordSchema.safeParse(password);
+    const result = passwordAlertlessSchema.safeParse(password);
     if (!result.success) {
       const invalid = result.error.errors.find(
         (err) =>
