@@ -625,7 +625,7 @@ export async function handleLineAuthAction(
     }
 
     // 5. 一時パスワードを設定
-    const tempPassword = `line_temp_${randomBytes(16).toString("hex")}`;
+    const tempPassword = randomBytes(32).toString("base64");
 
     const { error: passwordError } = await supabase.auth.admin.updateUserById(
       userId,
@@ -635,7 +635,8 @@ export async function handleLineAuthAction(
     );
 
     if (passwordError) {
-      // Password setting failed but continue with the flow
+      console.error("Failed to set temporary password:", passwordError);
+      // パスワード設定に失敗した場合でも続行しますが、ログに記録します
     }
 
     // 6. Supabaseセッション作成
