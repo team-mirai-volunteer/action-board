@@ -22,7 +22,7 @@ VALUES
     'LINK',
     NULL,
     '', -- TODO
-    '投稿した自己紹介のリンク（例: https://team-mirai-volunteer.slack.com/archives/C08SF0HARU6/p1747563247933219）' -- TODO (必須)が正しくないフォントで表示されている
+    '投稿した自己紹介のリンク（例: https://team-mirai-volunteer.slack.com/archives/C08SF0HARU6/p1747563247933219）'
   ),
   (
     gen_random_uuid(),
