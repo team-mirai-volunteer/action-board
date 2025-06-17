@@ -295,8 +295,15 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   // LINEユーザーかどうかを確認
   const serviceSupabase = await createServiceClient();
-  const { data: existingUsers } = await serviceSupabase.auth.admin.listUsers();
-  const userWithEmail = existingUsers.users.find((u) => u.email === email);
+  const { data: userWithEmail, error: userFetchError } = await serviceSupabase
+    .from("auth.users")
+    .select("id, user_metadata")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (userFetchError) {
+    console.error("Failed to fetch user:", userFetchError);
+  }
 
   // LINEユーザーの場合、パスワードリセットは出来ない
   if (userWithEmail && userWithEmail.user_metadata?.provider === "line") {
@@ -542,8 +549,15 @@ export async function handleLineAuthAction(
     let userId: string;
     let isNewUser = false;
 
-    const { data: existingUser } = await supabase.auth.admin.listUsers();
-    const userWithEmail = existingUser.users.find((u) => u.email === email);
+    const { data: userWithEmail, error: userFetchError } = await supabase
+      .from("auth.users")
+      .select("id, user_metadata")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (userFetchError) {
+      console.error("Failed to fetch user:", userFetchError);
+    }
 
     if (userWithEmail) {
       // 既存ユーザーの場合：作成方法に応じて処理を分岐
