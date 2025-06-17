@@ -12,6 +12,23 @@ const emailSchema = z
   .nonempty({ message: "メールアドレスを入力してください" })
   .email({ message: "有効なメールアドレスを入力してください" });
 
+// パスワードのサーバーバリデーションスキーマ（再利用可能）
+export const passwordAlertSchema = z
+  .string()
+  .nonempty({ message: "パスワードを入力してください" })
+  .min(8, { message: "パスワードは8文字以上で入力してください" })
+  .regex(ALPHANUMERIC_REQUIRED_REGEX, {
+    message: "パスワードには英字と数字の両方を含めてください",
+  });
+
+// パスワードのクライアントバリデーションスキーマ（再利用可能）
+export const passwordAlertlessSchema = z
+  .string()
+  .max(32, { message: "パスワードは32文字以下で入力してください" })
+  .regex(ALLOWED_PASSWORD_CHARS_REGEX, {
+    message: "パスワードに無効な文字が含まれています",
+  });
+
 // パスワードのバリデーションスキーマ（再利用可能）
 export const passwordSchema = z
   .string()
