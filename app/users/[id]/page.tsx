@@ -1,10 +1,7 @@
 import Levels from "@/components/levels";
 import { Card } from "@/components/ui/card";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import {
-  getUserRepeatableMissionAchievements,
-  getUserTotalAchievementCount,
-} from "@/lib/services/userMissionAchievement";
+import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
 import UserDetailActivities from "./user-detail-activities";
 
@@ -31,25 +28,20 @@ export default async function UserDetailPage({ params }: Props) {
   if (!user) return <div>ユーザーが見つかりません</div>;
 
   // 並列でデータを取得
-  const [
-    { data: timeline },
-    { count },
-    missionAchievements,
-    totalAchievementCount,
-  ] = await Promise.all([
-    supabase
-      .from("activity_timeline_view")
-      .select("*")
-      .eq("user_id", id)
-      .order("created_at", { ascending: false })
-      .limit(PAGE_SIZE),
-    supabase
-      .from("activity_timeline_view")
-      .select("*", { count: "exact" })
-      .eq("user_id", id),
-    getUserRepeatableMissionAchievements(id),
-    getUserTotalAchievementCount(id),
-  ]);
+  const [{ data: timeline }, { count }, missionAchievements] =
+    await Promise.all([
+      supabase
+        .from("activity_timeline_view")
+        .select("*")
+        .eq("user_id", id)
+        .order("created_at", { ascending: false })
+        .limit(PAGE_SIZE),
+      supabase
+        .from("activity_timeline_view")
+        .select("*", { count: "exact" })
+        .eq("user_id", id),
+      getUserRepeatableMissionAchievements(id),
+    ]);
 
   return (
     <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
@@ -88,11 +80,11 @@ export default async function UserDetailPage({ params }: Props) {
           </div>
         )}
       </div>
-      {totalAchievementCount > 0 && (
+      {(count || 0) > 0 && (
         <Card className="w-full p-4 mt-4">
           <UserMissionAchievements
             achievements={missionAchievements}
-            totalCount={totalAchievementCount}
+            totalCount={count || 0}
           />
         </Card>
       )}
