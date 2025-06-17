@@ -54,17 +54,17 @@ CREATE TABLE mission_quiz_questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mission_id UUID NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
     question_id UUID NOT NULL REFERENCES quiz_questions(id) ON DELETE CASCADE,
-    question_order INTEGER NOT NULL CHECK (question_order >= 1 AND question_order <= 3),
+    question_order INTEGER NOT NULL CHECK (question_order >= 1),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE(mission_id, question_id),
     UNIQUE(mission_id, question_order)
 );
 
-COMMENT ON TABLE mission_quiz_questions IS 'ミッションに紐づく固定のクイズ問題（3問）';
+COMMENT ON TABLE mission_quiz_questions IS 'ミッションに紐づくクイズ問題';
 COMMENT ON COLUMN mission_quiz_questions.id IS 'ID';
 COMMENT ON COLUMN mission_quiz_questions.mission_id IS 'ミッションID';
 COMMENT ON COLUMN mission_quiz_questions.question_id IS '問題ID';
-COMMENT ON COLUMN mission_quiz_questions.question_order IS '問題の順序（1-3）';
+COMMENT ON COLUMN mission_quiz_questions.question_order IS '問題の順序（1以上）';
 COMMENT ON COLUMN mission_quiz_questions.created_at IS '作成日時(UTC)';
 
 -- インデックス作成
