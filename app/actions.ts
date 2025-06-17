@@ -295,15 +295,18 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   // LINEユーザーかどうかを確認
   const serviceSupabase = await createServiceClient();
-  const { data: userWithEmail, error: userFetchError } = await serviceSupabase
-    .from("auth.users")
-    .select("id, user_metadata")
-    .eq("email", email)
-    .maybeSingle();
+
+  // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
+  // listUsers()の全件取得 (O(n)) から大幅な性能改善
+  const { data: userResults, error: userFetchError } =
+    await serviceSupabase.rpc("get_user_by_email", { user_email: email });
 
   if (userFetchError) {
-    console.error("Failed to fetch user:", userFetchError);
+    console.error("get_user_by_email function failed:", userFetchError);
+    throw new Error("Failed to check user existence");
   }
+
+  const userWithEmail = userResults?.[0] || null;
 
   // LINEユーザーの場合、パスワードリセットは出来ない
   if (userWithEmail && userWithEmail.user_metadata?.provider === "line") {
@@ -549,15 +552,24 @@ export async function handleLineAuthAction(
     let userId: string;
     let isNewUser = false;
 
-    const { data: userWithEmail, error: userFetchError } = await supabase
-      .from("auth.users")
-      .select("id, user_metadata")
-      .eq("email", email)
-      .maybeSingle();
+    // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
+    // listUsers()の全件取得 (O(n)) から大幅な性能改善
+    const { data: userResults, error: userFetchError } = await supabase.rpc(
+      "get_user_by_email",
+      { user_email: email },
+    );
 
     if (userFetchError) {
-      console.error("Failed to fetch user:", userFetchError);
+      console.error(
+        "LINE Auth - get_user_by_email function failed:",
+        userFetchError,
+      );
+      throw new Error(
+        "Failed to check user existence during LINE authentication",
+      );
     }
+
+    const userWithEmail = userResults?.[0] || null;
 
     if (userWithEmail) {
       // 既存ユーザーの場合：作成方法に応じて処理を分岐
