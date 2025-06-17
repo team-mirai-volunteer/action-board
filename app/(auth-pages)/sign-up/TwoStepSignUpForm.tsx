@@ -205,11 +205,13 @@ function LoginSelectionPhase({
   onBack: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleLINELogin = async () => {
     try {
       setIsLoading(true);
+      setError(null);
       // sessionStorageにサインアップデータを保存
       sessionStorage.setItem(
         "lineLoginData",
@@ -222,11 +224,20 @@ function LoginSelectionPhase({
       await signInWithLine();
     } catch (error) {
       setIsLoading(false);
+      setError("LINE連携に失敗しました。もう一度お試しください。");
+      console.error("LINE login error:", error);
     }
   };
 
   return (
     <div className="flex flex-col gap-4 mt-8">
+      {/* エラーメッセージ表示 */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-3">
+          <p className="text-red-700 text-sm">{error}</p>
+        </div>
+      )}
+
       {/* LINEログインボタン */}
       <Button
         type="button"
