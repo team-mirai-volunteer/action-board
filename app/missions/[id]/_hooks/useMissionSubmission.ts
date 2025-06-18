@@ -16,16 +16,8 @@ export function useMissionSubmission(
       return "このミッションは完了済みです";
     }
 
-    if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
-      return "達成を報告する";
-    }
-
     return "ミッション完了を記録する";
-  }, [
-    mission.max_achievement_count,
-    mission.required_artifact_type,
-    userAchievementCount,
-  ]);
+  }, [mission.max_achievement_count, userAchievementCount]);
 
   const isButtonDisabled = useMemo(() => {
     return (

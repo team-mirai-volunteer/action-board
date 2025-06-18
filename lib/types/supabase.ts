@@ -474,48 +474,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      quiz_answers: {
-        Row: {
-          answered_at: string;
-          id: string;
-          is_correct: boolean;
-          question_id: string;
-          session_id: string;
-          user_answer: number;
-        };
-        Insert: {
-          answered_at?: string;
-          id?: string;
-          is_correct: boolean;
-          question_id: string;
-          session_id: string;
-          user_answer: number;
-        };
-        Update: {
-          answered_at?: string;
-          id?: string;
-          is_correct?: boolean;
-          question_id?: string;
-          session_id?: string;
-          user_answer?: number;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "quiz_answers_question_id_fkey";
-            columns: ["question_id"];
-            isOneToOne: false;
-            referencedRelation: "quiz_questions";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "quiz_answers_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: false;
-            referencedRelation: "quiz_sessions";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       quiz_categories: {
         Row: {
           created_at: string;
@@ -598,54 +556,6 @@ export type Database = {
             columns: ["category_id"];
             isOneToOne: false;
             referencedRelation: "quiz_categories";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      quiz_sessions: {
-        Row: {
-          completed_at: string | null;
-          correct_answers: number;
-          created_at: string;
-          id: string;
-          mission_id: string | null;
-          total_questions: number;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          completed_at?: string | null;
-          correct_answers?: number;
-          created_at?: string;
-          id?: string;
-          mission_id?: string | null;
-          total_questions?: number;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          completed_at?: string | null;
-          correct_answers?: number;
-          created_at?: string;
-          id?: string;
-          mission_id?: string | null;
-          total_questions?: number;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "quiz_sessions_mission_id_fkey";
-            columns: ["mission_id"];
-            isOneToOne: false;
-            referencedRelation: "mission_achievement_count_view";
-            referencedColumns: ["mission_id"];
-          },
-          {
-            foreignKeyName: "quiz_sessions_mission_id_fkey";
-            columns: ["mission_id"];
-            isOneToOne: false;
-            referencedRelation: "missions";
             referencedColumns: ["id"];
           },
         ];

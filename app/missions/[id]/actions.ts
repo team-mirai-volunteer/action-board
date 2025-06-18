@@ -9,92 +9,21 @@ import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
-// クイズ用の型定義
-interface QuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  difficulty: number;
-  correct_answer: number;
-  explanation: string | null;
-  category?: string; // カテゴリー名を追加
-}
+// Quiz関連のServer ActionsとQuizQuestion型をインポート
+import {
+  type QuizQuestion,
+  checkQuizAnswersAction,
+  getMissionQuizCategoryAction,
+  getQuizQuestionsAction,
+} from "./quiz-actions";
 
-// データベースから取得されるクイズ問題の型
-interface DbQuizQuestion {
-  id: string;
-  question: string;
-  option1: string;
-  option2: string;
-  option3: string;
-  option4: string;
-  correct_answer: number;
-  explanation: string;
-  difficulty: number;
-}
-
-// mission_quiz_questionsテーブルからの結果型
-interface MissionQuizQuestionResult {
-  question_order: number;
-  quiz_questions: DbQuizQuestion;
-}
-
-// ミッション用のクイズ問題取得関数
-async function getQuestionsByMission(
-  missionId: string,
-): Promise<QuizQuestion[]> {
-  const supabase = await createServiceClient();
-
-  // ミッションに紐づく問題を取得（mission_quiz_questionsテーブル経由）
-  const { data, error } = await supabase
-    .from("mission_quiz_questions")
-    .select(`
-      question_order,
-      quiz_questions (
-        id,
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        correct_answer,
-        explanation,
-        difficulty,
-        quiz_categories (
-          name
-        )
-      )
-    `)
-    .eq("mission_id", missionId)
-    .order("question_order");
-
-  if (error) {
-    console.error("Error fetching quiz questions:", error);
-    console.error("Mission ID:", missionId);
-    throw new Error(
-      `クイズ問題の取得に失敗しました: ${error.message || "Unknown error"}`,
-    );
-  }
-
-  if (!data || data.length === 0) {
-    console.warn("No quiz questions found for mission:", missionId);
-    return [];
-  }
-
-  return data.map((item) => {
-    const q = Array.isArray(item.quiz_questions)
-      ? item.quiz_questions[0]
-      : item.quiz_questions;
-    return {
-      id: q.id,
-      question: q.question,
-      options: [q.option1, q.option2, q.option3, q.option4],
-      difficulty: q.difficulty,
-      correct_answer: q.correct_answer,
-      explanation: q.explanation,
-    };
-  });
-}
+// Quiz関連のServer Actionsを再エクスポート
+export {
+  getMissionQuizCategoryAction,
+  getQuizQuestionsAction,
+  checkQuizAnswersAction,
+  type QuizQuestion,
+};
 
 // 基本スキーマ（共通項目）
 const baseMissionFormSchema = z.object({
@@ -421,10 +350,8 @@ export const achieveMissionAction = async (formData: FormData) => {
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
       artifactTypeLabel = "QUIZ";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
-        // クイズ結果をdescriptionに格納（既にvalidatedArtifactDescriptionに含まれている）
-        // CHECK制約回避のためtext_contentにも格納
-        artifactPayload.text_content =
-          validatedArtifactDescription || "クイズ完了";
+        // クイズ結果はdescriptionのみに格納
+        artifactPayload.text_content = null;
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
       }
@@ -435,8 +362,9 @@ export const achieveMissionAction = async (formData: FormData) => {
       artifactPayload.text_content = null;
     }
 
-    // CHECK制約: link_url、text_content、image_storage_pathのいずれか一つは必須
+    // CHECK制約: QUIZタイプ以外はlink_url、text_content、image_storage_pathのいずれか一つは必須
     if (
+      validatedRequiredArtifactType !== ARTIFACT_TYPES.QUIZ.key &&
       !artifactPayload.link_url &&
       !artifactPayload.image_storage_path &&
       !artifactPayload.text_content
@@ -701,106 +629,4 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     xpRevoked: xpToRevoke,
     userLevel: xpResult.userLevel,
   };
-};
-
-// === クイズ関連のServer Actions ===
-
-// ミッションのクイズ問題を取得する
-export const getQuizQuestionsAction = async (missionId: string) => {
-  try {
-    // ミッションに紐づく問題を取得
-    const questions = await getQuestionsByMission(missionId);
-
-    if (!questions || questions.length === 0) {
-      return {
-        success: false,
-        error: "このミッションにはクイズ問題が設定されていません",
-      };
-    }
-
-    return {
-      success: true,
-      questions: questions.map((q) => ({
-        id: q.id,
-        question: q.question,
-        options: q.options,
-        difficulty: q.difficulty,
-      })),
-    };
-  } catch (error) {
-    console.error("Error fetching quiz questions:", error);
-    return {
-      success: false,
-      error: "クイズ問題の取得に失敗しました",
-    };
-  }
-};
-
-// クイズの回答をチェックする（採点のみ、achievements記録なし）
-export const checkQuizAnswersAction = async (
-  missionId: string,
-  answers: { questionId: string; selectedAnswer: number }[],
-) => {
-  try {
-    const supabase = await createClient();
-
-    // ユーザー認証確認
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return { success: false, error: "認証が必要です" };
-    }
-
-    // ミッションに紐づく問題を取得（正解と照合するため）
-    const questions = await getQuestionsByMission(missionId);
-
-    if (!questions || questions.length === 0) {
-      return {
-        success: false,
-        error: "このミッションにはクイズ問題が設定されていません",
-      };
-    }
-
-    // 回答チェック
-    const results = answers.map((answer) => {
-      const question = questions.find((q) => q.id === answer.questionId);
-      if (!question) {
-        return {
-          questionId: answer.questionId,
-          correct: false,
-          explanation: "",
-          selectedAnswer: answer.selectedAnswer,
-          correctAnswer: 0, // デフォルト値
-        };
-      }
-
-      const isCorrect = question.correct_answer === answer.selectedAnswer;
-      return {
-        questionId: answer.questionId,
-        correct: isCorrect,
-        explanation: question.explanation || "",
-        selectedAnswer: answer.selectedAnswer,
-        correctAnswer: question.correct_answer,
-      };
-    });
-
-    const correctCount = results.filter((r) => r.correct).length;
-    const totalQuestions = questions.length;
-    const score = Math.round((correctCount / totalQuestions) * 100);
-    const passed = correctCount === totalQuestions; // 全問正解が合格条件
-
-    return {
-      success: true,
-      score,
-      passed,
-      correctAnswers: correctCount,
-      totalQuestions,
-      results,
-    };
-  } catch (error) {
-    console.error("Error checking quiz answers:", error);
-    return { success: false, error: "クイズの採点に失敗しました" };
-  }
 };

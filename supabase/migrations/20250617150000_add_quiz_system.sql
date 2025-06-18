@@ -149,7 +149,7 @@ ADD CONSTRAINT ensure_artifact_data CHECK (
       (artifact_type = 'QUIZ'::text)
       AND (link_url IS NULL)
       AND (image_storage_path IS NULL)
-      AND (text_content IS NOT NULL)
+      AND (text_content IS NULL)
     )
   )
 );

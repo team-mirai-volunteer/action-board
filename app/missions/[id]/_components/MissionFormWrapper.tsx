@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
+import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
@@ -38,20 +39,6 @@ export function MissionFormWrapper({
   onSubmissionSuccess,
   preloadedQuizQuestions,
 }: Props) {
-  // ミッションタイトルからカテゴリーを推測する関数
-  const getCategoryFromMissionTitle = (title: string): string => {
-    if (title.includes("政策") || title.includes("マニフェスト")) {
-      return "政策・マニフェスト";
-    }
-    if (title.includes("チームみらい")) {
-      return "チームみらい";
-    }
-    if (title.includes("公職選挙法")) {
-      return "公職選挙法";
-    }
-    return "その他";
-  };
-
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
 
@@ -60,23 +47,6 @@ export function MissionFormWrapper({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
   const formRef = useRef<HTMLFormElement>(null);
-
-  // クイズ関連の状態
-  const [quizPassed, setQuizPassed] = useState(false);
-  const [quizResults, setQuizResults] = useState<{
-    score: number;
-    passed: boolean;
-    correctAnswers: number;
-    totalQuestions: number;
-    results: Array<{
-      questionId: string;
-      correct: boolean;
-      explanation: string;
-      selectedAnswer?: number;
-      correctAnswer?: number;
-    }>;
-  } | null>(null);
-  const [quizKey, setQuizKey] = useState(0); // QuizComponentを再マウントするためのkey
 
   // XPアニメーション関連の状態
   const [xpAnimationData, setXpAnimationData] = useState<{
@@ -89,87 +59,21 @@ export function MissionFormWrapper({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // クイズ完了時のハンドラ（結果を受け取り、状態を更新）
-  const handleQuizComplete = (results: {
-    score: number;
-    passed: boolean;
-    correctAnswers: number;
-    totalQuestions: number;
-    results: Array<{
-      questionId: string;
-      correct: boolean;
-      explanation: string;
-      selectedAnswer?: number;
-      correctAnswer?: number;
-    }>;
-  }) => {
-    // エラー状態をクリア（新しいクイズ結果が得られたため）
-    setErrorMessage(null);
-
-    setQuizResults(results);
-    setQuizPassed(results.passed);
-
-    // スクロール位置をリセット
-    scrollToTop();
-  };
-
-  // クイズミッション達成時の処理
-  const handleQuizSubmit = async () => {
-    // 連続報告を防ぐため、提出中や結果がない場合は早期リターン
-    if (isSubmitting || !quizPassed || !quizResults) {
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      setErrorMessage(null);
-
-      // achieveMissionActionを呼び出してミッション達成を記録
-      const formData = new FormData();
-      formData.append("missionId", mission.id);
-      formData.append("requiredArtifactType", ARTIFACT_TYPES.QUIZ.key);
-      formData.append(
-        "artifactDescription",
-        `クイズ結果: ${quizResults.correctAnswers}/${quizResults.totalQuestions}問正解`,
-      );
-
-      const result = await achieveMissionAction(formData);
-
-      if (result.success) {
-        // 即座にクイズの状態をリセット（連続報告を防ぐ）
-        setQuizResults(null);
-        setQuizPassed(false);
-        setQuizKey((prev) => prev + 1); // QuizComponentを再マウント
-
-        toast.success("クイズミッション達成！");
-        setIsDialogOpen(true);
-
-        // XPアニメーション表示
-        if (result.xpGranted && result.userLevel) {
-          const initialXp = result.userLevel.xp - result.xpGranted;
-          setXpAnimationData({
-            initialXp,
-            xpGained: result.xpGranted,
-          });
-        }
-
-        // スクロール位置をリセット
-        scrollToTop();
-
-        if (onSubmissionSuccess) {
-          onSubmissionSuccess();
-        }
-      } else {
-        console.error("achieveMissionAction failed:", result.error);
-        setErrorMessage(result.error || "ミッションの達成に失敗しました");
-      }
-    } catch (error) {
-      console.error("Quiz submission error:", error);
-      setErrorMessage("ネットワークエラーが発生しました");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // Quiz関連の処理をカスタムHookに委託
+  const {
+    quizCategory,
+    quizKey,
+    isSubmitting: isQuizSubmitting,
+    handleQuizComplete,
+    handleQuizSubmit,
+  } = useQuizMission({
+    mission,
+    onSubmissionSuccess,
+    onXpAnimationData: setXpAnimationData,
+    onDialogOpen: () => setIsDialogOpen(true),
+    onErrorMessage: setErrorMessage,
+    scrollToTop,
+  });
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -278,9 +182,9 @@ export function MissionFormWrapper({
               preloadedQuestions={preloadedQuizQuestions || []}
               onQuizComplete={handleQuizComplete}
               onSubmitAchievement={handleQuizSubmit}
-              isSubmittingAchievement={isSubmitting}
+              isSubmittingAchievement={isQuizSubmitting}
               buttonLabel={buttonLabel}
-              category={getCategoryFromMissionTitle(mission.title)}
+              category={quizCategory}
             />
 
             {errorMessage && (

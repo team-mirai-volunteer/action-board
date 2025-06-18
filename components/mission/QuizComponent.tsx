@@ -55,7 +55,7 @@ export default function QuizComponent({
   onQuizComplete,
   onSubmitAchievement,
   isSubmittingAchievement = false,
-  buttonLabel = "達成を報告する",
+  buttonLabel,
   onAchievementSuccess,
   category,
 }: QuizComponentProps) {
@@ -345,7 +345,7 @@ export default function QuizComponent({
                 </div>
               </div>
               {result.passed ? (
-                <div>{getAchievementMessage(category)}</div>
+                <div>{`ミッション達成！${category}マスターですね！`}</div>
               ) : (
                 <div className="text-red-600">
                   全問正解が必要です。再挑戦してください
