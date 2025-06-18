@@ -11,7 +11,7 @@ import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
@@ -32,7 +32,15 @@ type LeafletWindow = Window & { L: typeof import("leaflet") };
 export default function PostingPageClient(_props: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
+  const [showText, setShowText] = useState(true);
+  const textLayersRef = useRef<Set<Layer>>(new Set());
+  const showTextRef = useRef(showText);
   const autoSave = true;
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    showTextRef.current = showText;
+  }, [showText]);
 
   useEffect(() => {
     if (!mapInstance) return;
@@ -98,6 +106,20 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
         console.log("Shape created:", e.layer);
         if (e.layer) {
+          // Check if it's a text layer
+          const shapeName = e.layer.pm?.getShape
+            ? e.layer.pm.getShape()
+            : undefined;
+          if (shapeName === "Text") {
+            e.layer._isTextLayer = true;
+            textLayersRef.current.add(e.layer);
+            // Hide if text is toggled off
+            if (!showTextRef.current && e.layer) {
+              const layerToRemove = e.layer;
+              setTimeout(() => mapInstance.removeLayer(layerToRemove), 0);
+            }
+          }
+
           await saveOrUpdateLayer(e.layer);
           attachTextEvents(e.layer);
           updateShapeCount();
@@ -108,6 +130,11 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         console.log("Shape removed:", e.layer);
         const layer = e.layer;
         if (layer) {
+          // Remove from text layers tracking if it's a text layer
+          if (layer._isTextLayer) {
+            textLayersRef.current.delete(layer);
+          }
+
           const sid = getShapeId(layer);
           if (sid) {
             await deleteMapShape(sid);
@@ -169,6 +196,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
                 text,
               } as L.MarkerOptions) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
+              layer._isTextLayer = true; // Mark as text layer for toggle
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
               layer = L.geoJSON(
@@ -179,6 +207,15 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
             if (layer) {
               layer.addTo(mapInstance);
+
+              // Track text layers
+              if (layer._isTextLayer) {
+                textLayersRef.current.add(layer);
+                // Apply initial text visibility state
+                if (!showTextRef.current) {
+                  mapInstance.removeLayer(layer);
+                }
+              }
 
               propagateShapeId(layer, shape.id);
 
@@ -242,6 +279,9 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
   function attachTextEvents(layer: Layer) {
     if (!layer || !layer.pm) return;
+
+    layer._isTextLayer = true; // Mark as text layer
+    textLayersRef.current.add(layer); // Add to tracking
 
     layer.off("pm:textchange");
     layer.off("pm:textblur");
@@ -343,6 +383,28 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     );
   };
 
+  const toggleTextVisibility = () => {
+    if (!mapInstance) return;
+
+    const newShowText = !showText;
+    setShowText(newShowText);
+
+    // Toggle visibility of all text layers from our ref
+    for (const layer of Array.from(textLayersRef.current)) {
+      if (newShowText) {
+        // Show text layer if it's not already on the map
+        if (!mapInstance.hasLayer(layer)) {
+          layer.addTo(mapInstance);
+        }
+      } else {
+        // Hide text layer
+        if (mapInstance.hasLayer(layer)) {
+          mapInstance.removeLayer(layer);
+        }
+      }
+    }
+  };
+
   return (
     <>
       <link
@@ -373,6 +435,23 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         <div style={{ fontSize: "12px", color: "#666" }}>
           Shapes: {shapeCount}
         </div>
+
+        <button
+          type="button"
+          onClick={toggleTextVisibility}
+          style={{
+            padding: "6px 12px",
+            fontSize: "12px",
+            background: showText ? "#4CAF50" : "#666",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+        >
+          {showText ? "テキストを非表示" : "テキストを表示"}
+        </button>
 
         {/* Auto-save is always on; checkbox removed */}
       </div>
