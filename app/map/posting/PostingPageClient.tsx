@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   type MapShape as MapShapeData,
   deleteShape as deleteMapShape,
@@ -32,6 +33,7 @@ type LeafletWindow = Window & { L: typeof import("leaflet") };
 export default function PostingPageClient(_props: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
+  const [showText, setShowText] = useState(true);
   const autoSave = true;
 
   useEffect(() => {
@@ -374,6 +376,15 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           Shapes: {shapeCount}
         </div>
 
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowText(!showText)}
+          style={{ fontSize: "12px" }}
+        >
+          {showText ? "テキスト非表示" : "テキスト表示"}
+        </Button>
+
         {/* Auto-save is always on; checkbox removed */}
       </div>
 
@@ -398,6 +409,17 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         }
 
         ${textMarkerStyles}
+        
+        /* Hide text when showText is false */
+        ${
+          !showText
+            ? `
+          .pm-text {
+            display: none !important;
+          }
+        `
+            : ""
+        }
       `}</style>
 
       <GeomanMap onMapReady={setMapInstance} />
