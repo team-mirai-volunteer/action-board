@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateAge } from "@/lib/utils/utils";
+import { passwordAlertlessSchema, passwordSchema } from "@/lib/validation/auth";
 import Link from "next/link";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -45,6 +46,7 @@ function SignUpFormContent({
   months,
   days,
   formattedDate,
+  passwordError,
 }: {
   isTermsAgreed: boolean;
   isPrivacyAgreed: boolean;
@@ -66,6 +68,7 @@ function SignUpFormContent({
   months: number[];
   days: number[];
   formattedDate: string;
+  passwordError: string | null;
 }) {
   const { pending } = useFormStatus();
 
@@ -97,6 +100,11 @@ function SignUpFormContent({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {passwordError && (
+          <p className="text-primary text-sm font-medium mb-2">
+            {passwordError}
+          </p>
+        )}
 
         <Label htmlFor="date_of_birth">
           生年月日（満18歳以上である必要があります）
@@ -270,6 +278,7 @@ export default function SignUpForm({
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [ageError, setAgeError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState(1990);
   const [selectedMonth, setSelectedMonth] = useState(1);
@@ -294,6 +303,25 @@ export default function SignUpForm({
   );
 
   const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
+
+  // パスワードチェック関数
+  const verifyPassword = useCallback((password: string): boolean => {
+    if (!password) return false;
+    const result = passwordAlertlessSchema.safeParse(password);
+    if (!result.success) {
+      setPasswordError(result.error.errors[0].message);
+      setIsFormValid(false);
+      return false;
+    }
+    setPasswordError(null);
+    setIsFormValid(true);
+    return true;
+  }, []);
+
+  // パスワードチェック
+  useEffect(() => {
+    verifyPassword(password);
+  }, [password, verifyPassword]);
 
   // 年齢チェック関数
   const verifyAge = useCallback((birthdate: string): boolean => {
@@ -393,6 +421,7 @@ export default function SignUpForm({
         months={months}
         days={days}
         formattedDate={formattedDate}
+        passwordError={passwordError}
       />
     </form>
   );
