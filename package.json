@@ -52,7 +52,7 @@
     "zod": "^3.25.23"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.0.0",
     "@chromatic-com/storybook": "^3.2.6",
     "@playwright/test": "^1.52.0",
     "@storybook/addon-essentials": "^8.6.14",
