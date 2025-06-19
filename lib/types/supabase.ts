@@ -34,6 +34,84 @@ export type Database = {
   };
   public: {
     Tables: {
+      cities: {
+        Row: {
+          id: number;
+          created_at: string;
+          prefecture: string;
+          city: string;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          prefecture: string;
+          city: string;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          prefecture?: string;
+          city?: string;
+        };
+        Relationships: [];
+      };
+      pins: {
+        Row: {
+          id: number;
+          created_at: string;
+          number: string | null;
+          address: string | null;
+          place_name: string | null;
+          lat: number | null;
+          long: number | null;
+          status: number;
+          note: string | null;
+          city_id: number;
+          updated_by: string | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          number?: string | null;
+          address?: string | null;
+          place_name?: string | null;
+          lat?: number | null;
+          long?: number | null;
+          status?: number;
+          note?: string | null;
+          city_id: number;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          number?: string | null;
+          address?: string | null;
+          place_name?: string | null;
+          lat?: number | null;
+          long?: number | null;
+          status?: number;
+          note?: string | null;
+          city_id?: number;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pins_city_id_fkey";
+            columns: ["city_id"];
+            isOneToOne: false;
+            referencedRelation: "cities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pins_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       achievements: {
         Row: {
           created_at: string;
