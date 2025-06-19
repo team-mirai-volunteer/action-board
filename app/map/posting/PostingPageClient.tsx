@@ -432,7 +432,6 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           gap: "8px",
         }}
       >
-
         <div style={{ fontSize: "12px", color: "#666" }}>
           Shapes: {shapeCount}
         </div>
@@ -472,7 +471,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         .leaflet-pm-toolbar {
           z-index: 1000 !important;
         }
-        
+
         .leaflet-pm-icon {
           background-color: white !important;
           border: 1px solid #ccc !important;
