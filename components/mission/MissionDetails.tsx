@@ -11,6 +11,16 @@ type MissionDetailsProps = {
   mission: Tables<"missions">;
 };
 
+declare global {
+  interface Window {
+    twttr?: {
+      widgets: {
+        load: (el?: HTMLElement) => void;
+      };
+    };
+  }
+}
+
 export function MissionDetails({ mission }: MissionDetailsProps) {
   return (
     <Card>
@@ -38,6 +48,17 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
           ref={(el) => {
             if (el && mission.content) {
               el.innerHTML = mission.content;
+            }
+            if (el) {
+              if (window.twttr?.widgets) {
+                window.twttr.widgets.load(el);
+              } else {
+                const script = document.createElement("script");
+                script.src = "https://platform.twitter.com/widgets.js";
+                script.async = true;
+                script.charset = "utf-8";
+                document.body.appendChild(script);
+              }
             }
           }}
         />
