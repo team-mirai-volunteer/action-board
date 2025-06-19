@@ -373,7 +373,7 @@ export const resetPasswordAction = async (formData: FormData) => {
     );
   }
 
-  encodedRedirect("success", "/reset-password", "パスワードを更新しました");
+  encodedRedirect("success", "/sign-in", "パスワードを更新しました");
 };
 
 export const signOutAction = async () => {
