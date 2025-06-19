@@ -432,6 +432,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           gap: "8px",
         }}
       >
+
         <div style={{ fontSize: "12px", color: "#666" }}>
           Shapes: {shapeCount}
         </div>
@@ -465,6 +466,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           width: 100%;
           height: 100vh;
           position: relative;
+          z-index:  40;
         }
         /* Ensure Geoman toolbar is visible */
         .leaflet-pm-toolbar {

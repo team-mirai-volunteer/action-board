@@ -33,6 +33,15 @@ const textArtifactSchema = baseMissionFormSchema.extend({
   artifactText: z.string().nonempty({ message: "テキストが必要です" }),
 });
 
+// EMAILタイプ用スキーマ
+const emailArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.EMAIL.key),
+  artifactEmail: z
+    .string()
+    .nonempty({ message: "メールアドレスが必要です" })
+    .email({ message: "有効なメールアドレスを入力してください" }),
+});
+
 // IMAGEタイプ用スキーマ
 const imageArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.IMAGE.key),
@@ -91,6 +100,7 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
   textArtifactSchema,
+  emailArtifactSchema,
   imageArtifactSchema,
   imageWithGeolocationArtifactSchema,
   postingArtifactSchema,
@@ -109,6 +119,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   const requiredArtifactType = formData.get("requiredArtifactType")?.toString();
   const artifactLink = formData.get("artifactLink")?.toString();
   const artifactText = formData.get("artifactText")?.toString();
+  const artifactEmail = formData.get("artifactEmail")?.toString();
   const artifactImagePath = formData.get("artifactImagePath")?.toString();
   const artifactDescription = formData.get("artifactDescription")?.toString();
   // 位置情報データの取得
@@ -126,6 +137,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     requiredArtifactType,
     artifactLink,
     artifactText,
+    artifactEmail,
     artifactImagePath,
     artifactDescription,
     latitude,
@@ -272,6 +284,14 @@ export const achieveMissionAction = async (formData: FormData) => {
       artifactTypeLabel = "TEXT";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.TEXT.key) {
         artifactPayload.text_content = validatedData.artifactText;
+        // CHECK制約: text_content必須、他はnull
+        artifactPayload.link_url = null;
+        artifactPayload.image_storage_path = null;
+      }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.EMAIL.key) {
+      artifactTypeLabel = "EMAIL";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.EMAIL.key) {
+        artifactPayload.text_content = validatedData.artifactEmail;
         // CHECK制約: text_content必須、他はnull
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
