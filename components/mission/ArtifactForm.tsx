@@ -94,6 +94,24 @@ export function ArtifactForm({
           </div>
         )}
 
+        {/* メールアドレス入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.EMAIL.key && (
+          <div className="space-y-2">
+            <Label htmlFor="artifactEmail">
+              {mission.artifact_label}
+              <span className="artifactText"> (必須)</span>
+            </Label>
+            <Input
+              type="email"
+              name="artifactEmail"
+              id="artifactEmail"
+              placeholder={`${mission.artifact_label}を入力してください`}
+              disabled={disabled}
+              required
+            />
+          </div>
+        )}
+
         {/* ポスティング入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTING.key && (
           <div className="space-y-4">

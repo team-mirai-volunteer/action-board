@@ -3,50 +3,83 @@
 import { signInActionWithState } from "@/app/actions";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signInWithLine } from "@/lib/auth/line-auth";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 export default function SignInForm() {
   const [state, formAction] = useActionState(signInActionWithState, null);
+  const [isLineLoading, setIsLineLoading] = useState(false);
+
+  const handleLINELogin = async () => {
+    try {
+      setIsLineLoading(true);
+      await signInWithLine();
+    } catch (error) {
+      setIsLineLoading(false);
+    }
+  };
 
   return (
-    <form
-      action={formAction}
-      className="flex flex-col gap-2 [&>input]:mb-3 mt-8 min-w-72 max-w-72 mx-auto"
-    >
-      {state?.error && (
-        <FormMessage message={{ error: state.error }} className="mb-4" />
-      )}
+    <div className="flex flex-col gap-4 mt-8 min-w-72 max-w-72 mx-auto">
+      {/* LINEログインボタン */}
+      <Button
+        type="button"
+        onClick={handleLINELogin}
+        disabled={isLineLoading}
+        className="w-full h-12 bg-[#00B900] hover:bg-[#00A000] text-white"
+      >
+        {isLineLoading ? "LINE連携中..." : "LINEでログイン"}
+      </Button>
 
-      <Label htmlFor="email">メールアドレス</Label>
-      <Input
-        name="email"
-        placeholder="you@example.com"
-        required
-        autoComplete="username"
-        defaultValue={state?.formData?.email || ""}
-      />
-
-      <div className="flex justify-between items-center">
-        <Label htmlFor="password">パスワード</Label>
-        <Link
-          className="text-xs text-foreground underline"
-          href="/forgot-password"
-        >
-          パスワードを忘れた方
-        </Link>
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            または
+          </span>
+        </div>
       </div>
-      <Input
-        type="password"
-        name="password"
-        placeholder="パスワード"
-        required
-        autoComplete="current-password"
-      />
 
-      <SubmitButton pendingText="ログイン中...">ログイン</SubmitButton>
-    </form>
+      {/* Email + Passwordログインフォーム */}
+      <form action={formAction} className="flex flex-col gap-2 [&>input]:mb-3">
+        {state?.error && (
+          <FormMessage message={{ error: state.error }} className="mb-4" />
+        )}
+
+        <Label htmlFor="email">メールアドレス</Label>
+        <Input
+          name="email"
+          placeholder="you@example.com"
+          required
+          autoComplete="username"
+          defaultValue={state?.formData?.email || ""}
+        />
+
+        <div className="flex justify-between items-center">
+          <Label htmlFor="password">パスワード</Label>
+          <Link
+            className="text-xs text-foreground underline"
+            href="/forgot-password"
+          >
+            パスワードを忘れた方
+          </Link>
+        </div>
+        <Input
+          type="password"
+          name="password"
+          placeholder="パスワード"
+          required
+          autoComplete="current-password"
+        />
+
+        <SubmitButton pendingText="ログイン中...">ログイン</SubmitButton>
+      </form>
+    </div>
   );
 }

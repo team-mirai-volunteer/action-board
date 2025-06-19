@@ -103,7 +103,7 @@
    NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
    ```
 
-3. ローカルデータベースの初期化:
+4. ローカルデータベースの初期化:
 
    ```bash
    supabase db reset
@@ -111,13 +111,13 @@
 
   supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。
 
-4. 必要なパッケージをインストール:
+5. 必要なパッケージをインストール:
 
    ```bash
    npm install
    ```
 
-5. Next.js のローカル開発サーバーを起動:
+6. Next.js のローカル開発サーバーを起動:
 
    ```bash
    npm run dev
