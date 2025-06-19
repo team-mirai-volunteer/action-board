@@ -4,6 +4,7 @@ declare module "leaflet" {
   // Custom properties added to layers
   interface Layer {
     _shapeId?: string;
+    _isTextLayer?: boolean;
     _textDirty?: boolean;
     _url?: string;
     toGeoJSON(): GeoJSON.Feature | GeoJSON.FeatureCollection;
