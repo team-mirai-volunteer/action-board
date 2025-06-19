@@ -6,7 +6,6 @@
 export interface HubSpotContactData {
   email: string;
   firstname?: string;
-  state?: string;
 }
 
 export interface HubSpotContact {
@@ -14,7 +13,6 @@ export interface HubSpotContact {
   properties: {
     email: string;
     firstname?: string;
-    state?: string;
   };
 }
 
@@ -29,8 +27,15 @@ export interface HubSpotError {
   correlationId?: string;
 }
 
+export interface HubSpotListMembershipResponse {
+  added: string[];
+  discarded: string[];
+  invalidVids: string[];
+  invalidEmails: string[];
+}
+
 /**
- * HubSpotコンタクトを作成または更新する
+ * HubSpotコンタクトを作成または更新し、コンタクトリストに追加する
  */
 export async function createOrUpdateHubSpotContact(
   contactData: HubSpotContactData,
@@ -39,6 +44,7 @@ export async function createOrUpdateHubSpotContact(
   { success: true; contactId: string } | { success: false; error: string }
 > {
   const apiKey = process.env.HUBSPOT_API_KEY;
+  const listId = process.env.HUBSPOT_CONTACT_LIST_ID;
 
   if (!apiKey) {
     console.error("HUBSPOT_API_KEY environment variable is not set");
@@ -47,10 +53,25 @@ export async function createOrUpdateHubSpotContact(
 
   try {
     // 既存のコンタクトIDがある場合は更新、ない場合は作成
+    let result:
+      | { success: true; contactId: string }
+      | { success: false; error: string };
     if (existingContactId) {
-      return await updateHubSpotContact(existingContactId, contactData, apiKey);
+      result = await updateHubSpotContact(
+        existingContactId,
+        contactData,
+        apiKey,
+      );
+    } else {
+      result = await createHubSpotContact(contactData, apiKey);
     }
-    return await createHubSpotContact(contactData, apiKey);
+
+    // コンタクト作成/更新が成功し、リストIDが設定されている場合はリストに追加
+    if (result.success && listId) {
+      await addContactToList(result.contactId, listId, apiKey);
+    }
+
+    return result;
   } catch (error) {
     console.error("HubSpot API error:", error);
     return {
@@ -73,15 +94,8 @@ async function createHubSpotContact(
 
   const properties: Record<string, string> = {
     email: contactData.email,
+    firstname: contactData.email, // firstnameにもemailを設定
   };
-
-  if (contactData.firstname) {
-    properties.firstname = contactData.firstname;
-  }
-
-  if (contactData.state) {
-    properties.state = contactData.state;
-  }
 
   const response = await fetch(url, {
     method: "POST",
@@ -131,15 +145,9 @@ async function updateHubSpotContact(
 > {
   const url = `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`;
 
-  const properties: Record<string, string> = {};
-
-  if (contactData.firstname) {
-    properties.firstname = contactData.firstname;
-  }
-
-  if (contactData.state) {
-    properties.state = contactData.state;
-  }
+  const properties: Record<string, string> = {
+    firstname: contactData.email, // firstnameにemailを設定
+  };
 
   const response = await fetch(url, {
     method: "PATCH",
@@ -195,7 +203,7 @@ async function findAndUpdateExistingContact(
           ],
         },
       ],
-      properties: ["email", "firstname", "state"],
+      properties: ["email", "firstname"],
     }),
   });
 
@@ -223,4 +231,45 @@ async function findAndUpdateExistingContact(
     success: false,
     error: "Contact creation failed and existing contact not found",
   };
+}
+
+/**
+ * HubSpotコンタクトをリストに追加する
+ */
+export async function addContactToList(
+  contactId: string,
+  listId: string,
+  apiKey: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+  const url = `https://api.hubapi.com/crm/v3/lists/${listId}/memberships/add`;
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify([contactId]),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(
+      `HubSpot list membership error (${response.status}):`,
+      errorBody,
+    );
+    return {
+      success: false,
+      error: `HubSpot list membership error: ${response.status} ${response.statusText}`,
+    };
+  }
+
+  const result: HubSpotListMembershipResponse = await response.json();
+  console.log("HubSpot contact added to list successfully:", {
+    contactId,
+    listId,
+    added: result.added,
+  });
+
+  return { success: true };
 }

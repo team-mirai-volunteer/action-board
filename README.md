@@ -323,6 +323,8 @@ npm run storybook
 5. **スコープ** タブで以下の権限を設定：
    - `crm.objects.contacts.read` - コンタクト読み取り権限
    - `crm.objects.contacts.write` - コンタクト書き込み権限
+   - `crm.lists.read` - リスト読み取り権限
+   - `crm.lists.write` - リスト操作権限（コンタクトの追加/削除）
 6. **アプリを作成** をクリックしてアプリを作成
 7. 生成された **Access Token** をコピー（`pat-na2-`で始まる形式）
 
@@ -333,7 +335,22 @@ npm run storybook
 ```bash
 # HubSpot API連携用のアクセストークン
 HUBSPOT_API_KEY=pat-na2-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+# HubSpotコンタクトリストID（オプション）
+HUBSPOT_CONTACT_LIST_ID=123456
 ```
+
+#### 3. コンタクトリストの作成（オプション）
+
+自動的にコンタクトをリストに追加したい場合：
+
+1. HubSpotダッシュボードで **マーケティング** → **リスト** を選択
+2. **リストを作成** をクリック
+3. **コンタクトベースのリスト** を選択
+4. **静的リスト** を選択
+5. リスト名を入力（例：「アクションボードユーザー」）
+6. リストを作成後、URLからリストIDを取得（例：`/contacts/list/123456` の `123456` 部分）
+7. 取得したIDを環境変数 `HUBSPOT_CONTACT_LIST_ID` に設定
 
 ### データマッピング仕様
 
@@ -342,14 +359,14 @@ HUBSPOT_API_KEY=pat-na2-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 | アプリケーション項目 | HubSpotプロパティ | HubSpot表示名 | データ型 | ステータス |
 |-------------|-----------------|--------------|----------|----------|
 | メールアドレス | `email` | Email | Email | ✅ 実装済み |
-| ユーザー名 | `firstname` | 名 | Text | ✅ 実装済み |
-| 都道府県 | `state` | 都道府県 | Text | ✅ 実装済み |
+| メールアドレス | `firstname` | 名 | Text | ✅ 実装済み |
 
 ### 連携タイミング
 
 - **新規ユーザー登録時**: プロフィール情報入力完了時にHubSpotコンタクトを作成
 - **プロフィール更新時**: 既存のHubSpotコンタクト情報を更新
 - **重複管理**: メールアドレスベースで重複チェックを実行
+- **リスト追加**: コンタクト作成/更新成功時に指定されたリストに自動追加（`HUBSPOT_CONTACT_LIST_ID`が設定されている場合）
 
 ### トラブルシューティング
 
@@ -360,6 +377,11 @@ HUBSPOT_API_KEY=pat-na2-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 #### 400 Bad Request - プロパティが存在しない
 - カスタムプロパティが HubSpot で作成されているか確認
 - プロパティ名（Internal name）がコードと一致しているか確認
+
+#### 403 Forbidden - リスト操作エラー
+- HubSpot Private App に `crm.lists.read` と `crm.lists.write` スコープが設定されているか確認
+- 指定したリストIDが正しいか確認
+- HubSpotアカウントにリスト機能のアクセス権限があるか確認
 
 ## デプロイ
 

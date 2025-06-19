@@ -256,8 +256,7 @@ export async function updateProfile(
     const hubspotResult = await createOrUpdateHubSpotContact(
       {
         email: user.email || "",
-        firstname: validatedData.name,
-        state: validatedData.address_prefecture,
+        firstname: user.email || "", // firstnameにもemailを設定
       },
       hubspot_contact_id,
     );
