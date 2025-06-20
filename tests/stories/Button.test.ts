@@ -1,14 +1,15 @@
-describe("Button stories", () => {
-  it("ボタンストーリーが存在する", () => {
-    try {
-      const buttonStories = require("../../stories/Button.stories");
-      expect(buttonStories).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+const ButtonModule = require("../../stories/examples/Button");
+
+describe("Button component", () => {
+  it("プライマリボタンのクラス名生成", () => {
+    const props = { primary: true, label: "Test" };
+    const result = ButtonModule.Button(props);
+    expect(result.props.className).toContain("storybook-button--primary");
   });
 
-  it("ボタンストーリーテスト完了", () => {
-    expect(true).toBe(true);
+  it("セカンダリボタンのクラス名生成", () => {
+    const props = { primary: false, label: "Test" };
+    const result = ButtonModule.Button(props);
+    expect(result.props.className).toContain("storybook-button--secondary");
   });
 });

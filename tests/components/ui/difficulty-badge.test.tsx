@@ -1,14 +1,15 @@
-describe("DifficultyBadge component", () => {
-  it("難易度バッジコンポーネントが存在する", () => {
-    try {
-      const difficultyBadge = require("../../../components/ui/difficulty-badge");
-      expect(difficultyBadge).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+const { DifficultyBadge } = require("../../../components/ui/difficulty-badge");
+
+describe("DifficultyBadge", () => {
+  it("難易度1でバッジ表示", () => {
+    const props = { difficulty: 1 };
+    const result = DifficultyBadge(props);
+    expect(result).toBeDefined();
   });
 
-  it("難易度バッジコンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("難易度0でバッジ表示", () => {
+    const props = { difficulty: 0, showLabel: false };
+    const result = DifficultyBadge(props);
+    expect(result).toBeDefined();
   });
 });

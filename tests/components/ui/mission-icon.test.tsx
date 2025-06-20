@@ -1,14 +1,15 @@
-describe("MissionIcon component", () => {
-  it("ミッションアイコンコンポーネントが存在する", () => {
-    try {
-      const missionIcon = require("../../../components/ui/mission-icon");
-      expect(missionIcon).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+const { MissionIcon } = require("../../../components/ui/mission-icon");
+
+describe("MissionIcon", () => {
+  it("サイズsmでアイコン表示", () => {
+    const props = { size: "sm", type: "default" };
+    const result = MissionIcon(props);
+    expect(result).toBeDefined();
   });
 
-  it("ミッションアイコンコンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("サイズlgでアイコン表示", () => {
+    const props = { size: "lg", type: "special" };
+    const result = MissionIcon(props);
+    expect(result).toBeDefined();
   });
 });

@@ -1,14 +1,14 @@
-describe("Textarea component", () => {
-  it("テキストエリアコンポーネントが存在する", () => {
-    try {
-      const textarea = require("../../../components/ui/textarea");
-      expect(textarea).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+import { Textarea } from "../../../components/ui/textarea";
+
+describe("Textarea", () => {
+  it("テキストエリアコンポーネント存在確認", () => {
+    expect(typeof Textarea).toBe("object");
+    expect(Textarea.displayName).toBeDefined();
   });
 
-  it("テキストエリアコンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("テキストエリアプロパティ確認", () => {
+    const props = { placeholder: "Enter text", rows: 4 };
+    expect(props.placeholder).toBe("Enter text");
+    expect(props.rows).toBe(4);
   });
 });

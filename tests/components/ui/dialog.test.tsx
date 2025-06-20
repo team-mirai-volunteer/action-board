@@ -1,14 +1,18 @@
-describe("Dialog component", () => {
-  it("ダイアログコンポーネントが存在する", () => {
-    try {
-      const dialog = require("../../../components/ui/dialog");
-      expect(dialog).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
+
+describe("Dialog", () => {
+  it("ダイアログコンポーネント存在確認", () => {
+    expect(typeof Dialog).toBe("function");
+    expect(typeof DialogContent).toBe("object");
   });
 
-  it("ダイアログコンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("ダイアログヘッダー存在確認", () => {
+    expect(typeof DialogHeader).toBe("function");
+    expect(typeof DialogTitle).toBe("object");
   });
 });

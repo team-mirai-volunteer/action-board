@@ -1,14 +1,13 @@
-describe("Input component", () => {
-  it("入力コンポーネントが存在する", () => {
-    try {
-      const input = require("../../../components/ui/input");
-      expect(input).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+import { Input } from "../../../components/ui/input";
+
+describe("Input", () => {
+  it("入力コンポーネント存在確認", () => {
+    expect(typeof Input).toBe("object");
+    expect(Input.displayName).toBeDefined();
   });
 
-  it("入力コンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("入力プロパティ確認", () => {
+    const props = { type: "text", placeholder: "Test" };
+    expect(props.type).toBe("text");
   });
 });

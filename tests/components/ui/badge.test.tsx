@@ -1,14 +1,15 @@
-describe("Badge component", () => {
-  it("バッジコンポーネントが存在する", () => {
-    try {
-      const badge = require("../../../components/ui/badge");
-      expect(badge).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+const { Badge } = require("../../../components/ui/badge");
+
+describe("Badge", () => {
+  it("デフォルトバッジ表示", () => {
+    const props = { children: "New" };
+    const result = Badge(props);
+    expect(result).toBeDefined();
   });
 
-  it("バッジコンポーネントテスト完了", () => {
-    expect(true).toBe(true);
+  it("バリアント付きバッジ表示", () => {
+    const props = { children: "Success", variant: "success" };
+    const result = Badge(props);
+    expect(result).toBeDefined();
   });
 });

@@ -1,14 +1,28 @@
-describe("Header stories", () => {
-  it("ヘッダーストーリーが存在する", () => {
-    try {
-      const headerStories = require("../../stories/Header.stories");
-      expect(headerStories).toBeDefined();
-    } catch (e) {
-      expect(true).toBe(true);
-    }
+const { Header } = require("../../stories/examples/Header");
+
+const mockUser = {
+  name: "Test User",
+};
+
+describe("Header component", () => {
+  it("ログイン状態でヘッダー表示", () => {
+    const props = {
+      user: mockUser,
+      onLogin: () => {},
+      onLogout: () => {},
+      onCreateAccount: () => {},
+    };
+    const result = Header(props);
+    expect(result).toBeDefined();
   });
 
-  it("ヘッダーストーリーテスト完了", () => {
-    expect(true).toBe(true);
+  it("ログアウト状態でヘッダー表示", () => {
+    const props = {
+      onLogin: () => {},
+      onLogout: () => {},
+      onCreateAccount: () => {},
+    };
+    const result = Header(props);
+    expect(result).toBeDefined();
   });
 });
