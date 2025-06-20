@@ -46,19 +46,34 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
         <div
           className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
           ref={(el) => {
-            if (el && mission.content) {
-              el.innerHTML = mission.content;
-            }
-            if (el) {
-              if (window.twttr?.widgets) {
+            if (!el || !mission.content) return;
+
+            el.innerHTML = mission.content;
+            const loaded = el.hasAttribute("data-twitter-loaded");
+
+            const loadTwitter = () => {
+              if (!loaded && window.twttr?.widgets) {
                 window.twttr.widgets.load(el);
-              } else {
-                const script = document.createElement("script");
-                script.src = "https://platform.twitter.com/widgets.js";
-                script.async = true;
-                script.charset = "utf-8";
-                document.body.appendChild(script);
+                el.setAttribute("data-twitter-loaded", "true");
               }
+            };
+
+            if (window.twttr?.widgets) {
+              loadTwitter();
+              return;
+            }
+
+            if (
+              !document.querySelector(
+                'script[src="https://platform.twitter.com/widgets.js"]',
+              )
+            ) {
+              const script = document.createElement("script");
+              script.src = "https://platform.twitter.com/widgets.js";
+              script.async = true;
+              script.charset = "utf-8";
+              script.onload = loadTwitter;
+              document.body.appendChild(script);
             }
           }}
         />

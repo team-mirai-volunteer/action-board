@@ -3,7 +3,7 @@ UPDATE missions SET
 WHERE id = '05814416-9cd8-4582-a940-ced9a832efee';
 
 UPDATE missions SET
-  content = '新党チームみらい党首・<a href="https://x.com/takahiroanno" target="_blank" rel="noopener noreferrer">安野たかひろの公式X（旧Twitter）</a>をフォローして発信をチェック！政策への想いや、未来を描く視点が日々の投稿から伝わってきます。'
+  content = '新党チームみらい党首・安野たかひろの公式X（旧Twitter）をフォローして発信をチェック！<a href="https://twitter.com/takahiroanno" class="twitter-follow-button" data-show-count="false" data-lang="ja" data-screen-name="takahiroanno">Follow @takahiroanno</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>政策への想いや、未来を描く視点が日々の投稿から伝わってきます。'
 WHERE id = '0f4f16e5-35eb-4756-a966-607895a61b0e';
 
 UPDATE missions SET
@@ -11,7 +11,7 @@ UPDATE missions SET
 WHERE id = '1776d950-34f4-44e6-a5c5-2e40fa9038a3';
 
 UPDATE missions SET
-  content = '最新の政策情報やイベント情報、サポーターの動きなどをチェックするなら、まずは<a href="https://x.com/team_mirai_jp" target="_blank" rel="noopener noreferrer">公式X（旧Twitter）</a>をフォロー！参加者の投稿や注目の提案も流れてきます。'
+  content = '最新の政策情報やイベント情報、ボランティアの動きなどをチェックするなら、まずは公式X（旧Twitter）をフォロー！<a href="https://twitter.com/team_mirai_jp" class="twitter-follow-button" data-show-count="false" data-lang="ja" data-screen-name="team_mirai_jp">Follow @team_mirai</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>参加者の投稿や注目の提案も流れてきます。'
 WHERE id = '2c5f7173-48be-4989-9d1b-c749fd56ae44';
 
 UPDATE missions SET
