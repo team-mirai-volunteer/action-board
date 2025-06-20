@@ -88,6 +88,17 @@ variable "LINE_CLIENT_SECRET" {
   sensitive   = true
 }
 
+variable "HUBSPOT_CONTACT_LIST_ID" {
+  description = "HubSpot Contact List ID for referral missions (public)"
+  type        = string
+}
+
+variable "HUBSPOT_API_KEY" {
+  description = "HubSpot API Key for accessing HubSpot APIs (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
 variable "SUPABASE_SERVICE_ROLE_KEY" {
   description = "Supabase Service Role Key (sensitive)"
   type        = string

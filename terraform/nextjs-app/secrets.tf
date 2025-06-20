@@ -83,3 +83,16 @@ resource "google_secret_manager_secret_version" "line_client_secret" {
   secret         = google_secret_manager_secret.line_client_secret.id
   secret_data_wo = var.LINE_CLIENT_SECRET
 }
+
+resource "google_secret_manager_secret" "hubspot_api_key" {
+  secret_id = "${var.app_name}-${var.environment}-hubspot-api-key"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "hubspot_api_key" {
+  secret         = google_secret_manager_secret.hubspot_api_key.id
+  secret_data_wo = var.HUBSPOT_API_KEY
+}

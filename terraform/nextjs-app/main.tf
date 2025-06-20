@@ -80,6 +80,11 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "HUBSPOT_CONTACT_LIST_ID"
+        value = var.HUBSPOT_CONTACT_LIST_ID
+      }
+
+      env {
         name  = "NEXT_PUBLIC_SITE_URL"
         value = var.SUPABASE_SITE_URL
       }
