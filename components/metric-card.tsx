@@ -27,8 +27,8 @@ export function MetricCard({
           <p className="text-sm text-gray-600">{description}</p>
         </div>
         <div className="flex flex-col items-end">
-          <div className="flex items-baseline gap-2">
-            <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
               {value?.toLocaleString() || "0"}
             </span>
             <span className="text-2xl font-bold text-gray-700">{unit}</span>
