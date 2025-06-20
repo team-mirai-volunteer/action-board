@@ -71,3 +71,15 @@ resource "google_secret_manager_secret_version" "batch_admin_key" {
   secret_data_wo = var.BATCH_ADMIN_KEY
 }
 
+
+resource "google_secret_manager_secret" "line_client_secret" {
+  secret_id = "${var.app_name}-${var.environment}-line-client-secret"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "line_client_secret" {
+  secret         = google_secret_manager_secret.line_client_secret.id
+  secret_data_wo = var.LINE_CLIENT_SECRET
+}
