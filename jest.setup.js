@@ -7,6 +7,16 @@ require("dotenv").config({ path: ".env" });
 
 require("@testing-library/jest-dom");
 
+jest.mock("react-dom", () => ({
+  ...jest.requireActual("react-dom"),
+  useFormStatus: jest.fn(() => ({
+    pending: false,
+    data: null,
+    method: null,
+    action: null,
+  })),
+}));
+
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -104,6 +114,16 @@ jest.mock("@/lib/supabase/client", () => ({
         Promise.resolve({ data: { user: null }, error: null }),
       ),
       signOut: jest.fn(() => Promise.resolve({ error: null })),
+    },
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn(() =>
+          Promise.resolve({ data: { path: "test-path" }, error: null }),
+        ),
+        download: jest.fn(() =>
+          Promise.resolve({ data: new Blob(), error: null }),
+        ),
+      })),
     },
   })),
 }));
