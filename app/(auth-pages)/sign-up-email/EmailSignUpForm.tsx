@@ -36,6 +36,10 @@ function EmailSignUpFormContent({
   return (
     <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
       <Label htmlFor="email">メールアドレス</Label>
+      <p className="text-xs text-muted-foreground mb-2">
+        ※一部のメールアドレスに認証メールが届かない事象が確認されています。Gmail
+        などのメールアドレスをご利用いただくと、より確実にご登録いただけます。
+      </p>
       <Input
         name="email"
         placeholder="you@example.com"
