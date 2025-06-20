@@ -8,12 +8,13 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const config = {
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   testMatch: ["**/tests/**/*.test.ts", "**/tests/**/*.test.tsx"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  transformIgnorePatterns: ["node_modules/(?!(nanoid|@supabase)/)"],
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{ts,tsx}",
