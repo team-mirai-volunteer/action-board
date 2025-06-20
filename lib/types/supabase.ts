@@ -606,6 +606,14 @@ export type Database = {
           updated_at: string;
         }[];
       };
+      get_user_by_email: {
+        Args: { user_email: string };
+        Returns: {
+          id: string;
+          email: string;
+          user_metadata: Json;
+        }[];
+      };
       get_user_mission_ranking: {
         Args: { mission_id: string; user_id: string };
         Returns: {
@@ -619,6 +627,10 @@ export type Database = {
           total_points: number;
           rank: number;
         }[];
+      };
+      get_user_posting_count: {
+        Args: { target_user_id: string };
+        Returns: number;
       };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };

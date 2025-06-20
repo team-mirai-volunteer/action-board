@@ -2,7 +2,10 @@ import { CurrentUserCardMission } from "@/components/ranking/current-user-card-m
 import { MissionSelect } from "@/components/ranking/mission-select";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
-import { getUserMissionRanking } from "@/lib/services/missionsRanking";
+import {
+  getUserMissionRanking,
+  getUserPostingCount,
+} from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
@@ -28,6 +31,11 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
     .is("max_achievement_count", null)
     .order("is_featured", { ascending: false }) // is_featuredがtrueのものを先頭に
     .order("difficulty", { ascending: true }); // その後、難易度の昇順でソート
+
+  const postingMission =
+    missions?.find((m) => m.id === resolvedSearchParams.missionId)?.title ===
+    "チームみらいの機関誌をポスティングしよう";
+  const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
 
   // エラーハンドリング
   if (missionsError) {
@@ -81,13 +89,20 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
             <CurrentUserCardMission
               currentUser={userRanking}
               mission={selectedMission}
+              userPostingCount={userPostingCount}
+              postingMission={postingMission}
             />
           </section>
         )}
 
         <section className="py-4 bg-white">
           {/* ミッション別ランキング */}
-          <RankingMission limit={100} mission={selectedMission} />
+          <RankingMission
+            limit={100}
+            mission={selectedMission}
+            userPostingCount={userPostingCount}
+            postingMission={postingMission}
+          />
         </section>
       </RankingTabs>
     </div>

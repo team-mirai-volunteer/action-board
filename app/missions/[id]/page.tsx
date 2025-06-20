@@ -15,7 +15,10 @@ import {
   defaultUrl,
   notoSansJP,
 } from "@/lib/metadata";
-import { getUserMissionRanking } from "@/lib/services/missionsRanking";
+import {
+  getUserMissionRanking,
+  getUserPostingCount,
+} from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
@@ -88,6 +91,11 @@ export default async function MissionPage({ params }: Props) {
     ? await getUserMissionRanking(id, user.id)
     : null;
 
+  // ポスティングミッションの場合は、ポスティング枚数を取得
+  const postingMission =
+    mission.title === "チームみらいの機関誌をポスティングしよう";
+  const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
@@ -110,6 +118,8 @@ export default async function MissionPage({ params }: Props) {
                   <CurrentUserCardMission
                     currentUser={userWithMissionRanking}
                     mission={mission}
+                    userPostingCount={userPostingCount}
+                    postingMission={postingMission}
                   />
                 </div>
                 <div className="mt-6">
@@ -117,6 +127,8 @@ export default async function MissionPage({ params }: Props) {
                     limit={10}
                     showDetailedInfo={true}
                     mission={mission}
+                    userPostingCount={userPostingCount}
+                    postingMission={postingMission}
                   />
                 </div>
               </>

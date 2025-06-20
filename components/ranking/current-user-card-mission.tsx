@@ -11,11 +11,15 @@ import { Badge } from "../ui/badge";
 interface CurrentUserCardProps {
   currentUser: UserMissionRanking | null;
   mission: Tables<"missions">;
+  userPostingCount?: number;
+  postingMission?: boolean;
 }
 
 export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
   currentUser,
   mission,
+  userPostingCount,
+  postingMission,
 }) => {
   if (!currentUser) {
     return null;
@@ -26,6 +30,7 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
     name: formatUserDisplayName(currentUser.name),
     address_prefecture: formatUserPrefecture(currentUser.address_prefecture),
   };
+
   return (
     <div className="max-w-6xl mx-auto">
       <Card className="border-teal-200 bg-teal-50">
@@ -56,7 +61,11 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
                   "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
                 }
               >
-                {(displayUser?.user_achievement_count ?? 0).toLocaleString()}回
+                {(postingMission
+                  ? (userPostingCount ?? 0)
+                  : (displayUser?.user_achievement_count ?? 0)
+                ).toLocaleString()}
+                {postingMission ? "枚" : "回"}
               </Badge>
               <span className="font-bold text-lg">
                 {(displayUser.total_points ?? 0).toLocaleString()}pt
