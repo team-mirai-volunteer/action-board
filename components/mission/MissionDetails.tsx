@@ -1,5 +1,6 @@
 "use client";
 
+import { YouTubeSubscribeButton } from "@/app/missions/[id]/_components/YouTubeSubscribeButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
@@ -10,6 +11,12 @@ import type { Tables } from "@/lib/types/supabase";
 type MissionDetailsProps = {
   mission: Tables<"missions">;
 };
+
+// YouTubeチャンネル登録ミッションID
+const youtubeMissionId = "9071a1eb-e272-43be-9c6b-e08b258a41c3";
+
+// 安野たかひろYouTubeチャンネルID
+const youtubeChannelId = "UCiMwbmcCSMORJ-85XWhStBw";
 
 export function MissionDetails({ mission }: MissionDetailsProps) {
   return (
@@ -41,6 +48,13 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
             }
           }}
         />
+
+        {/* YouTubeチャンネル登録ミッションの場合のみ、YouTube登録ボタンを表示 */}
+        {mission.id === youtubeMissionId && (
+          <div className="flex justify-center mt-6">
+            <YouTubeSubscribeButton channelId={youtubeChannelId} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
