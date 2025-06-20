@@ -18,7 +18,7 @@ export default async function PosterMapPage({ params }: PosterMapPageProps) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in");
   }
 
   const decodedPrefecture = decodeURIComponent(prefecture);

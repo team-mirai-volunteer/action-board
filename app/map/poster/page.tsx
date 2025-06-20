@@ -61,7 +61,7 @@ export default async function PosterMapMenuPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in");
   }
 
   return (
