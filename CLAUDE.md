@@ -74,6 +74,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 認証フロー
 - Supabase Authがユーザー登録、ログイン、セッション管理を処理
+- LINE Loginサポート (`/auth/callback/line/`, `/auth/line-callback/`)
 - ミドルウェア (`middleware.ts`) が各リクエストでセッション更新を管理
 - 保護されたルートはSupabaseのセッションベース認証を使用
 
@@ -104,6 +105,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabaseサービスロールキー (サーバー操作用)
 - `NEXT_PUBLIC_SENTRY_DSN` - Sentryエラー監視DSN
 - `NEXT_PUBLIC_GA_ID` - Google Analyticsトラッキング ID
+- `LINE_CLIENT_SECRET` - LINE Login用チャンネルシークレット
+- `NEXT_PUBLIC_LINE_CLIENT_ID` - LINE Login用チャンネルID
+- `BATCH_ADMIN_KEY` - バッチ処理API用の管理者キー
 
 ## 開発ワークフロー
 
@@ -125,8 +129,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **コンポーネントテスト**: UIコンポーネント分離用Storybook
 
 ### 重要な開発ノート
-- データベーススキーマ変更後は必ず `npm run types` を実行
+- **データベーススキーマ変更後は必ず `npm run types` を実行** - Supabaseスキーマから型定義を再生成
 - Pre-commitフックがBiomeで自動的にコードをフォーマット
 - 新しいデータベーステーブルにはRLSポリシーのテストが必須
 - 新しいUIコンポーネントにはStorybookストーリーを作成
 - 新しいベースコンポーネントは `/components/ui/` の既存パターンに従う
+- コード変更後は `npm run biome:check:write` で自動修正を実行
