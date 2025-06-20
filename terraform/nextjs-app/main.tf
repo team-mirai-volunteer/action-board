@@ -75,6 +75,11 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "NEXT_PUBLIC_LINE_CLIENT_ID"
+        value = var.NEXT_PUBLIC_LINE_CLIENT_ID
+      }
+
+      env {
         name  = "NEXT_PUBLIC_SITE_URL"
         value = var.SUPABASE_SITE_URL
       }

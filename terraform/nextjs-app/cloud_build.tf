@@ -52,6 +52,12 @@ resource "google_secret_manager_secret_iam_member" "sentry_auth_token_accessor" 
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "line_client_secret_accessor" {
+  secret_id = google_secret_manager_secret.line_client_secret.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
 
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
@@ -116,6 +122,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _NEXT_PUBLIC_GA_ID                 = var.NEXT_PUBLIC_GA_ID
     _NEXT_PUBLIC_SENTRY_ENVIRONMENT    = var.environment
     _NEXT_PUBLIC_APP_ORIGIN            = var.NEXT_PUBLIC_APP_ORIGIN
+    _NEXT_PUBLIC_LINE_CLIENT_ID        = var.NEXT_PUBLIC_LINE_CLIENT_ID
     _SUPABASE_PROJECT_ID               = var.SUPABASE_PROJECT_ID
     _SUPABASE_SMTP_HOST                = var.SUPABASE_SMTP_HOST
     _SUPABASE_SMTP_USER                = var.SUPABASE_SMTP_USER
