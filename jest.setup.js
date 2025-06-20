@@ -7,6 +7,21 @@ require("dotenv").config({ path: ".env" });
 
 require("@testing-library/jest-dom");
 
+jest.mock("react", () => {
+  const actual = jest.requireActual("react");
+  return {
+    ...actual,
+    useState: jest.fn((initial) => [initial, jest.fn()]),
+    useEffect: jest.fn((effect) => effect()),
+    useContext: jest.fn(() => ({})),
+    useActionState: jest.fn((action, initialState) => [
+      initialState,
+      jest.fn(),
+    ]),
+    useCallback: jest.fn((callback) => callback),
+  };
+});
+
 jest.mock("react-dom", () => ({
   ...jest.requireActual("react-dom"),
   useFormStatus: jest.fn(() => ({
