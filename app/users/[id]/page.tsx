@@ -79,6 +79,38 @@ export default async function UserDetailPage({ params }: Props) {
             </a>
           </div>
         )}
+        {user.github_username && (
+          <div className="flex items-center gap-2 mt-2" style={{ height: 20 }}>
+            <img
+              src="/img/github-logo.png"
+              alt="GitHubのロゴ"
+              style={{
+                width: 16,
+                height: 16,
+                display: "block",
+              }}
+            />
+            <a
+              href={`https://github.com/${user.github_username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontWeight: 500,
+                fontFamily:
+                  "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                fontSize: "18px",
+                lineHeight: "20px",
+                height: 20,
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+              }}
+              className="text-[#0F1419] hover:text-blue-600 hover:underline"
+            >
+              {user.github_username}
+            </a>
+          </div>
+        )}
       </div>
       {(count || 0) > 0 && (
         <Card className="w-full p-4 mt-4">

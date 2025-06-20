@@ -48,6 +48,10 @@ const updateProfileFormSchema = z.object({
     .string()
     .max(50, { message: "Xユーザー名は50文字以内で入力してください" })
     .optional(),
+  github_username: z
+    .string()
+    .max(39, { message: "GitHubユーザー名は39文字以内で入力してください" })
+    .optional(),
 });
 
 export async function updateProfile(
@@ -72,6 +76,7 @@ export async function updateProfile(
   const date_of_birth = formData.get("date_of_birth")?.toString();
   const postcode = formData.get("postcode")?.toString();
   const x_username = formData.get("x_username")?.toString() || "";
+  const github_username = formData.get("github_username")?.toString() || "";
 
   // バリデーション
   const validatedFields = updateProfileFormSchema.safeParse({
@@ -80,6 +85,7 @@ export async function updateProfile(
     date_of_birth,
     postcode,
     x_username,
+    github_username,
   });
 
   if (!validatedFields.success) {
@@ -218,6 +224,7 @@ export async function updateProfile(
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
         x_username: validatedData.x_username || null,
+        github_username: validatedData.github_username || null,
         avatar_url: avatar_path,
         hubspot_contact_id: null, // 初期値はnull、HubSpot連携後に更新
         updated_at: new Date().toISOString(),
@@ -238,6 +245,7 @@ export async function updateProfile(
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
         x_username: validatedData.x_username || null,
+        github_username: validatedData.github_username || null,
         avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       })

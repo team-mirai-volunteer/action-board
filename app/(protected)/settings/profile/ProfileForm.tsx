@@ -33,6 +33,7 @@ interface ProfileFormProps {
     address_prefecture?: string;
     date_of_birth?: string;
     x_username?: string | null;
+    github_username?: string | null;
     avatar_url?: string | null;
   } | null;
   initialPrivateUser: {
@@ -248,6 +249,26 @@ export default function ProfileForm({
               placeholder="@を除いたユーザー名"
               disabled={isPending}
               maxLength={50}
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="github_username">GitHubのユーザー名</Label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                オプション
+              </span>
+            </div>
+            <p className="text-sm text-gray-500">
+              GitHubのユーザー名を設定すると、あなたのプロフィールに表示することができます。
+            </p>
+            <Input
+              id="github_username"
+              name="github_username"
+              type="text"
+              defaultValue={initialProfile?.github_username || ""}
+              placeholder="GitHubのユーザー名"
+              disabled={isPending}
+              maxLength={39}
             />
           </div>
           {state?.success && (
