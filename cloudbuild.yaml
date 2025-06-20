@@ -41,7 +41,7 @@ steps:
           --build-arg NEXT_PUBLIC_LINE_CLIENT_ID=${_NEXT_PUBLIC_LINE_CLIENT_ID} \
           --build-arg LINE_CLIENT_SECRET="$$LINE_CLIENT_SECRET" \
           --build-arg HUBSPOT_CONTACT_LIST_ID=${_HUBSPOT_CONTACT_LIST_ID} \
-          --build-arg HUBSPOT_API_KEY=${_HUBSPOT_API_KEY} \
+          --build-arg HUBSPOT_API_KEY="$$HUBSPOT_API_KEY" \
           --build-arg SENTRY_RELEASE=${COMMIT_SHA} \
           --build-arg SENTRY_AUTH_TOKEN="$$SENTRY_AUTH_TOKEN" \
           .
