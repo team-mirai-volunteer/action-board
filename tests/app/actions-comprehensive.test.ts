@@ -40,10 +40,14 @@ jest.mock("../../lib/supabase/server", () => ({
           maybeSingle: jest.fn(() =>
             Promise.resolve({ data: null, error: null }),
           ),
+          single: jest.fn(() =>
+            Promise.resolve({ data: { id: "test-id" }, error: null }),
+          ),
         })),
       })),
       insert: jest.fn(() => Promise.resolve({ error: null })),
     })),
+    rpc: jest.fn(() => Promise.resolve({ data: [], error: null })),
   })),
 }));
 
