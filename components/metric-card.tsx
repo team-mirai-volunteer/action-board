@@ -3,7 +3,6 @@ import clsx from "clsx";
 
 interface MetricCardProps {
   title: string;
-  description: string;
   value: number | null;
   unit: string;
   todayValue?: number | null;
@@ -12,7 +11,6 @@ interface MetricCardProps {
 
 export function MetricCard({
   title,
-  description,
   value,
   unit,
   todayValue,
@@ -24,7 +22,6 @@ export function MetricCard({
       <div className="relative flex flex-col items-center">
         <div>
           <div className="text-xl font-bold text-gray-700 mb-2">{title}</div>
-          <p className="text-sm text-gray-600">{description}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-baseline gap-2">
