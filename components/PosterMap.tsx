@@ -4,6 +4,7 @@ import { updatePin } from "@/lib/services/poster-map";
 import type { PinData } from "@/lib/types/poster-map";
 import {
   createBaseLayers,
+  getPrefectureCoordinates,
   getStatusColor,
   getStatusText,
 } from "@/lib/utils/map-utils";
@@ -155,7 +156,7 @@ export default function PosterMap({
     if (!mapInstance) return;
 
     if (mapInstance.getZoom() === undefined) {
-      mapInstance.setView([35.681236, 139.767125], 11);
+      mapInstance.setView(getPrefectureCoordinates(prefecture), 11);
     }
 
     const drawPins = async () => {
@@ -251,7 +252,7 @@ export default function PosterMap({
       />
       <div style={{ height: "100vh", width: "100%" }}>
         <MapContainer
-          center={[35.681236, 139.767125]}
+          center={getPrefectureCoordinates(prefecture)}
           zoom={11}
           style={{ height: "100%", width: "100%" }}
           ref={(mapRef: LeafletMap | null) => {
