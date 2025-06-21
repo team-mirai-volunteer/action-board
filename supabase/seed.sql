@@ -190,7 +190,7 @@ INSERT INTO pins (number, address, place_name, lat, long, status, note, city_id)
   ('008', '東京都品川区高輪3-13-1', '品川駅前掲示板', 35.6284, 139.7387, 1, '品川駅高輪口前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '品川区')),
   ('009', '東京都世田谷区北沢2-1-1', '下北沢駅前掲示板', 35.6617, 139.6681, 0, '下北沢駅北口前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '世田谷区')),
   ('010', '東京都中野区中野5-52-15', '中野駅前掲示板', 35.7056, 139.6659, 2, '中野駅北口サンモール前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '中野区'));
-=======
+  
 -- ポスティングシェイプのサンプルデータ
 INSERT INTO posting_shapes (id, type, coordinates, properties, created_at, updated_at)
 VALUES

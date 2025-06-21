@@ -1,0 +1,511 @@
+ubuntu@devin-box:~/repos/action-board$ cat /tmp/cleanup_patch.patch
+From f0832ad7d947219c878afc80c0e66aaffe657b34 Mon Sep 17 00:00:00 2001
+From: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+Date: Sat, 21 Jun 2025 15:37:50 +0000
+Subject: [PATCH] refactor: clean up poster map feature
+
+Co-Authored-By: shunsuke12021202@gmail.com <shunsuke12021202@gmail.com>
+---
+ app/map/board/BoardPageClient.tsx | 280 ------------------------------
+ app/map/board/page.tsx            |  23 ---
+ components/header-auth.tsx        |   3 +
+ components/navbar.tsx             |   4 -
+ lib/services/board.ts             | 132 --------------
+ 5 files changed, 3 insertions(+), 439 deletions(-)
+ delete mode 100644 app/map/board/BoardPageClient.tsx
+ delete mode 100644 app/map/board/page.tsx
+ delete mode 100644 lib/services/board.ts
+
+diff --git a/app/map/board/BoardPageClient.tsx b/app/map/board/BoardPageClient.tsx
+deleted file mode 100644
+index ac32f90..0000000
+--- a/app/map/board/BoardPageClient.tsx
++++ /dev/null
+@@ -1,280 +0,0 @@
+-"use client";
+-
+-import {
+-  type AreaData,
+-  type BoardPin,
+-  getAreaList,
+-  getBoardPins,
+-  getProgress,
+-  getProgressCountdown,
+-  getVoteVenues,
+-} from "@/lib/services/board";
+-import {
+-  createBaseLayers,
+-  createGrayIcon,
+-  createProgressBox,
+-  createProgressBoxCountdown,
+-  getStatusColor,
+-  getStatusText,
+-} from "@/lib/utils/map-utils";
+-import type { Map as LeafletMap } from "leaflet";
+-import dynamic from "next/dynamic";
+-import { useSearchParams } from "next/navigation";
+-import { Suspense, useEffect, useState } from "react";
+-
+-const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
+-  ssr: false,
+-});
+-
+-interface BoardPageClientProps {
+-  userId: string;
+-}
+-
+-interface MapConfig {
+-  [key: string]: {
+-    lat: number;
+-    long: number;
+-    zoom: number;
+-  };
+-}
+-
+-const mapConfig: MapConfig = {
+-  "23-east": { lat: 35.7266074, long: 139.8292152, zoom: 14 },
+-  "23-west": { lat: 35.6861171, long: 139.6490942, zoom: 13 },
+-  "23-city": { lat: 35.6916896, long: 139.7254559, zoom: 14 },
+-  "tama-north": { lat: 35.731028, long: 139.481822, zoom: 13 },
+-  "tama-south": { lat: 35.6229399, long: 139.4584664, zoom: 13 },
+-  "tama-west": { lat: 35.7097579, long: 139.2904051, zoom: 12 },
+-  island: { lat: 34.5291416, long: 139.2819004, zoom: 11 },
+-};
+-
+-function getPinNote(note: string | null): string {
+-  return note == null ? "なし" : note;
+-}
+-
+-function BoardPageContent({ userId }: BoardPageClientProps) {
+-  const searchParams = useSearchParams();
+-  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
+-
+-  const block = searchParams.get("block");
+-  const smallBlock = searchParams.get("sb");
+-
+-  useEffect(() => {
+-    if (!mapInstance) return;
+-
+-    const initializeBoardMap = async () => {
+-      const L = (await import("leaflet")).default;
+-
+-      const overlays = {
+-        未: L.layerGroup(),
+-        完了: L.layerGroup(),
+-        異常: L.layerGroup(),
+-        要確認: L.layerGroup(),
+-        異常対応中: L.layerGroup(),
+-        削除: L.layerGroup(),
+-        期日前投票所: L.layerGroup(),
+-      };
+-
+-      for (const layer of Object.values(overlays)) {
+-        layer.addTo(mapInstance);
+-      }
+-
+-      const baseLayers = createBaseLayers(L);
+-      baseLayers.japanBaseMap.addTo(mapInstance);
+-
+-      const layerControl = L.control
+-        .layers(
+-          {
+-            OpenStreetMap: baseLayers.osm,
+-            "Google Map": baseLayers.googleMap,
+-            国土地理院地図: baseLayers.japanBaseMap,
+-          },
+-          overlays as unknown as L.Control.LayersObject,
+-        )
+-        .addTo(mapInstance);
+-
+-      const setInitialView = () => {
+-        let latlong: [number, number];
+-        let zoom: number;
+-
+-        if (block && mapConfig[block]) {
+-          latlong = [mapConfig[block].lat, mapConfig[block].long];
+-          zoom = mapConfig[block].zoom;
+-        } else {
+-          latlong = [35.6988862, 139.4649636];
+-          zoom = 11;
+-        }
+-
+-        mapInstance.setView(latlong, zoom);
+-      };
+-
+-      mapInstance.on("locationfound", (e: L.LocationEvent) => {
+-        const radius = e.accuracy;
+-        L.marker(e.latlng)
+-          .addTo(mapInstance)
+-          .bindPopup(`You are within ${radius} meters from this point`)
+-          .openPopup();
+-        L.circle(e.latlng, radius).addTo(mapInstance);
+-      });
+-
+-      mapInstance.on("locationerror", setInitialView);
+-      mapInstance.locate({ setView: false, maxZoom: 14 });
+-
+-      try {
+-        const pins = await getBoardPins(block, smallBlock);
+-        const areaList = await getAreaList();
+-
+-        const loadBoardPins = async (
+-          pins: BoardPin[],
+-          layer: L.LayerGroup,
+-          areaList: Record<number, AreaData>,
+-          L: typeof import("leaflet"),
+-          status: number | null = null,
+-        ) => {
+-          try {
+-            const filteredPins =
+-              status !== null
+-                ? pins.filter((item: BoardPin) => item.status === status)
+-                : pins;
+-
+-            for (const pin of filteredPins) {
+-              const marker = L.circleMarker([pin.lat, pin.long], {
+-                radius: 8,
+-                color: "black",
+-                weight: 1,
+-                fillColor: getStatusColor(pin.status),
+-                fillOpacity: 0.9,
+-              }).addTo(layer);
+-
+-              const areaName = areaList[pin.area_id]?.area_name || "不明";
+-              marker.bindPopup(`
+-                <b>${areaName} ${pin.name}</b><br>
+-                ステータス: ${getStatusText(pin.status)}<br>
+-                備考: ${getPinNote(pin.note || null)}<br>
+-                座標: <a href="https://www.google.com/maps/search/${pin.lat},+${pin.long}" target="_blank" rel="noopener noreferrer">(${pin.lat}, ${pin.long})</a>
+-              `);
+-            }
+-          } catch (error) {
+-            console.error(
+-              "Error loading board pins for status:",
+-              status,
+-              error,
+-            );
+-          }
+-        };
+-
+-        await loadBoardPins(pins, overlays.削除, areaList, L, 6);
+-        await loadBoardPins(pins, overlays.完了, areaList, L, 1);
+-        await loadBoardPins(pins, overlays.異常, areaList, L, 2);
+-        await loadBoardPins(pins, overlays.要確認, areaList, L, 4);
+-        await loadBoardPins(pins, overlays.異常対応中, areaList, L, 5);
+-        await loadBoardPins(pins, overlays.未, areaList, L, 0);
+-
+-        const [progress, progressCountdown] = await Promise.all([
+-          getProgress(),
+-          getProgressCountdown(),
+-        ]);
+-
+-        createProgressBox(
+-          L,
+-          Number((progress.total * 100).toFixed(2)),
+-          "topleft",
+-        ).addTo(mapInstance);
+-        createProgressBoxCountdown(
+-          L,
+-          Number.parseInt(progressCountdown.total.toString()),
+-          "topleft",
+-        ).addTo(mapInstance);
+-
+-        const loadVoteVenuePins = async (
+-          layer: L.LayerGroup,
+-          L: typeof import("leaflet"),
+-        ) => {
+-          try {
+-            const pins = await getVoteVenues();
+-            const grayIcon = createGrayIcon(L);
+-            for (const pin of pins) {
+-              const marker = L.marker([pin.lat, pin.long], {
+-                icon: grayIcon,
+-              }).addTo(layer);
+-              marker.bindPopup(`
+-                <b>期日前投票所: ${pin.name}</b><br>
+-                ${pin.address}<br>
+-                期間: ${pin.period}<br>
+-                座標: <a href="https://www.google.com/maps/search/${pin.lat},+${pin.long}" target="_blank" rel="noopener noreferrer">(${pin.lat}, ${pin.long})</a>
+-              `);
+-            }
+-          } catch (error) {
+-            console.error("Error loading vote venue pins:", error);
+-          }
+-        };
+-
+-        await loadVoteVenuePins(overlays.期日前投票所, L);
+-      } catch (error) {
+-        console.error("Error loading map data:", error);
+-      }
+-    };
+-
+-    initializeBoardMap();
+-  }, [mapInstance, block, smallBlock]);
+-
+-  return (
+-    <>
+-      <link
+-        rel="stylesheet"
+-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+-      />
+-      <style jsx global>{`
+-        body {
+-          margin: 0;
+-          padding: 0;
+-        }
+-        #map {
+-          width: 100%;
+-          height: 100vh;
+-        }
+-        .icon-gray {
+-          filter: grayscale(100%);
+-        }
+-        .info {
+-          color: #333;
+-          background: white;
+-          padding: 10px;
+-          border: 1px solid #5d5d5d;
+-          border-radius: 4px;
+-          width: 72px;
+-          display: flex;
+-          flex-direction: column;
+-          align-items: center;
+-        }
+-        .info p {
+-          padding: 0;
+-          margin: 0 0 2px 0;
+-          font-weight: bold;
+-        }
+-        .progressValue {
+-          font-size: 25px;
+-          line-height: 1;
+-          margin: 0;
+-        }
+-        @media (max-width: 767px) {
+-          .info {
+-            padding: 7px;
+-          }
+-          .progressValue {
+-            font-size: 25px;
+-          }
+-        }
+-      `}</style>
+-      <GeomanMap onMapReady={setMapInstance} />
+-    </>
+-  );
+-}
+-
+-export default function BoardPageClient(props: BoardPageClientProps) {
+-  return (
+-    <Suspense fallback={<div>Loading...</div>}>
+-      <BoardPageContent {...props} />
+-    </Suspense>
+-  );
+-}
+diff --git a/app/map/board/page.tsx b/app/map/board/page.tsx
+deleted file mode 100644
+index ed259dd..0000000
+--- a/app/map/board/page.tsx
++++ /dev/null
+@@ -1,23 +0,0 @@
+-import { createClient } from "@/lib/supabase/server";
+-import type { Metadata } from "next";
+-import { redirect } from "next/navigation";
+-import BoardPageClient from "./BoardPageClient";
+-
+-export const metadata: Metadata = {
+-  title: "チームみらいポスター掲示板マップ",
+-  description: "チームみらいポスター掲示板マップ",
+-};
+-
+-export default async function BoardPage() {
+-  const supabase = await createClient();
+-
+-  const {
+-    data: { user },
+-  } = await supabase.auth.getUser();
+-
+-  if (!user) {
+-    return redirect("/sign-in");
+-  }
+-
+-  return <BoardPageClient userId={user.id} />;
+-}
+diff --git a/components/header-auth.tsx b/components/header-auth.tsx
+index 95b1567..dbd4e4c 100644
+--- a/components/header-auth.tsx
++++ b/components/header-auth.tsx
+@@ -41,6 +41,9 @@ export default async function AuthButton() {
+             <DropdownMenuItem asChild>
+               <Link href="/map/posting">機関誌配布マップ</Link>
+             </DropdownMenuItem>
++            <DropdownMenuItem asChild>
++              <Link href="/map/poster/東京都">選挙ポスター掲示場</Link>
++            </DropdownMenuItem>
+             {/*
+             <DropdownMenuItem asChild>
+               <Link href="/missions">ミッション</Link>
+diff --git a/components/navbar.tsx b/components/navbar.tsx
+index 9021f6d..1aedff1 100644
+--- a/components/navbar.tsx
++++ b/components/navbar.tsx
+@@ -32,7 +32,6 @@ export default async function Navbar() {
+           <div className="flex gap-6 items-center">
+             <div className="font-semibold hidden sm:flex gap-6">
+               <Link href="/">ダッシュボード</Link>
+-              <Link href="/map/board">ポスター掲示板マップ</Link>
+             </div>
+             <HeaderAuth />
+           </div>
+@@ -60,9 +59,6 @@ export default async function Navbar() {
+                     <DropdownMenuItem asChild>
+                       <Link href="/">ダッシュボード</Link>
+                     </DropdownMenuItem>
+-                    <DropdownMenuItem asChild>
+-                      <Link href="/map/board">ポスター掲示板マップ</Link>
+-                    </DropdownMenuItem>
+                   </DropdownMenuGroup>
+                   <DropdownMenuSeparator />
+                   <DropdownMenuItem asChild>
+diff --git a/lib/services/board.ts b/lib/services/board.ts
+deleted file mode 100644
+index f4c6fba..0000000
+--- a/lib/services/board.ts
++++ /dev/null
+@@ -1,132 +0,0 @@
+-import { createClient } from "@/lib/supabase/client";
+-
+-export interface BoardPin {
+-  id?: string;
+-  name: string;
+-  lat: number;
+-  long: number;
+-  status: number;
+-  area_id: number;
+-  note?: string;
+-  created_at?: string;
+-  updated_at?: string;
+-}
+-
+-export interface VoteVenue {
+-  id?: string;
+-  name: string;
+-  lat: number;
+-  long: number;
+-  address: string;
+-  period: string;
+-  created_at?: string;
+-  updated_at?: string;
+-}
+-
+-export interface AreaData {
+-  id: number;
+-  area_name: string;
+-}
+-
+-export interface ProgressData {
+-  total: number;
+-}
+-
+-const supabase = createClient();
+-
+-export async function getBoardPins(
+-  block?: string | null,
+-  smallBlock?: string | null,
+-): Promise<BoardPin[]> {
+-  try {
+-    const mockPins: BoardPin[] = [
+-      {
+-        id: "1",
+-        name: "サンプル掲示板1",
+-        lat: 35.6762,
+-        long: 139.6503,
+-        status: 0,
+-        area_id: 1,
+-        note: "テスト用のピンです",
+-        created_at: new Date().toISOString(),
+-        updated_at: new Date().toISOString(),
+-      },
+-      {
+-        id: "2",
+-        name: "サンプル掲示板2",
+-        lat: 35.6895,
+-        long: 139.6917,
+-        status: 1,
+-        area_id: 1,
+-        note: "完了済みのピンです",
+-        created_at: new Date().toISOString(),
+-        updated_at: new Date().toISOString(),
+-      },
+-    ];
+-
+-    return mockPins;
+-  } catch (error) {
+-    console.error("Error loading board pins:", error);
+-    return [];
+-  }
+-}
+-
+-export async function getVoteVenues(): Promise<VoteVenue[]> {
+-  try {
+-    const mockVenues: VoteVenue[] = [
+-      {
+-        id: "1",
+-        name: "渋谷区役所",
+-        lat: 35.6627,
+-        long: 139.6983,
+-        address: "東京都渋谷区宇田川町1-1",
+-        period: "2024年6月1日〜6月30日",
+-        created_at: new Date().toISOString(),
+-        updated_at: new Date().toISOString(),
+-      },
+-    ];
+-
+-    return mockVenues;
+-  } catch (error) {
+-    console.error("Error loading vote venues:", error);
+-    return [];
+-  }
+-}
+-
+-export async function getAreaList(): Promise<Record<number, AreaData>> {
+-  try {
+-    const mockAreas: AreaData[] = [
+-      { id: 1, area_name: "渋谷区" },
+-      { id: 2, area_name: "新宿区" },
+-      { id: 3, area_name: "港区" },
+-    ];
+-
+-    const areaMap: Record<number, AreaData> = {};
+-    for (const area of mockAreas) {
+-      areaMap[area.id] = area;
+-    }
+-
+-    return areaMap;
+-  } catch (error) {
+-    console.error("Error loading areas:", error);
+-    return {};
+-  }
+-}
+-
+-export async function getProgress(): Promise<ProgressData> {
+-  try {
+-    return { total: 0.75 }; // 75% progress
+-  } catch (error) {
+-    console.error("Error loading progress:", error);
+-    return { total: 0 };
+-  }
+-}
+-
+-export async function getProgressCountdown(): Promise<ProgressData> {
+-  try {
+-    return { total: 150 }; // Total count of pins
+-  } catch (error) {
+-    console.error("Error loading progress countdown:", error);
+-    return { total: 0 };
+-  }
+-}
+-- 
+2.34.1
+
+ubuntu@devin-box:~/repos/action-board$ 
