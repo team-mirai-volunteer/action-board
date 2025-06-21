@@ -2,11 +2,15 @@
 -- This migration sets up logical replication for BigQuery integration
 -- Reference: https://tech.asahi.co.jp/posts/20250214-197e
 
+-- need to break the transaction to avoid transaction limitations
+BEGIN;
 -- 1. Create publication for all tables
 CREATE PUBLICATION bq_pub FOR ALL TABLES;
+COMMIT;
 
 -- 2. Create logical replication slot
 SELECT PG_CREATE_LOGICAL_REPLICATION_SLOT('bq_slot', 'pgoutput');
+
 
 -- 3. Create dedicated user for BigQuery replication
 -- Note: Requires 'bq_user_password' secret to be created in Supabase Vault
@@ -22,9 +26,7 @@ BEGIN
     
     -- Validate password exists
     IF password IS NULL OR password = '' THEN
-        RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.' || E'\n' ||
-                        'To create it, run:' || E'\n' ||
-                        'INSERT INTO vault.secrets (name, secret) VALUES (''bq_user_password'', ''your-secure-password'');';
+        RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.';
     END IF;
     
     -- Create user with the password
