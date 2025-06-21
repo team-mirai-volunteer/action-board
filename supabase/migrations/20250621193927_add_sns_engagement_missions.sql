@@ -1,0 +1,87 @@
+
+INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count, ogp_image_url, artifact_label, is_featured, is_hidden)
+VALUES
+  (
+    gen_random_uuid(),
+    'Instagram でチームみらい投稿に♡をつけよう',
+    '/img/mission_fallback.svg',
+    'チームみらい関連のInstagram投稿を見つけて「いいね」で応援しましょう。特に本垢で投稿されている方を優先的にサポート！',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    'いいねした投稿のURL',
+    false,
+    false
+  ),
+  (
+    gen_random_uuid(),
+    'Threads でチームみらい投稿に♡をつけよう',
+    '/img/mission_fallback.svg',
+    'チームみらい関連のThreads投稿を見つけて「いいね」で応援しましょう。InstagramとThreadsは連携しているので効率的にサポートできます。',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    'いいねした投稿のURL',
+    false,
+    false
+  ),
+  (
+    gen_random_uuid(),
+    'YouTube でチームみらい動画に高評価',
+    '/img/mission_fallback.svg',
+    'チームみらい関連のYouTube動画に高評価を押して応援しましょう。',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    '高評価・チャンネル登録した動画のURL',
+    false,
+    false
+  ),
+  (
+    gen_random_uuid(),
+    'note でチームみらい記事にスキ♡をつけよう',
+    '/img/mission_fallback.svg',
+    'チームみらい関連のnote記事を見つけて「スキ」で応援しましょう。文章が書けなくても「スキ」で参加できます。',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    'スキを押した記事のURL',
+    false,
+    false
+  ),
+  (
+    gen_random_uuid(),
+    'Yahoo!リアルタイム検索で新しい仲間を見つけよう',
+    '/img/mission_fallback.svg',
+    'Yahoo!リアルタイム検索で「チームみらい」を検索し、新しい投稿やアカウントを見つけて「いいね」でお迎えしましょう。',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    'いいねした投稿のURL',
+    false,
+    false
+  ),
+  (
+    gen_random_uuid(),
+    'ハッシュタグ投稿を応援しよう',
+    '/img/mission_fallback.svg',
+    '#64_sns企画_盛り上げハッシュタグ を使った投稿を見つけて「いいね」で盛り上げましょう。',
+    1,
+    NULL,
+    'LINK',
+    NULL,
+    NULL,
+    'いいねした投稿のURL',
+    false,
+    false
+  );
