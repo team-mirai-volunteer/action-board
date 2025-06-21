@@ -9,26 +9,22 @@ CREATE PUBLICATION bq_pub FOR ALL TABLES;
 SELECT PG_CREATE_LOGICAL_REPLICATION_SLOT('bq_slot', 'pgoutput');
 
 -- 3. Create dedicated user for BigQuery replication
--- Note: Requires BQ_USER_PASSWORD to be set in Supabase dashboard under Settings > Database > Database Settings
--- Or passed as environment variable when running migration
+-- Note: Requires 'bq_user_password' secret to be created in Supabase Vault
+-- To create the secret: INSERT INTO vault.secrets (name, secret) VALUES ('bq_user_password', 'your-secure-password');
 DO $$
 DECLARE
     password TEXT;
 BEGIN
-    -- Try to get password from current_setting
-    -- The 'true' parameter means it returns NULL instead of erroring if not found
-    password := current_setting('app.settings.bq_user_password', true);
-    
-    -- If not found in app.settings, try without prefix (for direct psql execution)
-    IF password IS NULL THEN
-        password := current_setting('bq_user_password', true);
-    END IF;
+    -- Get password from Supabase Vault
+    SELECT decrypted_secret INTO password
+    FROM vault.decrypted_secrets
+    WHERE name = 'bq_user_password';
     
     -- Validate password exists
     IF password IS NULL OR password = '' THEN
-        RAISE EXCEPTION 'BQ_USER_PASSWORD must be set. Either:' || E'\n' ||
-                        '1. Set in Supabase dashboard: Settings > Database > Database Settings > app.settings.bq_user_password' || E'\n' ||
-                        '2. Pass via psql: psql $DATABASE_URL -v bq_user_password="your-password" -f this_migration.sql';
+        RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.' || E'\n' ||
+                        'To create it, run:' || E'\n' ||
+                        'INSERT INTO vault.secrets (name, secret) VALUES (''bq_user_password'', ''your-secure-password'');';
     END IF;
     
     -- Create user with the password
