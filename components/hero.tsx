@@ -33,7 +33,7 @@ export default async function Hero() {
       </div>
 
       <div className="relative px-4 py-16 md:py-24">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-4 leading-tight">
             チームみらい
             <br />

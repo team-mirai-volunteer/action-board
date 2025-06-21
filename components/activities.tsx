@@ -12,7 +12,7 @@ export default async function Activities() {
     .limit(10);
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="px-4">
       <div className="flex flex-col gap-6">
         <div className="text-center">
           <h2 className="text-2xl md:text-4xl text-gray-900 mb-2">

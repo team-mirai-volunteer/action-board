@@ -21,7 +21,7 @@ export function RankingTabs({ children }: RankingTabsProps) {
   };
 
   return (
-    <Tabs value={getTabValue()} className="w-full max-w-6xl mx-auto px-4">
+    <Tabs value={getTabValue()} className="w-full px-4">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="overall" asChild>
           <Link href="/ranking">全体</Link>

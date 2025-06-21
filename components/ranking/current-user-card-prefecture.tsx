@@ -28,7 +28,7 @@ export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
     xp: currentUser.xp || 0,
   };
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="px-4">
       <Card className="border-teal-200 bg-teal-50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
