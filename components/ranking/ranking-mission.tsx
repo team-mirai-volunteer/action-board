@@ -10,14 +10,16 @@ interface RankingTopProps {
   limit?: number;
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   mission?: Tables<"missions">;
-  badgeText: string;
+  isPostingMission?: boolean;
+  allUsersPostingCount?: Array<{ user_id: string; posting_count: number }>;
 }
 
 export default async function RankingMission({
   mission,
   limit = 10,
   showDetailedInfo = false,
-  badgeText,
+  isPostingMission,
+  allUsersPostingCount,
 }: RankingTopProps) {
   if (!mission) {
     return null;
@@ -44,7 +46,8 @@ export default async function RankingMission({
                 mission={
                   mission ? { id: mission.id, name: mission.title } : undefined
                 }
-                badgeText={badgeText}
+                isPostingMission={isPostingMission}
+                allUsersPostingCount={allUsersPostingCount}
               />
             ))}
           </div>

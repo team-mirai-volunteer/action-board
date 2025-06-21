@@ -16,6 +16,7 @@ import {
   notoSansJP,
 } from "@/lib/metadata";
 import {
+  getAllUsersPostingCount,
   getUserMissionRanking,
   getUserPostingCount,
 } from "@/lib/services/missionsRanking";
@@ -94,6 +95,7 @@ export default async function MissionPage({ params }: Props) {
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = mission.required_artifact_type === "POSTING";
   const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
+  const allUsersPostingCount = await getAllUsersPostingCount();
   let badgeText = "";
 
   if (userWithMissionRanking) {
@@ -134,7 +136,8 @@ export default async function MissionPage({ params }: Props) {
                     limit={10}
                     showDetailedInfo={true}
                     mission={mission}
-                    badgeText={badgeText}
+                    isPostingMission={isPostingMission}
+                    allUsersPostingCount={allUsersPostingCount}
                   />
                 </div>
               </>

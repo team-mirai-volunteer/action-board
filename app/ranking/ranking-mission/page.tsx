@@ -3,6 +3,7 @@ import { MissionSelect } from "@/components/ranking/mission-select";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import {
+  getAllUsersPostingCount,
   getUserMissionRanking,
   getUserPostingCount,
 } from "@/lib/services/missionsRanking";
@@ -73,6 +74,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = selectedMission.required_artifact_type === "POSTING";
   const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
+  const allUsersPostingCount = await getAllUsersPostingCount();
   let badgeText = "";
 
   if (userRanking) {
@@ -107,7 +109,8 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
           <RankingMission
             limit={100}
             mission={selectedMission}
-            badgeText={badgeText}
+            isPostingMission={isPostingMission}
+            allUsersPostingCount={allUsersPostingCount}
           />
         </section>
       </RankingTabs>
