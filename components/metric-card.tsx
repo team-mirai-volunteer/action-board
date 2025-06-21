@@ -21,14 +21,14 @@ export function MetricCard({
   return (
     <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
-      <div className="relative flex justify-between items-center align-middle">
+      <div className="relative flex flex-col items-center">
         <div>
           <div className="text-xl font-bold text-gray-700 mb-2">{title}</div>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
-        <div className="flex flex-col items-end">
+        <div className="flex item-center gap-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+            <span className="text-4xl md:text-5xl leading-[4.2rem] md:leading-[4.2rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
               {value?.toLocaleString() || "0"}
             </span>
             <span className="text-2xl font-bold text-gray-700">{unit}</span>
