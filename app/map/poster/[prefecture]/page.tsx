@@ -1,4 +1,5 @@
 import PosterMap from "@/components/PosterMap";
+import { getBoardPins } from "@/lib/services/poster-map";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -23,6 +24,13 @@ export default async function PosterMapPage({ params }: PosterMapPageProps) {
 
   const decodedPrefecture = decodeURIComponent(prefecture);
 
+  const serializedUser = {
+    id: user.id,
+    email: user.email,
+  };
+
+  const pins = await getBoardPins(decodedPrefecture);
+
   return (
     <div className="h-screen w-full">
       <div className="absolute top-4 left-4 z-[1000] bg-white px-4 py-2 rounded-lg shadow-md">
@@ -30,7 +38,11 @@ export default async function PosterMapPage({ params }: PosterMapPageProps) {
           {decodedPrefecture} - ポスターマップ
         </h1>
       </div>
-      <PosterMap prefecture={decodedPrefecture} user={user} />
+      <PosterMap
+        prefecture={decodedPrefecture}
+        user={serializedUser}
+        pins={pins}
+      />
     </div>
   );
 }

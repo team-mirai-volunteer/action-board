@@ -1,6 +1,6 @@
 "use client";
 
-import { getBoardPins, updatePin } from "@/lib/services/poster-map";
+import { updatePin } from "@/lib/services/poster-map";
 import type { PinData } from "@/lib/types/poster-map";
 import {
   createBaseLayers,
@@ -23,7 +23,8 @@ const TileLayer = dynamic(
 
 interface PosterMapProps {
   prefecture: string;
-  user: User;
+  user: { id: string; email: string | undefined };
+  pins: PinData[];
 }
 
 function getPinNote(note: string | null): string {
@@ -66,16 +67,24 @@ async function loadBoardPins(
   }
 }
 
-export default function PosterMap({ prefecture, user }: PosterMapProps) {
+export default function PosterMap({
+  prefecture,
+  user,
+  pins: initialPins,
+}: PosterMapProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const layerControlRef = useRef<Control.Layers | null>(null);
   const overlaysRef = useRef<{ [key: string]: LayerGroup }>({});
 
-  const [pins, setPins] = useState<PinData[]>([]);
+  const [pins, setPins] = useState<PinData[]>(initialPins);
   const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
   const [currentStatus, setCurrentStatus] = useState<number | null>(null);
   const [noteText, setNoteText] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    setPins(initialPins);
+  }, [initialPins]);
 
   useEffect(() => {
     if (selectedPin) {
@@ -115,13 +124,6 @@ export default function PosterMap({ prefecture, user }: PosterMapProps) {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (!prefecture) return;
-    getBoardPins(prefecture).then((fetchedPins) => {
-      setPins(fetchedPins);
-    });
-  }, [prefecture]);
 
   useEffect(() => {
     if (!mapInstance) return;
