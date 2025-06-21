@@ -92,8 +92,7 @@ export default async function MissionPage({ params }: Props) {
     : null;
 
   // ポスティングミッションの場合は、ポスティング枚数を取得
-  const postingMission =
-    mission.title === "チームみらいの機関誌をポスティングしよう";
+  const postingMission = mission.required_artifact_type === "POSTING";
   const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
 
   return (

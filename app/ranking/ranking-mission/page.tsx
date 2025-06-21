@@ -33,8 +33,8 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
     .order("difficulty", { ascending: true }); // その後、難易度の昇順でソート
 
   const postingMission =
-    missions?.find((m) => m.id === resolvedSearchParams.missionId)?.title ===
-    "チームみらいの機関誌をポスティングしよう";
+    missions?.find((m) => m.id === resolvedSearchParams.missionId)
+      ?.required_artifact_type === "POSTING";
   const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
 
   // エラーハンドリング
