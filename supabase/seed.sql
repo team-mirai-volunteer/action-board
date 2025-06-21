@@ -235,7 +235,7 @@ INSERT INTO pins (number, address, place_name, lat, long, status, note, city_id)
   ('004', '東京都港区六本木6-10-1', '六本木ヒルズ掲示板', 35.6606, 139.7298, 2, '六本木ヒルズ森タワー前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '港区')),
   ('005', '東京都台東区上野7-1-1', '上野駅前掲示板', 35.7141, 139.7774, 1, '上野駅公園口前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '台東区')),
   ('006', '東京都墨田区押上1-1-2', '東京スカイツリー掲示板', 35.7101, 139.8107, 0, 'スカイツリータウン入口の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '墨田区')),
-  ('007', '東京都江東区豊洲2-4-9', '豊洲市場掲示板', 35.6542, 139.7967, 3, '豊洲市場正門前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '江東区')),
+  ('007', '東京都江東区豊洲2-4-9', '豊洲市場掲示板', 35.6542, 139.7967, 4, '豊洲市場正門前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '江東区')),
   ('008', '東京都品川区高輪3-13-1', '品川駅前掲示板', 35.6284, 139.7387, 1, '品川駅高輪口前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '品川区')),
   ('009', '東京都世田谷区北沢2-1-1', '下北沢駅前掲示板', 35.6617, 139.6681, 0, '下北沢駅北口前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '世田谷区')),
   ('010', '東京都中野区中野5-52-15', '中野駅前掲示板', 35.7056, 139.6659, 2, '中野駅北口サンモール前の掲示板', (SELECT id FROM cities WHERE prefecture = '東京都' AND city = '中野区'));
