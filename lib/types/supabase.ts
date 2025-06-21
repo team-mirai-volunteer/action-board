@@ -378,7 +378,7 @@ export type Database = {
           avatar_url?: string | null;
           created_at?: string;
           date_of_birth: string;
-          hubspot_contact_id: string | null;
+          hubspot_contact_id?: string | null;
           id: string;
           name: string;
           postcode: string;
@@ -391,6 +391,7 @@ export type Database = {
           avatar_url?: string | null;
           created_at?: string;
           date_of_birth?: string;
+          hubspot_contact_id?: string | null;
           id?: string;
           name?: string;
           postcode?: string;
