@@ -4,13 +4,23 @@
 
 -- need to break the transaction to avoid transaction limitations
 BEGIN;
--- 1. Create publication for all tables
-CREATE PUBLICATION bq_pub FOR ALL TABLES;
+-- 1. Create publication for all tables (idempotent)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'bq_pub') THEN
+        CREATE PUBLICATION bq_pub FOR ALL TABLES;
+    END IF;
+END $$;
 COMMIT;
 
 BEGIN;
--- 2. Create logical replication slot
-SELECT PG_CREATE_LOGICAL_REPLICATION_SLOT('bq_slot', 'pgoutput');
+-- 2. Create logical replication slot (idempotent)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_replication_slots WHERE slot_name = 'bq_slot') THEN
+        PERFORM pg_create_logical_replication_slot('bq_slot', 'pgoutput');
+    END IF;
+END $$;
 COMMIT;
 
 
