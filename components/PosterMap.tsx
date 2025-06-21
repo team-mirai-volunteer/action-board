@@ -180,7 +180,7 @@ export default function PosterMap({
         overlaysRef.current.要確認,
         L,
         setSelectedPin,
-        4,
+        3,
       );
       await loadBoardPins(
         pins,
