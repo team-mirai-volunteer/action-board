@@ -58,7 +58,7 @@ function LineCallbackContent() {
 
         const code = searchParams.get("code");
         const state = searchParams.get("state");
-        const storedState = sessionStorage.getItem("lineLoginState");
+        const storedState = localStorage.getItem("lineLoginState");
 
         // CSRF対策: stateの検証
         if (!state || state !== storedState) {
@@ -69,8 +69,8 @@ function LineCallbackContent() {
           throw new Error("認証コードが取得できませんでした");
         }
 
-        // セッションストレージからサインアップ時のデータを取得
-        const storedData = sessionStorage.getItem("lineLoginData");
+        // ローカルストレージからサインアップ時のデータを取得
+        const storedData = localStorage.getItem("lineLoginData");
         const loginData = storedData ? JSON.parse(storedData) : {};
 
         // Server Actionを呼び出し
@@ -81,9 +81,9 @@ function LineCallbackContent() {
         );
 
         if (result.success) {
-          // セッションストレージをクリア
-          sessionStorage.removeItem("lineLoginState");
-          sessionStorage.removeItem("lineLoginData");
+          // ローカルストレージをクリア
+          localStorage.removeItem("lineLoginState");
+          localStorage.removeItem("lineLoginData");
 
           // サーバーコンポーネントを強制的に再レンダリング
           router.refresh();
