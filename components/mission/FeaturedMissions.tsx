@@ -5,6 +5,11 @@ export default function FeaturedMissions(
   props: Omit<MissionsProps, "filterFeatured">,
 ) {
   return (
-    <Missions {...props} filterFeatured={true} title="📈 重要ミッション" />
+    <Missions
+      {...props}
+      filterFeatured={true}
+      title="📈 重要ミッション"
+      id="featured-missions"
+    />
   );
 }
