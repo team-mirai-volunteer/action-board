@@ -335,11 +335,11 @@ export type Database = {
       posting_shapes: {
         Row: {
           coordinates: Json;
-          created_at: string;
+          created_at: string | null;
           id: string;
           properties: Json | null;
           type: string;
-          updated_at: string;
+          updated_at: string | null;
         };
         Insert: {
           coordinates: Json;
@@ -365,6 +365,7 @@ export type Database = {
           avatar_url: string | null;
           created_at: string;
           date_of_birth: string;
+          hubspot_contact_id: string | null;
           id: string;
           name: string;
           postcode: string;
@@ -377,6 +378,7 @@ export type Database = {
           avatar_url?: string | null;
           created_at?: string;
           date_of_birth: string;
+          hubspot_contact_id: string | null;
           id: string;
           name: string;
           postcode: string;
