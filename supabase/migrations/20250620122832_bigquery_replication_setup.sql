@@ -3,15 +3,15 @@
 -- Reference: https://tech.asahi.co.jp/posts/20250214-197e
 
 -- need to break the transaction to avoid transaction limitations
-BEGIN;
+BEGIN;  -- begin transaction
 -- 1. Create publication for all tables (idempotent)
 DO $$
-BEGIN
+BEGIN  -- begin code block 
     IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'bq_pub') THEN
         CREATE PUBLICATION bq_pub FOR ALL TABLES;
     END IF;
-END $$;
-COMMIT;
+END $$;  -- end code block
+COMMIT;  -- end transaction
 
 BEGIN;
 -- 2. Create logical replication slot (idempotent)
