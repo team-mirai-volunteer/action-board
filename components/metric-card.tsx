@@ -26,7 +26,7 @@ export function MetricCard({
           <div className="text-xl font-bold text-gray-700 mb-2">{title}</div>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
-        <div className="flex item-center gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-baseline gap-2">
             <span className="text-4xl md:text-5xl leading-[4.2rem] md:leading-[4.2rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
               {value?.toLocaleString() || "0"}
