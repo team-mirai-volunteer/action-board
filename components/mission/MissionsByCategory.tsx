@@ -11,7 +11,7 @@ type MissionCategoryViewRow =
 export default async function MissionsByCategory({
   userId,
   showAchievedMissions,
-  title = "\ud83d\udcc8 \u30df\u30c3\u30b7\u30e7\u30f3",
+  title = "📈 ミッション",
 }: MissionsProps) {
   const supabase = await createClient();
 
@@ -75,7 +75,7 @@ export default async function MissionsByCategory({
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">
-          \u30df\u30c3\u30b7\u30e7\u30f3\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f
+          ミッションが見つかりませんでした
         </p>
       </div>
     );
@@ -93,9 +93,10 @@ export default async function MissionsByCategory({
 
   return (
     <div className="max-w-6xl mx-auto px-4">
-      <div className="flex flex-col gap-12">
-        <div className="text-center">
-          <h2 className="text-2xl md:text-4xl font-black text-gray-900 mb-2">
+      <div className="flex flex-col divide-y divide-gray-200">
+        {/* タイトル */}
+        <div className="text-center py-8">
+          <h2 className="text-2xl md:text-4xl font-black text-gray-900">
             {title}
           </h2>
         </div>
@@ -105,14 +106,25 @@ export default async function MissionsByCategory({
           return (
             <section
               key={category.category_id}
-              className="w-[375px] sm:w-full sm:max-w-screen-md mx-auto"
+              className="
+                relative               /* オーバーレイ配置のため */
+                w-full
+                max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl
+                mx-auto
+                bg-gray-50
+                rounded-lg
+                shadow-sm
+                px-6 py-5
+              "
             >
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span className="text-red-500 text-lg">\ud83d\udccc</span>
-                {category.category_title}
+              {/* カテゴリ見出し */}
+              <h3 className="text-xl font-bold mb-4 pl-3">
+                🚩{category.category_title}
               </h3>
-              <div className="-mx-4 overflow-x-auto">
-                <div className="flex gap-4 w-max px-4">
+
+              {/* 横スクロール領域 */}
+              <div className="w-full overflow-x-auto custom-scrollbar cursor-grab">
+                <div className="flex gap-4 px-4 pb-2">
                   {missionsInCategory
                     .filter(
                       (m) =>
@@ -140,7 +152,7 @@ export default async function MissionsByCategory({
                       return (
                         <div
                           key={m.mission_id}
-                          className="min-w-[280px] max-w-[280px] shrink-0"
+                          className="flex-shrink-0 w-[280px]"
                         >
                           <Mission
                             mission={missionForComponent}
@@ -157,6 +169,22 @@ export default async function MissionsByCategory({
                     })}
                 </div>
               </div>
+
+              {/* スクロール余白を示すグラデーション */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute inset-y-0 left-0 w-8
+                  bg-gradient-to-r from-gray-50 to-transparent
+                "
+              />
+              <div
+                className="
+                  pointer-events-none
+                  absolute inset-y-0 right-0 w-8
+                  bg-gradient-to-l from-gray-50 to-transparent
+                "
+              />
             </section>
           );
         })}
