@@ -17,8 +17,8 @@ export async function signInWithLine() {
   const redirectUri = `${window.location.origin}/api/auth/callback/line`;
   const state = crypto.randomUUID();
 
-  // stateをセッションストレージに保存（CSRF対策）
-  sessionStorage.setItem("lineLoginState", state);
+  // stateをローカルストレージに保存（CSRF対策、モバイル対応）
+  localStorage.setItem("lineLoginState", state);
 
   const authUrl = new URL("https://access.line.me/oauth2/v2.1/authorize");
   authUrl.searchParams.set("response_type", "code");

@@ -2,6 +2,7 @@
 
 import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
+import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { encodedRedirect } from "@/lib/utils/utils";
 import { nanoid } from "nanoid";
@@ -204,6 +205,8 @@ export async function updateProfile(
     }
   }
 
+  const hubspot_contact_id = privateUser?.hubspot_contact_id || null;
+
   // private_users テーブルを更新
   if (!privateUser) {
     const { error: privateUserError } = await supabaseClient
@@ -216,6 +219,7 @@ export async function updateProfile(
         postcode: validatedData.postcode,
         x_username: validatedData.x_username || null,
         avatar_url: avatar_path,
+        hubspot_contact_id: null, // 初期値はnull、HubSpot連携後に更新
         updated_at: new Date().toISOString(),
       });
     if (privateUserError) {
@@ -245,6 +249,43 @@ export async function updateProfile(
         error: "ユーザー情報の更新に失敗しました",
       };
     }
+  }
+
+  // HubSpot連携処理（プロフィール更新成功後に実行）
+  try {
+    const hubspotResult = await createOrUpdateHubSpotContact(
+      {
+        email: user.email || "",
+        firstname: user.email || "", // firstnameにもemailを設定
+      },
+      hubspot_contact_id,
+    );
+
+    if (hubspotResult.success) {
+      // HubSpot連携成功時、コンタクトIDをデータベースに保存
+      const { error: updateHubSpotIdError } = await supabaseClient
+        .from("private_users")
+        .update({ hubspot_contact_id: hubspotResult.contactId })
+        .eq("id", user.id);
+
+      if (updateHubSpotIdError) {
+        console.error(
+          "Error updating hubspot_contact_id:",
+          updateHubSpotIdError,
+        );
+      } else {
+        console.log(
+          "HubSpot contact ID updated successfully:",
+          hubspotResult.contactId,
+        );
+      }
+    } else {
+      console.error("HubSpot integration failed:", hubspotResult.error);
+      // HubSpot連携に失敗してもプロフィール更新は成功として扱う
+    }
+  } catch (error) {
+    console.error("HubSpot integration error:", error);
+    // HubSpot連携エラーでもプロフィール更新は成功として扱う
   }
 
   // ユーザー別紹介コードの登録処理（重複時は最大5回リトライ）

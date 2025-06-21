@@ -20,7 +20,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
   userId,
   onCancelClick,
 }) => {
-  const canCancel = isLatest && userId && submission.user_id === userId;
+  const canCancel = userId && submission.user_id === userId;
 
   return (
     <li className="border p-4 rounded-lg shadow">

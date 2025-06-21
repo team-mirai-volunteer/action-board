@@ -77,6 +77,28 @@ variable "NEXT_PUBLIC_APP_ORIGIN" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_LINE_CLIENT_ID" {
+  description = "LINE Client ID for LINE Login (public)"
+  type        = string
+}
+
+variable "LINE_CLIENT_SECRET" {
+  description = "LINE Client Secret for LINE Login (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "HUBSPOT_CONTACT_LIST_ID" {
+  description = "HubSpot Contact List ID for referral missions (public)"
+  type        = string
+}
+
+variable "HUBSPOT_API_KEY" {
+  description = "HubSpot API Key for accessing HubSpot APIs (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
 variable "SUPABASE_SERVICE_ROLE_KEY" {
   description = "Supabase Service Role Key (sensitive)"
   type        = string
