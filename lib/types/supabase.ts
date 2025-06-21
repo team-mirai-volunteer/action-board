@@ -580,13 +580,6 @@ export type Database = {
       };
     };
     Functions: {
-      get_all_users_posting_count: {
-        Args: Record<PropertyKey, never>;
-        Returns: {
-          user_id: string;
-          posting_count: number;
-        }[];
-      };
       get_mission_ranking: {
         Args: { mission_id: string; limit_count?: number };
         Returns: {
@@ -611,6 +604,13 @@ export type Database = {
           level: number;
           xp: number;
           updated_at: string;
+        }[];
+      };
+      get_top_users_posting_count: {
+        Args: { user_ids: string[] };
+        Returns: {
+          user_id: string;
+          posting_count: number;
         }[];
       };
       get_user_by_email: {

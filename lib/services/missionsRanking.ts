@@ -117,19 +117,21 @@ export async function getUserPostingCount(userId: string): Promise<number> {
   return typeof data === "number" ? data : 0;
 }
 
-export async function getAllUsersPostingCount(): Promise<
-  Array<{ user_id: string; posting_count: number }>
-> {
+export async function getTopUsersPostingCount(
+  userIds: string[],
+): Promise<{ user_id: string; posting_count: number }[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("get_all_users_posting_count");
+  const { data, error } = await supabase.rpc("get_top_users_posting_count", {
+    user_ids: userIds,
+  });
 
   if (error) {
-    console.error("Failed to fetch all users posting count:", error);
+    console.error("Failed to fetch users posting count:", error);
     throw new Error(
-      `全ユーザーのポスティング枚数取得に失敗しました: ${error.message}`,
+      `ユーザーのポスティング枚数取得に失敗しました: ${error.message}`,
     );
   }
 
   // dataがnullやundefinedの場合は空配列を返す
-  return (data as Array<{ user_id: string; posting_count: number }>) || [];
+  return (data as { user_id: string; posting_count: number }[]) || [];
 }

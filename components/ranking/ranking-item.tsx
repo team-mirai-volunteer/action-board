@@ -1,6 +1,7 @@
 // TOPページ用のランキングコンポーネント
 import { Badge } from "@/components/ui/badge";
 import type { UserMissionRanking } from "@/lib/services/missionsRanking";
+import { getTopUsersPostingCount } from "@/lib/services/missionsRanking";
 import type { UserRanking } from "@/lib/services/ranking";
 import { Crown, Medal, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -46,14 +47,19 @@ function getLevelBadgeColor(level: number | null) {
   return "text-emerald-700 bg-emerald-100";
 }
 
-export function RankingItem({
+export async function RankingItem({
   user,
   userWithMission,
   showDetailedInfo = false,
   mission,
   isPostingMission,
-  allUsersPostingCount,
 }: RankingItemProps) {
+  // isPostingMissionがtrueの場合のみgetTopUsersPostingCountを呼び出す
+  const userIds = userWithMission?.user_id ? [userWithMission.user_id] : [];
+  const topUsersPostingCount = isPostingMission
+    ? await getTopUsersPostingCount(userIds)
+    : [];
+
   return (
     <Link
       href={`/users/${user.user_id}`}
@@ -80,11 +86,8 @@ export function RankingItem({
             >
               {/* ポスティングミッションの場合はポスティング枚数を表示 */}
               {isPostingMission
-                ? `${allUsersPostingCount
-                    ?.find(
-                      (postingUser) =>
-                        postingUser.user_id === userWithMission?.user_id,
-                    )
+                ? `${topUsersPostingCount
+                    .find((user) => user.user_id === userWithMission?.user_id)
                     ?.posting_count?.toLocaleString()}枚`
                 : `${(userWithMission?.user_achievement_count ?? 0).toLocaleString()}回`}
             </Badge>

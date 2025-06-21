@@ -1,5 +1,5 @@
 -- 全てのユーザーのポスティング枚数合計を取得するRPC関数
-CREATE OR REPLACE FUNCTION public.get_all_users_posting_count()
+CREATE OR REPLACE FUNCTION public.get_top_users_posting_count(user_ids UUID[])
 RETURNS TABLE(user_id UUID, posting_count BIGINT)
 LANGUAGE plpgsql
 SECURITY DEFINER
