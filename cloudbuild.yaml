@@ -38,6 +38,7 @@ steps:
           --build-arg NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN} \
           --build-arg NEXT_PUBLIC_SENTRY_ENVIRONMENT=${_NEXT_PUBLIC_SENTRY_ENVIRONMENT} \
           --build-arg NEXT_PUBLIC_APP_ORIGIN=${_NEXT_PUBLIC_APP_ORIGIN} \
+          --build-arg NEXT_PUBLIC_LINE_CLIENT_ID=${_NEXT_PUBLIC_LINE_CLIENT_ID} \
           --build-arg SENTRY_RELEASE=${COMMIT_SHA} \
           --build-arg SENTRY_AUTH_TOKEN="$$SENTRY_AUTH_TOKEN" \
           .

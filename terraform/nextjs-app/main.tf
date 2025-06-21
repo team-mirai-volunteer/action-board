@@ -75,6 +75,36 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "NEXT_PUBLIC_LINE_CLIENT_ID"
+        value = var.NEXT_PUBLIC_LINE_CLIENT_ID
+      }
+
+      env {
+        name = "LINE_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.line_client_secret.id
+            version = "latest"
+          }
+        }
+      }
+
+      env {
+        name  = "HUBSPOT_CONTACT_LIST_ID"
+        value = var.HUBSPOT_CONTACT_LIST_ID
+      }
+
+      env {
+        name = "HUBSPOT_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.hubspot_api_key.id
+            version = "latest"
+          }
+        }
+      }
+
+      env {
         name  = "NEXT_PUBLIC_SITE_URL"
         value = var.SUPABASE_SITE_URL
       }

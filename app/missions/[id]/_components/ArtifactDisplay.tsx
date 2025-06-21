@@ -89,6 +89,21 @@ const TextArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   </div>
 );
 
+const EmailArtifact: React.FC<{ artifact: MissionArtifact }> = ({
+  artifact,
+}) => (
+  <div className="">
+    {artifact.text_content && (
+      <div className="bg-gray-50 p-3 rounded border">
+        <p className="text-sm whitespace-pre-wrap">{artifact.text_content}</p>
+      </div>
+    )}
+    {artifact.description && (
+      <p className="text-sm mt-1">{artifact.description}</p>
+    )}
+  </div>
+);
+
 const PostingArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
@@ -123,6 +138,8 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
       return <LinkArtifact artifact={artifact} />;
     case "TEXT":
       return <TextArtifact artifact={artifact} />;
+    case "EMAIL":
+      return <EmailArtifact artifact={artifact} />;
     case "POSTING":
       return <PostingArtifact artifact={artifact} />;
     default:

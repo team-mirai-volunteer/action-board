@@ -39,7 +39,7 @@ export default async function ProfileSettingsPage({
         message={params}
         isNew={isNew}
         initialProfile={{
-          name: privateUser?.name || "",
+          name: privateUser?.name || user.user_metadata.name || "",
           address_prefecture: privateUser?.address_prefecture || "",
           date_of_birth:
             privateUser?.date_of_birth ?? user.user_metadata.date_of_birth,
