@@ -65,7 +65,7 @@ export function useDailyAttemptStatus(
         .eq("id", missionId)
         .single();
 
-      const dailyLimit = missionData?.daily_attempt_limit;
+      const dailyLimit = missionData?.daily_attempt_limit ?? null;
 
       if (dailyLimit === null) {
         setDailyAttemptStatus({
