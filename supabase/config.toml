@@ -43,7 +43,6 @@ default_pool_size = 20
 max_client_conn = 100
 
 [db.vault]
-# this is already set for stg/prd
 bq_user_password = "env(BQ_USER_PASSWORD)"
 
 [db.migrations]
