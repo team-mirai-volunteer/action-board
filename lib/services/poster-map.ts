@@ -17,7 +17,7 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
         status,
         note,
         created_at,
-        updated_at,
+        updated_by,
         cities!inner(
           prefecture
         )
@@ -29,6 +29,8 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
       return [];
     }
 
+    console.log("Raw pins data from Supabase:", pins);
+
     const transformedPins: PinData[] = pins.map((pin) => ({
       id: pin.id.toString(),
       number: pin.number || "",
@@ -39,10 +41,10 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
       status: pin.status,
       note: pin.note || "",
       created_at: pin.created_at,
-      updated_at: pin.updated_at || undefined,
+      updated_at: undefined,
     }));
 
-    return transformedPins;
+    return JSON.parse(JSON.stringify(transformedPins));
   } catch (error) {
     console.error("Error loading poster pins:", error);
     return [];
