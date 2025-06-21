@@ -60,7 +60,6 @@ export async function updatePin(request: UpdatePinRequest): Promise<boolean> {
       .update({
         status: request.status,
         note: request.note,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", Number.parseInt(request.id));
 
