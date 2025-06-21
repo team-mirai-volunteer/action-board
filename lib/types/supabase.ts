@@ -127,6 +127,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      daily_mission_attempts: {
+        Row: {
+          attempt_count: number;
+          attempt_date: string;
+          created_at: string;
+          id: string;
+          mission_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          attempt_date?: string;
+          created_at?: string;
+          id?: string;
+          mission_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempt_count?: number;
+          attempt_date?: string;
+          created_at?: string;
+          id?: string;
+          mission_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       events: {
         Row: {
           created_at: string;
@@ -251,6 +296,7 @@ export type Database = {
           artifact_label: string | null;
           content: string | null;
           created_at: string;
+          daily_attempt_limit: number | null;
           difficulty: number;
           event_date: string | null;
           icon_url: string | null;
@@ -267,6 +313,7 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
+          daily_attempt_limit?: number | null;
           difficulty: number;
           event_date?: string | null;
           icon_url?: string | null;
@@ -283,6 +330,7 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
+          daily_attempt_limit?: number | null;
           difficulty?: number;
           event_date?: string | null;
           icon_url?: string | null;
@@ -604,6 +652,14 @@ export type Database = {
           level: number;
           xp: number;
           updated_at: string;
+        }[];
+      };
+      get_user_by_email: {
+        Args: { user_email: string };
+        Returns: {
+          id: string;
+          email: string;
+          user_metadata: Json;
         }[];
       };
       get_user_mission_ranking: {
