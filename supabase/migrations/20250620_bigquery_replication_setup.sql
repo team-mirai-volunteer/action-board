@@ -9,22 +9,32 @@ CREATE PUBLICATION bq_pub FOR ALL TABLES;
 SELECT PG_CREATE_LOGICAL_REPLICATION_SLOT('bq_slot', 'pgoutput');
 
 -- 3. Create dedicated user for BigQuery replication
--- Note: Requires 'bq_user_password' secret to be created in Supabase Vault
--- To create the secret: INSERT INTO vault.secrets (name, secret) VALUES ('bq_user_password', 'your-secure-password');
+-- Note: In production/staging, password is retrieved from Supabase Vault
+-- For local development, a default password is used
 DO $$
 DECLARE
     password TEXT;
+    is_local BOOLEAN;
 BEGIN
-    -- Get password from Supabase Vault
-    SELECT decrypted_secret INTO password
-    FROM vault.decrypted_secrets
-    WHERE name = 'bq_user_password';
+    -- Check if we're in local development (Supabase local doesn't have certain system settings)
+    -- This checks for the presence of a Supabase-specific setting that only exists in cloud
+    SELECT current_setting('app.settings.jwt_secret', true) IS NULL INTO is_local;
     
-    -- Validate password exists
-    IF password IS NULL OR password = '' THEN
-        RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.' || E'\n' ||
-                        'To create it, run:' || E'\n' ||
-                        'INSERT INTO vault.secrets (name, secret) VALUES (''bq_user_password'', ''your-secure-password'');';
+    IF is_local THEN
+        -- Local development: use default password
+        password := 'local_dev_password_123';
+        RAISE WARNING 'Using default password for bq_user in local development. This should NOT be used in production!';
+    ELSE
+        -- Production/Staging: get password from Vault
+        SELECT decrypted_secret INTO password
+        FROM vault.decrypted_secrets
+        WHERE name = 'bq_user_password';
+        
+        -- Validate password exists in production
+        IF password IS NULL OR password = '' THEN
+            RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.' || E'\n' ||
+                            'This secret must be configured in staging/production environments.';
+        END IF;
     END IF;
     
     -- Create user with the password
