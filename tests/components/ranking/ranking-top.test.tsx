@@ -3,6 +3,11 @@ import RankingTop from "../../../components/ranking/ranking-top";
 
 jest.mock("../../../lib/supabase/server", () => ({
   createClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
+      })),
+    })),
     rpc: jest.fn(() => Promise.resolve({ data: [] })),
   })),
 }));

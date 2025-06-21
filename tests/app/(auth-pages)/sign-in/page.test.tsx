@@ -1,3 +1,4 @@
+import { render } from "@testing-library/react";
 import React from "react";
 import SignInPage from "../../../../app/(auth-pages)/sign-in/page";
 
@@ -7,16 +8,21 @@ jest.mock(
 );
 
 describe("SignInPage", () => {
-  it("サインインページの正常レンダリング", () => {
-    const page = SignInPage();
-    expect(page.type).toBe("div");
-    expect(page.props.className).toContain("flex");
+  it("サインインページの正常レンダリング", async () => {
+    const SignInPageComponent = await SignInPage({
+      searchParams: Promise.resolve({}),
+    });
+    const { container } = render(SignInPageComponent);
+    expect(container.firstChild).toBeDefined();
+    expect(container.firstChild).toHaveClass("flex-1");
   });
 
-  it("サインアップリンクの存在確認", () => {
-    const page = SignInPage();
-    expect(
-      page.props.children.props.children[1].props.children[2].props.href,
-    ).toBe("/sign-up");
+  it("サインアップリンクの存在確認", async () => {
+    const SignInPageComponent = await SignInPage({
+      searchParams: Promise.resolve({}),
+    });
+    const { container } = render(SignInPageComponent);
+    const links = container.querySelectorAll('a[href="/sign-up"]');
+    expect(links.length).toBeGreaterThan(0);
   });
 });

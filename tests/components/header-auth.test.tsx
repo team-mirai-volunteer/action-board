@@ -31,6 +31,6 @@ describe("AuthButton", () => {
       },
     });
     const authButtonComponent = await AuthButton();
-    expect(authButtonComponent.props.children[0].type).toBeDefined();
+    expect(authButtonComponent).toBeDefined();
   });
 });

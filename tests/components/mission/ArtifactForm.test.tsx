@@ -1,3 +1,4 @@
+import { render } from "@testing-library/react";
 import React from "react";
 import { ArtifactForm } from "../../../components/mission/ArtifactForm";
 
@@ -23,22 +24,26 @@ const mockMission = {
 
 describe("ArtifactForm", () => {
   it("アーティファクトフォームの正常レンダリング", () => {
-    const form = ArtifactForm({
-      mission: mockMission,
-      authUser: null,
-      disabled: false,
-      submittedArtifactImagePath: null,
-    });
-    expect(form).toBeDefined();
+    const { container } = render(
+      <ArtifactForm
+        mission={mockMission}
+        authUser={null}
+        disabled={false}
+        submittedArtifactImagePath={null}
+      />,
+    );
+    expect(container.firstChild).toBeDefined();
   });
 
   it("リンクタイプのフォーム表示", () => {
-    const form = ArtifactForm({
-      mission: mockMission,
-      authUser: null,
-      disabled: false,
-      submittedArtifactImagePath: null,
-    });
-    expect(form).toBeDefined();
+    const { container } = render(
+      <ArtifactForm
+        mission={mockMission}
+        authUser={null}
+        disabled={false}
+        submittedArtifactImagePath={null}
+      />,
+    );
+    expect(container.firstChild).toBeDefined();
   });
 });

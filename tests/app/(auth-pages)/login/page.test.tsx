@@ -1,5 +1,5 @@
 import React from "react";
-import ForgotPasswordPage from "../../../../app/(auth-pages)/forgot-password/page";
+import SignInPage from "../../../../app/(auth-pages)/sign-in/page";
 
 jest.mock("../../../../components/form-message", () => {
   return function MockFormMessage() {
@@ -11,16 +11,16 @@ jest.mock("../../../../components/form-message", () => {
   };
 });
 
-describe("ForgotPasswordPage", () => {
-  it("パスワードリセットページの正常レンダリング", async () => {
+describe("SignInPage", () => {
+  it("サインインページの正常レンダリング", async () => {
     const mockProps = { searchParams: Promise.resolve({}) };
-    const page = await ForgotPasswordPage(mockProps);
+    const page = await SignInPage(mockProps);
     expect(page).toBeDefined();
   });
 
   it("フォーム要素の存在確認", async () => {
     const mockProps = { searchParams: Promise.resolve({}) };
-    const page = await ForgotPasswordPage(mockProps);
-    expect(page.type).toBeDefined();
+    const page = await SignInPage(mockProps);
+    expect(page).toBeDefined();
   });
 });

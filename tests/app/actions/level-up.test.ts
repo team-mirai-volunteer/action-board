@@ -1,37 +1,28 @@
-import { checkLevelUpAction } from "../../../app/actions/level-up";
-
-jest.mock("../../../lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(() =>
-        Promise.resolve({ data: { user: { id: "test-id" } } }),
-      ),
-    },
-  })),
-}));
+import { markLevelUpSeenAction } from "../../../app/actions/level-up";
 
 jest.mock("../../../lib/services/levelUpNotification", () => ({
-  checkLevelUpNotification: jest.fn(() =>
-    Promise.resolve({ shouldNotify: true, levelUp: { level: 2 } }),
+  markLevelUpNotificationAsSeen: jest.fn(() =>
+    Promise.resolve({ success: true }),
   ),
 }));
 
-describe("checkLevelUpAction", () => {
-  it("レベルアップチェックの正常処理", async () => {
-    const result = await checkLevelUpAction();
-    expect(result.shouldNotify).toBe(true);
-    expect(result.levelUp).toBeDefined();
+jest.mock("../../../lib/services/users", () => ({
+  getUser: jest.fn(() =>
+    Promise.resolve({ id: "test-id", email: "test@example.com" }),
+  ),
+}));
+
+describe("markLevelUpSeenAction", () => {
+  it("レベルアップ通知の正常処理", async () => {
+    const result = await markLevelUpSeenAction();
+    expect(result.success).toBe(true);
   });
 
   it("ユーザー未認証時の処理", async () => {
-    const mockCreateClient =
-      require("../../../lib/supabase/server").createClient;
-    mockCreateClient.mockReturnValue({
-      auth: {
-        getUser: jest.fn(() => Promise.resolve({ data: { user: null } })),
-      },
-    });
-    const result = await checkLevelUpAction();
-    expect(result.shouldNotify).toBe(false);
+    const mockGetUser = require("../../../lib/services/users").getUser;
+    mockGetUser.mockResolvedValue(null);
+    const result = await markLevelUpSeenAction();
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("認証が必要です");
   });
 });
