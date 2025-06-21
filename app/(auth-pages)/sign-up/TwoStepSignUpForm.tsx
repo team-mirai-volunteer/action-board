@@ -2,6 +2,7 @@
 
 import { FormMessage, type Message } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -61,7 +62,25 @@ function ConsentPhase({
   const canProceed = isTermsAgreed && isPrivacyAgreed && isAgeValid;
 
   return (
-    <div className="flex flex-col gap-2 mt-8">
+    <div className="flex flex-col gap-2 mt-2">
+      {/* チームみらいサポーター情報 */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
+              <span className="text-white text-xs font-bold">i</span>
+            </div>
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">チームみらいサポーターへの参加</p>
+              <p className="text-blue-700">
+                アクションボードに登録すると、チームみらいサポーターとして参加できます。
+                サポーターは、チームみらいのために積極的に活動する仲間です。
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Label htmlFor="date_of_birth">
         生年月日（満18歳以上である必要があります）
       </Label>
