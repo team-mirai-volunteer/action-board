@@ -39,7 +39,7 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
       status: pin.status,
       note: pin.note || "",
       created_at: pin.created_at,
-      updated_at: pin.updated_at,
+      updated_at: pin.updated_at || undefined,
     }));
 
     return transformedPins;
