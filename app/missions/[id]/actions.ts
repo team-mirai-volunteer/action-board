@@ -594,6 +594,20 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
+  const { decrementDailyAttempt } = await import("@/lib/services/missions");
+  const dailyAttemptResult = await decrementDailyAttempt(
+    authUser.id,
+    achievement.mission_id,
+  );
+
+  if (!dailyAttemptResult.success) {
+    console.error(
+      "日次挑戦回数の減算に失敗しました:",
+      dailyAttemptResult.error,
+    );
+    // 日次挑戦回数の減算失敗は警告として扱うが、達成記録は既に削除済み
+  }
+
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
   const xpResult = await grantXp(
