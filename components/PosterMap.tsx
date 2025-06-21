@@ -42,14 +42,36 @@ async function loadBoardPins(
   const filteredPins =
     status !== null ? pins.filter((item) => item.status === status) : pins;
 
+  console.log(
+    `Loading pins for status ${status}:`,
+    filteredPins.length,
+    "pins",
+  );
+
   for (const pin of filteredPins) {
-    if (pin.lat === null || pin.long === null) continue;
-    const marker = L.circleMarker([pin.lat, pin.long], {
-      radius: 8,
-      weight: 0,
-      fillColor: getStatusColor(pin.status),
-      fillOpacity: 0.9,
+    if (pin.lat === null || pin.long === null) {
+      console.log(
+        `Skipping pin ${pin.number} - invalid coordinates:`,
+        pin.lat,
+        pin.long,
+      );
+      continue;
+    }
+    console.log(
+      `Creating marker for pin ${pin.number} at [${pin.lat}, ${pin.long}] with status ${pin.status}`,
+    );
+    const marker = L.marker([pin.lat, pin.long], {
+      icon: L.divIcon({
+        className: "custom-div-icon",
+        html: `<div style="background-color: ${getStatusColor(pin.status)}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+      }),
     }).addTo(layer);
+
+    console.log(
+      `Added marker for pin ${pin.number} to layer. Layer now has ${layer.getLayers().length} markers`,
+    );
 
     marker.on("click", () => {
       setSelectedPin(pin);
@@ -113,7 +135,11 @@ export default function PosterMap({
               : pin,
           ),
         );
-        setSelectedPin(null);
+        setSelectedPin({
+          ...selectedPin,
+          status: currentStatus,
+          note: noteText || null,
+        });
       } else {
         alert("更新に失敗しました");
       }
@@ -133,7 +159,14 @@ export default function PosterMap({
     }
 
     const drawPins = async () => {
+      console.log(
+        "Drawing pins:",
+        pins.length,
+        "pins for prefecture:",
+        prefecture,
+      );
       if (pins.length === 0 && prefecture) {
+        console.log("No pins to draw, returning early");
         return;
       }
 
@@ -155,8 +188,9 @@ export default function PosterMap({
         削除: L.layerGroup(),
       };
       overlaysRef.current = newOverlays;
-      for (const layer of Object.values(overlaysRef.current)) {
+      for (const [name, layer] of Object.entries(overlaysRef.current)) {
         layer.addTo(mapInstance);
+        console.log(`Added layer ${name} to map`);
       }
 
       const baseLayers = createBaseLayers(L);
@@ -180,7 +214,7 @@ export default function PosterMap({
         overlaysRef.current.要確認,
         L,
         setSelectedPin,
-        3,
+        4,
       );
       await loadBoardPins(
         pins,
@@ -190,6 +224,11 @@ export default function PosterMap({
         5,
       );
       await loadBoardPins(pins, overlaysRef.current.削除, L, setSelectedPin, 6);
+
+      console.log("All layers loaded. Checking layer contents...");
+      for (const [name, layer] of Object.entries(overlaysRef.current)) {
+        console.log(`Layer ${name} has ${layer.getLayers().length} markers`);
+      }
     };
 
     drawPins();
