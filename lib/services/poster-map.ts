@@ -1,3 +1,4 @@
+import { createClient as createClientClient } from "@/lib/supabase/client";
 import { createClient } from "@/lib/supabase/server";
 import type { PinData, UpdatePinRequest } from "@/lib/types/poster-map";
 
@@ -40,7 +41,10 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
       long: pin.long || 0,
       status: pin.status,
       note: pin.note || "",
-      created_at: pin.created_at,
+      created_at:
+        typeof pin.created_at === "string"
+          ? pin.created_at
+          : new Date(pin.created_at).toISOString(),
       updated_at: undefined,
     }));
 
@@ -53,7 +57,7 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
 
 export async function updatePin(request: UpdatePinRequest): Promise<boolean> {
   try {
-    const supabase = await createClient();
+    const supabase = createClientClient();
 
     const { error } = await supabase
       .from("pins")
