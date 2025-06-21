@@ -91,9 +91,18 @@ export default async function MissionPage({ params }: Props) {
     ? await getUserMissionRanking(id, user.id)
     : null;
 
-  // ポスティングミッションの場合は、ポスティング枚数を取得
-  const postingMission = mission.required_artifact_type === "POSTING";
+  // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
+  const isPostingMission = mission.required_artifact_type === "POSTING";
   const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
+  let badgeText = "";
+
+  if (userWithMissionRanking) {
+    if (isPostingMission) {
+      badgeText = `${userPostingCount.toLocaleString()}枚`;
+    } else {
+      badgeText = `${(userWithMissionRanking.user_achievement_count ?? 0).toLocaleString()}回`;
+    }
+  }
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
@@ -117,8 +126,7 @@ export default async function MissionPage({ params }: Props) {
                   <CurrentUserCardMission
                     currentUser={userWithMissionRanking}
                     mission={mission}
-                    userPostingCount={userPostingCount}
-                    postingMission={postingMission}
+                    badgeText={badgeText}
                   />
                 </div>
                 <div className="mt-6">
@@ -126,8 +134,7 @@ export default async function MissionPage({ params }: Props) {
                     limit={10}
                     showDetailedInfo={true}
                     mission={mission}
-                    userPostingCount={userPostingCount}
-                    postingMission={postingMission}
+                    badgeText={badgeText}
                   />
                 </div>
               </>

@@ -13,8 +13,7 @@ interface RankingItemProps {
     id: string;
     name: string;
   };
-  userPostingCount?: number;
-  postingMission?: boolean;
+  badgeText?: string;
 }
 
 function getRankIcon(rank: number | null) {
@@ -51,8 +50,7 @@ export function RankingItem({
   userWithMission,
   showDetailedInfo = false,
   mission,
-  userPostingCount,
-  postingMission,
+  badgeText,
 }: RankingItemProps) {
   return (
     <Link
@@ -78,12 +76,7 @@ export function RankingItem({
                 "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
               }
             >
-              {/* ポスティングミッションの場合はポスティング枚数を表示 */}
-              {(postingMission
-                ? (userPostingCount ?? 0)
-                : (userWithMission?.user_achievement_count ?? 0)
-              ).toLocaleString()}
-              {postingMission ? "枚" : "回"}
+              {badgeText}
             </Badge>
             <span className="font-bold text-lg">
               {(userWithMission?.total_points ?? 0).toLocaleString()}pt
