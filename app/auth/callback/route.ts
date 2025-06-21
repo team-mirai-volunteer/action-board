@@ -12,7 +12,19 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      // PKCE Code Verifier エラーの場合、メール認証は完了している可能性が高い
+      if (
+        error.message?.includes("code verifier") ||
+        error.code === "validation_failed"
+      ) {
+        // ログイン画面に成功メッセージ付きでリダイレクト
+        const loginUrl = `${origin}/sign-in?success=${encodeURIComponent("メール認証が完了しました。このブラウザでログインしてください。")}`;
+        return NextResponse.redirect(loginUrl);
+      }
+    }
   }
 
   if (redirectTo) {
