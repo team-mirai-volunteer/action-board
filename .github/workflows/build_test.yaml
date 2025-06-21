@@ -24,6 +24,7 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
           echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          echo "BQ_USER_PASSWORD=bq_user_password" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
       # Supabase CLIのセットアップと起動
@@ -62,7 +63,6 @@ jobs:
           echo "Supabase database reset completed."
         env:
           SMTP_ENABLED: false
-          BQ_USER_PASSWORD: "bq_user_password"
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
