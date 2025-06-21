@@ -10,7 +10,10 @@ import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { useMissionSubmission } from "../_hooks/useMissionSubmission";
+import {
+  useDailyAttemptStatus,
+  useMissionSubmission,
+} from "../_hooks/useMissionSubmission";
 import { achieveMissionAction } from "../actions";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
@@ -29,6 +32,10 @@ export function MissionFormWrapper({
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
+  const dailyAttemptStatus = useDailyAttemptStatus(
+    mission.id,
+    authUser?.id || null,
+  );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -161,10 +168,23 @@ export function MissionFormWrapper({
             <SubmitButton
               pendingText="登録中..."
               size="lg"
-              disabled={isButtonDisabled || isSubmitting}
+              disabled={
+                isButtonDisabled ||
+                isSubmitting ||
+                dailyAttemptStatus.hasReachedLimit
+              }
             >
-              {buttonLabel}
+              {dailyAttemptStatus.hasReachedLimit
+                ? "本日の挑戦回数上限に達しました"
+                : buttonLabel}
             </SubmitButton>
+            {dailyAttemptStatus.dailyLimit !== null && (
+              <p className="text-sm text-muted-foreground">
+                今日の挑戦回数: {dailyAttemptStatus.currentAttempts}/
+                {dailyAttemptStatus.dailyLimit}
+                {dailyAttemptStatus.hasReachedLimit && " (上限に達しました)"}
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">
               ※
               成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。

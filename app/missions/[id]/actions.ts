@@ -175,10 +175,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count を確認
+  // ミッション情報を取得して、max_achievement_count と daily_attempt_limit を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("max_achievement_count")
+    .select("max_achievement_count, daily_attempt_limit")
     .eq("id", validatedMissionId)
     .single();
 
@@ -188,6 +188,23 @@ export const achieveMissionAction = async (formData: FormData) => {
       success: false,
       error: "ミッション情報の取得に失敗しました。",
     };
+  }
+
+  if (missionData?.daily_attempt_limit !== null) {
+    const { checkAndRecordDailyAttempt } = await import(
+      "@/lib/services/missions"
+    );
+    const dailyAttemptResult = await checkAndRecordDailyAttempt(
+      authUser.id,
+      validatedMissionId,
+    );
+
+    if (!dailyAttemptResult.canAttempt) {
+      return {
+        success: false,
+        error: `本日のミッション挑戦回数の上限（${dailyAttemptResult.dailyLimit}回）に達しています。明日再度お試しください。`,
+      };
+    }
   }
 
   if (missionData?.max_achievement_count !== null) {
