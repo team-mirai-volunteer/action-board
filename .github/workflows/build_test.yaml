@@ -60,6 +60,12 @@ jobs:
         env:
           SMTP_ENABLED: false
 
+      - name: Generate TypeScript types
+        run: |
+          echo "Generating TypeScript types from Supabase schema..."
+          npm run types
+          echo "TypeScript types generation completed."
+
       - name: Build
         run: npm run build
 
