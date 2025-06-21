@@ -8,8 +8,10 @@ BEGIN;
 CREATE PUBLICATION bq_pub FOR ALL TABLES;
 COMMIT;
 
+BEGIN;
 -- 2. Create logical replication slot
 SELECT PG_CREATE_LOGICAL_REPLICATION_SLOT('bq_slot', 'pgoutput');
+COMMIT;
 
 
 -- 3. Create dedicated user for BigQuery replication

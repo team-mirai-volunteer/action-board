@@ -44,7 +44,7 @@ max_client_conn = 100
 
 [db.vault]
 # this is already set for stg/prd
-bq_user_password = "bq_user_password"
+bq_user_password = "env(BQ_USER_PASSWORD)"
 
 [db.migrations]
 # Specifies an ordered list of schema files that describe your database.
