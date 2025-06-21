@@ -189,6 +189,7 @@ export default function ProfileForm({
 
           <div className="space-y-2">
             <Label htmlFor="date_of_birth">生年月日</Label>
+            <p className="text-sm text-gray-500">この項目は公開されません</p>
             <Input
               type="date"
               name="date_of_birth"

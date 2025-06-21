@@ -10,6 +10,12 @@ export const ARTIFACT_TYPES = {
     displayName: "テキスト",
     prompt: "成果物のテキストを入力してください。",
   },
+  EMAIL: {
+    key: "EMAIL",
+    displayName: "メールアドレス",
+    prompt: "成果物のメールアドレスを入力してください。",
+    validationRegex: /^[\w!#$%&'*+/=?`{|}~^.-]+@[\w.-]+\.[a-zA-Z]{2,}$/,
+  },
   IMAGE: {
     key: "IMAGE",
     displayName: "画像",
@@ -61,6 +67,7 @@ export type MissionRequiredArtifactType =
   | ArtifactTypeKey
   | "LINK"
   | "TEXT"
+  | "EMAIL"
   | "IMAGE"
   | "IMAGE_WITH_GEOLOCATION"
   | "REFERRAL"
