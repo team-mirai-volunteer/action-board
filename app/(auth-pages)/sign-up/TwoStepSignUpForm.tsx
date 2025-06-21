@@ -212,8 +212,8 @@ function LoginSelectionPhase({
     try {
       setIsLoading(true);
       setError(null);
-      // sessionStorageにサインアップデータを保存
-      sessionStorage.setItem(
+      // ローカルストレージにサインアップデータを保存（モバイル対応）
+      localStorage.setItem(
         "lineLoginData",
         JSON.stringify({
           dateOfBirth: formattedDate,
