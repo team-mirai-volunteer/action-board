@@ -18,6 +18,7 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
         status,
         note,
         created_at,
+        updated_at,
         updated_by,
         cities!inner(
           prefecture
@@ -45,7 +46,7 @@ export async function getBoardPins(prefecture: string): Promise<PinData[]> {
         typeof pin.created_at === "string"
           ? pin.created_at
           : new Date(pin.created_at).toISOString(),
-      updated_at: undefined,
+      updated_at: pin.updated_at || undefined,
     }));
 
     return JSON.parse(JSON.stringify(transformedPins));
