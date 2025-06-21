@@ -15,14 +15,13 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      // PKCE Code Verifier エラーの場合、type別に適切な画面にリダイレクト
+      // PKCE Code Verifier エラーの場合、redirect_to別に適切な画面にリダイレクト
       if (
         error.message?.includes("code verifier") ||
         error.code === "validation_failed"
       ) {
-        const type = requestUrl.searchParams.get("type");
-
-        if (type === "recovery") {
+        // redirect_toパラメータからパスワードリセットかどうかを判定
+        if (redirectTo === "/reset-password") {
           // パスワードリセットの場合
           const resetUrl = `${origin}/reset-password`;
           return NextResponse.redirect(resetUrl);
