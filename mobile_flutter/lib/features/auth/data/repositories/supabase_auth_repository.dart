@@ -59,11 +59,15 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<domain.AuthUser> signUpWithEmailPassword({
     required String email,
     required String password,
+    required String dateOfBirth,
   }) async {
     try {
       final response = await _client.auth.signUp(
         email: email,
         password: password,
+        data: {
+          'date_of_birth': dateOfBirth,
+        },
       );
 
       final user = response.user;

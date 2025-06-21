@@ -71,6 +71,7 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signUpWithEmailPassword({
     required String email,
     required String password,
+    required String dateOfBirth,
   }) async {
     try {
       state = const AuthState.loading();
@@ -78,6 +79,7 @@ class AuthNotifier extends _$AuthNotifier {
       final user = await repository.signUpWithEmailPassword(
         email: email,
         password: password,
+        dateOfBirth: dateOfBirth,
       );
       state = AuthState.authenticated(user: user);
     } catch (e) {
