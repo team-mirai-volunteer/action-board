@@ -40,6 +40,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
+    "googleapis": "^150.0.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.511.0",
     "nanoid": "^5.1.5",
