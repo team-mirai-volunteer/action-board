@@ -151,3 +151,10 @@ class Failure with _$Failure {
 - `.env`ファイルでSupabase設定を管理
 - `SUPABASE_URL`と`SUPABASE_ANON_KEY`が必須
 - `flutter_dotenv`で環境変数をロード
+
+### UIガイドライン
+- **UI_GUIDELINES.md**を参照して一貫性のあるUIを実装
+- フォームの最大幅: 320px
+- 一般コンテンツの最大幅: 342px
+- ボタンの高さ: 44px
+- プライマリカラー: #089781
