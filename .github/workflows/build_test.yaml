@@ -94,3 +94,4 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+# Trigger CI retry - testing if 502 upstream server error was transient
