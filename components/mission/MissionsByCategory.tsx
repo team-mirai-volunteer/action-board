@@ -91,9 +91,30 @@ export default async function MissionsByCategory({
     {},
   );
 
+  // カテゴリ内のミッションをソート
+  for (const categoryId in grouped) {
+    grouped[categoryId].sort((a, b) => {
+      // クリア済みミッションを後ろに
+      if (
+        achievedMissionIds.includes(a.mission_id) &&
+        !achievedMissionIds.includes(b.mission_id)
+      ) {
+        return 1; // a を後ろに
+      }
+      if (
+        !achievedMissionIds.includes(a.mission_id) &&
+        achievedMissionIds.includes(b.mission_id)
+      ) {
+        return -1; // b を後ろに
+      }
+      // それ以外はリンクのソート順で比較
+      return a.link_sort_no - b.link_sort_no;
+    });
+  }
+
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="flex flex-col divide-y divide-gray-200">
+    <div className="max-w-6xl mx-auto">
+      <div className="flex flex-col">
         {/* タイトル */}
         <div className="text-center py-8">
           <h2 className="text-2xl md:text-4xl font-black text-gray-900">
@@ -108,23 +129,21 @@ export default async function MissionsByCategory({
               key={category.category_id}
               className="
                 relative               /* オーバーレイ配置のため */
-                w-full
-                max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl
-                mx-auto
-                bg-gray-50
-                rounded-lg
-                shadow-sm
-                px-6 py-5
+                w-screen
+                py-5
               "
             >
               {/* カテゴリ見出し */}
-              <h3 className="text-xl font-bold mb-4 pl-3">
-                🚩{category.category_title}
+              <h3 className="text-xl font-bold mb-4 px-4">
+                {category.category_title}
               </h3>
 
               {/* 横スクロール領域 */}
-              <div className="w-full overflow-x-auto custom-scrollbar cursor-grab">
-                <div className="flex gap-4 px-4 pb-2">
+              <div
+                className="w-full overflow-x-auto custom-scrollbar cursor-grab"
+                style={{ scrollbarWidth: "none" }}
+              >
+                <div className="flex w-fit gap-4 px-4 pb-2">
                   {missionsInCategory
                     .filter(
                       (m) =>
@@ -152,7 +171,7 @@ export default async function MissionsByCategory({
                       return (
                         <div
                           key={m.mission_id}
-                          className="flex-shrink-0 w-[280px]"
+                          className="flex-shrink-0 w-[300px]"
                         >
                           <Mission
                             mission={missionForComponent}
@@ -171,7 +190,7 @@ export default async function MissionsByCategory({
               </div>
 
               {/* スクロール余白を示すグラデーション */}
-              <div
+              {/* <div
                 className="
                   pointer-events-none
                   absolute inset-y-0 left-0 w-8
@@ -184,7 +203,7 @@ export default async function MissionsByCategory({
                   absolute inset-y-0 right-0 w-8
                   bg-gradient-to-l from-gray-50 to-transparent
                 "
-              />
+              /> */}
             </section>
           );
         })}
