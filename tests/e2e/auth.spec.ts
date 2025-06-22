@@ -310,7 +310,7 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // /sign-upページにリダイレクトされることを確認
     await page.waitForURL("/sign-up", { timeout: 5000 });
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アクションボードに登録" }),
     ).toBeVisible();
   });
 
@@ -320,7 +320,7 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アクションボードに登録" }),
     ).toBeVisible();
     await expect(
       page.getByText("生年月日（満18歳以上である必要があります）"),
