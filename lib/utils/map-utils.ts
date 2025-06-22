@@ -147,7 +147,11 @@ export function createProgressBox(
     },
   });
 
-  return new ProgressControl({ position });
+  return new (
+    ProgressControl as new (
+      options: Record<string, unknown>,
+    ) => unknown
+  )({ position });
 }
 
 export function createProgressBoxCountdown(
@@ -174,5 +178,9 @@ export function createProgressBoxCountdown(
     },
   });
 
-  return new CountdownControl({ position });
+  return new (
+    CountdownControl as new (
+      options: Record<string, unknown>,
+    ) => unknown
+  )({ position });
 }

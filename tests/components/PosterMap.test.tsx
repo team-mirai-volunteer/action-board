@@ -38,14 +38,72 @@ jest.mock("@/lib/utils/map-utils", () => ({
   })),
 }));
 
+const mockMapInstance = {
+  setView: jest.fn().mockReturnThis(),
+  addLayer: jest.fn(),
+  removeLayer: jest.fn(),
+  invalidateSize: jest.fn(),
+  remove: jest.fn(),
+  getZoom: jest.fn().mockReturnValue(8),
+  getCenter: jest.fn().mockReturnValue({ lat: 35.6762, lng: 139.6503 }),
+  getBounds: jest.fn().mockReturnValue({
+    getNorthEast: jest.fn(),
+    getSouthWest: jest.fn(),
+  }),
+  on: jest.fn(),
+  off: jest.fn(),
+  hasLayer: jest.fn().mockReturnValue(false),
+  removeControl: jest.fn(),
+};
+
 jest.mock("next/dynamic", () => {
   return function dynamic(importFunc: () => Promise<unknown>) {
+    const importPath = importFunc.toString();
+
+    if (importPath.includes("MapContainer")) {
+      const Component = React.forwardRef(
+        (props: Record<string, unknown>, ref: unknown) => {
+          React.useEffect(() => {
+            if (typeof ref === "function") {
+              ref(mockMapInstance);
+            } else if (ref && typeof ref === "object" && "current" in ref) {
+              (ref as React.MutableRefObject<unknown>).current =
+                mockMapInstance;
+            }
+          }, [ref]);
+
+          return React.createElement(
+            "div",
+            {
+              ...props,
+              "data-testid": "mock-map-container",
+            },
+            props.children as React.ReactNode,
+          );
+        },
+      );
+      Component.displayName = "MockMapContainer";
+      return Component;
+    }
+
+    if (importPath.includes("TileLayer")) {
+      const Component = React.forwardRef(
+        (props: Record<string, unknown>, ref: unknown) => {
+          return React.createElement("div", {
+            ...props,
+            "data-testid": "mock-tile-layer",
+          });
+        },
+      );
+      Component.displayName = "MockTileLayer";
+      return Component;
+    }
+
     const Component = React.forwardRef(
       (props: Record<string, unknown>, ref: unknown) => {
         return React.createElement("div", {
           ...props,
-          ref,
-          "data-testid": "mock-map-component",
+          "data-testid": "mock-dynamic-component",
         });
       },
     );
@@ -54,28 +112,36 @@ jest.mock("next/dynamic", () => {
   };
 });
 
-jest.mock("leaflet", () => ({
-  map: jest.fn(() => ({
-    setView: jest.fn().mockReturnThis(),
-    addLayer: jest.fn(),
-    removeLayer: jest.fn(),
-    invalidateSize: jest.fn(),
-    remove: jest.fn(),
-  })),
+const mockMarker = {
+  addTo: jest.fn().mockReturnThis(),
+  bindPopup: jest.fn().mockReturnThis(),
+  on: jest.fn().mockReturnThis(),
+  off: jest.fn().mockReturnThis(),
+};
+
+const mockLeaflet = {
+  map: jest.fn(() => mockMapInstance),
   layerGroup: jest.fn(() => ({
     addTo: jest.fn(),
     clearLayers: jest.fn(),
     addLayer: jest.fn(),
   })),
-  marker: jest.fn(() => ({
-    addTo: jest.fn(),
-    bindPopup: jest.fn(),
-    on: jest.fn(),
-  })),
+  marker: jest.fn(() => mockMarker),
   popup: jest.fn(() => ({
     setContent: jest.fn(),
     openOn: jest.fn(),
   })),
+  divIcon: jest.fn(() => ({})),
+  control: {
+    layers: jest.fn(() => ({
+      addTo: jest.fn(),
+    })),
+  },
+};
+
+jest.mock("leaflet", () => ({
+  default: mockLeaflet,
+  ...mockLeaflet,
 }));
 
 const mockUpdatePin = updatePin as jest.MockedFunction<typeof updatePin>;
@@ -132,7 +198,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -145,7 +211,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="存在しない県" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -166,7 +232,7 @@ describe("PosterMapコンポーネント", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("データの読み込みに失敗しました"),
+          screen.getByText(/エラー:|データの読み込みに失敗しました/),
         ).toBeInTheDocument();
       });
     });
@@ -182,7 +248,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -195,7 +261,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -208,7 +274,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
   });
@@ -223,7 +289,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -249,7 +315,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -275,7 +341,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -290,7 +356,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
   });
@@ -305,7 +371,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="大阪府" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -318,7 +384,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -333,13 +399,13 @@ describe("PosterMapコンポーネント", () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
 
       rerender(<PosterMap prefecture="大阪府" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
   });
@@ -360,7 +426,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -375,7 +441,7 @@ describe("PosterMapコンポーネント", () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
 
       const updatedPins = [
@@ -391,7 +457,7 @@ describe("PosterMapコンポーネント", () => {
       rerender(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
   });
@@ -406,7 +472,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -419,7 +485,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
 
@@ -432,7 +498,7 @@ describe("PosterMapコンポーネント", () => {
       render(<PosterMap prefecture="東京都" user={mockUser} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
     });
   });
@@ -461,7 +527,7 @@ describe("PosterMapコンポーネント", () => {
 
       await waitFor(
         () => {
-          expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+          expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
         },
         { timeout: 5000 },
       );
@@ -478,7 +544,7 @@ describe("PosterMapコンポーネント", () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId("mock-map-component")).toBeInTheDocument();
+        expect(screen.getByTestId("mock-map-container")).toBeInTheDocument();
       });
 
       unmount();

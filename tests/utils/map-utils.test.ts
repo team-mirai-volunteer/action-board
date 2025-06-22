@@ -318,16 +318,6 @@ describe("地図ユーティリティ関数", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       mockLeaflet.DomUtil.create.mockReturnValue({});
-      mockLeaflet.Control.extend.mockImplementation((options) => {
-        return () => ({
-          onAdd: options.onAdd,
-        });
-      });
-    });
-
-    test("進捗ボックスが正しい割合で作成される", () => {
-      const percentage = 75;
-      const position = "topright";
 
       const mockConstructor = jest.fn().mockImplementation(function (this: {
         onAdd: () => unknown;
@@ -335,6 +325,11 @@ describe("地図ユーティリティ関数", () => {
         this.onAdd = () => mockLeaflet.DomUtil.create("div", "info");
       });
       mockLeaflet.Control.extend.mockReturnValue(mockConstructor);
+    });
+
+    test("進捗ボックスが正しい割合で作成される", () => {
+      const percentage = 75;
+      const position = "topright";
 
       const result = createProgressBox(mockLeaflet, percentage, position);
 
@@ -372,16 +367,6 @@ describe("地図ユーティリティ関数", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       mockLeaflet.DomUtil.create.mockReturnValue({});
-      mockLeaflet.Control.extend.mockImplementation((options) => {
-        return () => ({
-          onAdd: options.onAdd,
-        });
-      });
-    });
-
-    test("総数ボックスが正しい数値で作成される", () => {
-      const total = 150;
-      const position = "topright";
 
       const mockConstructor = jest.fn().mockImplementation(function (this: {
         onAdd: () => unknown;
@@ -389,6 +374,11 @@ describe("地図ユーティリティ関数", () => {
         this.onAdd = () => mockLeaflet.DomUtil.create("div", "info");
       });
       mockLeaflet.Control.extend.mockReturnValue(mockConstructor);
+    });
+
+    test("総数ボックスが正しい数値で作成される", () => {
+      const total = 150;
+      const position = "topright";
 
       const result = createProgressBoxCountdown(mockLeaflet, total, position);
 
