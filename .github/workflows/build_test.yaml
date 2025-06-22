@@ -41,6 +41,7 @@ jobs:
           SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
+          BQ_USER_PASSWORD: bq_user_password
 
       - name: Install dependencies
         run: npm ci
@@ -63,6 +64,8 @@ jobs:
           echo "Supabase database reset completed."
         env:
           SMTP_ENABLED: false
+          BQ_USER_PASSWORD: bq_user_password
+
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
