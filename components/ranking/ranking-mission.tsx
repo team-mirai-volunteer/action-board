@@ -28,6 +28,8 @@ export default async function RankingMission({
 
   const rankings = await getMissionRanking(mission.id, limit);
 
+  const rankingMap = new Map(rankings.map((item) => [item.user_id, item]));
+
   // ポスティングミッションの場合のみ、上位ユーザーの投稿数を取得
   const topUsersPostingCount =
     isPostingMission && rankings.length > 0
@@ -36,18 +38,18 @@ export default async function RankingMission({
         )
       : [];
 
-  // バッジテキストの生成
-  let badgeText = "";
-  if (rankings.length > 0) {
+  const topUsersPostingCountMap = new Map(
+    topUsersPostingCount.map((user) => [user.user_id, user.posting_count]),
+  );
+
+  const badgeText = (userId: string) => {
+    const rankingItem = rankingMap.get(userId);
+    const postingCount = topUsersPostingCountMap.get(userId);
     if (isPostingMission) {
-      const topUserPostingCount = topUsersPostingCount.find(
-        (user) => user.user_id === rankings[0].user_id,
-      );
-      badgeText = `${(topUserPostingCount?.posting_count ?? 0).toLocaleString()}枚`;
-    } else {
-      badgeText = `${(rankings[0].user_achievement_count ?? 0).toLocaleString()}回`;
+      return `${(postingCount ?? 0).toLocaleString()}枚`;
     }
-  }
+    return `${(rankingItem?.user_achievement_count ?? 0).toLocaleString()}回`;
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -68,7 +70,7 @@ export default async function RankingMission({
                 mission={
                   mission ? { id: mission.id, name: mission.title } : undefined
                 }
-                badgeText={badgeText}
+                badgeText={badgeText(user.user_id || "")}
               />
             ))}
           </div>

@@ -25,20 +25,20 @@ export default async function Navbar() {
         <div className="flex gap-5 items-center font-semibold min-w-[60px]">
           <Link href="/" className="flex items-center gap-4">
             <Image src="/img/logo.png" alt="logo" width={57} height={48} />
-            <div className="text-lg">アクションボード（α版）</div>
+            <div className="text-lg">アクションボード</div>
           </Link>
         </div>
         {user ? (
           <div className="flex gap-6 items-center">
             <div className="font-semibold hidden sm:flex">
-              <Link href="/">ダッシュボード</Link>
+              <Link href="/">ホーム</Link>
             </div>
             <HeaderAuth />
           </div>
         ) : (
           <>
             <div className="gap-6 items-center font-semibold hidden sm:flex">
-              <Link href="/">ダッシュボード</Link>
+              <Link href="/">ホーム</Link>
               <HeaderAuth />
             </div>
             <div className="flex gap-6 items-center font-semibold sm:hidden">
@@ -57,7 +57,7 @@ export default async function Navbar() {
                 >
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                      <Link href="/">ダッシュボード</Link>
+                      <Link href="/">ホーム</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
