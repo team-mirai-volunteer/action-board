@@ -70,6 +70,27 @@ export type Database = {
           },
         ];
       };
+      cities: {
+        Row: {
+          city: string;
+          created_at: string;
+          id: number;
+          prefecture: string;
+        };
+        Insert: {
+          city: string;
+          created_at?: string;
+          id?: number;
+          prefecture: string;
+        };
+        Update: {
+          city?: string;
+          created_at?: string;
+          id?: number;
+          prefecture?: string;
+        };
+        Relationships: [];
+      };
       daily_action_summary: {
         Row: {
           count: number;
@@ -296,6 +317,56 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      pins: {
+        Row: {
+          address: string | null;
+          city_id: number;
+          created_at: string;
+          id: number;
+          lat: number | null;
+          long: number | null;
+          note: string | null;
+          number: string | null;
+          place_name: string | null;
+          status: number;
+          updated_by: string | null;
+        };
+        Insert: {
+          address?: string | null;
+          city_id: number;
+          created_at?: string;
+          id?: number;
+          lat?: number | null;
+          long?: number | null;
+          note?: string | null;
+          number?: string | null;
+          place_name?: string | null;
+          status?: number;
+          updated_by?: string | null;
+        };
+        Update: {
+          address?: string | null;
+          city_id?: number;
+          created_at?: string;
+          id?: number;
+          lat?: number | null;
+          long?: number | null;
+          note?: string | null;
+          number?: string | null;
+          place_name?: string | null;
+          status?: number;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pins_city_id_fkey";
+            columns: ["city_id"];
+            isOneToOne: false;
+            referencedRelation: "cities";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       posting_activities: {
         Row: {
@@ -606,13 +677,6 @@ export type Database = {
           updated_at: string;
         }[];
       };
-      get_top_users_posting_count: {
-        Args: { user_ids: string[] };
-        Returns: {
-          user_id: string;
-          posting_count: number;
-        }[];
-      };
       get_user_by_email: {
         Args: { user_email: string };
         Returns: {
@@ -634,10 +698,6 @@ export type Database = {
           total_points: number;
           rank: number;
         }[];
-      };
-      get_user_posting_count: {
-        Args: { target_user_id: string };
-        Returns: number;
       };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };

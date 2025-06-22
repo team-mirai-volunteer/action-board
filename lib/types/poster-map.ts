@@ -1,18 +1,23 @@
+// lib/types/poster-map.ts
+
 export interface PinData {
-  id: string;
-  number: string;
-  address: string;
-  place_name: string;
-  lat: number;
-  long: number;
+  id: number;
+  number: string | null;
+  address: string | null;
+  place_name: string | null;
+  lat: number | null;
+  long: number | null;
   status: number;
   note: string | null;
-  created_at: string;
-  updated_at?: string;
+  created_at?: string; // オプションとして定義
+  cities: {
+    prefecture: string;
+    city: string;
+  } | null;
 }
 
 export interface UpdatePinRequest {
-  id: string;
+  id: number; // stringからnumberに修正
   status: number;
   note: string | null;
 }
