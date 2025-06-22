@@ -96,3 +96,16 @@ resource "google_secret_manager_secret_version" "hubspot_api_key" {
   secret         = google_secret_manager_secret.hubspot_api_key.id
   secret_data_wo = var.HUBSPOT_API_KEY
 }
+
+resource "google_secret_manager_secret" "bq_user_password" {
+  secret_id = "${var.app_name}-${var.environment}-bq-user-password"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "bq_user_password" {
+  secret         = google_secret_manager_secret.bq_user_password.id
+  secret_data_wo = var.BQ_USER_PASSWORD
+}

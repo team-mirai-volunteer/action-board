@@ -164,3 +164,9 @@ variable "BATCH_ADMIN_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "BQ_USER_PASSWORD" {
+  description = "BigQuery user password for replication (sensitive)"
+  type        = string
+  sensitive   = true
+}
