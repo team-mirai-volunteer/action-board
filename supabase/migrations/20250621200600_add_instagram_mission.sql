@@ -3,7 +3,7 @@ VALUES (
   gen_random_uuid(),
   'Instagram でチームみらい投稿に♡をつけよう',
   '/img/mission_fallback.svg',
-  'チームみらい関連のInstagram投稿を見つけて「いいね」で応援しましょう。<br><br>&lt;a href="https://www.instagram.com/explore/tags/チームみらい/" target="_blank" rel="noopener noreferrer"&gt;「#チームみらい」で検索&lt;/a&gt;<br><br>気に入った投稿に「いいね」をつけて、その投稿のURLを貼り付けてください。',
+  'チームみらい関連のInstagram投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.instagram.com/explore/tags/チームみらい/" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>',
   1,
   NULL,
   'LINK',
