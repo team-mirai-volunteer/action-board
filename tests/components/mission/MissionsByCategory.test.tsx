@@ -83,10 +83,11 @@ describe("MissionsByCategory", () => {
 
       if (table === "mission_category_view") {
         return {
-          ...mockQuery,
-          select: jest
-            .fn()
-            .mockResolvedValue({ data: mockMissionCategoryViewData }),
+          select: jest.fn().mockImplementation(() => ({
+            order: jest.fn().mockImplementation(() => ({
+              order: jest.fn().mockResolvedValue({ data: mockMissionCategoryViewData }),
+            })),
+          })),
         };
       }
 

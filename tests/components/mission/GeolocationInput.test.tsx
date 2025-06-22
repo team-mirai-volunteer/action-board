@@ -16,6 +16,10 @@ describe("GeolocationInput", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    Object.defineProperty(global.navigator, "geolocation", {
+      value: mockGeolocation,
+      writable: true,
+    });
   });
 
   it("位置情報取得ボタンが表示される", () => {
