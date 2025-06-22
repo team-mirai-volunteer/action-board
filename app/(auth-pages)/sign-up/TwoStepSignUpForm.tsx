@@ -26,9 +26,7 @@ interface TwoStepSignUpFormProps {
 // フェーズ1: 同意・生年月日入力
 function ConsentPhase({
   isTermsAgreed,
-  isPrivacyAgreed,
   setIsTermsAgreed,
-  setIsPrivacyAgreed,
   selectedYear,
   selectedMonth,
   selectedDay,
@@ -43,9 +41,7 @@ function ConsentPhase({
   onNext,
 }: {
   isTermsAgreed: boolean;
-  isPrivacyAgreed: boolean;
   setIsTermsAgreed: (value: boolean) => void;
-  setIsPrivacyAgreed: (value: boolean) => void;
   selectedYear: number;
   selectedMonth: number;
   selectedDay: number;
@@ -59,7 +55,7 @@ function ConsentPhase({
   isAgeValid: boolean;
   onNext: () => void;
 }) {
-  const canProceed = isTermsAgreed && isPrivacyAgreed && isAgeValid;
+  const canProceed = isTermsAgreed && isAgeValid;
 
   return (
     <div className="flex flex-col gap-2 mt-2">
@@ -157,20 +153,7 @@ function ConsentPhase({
             >
               利用規約
             </Link>
-            に同意する
-          </Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="privacy"
-            checked={isPrivacyAgreed}
-            onCheckedChange={(checked) => setIsPrivacyAgreed(checked === true)}
-          />
-          <Label
-            htmlFor="privacy"
-            className="text-sm font-normal cursor-pointer"
-          >
+            および
             <Link
               href="/privacy"
               className="text-primary underline hover:no-underline"
@@ -405,9 +388,7 @@ export default function TwoStepSignUpForm({
       {currentPhase === "consent" ? (
         <ConsentPhase
           isTermsAgreed={isTermsAgreed}
-          isPrivacyAgreed={isPrivacyAgreed}
           setIsTermsAgreed={setIsTermsAgreed}
-          setIsPrivacyAgreed={setIsPrivacyAgreed}
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectedDay={selectedDay}
