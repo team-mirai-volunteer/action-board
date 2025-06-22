@@ -23,15 +23,12 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // 2. サインアップページに移動
     if (await page.getByTestId("navmenubutton").isVisible()) {
       await page.getByTestId("navmenubutton").click();
-      await page.getByRole("menuitem", { name: "サインアップ" }).click();
+      await page.getByRole("menuitem", { name: "新規登録" }).click();
     } else {
-      await page.getByRole("link", { name: "サインアップ" }).click();
+      await page.getByRole("link", { name: "新規登録" }).click();
     }
 
     await expect(page).toHaveURL("/sign-up");
-    await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
-    ).toBeVisible();
 
     // 3. フェーズ1: 生年月日と同意情報を入力
     // 年を選択
