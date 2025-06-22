@@ -8,6 +8,7 @@ import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -197,16 +198,23 @@ export function MissionFormWrapper({
             <p className="text-sm font-medium text-gray-800">
               このミッションは達成済みです。
             </p>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                setIsDialogOpen(true);
-              }}
-              className="mt-2"
-              variant="outline"
-            >
-              シェアする
-            </Button>
+            <div className="flex flex-col gap-2 mt-2">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsDialogOpen(true);
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                シェアする
+              </Button>
+              <Link href="/#featured-missions">
+                <Button variant="outline" className="w-full">
+                  ミッション一覧へ
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </form>
