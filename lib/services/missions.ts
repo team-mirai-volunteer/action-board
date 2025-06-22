@@ -28,7 +28,7 @@ export async function checkAndRecordDailyAttempt(
 
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
-    .select("daily_attempt_limit")
+    .select("max_daily_achievement_count")
     .eq("id", missionId)
     .single();
 
@@ -37,7 +37,7 @@ export async function checkAndRecordDailyAttempt(
     return { canAttempt: false, currentAttempts: 0, dailyLimit: null };
   }
 
-  const dailyLimit = missionData?.daily_attempt_limit;
+  const dailyLimit = missionData?.max_daily_achievement_count;
 
   if (dailyLimit === null) {
     return { canAttempt: true, currentAttempts: 0, dailyLimit: null };
@@ -94,7 +94,7 @@ export async function decrementDailyAttempt(
 
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
-    .select("daily_attempt_limit")
+    .select("max_daily_achievement_count")
     .eq("id", missionId)
     .single();
 
@@ -103,7 +103,7 @@ export async function decrementDailyAttempt(
     return { success: false, error: "ミッション情報の取得に失敗しました" };
   }
 
-  const dailyLimit = missionData?.daily_attempt_limit;
+  const dailyLimit = missionData?.max_daily_achievement_count;
 
   if (dailyLimit === null) {
     return { success: true };

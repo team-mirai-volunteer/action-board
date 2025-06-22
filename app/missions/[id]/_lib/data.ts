@@ -16,7 +16,7 @@ export async function getMissionData(
   const { data: missionData, error } = await supabase
     .from("missions")
     .select(
-      "*, required_artifact_type, max_achievement_count, daily_attempt_limit",
+      "*, required_artifact_type, max_achievement_count, max_daily_achievement_count",
     )
     .eq("id", missionId)
     .single();

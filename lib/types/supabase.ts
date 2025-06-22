@@ -296,7 +296,7 @@ export type Database = {
           artifact_label: string | null;
           content: string | null;
           created_at: string;
-          daily_attempt_limit: number | null;
+          max_daily_achievement_count: number | null;
           difficulty: number;
           event_date: string | null;
           icon_url: string | null;
@@ -313,7 +313,7 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
-          daily_attempt_limit?: number | null;
+          max_daily_achievement_count?: number | null;
           difficulty: number;
           event_date?: string | null;
           icon_url?: string | null;
@@ -330,7 +330,7 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
-          daily_attempt_limit?: number | null;
+          max_daily_achievement_count?: number | null;
           difficulty?: number;
           event_date?: string | null;
           icon_url?: string | null;

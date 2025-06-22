@@ -61,11 +61,11 @@ export function useDailyAttemptStatus(
 
       const { data: missionData } = await supabase
         .from("missions")
-        .select("daily_attempt_limit")
+        .select("max_daily_achievement_count")
         .eq("id", missionId)
         .single();
 
-      const dailyLimit = missionData?.daily_attempt_limit ?? null;
+      const dailyLimit = missionData?.max_daily_achievement_count ?? null;
 
       if (dailyLimit === null) {
         setDailyAttemptStatus({

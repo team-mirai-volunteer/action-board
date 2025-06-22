@@ -175,10 +175,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count と daily_attempt_limit を確認
+  // ミッション情報を取得して、max_achievement_count と max_daily_achievement_count を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("max_achievement_count, daily_attempt_limit")
+    .select("max_achievement_count, max_daily_achievement_count")
     .eq("id", validatedMissionId)
     .single();
 
@@ -190,7 +190,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  if (missionData?.daily_attempt_limit !== null) {
+  if (missionData?.max_daily_achievement_count !== null) {
     const { checkAndRecordDailyAttempt } = await import(
       "@/lib/services/missions"
     );
