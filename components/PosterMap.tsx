@@ -253,7 +253,7 @@ export default function PosterMap({
       <div style={{ height: "100vh", width: "100%" }}>
         <MapContainer
           center={getPrefectureCoordinates(prefecture)}
-          zoom={11}
+          zoom={8}
           style={{ height: "100%", width: "100%" }}
           ref={(mapRef: LeafletMap | null) => {
             if (mapRef) {
