@@ -40,16 +40,14 @@ export default async function Metrics() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <MetricCard
-            title="アクション数"
-            description="みんなで達成した成果"
+            title="みんなで達成したアクション数"
             value={achievementCount}
             unit="件"
             todayValue={todayAchievementCount}
             todayUnit="件"
           />
           <MetricCard
-            title="登録人数"
-            description="アクションボード参加者"
+            title="アクションボード参加者"
             value={totalRegistrationCount}
             unit="人"
             todayValue={todayRegistrationCount}
