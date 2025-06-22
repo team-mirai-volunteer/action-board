@@ -2,6 +2,7 @@
 
 import { FormMessage, type Message } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -61,7 +62,7 @@ function ConsentPhase({
   const canProceed = isTermsAgreed && isPrivacyAgreed && isAgeValid;
 
   return (
-    <div className="flex flex-col gap-2 mt-8">
+    <div className="flex flex-col gap-2 mt-2">
       <Label htmlFor="date_of_birth">
         生年月日（満18歳以上である必要があります）
       </Label>
@@ -190,6 +191,19 @@ function ConsentPhase({
       >
         次へ進む
       </Button>
+      {/* チームみらいサポーター情報 */}
+      <Card className="bg-gray-50 border-gray-200 mt-4">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="text-sm text-gray-600">
+              {/* <p className="font-medium mb-1">チームみらいサポーターへの参加</p> */}
+              <p className="text-gray-600">
+                アクションボードに登録することで、サポーターとしてチームみらいを応援することができます。義務や費用は一切発生しません。
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -212,8 +226,8 @@ function LoginSelectionPhase({
     try {
       setIsLoading(true);
       setError(null);
-      // sessionStorageにサインアップデータを保存
-      sessionStorage.setItem(
+      // ローカルストレージにサインアップデータを保存（モバイル対応）
+      localStorage.setItem(
         "lineLoginData",
         JSON.stringify({
           dateOfBirth: formattedDate,
@@ -376,9 +390,9 @@ export default function TwoStepSignUpForm({
   return (
     <div className="flex flex-col min-w-72 max-w-72 mx-auto">
       <h1 className="text-2xl font-medium text-center mb-2">
-        アカウントを作成する
+        アクションボードに登録
       </h1>
-      <p className="text-sm text-foreground text-center">
+      <p className="text-sm text-foreground text-center mb-4">
         すでに登録済みの方は{" "}
         <Link className="text-primary font-medium underline" href="/sign-in">
           こちら

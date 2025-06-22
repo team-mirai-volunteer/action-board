@@ -654,6 +654,13 @@ export type Database = {
           updated_at: string;
         }[];
       };
+      get_top_users_posting_count: {
+        Args: { user_ids: string[] };
+        Returns: {
+          user_id: string;
+          posting_count: number;
+        }[];
+      };
       get_user_by_email: {
         Args: { user_email: string };
         Returns: {
@@ -675,6 +682,10 @@ export type Database = {
           total_points: number;
           rank: number;
         }[];
+      };
+      get_user_posting_count: {
+        Args: { target_user_id: string };
+        Returns: number;
       };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
