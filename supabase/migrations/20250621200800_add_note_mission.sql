@@ -3,7 +3,7 @@ VALUES (
   gen_random_uuid(),
   'note でチームみらい記事にスキ♡をつけよう',
   '/img/mission_fallback.svg',
-  'チームみらい関連のnote記事を見つけて「スキ」で応援しましょう。文章が書けなくても「スキ」で参加できます。',
+  'チームみらい関連のnote記事を見つけて「スキ」で応援しましょう。<br><br>&lt;a href="https://note.com/search?q=チームみらい" target="_blank" rel="noopener noreferrer"&gt;「チームみらい」で検索&lt;/a&gt;<br><br>気に入った記事に「スキ」をつけて、その記事のURLを貼り付けてください。',
   1,
   NULL,
   'LINK',
