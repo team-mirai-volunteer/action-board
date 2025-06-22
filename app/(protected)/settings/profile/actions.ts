@@ -2,6 +2,7 @@
 
 import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
+import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { encodedRedirect } from "@/lib/utils/utils";
@@ -228,6 +229,13 @@ export async function updateProfile(
         success: false,
         error: "ユーザー情報の登録に失敗しました",
       };
+    }
+    try {
+      if (user.email) {
+        await sendWelcomeMail(user.email);
+      }
+    } catch (e) {
+      console.error("案内メール送信失敗:", e);
     }
   } else {
     const { error: privateUserError } = await supabaseClient
