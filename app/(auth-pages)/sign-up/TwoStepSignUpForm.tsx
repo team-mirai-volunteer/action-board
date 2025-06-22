@@ -299,7 +299,6 @@ export default function TwoStepSignUpForm({
 
   // 同意状態
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
-  const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
 
   // 生年月日の状態
   const [selectedYear, setSelectedYear] = useState(1990);
