@@ -30,7 +30,7 @@ export default async function Navbar() {
         </div>
         {user ? (
           <div className="flex gap-6 items-center">
-            <div className="font-semibold hidden sm:flex">
+            <div className="font-semibold hidden sm:flex gap-6">
               <Link href="/">ダッシュボード</Link>
             </div>
             <HeaderAuth />
