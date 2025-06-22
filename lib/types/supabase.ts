@@ -578,6 +578,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      mission_category_view: {
+        Row: {
+          category_id: string;
+          category_title: string;
+          category_kbn: string;
+          category_sort_no: number;
+          mission_id: string;
+          title: string;
+          icon_url: string | null;
+          difficulty: number;
+          content: string | null;
+          created_at: string;
+          artifact_label: string | null;
+          max_achievement_count: number | null;
+          event_date: string | null;
+          is_featured: boolean;
+          updated_at: string;
+          is_hidden: boolean;
+          ogp_image_url: string | null;
+          required_artifact_type: string | null;
+          link_sort_no: number;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       get_mission_ranking: {
