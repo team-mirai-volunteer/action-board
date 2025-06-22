@@ -1,6 +1,7 @@
 import Levels from "@/components/levels";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { SocialBadge } from "@/components/ui/social-badge";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
@@ -49,66 +50,25 @@ export default async function UserDetailPage({ params }: Props) {
       <Levels userId={user.id} hideProgress />
       <div className="flex justify-center gap-2">
         {user.x_username && (
-          <a
+          <SocialBadge
+            username={user.x_username}
+            platform="x"
             href={`https://x.com/${user.x_username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontWeight: 500,
-              fontFamily:
-                "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-              textDecoration: "none",
-            }}
-          >
-            <Badge
-              variant="outline"
-              className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 transition cursor-pointer"
-            >
-              <img
-                src="/img/x_logo.png"
-                alt="Xのロゴ"
-                style={{
-                  width: 16,
-                  height: 16,
-                  display: "block",
-                }}
-              />
-              <span className="text-[#0F1419] hover:text-emerald-600">
-                @{user.x_username}
-              </span>
-            </Badge>
-          </a>
+            logoSrc="/img/x_logo.png"
+            logoAlt="Xのロゴ"
+            logoSize={{ width: 16, height: 16 }}
+            showAtSymbol={true}
+          />
         )}
         {user.github_username && (
-          <a
+          <SocialBadge
+            username={user.github_username}
+            platform="github"
             href={`https://github.com/${user.github_username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontWeight: 500,
-              fontFamily:
-                "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-              textDecoration: "none",
-            }}
-          >
-            <Badge
-              variant="outline"
-              className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 transition cursor-pointer"
-            >
-              <img
-                src="/img/github-logo.png"
-                alt="GitHubのロゴ"
-                style={{
-                  width: 20,
-                  height: 20,
-                  display: "block",
-                }}
-              />
-              <span className="text-[#0F1419] hover:text-emerald-600">
-                {user.github_username}
-              </span>
-            </Badge>
-          </a>
+            logoSrc="/img/github-logo.png"
+            logoAlt="GitHubのロゴ"
+            logoSize={{ width: 20, height: 20 }}
+          />
         )}
       </div>
       {(count || 0) > 0 && (
