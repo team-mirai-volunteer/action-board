@@ -107,10 +107,14 @@ export async function getUserPostingCount(userId: string): Promise<number> {
   });
 
   if (error) {
-    console.error("Failed to fetch user posting count:", error);
-    throw new Error(
-      `ポスティング活動枚数の取得に失敗しました: ${error.message}`,
-    );
+    console.error("Failed to fetch user posting count:", {
+      userId,
+      errorMessage: error.message,
+      errorCode: error.code,
+      errorDetails: error.details,
+      timestamp: new Date().toISOString(),
+    });
+    return 0;
   }
 
   // dataがnullやundefinedの場合は0を返す
