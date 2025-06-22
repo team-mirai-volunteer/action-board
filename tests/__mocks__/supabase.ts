@@ -1,32 +1,41 @@
 const createMockQuery = (data: unknown[] = []) => {
-  const mockQuery = {
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    not: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-  };
+  const query: any = {};
+  
+  const methods = ['select', 'eq', 'not', 'order', 'limit', 'then'];
+  
+  methods.forEach(method => {
+    query[method] = jest.fn();
+  });
 
-  for (const key of Object.keys(mockQuery)) {
-    mockQuery[key as keyof typeof mockQuery].mockImplementation(() => ({
-      ...mockQuery,
-      then: jest.fn().mockResolvedValue({ data }),
-    }));
-  }
+  query.select.mockImplementation((columns?: string) => {
+    if (columns === "mission_id") {
+      return {
+        eq: jest.fn().mockResolvedValue({ data }),
+      };
+    }
+    if (columns === "mission_id, achievement_count") {
+      return Promise.resolve({ data });
+    }
+    return query;
+  });
 
-  return {
-    ...mockQuery,
-    then: jest.fn().mockResolvedValue({ data }),
-  };
+  query.eq.mockReturnValue(query);
+  query.not.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  
+  query.limit.mockResolvedValue({ data });
+  query.then.mockResolvedValue({ data });
+
+  return query;
 };
 
 export const mockSupabaseClient = {
-  from: jest.fn((table: string) => createMockQuery()),
+  from: jest.fn((table: string) => createMockQuery([])),
   storage: {
     from: jest.fn(() => ({
-      upload: jest.fn(),
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
     })),
   },
 };
 
-export const createClient = jest.fn(() => mockSupabaseClient);
+export const createClient = jest.fn(() => Promise.resolve(mockSupabaseClient));

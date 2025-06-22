@@ -56,53 +56,47 @@ describe("Missions", () => {
     jest.clearAllMocks();
 
     mockSupabaseClient.from.mockImplementation((table: string) => {
-      if (table === "achievements") {
-        const query: any = {
-          select: jest.fn().mockReturnThis(),
-          eq: jest.fn().mockReturnThis(),
-          not: jest.fn().mockReturnThis(),
-          order: jest.fn().mockReturnThis(),
-          limit: jest.fn().mockReturnThis(),
-          then: jest.fn().mockResolvedValue({ data: mockAchievements }),
-        };
-        query.select.mockImplementation(() => ({
-          eq: jest.fn().mockResolvedValue({ data: mockAchievements }),
-        }));
-        return query;
-      }
+      const createQuery = (data: any[]) => {
+        const query: any = {};
+        
+        const methods = ['select', 'eq', 'not', 'order', 'limit', 'then'];
+        
+        methods.forEach(method => {
+          query[method] = jest.fn();
+        });
 
-      if (table === "mission_achievement_count_view") {
-        const query: any = {
-          select: jest.fn().mockResolvedValue({ data: mockAchievementCounts }),
-          eq: jest.fn().mockReturnThis(),
-          not: jest.fn().mockReturnThis(),
-          order: jest.fn().mockReturnThis(),
-          limit: jest.fn().mockReturnThis(),
-          then: jest.fn().mockResolvedValue({ data: mockAchievementCounts }),
-        };
-        return query;
-      }
+        query.select.mockImplementation((columns?: string) => {
+          if (columns === "mission_id") {
+            return {
+              eq: jest.fn().mockResolvedValue({ data }),
+            };
+          }
+          if (columns === "mission_id, achievement_count") {
+            return Promise.resolve({ data });
+          }
+          return query;
+        });
 
-      if (table === "missions") {
-        const query: any = {
-          select: jest.fn().mockReturnThis(),
-          eq: jest.fn().mockReturnThis(),
-          not: jest.fn().mockReturnThis(),
-          order: jest.fn().mockReturnThis(),
-          limit: jest.fn().mockResolvedValue({ data: mockMissions }),
-          then: jest.fn().mockResolvedValue({ data: mockMissions }),
-        };
-        return query;
-      }
+        query.eq.mockReturnValue(query);
+        query.not.mockReturnValue(query);
+        query.order.mockReturnValue(query);
+        
+        query.limit.mockResolvedValue({ data });
+        query.then.mockResolvedValue({ data });
 
-      return {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        not: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        then: jest.fn().mockResolvedValue({ data: [] }),
+        return query;
       };
+
+      switch (table) {
+        case "achievements":
+          return createQuery(mockAchievements);
+        case "mission_achievement_count_view":
+          return createQuery(mockAchievementCounts);
+        case "missions":
+          return createQuery(mockMissions);
+        default:
+          return createQuery([]);
+      }
     });
   });
 
@@ -199,27 +193,45 @@ describe("Missions", () => {
 
   it("ミッションがない場合は適切なメッセージが表示される", async () => {
     mockSupabaseClient.from.mockImplementation((table: string) => {
-      const mockQuery: any = {
-        select: jest.fn().mockReturnThis(),
+      const createEmptyQuery = () => ({
+        select: jest.fn().mockImplementation((columns?: string) => {
+          if (columns === "mission_id") {
+            return {
+              eq: jest.fn().mockResolvedValue({ data: [] }),
+            };
+          }
+          if (columns === "mission_id, achievement_count") {
+            return Promise.resolve({ data: [] });
+          }
+          return {
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockReturnValue({
+                order: jest.fn().mockReturnValue({
+                  limit: jest.fn().mockResolvedValue({ data: [] }),
+                }),
+              }),
+            }),
+            not: jest.fn().mockReturnValue({
+              order: jest.fn().mockReturnValue({
+                order: jest.fn().mockReturnValue({
+                  limit: jest.fn().mockResolvedValue({ data: [] }),
+                }),
+              }),
+            }),
+            order: jest.fn().mockReturnValue({
+              order: jest.fn().mockReturnValue({
+                limit: jest.fn().mockResolvedValue({ data: [] }),
+              }),
+            }),
+            limit: jest.fn().mockResolvedValue({ data: [] }),
+          };
+        }),
         eq: jest.fn().mockReturnThis(),
         not: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        then: jest.fn().mockResolvedValue({ data: [] }),
-      };
-
-      if (table === "missions") {
-        return {
-          ...mockQuery,
-          limit: jest.fn().mockResolvedValue({ data: [] }),
-          then: jest.fn().mockResolvedValue({ data: [] }),
-        };
-      }
-
-      return {
-        ...mockQuery,
-        select: jest.fn().mockResolvedValue({ data: [] }),
-      };
+        limit: jest.fn().mockResolvedValue({ data: [] }),
+      });
+      return createEmptyQuery();
     });
 
     render(
