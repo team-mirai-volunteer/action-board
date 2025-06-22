@@ -10,6 +10,15 @@ interface SocialBadgeProps {
   showAtSymbol?: boolean;
 }
 
+const isValidUrl = (url: string) => {
+  try {
+    const parsedUrl = new URL(url);
+    return ["http:", "https:"].includes(parsedUrl.protocol);
+  } catch {
+    return false;
+  }
+};
+
 function SocialBadge(props: SocialBadgeProps) {
   const {
     username,
@@ -20,6 +29,11 @@ function SocialBadge(props: SocialBadgeProps) {
     logoSize,
     showAtSymbol = false,
   } = props;
+
+  if (!isValidUrl(href)) {
+    console.warn("Invalid URL provided to SocialBadge:", href);
+    return null;
+  }
 
   return (
     <a
