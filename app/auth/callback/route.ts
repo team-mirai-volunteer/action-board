@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         }
 
         // メール認証の場合
-        const loginUrl = `${origin}/sign-in?success=${encodeURIComponent("メール認証が完了しました。このブラウザでログインしてください。")}`;
+        const loginUrl = `${origin}/sign-in?success=${encodeURIComponent("メール認証が完了しました。ログインしてください。")}`;
         return NextResponse.redirect(loginUrl);
       }
     }
