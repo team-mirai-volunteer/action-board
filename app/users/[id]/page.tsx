@@ -1,4 +1,5 @@
 import Levels from "@/components/levels";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
@@ -46,70 +47,68 @@ export default async function UserDetailPage({ params }: Props) {
   return (
     <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
       <Levels userId={user.id} hideProgress />
-      <div className="flex flex-col items-center">
+      <div className="flex justify-center gap-2">
         {user.x_username && (
-          <div className="flex items-center gap-2 mt-2" style={{ height: 20 }}>
-            <img
-              src="/img/x_logo.png"
-              alt="Xのロゴ"
-              style={{
-                width: 16,
-                height: 16,
-                display: "block",
-              }}
-            />
-            <a
-              href={`https://x.com/${user.x_username}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontWeight: 500,
-                fontFamily:
-                  "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-                fontSize: "18px",
-                lineHeight: "20px",
-                height: 20,
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
-              }}
-              className="text-[#0F1419] hover:text-blue-600 hover:underline"
+          <a
+            href={`https://x.com/${user.x_username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontWeight: 500,
+              fontFamily:
+                "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+              textDecoration: "none",
+            }}
+          >
+            <Badge
+              variant="outline"
+              className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 transition cursor-pointer"
             >
-              @{user.x_username}
-            </a>
-          </div>
+              <img
+                src="/img/x_logo.png"
+                alt="Xのロゴ"
+                style={{
+                  width: 16,
+                  height: 16,
+                  display: "block",
+                }}
+              />
+              <span className="text-[#0F1419] hover:text-emerald-600">
+                @{user.x_username}
+              </span>
+            </Badge>
+          </a>
         )}
         {user.github_username && (
-          <div className="flex items-center gap-2 mt-2" style={{ height: 20 }}>
-            <img
-              src="/img/github-logo.png"
-              alt="GitHubのロゴ"
-              style={{
-                width: 16,
-                height: 16,
-                display: "block",
-              }}
-            />
-            <a
-              href={`https://github.com/${user.github_username}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontWeight: 500,
-                fontFamily:
-                  "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-                fontSize: "18px",
-                lineHeight: "20px",
-                height: 20,
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
-              }}
-              className="text-[#0F1419] hover:text-blue-600 hover:underline"
+          <a
+            href={`https://github.com/${user.github_username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontWeight: 500,
+              fontFamily:
+                "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+              textDecoration: "none",
+            }}
+          >
+            <Badge
+              variant="outline"
+              className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 transition cursor-pointer"
             >
-              {user.github_username}
-            </a>
-          </div>
+              <img
+                src="/img/github-logo.png"
+                alt="GitHubのロゴ"
+                style={{
+                  width: 20,
+                  height: 20,
+                  display: "block",
+                }}
+              />
+              <span className="text-[#0F1419] hover:text-emerald-600">
+                {user.github_username}
+              </span>
+            </Badge>
+          </a>
         )}
       </div>
       {(count || 0) > 0 && (
