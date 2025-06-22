@@ -3,7 +3,7 @@ VALUES (
   gen_random_uuid(),
   'X でチームみらい投稿に♡をつけよう',
   '/img/mission_fallback.svg',
-  'チームみらい関連のX投稿を見つけて「いいね」で応援しましょう。<br><br><a href="https://x.com/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>',
+  'チームみらい関連のX投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://x.com/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>',
   1,
   NULL,
   'LINK',
