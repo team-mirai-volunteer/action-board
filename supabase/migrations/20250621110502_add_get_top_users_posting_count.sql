@@ -11,6 +11,7 @@ BEGIN
     COALESCE(SUM(pa.posting_count), 0) as posting_count
   FROM mission_artifacts ma
   LEFT JOIN posting_activities pa ON ma.id = pa.mission_artifact_id
+  WHERE ma.user_id = ANY(user_ids)
   GROUP BY ma.user_id
   HAVING COALESCE(SUM(pa.posting_count), 0) > 1
   ORDER BY posting_count DESC;
