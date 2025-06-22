@@ -65,6 +65,13 @@ export type Database = {
             foreignKeyName: "achievements_mission_id_fkey";
             columns: ["mission_id"];
             isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "achievements_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
             referencedRelation: "missions";
             referencedColumns: ["id"];
           },
@@ -161,6 +168,13 @@ export type Database = {
             columns: ["mission_id"];
             isOneToOne: false;
             referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
             referencedColumns: ["mission_id"];
           },
           {
@@ -291,12 +305,104 @@ export type Database = {
           },
         ];
       };
+      mission_category: {
+        Row: {
+          category_kbn: string;
+          category_title: string | null;
+          created_at: string;
+          del_flg: boolean;
+          id: string;
+          sort_no: number;
+          updated_at: string;
+        };
+        Insert: {
+          category_kbn?: string;
+          category_title?: string | null;
+          created_at?: string;
+          del_flg?: boolean;
+          id: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Update: {
+          category_kbn?: string;
+          category_title?: string | null;
+          created_at?: string;
+          del_flg?: boolean;
+          id?: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      mission_category_link: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          del_flg: boolean;
+          mission_id: string;
+          sort_no: number;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          del_flg?: boolean;
+          mission_id: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          del_flg?: boolean;
+          mission_id?: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_category_link_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["category_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       missions: {
         Row: {
           artifact_label: string | null;
           content: string | null;
           created_at: string;
-          max_daily_achievement_count: number | null;
           difficulty: number;
           event_date: string | null;
           icon_url: string | null;
@@ -304,6 +410,7 @@ export type Database = {
           is_featured: boolean;
           is_hidden: boolean;
           max_achievement_count: number | null;
+          max_daily_achievement_count: number | null;
           ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
@@ -313,7 +420,6 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
-          max_daily_achievement_count?: number | null;
           difficulty: number;
           event_date?: string | null;
           icon_url?: string | null;
@@ -321,6 +427,7 @@ export type Database = {
           is_featured?: boolean;
           is_hidden?: boolean;
           max_achievement_count?: number | null;
+          max_daily_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
@@ -330,7 +437,6 @@ export type Database = {
           artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
-          max_daily_achievement_count?: number | null;
           difficulty?: number;
           event_date?: string | null;
           icon_url?: string | null;
@@ -338,6 +444,7 @@ export type Database = {
           is_featured?: boolean;
           is_hidden?: boolean;
           max_achievement_count?: number | null;
+          max_daily_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
@@ -614,6 +721,31 @@ export type Database = {
         };
         Relationships: [];
       };
+      mission_category_view: {
+        Row: {
+          artifact_label: string | null;
+          category_id: string | null;
+          category_kbn: string | null;
+          category_sort_no: number | null;
+          category_title: string | null;
+          content: string | null;
+          created_at: string | null;
+          difficulty: number | null;
+          event_date: string | null;
+          icon_url: string | null;
+          is_featured: boolean | null;
+          is_hidden: boolean | null;
+          link_sort_no: number | null;
+          max_achievement_count: number | null;
+          max_daily_achievement_count: number | null;
+          mission_id: string | null;
+          ogp_image_url: string | null;
+          required_artifact_type: string | null;
+          title: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [];
+      };
       user_ranking_view: {
         Row: {
           address_prefecture: string | null;
@@ -623,30 +755,6 @@ export type Database = {
           updated_at: string | null;
           user_id: string | null;
           xp: number | null;
-        };
-        Relationships: [];
-      };
-      mission_category_view: {
-        Row: {
-          category_id: string;
-          category_title: string;
-          category_kbn: string;
-          category_sort_no: number;
-          mission_id: string;
-          title: string;
-          icon_url: string | null;
-          difficulty: number;
-          content: string | null;
-          created_at: string;
-          artifact_label: string | null;
-          max_achievement_count: number | null;
-          event_date: string | null;
-          is_featured: boolean;
-          updated_at: string;
-          is_hidden: boolean;
-          ogp_image_url: string | null;
-          required_artifact_type: string | null;
-          link_sort_no: number;
         };
         Relationships: [];
       };

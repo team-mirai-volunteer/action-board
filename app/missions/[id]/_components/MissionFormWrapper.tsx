@@ -23,6 +23,11 @@ type Props = {
   authUser: User;
   userAchievementCount: number;
   onSubmissionSuccess?: () => void;
+  initialDailyAttemptStatus?: {
+    currentAttempts: number;
+    dailyLimit: number | null;
+    hasReachedLimit: boolean;
+  };
 };
 
 export function MissionFormWrapper({
@@ -30,13 +35,16 @@ export function MissionFormWrapper({
   authUser,
   userAchievementCount,
   onSubmissionSuccess,
+  initialDailyAttemptStatus,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
-  const dailyAttemptStatus = useDailyAttemptStatus(
-    mission.id,
-    authUser?.id || null,
-  );
+  const { refreshDailyAttemptStatus, ...dailyAttemptStatus } =
+    useDailyAttemptStatus(
+      mission.id,
+      authUser?.id || null,
+      initialDailyAttemptStatus,
+    );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,6 +101,9 @@ export function MissionFormWrapper({
     if (xpAnimationData) {
       startXpAnimation();
     }
+
+    // 日次挑戦状態を更新
+    refreshDailyAttemptStatus();
 
     // 達成履歴を更新
     if (onSubmissionSuccess) {

@@ -64,6 +64,8 @@ export async function checkAndRecordDailyAttempt(
     return { canAttempt: false, currentAttempts, dailyLimit };
   }
 
+  const newAttemptCount = currentAttempts + 1;
+
   const { error: upsertError } = await supabase
     .from("daily_mission_attempts")
     .upsert(
@@ -71,7 +73,7 @@ export async function checkAndRecordDailyAttempt(
         user_id: userId,
         mission_id: missionId,
         attempt_date: today,
-        attempt_count: currentAttempts + 1,
+        attempt_count: newAttemptCount,
       },
       {
         onConflict: "user_id,mission_id,attempt_date",
@@ -83,7 +85,7 @@ export async function checkAndRecordDailyAttempt(
     return { canAttempt: false, currentAttempts, dailyLimit };
   }
 
-  return { canAttempt: true, currentAttempts: currentAttempts + 1, dailyLimit };
+  return { canAttempt: true, currentAttempts: newAttemptCount, dailyLimit };
 }
 
 export async function decrementDailyAttempt(

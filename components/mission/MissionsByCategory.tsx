@@ -60,6 +60,7 @@ export default async function MissionsByCategory({
       created_at,
       artifact_label,
       max_achievement_count,
+      max_daily_achievement_count,
       event_date,
       is_featured,
       updated_at,
@@ -84,8 +85,9 @@ export default async function MissionsByCategory({
   // カテゴリごとにグループ化
   const grouped = data.reduce<Record<string, MissionCategoryViewRow[]>>(
     (acc, row) => {
-      if (!acc[row.category_id]) acc[row.category_id] = [];
-      acc[row.category_id].push(row);
+      const categoryId = row.category_id || "unknown";
+      if (!acc[categoryId]) acc[categoryId] = [];
+      acc[categoryId].push(row);
       return acc;
     },
     {},
@@ -96,19 +98,19 @@ export default async function MissionsByCategory({
     grouped[categoryId].sort((a, b) => {
       // クリア済みミッションを後ろに
       if (
-        achievedMissionIds.includes(a.mission_id) &&
-        !achievedMissionIds.includes(b.mission_id)
+        achievedMissionIds.includes(a.mission_id || "") &&
+        !achievedMissionIds.includes(b.mission_id || "")
       ) {
         return 1; // a を後ろに
       }
       if (
-        !achievedMissionIds.includes(a.mission_id) &&
-        achievedMissionIds.includes(b.mission_id)
+        !achievedMissionIds.includes(a.mission_id || "") &&
+        achievedMissionIds.includes(b.mission_id || "")
       ) {
         return -1; // b を後ろに
       }
       // それ以外はリンクのソート順で比較
-      return a.link_sort_no - b.link_sort_no;
+      return (a.link_sort_no || 0) - (b.link_sort_no || 0);
     });
   }
 
@@ -148,39 +150,44 @@ export default async function MissionsByCategory({
                     .filter(
                       (m) =>
                         showAchievedMissions ||
-                        !achievedMissionIds.includes(m.mission_id),
+                        !achievedMissionIds.includes(m.mission_id || ""),
                     )
                     .map((m) => {
                       const missionForComponent: Tables<"missions"> = {
-                        id: m.mission_id,
-                        title: m.title,
+                        id: m.mission_id || "",
+                        title: m.title || "",
                         icon_url: m.icon_url,
-                        difficulty: m.difficulty,
+                        difficulty: m.difficulty || 0,
                         content: m.content,
-                        created_at: m.created_at,
+                        created_at: m.created_at || "",
                         artifact_label: m.artifact_label,
                         max_achievement_count: m.max_achievement_count,
+                        max_daily_achievement_count:
+                          m.max_daily_achievement_count,
                         event_date: m.event_date,
-                        is_featured: m.is_featured,
-                        updated_at: m.updated_at,
-                        is_hidden: m.is_hidden,
+                        is_featured: m.is_featured || false,
+                        updated_at: m.updated_at || "",
+                        is_hidden: m.is_hidden || false,
                         ogp_image_url: m.ogp_image_url,
-                        required_artifact_type: m.required_artifact_type ?? "",
+                        required_artifact_type: m.required_artifact_type || "",
                       };
 
                       return (
                         <div
-                          key={m.mission_id}
+                          key={m.mission_id || "unknown"}
                           className="flex-shrink-0 w-[300px]"
                         >
                           <Mission
                             mission={missionForComponent}
-                            achieved={achievedMissionIds.includes(m.mission_id)}
+                            achieved={achievedMissionIds.includes(
+                              m.mission_id || "",
+                            )}
                             achievementsCount={
-                              achievementCountMap.get(m.mission_id) ?? 0
+                              achievementCountMap.get(m.mission_id || "") ?? 0
                             }
                             userAchievementCount={
-                              userAchievementCountMap.get(m.mission_id) ?? 0
+                              userAchievementCountMap.get(m.mission_id || "") ??
+                              0
                             }
                           />
                         </div>

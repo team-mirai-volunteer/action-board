@@ -84,7 +84,13 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, submissions, userAchievementCount, referralCode } = pageData;
+  const {
+    mission,
+    submissions,
+    userAchievementCount,
+    referralCode,
+    dailyAttemptStatus,
+  } = pageData;
 
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
@@ -119,6 +125,7 @@ export default async function MissionPage({ params }: Props) {
               initialUserAchievementCount={userAchievementCount}
               initialSubmissions={submissions}
               missionId={id}
+              initialDailyAttemptStatus={dailyAttemptStatus}
             />
             {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
             {mission.max_achievement_count === null && (

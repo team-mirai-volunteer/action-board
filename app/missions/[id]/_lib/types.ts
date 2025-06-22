@@ -27,6 +27,11 @@ export type MissionPageData = {
   userAchievementCount: number;
   totalAchievementCount: number;
   referralCode: string | null;
+  dailyAttemptStatus: {
+    currentAttempts: number;
+    dailyLimit: number | null;
+    hasReachedLimit: boolean;
+  };
 };
 
 export type ButtonLabelProps = {
