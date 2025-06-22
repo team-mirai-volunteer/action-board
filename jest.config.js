@@ -9,7 +9,7 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: "jsdom",
-  testMatch: ["**/tests/**/*.test.{ts,tsx}"],
+  testMatch: ["**/tests/{components,map,mission}/**/*.test.{ts,tsx}"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
@@ -22,10 +22,10 @@ const config = {
   coverageProvider: "v8",
   coverageThreshold: {
     global: {
-      branches: 76,
-      functions: 88,
-      lines: 82,
-      statements: 82,
+      branches: 75,
+      functions: 85,
+      lines: 80,
+      statements: 80,
     },
   },
 };

@@ -1,37 +1,44 @@
 const createMockQuery = (data: unknown[] = []) => {
-  const mockResult = { data };
-  
-  const mockQuery = {
-    then: jest.fn((onResolve) => {
-      return Promise.resolve(onResolve ? onResolve(mockResult) : mockResult);
-    }),
-    select: jest.fn().mockImplementation((columns?: string) => {
-      if (columns === "mission_id") {
-        return {
-          eq: jest.fn().mockResolvedValue({ data }),
-        };
-      }
-      if (columns === "mission_id, achievement_count") {
-        return Promise.resolve({ data });
-      }
-      return Promise.resolve(mockResult);
-    }),
-    eq: jest.fn().mockResolvedValue(mockResult),
-    not: jest.fn().mockResolvedValue(mockResult),
-    order: jest.fn().mockResolvedValue(mockResult),
-    limit: jest.fn().mockResolvedValue(mockResult),
+  const query = {
+    select: jest.fn(),
+    eq: jest.fn(),
+    not: jest.fn(),
+    order: jest.fn(),
+    limit: jest.fn(),
   };
-  
-  return mockQuery;
+
+  query.select.mockImplementation((columns?: string) => {
+    if (columns === "mission_id") {
+      return {
+        eq: jest.fn().mockResolvedValue({ data }),
+      };
+    }
+    if (columns === "mission_id, achievement_count") {
+      return Promise.resolve({ data });
+    }
+    return query;
+  });
+
+  query.eq.mockReturnValue(query);
+  query.not.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  query.limit.mockResolvedValue({ data });
+
+  return query;
 };
+
+export const mockUpload = jest.fn().mockResolvedValue({ 
+  data: { path: "test-path/test-file.jpg" }, 
+  error: null 
+});
 
 export const mockSupabaseClient = {
   from: jest.fn((table: string) => createMockQuery([])),
   storage: {
     from: jest.fn(() => ({
-      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      upload: mockUpload,
     })),
   },
 };
 
-export const createClient = jest.fn(() => Promise.resolve(mockSupabaseClient));
+export const createClient = jest.fn(() => mockSupabaseClient);

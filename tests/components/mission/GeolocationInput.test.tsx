@@ -113,7 +113,10 @@ describe("GeolocationInput", () => {
   });
 
   it("位置情報取得中はボタンが無効化される", async () => {
-    mockGeolocation.getCurrentPosition.mockImplementation(() => {});
+    let successCallback: any;
+    mockGeolocation.getCurrentPosition.mockImplementation((success) => {
+      successCallback = success;
+    });
 
     render(
       <GeolocationInput
@@ -129,6 +132,17 @@ describe("GeolocationInput", () => {
       expect(screen.getByText("位置情報取得中...")).toBeInTheDocument();
       expect(button).toBeDisabled();
     });
+
+    if (successCallback) {
+      successCallback({
+        coords: {
+          latitude: 35.6762,
+          longitude: 139.6503,
+          accuracy: 10,
+          altitude: 100,
+        },
+      });
+    }
   });
 
   it("disabledがtrueの場合はボタンが無効化される", () => {
@@ -154,7 +168,7 @@ describe("GeolocationInput", () => {
     };
 
     mockGeolocation.getCurrentPosition.mockImplementation((success) => {
-      success(mockPosition);
+      setTimeout(() => success(mockPosition), 0);
     });
 
     render(
