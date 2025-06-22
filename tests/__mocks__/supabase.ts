@@ -16,7 +16,11 @@ const createMockQuery = (data: unknown[] = []) => {
     if (columns === "mission_id, achievement_count") {
       return Promise.resolve({ data });
     }
-    return query;
+    return {
+      order: jest.fn().mockImplementation(() => ({
+        order: jest.fn().mockResolvedValue({ data }),
+      })),
+    };
   });
 
   query.eq.mockReturnValue(query);

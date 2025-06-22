@@ -3,13 +3,13 @@ import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-jest.mock("@/app/missions/[id]/_components/YouTubeSubscribeButton", () => {
-  return function MockYouTubeSubscribeButton({
+jest.mock("@/app/missions/[id]/_components/YouTubeSubscribeButton", () => ({
+  YouTubeSubscribeButton: function MockYouTubeSubscribeButton({
     channelId,
   }: { channelId: string }) {
     return <div data-testid="youtube-button">YouTube Button: {channelId}</div>;
-  };
-});
+  },
+}));
 
 jest.mock("@/lib/constants", () => ({
   YOUTUBE_MISSION_CONFIG: {

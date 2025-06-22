@@ -94,7 +94,9 @@ describe("MissionsByCategory", () => {
       if (table === "achievements") {
         return {
           ...mockQuery,
-          select: jest.fn().mockResolvedValue({ data: [] }),
+          select: jest.fn().mockImplementation(() => ({
+            eq: jest.fn().mockResolvedValue({ data: [] }),
+          })),
         };
       }
 
@@ -151,7 +153,11 @@ describe("MissionsByCategory", () => {
       if (table === "mission_category_view") {
         return {
           ...mockQuery,
-          select: jest.fn().mockResolvedValue({ data: [] }),
+          select: jest.fn().mockImplementation(() => ({
+            order: jest.fn().mockImplementation(() => ({
+              order: jest.fn().mockResolvedValue({ data: [] }),
+            })),
+          })),
         };
       }
 

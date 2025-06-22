@@ -27,6 +27,7 @@ const baseMission: Tables<"missions"> = {
   is_featured: false,
   is_hidden: false,
   artifact_label: "テストラベル",
+  ogp_image_url: null,
   created_at: "2025-06-22T00:00:00Z",
   updated_at: "2025-06-22T00:00:00Z",
   required_artifact_type: "LINK",
@@ -79,7 +80,7 @@ describe("ArtifactForm", () => {
       />,
     );
 
-    expect(screen.getByDisplayValue("")).toBeInTheDocument();
+    expect(screen.getByLabelText(/テストラベル/)).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("テストラベルを入力してください"),
     ).toBeInTheDocument();
