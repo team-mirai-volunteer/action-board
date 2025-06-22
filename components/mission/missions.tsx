@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 import Mission from "./mission";
 
 export type MissionsProps = {
@@ -8,6 +7,7 @@ export type MissionsProps = {
   showAchievedMissions: boolean;
   filterFeatured?: boolean;
   title?: string;
+  id?: string;
 };
 
 export default async function Missions({
@@ -16,6 +16,7 @@ export default async function Missions({
   showAchievedMissions,
   filterFeatured,
   title = "📈 ミッション",
+  id,
 }: MissionsProps) {
   const supabase = await createClient();
 
@@ -80,8 +81,8 @@ export default async function Missions({
       <div className="flex flex-col gap-6">
         <div className="text-center">
           <h2
-            id="missions"
-            className="text-2xl md:text-4xl font-black text-gray-900 mb-2"
+            id={id}
+            className="text-2xl md:text-4xl font-black text-gray-900 mb-2 scroll-mt-20"
           >
             {title}
           </h2>
