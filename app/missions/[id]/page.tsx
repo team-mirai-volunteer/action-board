@@ -15,7 +15,10 @@ import {
   defaultUrl,
   notoSansJP,
 } from "@/lib/metadata";
-import { getUserMissionRanking } from "@/lib/services/missionsRanking";
+import {
+  getUserMissionRanking,
+  getUserPostingCount,
+} from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
@@ -88,6 +91,20 @@ export default async function MissionPage({ params }: Props) {
     ? await getUserMissionRanking(id, user.id)
     : null;
 
+  // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
+  const isPostingMission = mission.required_artifact_type === "POSTING";
+  const userPostingCount =
+    user && isPostingMission ? await getUserPostingCount(user.id) : 0;
+  let badgeText = "";
+
+  if (userWithMissionRanking) {
+    if (isPostingMission) {
+      badgeText = `${userPostingCount.toLocaleString()}枚`;
+    } else {
+      badgeText = `${(userWithMissionRanking.user_achievement_count ?? 0).toLocaleString()}回`;
+    }
+  }
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
@@ -110,6 +127,7 @@ export default async function MissionPage({ params }: Props) {
                   <CurrentUserCardMission
                     currentUser={userWithMissionRanking}
                     mission={mission}
+                    badgeText={badgeText}
                   />
                 </div>
                 <div className="mt-6">
@@ -117,6 +135,7 @@ export default async function MissionPage({ params }: Props) {
                     limit={10}
                     showDetailedInfo={true}
                     mission={mission}
+                    isPostingMission={isPostingMission}
                   />
                 </div>
               </>

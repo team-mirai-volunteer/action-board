@@ -2,7 +2,10 @@ import { CurrentUserCardMission } from "@/components/ranking/current-user-card-m
 import { MissionSelect } from "@/components/ranking/mission-select";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
-import { getUserMissionRanking } from "@/lib/services/missionsRanking";
+import {
+  getUserMissionRanking,
+  getUserPostingCount,
+} from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
@@ -67,6 +70,20 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
     userRanking = await getUserMissionRanking(selectedMission.id, user.id);
   }
 
+  // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
+  const isPostingMission = selectedMission.required_artifact_type === "POSTING";
+  const userPostingCount =
+    user && isPostingMission ? await getUserPostingCount(user.id) : 0;
+  let badgeText = "";
+
+  if (userRanking) {
+    if (isPostingMission) {
+      badgeText = `${userPostingCount.toLocaleString()}枚`;
+    } else {
+      badgeText = `${(userRanking.user_achievement_count ?? 0).toLocaleString()}回`;
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
       <RankingTabs>
@@ -81,13 +98,18 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
             <CurrentUserCardMission
               currentUser={userRanking}
               mission={selectedMission}
+              badgeText={badgeText}
             />
           </section>
         )}
 
         <section className="py-4 bg-white">
           {/* ミッション別ランキング */}
-          <RankingMission limit={100} mission={selectedMission} />
+          <RankingMission
+            limit={100}
+            mission={selectedMission}
+            isPostingMission={isPostingMission}
+          />
         </section>
       </RankingTabs>
     </div>

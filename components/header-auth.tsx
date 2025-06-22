@@ -36,7 +36,7 @@ export default async function AuthButton() {
         >
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link href="/">ダッシュボード</Link>
+              <Link href="/">ホーム</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/map/posting">機関誌配布マップ</Link>
@@ -75,7 +75,7 @@ export default async function AuthButton() {
         <Link href="/sign-in">ログイン</Link>
       </Button>
       <Button asChild size="sm" variant="default">
-        <Link href="/sign-up">サインアップ</Link>
+        <Link href="/sign-up">新規登録</Link>
       </Button>
     </div>
   );
