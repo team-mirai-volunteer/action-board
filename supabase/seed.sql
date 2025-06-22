@@ -68,6 +68,17 @@ VALUES
   ('5546205f-933f-4a86-83af-dbf6bb6cde93', '(seed) 日付付きミッション１ (成果物不要, 上限1回)', '/img/mission_fallback.svg', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01', 'NONE', 1),
   ('e5348472-d054-4ef4-81af-772c6323b669', '(seed) Xのニックネームを入力しよう(テキスト提出)', NULL, 'Xのニックネームを入力しよう', 1, NULL, 'TEXT', NULL);  
 
+INSERT INTO mission_category_link (mission_id, category_id, sort_no) VALUES
+  (coalesce((select id from missions where title = '(seed) Xのニックネームを入力しよう(テキスト提出)' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 10),
+
+  (coalesce((select id from missions where title = '(seed) 活動ブログを書こう (リンク提出)' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 10),
+  (coalesce((select id from missions where title = '(seed) 今日のベストショット (画像提出)' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 11),
+
+  (coalesce((select id from missions where title = '(seed) 発見！地域の宝 (位置情報付き画像)' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 10),
+  (coalesce((select id from missions where title = '(seed) 日付付きミッション１ (成果物不要, 上限1回)' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 11),
+
+  (coalesce((select id from missions where title = '(seed) ゴミ拾いをしよう (成果物不要)' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 10);
+
 --★#278対応にて、achievementsとmission_artifactsのuser_idのFKをpublic_user_profileからauth.usersへ変更
 --★seed.sql実行時点でauth.usersデータを作れず、上記2テーブルがFK違反になることから、INSERT処理はコメントアウト
 
