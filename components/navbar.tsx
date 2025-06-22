@@ -65,7 +65,7 @@ export default async function Navbar() {
                     <Link href="/sign-in">ログイン</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/sign-up">サインアップ</Link>
+                    <Link href="/sign-up">新規登録</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

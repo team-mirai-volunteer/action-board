@@ -63,23 +63,6 @@ function ConsentPhase({
 
   return (
     <div className="flex flex-col gap-2 mt-2">
-      {/* チームみらいサポーター情報 */}
-      <Card className="bg-gray-50 border-gray-200">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-              <span className="text-gray-600 text-xs font-bold">i</span>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p className="font-medium mb-1">チームみらいサポーターへの参加</p>
-              <p className="text-gray-600">
-                アクションボードに登録することで、サポーターとしてチームみらいを応援することができます。義務や費用は一切発生しません。
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <Label htmlFor="date_of_birth">
         生年月日（満18歳以上である必要があります）
       </Label>
@@ -208,6 +191,19 @@ function ConsentPhase({
       >
         次へ進む
       </Button>
+      {/* チームみらいサポーター情報 */}
+      <Card className="bg-gray-50 border-gray-200 mt-4">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="text-sm text-gray-600">
+              {/* <p className="font-medium mb-1">チームみらいサポーターへの参加</p> */}
+              <p className="text-gray-600">
+                アクションボードに登録することで、サポーターとしてチームみらいを応援することができます。義務や費用は一切発生しません。
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -394,9 +390,9 @@ export default function TwoStepSignUpForm({
   return (
     <div className="flex flex-col min-w-72 max-w-72 mx-auto">
       <h1 className="text-2xl font-medium text-center mb-2">
-        アカウントを作成する
+        アクションボードに登録
       </h1>
-      <p className="text-sm text-foreground text-center">
+      <p className="text-sm text-foreground text-center mb-4">
         すでに登録済みの方は{" "}
         <Link className="text-primary font-medium underline" href="/sign-in">
           こちら
