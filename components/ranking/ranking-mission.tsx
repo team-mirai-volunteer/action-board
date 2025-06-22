@@ -1,6 +1,9 @@
 // TOPページ用のランキングコンポーネント
 import { Card } from "@/components/ui/card";
-import { getMissionRanking } from "@/lib/services/missionsRanking";
+import {
+  getMissionRanking,
+  getTopUsersPostingCount,
+} from "@/lib/services/missionsRanking";
 import type { Tables } from "@/lib/types/supabase";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -25,6 +28,27 @@ export default async function RankingMission({
 
   const rankings = await getMissionRanking(mission.id, limit);
 
+  // ポスティングミッションの場合のみ、上位ユーザーの投稿数を取得
+  const topUsersPostingCount =
+    isPostingMission && rankings.length > 0
+      ? await getTopUsersPostingCount(
+          rankings.map((user) => user.user_id ?? ""),
+        )
+      : [];
+
+  // バッジテキストの生成
+  let badgeText = "";
+  if (rankings.length > 0) {
+    if (isPostingMission) {
+      const topUserPostingCount = topUsersPostingCount.find(
+        (user) => user.user_id === rankings[0].user_id,
+      );
+      badgeText = `${(topUserPostingCount?.posting_count ?? 0).toLocaleString()}枚`;
+    } else {
+      badgeText = `${(rankings[0].user_achievement_count ?? 0).toLocaleString()}回`;
+    }
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex flex-col gap-6">
@@ -44,7 +68,7 @@ export default async function RankingMission({
                 mission={
                   mission ? { id: mission.id, name: mission.title } : undefined
                 }
-                isPostingMission={isPostingMission}
+                badgeText={badgeText}
               />
             ))}
           </div>
