@@ -64,17 +64,16 @@ function ConsentPhase({
   return (
     <div className="flex flex-col gap-2 mt-2">
       {/* チームみらいサポーター情報 */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gray-50 border-gray-200">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
-              <span className="text-white text-xs font-bold">i</span>
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+              <span className="text-gray-600 text-xs font-bold">i</span>
             </div>
-            <div className="text-sm text-blue-800">
+            <div className="text-sm text-gray-600">
               <p className="font-medium mb-1">チームみらいサポーターへの参加</p>
-              <p className="text-blue-700">
-                アクションボードに登録すると、チームみらいサポーターとして参加できます。
-                サポーターは、チームみらいのために積極的に活動する仲間です。
+              <p className="text-gray-600">
+                アクションボードに登録することで、サポーターとしてチームみらいを応援することができます。義務や費用は一切発生しません。
               </p>
             </div>
           </div>
