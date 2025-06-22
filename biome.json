@@ -13,7 +13,8 @@
       "**/supabase/.temp/**",
       "**/playwright-report/**",
       "**/coverage/**",
-      "**/mobile_flutter/**"
+      "**/mobile_flutter/**",
+      "**/tests/**"
     ]
   },
   "formatter": {
@@ -30,6 +31,7 @@
       "recommended": true
     }
   },
+
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
