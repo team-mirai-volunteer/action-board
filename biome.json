@@ -33,7 +33,7 @@
   },
   "overrides": [
     {
-      "include": ["components/**/*.test.tsx", "components/**/*.test.ts"],
+      "include": ["**/*.test.tsx", "**/*.test.ts"],
       "linter": {
         "rules": {
           "suspicious": {
