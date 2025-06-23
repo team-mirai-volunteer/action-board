@@ -84,6 +84,9 @@ export default async function MissionsByCategory({
   // カテゴリごとにグループ化
   const grouped = data.reduce<Record<string, MissionCategoryViewRow[]>>(
     (acc, row) => {
+      // category_idがnullの場合はスキップ
+      if (!row.category_id) return acc;
+
       if (!acc[row.category_id]) acc[row.category_id] = [];
       acc[row.category_id].push(row);
       return acc;
@@ -94,6 +97,9 @@ export default async function MissionsByCategory({
   // カテゴリ内のミッションをソート
   for (const categoryId in grouped) {
     grouped[categoryId].sort((a, b) => {
+      // mission_idがnullの場合の処理
+      if (!a.mission_id || !b.mission_id) return 0;
+
       // クリア済みミッションを後ろに
       if (
         achievedMissionIds.includes(a.mission_id) &&
@@ -108,7 +114,7 @@ export default async function MissionsByCategory({
         return -1; // b を後ろに
       }
       // それ以外はリンクのソート順で比較
-      return a.link_sort_no - b.link_sort_no;
+      return (a.link_sort_no ?? 0) - (b.link_sort_no ?? 0);
     });
   }
 
@@ -147,40 +153,45 @@ export default async function MissionsByCategory({
                   {missionsInCategory
                     .filter(
                       (m) =>
-                        showAchievedMissions ||
-                        !achievedMissionIds.includes(m.mission_id),
+                        m.mission_id &&
+                        (showAchievedMissions ||
+                          !achievedMissionIds.includes(m.mission_id)),
                     )
                     .map((m) => {
+                      // filterでmission_idがnullでないことを確認済み
+                      // mission_idが存在することが保証されているので、安全にアクセス
+                      const missionId = m.mission_id as string;
+
                       const missionForComponent: Tables<"missions"> = {
-                        id: m.mission_id,
-                        title: m.title,
+                        id: missionId,
+                        title: m.title || "",
                         icon_url: m.icon_url,
-                        difficulty: m.difficulty,
-                        content: m.content,
-                        created_at: m.created_at,
+                        difficulty: m.difficulty || 1,
+                        content: m.content || "",
+                        created_at: m.created_at || new Date().toISOString(),
                         artifact_label: m.artifact_label,
                         max_achievement_count: m.max_achievement_count,
                         event_date: m.event_date,
-                        is_featured: m.is_featured,
-                        updated_at: m.updated_at,
-                        is_hidden: m.is_hidden,
+                        is_featured: m.is_featured || false,
+                        updated_at: m.updated_at || new Date().toISOString(),
+                        is_hidden: m.is_hidden || false,
                         ogp_image_url: m.ogp_image_url,
-                        required_artifact_type: m.required_artifact_type ?? "",
+                        required_artifact_type: m.required_artifact_type || "",
                       };
 
                       return (
                         <div
-                          key={m.mission_id}
+                          key={missionId}
                           className="flex-shrink-0 w-[300px]"
                         >
                           <Mission
                             mission={missionForComponent}
-                            achieved={achievedMissionIds.includes(m.mission_id)}
+                            achieved={achievedMissionIds.includes(missionId)}
                             achievementsCount={
-                              achievementCountMap.get(m.mission_id) ?? 0
+                              achievementCountMap.get(missionId) ?? 0
                             }
                             userAchievementCount={
-                              userAchievementCountMap.get(m.mission_id) ?? 0
+                              userAchievementCountMap.get(missionId) ?? 0
                             }
                           />
                         </div>
