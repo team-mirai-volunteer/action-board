@@ -43,7 +43,9 @@ export async function checkAndRecordDailyAttempt(
     return { canAttempt: true, currentAttempts: 0, dailyLimit: null };
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 
   const { data: existingAttempt, error: fetchError } = await supabase
     .from("daily_mission_attempts")
@@ -111,7 +113,9 @@ export async function decrementDailyAttempt(
     return { success: true };
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 
   const { data: existingAttempt, error: fetchError } = await supabase
     .from("daily_mission_attempts")

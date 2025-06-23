@@ -200,7 +200,9 @@ export async function getDailyAttemptStatus(
     };
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 
   const { data: attemptData } = await supabase
     .from("daily_mission_attempts")
