@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 
 jest.mock("@/lib/supabase/client", () =>
-  require("../../../tests/__mocks__/supabase"),
+  require("../../tests/__mocks__/supabase"),
 );
 
 const mockUser: User = {

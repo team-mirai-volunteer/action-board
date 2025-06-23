@@ -3,10 +3,10 @@ import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { mockSupabaseClient } from "../../../tests/__mocks__/supabase";
+import { mockSupabaseClient } from "../../tests/__mocks__/supabase";
 
 jest.mock("@/lib/supabase/client", () =>
-  require("../../../tests/__mocks__/supabase"),
+  require("../../tests/__mocks__/supabase"),
 );
 
 const mockUser: User = {

@@ -1,10 +1,10 @@
 import Missions from "@/components/mission/missions";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { mockSupabaseClient } from "../../../tests/__mocks__/supabase";
+import { mockSupabaseClient } from "../../tests/__mocks__/supabase";
 
 jest.mock("@/lib/supabase/server", () =>
-  require("../../../tests/__mocks__/supabase"),
+  require("../../tests/__mocks__/supabase"),
 );
 
 jest.mock("@/components/mission/mission", () => {

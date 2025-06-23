@@ -13,7 +13,7 @@ const config = {
     "**/tests/**/*.test.{ts,tsx}",
     "**/components/**/*.test.{ts,tsx}",
   ],
-  testPathIgnorePatterns: ["/tests/rls/"],
+  testPathIgnorePatterns: ["<rootDir>/tests/rls/"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
