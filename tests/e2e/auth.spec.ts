@@ -46,10 +46,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     await day.press("Enter");
     await page.getByRole("option", { name: "14日" }).click();
 
-    // 利用規約に同意する
+    // 利用規約・プライバシーポリシーに同意する
     await page.locator("#terms").click();
-    // プライバシーポリシーに同意する
-    await page.locator("#privacy").click();
 
     // 次へ進むボタンをクリック
     await page.getByRole("button", { name: "次へ進む" }).click();
@@ -199,10 +197,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     const selectedDay = page.getByRole("option", { name: "31日" });
     await selectedDay.click();
 
-    // 利用規約に同意する
+    // 利用規約・プライバシーポリシーに同意する
     await page.locator("#terms").click();
-    // プライバシーポリシーに同意する
-    await page.locator("#privacy").click();
 
     // 年齢制限エラーメッセージが表示されることを確認
     await expect(
@@ -232,14 +228,12 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     await day2.press("Enter");
     await page.getByRole("option", { name: "14日" }).click();
 
-    // 利用規約のみ同意（プライバシーポリシーは未同意）
-    await page.locator("#terms").click();
-
+    // 利用規約・プライバシーポリシーに未同意
     // 次へ進むボタンが無効化されていることを確認
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
 
-    // プライバシーポリシーにも同意
-    await page.locator("#privacy").click();
+    // 利用規約・プライバシーポリシーに同意
+    await page.locator("#terms").click();
 
     // 次へ進むボタンが有効化されることを確認
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeEnabled();
@@ -350,12 +344,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
 
-    // 4. 利用規約のみ同意して無効化されていることを確認
+    // 4. 利用規約・プライバシーポリシーに同意して有効化されることを確認
     await page.locator("#terms").click();
-    await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
-
-    // 5. すべて入力すると有効化されることを確認
-    await page.locator("#privacy").click();
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeEnabled();
   });
 
@@ -484,7 +474,6 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     // 利用規約・プライバシーポリシーに同意
     await page.locator("#terms").click();
-    await page.locator("#privacy").click();
 
     // 次へ進む
     await page.getByRole("button", { name: "次へ進む" }).click();

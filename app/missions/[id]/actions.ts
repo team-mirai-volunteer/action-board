@@ -9,6 +9,22 @@ import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
+// Quiz関連のServer ActionsとQuizQuestion型をインポート
+import {
+  type QuizQuestion,
+  checkQuizAnswersAction,
+  getMissionQuizCategoryAction,
+  getQuizQuestionsAction,
+} from "./quiz-actions";
+
+// Quiz関連のServer Actionsを再エクスポート
+export {
+  getMissionQuizCategoryAction,
+  getQuizQuestionsAction,
+  checkQuizAnswersAction,
+  type QuizQuestion,
+};
+
 // 基本スキーマ（共通項目）
 const baseMissionFormSchema = z.object({
   missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
@@ -96,6 +112,11 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
     .max(100, { message: "ポスティング場所は100文字以下で入力してください" }),
 });
 
+// QUIZタイプ用スキーマ（sessionIdは不要）
+const quizArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
+});
+
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
@@ -103,8 +124,9 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   emailArtifactSchema,
   imageArtifactSchema,
   imageWithGeolocationArtifactSchema,
-  postingArtifactSchema,
   noneArtifactSchema,
+  postingArtifactSchema,
+  quizArtifactSchema, // 追加
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -131,7 +153,6 @@ export const achieveMissionAction = async (formData: FormData) => {
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
 
-  // zodによるバリデーション
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
     requiredArtifactType,
@@ -343,6 +364,14 @@ export const achieveMissionAction = async (formData: FormData) => {
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
       }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
+      artifactTypeLabel = "QUIZ";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
+        // クイズ結果はdescriptionのみに格納
+        artifactPayload.text_content = null;
+        artifactPayload.link_url = null;
+        artifactPayload.image_storage_path = null;
+      }
     } else {
       // その他のタイプは全てnullに
       artifactPayload.link_url = null;
@@ -350,8 +379,9 @@ export const achieveMissionAction = async (formData: FormData) => {
       artifactPayload.text_content = null;
     }
 
-    // CHECK制約: link_url、text_content、image_storage_pathのいずれか一つは必須
+    // CHECK制約: QUIZタイプ以外はlink_url、text_content、image_storage_pathのいずれか一つは必須
     if (
+      validatedRequiredArtifactType !== ARTIFACT_TYPES.QUIZ.key &&
       !artifactPayload.link_url &&
       !artifactPayload.image_storage_path &&
       !artifactPayload.text_content
@@ -376,9 +406,6 @@ export const achieveMissionAction = async (formData: FormData) => {
         error: validationError,
       };
     }
-
-    // insert前にpayloadと分岐情報を出力
-    console.log(`[Artifact Insert] type=${artifactTypeLabel}`, artifactPayload);
 
     const { data: newArtifact, error: artifactError } = await supabase
       .from("mission_artifacts")

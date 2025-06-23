@@ -40,6 +40,11 @@ export const ARTIFACT_TYPES = {
     displayName: "ポスティング",
     prompt: "ポスティングした枚数と場所を入力してください。",
   },
+  QUIZ: {
+    key: "QUIZ",
+    displayName: "クイズ",
+    prompt: "クイズに正解してミッションを達成しましょう。",
+  },
   NONE: {
     key: "NONE",
     displayName: "添付データ不要",

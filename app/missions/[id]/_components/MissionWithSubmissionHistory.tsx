@@ -23,6 +23,14 @@ type Props = {
     dailyLimit: number | null;
     hasReachedLimit: boolean;
   };
+  preloadedQuizQuestions?:
+    | {
+        id: string;
+        question: string;
+        options: string[];
+        category?: string;
+      }[]
+    | null;
 };
 
 export function MissionWithSubmissionHistory({
@@ -33,6 +41,7 @@ export function MissionWithSubmissionHistory({
   initialSubmissions,
   missionId,
   initialDailyAttemptStatus,
+  preloadedQuizQuestions,
 }: Props) {
   const [submissions, setSubmissions] =
     useState<SubmissionData[]>(initialSubmissions);
@@ -192,6 +201,7 @@ export function MissionWithSubmissionHistory({
           userAchievementCount={userAchievementCount}
           onSubmissionSuccess={refreshSubmissions}
           initialDailyAttemptStatus={initialDailyAttemptStatus}
+          preloadedQuizQuestions={preloadedQuizQuestions}
         />
       )}
 

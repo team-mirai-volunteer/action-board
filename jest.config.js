@@ -8,8 +8,8 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const config = {
-  testEnvironment: "node",
-  testMatch: ["**/tests/**/*.test.ts"],
+  testEnvironment: "jsdom",
+  testMatch: ["**/*.test.{ts,tsx}"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
