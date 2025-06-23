@@ -27,7 +27,7 @@ type Props = {
         id: string;
         question: string;
         options: string[];
-        difficulty: number;
+        category?: string;
       }[]
     | null;
 };
