@@ -43,4 +43,25 @@ jest.mock("lucide-react", () => ({
       className,
     });
   },
+  Crown: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "crown-icon",
+      className,
+    });
+  },
+  Trophy: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "trophy-icon",
+      className,
+    });
+  },
+  Medal: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "medal-icon",
+      className,
+    });
+  },
 }));
