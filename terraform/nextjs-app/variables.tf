@@ -153,6 +153,12 @@ variable "SUPABASE_SITE_URL" {
   type        = string
 }
 
+variable "BQ_USER_PASSWORD" {
+  description = "BigQuery User Password (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
 variable "SENTRY_AUTH_TOKEN" {
   description = "Sentry Auth Token (sensitive)"
   type        = string
