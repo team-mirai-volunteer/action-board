@@ -49,6 +49,24 @@ COMMENT ON COLUMN quiz_questions.correct_answer IS '正解の選択肢番号 (1-
 COMMENT ON COLUMN quiz_questions.explanation IS '解説';
 COMMENT ON COLUMN quiz_questions.difficulty IS '難易度 (1-5)';
 
+-- クイズカテゴリリンクテーブル
+CREATE TABLE quiz_category_links (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category_id UUID NOT NULL REFERENCES quiz_categories(id) ON DELETE CASCADE,
+    link TEXT NOT NULL,
+    remark TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE quiz_category_links IS 'クイズカテゴリの参考リンク';
+COMMENT ON COLUMN quiz_category_links.id IS 'リンクID';
+COMMENT ON COLUMN quiz_category_links.category_id IS 'カテゴリID';
+COMMENT ON COLUMN quiz_category_links.link IS '参考リンクURL';
+COMMENT ON COLUMN quiz_category_links.remark IS 'リンクに関する備考';
+COMMENT ON COLUMN quiz_category_links.display_order IS '表示順序';
+COMMENT ON COLUMN quiz_category_links.created_at IS '作成日時(UTC)';
+
 -- ミッションクイズ問題関連テーブル（新規追加）
 CREATE TABLE mission_quiz_questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -73,6 +91,7 @@ CREATE INDEX idx_quiz_questions_category_id ON quiz_questions(category_id);
 CREATE INDEX idx_quiz_questions_difficulty ON quiz_questions(difficulty);
 CREATE INDEX idx_mission_quiz_questions_mission_id ON mission_quiz_questions(mission_id);
 CREATE INDEX idx_mission_quiz_questions_question_id ON mission_quiz_questions(question_id);
+CREATE INDEX idx_quiz_category_links_category_id ON quiz_category_links(category_id);
 
 -- RLS設定
 
@@ -92,6 +111,12 @@ CREATE POLICY "Anyone can read quiz questions"
 ALTER TABLE mission_quiz_questions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can read mission quiz questions"
   ON mission_quiz_questions FOR SELECT
+  USING (true);
+
+-- quiz_category_links: 全ユーザー読み取り可能
+ALTER TABLE quiz_category_links ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read quiz category links"
+  ON quiz_category_links FOR SELECT
   USING (true);
 
 -- mission_artifactsテーブルのartifact_type制約にQUIZタイプを追加

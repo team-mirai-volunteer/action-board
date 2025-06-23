@@ -66,8 +66,7 @@ export function useQuizMission({
     setQuizResults(results);
     setQuizPassed(results.passed);
 
-    // スクロール位置をリセット
-    scrollToTop?.();
+    // スクロールはQuizComponent内で結果カードまでスクロールするため、ここでは行わない
   };
 
   // クイズミッション達成時の処理
@@ -110,8 +109,7 @@ export function useQuizMission({
           });
         }
 
-        // スクロール位置をリセット
-        scrollToTop?.();
+        // スクロールはQuizComponent内で処理されるため、ここでは行わない
 
         if (onSubmissionSuccess) {
           onSubmissionSuccess();

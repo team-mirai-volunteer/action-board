@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Loader2, XCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface QuizQuestion {
   id: string;
@@ -130,10 +130,32 @@ export default function QuizComponent({
   const [result, setResult] = useState<QuizResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // 結果カードへの参照
+  const resultCardRef = useRef<HTMLDivElement>(null);
+
   // クライアントサイドでのマウント時の処理
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // 結果が表示されたときのスクロール処理
+  useEffect(() => {
+    if (result) {
+      // 少し遅延を入れて、DOMが完全にレンダリングされてからスクロール
+      setTimeout(() => {
+        if (result.passed && resultCardRef.current) {
+          // 全問正解時は結果カードまでスクロール
+          resultCardRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        } else {
+          // 不正解時は画面トップへスクロール
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [result]);
 
   // クライアントサイドでマウントされた後にシャッフルを実行
   useEffect(() => {
@@ -335,7 +357,7 @@ export default function QuizComponent({
         })}
 
         {/* 結果カード */}
-        <Card className="w-full">
+        <Card ref={resultCardRef} className="w-full">
           <CardContent className="space-y-4 p-6">
             <div className="space-y-2">
               <div className="text-xl font-bold flex mb-6">
