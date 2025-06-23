@@ -65,7 +65,7 @@ export function useDailyAttemptStatus(
     }
 
     const supabase = createClient();
-    const status = await fetchDailyAttemptStatus(supabase, userId, missionId);
+    const status = await fetchDailyAttemptStatus(userId, missionId);
     setDailyAttemptStatus(status);
   }, [userId, missionId]);
 

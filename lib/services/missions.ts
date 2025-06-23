@@ -3,7 +3,6 @@ import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
 import { getTodayInJST } from "@/lib/utils/utils";
 
-
 export type Mission = Tables<"missions">;
 
 export async function hasFeaturedMissions(): Promise<boolean> {
