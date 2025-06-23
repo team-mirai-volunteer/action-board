@@ -24,11 +24,15 @@ mixin _$Mission {
   int get difficulty => throw _privateConstructorUsedError;
   DateTime? get eventDate => throw _privateConstructorUsedError;
   String get requiredArtifactType => throw _privateConstructorUsedError;
+  String? get artifactLabel => throw _privateConstructorUsedError;
+  String? get ogpImageUrl => throw _privateConstructorUsedError;
   int? get maxAchievementCount => throw _privateConstructorUsedError;
   bool get isFeatured => throw _privateConstructorUsedError;
   bool get isHidden => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
+  int get achievementCount => throw _privateConstructorUsedError;
+  bool get isCompleted => throw _privateConstructorUsedError;
 
   /// Create a copy of Mission
   /// with the given fields replaced by the non-null parameter values.
@@ -49,11 +53,15 @@ abstract class $MissionCopyWith<$Res> {
     int difficulty,
     DateTime? eventDate,
     String requiredArtifactType,
+    String? artifactLabel,
+    String? ogpImageUrl,
     int? maxAchievementCount,
     bool isFeatured,
     bool isHidden,
     DateTime createdAt,
     DateTime updatedAt,
+    int achievementCount,
+    bool isCompleted,
   });
 }
 
@@ -79,11 +87,15 @@ class _$MissionCopyWithImpl<$Res, $Val extends Mission>
     Object? difficulty = null,
     Object? eventDate = freezed,
     Object? requiredArtifactType = null,
+    Object? artifactLabel = freezed,
+    Object? ogpImageUrl = freezed,
     Object? maxAchievementCount = freezed,
     Object? isFeatured = null,
     Object? isHidden = null,
     Object? createdAt = null,
     Object? updatedAt = null,
+    Object? achievementCount = null,
+    Object? isCompleted = null,
   }) {
     return _then(
       _value.copyWith(
@@ -115,6 +127,14 @@ class _$MissionCopyWithImpl<$Res, $Val extends Mission>
                 ? _value.requiredArtifactType
                 : requiredArtifactType // ignore: cast_nullable_to_non_nullable
                       as String,
+            artifactLabel: freezed == artifactLabel
+                ? _value.artifactLabel
+                : artifactLabel // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            ogpImageUrl: freezed == ogpImageUrl
+                ? _value.ogpImageUrl
+                : ogpImageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
             maxAchievementCount: freezed == maxAchievementCount
                 ? _value.maxAchievementCount
                 : maxAchievementCount // ignore: cast_nullable_to_non_nullable
@@ -135,6 +155,14 @@ class _$MissionCopyWithImpl<$Res, $Val extends Mission>
                 ? _value.updatedAt
                 : updatedAt // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            achievementCount: null == achievementCount
+                ? _value.achievementCount
+                : achievementCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isCompleted: null == isCompleted
+                ? _value.isCompleted
+                : isCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -157,11 +185,15 @@ abstract class _$$MissionImplCopyWith<$Res> implements $MissionCopyWith<$Res> {
     int difficulty,
     DateTime? eventDate,
     String requiredArtifactType,
+    String? artifactLabel,
+    String? ogpImageUrl,
     int? maxAchievementCount,
     bool isFeatured,
     bool isHidden,
     DateTime createdAt,
     DateTime updatedAt,
+    int achievementCount,
+    bool isCompleted,
   });
 }
 
@@ -186,11 +218,15 @@ class __$$MissionImplCopyWithImpl<$Res>
     Object? difficulty = null,
     Object? eventDate = freezed,
     Object? requiredArtifactType = null,
+    Object? artifactLabel = freezed,
+    Object? ogpImageUrl = freezed,
     Object? maxAchievementCount = freezed,
     Object? isFeatured = null,
     Object? isHidden = null,
     Object? createdAt = null,
     Object? updatedAt = null,
+    Object? achievementCount = null,
+    Object? isCompleted = null,
   }) {
     return _then(
       _$MissionImpl(
@@ -222,6 +258,14 @@ class __$$MissionImplCopyWithImpl<$Res>
             ? _value.requiredArtifactType
             : requiredArtifactType // ignore: cast_nullable_to_non_nullable
                   as String,
+        artifactLabel: freezed == artifactLabel
+            ? _value.artifactLabel
+            : artifactLabel // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        ogpImageUrl: freezed == ogpImageUrl
+            ? _value.ogpImageUrl
+            : ogpImageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
         maxAchievementCount: freezed == maxAchievementCount
             ? _value.maxAchievementCount
             : maxAchievementCount // ignore: cast_nullable_to_non_nullable
@@ -242,6 +286,14 @@ class __$$MissionImplCopyWithImpl<$Res>
             ? _value.updatedAt
             : updatedAt // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        achievementCount: null == achievementCount
+            ? _value.achievementCount
+            : achievementCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isCompleted: null == isCompleted
+            ? _value.isCompleted
+            : isCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -258,11 +310,15 @@ class _$MissionImpl implements _Mission {
     required this.difficulty,
     this.eventDate,
     required this.requiredArtifactType,
+    this.artifactLabel,
+    this.ogpImageUrl,
     this.maxAchievementCount,
     this.isFeatured = false,
     this.isHidden = false,
     required this.createdAt,
     required this.updatedAt,
+    this.achievementCount = 0,
+    this.isCompleted = false,
   });
 
   @override
@@ -280,6 +336,10 @@ class _$MissionImpl implements _Mission {
   @override
   final String requiredArtifactType;
   @override
+  final String? artifactLabel;
+  @override
+  final String? ogpImageUrl;
+  @override
   final int? maxAchievementCount;
   @override
   @JsonKey()
@@ -291,10 +351,16 @@ class _$MissionImpl implements _Mission {
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
+  @override
+  @JsonKey()
+  final int achievementCount;
+  @override
+  @JsonKey()
+  final bool isCompleted;
 
   @override
   String toString() {
-    return 'Mission(id: $id, title: $title, iconUrl: $iconUrl, content: $content, difficulty: $difficulty, eventDate: $eventDate, requiredArtifactType: $requiredArtifactType, maxAchievementCount: $maxAchievementCount, isFeatured: $isFeatured, isHidden: $isHidden, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Mission(id: $id, title: $title, iconUrl: $iconUrl, content: $content, difficulty: $difficulty, eventDate: $eventDate, requiredArtifactType: $requiredArtifactType, artifactLabel: $artifactLabel, ogpImageUrl: $ogpImageUrl, maxAchievementCount: $maxAchievementCount, isFeatured: $isFeatured, isHidden: $isHidden, createdAt: $createdAt, updatedAt: $updatedAt, achievementCount: $achievementCount, isCompleted: $isCompleted)';
   }
 
   @override
@@ -312,6 +378,10 @@ class _$MissionImpl implements _Mission {
                 other.eventDate == eventDate) &&
             (identical(other.requiredArtifactType, requiredArtifactType) ||
                 other.requiredArtifactType == requiredArtifactType) &&
+            (identical(other.artifactLabel, artifactLabel) ||
+                other.artifactLabel == artifactLabel) &&
+            (identical(other.ogpImageUrl, ogpImageUrl) ||
+                other.ogpImageUrl == ogpImageUrl) &&
             (identical(other.maxAchievementCount, maxAchievementCount) ||
                 other.maxAchievementCount == maxAchievementCount) &&
             (identical(other.isFeatured, isFeatured) ||
@@ -321,7 +391,11 @@ class _$MissionImpl implements _Mission {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.achievementCount, achievementCount) ||
+                other.achievementCount == achievementCount) &&
+            (identical(other.isCompleted, isCompleted) ||
+                other.isCompleted == isCompleted));
   }
 
   @override
@@ -334,11 +408,15 @@ class _$MissionImpl implements _Mission {
     difficulty,
     eventDate,
     requiredArtifactType,
+    artifactLabel,
+    ogpImageUrl,
     maxAchievementCount,
     isFeatured,
     isHidden,
     createdAt,
     updatedAt,
+    achievementCount,
+    isCompleted,
   );
 
   /// Create a copy of Mission
@@ -359,11 +437,15 @@ abstract class _Mission implements Mission {
     required final int difficulty,
     final DateTime? eventDate,
     required final String requiredArtifactType,
+    final String? artifactLabel,
+    final String? ogpImageUrl,
     final int? maxAchievementCount,
     final bool isFeatured,
     final bool isHidden,
     required final DateTime createdAt,
     required final DateTime updatedAt,
+    final int achievementCount,
+    final bool isCompleted,
   }) = _$MissionImpl;
 
   @override
@@ -381,6 +463,10 @@ abstract class _Mission implements Mission {
   @override
   String get requiredArtifactType;
   @override
+  String? get artifactLabel;
+  @override
+  String? get ogpImageUrl;
+  @override
   int? get maxAchievementCount;
   @override
   bool get isFeatured;
@@ -390,6 +476,10 @@ abstract class _Mission implements Mission {
   DateTime get createdAt;
   @override
   DateTime get updatedAt;
+  @override
+  int get achievementCount;
+  @override
+  bool get isCompleted;
 
   /// Create a copy of Mission
   /// with the given fields replaced by the non-null parameter values.

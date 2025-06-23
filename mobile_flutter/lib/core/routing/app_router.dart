@@ -11,6 +11,7 @@ import 'package:mobile_flutter/features/auth/presentation/pages/sign_up_page.dar
 import 'package:mobile_flutter/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile_flutter/features/auth/presentation/providers/user_profile_provider.dart';
 import 'package:mobile_flutter/features/main/presentation/pages/main_navigation_page.dart';
+import 'package:mobile_flutter/features/missions/presentation/pages/mission_detail_page.dart';
 import 'package:mobile_flutter/features/missions/presentation/pages/mission_list_page.dart';
 import 'package:mobile_flutter/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:mobile_flutter/features/splash/presentation/pages/splash_page.dart';
@@ -295,6 +296,32 @@ GoRouter appRouter(Ref ref) {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const MissionListPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.ease;
+
+                  var tween = Tween(begin: begin, end: end).chain(
+                    CurveTween(curve: curve),
+                  );
+
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+            transitionDuration: const Duration(milliseconds: 300),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/missions/:missionId',
+        pageBuilder: (context, state) {
+          final missionId = state.pathParameters['missionId']!;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: MissionDetailPage(missionId: missionId),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);

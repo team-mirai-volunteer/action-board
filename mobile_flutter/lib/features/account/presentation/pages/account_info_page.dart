@@ -100,7 +100,7 @@ class AccountInfoPage extends ConsumerWidget {
                                       ),
                                     ),
                             ),
-                            const SizedBox(height: 17),
+                            const SizedBox(height: 16),
                             // 名前とレベル
                             Column(
                               children: [
@@ -117,7 +117,7 @@ class AccountInfoPage extends ConsumerWidget {
                                             fontWeight: FontWeight.w700,
                                           ),
                                     ),
-                                    const SizedBox(width: 18),
+                                    const SizedBox(width: 20),
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
@@ -132,7 +132,7 @@ class AccountInfoPage extends ConsumerWidget {
                                                 fontWeight: FontWeight.w700,
                                               ),
                                         ),
-                                        const SizedBox(width: 2),
+                                        const SizedBox(width: 4),
                                         Text(
                                           profile.level.toString(),
                                           style: Theme.of(context)
@@ -252,7 +252,7 @@ class AccountInfoPage extends ConsumerWidget {
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                           ),
-                                          const SizedBox(width: 5),
+                                          const SizedBox(width: 4),
                                           Text(
                                             '99',
                                             style: Theme.of(context)
@@ -265,13 +265,13 @@ class AccountInfoPage extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 12),
                                       Container(
                                         width: 1,
                                         height: 20,
                                         color: const Color(0xFF99A9B0),
                                       ),
-                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 12),
                                       // 総ミッション
                                       Row(
                                         children: [
@@ -286,7 +286,7 @@ class AccountInfoPage extends ConsumerWidget {
                                                   ),
                                                 ),
                                           ),
-                                          const SizedBox(width: 5),
+                                          const SizedBox(width: 4),
                                           Text(
                                             '120',
                                             style: Theme.of(context)
@@ -322,7 +322,7 @@ class AccountInfoPage extends ConsumerWidget {
                             style: Theme.of(context).textTheme.displayMedium
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),
-                          const SizedBox(height: 1),
+                          const SizedBox(height: 0),
                           Text(
                             'Ranking',
                             style: Theme.of(context).textTheme.headlineSmall
