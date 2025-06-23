@@ -31,6 +31,19 @@
       "recommended": true
     }
   },
+  "overrides": [
+    {
+      "include": ["components/**/*.test.tsx", "components/**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noThenProperty": "off"
+          }
+        }
+      }
+    }
+  ],
 
   "javascript": {
     "formatter": {

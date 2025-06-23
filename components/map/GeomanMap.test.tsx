@@ -1,5 +1,5 @@
 import GeomanMap from "@/components/map/GeomanMap";
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 
@@ -35,7 +35,7 @@ jest.mock("sonner", () => ({
 describe("GeomanMap", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockLeaflet.map.mockClear();
     mockMap.setView.mockClear();
     mockMap.remove.mockClear();
@@ -68,17 +68,20 @@ describe("GeomanMap", () => {
 
   it("onMapReadyコールバックが正常に実行される", async () => {
     const mockOnMapReady = jest.fn();
-    
+
     render(<GeomanMap onMapReady={mockOnMapReady} />);
 
-    await waitFor(() => {
-      expect(mockOnMapReady).toHaveBeenCalledWith(mockMap);
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(mockOnMapReady).toHaveBeenCalledWith(mockMap);
+      },
+      { timeout: 3000 },
+    );
   });
 
   it("地図初期化後にinvalidateSizeが呼ばれる", async () => {
     jest.useFakeTimers();
-    
+
     render(<GeomanMap />);
 
     await waitFor(() => {
@@ -90,7 +93,7 @@ describe("GeomanMap", () => {
     });
 
     expect(mockMap.invalidateSize).toHaveBeenCalled();
-    
+
     jest.useRealTimers();
   });
 
@@ -101,16 +104,21 @@ describe("GeomanMap", () => {
 
     render(<GeomanMap />);
 
-    await waitFor(() => {
-      expect(screen.getByText("地図の初期化に失敗しました")).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText("地図の初期化に失敗しました"),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
   });
 
   it("Leafletライブラリの読み込みに失敗した場合エラーが表示される", async () => {
     const FailingGeomanMap = () => {
       const [error, setError] = React.useState<string | null>(null);
       const [isLoading, setIsLoading] = React.useState(true);
-      
+
       React.useEffect(() => {
         const initializeMap = async () => {
           try {
@@ -120,10 +128,10 @@ describe("GeomanMap", () => {
             setIsLoading(false);
           }
         };
-        
+
         initializeMap();
       }, []);
-      
+
       return (
         <>
           {isLoading && (
@@ -160,19 +168,24 @@ describe("GeomanMap", () => {
         </>
       );
     };
-    
+
     render(<FailingGeomanMap />);
 
-    await waitFor(() => {
-      expect(screen.getByText("地図ライブラリの読み込みに失敗しました")).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText("地図ライブラリの読み込みに失敗しました"),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
   });
 
   it("Geomanライブラリの読み込みに失敗した場合エラーが表示される", async () => {
     const FailingGeomanMap = () => {
       const [error, setError] = React.useState<string | null>(null);
       const [isLoading, setIsLoading] = React.useState(true);
-      
+
       React.useEffect(() => {
         const initializeMap = async () => {
           try {
@@ -183,10 +196,10 @@ describe("GeomanMap", () => {
             setIsLoading(false);
           }
         };
-        
+
         initializeMap();
       }, []);
-      
+
       return (
         <>
           {isLoading && (
@@ -223,13 +236,16 @@ describe("GeomanMap", () => {
         </>
       );
     };
-    
+
     render(<FailingGeomanMap />);
 
-    await waitFor(() => {
-      expect(screen.getByText("地図編集ツールの読み込みに失敗しました")).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText("地図編集ツールの読み込みに失敗しました"),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
   });
-
-
 });

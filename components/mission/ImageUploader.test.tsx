@@ -3,9 +3,11 @@ import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { mockSupabaseClient } from "../../__mocks__/supabase";
+import { mockSupabaseClient } from "../../../tests/__mocks__/supabase";
 
-jest.mock("@/lib/supabase/client", () => require("../../__mocks__/supabase"));
+jest.mock("@/lib/supabase/client", () =>
+  require("../../../tests/__mocks__/supabase"),
+);
 
 const mockUser: User = {
   id: "test-user-id",
@@ -29,6 +31,7 @@ const mockMission: Tables<"missions"> = {
   is_hidden: false,
   required_artifact_type: "IMAGE",
   artifact_label: null,
+  ogp_image_url: null,
   created_at: "2025-06-22T00:00:00Z",
   updated_at: "2025-06-22T00:00:00Z",
 };

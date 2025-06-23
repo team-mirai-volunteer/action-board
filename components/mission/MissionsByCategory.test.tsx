@@ -1,9 +1,11 @@
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { mockSupabaseClient } from "../../__mocks__/supabase";
+import { mockSupabaseClient } from "../../../tests/__mocks__/supabase";
 
-jest.mock("@/lib/supabase/server", () => require("../../__mocks__/supabase"));
+jest.mock("@/lib/supabase/server", () =>
+  require("../../../tests/__mocks__/supabase"),
+);
 
 jest.mock("@/components/mission/mission", () => {
   return function MockMission({
@@ -85,7 +87,9 @@ describe("MissionsByCategory", () => {
         return {
           select: jest.fn().mockImplementation(() => ({
             order: jest.fn().mockImplementation(() => ({
-              order: jest.fn().mockResolvedValue({ data: mockMissionCategoryViewData }),
+              order: jest
+                .fn()
+                .mockResolvedValue({ data: mockMissionCategoryViewData }),
             })),
           })),
         };

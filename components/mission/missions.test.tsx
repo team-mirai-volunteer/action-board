@@ -1,9 +1,11 @@
 import Missions from "@/components/mission/missions";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { mockSupabaseClient } from "../../__mocks__/supabase";
+import { mockSupabaseClient } from "../../../tests/__mocks__/supabase";
 
-jest.mock("@/lib/supabase/server", () => require("../../__mocks__/supabase"));
+jest.mock("@/lib/supabase/server", () =>
+  require("../../../tests/__mocks__/supabase"),
+);
 
 jest.mock("@/components/mission/mission", () => {
   return function MockMission({
@@ -57,7 +59,7 @@ describe("Missions", () => {
 
     mockSupabaseClient.from.mockImplementation((table: string) => {
       let data: any[] = [];
-      
+
       switch (table) {
         case "achievements":
           data = mockAchievements;
@@ -84,9 +86,15 @@ describe("Missions", () => {
           }
           return createChainableMock(resolveData);
         }),
-        eq: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
-        not: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
-        order: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
+        eq: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
+        not: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
+        order: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
         limit: jest.fn().mockResolvedValue({ data: resolveData }),
         then: jest.fn().mockImplementation((onResolve) => {
           const result = { data: resolveData };
@@ -154,7 +162,7 @@ describe("Missions", () => {
 
     await waitFor(() => {
       const missionsQuery = mockSupabaseClient.from.mock.calls.find(
-        (call) => call[0] === "missions",
+        (call: any) => call[0] === "missions",
       );
       expect(missionsQuery).toBeDefined();
     });
@@ -183,7 +191,7 @@ describe("Missions", () => {
 
     await waitFor(() => {
       const missionsQuery = mockSupabaseClient.from.mock.calls.find(
-        (call) => call[0] === "missions",
+        (call: any) => call[0] === "missions",
       );
       expect(missionsQuery).toBeDefined();
     });
@@ -203,9 +211,15 @@ describe("Missions", () => {
           }
           return createChainableMock(resolveData);
         }),
-        eq: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
-        not: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
-        order: jest.fn().mockImplementation(() => createChainableMock(resolveData)),
+        eq: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
+        not: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
+        order: jest
+          .fn()
+          .mockImplementation(() => createChainableMock(resolveData)),
         limit: jest.fn().mockResolvedValue({ data: resolveData }),
         then: jest.fn().mockImplementation((onResolve) => {
           const result = { data: resolveData };
