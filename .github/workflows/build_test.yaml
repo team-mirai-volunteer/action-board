@@ -45,6 +45,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npm run build
+
       # Supabaseの起動を待機
       - name: Wait for Supabase
         run: |
@@ -62,17 +65,6 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
-
-      - name: Generate TypeScript types
-        run: |
-          echo "Generating TypeScript types from Supabase schema..."
-          npm run types
-          echo "TypeScript types generation completed."
-        env:
-          SMTP_ENABLED: false
-
-      - name: Build
-        run: npm run build
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
@@ -97,4 +89,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-# Trigger CI retry - testing if 502 upstream server error was transient
