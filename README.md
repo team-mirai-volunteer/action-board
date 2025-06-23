@@ -417,6 +417,33 @@ HUBSPOT_CONTACT_LIST_ID=123456
    * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
    * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
 
+## 開発時の留意事項
+
+### ミッション登録フロー変更のお知らせ
+
+#### 背景
+- **ISSUE（#398） の対応により、`missions` テーブルへ新規ミッションを登録する際、  
+  同時に `mission_category_link` テーブルへの登録が必須になりました。  
+  - もし `mission_category_link` への登録を忘れると、トップページにミッションが表示されません。
+
+#### 対応内容
+1. **新規ミッション登録**  
+   - `missions` テーブルへのデータ登録  
+   - **必ず** `mission_category_link` テーブルへカテゴリー紐づけデータを登録
+2. **カテゴリーの選定**  
+   - 登録するミッションを **どのカテゴリー** に紐づけるかは、PM（プロダクトマネージャー）と相談して決定してください。
+   - カテゴリ管理は以下の Notion ページで一元管理しています。
+
+#### 管理ページ
+- カテゴリ管理 Notion: https://team-mirai.notion.site/203f6f56bae181598a0cfbcd03853b69?v=203f6f56bae18185b448000ca7dcf05f
+
+#### 手順例
+1. 新しいミッションを作成  
+2. `missions` テーブルに INSERT  
+3. PM と紐づけるカテゴリーを確認  
+4. missiosとmission_category_link テーブルに INSERT  
+　mission_category_linkへの登録例：action-board/supabase/migrations/20250623115600_update_mission_category.sql
+
 ---
 
 # for CodeRabbit
