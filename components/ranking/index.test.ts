@@ -9,7 +9,7 @@ describe("ranking/index", () => {
 
     it("RankingItemがエクスポートされている", () => {
       expect(RankingExports.RankingItem).toBeDefined();
-      expect(typeof RankingExports.RankingItem).toBe("object");
+      expect(typeof RankingExports.RankingItem).toBe("function");
     });
   });
 
