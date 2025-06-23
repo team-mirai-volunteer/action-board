@@ -6,7 +6,7 @@ steps:
       - |
         npx supabase link --project-ref ${_SUPABASE_PROJECT_ID} -p $$SUPABASE_DB_PASSWORD
 
-        npx supabase db push
+        npx supabase db push --include-all
         npx supabase config push
     env:
       - 'CI=true'
