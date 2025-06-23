@@ -39,6 +39,12 @@ export function calculateAge(birthdate: string): number {
   return age;
 }
 
+export function getTodayInJST(): string {
+  return new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+}
+
 // L → L+1 の差分 XP
 export const xpDelta = (L: number) => {
   if (L < 1) throw new Error("Level must be at least 1");

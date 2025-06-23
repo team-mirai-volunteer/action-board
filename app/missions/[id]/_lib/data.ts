@@ -1,5 +1,6 @@
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
+import { getTodayInJST } from "@/lib/utils/utils";
 import { nanoid } from "nanoid";
 import type {
   Achievement,
@@ -200,9 +201,7 @@ export async function getDailyAttemptStatus(
     };
   }
 
-  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const today = getTodayInJST();
 
   const { data: attemptData } = await supabase
     .from("daily_mission_attempts")

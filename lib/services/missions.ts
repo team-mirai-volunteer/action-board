@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
+import { getTodayInJST } from "@/lib/utils/utils";
 
 export type Mission = Tables<"missions">;
 
@@ -43,9 +44,7 @@ export async function checkAndRecordDailyAttempt(
     return { canAttempt: true, currentAttempts: 0, dailyLimit: null };
   }
 
-  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const today = getTodayInJST();
 
   const { data: existingAttempt, error: fetchError } = await supabase
     .from("daily_mission_attempts")
@@ -113,9 +112,7 @@ export async function decrementDailyAttempt(
     return { success: true };
   }
 
-  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const today = getTodayInJST();
 
   const { data: existingAttempt, error: fetchError } = await supabase
     .from("daily_mission_attempts")

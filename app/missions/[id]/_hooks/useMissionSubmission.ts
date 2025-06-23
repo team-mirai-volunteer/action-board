@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
+import { getTodayInJST } from "@/lib/utils/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function useMissionSubmission(
@@ -84,7 +85,7 @@ export function useDailyAttemptStatus(
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayInJST();
 
     const { data: attemptData } = await supabase
       .from("daily_mission_attempts")
