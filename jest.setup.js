@@ -1,6 +1,8 @@
 // Jest setup file
 const React = require("react");
 
+import "@testing-library/jest-dom";
+
 // Mock server-only package for tests
 jest.mock("server-only", () => ({}));
 
