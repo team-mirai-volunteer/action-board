@@ -21,21 +21,26 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("next/link", () => {
   return ({ children, href, ...props }) => {
-    return React.createElement("a", { href, ...props }, children);
+    const mockReact = require("react");
+    return mockReact.createElement("a", { href, ...props }, children);
   };
 });
 
 jest.mock("lucide-react", () => ({
-  CheckIcon: ({ size, className }) =>
-    React.createElement("div", {
+  CheckIcon: ({ size, className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
       "data-testid": "check-icon",
       style: { width: size, height: size },
       className,
-    }),
-  CircleDashed: ({ size, className }) =>
-    React.createElement("div", {
+    });
+  },
+  CircleDashed: ({ size, className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
       "data-testid": "circle-dashed-icon",
       style: { width: size, height: size },
       className,
-    }),
+    });
+  },
 }));

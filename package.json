@@ -15,8 +15,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:unit": "jest --selectProjects=unit",
-    "test:rls": "jest --selectProjects=rls",
+    "test:unit": "jest --testPathIgnorePatterns=tests/rls/",
+    "test:rls": "jest --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
