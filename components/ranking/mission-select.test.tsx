@@ -23,9 +23,6 @@ jest.mock("lucide-react", () => ({
   ),
 }));
 
-(window as any).location = undefined;
-(window as any).location = { search: "" };
-
 const mockMissions = [
   {
     id: "mission-1",
@@ -47,7 +44,6 @@ const mockMissions = [
 describe("MissionSelect", () => {
   beforeEach(() => {
     mockPush.mockClear();
-    window.location.search = "";
   });
 
   describe("基本的な表示", () => {
@@ -89,11 +85,17 @@ describe("MissionSelect", () => {
     });
 
     it("URLパラメータがある場合はそのミッションが選択される", () => {
-      window.location.search = "?missionId=mission-2";
+      const originalURLSearchParams = global.URLSearchParams;
+      global.URLSearchParams = jest.fn().mockImplementation(() => ({
+        get: jest.fn().mockReturnValue("mission-2"),
+      }));
+
       render(<MissionSelect missions={mockMissions} />);
 
       const select = screen.getByRole("combobox") as HTMLSelectElement;
       expect(select.value).toBe("mission-2");
+
+      global.URLSearchParams = originalURLSearchParams;
     });
   });
 
@@ -136,11 +138,17 @@ describe("MissionSelect", () => {
     });
 
     it("無効なmissionIdがURLにある場合は最初のミッションが選択される", () => {
-      window.location.search = "?missionId=invalid-mission";
+      const originalURLSearchParams = global.URLSearchParams;
+      global.URLSearchParams = jest.fn().mockImplementation(() => ({
+        get: jest.fn().mockReturnValue("invalid-mission"),
+      }));
+
       render(<MissionSelect missions={mockMissions} />);
 
       const select = screen.getByRole("combobox") as HTMLSelectElement;
       expect(select.value).toBe("mission-1");
+
+      global.URLSearchParams = originalURLSearchParams;
     });
   });
 

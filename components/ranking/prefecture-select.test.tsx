@@ -107,11 +107,11 @@ describe("PrefectureSelect", () => {
   });
 
   describe("初期値の設定", () => {
-    it("selectedPrefectureが指定されていない場合は空文字が初期値", () => {
+    it("selectedPrefectureが指定されていない場合は最初の都道府県が初期値", () => {
       render(<PrefectureSelect prefectures={mockPrefectures} />);
 
       const select = screen.getByRole("combobox") as HTMLSelectElement;
-      expect(select.value).toBe("");
+      expect(select.value).toBe("北海道");
     });
 
     it("selectedPrefectureが指定されている場合はその値が初期値", () => {
@@ -171,7 +171,7 @@ describe("PrefectureSelect", () => {
 
       const select = screen.getByRole("combobox");
       const options = select.querySelectorAll("option");
-      expect(options).toHaveLength(48);
+      expect(options).toHaveLength(47);
     });
 
     it("都道府県が正しい順序で表示される", () => {
@@ -182,9 +182,9 @@ describe("PrefectureSelect", () => {
         (option) => option.textContent,
       );
 
-      expect(options[1]).toBe("北海道");
-      expect(options[13]).toBe("東京都");
-      expect(options[47]).toBe("沖縄県");
+      expect(options[0]).toBe("北海道");
+      expect(options[12]).toBe("東京都");
+      expect(options[46]).toBe("沖縄県");
     });
   });
 
