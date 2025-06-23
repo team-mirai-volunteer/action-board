@@ -65,6 +65,13 @@ export type Database = {
             foreignKeyName: "achievements_mission_id_fkey";
             columns: ["mission_id"];
             isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "achievements_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
             referencedRelation: "missions";
             referencedColumns: ["id"];
           },
@@ -242,6 +249,148 @@ export type Database = {
             columns: ["achievement_id"];
             isOneToOne: false;
             referencedRelation: "activity_timeline_view";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      mission_category: {
+        Row: {
+          category_kbn: string;
+          category_title: string | null;
+          created_at: string;
+          del_flg: boolean;
+          id: string;
+          sort_no: number;
+          updated_at: string;
+        };
+        Insert: {
+          category_kbn?: string;
+          category_title?: string | null;
+          created_at?: string;
+          del_flg?: boolean;
+          id: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Update: {
+          category_kbn?: string;
+          category_title?: string | null;
+          created_at?: string;
+          del_flg?: boolean;
+          id?: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      mission_category_link: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          del_flg: boolean;
+          mission_id: string;
+          sort_no: number;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          del_flg?: boolean;
+          mission_id: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          del_flg?: boolean;
+          mission_id?: string;
+          sort_no?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_category_link_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["category_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_category_link_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      mission_quiz_links: {
+        Row: {
+          created_at: string;
+          display_order: number;
+          id: string;
+          link: string;
+          mission_id: string;
+          remark: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          link: string;
+          mission_id: string;
+          remark?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          link?: string;
+          mission_id?: string;
+          remark?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_quiz_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_quiz_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_quiz_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
             referencedColumns: ["id"];
           },
         ];
@@ -428,6 +577,116 @@ export type Database = {
         };
         Relationships: [];
       };
+      quiz_categories: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          display_order: number;
+          id: string;
+          is_active: boolean;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          display_order?: number;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          display_order?: number;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      quiz_questions: {
+        Row: {
+          category_id: string;
+          correct_answer: number;
+          created_at: string;
+          explanation: string | null;
+          id: string;
+          is_active: boolean;
+          mission_id: string | null;
+          option1: string;
+          option2: string;
+          option3: string;
+          option4: string;
+          question: string;
+          question_order: number | null;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          correct_answer: number;
+          created_at?: string;
+          explanation?: string | null;
+          id?: string;
+          is_active?: boolean;
+          mission_id?: string | null;
+          option1: string;
+          option2: string;
+          option3: string;
+          option4: string;
+          question: string;
+          question_order?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string;
+          correct_answer?: number;
+          created_at?: string;
+          explanation?: string | null;
+          id?: string;
+          is_active?: boolean;
+          mission_id?: string | null;
+          option1?: string;
+          option2?: string;
+          option3?: string;
+          option4?: string;
+          question?: string;
+          question_order?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       user_levels: {
         Row: {
           last_notified_level: number | null;
@@ -566,6 +825,129 @@ export type Database = {
         };
         Relationships: [];
       };
+      mission_category_view: {
+        Row: {
+          artifact_label: string | null;
+          category_id: string | null;
+          category_kbn: string | null;
+          category_sort_no: number | null;
+          category_title: string | null;
+          content: string | null;
+          created_at: string | null;
+          difficulty: number | null;
+          event_date: string | null;
+          icon_url: string | null;
+          is_featured: boolean | null;
+          is_hidden: boolean | null;
+          link_sort_no: number | null;
+          max_achievement_count: number | null;
+          mission_id: string | null;
+          ogp_image_url: string | null;
+          required_artifact_type: string | null;
+          title: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [];
+      };
+      mission_quiz_with_links: {
+        Row: {
+          category_description: string | null;
+          category_id: string | null;
+          category_name: string | null;
+          correct_answer: number | null;
+          explanation: string | null;
+          mission_id: string | null;
+          mission_links: Json | null;
+          option1: string | null;
+          option2: string | null;
+          option3: string | null;
+          option4: string | null;
+          question: string | null;
+          question_id: string | null;
+          question_order: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quiz_questions_with_category: {
+        Row: {
+          category_description: string | null;
+          category_display_order: number | null;
+          category_id: string | null;
+          category_name: string | null;
+          correct_answer: number | null;
+          created_at: string | null;
+          explanation: string | null;
+          id: string | null;
+          is_active: boolean | null;
+          mission_id: string | null;
+          option1: string | null;
+          option2: string | null;
+          option3: string | null;
+          option4: string | null;
+          question: string | null;
+          question_order: number | null;
+          updated_at: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "quiz_questions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       user_ranking_view: {
         Row: {
           address_prefecture: string | null;
@@ -578,32 +960,34 @@ export type Database = {
         };
         Relationships: [];
       };
-      mission_category_view: {
-        Row: {
-          category_id: string;
-          category_title: string;
-          category_kbn: string;
-          category_sort_no: number;
-          mission_id: string;
-          title: string;
-          icon_url: string | null;
-          difficulty: number;
-          content: string | null;
-          created_at: string;
-          artifact_label: string | null;
-          max_achievement_count: number | null;
-          event_date: string | null;
-          is_featured: boolean;
-          updated_at: string;
-          is_hidden: boolean;
-          ogp_image_url: string | null;
-          required_artifact_type: string | null;
-          link_sort_no: number;
-        };
-        Relationships: [];
-      };
     };
     Functions: {
+      get_mission_links: {
+        Args: { p_mission_id: string };
+        Returns: {
+          link: string;
+          remark: string;
+          display_order: number;
+        }[];
+      };
+      get_mission_quiz_questions: {
+        Args: { p_mission_id: string };
+        Returns: {
+          question_id: string;
+          question_order: number;
+          category_id: string;
+          category_name: string;
+          category_description: string;
+          mission_links: Json;
+          question: string;
+          option1: string;
+          option2: string;
+          option3: string;
+          option4: string;
+          correct_answer: number;
+          explanation: string;
+        }[];
+      };
       get_mission_ranking: {
         Args: { mission_id: string; limit_count?: number };
         Returns: {
