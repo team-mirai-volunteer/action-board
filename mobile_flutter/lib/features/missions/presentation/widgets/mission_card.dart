@@ -79,14 +79,14 @@ class MissionCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(height: 13),
+                  const SizedBox(height: 12),
                   // 区切り線
                   Container(
                     width: 212,
                     height: 1,
                     color: const Color(0xFFCBCBCB),
                   ),
-                  const SizedBox(height: 13),
+                  const SizedBox(height: 12),
                   // ポイント情報
                   Column(
                     children: [
@@ -110,7 +110,7 @@ class MissionCard extends StatelessWidget {
                                   letterSpacing: 0.17,
                                 ),
                               ),
-                              const SizedBox(width: 2),
+                              const SizedBox(width: 4),
                               const Text(
                                 'ポイント獲得',
                                 style: TextStyle(

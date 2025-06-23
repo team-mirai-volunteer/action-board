@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_flutter/core/theme/app_theme.dart';
 import 'package:mobile_flutter/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile_flutter/shared/widgets/custom_app_bar.dart';
+import 'package:mobile_flutter/shared/widgets/custom_text_form_field.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -110,51 +111,12 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 'メールアドレス',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 6),
-              TextFormField(
+              const SizedBox(height: 8),
+              CustomTextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 autofocus: true,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'action@team-mir.ai',
-                  hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  contentPadding: const EdgeInsets.only(
-                    left: 12,
-                    right: 12,
-                    top: 12,
-                    bottom: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(
-                      color: AppColors.textQuaternary,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(
-                      color: AppColors.textQuaternary,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(
-                      color: AppColors.error,
-                    ),
-                  ),
-                ),
+                hintText: 'action@team-mir.ai',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'メールアドレスを入力してください';
