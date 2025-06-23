@@ -1,17 +1,26 @@
 "use client";
 
 import { checkQuizAnswersAction } from "@/app/missions/[id]/actions";
+import {
+  type MissionLink,
+  getMissionLinksAction,
+} from "@/app/missions/[id]/quiz-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle, Loader2, XCircle } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  ExternalLink,
+  Loader2,
+  XCircle,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
-  difficulty: number;
 }
 
 interface ShuffledQuizQuestion extends QuizQuestion {
@@ -129,6 +138,7 @@ export default function QuizComponent({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<QuizResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [missionLinks, setMissionLinks] = useState<MissionLink[]>([]);
 
   // 結果カードへの参照
   const resultCardRef = useRef<HTMLDivElement>(null);
@@ -136,7 +146,15 @@ export default function QuizComponent({
   // クライアントサイドでのマウント時の処理
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    // ミッションリンクを取得
+    const fetchMissionLinks = async () => {
+      const result = await getMissionLinksAction(missionId);
+      if (result.success) {
+        setMissionLinks(result.links);
+      }
+    };
+    fetchMissionLinks();
+  }, [missionId]);
 
   // 結果が表示されたときのスクロール処理
   useEffect(() => {
@@ -408,6 +426,29 @@ export default function QuizComponent({
 
   return (
     <>
+      {/* ミッションリンク表示 */}
+      {missionLinks.length > 0 && (
+        <Card className="w-full mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">参考リンク</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {missionLinks.map((link, index) => (
+              <a
+                key={link.link}
+                href={link.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>{link.remark || link.link}</span>
+              </a>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {questions.map((question, index) => (
         <Card key={question.id} className="w-full">
           <CardContent className="p-6">

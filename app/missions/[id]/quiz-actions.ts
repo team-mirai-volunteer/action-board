@@ -7,10 +7,16 @@ export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
-  difficulty: number;
   correct_answer: number;
   explanation: string | null;
   category?: string; // カテゴリー名を追加
+}
+
+// ミッションリンクの型定義
+export interface MissionLink {
+  link: string;
+  remark: string | null;
+  display_order: number;
 }
 
 // データベースから取得されるクイズ問題の型
@@ -23,13 +29,14 @@ interface DbQuizQuestion {
   option4: string;
   correct_answer: number;
   explanation: string | null;
-  difficulty: number;
 }
 
-// mission_quiz_questionsテーブルからの結果型
-interface MissionQuizQuestionResult {
+// quiz_questionsテーブルから直接取得される問題の型
+interface MissionQuizQuestion extends DbQuizQuestion {
   question_order: number;
-  quiz_questions: DbQuizQuestion;
+  quiz_categories: {
+    name: string;
+  };
 }
 
 // ミッションのクイズカテゴリ取得関数
@@ -39,12 +46,10 @@ async function getMissionQuizCategory(
   const supabase = await createServiceClient();
 
   const { data, error } = await supabase
-    .from("mission_quiz_questions")
+    .from("quiz_questions")
     .select(`
-      quiz_questions (
-        quiz_categories (
-          name
-        )
+      quiz_categories (
+        name
       )
     `)
     .eq("mission_id", missionId)
@@ -56,12 +61,9 @@ async function getMissionQuizCategory(
   }
 
   const firstItem = data[0];
-  const question = Array.isArray(firstItem.quiz_questions)
-    ? firstItem.quiz_questions[0]
-    : firstItem.quiz_questions;
-  const category = Array.isArray(question?.quiz_categories)
-    ? question.quiz_categories[0]
-    : question?.quiz_categories;
+  const category = Array.isArray(firstItem.quiz_categories)
+    ? firstItem.quiz_categories[0]
+    : firstItem.quiz_categories;
 
   return category?.name || null;
 }
@@ -72,24 +74,21 @@ async function getQuestionsByMission(
 ): Promise<QuizQuestion[]> {
   const supabase = await createServiceClient();
 
-  // ミッションに紐づく問題を取得（mission_quiz_questionsテーブル経由）
+  // ミッションに紐づく問題を直接取得
   const { data, error } = await supabase
-    .from("mission_quiz_questions")
+    .from("quiz_questions")
     .select(`
+      id,
+      question,
+      option1,
+      option2,
+      option3,
+      option4,
+      correct_answer,
+      explanation,
       question_order,
-      quiz_questions (
-        id,
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        correct_answer,
-        explanation,
-        difficulty,
-        quiz_categories (
-          name
-        )
+      quiz_categories (
+        name
       )
     `)
     .eq("mission_id", missionId)
@@ -108,10 +107,7 @@ async function getQuestionsByMission(
     return [];
   }
 
-  return data.map((item) => {
-    const q = Array.isArray(item.quiz_questions)
-      ? item.quiz_questions[0]
-      : item.quiz_questions;
+  return data.map((q) => {
     const category = Array.isArray(q.quiz_categories)
       ? q.quiz_categories[0]
       : q.quiz_categories;
@@ -119,7 +115,6 @@ async function getQuestionsByMission(
       id: q.id,
       question: q.question,
       options: [q.option1, q.option2, q.option3, q.option4],
-      difficulty: q.difficulty,
       correct_answer: q.correct_answer,
       explanation: q.explanation,
       category: category?.name || "その他",
@@ -147,6 +142,40 @@ export const getMissionQuizCategoryAction = async (missionId: string) => {
   }
 };
 
+// ミッションのリンクを取得する
+export const getMissionLinksAction = async (missionId: string) => {
+  try {
+    const supabase = await createServiceClient();
+
+    const { data, error } = await supabase
+      .from("mission_quiz_links")
+      .select("link, remark, display_order")
+      .eq("mission_id", missionId)
+      .order("display_order");
+
+    if (error) {
+      console.error("Error fetching mission links:", error);
+      return {
+        success: false,
+        error: "リンクの取得に失敗しました",
+        links: [] as MissionLink[],
+      };
+    }
+
+    return {
+      success: true,
+      links: data || [],
+    };
+  } catch (error) {
+    console.error("Error fetching mission links:", error);
+    return {
+      success: false,
+      error: "リンクの取得に失敗しました",
+      links: [] as MissionLink[],
+    };
+  }
+};
+
 // ミッションのクイズ問題を取得する
 export const getQuizQuestionsAction = async (missionId: string) => {
   try {
@@ -166,7 +195,6 @@ export const getQuizQuestionsAction = async (missionId: string) => {
         id: q.id,
         question: q.question,
         options: q.options,
-        difficulty: q.difficulty,
         category: q.category,
       })),
     };
