@@ -70,6 +70,7 @@
     "@vitest/coverage-v8": "^3.1.4",
     "dotenv": "^16.5.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "^16.0.0",
     "lefthook": "^1.11.13",
     "playwright": "^1.52.0",
