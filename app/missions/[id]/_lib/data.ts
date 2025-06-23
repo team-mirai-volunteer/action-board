@@ -111,58 +111,64 @@ export async function getSubmissionHistory(
 
   // 画像の署名付きURLを並列処理で取得
   const submissionsWithArtifacts = await Promise.all(
-    achievementsData.map(async (achievement: Record<string, unknown>) => {
-      if (
-        !achievement.mission_artifacts ||
-        (achievement.mission_artifacts as unknown[]).length === 0
-      ) {
-        return {
-          ...achievement,
-          artifacts: [],
-        };
-      }
+    achievementsData.map(
+      async (achievement: Record<string, unknown>): Promise<SubmissionData> => {
+        if (
+          !achievement.mission_artifacts ||
+          (achievement.mission_artifacts as unknown[]).length === 0
+        ) {
+          return {
+            id: achievement.id,
+            created_at: achievement.created_at,
+            mission_id: achievement.mission_id,
+            user_id: achievement.user_id,
+            artifacts: [],
+          } as SubmissionData;
+        }
 
-      // 画像の署名付きURLを並列取得
-      const artifactsWithSignedUrls = await Promise.all(
-        (achievement.mission_artifacts as Record<string, unknown>[]).map(
-          async (artifact: Record<string, unknown>) => {
-            if (artifact.image_storage_path) {
-              const { data: signedUrlData } = await supabase.storage
-                .from("mission_artifact_files")
-                .createSignedUrl(artifact.image_storage_path as string, 60, {
-                  transform: {
-                    width: 240,
-                    height: 240,
-                    resize: "contain",
-                  },
-                });
+        // 画像の署名付きURLを並列取得
+        const artifactsWithSignedUrls = await Promise.all(
+          (achievement.mission_artifacts as Record<string, unknown>[]).map(
+            async (artifact: Record<string, unknown>) => {
+              if (artifact.image_storage_path) {
+                const { data: signedUrlData } = await supabase.storage
+                  .from("mission_artifact_files")
+                  .createSignedUrl(artifact.image_storage_path as string, 60, {
+                    transform: {
+                      width: 240,
+                      height: 240,
+                      resize: "contain",
+                    },
+                  });
 
-              if (signedUrlData) {
-                return {
-                  ...artifact,
-                  image_storage_path: signedUrlData.signedUrl,
-                  geolocations:
-                    (artifact.mission_artifact_geolocations as unknown[]) || [],
-                };
+                if (signedUrlData) {
+                  return {
+                    ...artifact,
+                    image_storage_path: signedUrlData.signedUrl,
+                    geolocations:
+                      (artifact.mission_artifact_geolocations as unknown[]) ||
+                      [],
+                  };
+                }
               }
-            }
-            return {
-              ...artifact,
-              geolocations:
-                (artifact.mission_artifact_geolocations as unknown[]) || [],
-            };
-          },
-        ),
-      );
+              return {
+                ...artifact,
+                geolocations:
+                  (artifact.mission_artifact_geolocations as unknown[]) || [],
+              };
+            },
+          ),
+        );
 
-      return {
-        id: achievement.id,
-        created_at: achievement.created_at,
-        mission_id: achievement.mission_id,
-        user_id: achievement.user_id,
-        artifacts: artifactsWithSignedUrls,
-      } as SubmissionData;
-    }),
+        return {
+          id: achievement.id,
+          created_at: achievement.created_at,
+          mission_id: achievement.mission_id,
+          user_id: achievement.user_id,
+          artifacts: artifactsWithSignedUrls,
+        } as SubmissionData;
+      },
+    ),
   );
 
   return submissionsWithArtifacts;
@@ -237,7 +243,7 @@ export async function getMissionPageData(
   const results = await Promise.all(promises);
 
   // ミッションデータのチェック
-  const mission = results[0];
+  const mission = results[0] as Tables<"missions"> | null;
   if (!mission) return null;
 
   // 結果の割り当て
@@ -251,15 +257,22 @@ export async function getMissionPageData(
     hasReachedLimit: false,
   };
 
-  const totalAchievementCount = results[1];
+  const totalAchievementCount = results[1] as number;
 
   if (userId) {
-    const { achievements, count } = results[2];
+    const { achievements, count } = results[2] as {
+      achievements: Achievement[];
+      count: number;
+    };
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = results[3];
-    referralCode = results[4];
-    dailyAttemptStatus = results[5];
+    submissions = results[3] as SubmissionData[];
+    referralCode = results[4] as string;
+    dailyAttemptStatus = results[5] as {
+      currentAttempts: number;
+      dailyLimit: number | null;
+      hasReachedLimit: boolean;
+    };
   }
 
   return {
