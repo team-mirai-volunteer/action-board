@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { type ClassValue, clsx } from "clsx";
 import { redirect } from "next/navigation";
 import { twMerge } from "tailwind-merge";
@@ -112,4 +113,51 @@ export function getLevelProgress(currentXp: number): number {
   const xpToNext = getXpToNextLevel(currentXp);
   const levelXpRange = xpDelta(currentLevel);
   return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
+}
+
+export type DailyAttemptStatusResult = {
+  currentAttempts: number;
+  dailyLimit: number | null;
+  hasReachedLimit: boolean;
+};
+
+export async function fetchDailyAttemptStatus(
+  supabase: SupabaseClient,
+  userId: string,
+  missionId: string,
+): Promise<DailyAttemptStatusResult> {
+  const { data: missionData } = await supabase
+    .from("missions")
+    .select("max_daily_achievement_count")
+    .eq("id", missionId)
+    .single();
+
+  const dailyLimit = missionData?.max_daily_achievement_count ?? null;
+
+  if (dailyLimit === null) {
+    return {
+      currentAttempts: 0,
+      dailyLimit: null,
+      hasReachedLimit: false,
+    };
+  }
+
+  const today = getTodayInJST();
+
+  const { data: attemptData } = await supabase
+    .from("daily_mission_attempts")
+    .select("attempt_count")
+    .eq("user_id", userId)
+    .eq("mission_id", missionId)
+    .eq("attempt_date", today)
+    .single();
+
+  const currentAttempts = attemptData?.attempt_count || 0;
+  const hasReachedLimit = currentAttempts >= dailyLimit;
+
+  return {
+    currentAttempts,
+    dailyLimit,
+    hasReachedLimit,
+  };
 }

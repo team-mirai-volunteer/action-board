@@ -2,7 +2,10 @@
 
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { getTodayInJST } from "@/lib/utils/utils";
+import {
+  type DailyAttemptStatusResult,
+  fetchDailyAttemptStatus,
+} from "@/lib/utils/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function useMissionSubmission(
@@ -43,23 +46,16 @@ export function useMissionSubmission(
 export function useDailyAttemptStatus(
   missionId: string,
   userId: string | null,
-  initialStatus?: {
-    currentAttempts: number;
-    dailyLimit: number | null;
-    hasReachedLimit: boolean;
-  },
+  initialStatus?: DailyAttemptStatusResult,
 ) {
-  const [dailyAttemptStatus, setDailyAttemptStatus] = useState<{
-    currentAttempts: number;
-    dailyLimit: number | null;
-    hasReachedLimit: boolean;
-  }>(
-    initialStatus || {
-      currentAttempts: 0,
-      dailyLimit: null,
-      hasReachedLimit: false,
-    },
-  );
+  const [dailyAttemptStatus, setDailyAttemptStatus] =
+    useState<DailyAttemptStatusResult>(
+      initialStatus || {
+        currentAttempts: 0,
+        dailyLimit: null,
+        hasReachedLimit: false,
+      },
+    );
 
   const refreshDailyAttemptStatus = useCallback(async () => {
     if (!userId || !missionId) {
@@ -67,42 +63,8 @@ export function useDailyAttemptStatus(
     }
 
     const supabase = createClient();
-
-    const { data: missionData } = await supabase
-      .from("missions")
-      .select("max_daily_achievement_count")
-      .eq("id", missionId)
-      .single();
-
-    const dailyLimit = missionData?.max_daily_achievement_count ?? null;
-
-    if (dailyLimit === null) {
-      setDailyAttemptStatus({
-        currentAttempts: 0,
-        dailyLimit: null,
-        hasReachedLimit: false,
-      });
-      return;
-    }
-
-    const today = getTodayInJST();
-
-    const { data: attemptData } = await supabase
-      .from("daily_mission_attempts")
-      .select("attempt_count")
-      .eq("user_id", userId)
-      .eq("mission_id", missionId)
-      .eq("attempt_date", today)
-      .single();
-
-    const currentAttempts = attemptData?.attempt_count || 0;
-    const hasReachedLimit = currentAttempts >= dailyLimit;
-
-    setDailyAttemptStatus({
-      currentAttempts,
-      dailyLimit,
-      hasReachedLimit,
-    });
+    const status = await fetchDailyAttemptStatus(supabase, userId, missionId);
+    setDailyAttemptStatus(status);
   }, [userId, missionId]);
 
   useEffect(() => {
