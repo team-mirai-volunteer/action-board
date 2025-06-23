@@ -1,11 +1,11 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
-import type { Tables } from "@/lib/types/supabase";
 import {
   type DailyAttemptStatusResult,
   fetchDailyAttemptStatus,
-} from "@/lib/utils/utils";
+} from "@/lib/services/missions";
+import { createClient } from "@/lib/supabase/client";
+import type { Tables } from "@/lib/types/supabase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function useMissionSubmission(
