@@ -84,7 +84,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 4),
                                 // レベル
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

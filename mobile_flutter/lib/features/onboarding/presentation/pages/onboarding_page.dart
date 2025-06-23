@@ -25,13 +25,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
 
     _animationController.forward();
   }
@@ -66,10 +62,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
           gradient: LinearGradient(
             begin: Alignment(0.0, -0.37),
             end: Alignment(1.0, 0.65),
-            colors: [
-              Color(0xFF64D8C6),
-              Color(0xFFBCECD3),
-            ],
+            colors: [Color(0xFF64D8C6), Color(0xFFBCECD3)],
             stops: [0.013, 1.0],
           ),
         ),
@@ -78,7 +71,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             opacity: _fadeAnimation,
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 29.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -92,10 +85,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                     // メインテキスト
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         '未来を動かすのは、あなたのアクション。\n社会の「なんとかしたい」を、ここから。\nこのボードには、あなたにできる\nアクションがたくさん並んでいます。(仮)',
                         textAlign: TextAlign.center,
@@ -108,7 +101,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 32),
                     // 利用規約・プライバシーポリシー
                     RichText(
                       textAlign: TextAlign.center,
@@ -128,7 +121,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                               fontWeight: FontWeight.w400,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => _launchURL('https://action.team-mir.ai/terms'),
+                              ..onTap = () => _launchURL(
+                                'https://action.team-mir.ai/terms',
+                              ),
                           ),
                           const TextSpan(text: '・'),
                           TextSpan(
@@ -138,13 +133,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                               fontWeight: FontWeight.w400,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => _launchURL('https://action.team-mir.ai/privacy'),
+                              ..onTap = () => _launchURL(
+                                'https://action.team-mir.ai/privacy',
+                              ),
                           ),
                           const TextSpan(text: 'に同意して'),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 32),
                     // はじめるボタン
                     SizedBox(
                       width: 184,
@@ -154,7 +151,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 8,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(150),
                           ),

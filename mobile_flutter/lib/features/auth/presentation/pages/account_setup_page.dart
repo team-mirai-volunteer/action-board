@@ -386,7 +386,7 @@ class _AccountSetupPageState extends ConsumerState<AccountSetupPage> {
               ),
             ),
             if (suffixLabel != null) ...[
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -406,7 +406,7 @@ class _AccountSetupPageState extends ConsumerState<AccountSetupPage> {
             ],
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         // 入力フィールド
         TextFormField(
           controller: controller,
@@ -428,6 +428,10 @@ class _AccountSetupPageState extends ConsumerState<AccountSetupPage> {
               horizontal: 12,
               vertical: 8,
             ),
+            helperText: ' ',
+            helperStyle: const TextStyle(height: 0.7),
+            errorStyle: const TextStyle(height: 1.0),
+            errorMaxLines: 2,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(
@@ -471,7 +475,7 @@ class _AccountSetupPageState extends ConsumerState<AccountSetupPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(

@@ -19,7 +19,7 @@ class AppColors {
   );
   
   // テキストカラー
-  static const Color textPrimary = Color(0xFF18181B);
+  static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF52525B);
   static const Color textTertiary = Color(0xFF71717A);
   static const Color textQuaternary = Color(0xFFA1A1AA);
@@ -183,22 +183,38 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1),
+          borderSide: const BorderSide(width: 1, color: AppColors.textQuaternary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1),
+          borderSide: const BorderSide(width: 1, color: AppColors.textQuaternary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1, color: Color(0xFF089781)),
+          borderSide: const BorderSide(width: 2, color: AppColors.primary),
         ),
-        constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(width: 1, color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(width: 2, color: AppColors.error),
+        ),
+        // エラー表示時も高さが変わらないようにする
+        constraints: const BoxConstraints(minHeight: 48),
+        isDense: false,
+        // エラーとヘルパーテキストのスタイル
+        helperMaxLines: 1,
+        errorMaxLines: 2,
         labelStyle: textTheme.bodyLarge,
-        floatingLabelStyle: textTheme.bodyLarge,
+        floatingLabelStyle: textTheme.bodyLarge?.copyWith(color: AppColors.primary),
+        hintStyle: textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+        errorStyle: textTheme.bodySmall?.copyWith(color: AppColors.error),
+        helperStyle: textTheme.bodySmall,
       ),
     );
   }
@@ -245,23 +261,38 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1),
+          borderSide: const BorderSide(width: 1, color: AppColors.textQuaternary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1),
+          borderSide: const BorderSide(width: 1, color: AppColors.textQuaternary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(width: 1, color: Color(0xFF089781)),
+          borderSide: const BorderSide(width: 2, color: AppColors.primary),
         ),
-        constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(width: 1, color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(width: 2, color: AppColors.error),
+        ),
+        // エラー表示時も高さが変わらないようにする
+        constraints: const BoxConstraints(minHeight: 48),
+        isDense: false,
+        // エラーとヘルパーテキストのスタイル
+        helperMaxLines: 1,
+        errorMaxLines: 2,
         labelStyle: textTheme.bodyLarge,
-        floatingLabelStyle: textTheme.bodyLarge,
-        isDense: true,
+        floatingLabelStyle: textTheme.bodyLarge?.copyWith(color: AppColors.primary),
+        hintStyle: textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+        errorStyle: textTheme.bodySmall?.copyWith(color: AppColors.error),
+        helperStyle: textTheme.bodySmall,
       ),
     );
   }

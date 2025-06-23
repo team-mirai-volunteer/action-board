@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_flutter/core/theme/app_theme.dart';
-import 'package:mobile_flutter/features/activity/presentation/pages/activity_page.dart';
 import 'package:mobile_flutter/features/home/presentation/pages/home_page.dart';
-import 'package:mobile_flutter/features/ranking/presentation/pages/ranking_page.dart';
 import 'package:mobile_flutter/features/settings/presentation/pages/settings_page.dart';
-import 'package:mobile_flutter/features/timeline/presentation/pages/timeline_page.dart';
 
 // 選択されているタブのインデックスを管理するプロバイダー
 final selectedTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -20,9 +17,6 @@ class MainNavigationPage extends ConsumerWidget {
     // タブごとのページ
     final pages = [
       const HomePage(),
-      const RankingPage(),
-      const TimelinePage(),
-      const ActivityPage(),
       const SettingsPage(),
     ];
 
@@ -64,21 +58,6 @@ class MainNavigationPage extends ConsumerWidget {
                   icon: Icon(Icons.home_outlined),
                   activeIcon: Icon(Icons.home),
                   label: 'ホーム',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.emoji_events_outlined),
-                  activeIcon: Icon(Icons.emoji_events),
-                  label: 'ランキング',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.timeline_outlined),
-                  activeIcon: Icon(Icons.timeline),
-                  label: 'タイムライン',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.group_outlined),
-                  activeIcon: Icon(Icons.group),
-                  label: 'みんなの活動',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings_outlined),

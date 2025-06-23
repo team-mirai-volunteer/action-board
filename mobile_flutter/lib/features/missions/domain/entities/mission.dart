@@ -12,10 +12,14 @@ class Mission with _$Mission {
     required int difficulty,
     DateTime? eventDate,
     required String requiredArtifactType,
+    String? artifactLabel,
+    String? ogpImageUrl,
     int? maxAchievementCount,
     @Default(false) bool isFeatured,
     @Default(false) bool isHidden,
     required DateTime createdAt,
     required DateTime updatedAt,
+    @Default(0) int achievementCount,
+    @Default(false) bool isCompleted,
   }) = _Mission;
 }

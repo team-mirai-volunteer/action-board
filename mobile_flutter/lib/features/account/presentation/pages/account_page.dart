@@ -257,7 +257,7 @@ class AccountPage extends ConsumerWidget {
               ),
             ),
             if (suffixLabel != null) ...[
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -277,7 +277,7 @@ class AccountPage extends ConsumerWidget {
             ],
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         // 入力フィールド
         TextFormField(
           initialValue: value,
@@ -296,6 +296,10 @@ class AccountPage extends ConsumerWidget {
               horizontal: 12,
               vertical: 8,
             ),
+            helperText: ' ',
+            helperStyle: const TextStyle(height: 0.7),
+            errorStyle: const TextStyle(height: 1.0),
+            errorMaxLines: 2,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(
@@ -346,7 +350,7 @@ class AccountPage extends ConsumerWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
