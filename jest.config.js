@@ -9,11 +9,7 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: "jsdom",
-  testMatch: [
-    "**/tests/**/*.test.{ts,tsx}",
-    "**/components/**/*.test.{ts,tsx}",
-  ],
-  testPathIgnorePatterns: ["<rootDir>/tests/rls/"],
+  testMatch: ["**/tests/**/*.test.ts", "**/components/**/*.test.{ts,tsx}"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
