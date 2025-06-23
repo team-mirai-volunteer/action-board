@@ -10,7 +10,6 @@ const createJestConfig = nextJest({
 const config = {
   testEnvironment: "jsdom",
   testMatch: ["**/tests/**/*.test.{ts,tsx}"],
-  testPathIgnorePatterns: ["/tests/rls/"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
