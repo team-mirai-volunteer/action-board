@@ -195,8 +195,7 @@ export async function getDailyAttemptStatus(
   userId: string,
   missionId: string,
 ): Promise<DailyAttemptStatusResult> {
-  const supabase = await createServerClient();
-  return fetchDailyAttemptStatus(supabase, userId, missionId);
+  return fetchDailyAttemptStatus(userId, missionId);
 }
 
 export async function getMissionPageData(
