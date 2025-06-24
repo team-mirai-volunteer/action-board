@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
+// import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -22,7 +22,7 @@ import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
   mission: Tables<"missions">;
-  authUser: User;
+  authUser: { id: string; email?: string } | null;
   userAchievementCount: number;
   onSubmissionSuccess?: () => void;
   initialDailyAttemptStatus?: {
@@ -166,7 +166,11 @@ export function MissionFormWrapper({
   };
 
   const completed =
-    userAchievementCount >= (mission.max_achievement_count || 1);
+    mission.max_achievement_count !== null &&
+    userAchievementCount >= mission.max_achievement_count;
+
+  // フォームを表示する条件：完了していない かつ 日次制限に達していない
+  const shouldShowForm = !completed && !dailyAttemptStatus.hasReachedLimit;
 
   return (
     <>
@@ -190,7 +194,7 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {!completed &&
+      {shouldShowForm &&
         (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ? (
           // クイズミッションの場合
           <div className="space-y-4">
@@ -267,32 +271,48 @@ export function MissionFormWrapper({
           </form>
         ))}
 
-      {(completed ||
-        (userAchievementCount > 0 &&
-          mission.max_achievement_count === null)) && (
+      {/* 日次制限に達した場合の表示 */}
+      {dailyAttemptStatus.hasReachedLimit && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
           <p className="text-sm font-medium text-gray-800">
-            このミッションは達成済みです。
+            本日の挑戦回数上限に達しました
           </p>
-          <div className="flex flex-col gap-2 mt-2">
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                setIsDialogOpen(true);
-              }}
-              variant="outline"
-              className="w-full"
-            >
-              シェアする
-            </Button>
-            <Link href="/#featured-missions">
-              <Button variant="outline" className="w-full">
-                ミッション一覧へ
-              </Button>
-            </Link>
-          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            今日の挑戦回数: {dailyAttemptStatus.currentAttempts}/
+            {dailyAttemptStatus.dailyLimit}
+          </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            明日また挑戦できます
+          </p>
         </div>
       )}
+
+      {(completed ||
+        (userAchievementCount > 0 && mission.max_achievement_count === null)) &&
+        !dailyAttemptStatus.hasReachedLimit && (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+            <p className="text-sm font-medium text-gray-800">
+              このミッションは達成済みです。
+            </p>
+            <div className="flex flex-col gap-2 mt-2">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsDialogOpen(true);
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                シェアする
+              </Button>
+              <Link href="/#featured-missions">
+                <Button variant="outline" className="w-full">
+                  ミッション一覧へ
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
       <MissionCompleteDialog
         isOpen={isDialogOpen}

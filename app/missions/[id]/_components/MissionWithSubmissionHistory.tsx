@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
+// import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
 import type { SubmissionData } from "../_lib/types";
@@ -13,7 +13,7 @@ import { SubmissionHistoryWrapper } from "./SubmissionHistoryWrapper";
 
 type Props = {
   mission: Tables<"missions">;
-  authUser: User;
+  authUser: { id: string; email?: string } | null;
   referralCode: string | null;
   initialUserAchievementCount: number;
   initialSubmissions: SubmissionData[];
@@ -50,6 +50,8 @@ export function MissionWithSubmissionHistory({
   );
 
   const refreshSubmissions = async () => {
+    if (!authUser) return;
+
     try {
       const supabase = createClient();
 
@@ -205,7 +207,7 @@ export function MissionWithSubmissionHistory({
         />
       )}
 
-      {submissions.length > 0 && (
+      {submissions.length > 0 && authUser && (
         <SubmissionHistoryWrapper
           submissions={submissions}
           missionId={missionId}

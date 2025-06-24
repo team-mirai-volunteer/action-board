@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
 import { getTodayInJST } from "@/lib/utils/utils";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type Mission = Tables<"missions">;
 
@@ -149,11 +150,25 @@ export async function decrementDailyAttempt(
 }
 
 export async function fetchDailyAttemptStatus(
+  supabase: SupabaseClient,
   userId: string,
   missionId: string,
 ): Promise<DailyAttemptStatusResult> {
-  const { getMissionData } = await import("@/app/missions/[id]/_lib/data");
-  const missionData = await getMissionData(missionId);
+  // First, fetch the mission data to get the daily limit
+  const { data: missionData, error: missionError } = await supabase
+    .from("missions")
+    .select("max_daily_achievement_count")
+    .eq("id", missionId)
+    .single();
+
+  if (missionError) {
+    console.error("Mission fetch error:", missionError);
+    return {
+      currentAttempts: 0,
+      dailyLimit: null,
+      hasReachedLimit: false,
+    };
+  }
 
   const dailyLimit = missionData?.max_daily_achievement_count ?? null;
 
@@ -167,7 +182,6 @@ export async function fetchDailyAttemptStatus(
 
   const today = getTodayInJST();
 
-  const supabase = await createServiceClient();
   const { data: attemptData } = await supabase
     .from("daily_mission_attempts")
     .select("attempt_count")
