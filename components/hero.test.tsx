@@ -2,6 +2,16 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import Hero from "./hero";
 
+jest.mock("@/lib/services/users", () => ({
+  getUser: jest.fn(() => Promise.resolve(null)),
+}));
+
+jest.mock("./levels", () => {
+  return function MockLevels({ userId, clickable }: any) {
+    return <div data-testid="levels">Levels Component for {userId}</div>;
+  };
+});
+
 jest.mock("next/link", () => {
   return ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>
@@ -18,37 +28,46 @@ jest.mock("@/components/ui/button", () => ({
 
 describe("Hero", () => {
   describe("基本的な表示", () => {
-    it("ヒーローセクションが正しくレンダリングされる", () => {
-      render(<Hero />);
+    it("ヒーローセクションが正しくレンダリングされる", async () => {
+      const result = await Hero();
+      render(result);
 
-      expect(screen.getByText("政治参加を")).toBeInTheDocument();
-      expect(screen.getByText("ゲームのように楽しく")).toBeInTheDocument();
+      expect(screen.getByText("チームみらい")).toBeInTheDocument();
+      expect(screen.getByText("アクションボード")).toBeInTheDocument();
     });
 
-    it("メインタイトルが表示される", () => {
-      render(<Hero />);
+    it("メインタイトルが表示される", async () => {
+      const result = await Hero();
+      render(result);
 
       const heading = screen.getByRole("heading", { level: 1 });
       expect(heading).toBeInTheDocument();
     });
 
-    it("説明文が表示される", () => {
-      render(<Hero />);
+    it("説明文が表示される", async () => {
+      const result = await Hero();
+      render(result);
 
-      expect(screen.getByText(/アクションボードは/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/テクノロジーで政治をかえる/),
+      ).toBeInTheDocument();
     });
   });
 
   describe("CTA要素", () => {
-    it("開始ボタンが表示される", () => {
-      render(<Hero />);
+    it("開始ボタンが表示される", async () => {
+      const result = await Hero();
+      render(result);
 
-      const startButton = screen.getByRole("button", { name: /始める/ });
+      const startButton = screen.getByRole("button", {
+        name: /チームみらいで手を動かす/,
+      });
       expect(startButton).toBeInTheDocument();
     });
 
-    it("詳細リンクが表示される", () => {
-      render(<Hero />);
+    it("詳細リンクが表示される", async () => {
+      const result = await Hero();
+      render(result);
 
       const detailLink = screen.getByRole("link");
       expect(detailLink).toBeInTheDocument();
@@ -56,31 +75,35 @@ describe("Hero", () => {
   });
 
   describe("レイアウトとスタイル", () => {
-    it("適切なCSSクラスが設定される", () => {
-      const { container } = render(<Hero />);
+    it("適切なCSSクラスが設定される", async () => {
+      const result = await Hero();
+      const { container } = render(result);
 
       const heroSection = container.querySelector("section");
-      expect(heroSection).toHaveClass("py-20");
+      expect(heroSection).toHaveClass("relative");
     });
 
-    it("グラデーション背景が設定される", () => {
-      const { container } = render(<Hero />);
+    it("グラデーション背景が設定される", async () => {
+      const result = await Hero();
+      const { container } = render(result);
 
-      const gradientElement = container.querySelector(".bg-gradient-to-r");
+      const gradientElement = container.querySelector(".bg-gradient-to-br");
       expect(gradientElement).toBeInTheDocument();
     });
   });
 
   describe("アクセシビリティ", () => {
-    it("見出し階層が適切に設定される", () => {
-      render(<Hero />);
+    it("見出し階層が適切に設定される", async () => {
+      const result = await Hero();
+      render(result);
 
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
     });
 
-    it("ボタンとリンクが適切に設定される", () => {
-      render(<Hero />);
+    it("ボタンとリンクが適切に設定される", async () => {
+      const result = await Hero();
+      render(result);
 
       const buttons = screen.getAllByRole("button");
       const links = screen.getAllByRole("link");

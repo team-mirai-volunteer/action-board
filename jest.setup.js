@@ -274,7 +274,26 @@ jest.mock("@/lib/services/users", () => ({
 
 jest.mock("@radix-ui/react-dialog", () => {
   const mockReact = require("react");
-  return {
+
+  const createMockComponent = (displayName, defaultElement = "div") => {
+    const component = mockReact.forwardRef(
+      ({ children, className, ...props }, ref) =>
+        mockReact.createElement(
+          defaultElement,
+          {
+            ...props,
+            className,
+            ref,
+            "data-testid": `dialog-${displayName.toLowerCase()}`,
+          },
+          children,
+        ),
+    );
+    component.displayName = displayName;
+    return component;
+  };
+
+  const mockComponents = {
     Root: ({ children, open, onOpenChange }) => {
       return open
         ? mockReact.createElement(
@@ -284,68 +303,19 @@ jest.mock("@radix-ui/react-dialog", () => {
           )
         : null;
     },
-    Trigger: ({ children, asChild, ...props }) => {
-      if (asChild && mockReact.Children.count(children) === 1) {
-        return mockReact.cloneElement(children, props);
-      }
-      return mockReact.createElement(
-        "button",
-        { ...props, "data-testid": "dialog-trigger" },
-        children,
-      );
-    },
+    Trigger: createMockComponent("DialogTrigger", "button"),
     Portal: ({ children }) =>
       mockReact.createElement(
         "div",
         { "data-testid": "dialog-portal" },
         children,
       ),
-    Overlay: ({ className, ...props }) =>
-      mockReact.createElement("div", {
-        ...props,
-        className,
-        "data-testid": "dialog-overlay",
-      }),
-    Content: ({ children, className, ...props }) =>
-      mockReact.createElement(
-        "div",
-        {
-          ...props,
-          className,
-          role: "dialog",
-          "data-testid": "dialog-content",
-        },
-        children,
-      ),
-    Close: ({ children, className, ...props }) =>
-      mockReact.createElement(
-        "button",
-        {
-          ...props,
-          className,
-          "data-testid": "dialog-close",
-        },
-        children,
-      ),
-    Title: ({ children, className, ...props }) =>
-      mockReact.createElement(
-        "h2",
-        {
-          ...props,
-          className,
-          "data-testid": "dialog-title",
-        },
-        children,
-      ),
-    Description: ({ children, className, ...props }) =>
-      mockReact.createElement(
-        "p",
-        {
-          ...props,
-          className,
-          "data-testid": "dialog-description",
-        },
-        children,
-      ),
+    Overlay: createMockComponent("DialogOverlay"),
+    Content: createMockComponent("DialogContent"),
+    Close: createMockComponent("DialogClose", "button"),
+    Title: createMockComponent("DialogTitle", "h2"),
+    Description: createMockComponent("DialogDescription", "p"),
   };
+
+  return mockComponents;
 });
