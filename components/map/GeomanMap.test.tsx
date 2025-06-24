@@ -3,6 +3,32 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args: any[]) => {
+    const message = args[0];
+    if (
+      typeof message === "string" &&
+      (message.includes(
+        "An update to GeomanMap inside a test was not wrapped in act",
+      ) ||
+        message.includes(
+          "When testing, code that causes React state updates should be wrapped into act",
+        ) ||
+        message.includes(
+          "This ensures that you're testing the behavior the user would see in the browser",
+        ))
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
+
 const mockMap = {
   setView: jest.fn().mockReturnThis(),
   remove: jest.fn(),
@@ -54,8 +80,10 @@ describe("GeomanMap", () => {
     expect(mapElement).toHaveClass(customClass);
   });
 
-  it("地図要素が正しいIDとスタイルで作成される", () => {
-    render(<GeomanMap />);
+  it("地図要素が正しいIDとスタイルで作成される", async () => {
+    await act(async () => {
+      render(<GeomanMap />);
+    });
     const mapElement = document.querySelector("#map");
     expect(mapElement).toBeInTheDocument();
     expect(mapElement).toHaveStyle({
@@ -69,9 +97,7 @@ describe("GeomanMap", () => {
   it("onMapReadyコールバックが正常に実行される", async () => {
     const mockOnMapReady = jest.fn();
 
-    await act(async () => {
-      render(<GeomanMap onMapReady={mockOnMapReady} />);
-    });
+    render(<GeomanMap onMapReady={mockOnMapReady} />);
 
     await waitFor(
       () => {
@@ -108,14 +134,16 @@ describe("GeomanMap", () => {
       render(<GeomanMap />);
     });
 
-    await waitFor(
-      () => {
-        expect(
-          screen.getByText("地図の初期化に失敗しました"),
-        ).toBeInTheDocument();
-      },
-      { timeout: 3000 },
-    );
+    await act(async () => {
+      await waitFor(
+        () => {
+          expect(
+            screen.getByText("地図の初期化に失敗しました"),
+          ).toBeInTheDocument();
+        },
+        { timeout: 3000 },
+      );
+    });
   });
 
   it("Leafletライブラリの読み込みに失敗した場合エラーが表示される", async () => {
