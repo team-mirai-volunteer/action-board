@@ -69,7 +69,9 @@ describe("GeomanMap", () => {
   it("onMapReadyコールバックが正常に実行される", async () => {
     const mockOnMapReady = jest.fn();
 
-    render(<GeomanMap onMapReady={mockOnMapReady} />);
+    await act(async () => {
+      render(<GeomanMap onMapReady={mockOnMapReady} />);
+    });
 
     await waitFor(
       () => {
@@ -102,7 +104,9 @@ describe("GeomanMap", () => {
       throw new Error("Map initialization failed");
     });
 
-    render(<GeomanMap />);
+    await act(async () => {
+      render(<GeomanMap />);
+    });
 
     await waitFor(
       () => {
@@ -124,8 +128,10 @@ describe("GeomanMap", () => {
           try {
             throw new Error("Failed to load Leaflet");
           } catch (error) {
-            setError("地図ライブラリの読み込みに失敗しました");
-            setIsLoading(false);
+            act(() => {
+              setError("地図ライブラリの読み込みに失敗しました");
+              setIsLoading(false);
+            });
           }
         };
 
@@ -169,7 +175,9 @@ describe("GeomanMap", () => {
       );
     };
 
-    render(<FailingGeomanMap />);
+    await act(async () => {
+      render(<FailingGeomanMap />);
+    });
 
     await waitFor(
       () => {
@@ -192,8 +200,10 @@ describe("GeomanMap", () => {
             await Promise.resolve(); // Leaflet loads fine
             throw new Error("Failed to load Geoman");
           } catch (error) {
-            setError("地図編集ツールの読み込みに失敗しました");
-            setIsLoading(false);
+            act(() => {
+              setError("地図編集ツールの読み込みに失敗しました");
+              setIsLoading(false);
+            });
           }
         };
 
@@ -237,7 +247,9 @@ describe("GeomanMap", () => {
       );
     };
 
-    render(<FailingGeomanMap />);
+    await act(async () => {
+      render(<FailingGeomanMap />);
+    });
 
     await waitFor(
       () => {
