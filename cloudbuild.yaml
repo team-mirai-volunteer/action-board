@@ -24,6 +24,20 @@ steps:
       - BQ_USER_PASSWORD
       - SMTP_PASS
 
+  # ミッションデータの同期
+  - name: 'node:22'
+    entrypoint: "bash"
+    args:
+      - '-c'
+      - |
+        npm ci
+        npm run mission:sync
+    env:
+      - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
+      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
+    secretEnv:
+      - SUPABASE_SERVICE_ROLE_KEY
+
   # Dockerイメージのビルド
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
@@ -94,6 +108,8 @@ availableSecrets:
       env: SUPABASE_ACCESS_TOKEN
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-db-password/versions/latest'
       env: SUPABASE_DB_PASSWORD
+    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-service-role-key/versions/latest'
+      env: SUPABASE_SERVICE_ROLE_KEY
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-smtp-password/versions/latest'
       env: SMTP_PASS
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-bq-user-password/versions/latest'

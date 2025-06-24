@@ -459,12 +459,9 @@ HUBSPOT_CONTACT_LIST_ID=123456
 #### 管理ページ
 - カテゴリ管理 Notion: https://team-mirai.notion.site/203f6f56bae181598a0cfbcd03853b69?v=203f6f56bae18185b448000ca7dcf05f
 
-#### 手順例
-1. 新しいミッションを作成  
-2. `missions` テーブルに INSERT  
-3. PM と紐づけるカテゴリーを確認  
-4. missiosとmission_category_link テーブルに INSERT  
-　mission_category_linkへの登録例：action-board/supabase/migrations/20250623115600_update_mission_category.sql
+#### 手順
+ミッションデータの詳細については[mission_data/README.md を参照してください](./mission_data/README.md)
+
 
 ---
 

@@ -101,13 +101,16 @@ export default async function MissionsByCategory({
       if (!a.mission_id || !b.mission_id) return 0;
 
       // クリア済みミッションを後ろに
+      // ただしミッションの上限回数が設定されている場合のみ
       if (
+        a.max_achievement_count &&
         achievedMissionIds.includes(a.mission_id) &&
-        !achievedMissionIds.includes(b.mission_id)
+        achievedMissionIds.includes(b.mission_id)
       ) {
         return 1; // a を後ろに
       }
       if (
+        b.max_achievement_count &&
         !achievedMissionIds.includes(a.mission_id) &&
         achievedMissionIds.includes(b.mission_id)
       ) {
@@ -162,7 +165,7 @@ export default async function MissionsByCategory({
                       // mission_idが存在することが保証されているので、安全にアクセス
                       const missionId = m.mission_id as string;
 
-                      const missionForComponent: Tables<"missions"> = {
+                      const missionForComponent = {
                         id: missionId,
                         title: m.title || "",
                         icon_url: m.icon_url,
