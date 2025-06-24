@@ -235,7 +235,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: 一番応援したくなった投稿のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/instagram_mission.png
+    ogp_image_url: null
   - slug: x-like
     title: X でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -246,7 +246,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: 一番応援したい投稿のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/x_like_mission.png
+    ogp_image_url: null
   - slug: note-like
     title: note でチームみらい記事にスキ♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -257,7 +257,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: スキを押した記事のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/note_mission.png
+    ogp_image_url: null
   - slug: put-up-poster
     title: チームみらいの政党ポスターを貼ろう
     icon_url: /img/mission_fallback.svg
@@ -268,7 +268,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: ポスターを貼った場所の郵便番号
-    ogp_image_url: ''
+    ogp_image_url: null
   - slug: chat-idobata-ai
     title: いどばた政策サイトでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
