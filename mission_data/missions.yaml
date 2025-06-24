@@ -305,18 +305,6 @@ missions:
     artifact_label: いどばたのユーザー名
     ogp_image_url: null
     event_date: null
-  - slug: quiz-policy-intermediate-2
-    title: 政策・マニフェストクイズ（中級2）に挑戦しよう
-    icon_url: /img/mission_fallback.svg
-    content: チームみらいの政策・マニフェストについてのクイズです。全部で5問！全問正解でミッション達成！
-    difficulty: 2
-    required_artifact_type: QUIZ
-    max_achievement_count: 2
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
-    event_date: null
   - slug: quiz-teammirai-beginner
     title: チームみらいクイズ（初級）に挑戦しよう
     icon_url: /img/mission_fallback.svg
@@ -331,6 +319,18 @@ missions:
     event_date: null
   - slug: quiz-policy-intermediate
     title: 政策・マニフェストクイズ（中級）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの政策・マニフェストについてのクイズです。全部で5問！全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 2
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+    event_date: null
+  - slug: quiz-policy-intermediate-2
+    title: 政策・マニフェストクイズ（中級2）に挑戦しよう
     icon_url: /img/mission_fallback.svg
     content: チームみらいの政策・マニフェストについてのクイズです。全部で5問！全問正解でミッション達成！
     difficulty: 2

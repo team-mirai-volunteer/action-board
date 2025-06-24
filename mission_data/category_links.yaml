@@ -13,6 +13,8 @@ category_links:
         sort_no: 500
   - category_slug: learn-about-teammirai
     missions:
+      - mission_slug: quiz-teammirai-beginner
+        sort_no: 200
       - mission_slug: youtube-watch
         sort_no: 300
       - mission_slug: chat-idobata-ai
