@@ -1,0 +1,53 @@
+categories:
+  - slug: follow-teammirai
+    title: チームみらいをフォローしよう
+    sort_no: 100
+    category_kbn: DEFAULT
+  - slug: learn-about-teammirai
+    title: チームみらいのことを知ろう
+    sort_no: 200
+    category_kbn: DEFAULT
+  - slug: join-community
+    title: コミュニティに参加しよう
+    sort_no: 300
+    category_kbn: DEFAULT
+  - slug: support-with-likes
+    title: いいねで応援しよう
+    sort_no: 400
+    category_kbn: DEFAULT
+  - slug: share-and-spread
+    title: 発信・拡散しよう
+    sort_no: 500
+    category_kbn: DEFAULT
+  - slug: local-activities
+    title: 地域で活動しよう
+    sort_no: 600
+    category_kbn: DEFAULT
+  - slug: learn-with-quiz
+    title: クイズで学ぼう
+    sort_no: 700
+    category_kbn: DEFAULT
+  - slug: improve-policies
+    title: 政策を改善しよう
+    sort_no: 800
+    category_kbn: DEFAULT
+  - slug: support-on-youtube
+    title: YouTubeで応援しよう
+    sort_no: 900
+    category_kbn: DEFAULT
+  - slug: support-on-tiktok
+    title: Tiktokで応援しよう
+    sort_no: 1000
+    category_kbn: DEFAULT
+  - slug: support-on-x
+    title: Xで応援しよう
+    sort_no: 1100
+    category_kbn: DEFAULT
+  - slug: support-on-note
+    title: noteで応援しよう
+    sort_no: 1200
+    category_kbn: DEFAULT
+  - slug: create-and-support
+    title: 作って応援しよう
+    sort_no: 1300
+    category_kbn: DEFAULT

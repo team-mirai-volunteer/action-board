@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     // 全ての達成IDに対するXPトランザクションを一括取得（チャンク分割）
     const { data: existingXpTransactions, error: xpBulkCheckError } =
-      await executeChunkedQuery<{ source_id: string }>(
+      await executeChunkedQuery(
         achievementIds,
         async (chunkIds) => {
           return await supabase
@@ -328,9 +328,7 @@ export async function GET() {
         (achievement) => achievement.id,
       );
 
-      const { data: existingXpTransactions } = await executeChunkedQuery<{
-        source_id: string;
-      }>(
+      const { data: existingXpTransactions } = await executeChunkedQuery(
         achievementIds,
         async (chunkIds) => {
           return await supabase

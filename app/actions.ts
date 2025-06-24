@@ -309,7 +309,10 @@ export const forgotPasswordAction = async (formData: FormData) => {
   const userWithEmail = userResults?.[0] || null;
 
   // LINEユーザーの場合、パスワードリセットは出来ない
-  if (userWithEmail && userWithEmail.user_metadata?.provider === "line") {
+  if (
+    userWithEmail &&
+    (userWithEmail.user_metadata as { provider: string })?.provider === "line"
+  ) {
     return encodedRedirect(
       "error",
       "/forgot-password",
@@ -573,7 +576,11 @@ export async function handleLineAuthAction(
 
     if (userWithEmail) {
       // 既存ユーザーの場合：作成方法に応じて処理を分岐
-      const userProvider = userWithEmail.user_metadata?.provider;
+      const metadata = userWithEmail.user_metadata as {
+        provider?: string;
+        picture?: string;
+      };
+      const userProvider = metadata?.provider;
 
       if (userProvider === "line") {
         // LINEで作成されたユーザーの場合：ログイン処理
@@ -583,10 +590,10 @@ export async function handleLineAuthAction(
         // LINE関連のメタデータを更新
         await supabase.auth.admin.updateUserById(userId, {
           user_metadata: {
-            ...userWithEmail.user_metadata,
+            ...metadata,
             line_user_id: lineUserId,
             line_linked_at: new Date().toISOString(),
-            picture: image || userWithEmail.user_metadata?.picture,
+            picture: image || metadata?.picture,
           },
         });
       } else {
