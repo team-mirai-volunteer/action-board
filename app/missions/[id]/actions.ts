@@ -196,19 +196,33 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count を確認
-  const { data: missionData, error: missionFetchError } = await supabase
-    .from("missions")
-    .select("max_achievement_count")
-    .eq("id", validatedMissionId)
-    .single();
+  // ミッション情報を取得して、max_achievement_count と max_daily_achievement_count を確認
+  const { getMissionData } = await import("@/app/missions/[id]/_lib/data");
+  const missionData = await getMissionData(validatedMissionId);
 
-  if (missionFetchError) {
-    console.error(`Mission fetch error: ${missionFetchError.message}`);
+  if (!missionData) {
+    console.error(`Mission not found: ${validatedMissionId}`);
     return {
       success: false,
       error: "ミッション情報の取得に失敗しました。",
     };
+  }
+
+  if (missionData?.max_daily_achievement_count !== null) {
+    const { checkAndRecordDailyAttempt } = await import(
+      "@/lib/services/missions"
+    );
+    const dailyAttemptResult = await checkAndRecordDailyAttempt(
+      authUser.id,
+      validatedMissionId,
+    );
+
+    if (!dailyAttemptResult.canAttempt) {
+      return {
+        success: false,
+        error: `本日のミッション挑戦回数の上限（${dailyAttemptResult.dailyLimit}回）に達しています。明日再度お試しください。`,
+      };
+    }
   }
 
   if (missionData?.max_achievement_count !== null) {
@@ -602,6 +616,20 @@ export const cancelSubmissionAction = async (formData: FormData) => {
       success: false,
       error: `達成の取り消しに失敗しました: ${deleteError.message}`,
     };
+  }
+
+  const { decrementDailyAttempt } = await import("@/lib/services/missions");
+  const dailyAttemptResult = await decrementDailyAttempt(
+    authUser.id,
+    achievement.mission_id,
+  );
+
+  if (!dailyAttemptResult.success) {
+    console.error(
+      "日次挑戦回数の減算に失敗しました:",
+      dailyAttemptResult.error,
+    );
+    // 日次挑戦回数の減算失敗は警告として扱うが、達成記録は既に削除済み
   }
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）

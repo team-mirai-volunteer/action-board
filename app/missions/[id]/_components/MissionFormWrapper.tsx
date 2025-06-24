@@ -12,7 +12,10 @@ import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { useMissionSubmission } from "../_hooks/useMissionSubmission";
+import {
+  useDailyAttemptStatus,
+  useMissionSubmission,
+} from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
@@ -22,6 +25,11 @@ type Props = {
   authUser: User;
   userAchievementCount: number;
   onSubmissionSuccess?: () => void;
+  initialDailyAttemptStatus?: {
+    currentAttempts: number;
+    dailyLimit: number | null;
+    hasReachedLimit: boolean;
+  };
   preloadedQuizQuestions?:
     | {
         id: string;
@@ -37,10 +45,17 @@ export function MissionFormWrapper({
   authUser,
   userAchievementCount,
   onSubmissionSuccess,
+  initialDailyAttemptStatus,
   preloadedQuizQuestions,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
+  const { refreshDailyAttemptStatus, ...dailyAttemptStatus } =
+    useDailyAttemptStatus(
+      mission.id,
+      authUser?.id || null,
+      initialDailyAttemptStatus,
+    );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -138,6 +153,10 @@ export function MissionFormWrapper({
       );
     }
 
+    // 日次挑戦状態を更新
+    refreshDailyAttemptStatus();
+
+    // 達成履歴を更新
     if (onSubmissionSuccess) {
       onSubmissionSuccess();
     }
@@ -147,7 +166,11 @@ export function MissionFormWrapper({
   };
 
   const completed =
-    userAchievementCount >= (mission.max_achievement_count || 1);
+    mission.max_achievement_count !== null &&
+    userAchievementCount >= mission.max_achievement_count;
+
+  // フォームを表示する条件：完了していない かつ 日次制限に達していない
+  const shouldShowForm = !completed && !dailyAttemptStatus.hasReachedLimit;
 
   return (
     <>
@@ -171,7 +194,7 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {!completed &&
+      {shouldShowForm &&
         (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ? (
           // クイズミッションの場合
           <div className="space-y-4">
@@ -218,10 +241,23 @@ export function MissionFormWrapper({
             <SubmitButton
               pendingText="登録中..."
               size="lg"
-              disabled={isButtonDisabled || isSubmitting}
+              disabled={
+                isButtonDisabled ||
+                isSubmitting ||
+                dailyAttemptStatus.hasReachedLimit
+              }
             >
-              {buttonLabel}
+              {dailyAttemptStatus.hasReachedLimit
+                ? "本日の挑戦回数上限に達しました"
+                : buttonLabel}
             </SubmitButton>
+            {dailyAttemptStatus.dailyLimit !== null && (
+              <p className="text-sm text-muted-foreground">
+                今日の挑戦回数: {dailyAttemptStatus.currentAttempts}/
+                {dailyAttemptStatus.dailyLimit}
+                {dailyAttemptStatus.hasReachedLimit && " (上限に達しました)"}
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">
               ※
               成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
@@ -235,12 +271,18 @@ export function MissionFormWrapper({
           </form>
         ))}
 
-      {(completed ||
-        (userAchievementCount > 0 &&
-          mission.max_achievement_count === null)) && (
+      {/* 日次制限に達した場合の表示 */}
+      {dailyAttemptStatus.hasReachedLimit && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
           <p className="text-sm font-medium text-gray-800">
-            このミッションは達成済みです。
+            本日の挑戦回数上限に達しました
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            今日の挑戦回数: {dailyAttemptStatus.currentAttempts}/
+            {dailyAttemptStatus.dailyLimit}
+          </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            明日また挑戦できます
           </p>
           <div className="flex flex-col gap-2 mt-2">
             <Button
@@ -261,6 +303,33 @@ export function MissionFormWrapper({
           </div>
         </div>
       )}
+
+      {(completed ||
+        (userAchievementCount > 0 && mission.max_achievement_count === null)) &&
+        !dailyAttemptStatus.hasReachedLimit && (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+            <p className="text-sm font-medium text-gray-800">
+              このミッションは達成済みです。
+            </p>
+            <div className="flex flex-col gap-2 mt-2">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsDialogOpen(true);
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                シェアする
+              </Button>
+              <Link href="/#featured-missions">
+                <Button variant="outline" className="w-full">
+                  ミッション一覧へ
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
       <MissionCompleteDialog
         isOpen={isDialogOpen}

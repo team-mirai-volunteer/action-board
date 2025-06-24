@@ -1,8 +1,13 @@
 "use client";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import {
+  type DailyAttemptStatusResult,
+  fetchDailyAttemptStatus,
+} from "@/lib/services/missions";
+import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function useMissionSubmission(
   mission: Tables<"missions">,
@@ -38,4 +43,35 @@ export function useMissionSubmission(
     isButtonDisabled,
     hasReachedUserMaxAchievements,
   };
+}
+
+export function useDailyAttemptStatus(
+  missionId: string,
+  userId: string | null,
+  initialStatus?: DailyAttemptStatusResult,
+) {
+  const [dailyAttemptStatus, setDailyAttemptStatus] =
+    useState<DailyAttemptStatusResult>(
+      initialStatus || {
+        currentAttempts: 0,
+        dailyLimit: null,
+        hasReachedLimit: false,
+      },
+    );
+
+  const refreshDailyAttemptStatus = useCallback(async () => {
+    if (!userId || !missionId) {
+      return;
+    }
+
+    const supabase = createClient();
+    const status = await fetchDailyAttemptStatus(supabase, userId, missionId);
+    setDailyAttemptStatus(status);
+  }, [userId, missionId]);
+
+  useEffect(() => {
+    refreshDailyAttemptStatus();
+  }, [refreshDailyAttemptStatus]);
+
+  return { ...dailyAttemptStatus, refreshDailyAttemptStatus };
 }

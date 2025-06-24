@@ -87,7 +87,13 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, submissions, userAchievementCount, referralCode } = pageData;
+  const {
+    mission,
+    submissions,
+    userAchievementCount,
+    referralCode,
+    dailyAttemptStatus,
+  } = pageData;
 
   // クイズミッションの場合は問題を事前取得
   let quizQuestions = null;
@@ -138,6 +144,7 @@ export default async function MissionPage({ params }: Props) {
                 initialUserAchievementCount={userAchievementCount}
                 initialSubmissions={submissions}
                 missionId={id}
+                initialDailyAttemptStatus={dailyAttemptStatus}
                 preloadedQuizQuestions={quizQuestions}
               />
             </Suspense>

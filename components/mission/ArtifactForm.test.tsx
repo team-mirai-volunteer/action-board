@@ -26,6 +26,7 @@ const baseMission: Tables<"missions"> = {
   icon_url: "/test-icon.svg",
   event_date: null,
   max_achievement_count: null,
+  max_daily_achievement_count: null,
   is_featured: false,
   is_hidden: false,
   artifact_label: "テストラベル",

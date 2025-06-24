@@ -1,3 +1,7 @@
+import {
+  type DailyAttemptStatusResult,
+  fetchDailyAttemptStatus,
+} from "@/lib/services/missions";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
@@ -15,7 +19,9 @@ export async function getMissionData(
 
   const { data: missionData, error } = await supabase
     .from("missions")
-    .select("*, required_artifact_type, max_achievement_count")
+    .select(
+      "*, required_artifact_type, max_achievement_count, max_daily_achievement_count",
+    )
     .eq("id", missionId)
     .single();
 
@@ -185,6 +191,14 @@ export async function getSubmissionHistory(
   return validSubmissions;
 }
 
+export async function getDailyAttemptStatus(
+  userId: string,
+  missionId: string,
+): Promise<DailyAttemptStatusResult> {
+  const supabase = await createServerClient();
+  return fetchDailyAttemptStatus(supabase, userId, missionId);
+}
+
 export async function getMissionPageData(
   missionId: string,
   userId?: string,
@@ -197,6 +211,11 @@ export async function getMissionPageData(
   let userAchievementCount = 0;
   let submissions: SubmissionData[] = [];
   let referralCode: string | null = null;
+  let dailyAttemptStatus = {
+    currentAttempts: 0,
+    dailyLimit: null as number | null,
+    hasReachedLimit: false,
+  };
 
   if (userId) {
     const { achievements, count } = await getUserAchievements(
@@ -207,6 +226,7 @@ export async function getMissionPageData(
     userAchievementCount = count;
     submissions = await getSubmissionHistory(userId, missionId);
     referralCode = await getReferralCode(userId);
+    dailyAttemptStatus = await getDailyAttemptStatus(userId, missionId);
   }
 
   // 総達成回数の取得
@@ -219,6 +239,7 @@ export async function getMissionPageData(
     userAchievementCount,
     totalAchievementCount,
     referralCode,
+    dailyAttemptStatus,
   };
 }
 

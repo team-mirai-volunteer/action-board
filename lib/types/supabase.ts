@@ -134,6 +134,58 @@ export type Database = {
         };
         Relationships: [];
       };
+      daily_mission_attempts: {
+        Row: {
+          attempt_count: number;
+          attempt_date: string;
+          created_at: string;
+          id: string;
+          mission_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          attempt_date?: string;
+          created_at?: string;
+          id?: string;
+          mission_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempt_count?: number;
+          attempt_date?: string;
+          created_at?: string;
+          id?: string;
+          mission_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "daily_mission_attempts_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       events: {
         Row: {
           created_at: string;
@@ -407,6 +459,7 @@ export type Database = {
           is_featured: boolean;
           is_hidden: boolean;
           max_achievement_count: number | null;
+          max_daily_achievement_count: number | null;
           ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
@@ -423,6 +476,7 @@ export type Database = {
           is_featured?: boolean;
           is_hidden?: boolean;
           max_achievement_count?: number | null;
+          max_daily_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
@@ -439,6 +493,7 @@ export type Database = {
           is_featured?: boolean;
           is_hidden?: boolean;
           max_achievement_count?: number | null;
+          max_daily_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
@@ -841,6 +896,7 @@ export type Database = {
           is_hidden: boolean | null;
           link_sort_no: number | null;
           max_achievement_count: number | null;
+          max_daily_achievement_count: number | null;
           mission_id: string | null;
           ogp_image_url: string | null;
           required_artifact_type: string | null;

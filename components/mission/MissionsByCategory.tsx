@@ -60,6 +60,7 @@ export default async function MissionsByCategory({
       created_at,
       artifact_label,
       max_achievement_count,
+      max_daily_achievement_count,
       event_date,
       is_featured,
       updated_at,
@@ -102,14 +103,14 @@ export default async function MissionsByCategory({
 
       // クリア済みミッションを後ろに
       if (
-        achievedMissionIds.includes(a.mission_id) &&
-        !achievedMissionIds.includes(b.mission_id)
+        achievedMissionIds.includes(a.mission_id || "") &&
+        !achievedMissionIds.includes(b.mission_id || "")
       ) {
         return 1; // a を後ろに
       }
       if (
-        !achievedMissionIds.includes(a.mission_id) &&
-        achievedMissionIds.includes(b.mission_id)
+        !achievedMissionIds.includes(a.mission_id || "") &&
+        achievedMissionIds.includes(b.mission_id || "")
       ) {
         return -1; // b を後ろに
       }
@@ -168,12 +169,14 @@ export default async function MissionsByCategory({
                         icon_url: m.icon_url,
                         difficulty: m.difficulty || 1,
                         content: m.content || "",
-                        created_at: m.created_at || new Date().toISOString(),
+                        created_at: m.created_at ?? "1970-01-01T00:00:00.000Z",
                         artifact_label: m.artifact_label,
                         max_achievement_count: m.max_achievement_count,
+                        max_daily_achievement_count:
+                          m.max_daily_achievement_count,
                         event_date: m.event_date,
                         is_featured: m.is_featured || false,
-                        updated_at: m.updated_at || new Date().toISOString(),
+                        updated_at: m.updated_at ?? "1970-01-01T00:00:00.000Z",
                         is_hidden: m.is_hidden || false,
                         ogp_image_url: m.ogp_image_url,
                         required_artifact_type: m.required_artifact_type || "",

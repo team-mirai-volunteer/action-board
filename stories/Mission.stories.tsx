@@ -30,6 +30,7 @@ const dummyMission: Tables<"missions"> = {
   artifact_label: null,
   is_featured: false,
   is_hidden: false,
+  max_daily_achievement_count: null,
 };
 
 export const Default: Story = {

@@ -18,6 +18,11 @@ type Props = {
   initialUserAchievementCount: number;
   initialSubmissions: SubmissionData[];
   missionId: string;
+  initialDailyAttemptStatus: {
+    currentAttempts: number;
+    dailyLimit: number | null;
+    hasReachedLimit: boolean;
+  };
   preloadedQuizQuestions?:
     | {
         id: string;
@@ -35,6 +40,7 @@ export function MissionWithSubmissionHistory({
   initialUserAchievementCount,
   initialSubmissions,
   missionId,
+  initialDailyAttemptStatus,
   preloadedQuizQuestions,
 }: Props) {
   const [submissions, setSubmissions] =
@@ -63,6 +69,9 @@ export function MissionWithSubmissionHistory({
 
       // 達成回数を更新
       setUserAchievementCount(achievementsData?.length || 0);
+
+      // 日次の挑戦回数もリフレッシュするために、コンポーネントを再レンダリング
+      // useDailyAttemptStatusフックが自動的に最新のデータを取得します
 
       if (!achievementsData || achievementsData.length === 0) {
         setSubmissions([]);
@@ -191,6 +200,7 @@ export function MissionWithSubmissionHistory({
           authUser={authUser}
           userAchievementCount={userAchievementCount}
           onSubmissionSuccess={refreshSubmissions}
+          initialDailyAttemptStatus={initialDailyAttemptStatus}
           preloadedQuizQuestions={preloadedQuizQuestions}
         />
       )}

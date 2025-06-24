@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { type ClassValue, clsx } from "clsx";
 import { redirect } from "next/navigation";
 import { twMerge } from "tailwind-merge";
@@ -37,6 +38,12 @@ export function calculateAge(birthdate: string): number {
   }
 
   return age;
+}
+
+export function getTodayInJST(): string {
+  return new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 }
 
 // L → L+1 の差分 XP
