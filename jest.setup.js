@@ -144,3 +144,81 @@ jest.mock("react-dom", () => ({
   ...jest.requireActual("react-dom"),
   useFormStatus: jest.fn(() => ({ pending: false })),
 }));
+
+jest.mock("@radix-ui/react-dialog", () => {
+  const mockReact = require("react");
+  return {
+    Root: ({ children, open, onOpenChange }) => {
+      return open
+        ? mockReact.createElement(
+            "div",
+            { "data-testid": "dialog-root" },
+            children,
+          )
+        : null;
+    },
+    Trigger: ({ children, asChild, ...props }) => {
+      if (asChild && mockReact.Children.count(children) === 1) {
+        return mockReact.cloneElement(children, props);
+      }
+      return mockReact.createElement(
+        "button",
+        { ...props, "data-testid": "dialog-trigger" },
+        children,
+      );
+    },
+    Portal: ({ children }) =>
+      mockReact.createElement(
+        "div",
+        { "data-testid": "dialog-portal" },
+        children,
+      ),
+    Overlay: ({ className, ...props }) =>
+      mockReact.createElement("div", {
+        ...props,
+        className,
+        "data-testid": "dialog-overlay",
+      }),
+    Content: ({ children, className, ...props }) =>
+      mockReact.createElement(
+        "div",
+        {
+          ...props,
+          className,
+          role: "dialog",
+          "data-testid": "dialog-content",
+        },
+        children,
+      ),
+    Close: ({ children, className, ...props }) =>
+      mockReact.createElement(
+        "button",
+        {
+          ...props,
+          className,
+          "data-testid": "dialog-close",
+        },
+        children,
+      ),
+    Title: ({ children, className, ...props }) =>
+      mockReact.createElement(
+        "h2",
+        {
+          ...props,
+          className,
+          "data-testid": "dialog-title",
+        },
+        children,
+      ),
+    Description: ({ children, className, ...props }) =>
+      mockReact.createElement(
+        "p",
+        {
+          ...props,
+          className,
+          "data-testid": "dialog-description",
+        },
+        children,
+      ),
+  };
+});
