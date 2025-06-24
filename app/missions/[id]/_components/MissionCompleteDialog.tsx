@@ -69,7 +69,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             missionId={mission.id}
             url={shareUrl}
           >
-            Lineでシェア
+            LINEでシェア
           </ShareLineButton>
           {/* navigator.share()を使っているのでモバイルのみ表示 */}
           <ShareButton
