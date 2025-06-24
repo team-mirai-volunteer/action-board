@@ -86,7 +86,7 @@ describe("mission_category テーブルのRLSテスト", () => {
       .eq("id", categoryId);
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(0);
+    expect(data).toBeNull();
 
     const { data: updatedData } = await user1.client
       .from("mission_category")
@@ -102,7 +102,7 @@ describe("mission_category テーブルのRLSテスト", () => {
       .eq("id", categoryId);
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(0);
+    expect(data).toBeNull();
 
     const { data: remainingData } = await user1.client
       .from("mission_category")
