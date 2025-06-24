@@ -85,8 +85,8 @@ describe("mission_category テーブルのRLSテスト", () => {
       .update({ category_title: "更新されたタイトル" })
       .eq("id", categoryId);
 
-    expect(error).toBeTruthy();
-    expect(data).toBeNull();
+    expect(error).toBeNull();
+    expect(data).toHaveLength(0);
 
     const { data: updatedData } = await user1.client
       .from("mission_category")
@@ -101,8 +101,8 @@ describe("mission_category テーブルのRLSテスト", () => {
       .delete()
       .eq("id", categoryId);
 
-    expect(error).toBeTruthy();
-    expect(data).toBeNull();
+    expect(error).toBeNull();
+    expect(data).toHaveLength(0);
 
     const { data: remainingData } = await user1.client
       .from("mission_category")
