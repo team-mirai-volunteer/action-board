@@ -71,7 +71,6 @@ describe("GeomanMap", () => {
 
     await act(async () => {
       render(<GeomanMap onMapReady={mockOnMapReady} />);
-      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     await waitFor(
@@ -107,7 +106,6 @@ describe("GeomanMap", () => {
 
     await act(async () => {
       render(<GeomanMap />);
-      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     await waitFor(
@@ -179,7 +177,6 @@ describe("GeomanMap", () => {
 
     await act(async () => {
       render(<FailingGeomanMap />);
-      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     await waitFor(
@@ -252,7 +249,6 @@ describe("GeomanMap", () => {
 
     await act(async () => {
       render(<FailingGeomanMap />);
-      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     await waitFor(
