@@ -42,7 +42,7 @@ UPDATE missions SET slug = CASE
   WHEN title = 'チームみらいの政党ポスターを貼ろう' THEN 'put-up-poster'
   
   -- 開発・技術関連
-  WHEN title = '開発者向け: Githubでプルリクエストを出そう' THEN 'github-pull-request'
+  WHEN title = '開発者向け: GitHubでプルリクエストを出そう' THEN 'github-pull-request'
   
   -- クイズ関連
   WHEN title = 'チームみらいクイズ（初級）に挑戦しよう' THEN 'quiz-teammirai-beginner'
@@ -51,14 +51,6 @@ UPDATE missions SET slug = CASE
   
   -- その他
   WHEN title = 'チームみらいの仲間を増やそう' THEN 'referral'
-  
-  -- シードデータ
-  WHEN title = '(seed) 今日のベストショット (画像提出)' THEN 'seed-best-shot'
-  WHEN title = '(seed) 発見！地域の宝 (位置情報付き画像)' THEN 'seed-local-treasure'
-  WHEN title = '(seed) 日付付きミッション１ (成果物不要, 上限1回)' THEN 'seed-date-mission-1'
-  WHEN title = '(seed) ゴミ拾いをしよう (成果物不要)' THEN 'seed-cleanup'
-  WHEN title = '(seed) Xのニックネームを入力しよう(テキスト提出)' THEN 'seed-x-nickname'
-  WHEN title = '(seed) 活動ブログを書こう (リンク提出)' THEN 'seed-activity-blog'
   
   ELSE NULL
 END
