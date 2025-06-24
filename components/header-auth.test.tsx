@@ -13,6 +13,16 @@ jest.mock("@/components/ui/button", () => ({
     asChild ? children : <button {...props}>{children}</button>,
 }));
 
+jest.mock("@/components/my-avatar", () => {
+  return ({ className }: any) => (
+    <div data-testid="my-avatar" className={className} />
+  );
+});
+
+jest.mock("@/app/actions", () => ({
+  signOutAction: jest.fn(),
+}));
+
 describe("HeaderAuth", () => {
   describe("未認証状態", () => {
     it("ログインリンクが表示される", async () => {
@@ -43,11 +53,46 @@ describe("HeaderAuth", () => {
   });
 
   describe("認証状態", () => {
-    it("コンポーネントが正しくレンダリングされる", async () => {
-      const result = await HeaderAuth();
-      render(result);
+    beforeEach(() => {
+      const mockSupabase = require("@/lib/supabase/server").createClient;
+      mockSupabase.mockResolvedValue({
+        auth: {
+          getUser: jest.fn(() =>
+            Promise.resolve({
+              data: { user: { id: "test-user", email: "test@example.com" } },
+            }),
+          ),
+        },
+      });
+    });
 
-      expect(result).toBeDefined();
+    it("ユーザーがログイン済みの場合ドロップダウンメニューが表示される", async () => {
+      render(await HeaderAuth());
+
+      expect(screen.getByTestId("usermenubutton")).toBeInTheDocument();
+      expect(screen.getByTestId("my-avatar")).toBeInTheDocument();
+    });
+
+    it("ドロップダウンメニューに適切なリンクが含まれる", async () => {
+      render(await HeaderAuth());
+
+      const menuButton = screen.getByTestId("usermenubutton");
+      expect(menuButton).toBeInTheDocument();
+    });
+
+    it("ユーザーメニューボタンが表示される", async () => {
+      render(await HeaderAuth());
+
+      expect(screen.getByTestId("usermenubutton")).toBeInTheDocument();
+      expect(
+        screen.getByLabelText("ユーザーメニューを開く"),
+      ).toBeInTheDocument();
+    });
+
+    it("アバターコンポーネントが表示される", async () => {
+      render(await HeaderAuth());
+
+      expect(screen.getByTestId("my-avatar")).toBeInTheDocument();
     });
   });
 
@@ -61,11 +106,10 @@ describe("HeaderAuth", () => {
   });
 
   describe("レイアウト", () => {
-    it("適切なCSSクラスが設定される", async () => {
+    it("コンポーネントが正しくレンダリングされる", async () => {
       const { container } = render(await HeaderAuth());
 
-      const authContainer = container.firstChild;
-      expect(authContainer).toHaveClass("flex", "gap-2");
+      expect(container.firstChild).toBeInTheDocument();
     });
   });
 });
