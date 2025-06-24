@@ -9,6 +9,8 @@ category_links:
         sort_no: 300
       - mission_slug: follow-anno-x
         sort_no: 350
+      - mission_slug: follow-teammirai-tiktok
+        sort_no: 400
       - mission_slug: follow-note
         sort_no: 500
   - category_slug: learn-about-teammirai
@@ -93,6 +95,10 @@ category_links:
         sort_no: 200
       - mission_slug: x-post
         sort_no: 300
+  - category_slug: support-on-tiktok
+    missions:
+      - mission_slug: follow-teammirai-tiktok
+        sort_no: 100
   - category_slug: support-on-youtube
     missions:
       - mission_slug: youtube-subscribe
