@@ -2,19 +2,6 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import HeaderAuth from "./header-auth";
 
-jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(() =>
-        Promise.resolve({
-          data: { user: null },
-          error: null,
-        }),
-      ),
-    },
-  })),
-}));
-
 jest.mock("next/link", () => {
   return ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>

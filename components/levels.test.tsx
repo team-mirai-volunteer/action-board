@@ -2,16 +2,6 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import Levels from "./levels";
 
-jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        order: jest.fn(() => Promise.resolve({ data: [], error: null })),
-      })),
-    })),
-  })),
-}));
-
 describe("Levels", () => {
   describe("基本的な表示", () => {
     it("レベル一覧が正しくレンダリングされる", async () => {
@@ -21,10 +11,15 @@ describe("Levels", () => {
       expect(result).toBeDefined();
     });
 
-    it("Supabaseクライアントが呼び出される", async () => {
+    it("ユーザーレベル情報が取得される", async () => {
       await Levels({ userId: "test-user-id" });
 
-      expect(require("@/lib/supabase/server").createClient).toHaveBeenCalled();
+      expect(require("@/lib/services/users").getProfile).toHaveBeenCalledWith(
+        "test-user-id",
+      );
+      expect(
+        require("@/lib/services/userLevel").getUserLevel,
+      ).toHaveBeenCalledWith("test-user-id");
     });
   });
 });

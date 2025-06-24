@@ -3,11 +3,21 @@ import React from "react";
 import { SubmitButton } from "./submit-button";
 
 jest.mock("@/components/ui/button", () => ({
-  Button: ({ children, disabled, type, ...props }: any) => (
-    <button disabled={disabled} type={type} {...props}>
-      {children}
-    </button>
-  ),
+  Button: ({ children, disabled, type, onClick, ...props }: any) => {
+    const handleClick = (e: any) => {
+      if (disabled) {
+        e.preventDefault();
+        return;
+      }
+      if (onClick) onClick(e);
+    };
+
+    return (
+      <button disabled={disabled} type={type} onClick={handleClick} {...props}>
+        {children}
+      </button>
+    );
+  },
 }));
 
 describe("SubmitButton", () => {
@@ -47,9 +57,12 @@ describe("SubmitButton", () => {
     });
 
     it("pendingTextがない場合はデフォルトテキストが表示される", () => {
+      const mockUseFormStatus = require("react-dom").useFormStatus;
+      mockUseFormStatus.mockReturnValue({ pending: true });
+
       render(<SubmitButton>送信</SubmitButton>);
 
-      expect(screen.getByText("送信")).toBeInTheDocument();
+      expect(screen.getByText("Submitting...")).toBeInTheDocument();
     });
   });
 
@@ -67,12 +80,13 @@ describe("SubmitButton", () => {
     it("disabled時はクリックイベントが発火しない", () => {
       const mockClick = jest.fn();
       render(
-        <SubmitButton onClick={mockClick} pendingText="送信中...">
-          送信
+        <SubmitButton onClick={mockClick} disabled>
+          送信中...
         </SubmitButton>,
       );
 
       const button = screen.getByRole("button");
+      expect(button).toBeDisabled();
       fireEvent.click(button);
 
       expect(mockClick).not.toHaveBeenCalled();

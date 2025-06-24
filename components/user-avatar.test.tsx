@@ -2,18 +2,6 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import UserAvatar from "./user-avatar";
 
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => ({
-    storage: {
-      from: jest.fn(() => ({
-        getPublicUrl: jest.fn(() => ({
-          data: { publicUrl: "https://example.com/avatar.jpg" },
-        })),
-      })),
-    },
-  })),
-}));
-
 describe("UserAvatar", () => {
   describe("基本的な表示", () => {
     it("アバター画像が正しく表示される", () => {

@@ -2,18 +2,6 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import Metrics from "./metrics";
 
-jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        gte: jest.fn(() =>
-          Promise.resolve({ data: [], count: 10, error: null }),
-        ),
-      })),
-    })),
-  })),
-}));
-
 jest.mock("@/components/metric-card", () => ({
   MetricCard: ({ title, value, unit, todayValue, todayUnit }: any) => (
     <div data-testid="metric-card">

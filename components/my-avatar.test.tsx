@@ -15,24 +15,6 @@ jest.mock("@/components/user-avatar", () => ({
   ),
 }));
 
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(() =>
-        Promise.resolve({
-          data: { user: { id: "test-user" } },
-          error: null,
-        }),
-      ),
-    },
-    from: jest.fn(() => ({
-      update: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ error: null })),
-      })),
-    })),
-  })),
-}));
-
 describe("MyAvatar", () => {
   const mockProps = {
     className: "test-avatar",

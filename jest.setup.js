@@ -96,8 +96,28 @@ const createMockSupabaseQuery = () => {
     not: jest.fn(() => mockQuery),
     or: jest.fn(() => mockQuery),
     and: jest.fn(() => mockQuery),
-    single: jest.fn(() => Promise.resolve({ data: null, error: null })),
-    maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    single: jest.fn(() =>
+      Promise.resolve({
+        data: {
+          id: "test-user-id",
+          name: "テストユーザー",
+          address_prefecture: "東京都",
+          avatar_url: null,
+        },
+        error: null,
+      }),
+    ),
+    maybeSingle: jest.fn(() =>
+      Promise.resolve({
+        data: {
+          id: "test-user-id",
+          name: "テストユーザー",
+          address_prefecture: "東京都",
+          avatar_url: null,
+        },
+        error: null,
+      }),
+    ),
   };
   return mockQuery;
 };
@@ -153,13 +173,64 @@ jest.mock("@/lib/supabase/client", () => ({
           Promise.resolve({ data: { user: null }, error: null }),
         ),
       },
-      from: jest.fn(() => ({
-        select: jest.fn(() => createMockSupabaseQuery()),
-        insert: jest.fn(() => createMockSupabaseQuery()),
-        update: jest.fn(() => createMockSupabaseQuery()),
-        delete: jest.fn(() => createMockSupabaseQuery()),
-        upsert: jest.fn(() => createMockSupabaseQuery()),
-      })),
+      from: jest.fn(() => {
+        const createMockSupabaseQuery = () => {
+          const mockQuery = {
+            eq: jest.fn(() => mockQuery),
+            gte: jest.fn(() => mockQuery),
+            lte: jest.fn(() => mockQuery),
+            gt: jest.fn(() => mockQuery),
+            lt: jest.fn(() => mockQuery),
+            in: jest.fn(() => mockQuery),
+            order: jest.fn(() => mockQuery),
+            limit: jest.fn(() => mockQuery),
+            range: jest.fn(() => mockQuery),
+            neq: jest.fn(() => mockQuery),
+            is: jest.fn(() => mockQuery),
+            not: jest.fn(() => mockQuery),
+            or: jest.fn(() => mockQuery),
+            and: jest.fn(() => mockQuery),
+            single: jest.fn(() =>
+              Promise.resolve({
+                data: {
+                  id: "test-user-id",
+                  name: "テストユーザー",
+                  address_prefecture: "東京都",
+                  avatar_url: null,
+                },
+                error: null,
+              }),
+            ),
+            maybeSingle: jest.fn(() =>
+              Promise.resolve({
+                data: {
+                  id: "test-user-id",
+                  name: "テストユーザー",
+                  address_prefecture: "東京都",
+                  avatar_url: null,
+                },
+                error: null,
+              }),
+            ),
+          };
+          return mockQuery;
+        };
+
+        return {
+          select: jest.fn(() => createMockSupabaseQuery()),
+          insert: jest.fn(() => createMockSupabaseQuery()),
+          update: jest.fn(() => createMockSupabaseQuery()),
+          delete: jest.fn(() => createMockSupabaseQuery()),
+          upsert: jest.fn(() => createMockSupabaseQuery()),
+        };
+      }),
+      storage: {
+        from: jest.fn(() => ({
+          getPublicUrl: jest.fn(() => ({
+            data: { publicUrl: "https://example.com/avatar.jpg" },
+          })),
+        })),
+      },
     }),
   ),
 }));
@@ -167,6 +238,35 @@ jest.mock("@/lib/supabase/client", () => ({
 jest.mock("react-dom", () => ({
   ...jest.requireActual("react-dom"),
   useFormStatus: jest.fn(() => ({ pending: false })),
+}));
+
+jest.mock("@/lib/services/userLevel", () => ({
+  getUserLevel: jest.fn(() =>
+    Promise.resolve({
+      level: 2,
+      current_xp: 100,
+      xp_to_next_level: 200,
+    }),
+  ),
+}));
+
+jest.mock("@/lib/services/users", () => ({
+  getPrivateUserData: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+      avatar_url: null,
+    }),
+  ),
+  getProfile: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+      avatar_url: null,
+    }),
+  ),
 }));
 
 jest.mock("@radix-ui/react-dialog", () => {
