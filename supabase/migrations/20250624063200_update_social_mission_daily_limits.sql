@@ -6,12 +6,12 @@ COMMENT ON COLUMN missions.max_daily_achievement_count IS 'ミッションの1�
 
 UPDATE missions 
 SET max_daily_achievement_count = 1 
-WHERE title = 'Instagram でチームみらい投稿に♡をつけよう';
+WHERE slug = 'instagram-like';
 
 UPDATE missions 
 SET max_daily_achievement_count = 1 
-WHERE title = 'X でチームみらい投稿に♡をつけよう';
+WHERE slug = 'x-like';
 
 UPDATE missions 
 SET max_daily_achievement_count = 3 
-WHERE title = 'note でチームみらい記事にスキ♡をつけよう';
+WHERE slug = 'note-like';
