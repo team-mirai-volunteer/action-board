@@ -17,7 +17,7 @@ describe("mission_category テーブルのRLSテスト", () => {
       category_title: "テストカテゴリ for RLS",
       sort_no: 999,
       category_kbn: "TEST",
-      slug: `test-category-${Date.now()}`,
+      slug: `test-category-${crypto.randomUUID()}`,
     };
 
     const { error } = await adminClient.from("mission_category").insert(categoryData);
@@ -57,7 +57,7 @@ describe("mission_category テーブルのRLSテスト", () => {
       category_title: "匿名ユーザーからのカテゴリ",
       sort_no: 999,
       category_kbn: "TEST",
-      slug: `anon-test-${Date.now()}`,
+      slug: `anon-test-${crypto.randomUUID()}`,
     });
 
     expect(error).toBeTruthy();
@@ -72,7 +72,7 @@ describe("mission_category テーブルのRLSテスト", () => {
       category_title: "一般ユーザーからのカテゴリ",
       sort_no: 999,
       category_kbn: "TEST",
-      slug: `user-test-${Date.now()}`,
+      slug: `user-test-${crypto.randomUUID()}`,
     });
 
     expect(error).toBeTruthy();
