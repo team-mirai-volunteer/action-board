@@ -13,8 +13,12 @@ category_links:
         sort_no: 500
   - category_slug: learn-about-teammirai
     missions:
-      - mission_slug: quiz-teammirai-beginner
+      - mission_slug: quiz-teammirai-anno
         sort_no: 200
+      - mission_slug: quiz-teammirai-vision
+        sort_no: 210
+      - mission_slug: quiz-teammirai-values
+        sort_no: 220
       - mission_slug: youtube-watch
         sort_no: 300
       - mission_slug: chat-idobata-ai
@@ -63,8 +67,12 @@ category_links:
         sort_no: 600
   - category_slug: learn-with-quiz
     missions:
-      - mission_slug: quiz-teammirai-beginner
+      - mission_slug: quiz-teammirai-anno
         sort_no: 100
+      - mission_slug: quiz-teammirai-vision
+        sort_no: 110
+      - mission_slug: quiz-teammirai-values
+        sort_no: 120
       - mission_slug: quiz-policy-intermediate
         sort_no: 200
       - mission_slug: quiz-policy-intermediate-2
@@ -99,8 +107,6 @@ category_links:
         sort_no: 100
       - mission_slug: youtube-watch
         sort_no: 200
-      # - mission_slug: youtube-like
-      #   sort_no: 300
       - mission_slug: youtube-clip
         sort_no: 400
   - category_slug: support-on-note

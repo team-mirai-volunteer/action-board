@@ -430,7 +430,10 @@ export default function QuizComponent({
       {missionLinks.length > 0 && (
         <Card className="w-full mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">参考リンク</CardTitle>
+            <CardTitle className="text-lg">学習リンク</CardTitle>
+            <p className="text-sm text-gray-500 mt-3">
+              学習リンクを確認してからクイズに挑戦しましょう！
+            </p>
           </CardHeader>
           <CardContent className="space-y-2">
             {missionLinks.map((link, index) => (
