@@ -10,7 +10,7 @@ import { MissionIcon } from "../ui/mission-icon";
 import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
-  mission: Tables<"missions">;
+  mission: Omit<Tables<"missions">, "slug">;
   achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
