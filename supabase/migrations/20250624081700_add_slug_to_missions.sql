@@ -1,0 +1,71 @@
+-- Add slug column to missions table
+ALTER TABLE missions ADD COLUMN slug TEXT;
+
+-- Add unique constraint to slug
+ALTER TABLE missions ADD CONSTRAINT missions_slug_unique UNIQUE (slug);
+
+-- Update existing missions with slugs based on their titles
+UPDATE missions SET slug = CASE
+  -- YouTube関連
+  WHEN title = 'YouTube動画を切り抜こう' THEN 'youtube-clip'
+  WHEN title = 'YouTube動画を視聴しよう' THEN 'youtube-watch'
+  WHEN title = '公式YouTubeチャンネルを登録しよう' THEN 'youtube-subscribe'
+  
+  -- X (Twitter)関連
+  WHEN title = '安野たかひろの公式Xをフォローしよう' THEN 'follow-anno-x'
+  WHEN title = 'チームみらいの公式Xをフォローしよう' THEN 'follow-teammirai-x'
+  WHEN title = 'Xでチームみらいに関する投稿をしよう' THEN 'x-post'
+  WHEN title = 'Xでチームみらいの投稿をリポストしよう' THEN 'x-repost'
+  WHEN title = 'X でチームみらい投稿に♡をつけよう' THEN 'x-like'
+  
+  -- SNS関連
+  WHEN title = 'Instagram でチームみらい投稿に♡をつけよう' THEN 'instagram-like'
+  WHEN title = 'note でチームみらい記事にスキ♡をつけよう' THEN 'note-like'
+  WHEN title = '公式noteをフォローしよう' THEN 'follow-note'
+  WHEN title = 'マニフェストの感想をSNSでシェアしよう' THEN 'share-manifest-sns'
+  
+  -- コミュニティ参加
+  WHEN title = 'サポーターSlackに入ろう' THEN 'join-slack'
+  WHEN title = '都道府県別LINEオープンチャットに入ろう' THEN 'join-prefecture-openchat'
+  WHEN title = 'サポーター目的別LINEオープンチャットに入ろう' THEN 'join-purpose-openchat'
+  WHEN title = '公式LINEアカウントと友達になろう' THEN 'add-line-friend'
+  
+  -- いどばた政策関連
+  WHEN title = 'いどばた政策サイトからマニフェストを提案しよう' THEN 'propose-manifest-idobata'
+  WHEN title = 'いどばた政策サイトでAIとチャットしよう' THEN 'chat-idobata-ai'
+  
+  -- イベント・活動関連
+  WHEN title = 'イベントに参加しよう' THEN 'join-event'
+  WHEN title = 'イベント運営を手伝おう' THEN 'help-event-operation'
+  WHEN title = '街頭演説に参加しよう' THEN 'join-street-speech'
+  WHEN title = 'チームみらいの機関誌をポスティングしよう' THEN 'posting-magazine'
+  WHEN title = 'チームみらいの政党ポスターを貼ろう' THEN 'put-up-poster'
+  
+  -- 開発・技術関連
+  WHEN title = '開発者向け: Githubでプルリクエストを出そう' THEN 'github-pull-request'
+  
+  -- クイズ関連
+  WHEN title = 'チームみらいクイズ（初級）に挑戦しよう' THEN 'quiz-teammirai-beginner'
+  WHEN title = '政策・マニフェストクイズ（中級）に挑戦しよう' THEN 'quiz-policy-intermediate'
+  WHEN title = '政策・マニフェストクイズ（中級2）に挑戦しよう' THEN 'quiz-policy-intermediate-2'
+  
+  -- その他
+  WHEN title = 'チームみらいの仲間を増やそう' THEN 'referral'
+  
+  -- シードデータ
+  WHEN title = '(seed) 今日のベストショット (画像提出)' THEN 'seed-best-shot'
+  WHEN title = '(seed) 発見！地域の宝 (位置情報付き画像)' THEN 'seed-local-treasure'
+  WHEN title = '(seed) 日付付きミッション１ (成果物不要, 上限1回)' THEN 'seed-date-mission-1'
+  WHEN title = '(seed) ゴミ拾いをしよう (成果物不要)' THEN 'seed-cleanup'
+  WHEN title = '(seed) Xのニックネームを入力しよう(テキスト提出)' THEN 'seed-x-nickname'
+  WHEN title = '(seed) 活動ブログを書こう (リンク提出)' THEN 'seed-activity-blog'
+  
+  ELSE NULL
+END
+WHERE slug IS NULL;
+
+-- Make slug column NOT NULL after updating all existing records
+ALTER TABLE missions ALTER COLUMN slug SET NOT NULL;
+
+-- Create index on slug for better query performance
+CREATE INDEX idx_missions_slug ON missions(slug);

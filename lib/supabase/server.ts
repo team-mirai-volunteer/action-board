@@ -19,7 +19,7 @@ export const createServiceClient = async () => {
   if (!supabaseServiceRoleKey) {
     throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
   }
-  return createClientSupabase(supabaseUrl, supabaseServiceRoleKey);
+  return createClientSupabase<Database>(supabaseUrl, supabaseServiceRoleKey);
 };
 
 export const createClient = async () => {
