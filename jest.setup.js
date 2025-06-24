@@ -64,4 +64,83 @@ jest.mock("lucide-react", () => ({
       className,
     });
   },
+  Menu: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "menu-icon",
+      className,
+    });
+  },
+  MapPin: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "map-pin-icon",
+      className,
+    });
+  },
+}));
+
+const createMockSupabaseQuery = () => {
+  const mockQuery = {
+    eq: jest.fn(() => mockQuery),
+    gte: jest.fn(() => mockQuery),
+    lte: jest.fn(() => mockQuery),
+    gt: jest.fn(() => mockQuery),
+    lt: jest.fn(() => mockQuery),
+    in: jest.fn(() => mockQuery),
+    order: jest.fn(() => mockQuery),
+    limit: jest.fn(() => mockQuery),
+    range: jest.fn(() => mockQuery),
+    neq: jest.fn(() => mockQuery),
+    is: jest.fn(() => mockQuery),
+    not: jest.fn(() => mockQuery),
+    or: jest.fn(() => mockQuery),
+    and: jest.fn(() => mockQuery),
+    single: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })),
+  };
+  return mockQuery;
+};
+
+jest.mock("@/lib/supabase/server", () => ({
+  createClient: jest.fn(() =>
+    Promise.resolve({
+      auth: {
+        getUser: jest.fn(() =>
+          Promise.resolve({ data: { user: null }, error: null }),
+        ),
+      },
+      from: jest.fn(() => ({
+        select: jest.fn(() => createMockSupabaseQuery()),
+        insert: jest.fn(() => createMockSupabaseQuery()),
+        update: jest.fn(() => createMockSupabaseQuery()),
+        delete: jest.fn(() => createMockSupabaseQuery()),
+        upsert: jest.fn(() => createMockSupabaseQuery()),
+      })),
+    }),
+  ),
+}));
+
+jest.mock("@/lib/supabase/client", () => ({
+  createClient: jest.fn(() =>
+    Promise.resolve({
+      auth: {
+        getUser: jest.fn(() =>
+          Promise.resolve({ data: { user: null }, error: null }),
+        ),
+      },
+      from: jest.fn(() => ({
+        select: jest.fn(() => createMockSupabaseQuery()),
+        insert: jest.fn(() => createMockSupabaseQuery()),
+        update: jest.fn(() => createMockSupabaseQuery()),
+        delete: jest.fn(() => createMockSupabaseQuery()),
+        upsert: jest.fn(() => createMockSupabaseQuery()),
+      })),
+    }),
+  ),
+}));
+
+jest.mock("react-dom", () => ({
+  ...jest.requireActual("react-dom"),
+  useFormStatus: jest.fn(() => ({ pending: false })),
 }));
