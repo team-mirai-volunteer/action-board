@@ -150,7 +150,7 @@ export default async function MissionsByCategory({
 
               {/* 横スクロール領域 */}
               <div
-                className="w-full overflow-x-auto custom-scrollbar cursor-grab"
+                className="w-full overflow-x-auto custom-scrollbar"
                 style={{ scrollbarWidth: "none" }}
               >
                 <div className="flex w-fit gap-4 px-4 pb-2">
