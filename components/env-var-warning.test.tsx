@@ -4,67 +4,55 @@ import { EnvVarWarning } from "./env-var-warning";
 
 describe("EnvVarWarning", () => {
   describe("基本的な表示", () => {
-    it("警告メッセージが正しく表示される", () => {
+    it("環境変数警告メッセージが表示される", () => {
       render(<EnvVarWarning />);
 
       expect(
-        screen.getByText("環境変数が設定されていません"),
+        screen.getByText("Supabase environment variables required"),
       ).toBeInTheDocument();
     });
 
-    it("詳細説明が表示される", () => {
+    it("Sign inリンクが表示される", () => {
       render(<EnvVarWarning />);
 
-      expect(
-        screen.getByText(/必要な環境変数を設定してください/),
-      ).toBeInTheDocument();
-    });
-  });
-
-  describe("スタイリング", () => {
-    it("警告用のCSSクラスが設定される", () => {
-      const { container } = render(<EnvVarWarning />);
-
-      const warningElement = container.firstChild;
-      expect(warningElement).toHaveClass("bg-yellow-50", "border-yellow-200");
+      expect(screen.getByText("Sign in")).toBeInTheDocument();
     });
 
-    it("警告アイコンが表示される", () => {
+    it("Sign upリンクが表示される", () => {
       render(<EnvVarWarning />);
 
-      expect(screen.getByText("⚠️")).toBeInTheDocument();
+      expect(screen.getByText("Sign up")).toBeInTheDocument();
     });
   });
 
   describe("レイアウト", () => {
-    it("適切なパディングとマージンが設定される", () => {
-      const { container } = render(<EnvVarWarning />);
-
-      const warningContainer = container.firstChild;
-      expect(warningContainer).toHaveClass("p-4", "rounded-md", "border");
-    });
-
     it("フレックスレイアウトが適用される", () => {
       const { container } = render(<EnvVarWarning />);
 
-      const flexContainer = container.querySelector(".flex");
-      expect(flexContainer).toBeInTheDocument();
+      const warningContainer = container.firstChild;
+      expect(warningContainer).toHaveClass("flex", "gap-4", "items-center");
+    });
+
+    it("リンクが正しく設定される", () => {
+      render(<EnvVarWarning />);
+
+      const signInLink = screen.getByRole("link", { name: "Sign in" });
+      const signUpLink = screen.getByRole("link", { name: "Sign up" });
+
+      expect(signInLink).toHaveAttribute("href", "/sign-in");
+      expect(signUpLink).toHaveAttribute("href", "/sign-up");
     });
   });
 
-  describe("アクセシビリティ", () => {
-    it("警告として認識される", () => {
+  describe("状態", () => {
+    it("ボタンが無効化されている", () => {
       render(<EnvVarWarning />);
 
-      const warningElement = screen.getByRole("alert");
-      expect(warningElement).toBeInTheDocument();
-    });
+      const signInLink = screen.getByRole("link", { name: "Sign in" });
+      const signUpLink = screen.getByRole("link", { name: "Sign up" });
 
-    it("適切なaria-labelが設定される", () => {
-      render(<EnvVarWarning />);
-
-      const warningElement = screen.getByRole("alert");
-      expect(warningElement).toHaveAttribute("aria-label", "環境変数警告");
+      expect(signInLink).toHaveAttribute("disabled");
+      expect(signUpLink).toHaveAttribute("disabled");
     });
   });
 });

@@ -166,73 +166,76 @@ jest.mock("@/lib/supabase/server", () => ({
 }));
 
 jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() =>
-    Promise.resolve({
-      auth: {
-        getUser: jest.fn(() =>
-          Promise.resolve({ data: { user: null }, error: null }),
-        ),
-      },
-      from: jest.fn(() => {
-        const createMockSupabaseQuery = () => {
-          const mockQuery = {
-            eq: jest.fn(() => mockQuery),
-            gte: jest.fn(() => mockQuery),
-            lte: jest.fn(() => mockQuery),
-            gt: jest.fn(() => mockQuery),
-            lt: jest.fn(() => mockQuery),
-            in: jest.fn(() => mockQuery),
-            order: jest.fn(() => mockQuery),
-            limit: jest.fn(() => mockQuery),
-            range: jest.fn(() => mockQuery),
-            neq: jest.fn(() => mockQuery),
-            is: jest.fn(() => mockQuery),
-            not: jest.fn(() => mockQuery),
-            or: jest.fn(() => mockQuery),
-            and: jest.fn(() => mockQuery),
-            single: jest.fn(() =>
-              Promise.resolve({
-                data: {
-                  id: "test-user-id",
-                  name: "テストユーザー",
-                  address_prefecture: "東京都",
-                  avatar_url: null,
-                },
-                error: null,
-              }),
-            ),
-            maybeSingle: jest.fn(() =>
-              Promise.resolve({
-                data: {
-                  id: "test-user-id",
-                  name: "テストユーザー",
-                  address_prefecture: "東京都",
-                  avatar_url: null,
-                },
-                error: null,
-              }),
-            ),
-          };
-          return mockQuery;
+  createClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn(() =>
+        Promise.resolve({ data: { user: null }, error: null }),
+      ),
+    },
+    from: jest.fn(() => {
+      const createMockSupabaseQuery = () => {
+        const mockQuery = {
+          eq: jest.fn(() => mockQuery),
+          gte: jest.fn(() => mockQuery),
+          lte: jest.fn(() => mockQuery),
+          gt: jest.fn(() => mockQuery),
+          lt: jest.fn(() => mockQuery),
+          in: jest.fn(() => mockQuery),
+          order: jest.fn(() => mockQuery),
+          limit: jest.fn(() => mockQuery),
+          range: jest.fn(() => mockQuery),
+          neq: jest.fn(() => mockQuery),
+          is: jest.fn(() => mockQuery),
+          not: jest.fn(() => mockQuery),
+          or: jest.fn(() => mockQuery),
+          and: jest.fn(() => mockQuery),
+          single: jest.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "test-user-id",
+                name: "テストユーザー",
+                address_prefecture: "東京都",
+                avatar_url: null,
+              },
+              error: null,
+            }),
+          ),
+          maybeSingle: jest.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "test-user-id",
+                name: "テストユーザー",
+                address_prefecture: "東京都",
+                avatar_url: null,
+              },
+              error: null,
+            }),
+          ),
         };
+        return mockQuery;
+      };
 
-        return {
-          select: jest.fn(() => createMockSupabaseQuery()),
-          insert: jest.fn(() => createMockSupabaseQuery()),
-          update: jest.fn(() => createMockSupabaseQuery()),
-          delete: jest.fn(() => createMockSupabaseQuery()),
-          upsert: jest.fn(() => createMockSupabaseQuery()),
-        };
-      }),
-      storage: {
-        from: jest.fn(() => ({
-          getPublicUrl: jest.fn(() => ({
-            data: { publicUrl: "https://example.com/avatar.jpg" },
-          })),
-        })),
-      },
+      return {
+        select: jest.fn(() => createMockSupabaseQuery()),
+        insert: jest.fn(() => createMockSupabaseQuery()),
+        update: jest.fn(() => createMockSupabaseQuery()),
+        delete: jest.fn(() => createMockSupabaseQuery()),
+        upsert: jest.fn(() => createMockSupabaseQuery()),
+      };
     }),
-  ),
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn().mockResolvedValue({
+          data: { path: "test/path/file.jpg" },
+          error: null,
+        }),
+        remove: jest.fn().mockResolvedValue({ error: null }),
+        getPublicUrl: jest.fn(() => ({
+          data: { publicUrl: "https://example.com/avatar.jpg" },
+        })),
+      })),
+    },
+  })),
 }));
 
 jest.mock("react-dom", () => ({
