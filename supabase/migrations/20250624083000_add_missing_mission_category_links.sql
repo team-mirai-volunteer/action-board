@@ -1,0 +1,122 @@
+-- まだカテゴリリンクが設定されていないミッションを適切なカテゴリに紐付ける
+
+DO $$
+BEGIN
+    -- 「安野たかひろの公式Xをフォローしよう」を複数カテゴリに紐付け
+    -- 2. チームみらいをフォローしよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '8b36a669-3457-0b67-308b-b4b8b0a3356d',
+        350
+    FROM missions
+    WHERE slug = 'follow-anno-x'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 11. Xで応援しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '089ed58c-9bbc-fb5d-8b51-e608906a965c',
+        150
+    FROM missions
+    WHERE slug = 'follow-anno-x'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 「X でチームみらい投稿に♡をつけよう」を複数カテゴリに紐付け
+    -- 4. いいねで応援しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '504a2520-23e3-e49b-e3f8-9e97981a1d03',
+        200
+    FROM missions
+    WHERE slug = 'x-like'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 11. Xで応援しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '089ed58c-9bbc-fb5d-8b51-e608906a965c',
+        400
+    FROM missions
+    WHERE slug = 'x-like'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 「note でチームみらい記事にスキ♡をつけよう」を複数カテゴリに紐付け
+    -- 4. いいねで応援しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '504a2520-23e3-e49b-e3f8-9e97981a1d03',
+        300
+    FROM missions
+    WHERE slug = 'note-like'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 12. noteで応援しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '6d4a5924-5411-277c-9c7d-911df2b717a1',
+        200
+    FROM missions
+    WHERE slug = 'note-like'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 「いどばた政策サイトでAIとチャットしよう」を複数カテゴリに紐付け
+    -- 1. チームみらいのことを知ろう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '0cc2f4f9-ab0a-480c-c1e2-442513421dfc',
+        400
+    FROM missions
+    WHERE slug = 'chat-idobata-ai'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 8. 政策を改善しよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '19bb0960-86af-4162-2351-530f664ac5b5',
+        100
+    FROM missions
+    WHERE slug = 'chat-idobata-ai'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- その他の単一カテゴリ紐付け
+    -- 3. コミュニティに参加しよう
+    -- サポーター目的別LINEオープンチャットに入ろう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        'e8e9652f-bd9e-e726-918e-6ef914432f85',
+        250
+    FROM missions
+    WHERE slug = 'join-purpose-openchat'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 4. いいねで応援しよう
+    -- Instagram でチームみらい投稿に♡をつけよう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        '504a2520-23e3-e49b-e3f8-9e97981a1d03',
+        100
+    FROM missions
+    WHERE slug = 'instagram-like'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+
+    -- 6. 地域で活動しよう
+    -- チームみらいの政党ポスターを貼ろう
+    INSERT INTO mission_category_link (mission_id, category_id, sort_no)
+    SELECT
+        id,
+        'b2109f3b-2389-54e0-0cb9-2dcb4e421994',
+        300
+    FROM missions
+    WHERE slug = 'put-up-poster'
+    ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
+END $$;

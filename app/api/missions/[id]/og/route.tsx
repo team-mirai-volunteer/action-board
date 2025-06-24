@@ -116,7 +116,7 @@ export async function GET(
               textAlign: "center",
             }}
           >
-            {`「${titleWithLineBreak}」\nを達成しました！`}
+            {`「${title}」\nを達成しました！`}
           </div>
         </div>
       </div>,

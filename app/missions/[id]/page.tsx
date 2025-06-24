@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import {
   config,
   createDefaultMetadata,
@@ -23,8 +24,10 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
+import { getQuizQuestionsAction } from "./actions";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -86,6 +89,19 @@ export default async function MissionPage({ params }: Props) {
 
   const { mission, submissions, userAchievementCount, referralCode } = pageData;
 
+  // クイズミッションの場合は問題を事前取得
+  let quizQuestions = null;
+  if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
+    try {
+      const quizResponse = await getQuizQuestionsAction(id);
+      if (quizResponse.success && quizResponse.questions) {
+        quizQuestions = quizResponse.questions;
+      }
+    } catch (error) {
+      console.error("Error fetching quiz questions:", error);
+    }
+  }
+
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
     ? await getUserMissionRanking(id, user.id)
@@ -93,7 +109,8 @@ export default async function MissionPage({ params }: Props) {
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = mission.required_artifact_type === "POSTING";
-  const userPostingCount = user ? await getUserPostingCount(user.id) : 0;
+  const userPostingCount =
+    user && isPostingMission ? await getUserPostingCount(user.id) : 0;
   let badgeText = "";
 
   if (userWithMissionRanking) {
@@ -111,14 +128,19 @@ export default async function MissionPage({ params }: Props) {
 
         {user ? (
           <>
-            <MissionWithSubmissionHistory
-              mission={mission}
-              authUser={user}
-              referralCode={referralCode}
-              initialUserAchievementCount={userAchievementCount}
-              initialSubmissions={submissions}
-              missionId={id}
-            />
+            <Suspense
+              fallback={<div className="text-center p-4">読み込み中...</div>}
+            >
+              <MissionWithSubmissionHistory
+                mission={mission}
+                authUser={user}
+                referralCode={referralCode}
+                initialUserAchievementCount={userAchievementCount}
+                initialSubmissions={submissions}
+                missionId={id}
+                preloadedQuizQuestions={quizQuestions}
+              />
+            </Suspense>
             {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
             {mission.max_achievement_count === null && (
               <>

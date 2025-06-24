@@ -1,5 +1,6 @@
 "use client";
 
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import { useMemo } from "react";
 
@@ -14,6 +15,7 @@ export function useMissionSubmission(
     ) {
       return "このミッションは完了済みです";
     }
+
     return "ミッション完了を記録する";
   }, [mission.max_achievement_count, userAchievementCount]);
 
