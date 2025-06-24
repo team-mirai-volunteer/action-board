@@ -1,14 +1,14 @@
 import HeaderAuth from "@/components/header-auth";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { createClient } from "@/lib/supabase/server";
-import { Menu } from "lucide-react";
+import { Home, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -42,33 +42,48 @@ export default async function Navbar() {
               <HeaderAuth />
             </div>
             <div className="flex gap-6 items-center font-semibold sm:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger
+              <Sheet>
+                <SheetTrigger
                   aria-label="ナビゲーションメニューを開く"
                   data-testid="navmenubutton"
                 >
                   <Menu />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                >
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Link href="/">ホーム</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/sign-in">ログイン</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/sign-up">新規登録</Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-80">
+                  <SheetHeader>
+                    <SheetTitle>メニュー</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4">
+                    <SheetClose asChild>
+                      <Link
+                        href="/"
+                        className="flex items-center gap-2 py-3 text-base hover:text-primary transition-colors"
+                      >
+                        <Home className="h-4 w-4" />
+                        ホーム
+                      </Link>
+                    </SheetClose>
+                    <div className="space-y-2 pt-4 border-t">
+                      <SheetClose asChild>
+                        <Link
+                          href="/sign-in"
+                          className="flex items-center gap-2 py-2 text-sm hover:text-primary transition-colors"
+                        >
+                          ログイン
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link
+                          href="/sign-up"
+                          className="flex items-center gap-2 py-2 text-sm hover:text-primary transition-colors"
+                        >
+                          新規登録
+                        </Link>
+                      </SheetClose>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </>
         )}
