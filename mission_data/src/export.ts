@@ -1,11 +1,12 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { createServiceClient } from "@/lib/supabase/server";
 import * as yaml from "js-yaml";
-import { supabase } from "./db";
 import type { Category, CategoryLink, Mission } from "./types";
 
 async function exportCategories() {
   console.log("📁 Exporting categories...");
+  const supabase = await createServiceClient();
 
   const { data, error } = await supabase
     .from("mission_category")
@@ -39,6 +40,7 @@ async function exportCategories() {
 
 async function exportMissions() {
   console.log("📋 Exporting missions...");
+  const supabase = await createServiceClient();
 
   const { data, error } = await supabase
     .from("missions")
@@ -77,6 +79,7 @@ async function exportMissions() {
 
 async function exportCategoryLinks() {
   console.log("🔗 Exporting category links...");
+  const supabase = await createServiceClient();
 
   const { data, error } = await supabase
     .from("mission_category_link")
