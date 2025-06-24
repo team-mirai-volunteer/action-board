@@ -34,14 +34,14 @@ export function PrefectureSelect({
     <div className="">
       <div className="relative">
         <label
-          htmlFor="mission-select"
+          htmlFor="prefecture-select"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
           都道府県を選択
         </label>
         <div className="relative">
           <select
-            id="mission-select"
+            id="prefecture-select"
             value={currentPrefecture}
             onChange={handlePrefectureChange}
             className="w-full p-3 pl-4 pr-10 text-base border border-gray-300 rounded-lg 
