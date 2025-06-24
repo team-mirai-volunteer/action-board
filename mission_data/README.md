@@ -11,24 +11,14 @@ npm install
 
 ## 使い方
 
-### 1. 現在のDBデータをエクスポート
+### 1. YAMLファイルを編集
 
-既存のデータベースからYAMLファイルを生成します：
-
-```bash
-npm run mission:export
-```
-
-以下のファイルが生成されます：
+以下のYAMLファイルを直接編集して、データを更新します。
 - `mission_data/categories.yaml` - カテゴリ定義
 - `mission_data/missions.yaml` - ミッション定義
 - `mission_data/category_links.yaml` - カテゴリとミッションの紐付け
 
-### 2. YAMLファイルを編集
-
-生成されたYAMLファイルを直接編集して、データを更新します。
-
-### 3. データベースに同期
+### 2. データベースに同期
 
 #### ドライラン（変更内容の確認）
 
@@ -40,19 +30,6 @@ npm run mission:sync:dry
 
 ```bash
 npm run mission:sync
-```
-
-#### 特定のデータタイプのみ同期
-
-```bash
-# カテゴリのみ
-npm run mission:sync -- --only=categories
-
-# ミッションのみ
-npm run mission:sync -- --only=missions
-
-# リンクのみ
-npm run mission:sync -- --only=links
 ```
 
 ## YAMLファイルの形式
