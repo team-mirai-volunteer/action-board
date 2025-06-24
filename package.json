@@ -11,7 +11,7 @@
     "types": "supabase gen types typescript --local > lib/types/supabase.ts",
     "biome:check:write": "biome check --write .",
     "test": "jest && playwright test",
-    "test:ci": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns=tests/rls/ && jest --ci --reporters=default --reporters=jest-junit --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node && CI=true playwright test",
+    "test:ci": "npx jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns=tests/rls/ && npx jest --ci --reporters=default --reporters=jest-junit --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node && CI=true playwright test",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
