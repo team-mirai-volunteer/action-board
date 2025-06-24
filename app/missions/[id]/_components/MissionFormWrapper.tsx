@@ -284,6 +284,23 @@ export function MissionFormWrapper({
           <p className="text-xs text-muted-foreground mt-2">
             明日また挑戦できます
           </p>
+          <div className="flex flex-col gap-2 mt-2">
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDialogOpen(true);
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              シェアする
+            </Button>
+            <Link href="/#featured-missions">
+              <Button variant="outline" className="w-full">
+                ミッション一覧へ
+              </Button>
+            </Link>
+          </div>
         </div>
       )}
 

@@ -33,6 +33,7 @@ const mockMission: Tables<"missions"> = {
   icon_url: "/test-icon.svg",
   event_date: "2025-06-22",
   max_achievement_count: null,
+  max_daily_achievement_count: null,
   is_featured: true,
   is_hidden: false,
   required_artifact_type: "NONE",
