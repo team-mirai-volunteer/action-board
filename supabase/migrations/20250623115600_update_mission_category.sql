@@ -1,22 +1,22 @@
 -- mission-categoryを一度削除。
--- TRUNCATE mission_category_link, mission_category;
+TRUNCATE mission_category_link, mission_category;
 
--- 正のカゴリ定義でINSRT。
--- insert into mission_category (id, category_title, sort_no, category_kbn)
--- values  
--- ('0cc2f4f9-ab0a-480c-c1e2-442513421dfc', 'チームみらいのことを知ろう', 100, 'DEFAULT'),
--- ('8b36a669-3457-0b67-308b-b4b8b0a3356d', 'チームみらいをフォローしよう', 200, 'DEFAULT'),
--- ('e8e9652f-bd9e-e726-918e-6ef914432f85', 'コミュニティに参加しよう', 300, 'DEFAULT'),
--- ('504a2520-23e3-e49b-e3f8-9e97981a1d03', 'いいねで応援しよう', 400, 'DEFAULT'),
--- ('07f654ee-d1da-328b-2443-fefa3c8d3a47', '発信・拡散しよう', 500, 'DEFAULT'),
--- ('b2109f3b-2389-54e0-0cb9-2dcb4e421994', '地域で活動しよう', 600, 'DEFAULT'),
--- ('720b511c-8be3-8e0c-e2ae-d95be1613281', 'クイズで学ぼう', 700, 'DEFAULT'),
--- ('19bb0960-86af-4162-2351-530f664ac5b5', '政策を改善しよう', 800, 'DEFAULT'),
--- ('373fe78b-9e63-96f7-40af-650120a599f1', 'YouTubeで応援しよう', 900, 'DEFAULT'),
--- ('91a10bef-fab0-1a99-c8d5-4353cd39c402', 'Tiktokで応援しよう', 1000, 'DEFAULT'),
--- ('089ed58c-9bbc-fb5d-8b51-e608906a965c', 'Xで応援しよう', 1100, 'DEFAULT'),
--- ('6d4a5924-5411-277c-9c7d-911df2b717a1', 'noteで応援しよう', 1200, 'DEFAULT'),
--- ('cb1da45e-740d-5ad9-55e8-40cb5c8446e1', '作って応援しよう', 1300, 'DEFAULT');
+正のカゴリ定義でINSRT。
+insert into mission_category (id, category_title, sort_no, category_kbn)
+values  
+('0cc2f4f9-ab0a-480c-c1e2-442513421dfc', 'チームみらいのことを知ろう', 100, 'DEFAULT'),
+('8b36a669-3457-0b67-308b-b4b8b0a3356d', 'チームみらいをフォローしよう', 200, 'DEFAULT'),
+('e8e9652f-bd9e-e726-918e-6ef914432f85', 'コミュニティに参加しよう', 300, 'DEFAULT'),
+('504a2520-23e3-e49b-e3f8-9e97981a1d03', 'いいねで応援しよう', 400, 'DEFAULT'),
+('07f654ee-d1da-328b-2443-fefa3c8d3a47', '発信・拡散しよう', 500, 'DEFAULT'),
+('b2109f3b-2389-54e0-0cb9-2dcb4e421994', '地域で活動しよう', 600, 'DEFAULT'),
+('720b511c-8be3-8e0c-e2ae-d95be1613281', 'クイズで学ぼう', 700, 'DEFAULT'),
+('19bb0960-86af-4162-2351-530f664ac5b5', '政策を改善しよう', 800, 'DEFAULT'),
+('373fe78b-9e63-96f7-40af-650120a599f1', 'YouTubeで応援しよう', 900, 'DEFAULT'),
+('91a10bef-fab0-1a99-c8d5-4353cd39c402', 'Tiktokで応援しよう', 1000, 'DEFAULT'),
+('089ed58c-9bbc-fb5d-8b51-e608906a965c', 'Xで応援しよう', 1100, 'DEFAULT'),
+('6d4a5924-5411-277c-9c7d-911df2b717a1', 'noteで応援しよう', 1200, 'DEFAULT'),
+('cb1da45e-740d-5ad9-55e8-40cb5c8446e1', '作って応援しよう', 1300, 'DEFAULT');
 
 -- ミッションカテゴリ紐付テーブルへのデータ投入
 -- missionsの一部のデータ生成時にuuidを随時採番しているため、タイトルからuuidを取得し登録

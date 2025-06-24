@@ -225,61 +225,6 @@ missions:
     is_hidden: false
     artifact_label: イベントコード
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
-  - slug: seed-date-mission-1
-    title: (seed) 日付付きミッション１ (成果物不要, 上限1回)
-    icon_url: /img/mission_fallback.svg
-    content: テスト用のミッションです。<a href="/">link test</a>
-    difficulty: 5
-    required_artifact_type: NONE
-    max_achievement_count: 1
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
-  - slug: seed-cleanup
-    title: (seed) ゴミ拾いをしよう (成果物不要)
-    icon_url: null
-    content: 近所のゴミを拾ってみよう！清掃活動の報告は任意です。
-    difficulty: 1
-    required_artifact_type: NONE
-    max_achievement_count: null
-    is_featured: true
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
-  - slug: seed-local-treasure
-    title: (seed) 発見！地域の宝 (位置情報付き画像)
-    icon_url: /img/mission_fallback.svg
-    content: あなたの地域で見つけた素敵な場所や物を、位置情報付きの写真で教えてください。
-    difficulty: 4
-    required_artifact_type: IMAGE_WITH_GEOLOCATION
-    max_achievement_count: 5
-    is_featured: true
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
-  - slug: seed-best-shot
-    title: (seed) 今日のベストショット (画像提出)
-    icon_url: /img/mission_fallback.svg
-    content: 今日の活動で見つけた素晴らしい瞬間を写真で共有してください。
-    difficulty: 3
-    required_artifact_type: IMAGE
-    max_achievement_count: null
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
-  - slug: seed-x-nickname
-    title: (seed) Xのニックネームを入力しよう(テキスト提出)
-    icon_url: null
-    content: Xのニックネームを入力しよう
-    difficulty: 1
-    required_artifact_type: TEXT
-    max_achievement_count: null
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
   - slug: instagram-like
     title: Instagram でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -290,7 +235,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: 一番応援したくなった投稿のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/instagram_mission.png
+    ogp_image_url: null
   - slug: x-like
     title: X でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -301,7 +246,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: 一番応援したい投稿のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/x_like_mission.png
+    ogp_image_url: null
   - slug: note-like
     title: note でチームみらい記事にスキ♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -312,7 +257,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: スキを押した記事のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/note_mission.png
+    ogp_image_url: null
   - slug: put-up-poster
     title: チームみらいの政党ポスターを貼ろう
     icon_url: /img/mission_fallback.svg
@@ -323,7 +268,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: ポスターを貼った場所の郵便番号
-    ogp_image_url: ''
+    ogp_image_url: null
   - slug: chat-idobata-ai
     title: いどばた政策サイトでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
