@@ -39,47 +39,47 @@ create policy select_all_links
   using (true);
 
 -- カテゴリテーブルへのデータ投入
-insert into mission_category (id, category_title, sort_no, category_kbn)
-values
-  ('e9b4504d-3281-8337-22d4-9c9f2faab54c', 'フォロー・登録する', 1, 'DEFAULT'),
-  ('7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', '発信・拡散する', 2, 'DEFAULT'),
-  ('a1e44661-c95a-8541-8fc4-55b942cce3a3', 'コミュニティ・イベントに参加する', 3, 'DEFAULT'),
-  ('089285df-f73d-55e6-e426-6e623095cf26', 'リアルで参加する', 4, 'DEFAULT'),
-  ('fdfe421f-9145-e73f-7000-53ab53d23f49', ' 作って参加する', 5, 'DEFAULT');
+-- insert into mission_category (id, category_title, sort_no, category_kbn)
+-- values
+--   ('e9b4504d-3281-8337-22d4-9c9f2faab54c', 'フォロー・登録する', 1, 'DEFAULT'),
+--   ('7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', '発信・拡散する', 2, 'DEFAULT'),
+--   ('a1e44661-c95a-8541-8fc4-55b942cce3a3', 'コミュニティ・イベントに参加する', 3, 'DEFAULT'),
+--   ('089285df-f73d-55e6-e426-6e623095cf26', 'リアルで参加する', 4, 'DEFAULT'),
+--   ('fdfe421f-9145-e73f-7000-53ab53d23f49', ' 作って参加する', 5, 'DEFAULT');
 
 
 -- ミッションカテゴリ紐付テーブルへのデータ投入
 -- missionsの一部でたーた生成時にuuidを随時採番しているため、タイトルからuuidを取得し登録
 -- uuidが取得できなかった場合、FK違反を意図的に起こし気が付ける仕組みを設けている（clalesce）
-insert into mission_category_link (mission_id, category_id, sort_no) values
--- フォロー・登録する
-  (coalesce((select id from missions where title = '安野たかひろの公式Xをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 1),
-  (coalesce((select id from missions where title = 'チームみらいの公式Xをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 2),
-  (coalesce((select id from missions where title = '公式noteをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 3),
-  (coalesce((select id from missions where title = '公式YouTubeチャンネルを登録しよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 4),
-  (coalesce((select id from missions where title = '公式LINEアカウントと友達になろう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 5),
+-- insert into mission_category_link (mission_id, category_id, sort_no) values
+-- -- フォロー・登録する
+--   (coalesce((select id from missions where title = '安野たかひろの公式Xをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 1),
+--   (coalesce((select id from missions where title = 'チームみらいの公式Xをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 2),
+--   (coalesce((select id from missions where title = '公式noteをフォローしよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 3),
+--   (coalesce((select id from missions where title = '公式YouTubeチャンネルを登録しよう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 4),
+--   (coalesce((select id from missions where title = '公式LINEアカウントと友達になろう' ), '00000000-0000-0000-0000-000000000000'), 'e9b4504d-3281-8337-22d4-9c9f2faab54c', 5),
 
--- 発信・拡散する
-  (coalesce((select id from missions where title = 'チームみらいの仲間を増やそう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 1),
-  (coalesce((select id from missions where title = 'Xでチームみらいの投稿をリポストしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 2),
-  (coalesce((select id from missions where title = 'Xでチームみらいに関する投稿をしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 3),
-  (coalesce((select id from missions where title = 'マニフェストの感想をSNSでシェアしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 4),
-  (coalesce((select id from missions where title = 'YouTube動画を視聴しよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 5),
+-- -- 発信・拡散する
+--   (coalesce((select id from missions where title = 'チームみらいの仲間を増やそう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 1),
+--   (coalesce((select id from missions where title = 'Xでチームみらいの投稿をリポストしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 2),
+--   (coalesce((select id from missions where title = 'Xでチームみらいに関する投稿をしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 3),
+--   (coalesce((select id from missions where title = 'マニフェストの感想をSNSでシェアしよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 4),
+--   (coalesce((select id from missions where title = 'YouTube動画を視聴しよう' ), '00000000-0000-0000-0000-000000000000'), '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', 5),
 
--- コミュニティ・イベントに参加する
-  (coalesce((select id from missions where title = 'サポーターSlackに入ろう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 1),
-  (coalesce((select id from missions where title = '都道府県別LINEオープンチャットに入ろう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 2),
-  (coalesce((select id from missions where title = 'イベントに参加しよう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 3),
+-- -- コミュニティ・イベントに参加する
+--   (coalesce((select id from missions where title = 'サポーターSlackに入ろう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 1),
+--   (coalesce((select id from missions where title = '都道府県別LINEオープンチャットに入ろう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 2),
+--   (coalesce((select id from missions where title = 'イベントに参加しよう' ), '00000000-0000-0000-0000-000000000000'), 'a1e44661-c95a-8541-8fc4-55b942cce3a3', 3),
 
--- リアルで参加する
-  (coalesce((select id from missions where title = '街頭演説に参加しよう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 1),
-  (coalesce((select id from missions where title = 'イベント運営を手伝おう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 2),
-  (coalesce((select id from missions where title = 'チームみらいの機関誌をポスティングしよう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 3),
+-- -- リアルで参加する
+--   (coalesce((select id from missions where title = '街頭演説に参加しよう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 1),
+--   (coalesce((select id from missions where title = 'イベント運営を手伝おう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 2),
+--   (coalesce((select id from missions where title = 'チームみらいの機関誌をポスティングしよう' ), '00000000-0000-0000-0000-000000000000'), '089285df-f73d-55e6-e426-6e623095cf26', 3),
 
--- 作って参加する
-  (coalesce((select id from missions where title = 'いどばた政策サイトからマニフェストを提案しよう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 1),
-  (coalesce((select id from missions where title = '開発者向け: Githubでプルリクエストを出そう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 2),
-  (coalesce((select id from missions where title = 'YouTube動画を切り抜こう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 3);
+-- -- 作って参加する
+--   (coalesce((select id from missions where title = 'いどばた政策サイトからマニフェストを提案しよう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 1),
+--   (coalesce((select id from missions where title = '開発者向け: Githubでプルリクエストを出そう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 2),
+--   (coalesce((select id from missions where title = 'YouTube動画を切り抜こう' ), '00000000-0000-0000-0000-000000000000'), 'fdfe421f-9145-e73f-7000-53ab53d23f49', 3);
 
 
 -- viewを作成
