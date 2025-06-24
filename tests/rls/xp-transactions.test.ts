@@ -24,6 +24,7 @@ describe("xp_transactions テーブルのRLSテスト", () => {
       title: "XPテスト用ミッション",
       content: "XP取引テスト用",
       difficulty: 2,
+      slug: `test-xp-mission-${crypto.randomUUID()}`,
     });
 
     if (missionError) {
