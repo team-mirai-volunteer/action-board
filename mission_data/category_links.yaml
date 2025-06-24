@@ -1,44 +1,4 @@
 category_links:
-  - category_slug: follow-teammirai
-    missions:
-      - mission_slug: add-line-friend
-        sort_no: 100
-      - mission_slug: youtube-subscribe
-        sort_no: 200
-      - mission_slug: follow-teammirai-x
-        sort_no: 300
-      - mission_slug: follow-anno-x
-        sort_no: 350
-      - mission_slug: follow-note
-        sort_no: 500
-  - category_slug: learn-about-teammirai
-    missions:
-      - mission_slug: quiz-teammirai-beginner
-        sort_no: 200
-      - mission_slug: youtube-watch
-        sort_no: 300
-      - mission_slug: chat-idobata-ai
-        sort_no: 400
-  - category_slug: join-community
-    missions:
-      - mission_slug: join-slack
-        sort_no: 100
-      - mission_slug: join-prefecture-openchat
-        sort_no: 200
-      - mission_slug: join-purpose-openchat
-        sort_no: 250
-      - mission_slug: join-event
-        sort_no: 300
-      - mission_slug: help-event-operation
-        sort_no: 400
-  - category_slug: support-with-likes
-    missions:
-      - mission_slug: x-like
-        sort_no: 100
-      - mission_slug: note-like
-        sort_no: 200
-      - mission_slug: instagram-like
-        sort_no: 300
   - category_slug: share-and-spread
     missions:
       - mission_slug: x-repost
@@ -46,38 +6,6 @@ category_links:
       - mission_slug: x-post
         sort_no: 300
       - mission_slug: referral
-        sort_no: 400
-      - mission_slug: share-manifest-sns
-        sort_no: 500
-  - category_slug: local-activities
-    missions:
-      - mission_slug: posting-magazine
-        sort_no: 100
-      - mission_slug: join-street-speech
-        sort_no: 200
-      - mission_slug: put-up-poster
-        sort_no: 300
-      - mission_slug: join-event
-        sort_no: 500
-      - mission_slug: help-event-operation
-        sort_no: 600
-  - category_slug: learn-with-quiz
-    missions:
-      - mission_slug: quiz-teammirai-beginner
-        sort_no: 100
-      - mission_slug: quiz-policy-intermediate
-        sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
-        sort_no: 300
-  - category_slug: improve-policies
-    missions:
-      - mission_slug: chat-idobata-ai
-        sort_no: 100
-      - mission_slug: quiz-policy-intermediate
-        sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
-        sort_no: 300
-      - mission_slug: propose-manifest-idobata
         sort_no: 400
       - mission_slug: share-manifest-sns
         sort_no: 500
@@ -93,22 +21,84 @@ category_links:
         sort_no: 200
       - mission_slug: x-post
         sort_no: 300
+  - category_slug: learn-about-teammirai
+    missions:
+      - mission_slug: quiz-teammirai-anno
+        sort_no: 200
+      - mission_slug: quiz-teammirai-vision
+        sort_no: 210
+      - mission_slug: quiz-teammirai-values
+        sort_no: 220
+      - mission_slug: youtube-watch
+        sort_no: 300
+      - mission_slug: chat-idobata-ai
+        sort_no: 400
+  - category_slug: improve-policies
+    missions:
+      - mission_slug: chat-idobata-ai
+        sort_no: 100
+      - mission_slug: quiz-policy-intermediate
+        sort_no: 200
+      - mission_slug: quiz-policy-intermediate-2
+        sort_no: 300
+      - mission_slug: propose-manifest-idobata
+        sort_no: 400
+      - mission_slug: share-manifest-sns
+        sort_no: 500
   - category_slug: support-on-youtube
     missions:
       - mission_slug: youtube-subscribe
         sort_no: 100
       - mission_slug: youtube-watch
         sort_no: 200
-      # - mission_slug: youtube-like
-      #   sort_no: 300
       - mission_slug: youtube-clip
         sort_no: 400
+  - category_slug: support-with-likes
+    missions:
+      - mission_slug: x-like
+        sort_no: 100
+      - mission_slug: note-like
+        sort_no: 200
+      - mission_slug: instagram-like
+        sort_no: 300
   - category_slug: support-on-note
     missions:
       - mission_slug: follow-note
         sort_no: 100
       - mission_slug: note-like
         sort_no: 200
+  - category_slug: learn-with-quiz
+    missions:
+      - mission_slug: quiz-teammirai-beginner
+        sort_no: 100
+      - mission_slug: quiz-policy-intermediate
+        sort_no: 200
+      - mission_slug: quiz-policy-intermediate-2
+        sort_no: 300
+  - category_slug: follow-teammirai
+    missions:
+      - mission_slug: add-line-friend
+        sort_no: 100
+      - mission_slug: youtube-subscribe
+        sort_no: 200
+      - mission_slug: follow-teammirai-x
+        sort_no: 300
+      - mission_slug: follow-anno-x
+        sort_no: 350
+      - mission_slug: follow-note
+        sort_no: 500
+  - category_slug: local-activities
+    missions:
+      - mission_slug: posting-magazine
+        sort_no: 100
+      - mission_slug: join-street-speech
+        sort_no: 200
+      - mission_slug: put-up-poster
+        sort_no: 300
+      - mission_slug: join-event
+        sort_no: 500
+      - mission_slug: help-event-operation
+        sort_no: 600
   - category_slug: create-and-support
     missions:
       - mission_slug: youtube-clip
@@ -117,3 +107,15 @@ category_links:
         sort_no: 200
       - mission_slug: github-pull-request
         sort_no: 300
+  - category_slug: join-community
+    missions:
+      - mission_slug: join-slack
+        sort_no: 100
+      - mission_slug: join-prefecture-openchat
+        sort_no: 200
+      - mission_slug: join-purpose-openchat
+        sort_no: 250
+      - mission_slug: join-event
+        sort_no: 300
+      - mission_slug: help-event-operation
+        sort_no: 400

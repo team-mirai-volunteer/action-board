@@ -28,8 +28,41 @@ export interface CategoryLink {
   }[];
 }
 
+export interface QuizCategory {
+  slug: string;
+  name: string;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  category_slug: string;
+  mission_slug?: string | null;
+  question: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  option4: string;
+  correct_answer: number;
+  explanation: string | null;
+  question_order?: number | null;
+  is_active: boolean;
+}
+
+export interface MissionQuizLink {
+  mission_slug: string;
+  link: string;
+  remark: string | null;
+  display_order: number;
+}
+
 export interface MissionData {
   categories: Category[];
   missions: Mission[];
   category_links: CategoryLink[];
+  quiz_categories: QuizCategory[];
+  quiz_questions: QuizQuestion[];
+  mission_quiz_links: MissionQuizLink[];
 }

@@ -2,7 +2,7 @@ missions:
   - slug: x-repost
     title: Xでチームみらいの投稿をリポストしよう
     icon_url: /img/mission_fallback.svg
-    content: "Xでチームみらいの投稿をリポストしてみましょう！チームみらいが目指す社会を、もっと多くの人へ届けませんか？ 公式アカウント以外でも、ハッシュタグ #チームみらい がついている投稿、もしくはチームみらいに関連する投稿であればOK！"
+    content: 'Xでチームみらいの投稿をリポストしてみましょう！チームみらいが目指す社会を、もっと多くの人へ届けませんか？ 公式アカウント以外でも、ハッシュタグ #チームみらい がついている投稿、もしくはチームみらいに関連する投稿であればOK！'
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -10,71 +10,10 @@ missions:
     is_hidden: false
     artifact_label: リポストした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//19_x_repost.png
-    event_date: '2025-06-15'
-  - slug: youtube-clip
-    title: YouTube動画を切り抜こう
-    icon_url: /img/mission_fallback.svg
-    content: '推し候補の魅力を、もっと多くの人に届けよう。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTube動画</a>や、チームみらいの候補者が出演している動画から、心に響いたワンシーンを切り抜いてショート動画にしてみよう。<br />SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。'
-    difficulty: 3
-    required_artifact_type: LINK
-    max_achievement_count: null
-    is_featured: false
-    is_hidden: false
-    artifact_label: YouTubeショートのURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//6_clip_youtube_video.png
-    event_date: null
-  - slug: youtube-subscribe
-    title: 公式YouTubeチャンネルを登録しよう
-    icon_url: /img/mission_fallback.svg
-    content: 'AIや政治の話をもっとわかりやすく。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>を登録して、政策解説、候補者のトーク、生配信アーカイブなど、多彩な動画をチェックしよう！難しそうな話題もわかりやすく解説しています。'
-    difficulty: 1
-    required_artifact_type: TEXT
-    max_achievement_count: 1
-    is_featured: false
-    is_hidden: false
-    artifact_label: あなたのYouTubeアカウント名
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//8_subscribe_official_youtube.png
-    event_date: null
-  - slug: follow-teammirai-x
-    title: チームみらいの公式Xをフォローしよう
-    icon_url: /img/mission_fallback.svg
-    content: '最新の政策情報やイベント情報、サポーターの動きなどをチェックするなら、まずは<a href="https://x.com/team_mirai_jp" target="_blank" rel="noopener noreferrer">公式X（旧Twitter）</a>をフォロー！参加者の投稿や注目の提案も流れてきます。'
-    difficulty: 1
-    required_artifact_type: TEXT
-    max_achievement_count: 1
-    is_featured: false
-    is_hidden: false
-    artifact_label: あなたのXアカウント名
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//11_follow_teammirai_x.png
-    event_date: null
-  - slug: add-line-friend
-    title: 公式LINEアカウントと友達になろう
-    icon_url: /img/mission_fallback.svg
-    content: '<a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204" target="_blank" rel="noopener noreferrer">チームみらいのLINEアカウント</a>を友達に追加して、最新情報をLINEでサクッと受け取ろう。イベント情報や動画の更新もLINEでお届けします。登録しておくと見逃しがありません！'
-    difficulty: 1
-    required_artifact_type: TEXT
-    max_achievement_count: 1
-    is_featured: false
-    is_hidden: false
-    artifact_label: あなたのLINEアカウント名
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//7_add_official_line.png
-    event_date: null
-  - slug: share-manifest-sns
-    title: マニフェストの感想をSNSでシェアしよう
-    icon_url: /img/mission_fallback.svg
-    content: '<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>でマニフェストを読み、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。'
-    difficulty: 2
-    required_artifact_type: LINK
-    max_achievement_count: null
-    is_featured: false
-    is_hidden: false
-    artifact_label: シェアした投稿のURL
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
-    event_date: null
   - slug: propose-manifest-idobata
     title: いどばた政策サイトからマニフェストを提案しよう
     icon_url: /img/mission_fallback.svg
-    content: 'AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>は、AIとチャットしながら政策に意見を出せる新しい仕組みです。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。'
+    content: AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>は、AIとチャットしながら政策に意見を出せる新しい仕組みです。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -82,11 +21,54 @@ missions:
     is_hidden: false
     artifact_label: 提案したページのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//9_propose_manifest_policy.png
-    event_date: null
+  - slug: add-line-friend
+    title: 公式LINEアカウントと友達になろう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204" target="_blank" rel="noopener noreferrer">チームみらいのLINEアカウント</a>を友達に追加して、最新情報をLINEでサクッと受け取ろう。イベント情報や動画の更新もLINEでお届けします。登録しておくと見逃しがありません！
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのLINEアカウント名
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//7_add_official_line.png
+  - slug: follow-teammirai-x
+    title: チームみらいの公式Xをフォローしよう
+    icon_url: /img/mission_fallback.svg
+    content: 最新の政策情報やイベント情報、サポーターの動きなどをチェックするなら、まずは<a href="https://x.com/team_mirai_jp" target="_blank" rel="noopener noreferrer">公式X（旧Twitter）</a>をフォロー！参加者の投稿や注目の提案も流れてきます。
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのXアカウント名
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//11_follow_teammirai_x.png
+  - slug: share-manifest-sns
+    title: マニフェストの感想をSNSでシェアしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>でマニフェストを読み、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。
+    difficulty: 2
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: シェアした投稿のURL
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
+  - slug: youtube-clip
+    title: YouTube動画を切り抜こう
+    icon_url: /img/mission_fallback.svg
+    content: 推し候補の魅力を、もっと多くの人に届けよう。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTube動画</a>や、チームみらいの候補者が出演している動画から、心に響いたワンシーンを切り抜いてショート動画にしてみよう。<br />SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
+    difficulty: 3
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: YouTubeショートのURL
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//6_clip_youtube_video.png
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
     icon_url: /img/mission_fallback.svg
-    content: '新党チームみらい党首・<a href="https://x.com/takahiroanno" target="_blank" rel="noopener noreferrer">安野たかひろの公式X（旧Twitter）</a>をフォローして発信をチェック！政策への想いや、未来を描く視点が日々の投稿から伝わってきます。'
+    content: 新党チームみらい党首・<a href="https://x.com/takahiroanno" target="_blank" rel="noopener noreferrer">安野たかひろの公式X（旧Twitter）</a>をフォローして発信をチェック！政策への想いや、未来を描く視点が日々の投稿から伝わってきます。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -94,35 +76,21 @@ missions:
     is_hidden: false
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//5_follow_anno_x.png
-    event_date: null
-  - slug: join-prefecture-openchat
-    title: 都道府県別LINEオープンチャットに入ろう
+  - slug: youtube-subscribe
+    title: 公式YouTubeチャンネルを登録しよう
     icon_url: /img/mission_fallback.svg
-    content: '<a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3" target="_blank" rel="noopener noreferrer">チームみらいの都道府県別LINEオープンチャット</a>に参加してあなたの地域で、政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。'
+    content: AIや政治の話をもっとわかりやすく。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>を登録して、政策解説、候補者のトーク、生配信アーカイブなど、多彩な動画をチェックしよう！難しそうな話題もわかりやすく解説しています。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
     is_hidden: false
-    artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//2_join_prefecture_openchat.png
-    event_date: null
-  - slug: join-event
-    title: イベントに参加しよう
-    icon_url: /img/mission_fallback.svg
-    content: 'チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e&source=copy_link#1fef6f56bae1800ab385f544ea22062a" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。仲間とつながり、リアルな場や画面越しで未来を語ろう！<br />成果物として、イベント内で公開されるイベントコードを入力ください。'
-    difficulty: 3
-    required_artifact_type: TEXT
-    max_achievement_count: null
-    is_featured: false
-    is_hidden: false
-    artifact_label: イベントコード
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//4_join_event.png
-    event_date: null
+    artifact_label: あなたのYouTubeアカウント名
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//8_subscribe_official_youtube.png
   - slug: join-purpose-openchat
     title: サポーター目的別LINEオープンチャットに入ろう
     icon_url: /img/mission_fallback.svg
-    content: 'あなたの得意や関心にあわせて、チームみらいの<a href="https://silent-tent-c92.notion.site/1f9f6f56bae1802aa4e9ff90f1308062" target="_blank" rel="noopener noreferrer">目的別LINEオープンチャット</a>に参加しよう！ ポスター掲示、SNS発信、マニフェスト改善、動画の切り抜きなど、テーマごとのチャットで、仲間とつながって活動を深められます。'
+    content: あなたの得意や関心にあわせて、チームみらいの<a href="https://silent-tent-c92.notion.site/1f9f6f56bae1802aa4e9ff90f1308062" target="_blank" rel="noopener noreferrer">目的別LINEオープンチャット</a>に参加しよう！ ポスター掲示、SNS発信、マニフェスト改善、動画の切り抜きなど、テーマごとのチャットで、仲間とつながって活動を深められます。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -130,11 +98,10 @@ missions:
     is_hidden: true
     artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//3_join_purpose_openchat.png
-    event_date: null
   - slug: follow-note
     title: 公式noteをフォローしよう
     icon_url: /img/mission_fallback.svg
-    content: '<a href="https://note.com/annotakahiro24" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。'
+    content: <a href="https://note.com/annotakahiro24" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -142,11 +109,32 @@ missions:
     is_hidden: false
     artifact_label: あなたのnoteアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//1_follow_note.png
-    event_date: null
+  - slug: join-prefecture-openchat
+    title: 都道府県別LINEオープンチャットに入ろう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3" target="_blank" rel="noopener noreferrer">チームみらいの都道府県別LINEオープンチャット</a>に参加してあなたの地域で、政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//2_join_prefecture_openchat.png
+  - slug: join-event
+    title: イベントに参加しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e&source=copy_link#1fef6f56bae1800ab385f544ea22062a" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。仲間とつながり、リアルな場や画面越しで未来を語ろう！<br />成果物として、イベント内で公開されるイベントコードを入力ください。
+    difficulty: 3
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: イベントコード
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//4_join_event.png
   - slug: referral
     title: チームみらいの仲間を増やそう
     icon_url: /img/mission_fallback.svg
-    content: 'あなたの紹介で、新しい仲間がアクションボードに参加！紹介専用URLと、<a href="https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/assets//magazine_1.pdf" target="_blank" rel="noopener noreferrer">チームみらい紹介PDF（ビラ）</a>や<a href="https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/assets//contents_list_1.1.pdf" target="_blank" rel="noopener noreferrer">おすすめコンテンツ集</a>を活用して、活動の魅力を伝えよう。'
+    content: あなたの紹介で、新しい仲間がアクションボードに参加！紹介専用URLと、<a href="https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/assets//magazine_1.pdf" target="_blank" rel="noopener noreferrer">チームみらい紹介PDF（ビラ）</a>や<a href="https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/assets//contents_list_1.1.pdf" target="_blank" rel="noopener noreferrer">おすすめコンテンツ集</a>を活用して、活動の魅力を伝えよう。
     difficulty: 3
     required_artifact_type: REFERRAL
     max_achievement_count: null
@@ -154,11 +142,10 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//12_referral.png
-    event_date: null
   - slug: github-pull-request
     title: '開発者向け: Githubでプルリクエストを出そう'
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！'
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -166,11 +153,10 @@ missions:
     is_hidden: false
     artifact_label: あなたが作成したプルリクエストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//14_github_pull_request.png
-    event_date: null
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission_fallback.svg
-    content: '<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-356o7vi9d-wGvz9UXGnwHT7BrOdXe9OA" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。'
+    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-356o7vi9d-wGvz9UXGnwHT7BrOdXe9OA" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
@@ -178,11 +164,10 @@ missions:
     is_hidden: false
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
-    event_date: null
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission_fallback.svg
-    content: '「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/1fef6f56bae180fe9560d8ef50d3e44a?v=1fef6f56bae1802c8f15000c3f0195e0" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>'
+    content: 「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/1fef6f56bae180fe9560d8ef50d3e44a?v=1fef6f56bae1802c8f15000c3f0195e0" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -190,7 +175,6 @@ missions:
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
-    event_date: null
   - slug: posting-magazine
     title: チームみらいの機関誌をポスティングしよう
     icon_url: /img/mission_fallback.svg
@@ -208,11 +192,10 @@ missions:
     is_hidden: false
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
-    event_date: null
   - slug: youtube-watch
     title: YouTube動画を視聴しよう
     icon_url: /img/mission_fallback.svg
-    content: '<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>でチームみらいの活動や政策解説、候補者のトーク、生配信アーカイブを視聴しよう！政治のことをわかりやすく解説してお届けしています。日本の政治を考えるヒントがきっと見つかるはず。まずは気になる動画から、ぜひご覧ください。動画の内容が気に入ったら高評価をお願いします！'
+    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>でチームみらいの活動や政策解説、候補者のトーク、生配信アーカイブを視聴しよう！政治のことをわかりやすく解説してお届けしています。日本の政治を考えるヒントがきっと見つかるはず。まずは気になる動画から、ぜひご覧ください。動画の内容が気に入ったら高評価をお願いします！
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
@@ -220,11 +203,10 @@ missions:
     is_hidden: false
     artifact_label: あなたが視聴したYouTube動画のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//20_youtube_view.png
-    event_date: null
   - slug: x-post
     title: Xでチームみらいに関する投稿をしよう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらいの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！'
+    content: チームみらいの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -232,11 +214,10 @@ missions:
     is_hidden: false
     artifact_label: 投稿したポストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/18_x_post.png
-    event_date: null
   - slug: help-event-operation
     title: イベント運営を手伝おう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらいでは、サポーターの皆さんと一緒に、イベントや街頭演説をつくりあげています。イベント会場の調整や当日のスタッフ対応、街頭演説での運営補助など、さまざまなかたちで運営を支えてくれる方を<a href="https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link" target="_blank" rel="noopener noreferrer">募集</a>しています！ <br />成果物として、イベント内で公開されるイベントコードを入力ください。'
+    content: チームみらいでは、サポーターの皆さんと一緒に、イベントや街頭演説をつくりあげています。イベント会場の調整や当日のスタッフ対応、街頭演説での運営補助など、さまざまなかたちで運営を支えてくれる方を<a href="https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link" target="_blank" rel="noopener noreferrer">募集</a>しています！ <br />成果物として、イベント内で公開されるイベントコードを入力ください。
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -244,11 +225,65 @@ missions:
     is_hidden: false
     artifact_label: イベントコード
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
-    event_date: null
+  - slug: seed-date-mission-1
+    title: (seed) 日付付きミッション１ (成果物不要, 上限1回)
+    icon_url: /img/mission_fallback.svg
+    content: テスト用のミッションです。<a href="/">link test</a>
+    difficulty: 5
+    required_artifact_type: NONE
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: seed-cleanup
+    title: (seed) ゴミ拾いをしよう (成果物不要)
+    icon_url: null
+    content: 近所のゴミを拾ってみよう！清掃活動の報告は任意です。
+    difficulty: 1
+    required_artifact_type: NONE
+    max_achievement_count: null
+    is_featured: true
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: seed-local-treasure
+    title: (seed) 発見！地域の宝 (位置情報付き画像)
+    icon_url: /img/mission_fallback.svg
+    content: あなたの地域で見つけた素敵な場所や物を、位置情報付きの写真で教えてください。
+    difficulty: 4
+    required_artifact_type: IMAGE_WITH_GEOLOCATION
+    max_achievement_count: 5
+    is_featured: true
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: seed-best-shot
+    title: (seed) 今日のベストショット (画像提出)
+    icon_url: /img/mission_fallback.svg
+    content: 今日の活動で見つけた素晴らしい瞬間を写真で共有してください。
+    difficulty: 3
+    required_artifact_type: IMAGE
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: seed-x-nickname
+    title: (seed) Xのニックネームを入力しよう(テキスト提出)
+    icon_url: null
+    content: Xのニックネームを入力しよう
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
   - slug: instagram-like
     title: Instagram でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらい関連のInstagram投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.instagram.com/explore/tags/チームみらい/" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>'
+    content: チームみらい関連のInstagram投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.instagram.com/explore/tags/チームみらい/" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
@@ -256,11 +291,10 @@ missions:
     is_hidden: false
     artifact_label: 一番応援したくなった投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/instagram_mission.png
-    event_date: null
   - slug: x-like
     title: X でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらい関連のX投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://x.com/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>'
+    content: チームみらい関連のX投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://x.com/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
@@ -268,11 +302,10 @@ missions:
     is_hidden: false
     artifact_label: 一番応援したい投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/x_like_mission.png
-    event_date: null
   - slug: note-like
     title: note でチームみらい記事にスキ♡をつけよう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらい関連のnote記事を見つけて「スキ」で応援しましょう！<br><br><a href="https://note.com/search?q=チームみらい" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>'
+    content: チームみらい関連のnote記事を見つけて「スキ」で応援しましょう！<br><br><a href="https://note.com/search?q=チームみらい" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
@@ -280,11 +313,10 @@ missions:
     is_hidden: false
     artifact_label: スキを押した記事のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/note_mission.png
-    event_date: null
   - slug: put-up-poster
     title: チームみらいの政党ポスターを貼ろう
     icon_url: /img/mission_fallback.svg
-    content: 'チームみらいの政党ポスターを貼って、地域の人々に政策を広めよう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/206f6f56bae180e6b471ec5360653227" target="_blank">政治ポスターを貼る</a>'
+    content: チームみらいの政党ポスターを貼って、地域の人々に政策を広めよう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/206f6f56bae180e6b471ec5360653227" target="_blank">政治ポスターを貼る</a>
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -292,7 +324,6 @@ missions:
     is_hidden: false
     artifact_label: ポスターを貼った場所の郵便番号
     ogp_image_url: ''
-    event_date: null
   - slug: chat-idobata-ai
     title: いどばた政策サイトでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
@@ -304,19 +335,39 @@ missions:
     is_hidden: false
     artifact_label: いどばたのユーザー名
     ogp_image_url: null
-    event_date: null
-  - slug: quiz-teammirai-beginner
-    title: チームみらいクイズ（初級）に挑戦しよう
+  - slug: quiz-teammirai-anno
+    title: チームみらいクイズ（安野編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいについてのクイズです。全部で4問！全問正解でミッション達成！
-    difficulty: 1
+    content: チームみらいの党首・安野たかひろについてのクイズです。全部で4問！全問正解でミッション達成！
+    difficulty: 2
     required_artifact_type: QUIZ
-    max_achievement_count: 2
+    max_achievement_count: 3
     is_featured: false
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
-    event_date: null
+  - slug: quiz-teammirai-vision
+    title: チームみらいクイズ（ビジョン編）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいのビジョンについてのクイズです。全部で4問！全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: quiz-teammirai-values
+    title: チームみらいクイズ（価値観編）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの価値観についてのクイズです。全部で4問！全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
   - slug: quiz-policy-intermediate
     title: 政策・マニフェストクイズ（中級）に挑戦しよう
     icon_url: /img/mission_fallback.svg
@@ -325,10 +376,9 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 2
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
-    event_date: null
   - slug: quiz-policy-intermediate-2
     title: 政策・マニフェストクイズ（中級2）に挑戦しよう
     icon_url: /img/mission_fallback.svg
@@ -337,7 +387,6 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 2
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
-    event_date: null
