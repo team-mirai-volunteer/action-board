@@ -23,15 +23,12 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // 2. サインアップページに移動
     if (await page.getByTestId("navmenubutton").isVisible()) {
       await page.getByTestId("navmenubutton").click();
-      await page.getByRole("menuitem", { name: "サインアップ" }).click();
+      await page.getByRole("menuitem", { name: "新規登録" }).click();
     } else {
-      await page.getByRole("link", { name: "サインアップ" }).click();
+      await page.getByRole("link", { name: "新規登録" }).click();
     }
 
     await expect(page).toHaveURL("/sign-up");
-    await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
-    ).toBeVisible();
 
     // 3. フェーズ1: 生年月日と同意情報を入力
     // 年を選択
@@ -49,10 +46,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     await day.press("Enter");
     await page.getByRole("option", { name: "14日" }).click();
 
-    // 利用規約に同意する
+    // 利用規約・プライバシーポリシーに同意する
     await page.locator("#terms").click();
-    // プライバシーポリシーに同意する
-    await page.locator("#privacy").click();
 
     // 次へ進むボタンをクリック
     await page.getByRole("button", { name: "次へ進む" }).click();
@@ -202,10 +197,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     const selectedDay = page.getByRole("option", { name: "31日" });
     await selectedDay.click();
 
-    // 利用規約に同意する
+    // 利用規約・プライバシーポリシーに同意する
     await page.locator("#terms").click();
-    // プライバシーポリシーに同意する
-    await page.locator("#privacy").click();
 
     // 年齢制限エラーメッセージが表示されることを確認
     await expect(
@@ -235,14 +228,12 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     await day2.press("Enter");
     await page.getByRole("option", { name: "14日" }).click();
 
-    // 利用規約のみ同意（プライバシーポリシーは未同意）
-    await page.locator("#terms").click();
-
+    // 利用規約・プライバシーポリシーに未同意
     // 次へ進むボタンが無効化されていることを確認
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
 
-    // プライバシーポリシーにも同意
-    await page.locator("#privacy").click();
+    // 利用規約・プライバシーポリシーに同意
+    await page.locator("#terms").click();
 
     // 次へ進むボタンが有効化されることを確認
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeEnabled();
@@ -313,7 +304,7 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // /sign-upページにリダイレクトされることを確認
     await page.waitForURL("/sign-up", { timeout: 5000 });
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アクションボードに登録" }),
     ).toBeVisible();
   });
 
@@ -323,7 +314,7 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アクションボードに登録" }),
     ).toBeVisible();
     await expect(
       page.getByText("生年月日（満18歳以上である必要があります）"),
@@ -353,12 +344,8 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
 
-    // 4. 利用規約のみ同意して無効化されていることを確認
+    // 4. 利用規約・プライバシーポリシーに同意して有効化されることを確認
     await page.locator("#terms").click();
-    await expect(page.getByRole("button", { name: "次へ進む" })).toBeDisabled();
-
-    // 5. すべて入力すると有効化されることを確認
-    await page.locator("#privacy").click();
     await expect(page.getByRole("button", { name: "次へ進む" })).toBeEnabled();
   });
 
@@ -487,7 +474,6 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
 
     // 利用規約・プライバシーポリシーに同意
     await page.locator("#terms").click();
-    await page.locator("#privacy").click();
 
     // 次へ進む
     await page.getByRole("button", { name: "次へ進む" }).click();

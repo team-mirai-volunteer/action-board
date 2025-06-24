@@ -12,7 +12,26 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      // PKCE Code Verifier エラーの場合、redirect_to別に適切な画面にリダイレクト
+      if (
+        error.message?.includes("code verifier") ||
+        error.code === "validation_failed"
+      ) {
+        // redirect_toパラメータからパスワードリセットかどうかを判定
+        if (redirectTo === "/reset-password") {
+          // パスワードリセットの場合
+          const resetUrl = `${origin}/reset-password`;
+          return NextResponse.redirect(resetUrl);
+        }
+
+        // メール認証の場合
+        const loginUrl = `${origin}/sign-in?success=${encodeURIComponent("メール認証が完了しました。ログインしてください。")}`;
+        return NextResponse.redirect(loginUrl);
+      }
+    }
   }
 
   if (redirectTo) {

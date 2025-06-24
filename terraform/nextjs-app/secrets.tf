@@ -47,6 +47,18 @@ resource "google_secret_manager_secret_version" "supabase_smtp_pass" {
   secret_data_wo = var.SUPABASE_SMTP_PASS
 }
 
+resource "google_secret_manager_secret" "bq_user_password" {
+  secret_id = "${var.app_name}-${var.environment}-bq-user-password"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "bq_user_password" {
+  secret         = google_secret_manager_secret.bq_user_password.id
+  secret_data_wo = var.BQ_USER_PASSWORD
+}
+
 resource "google_secret_manager_secret" "sentry_auth_token" {
   secret_id = "${var.app_name}-${var.environment}-sentry-auth-token"
 
