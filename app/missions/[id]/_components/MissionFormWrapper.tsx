@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
-// import type { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -22,7 +22,7 @@ import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
   mission: Tables<"missions">;
-  authUser: { id: string; email?: string } | null;
+  authUser: User;
   userAchievementCount: number;
   onSubmissionSuccess?: () => void;
   initialDailyAttemptStatus?: {

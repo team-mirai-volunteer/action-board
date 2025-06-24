@@ -7,14 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
 import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
-// import type { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { GeolocationInput } from "./GeolocationInput";
 import { ImageUploader } from "./ImageUploader";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
-  authUser: { id: string; email?: string } | null;
+  authUser: User | null;
   disabled: boolean;
   submittedArtifactImagePath: string | null;
 };

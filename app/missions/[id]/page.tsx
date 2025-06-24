@@ -108,14 +108,6 @@ export default async function MissionPage({ params }: Props) {
     }
   }
 
-  // User オブジェクトから必要なプロパティのみを抽出
-  const serializedUser = user
-    ? {
-        id: user.id,
-        email: user.email,
-      }
-    : null;
-
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
     ? await getUserMissionRanking(id, user.id)
@@ -147,7 +139,7 @@ export default async function MissionPage({ params }: Props) {
             >
               <MissionWithSubmissionHistory
                 mission={mission}
-                authUser={serializedUser}
+                authUser={user}
                 referralCode={referralCode}
                 initialUserAchievementCount={userAchievementCount}
                 initialSubmissions={submissions}
