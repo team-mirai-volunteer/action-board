@@ -21,6 +21,7 @@ describe("achievements テーブルのRLSテスト", () => {
       title: "テストミッション",
       content: "これはテスト用のミッションです",
       difficulty: 1,
+      slug: `test-mission-${crypto.randomUUID()}`,
     };
 
     const { error } = await adminClient.from("missions").insert(missionData);

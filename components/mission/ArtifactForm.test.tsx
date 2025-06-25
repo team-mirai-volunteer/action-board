@@ -4,10 +4,6 @@ import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-jest.mock("@/lib/supabase/client", () =>
-  require("../../tests/__mocks__/supabase"),
-);
-
 const mockUser: User = {
   id: "test-user-id",
   email: "test@example.com",

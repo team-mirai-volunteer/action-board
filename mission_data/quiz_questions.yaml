@@ -1,0 +1,278 @@
+quiz_questions:
+  # チームみらい（安野編）
+  - id: 95bdeea3-f6b4-41ff-a66b-3e627ec52af9
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-anno
+    question: 安野たかひろのキャリアに最も当てはまる「組み合わせ」はどれ？
+    option1: 東大卒・漫画家・登山家
+    option2: AIエンジニア・起業家・SF作家
+    option3: 弁護士・医師・政治家
+    option4: 公務員・写真家・投資家
+    correct_answer: 2
+    explanation: 著書「1%の革命」、「はじめる力」、「サーキット・スイッチャー」など。第9回ハヤカワSFコンテストで優秀賞を受賞。
+    question_order: 1
+    is_active: true
+  - id: 9c8db08a-1558-4193-a03b-e1d8b972d30e
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-anno
+    question: 安野たかひろの経歴として正しいものは、次のうちどれか？
+    option1: 東京都知事選に立候補
+    option2: R-1グランプリ出場
+    option3: 芥川賞受賞
+    option4: 宇宙飛行士として国際宇宙ステーションに滞在
+    correct_answer: 1
+    explanation: 2024年、東京都知事選に出馬。R-1グランプリには出場していないが、M-1グランプリにはロボットであるPepperとともに出場し、一回戦突破。
+    question_order: 2
+    is_active: true
+  - id: 9ec20608-3f99-4832-84c8-7d35a5aab589
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-anno
+    question: 安野たかひろが2016年に創業したAIチャットボットの会社は？
+    option1: MNTSQ（モンテスキュー）
+    option2: GovTech東京
+    option3: BEDORE（現PKSHA Communication）
+    option4: チームみらい
+    correct_answer: 3
+    explanation: 2016年にAIチャットボットの株式会社BEDORE（現PKSHA Communication）を創業。2018年にリーガルテックのMNTSQ株式会社を共同創業。
+    question_order: 3
+    is_active: true
+  - id: 076abc35-c67d-4fff-b397-b0aa7bb4f7fe
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-anno
+    question: 安野たかひろが2024年東京都知事選挙にて獲得した得票数はおよそいくらか？
+    option1: 15万票
+    option2: 1.5万票
+    option3: 1500票
+    option4: 150票
+    correct_answer: 1
+    explanation: 有権者数がおよそ1100万人。そのうち約60%にあたる690万人が投票。その約2%の約15万票を獲得した。
+    question_order: 4
+    is_active: true
+
+  # チームみらい（ビジョン編）
+  - id: d43afcb5-b902-4f94-9bb2-09a7f399b21c
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-vision
+    question: チームみらいが考える「テクノロジーと政治」の理想的な関係はどれ？
+    option1: テクノロジーの導入はコストがかかるので慎重にすべき
+    option2: 民間は進んでいるが、政治は古いやり方を守るべき
+    option3: 行政は人の手による手続きの方が信頼できる
+    option4: テクノロジーで政治のプロセスを透明かつ効率的にするべき
+    correct_answer: 4
+    explanation: 政治はあなたの生活を豊かにするための重要な要素。今こそ、テクノロジーで徹底的に政治をアップデートします。
+    question_order: 1
+    is_active: true
+  - id: 9c75c9fd-e3ef-4861-84b0-736d351d1b47
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-vision
+    question: チームみらいが描く「日本の未来」に最も近いイメージは？
+    option1: 過去の成功に学び、今の水準を維持すること
+    option2: 再分配政策を最優先に、成長戦略は二の次にする
+    option3: 科学・技術・文化に投資し、未来は明るいと信じられる国へ
+    option4: 財政赤字に対応するために全世代で我慢する社会
+    correct_answer: 3
+    explanation: チームみらいは、科学技術への投資、新産業の育成、文化の振興によって、未来は明るいと信じられる国を目指します。
+    question_order: 2
+    is_active: true
+  - id: 4d3b0cf3-1a49-47a7-bcfc-9e6bc44e2a3d
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-vision
+    question: チームみらいが目指す「変化に強い社会」の特徴は？
+    option1: 一度決めた制度を長く守り抜くこと
+    option2: 柔軟に変化しながらも安心・安全を守る社会
+    option3: 外部の変化をなるべく受け入れない姿勢
+    option4: グローバル競争よりも国内優先の政策を徹底する
+    correct_answer: 2
+    explanation: チームみらいは、私たちの暮らしが変わらず安心安全なものであるために、変わり続けることができるしなやかな社会づくりを目指します。
+    question_order: 3
+    is_active: true
+
+  # チームみらい（価値観編）
+  - id: f3a7269f-8eb0-4727-a9b0-5b1ffbdc1c29
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-values
+    question: チームみらいが大切にしている「実行力」に関する価値観はどれ？
+    option1: 指示を待ってから動く
+    option2: 完璧に準備してから動く
+    option3: 他人に任せて様子を見る
+    option4: 現場視点で考え、自ら手を動かす
+    correct_answer: 4
+    explanation: 手を動かす。現場視点で建設的なプランを考え、自らの手で素早く実行します。
+    question_order: 1
+    is_active: true
+
+  - id: 6516e0f1-3b23-4b54-92e2-b35805dcd270
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-values
+    question: チームみらいが重視する「透明性」に最も近い価値観はどれ？
+    option1: 決定はトップだけで決める
+    option2: 意思決定やプロセスをオープンにする
+    option3: 内輪での話は外に出さない
+    option4: 成果が出るまで情報は公開しない
+    correct_answer: 2
+    explanation: オープンにする。意思決定も、お金の流れも、プロセスも。透明に、誠実に、信頼とともに歩みます。
+    question_order: 2
+    is_active: true
+
+  - id: 33d4e742-4ab4-4f5f-96d3-2cf56b9ae9c5
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-values
+    question: チームみらいの姿勢として「他党や政治家との関わり方」で正しいのは？
+    option1: ライバルとは距離を置く
+    option2: 相手の弱点を突いて差別化する
+    option3: 他の政党も未来をつくる仲間と捉える
+    option4: 政治的立場が違えば一切協力しない
+    correct_answer: 3
+    explanation: 誰かをおとしめない。他の政党も政治家も、日本の未来をつくる仲間。協力できる箇所を探し、一緒に進みます。
+    question_order: 3
+    is_active: true
+
+  - id: 0a1c2454-cd2f-49e1-bb92-76cb3d1b709f
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-values
+    question: チームみらいが避けたいコミュニケーションのあり方は？
+    option1: 解決策を中心に提案する
+    option2: 感情ではなくデータで語る
+    option3: 分断を煽る
+    option4: 批判より改善を優先する
+    correct_answer: 3
+    explanation: 分断を煽らない。感情ではなく、データと事実で語ります。批判より提案を。分断より解決を。
+    question_order: 4
+    is_active: true
+
+  - id: 10e51a96-74e3-4b58-9561-bac0a6b87b01
+    category_slug: teammirai
+    mission_slug: quiz-teammirai-values
+    question: チームみらいが意思決定する際に大切にしているスタンスは？
+    option1: 一度決めたら変えない
+    option2: 多様な意見を聞いて柔軟に改善する
+    option3: できるだけ早く一つの正解を選ぶ
+    option4: 反対意見は排除する
+    correct_answer: 2
+    explanation: 何事も決めつけない。正解はひとつじゃない。多様な声に耳を傾け、より良い答えがあれば、柔軟に改善します。
+    question_order: 5
+    is_active: true
+
+  # 政策中級1
+  - id: be7891d1-d832-4a91-a4d5-8589d3a59b18
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate
+    question: マニフェストが指摘する日本の現状として、**誤っている**ものはどれか？
+    option1: 平均年収が20年間増えていない
+    option2: 出生数が過去最少を更新している
+    option3: デジタル分野で世界的な企業が多数生まれている
+    option4: 実質GDPがほとんど成長していない
+    correct_answer: 3
+    explanation: マニフェストでは、日本から世界的なインターネット企業は生まれず、デジタル赤字が増え続けていると指摘しています。
+    question_order: 1
+    is_active: true
+  - id: 4b713c16-c3a0-47aa-91fd-efe643db7351
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate
+    question: マニフェストが現在の政治に不足していると指摘している議論は何か？
+    option1: 社会保障の充実
+    option2: どう成長するか
+    option3: 格差の是正
+    option4: 環境問題への対策
+    correct_answer: 2
+    explanation: マニフェストは、現在の政治では『どう再分配するか』の話ばかりで『どう成長するか』の議論が不足していると指摘しています。
+    question_order: 2
+    is_active: true
+  - id: 5dc313ff-39be-4b79-bc9f-11ac193ee7af
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate
+    question: マニフェストが日本の経済成長の糸口として最も重要視しているものは何か？
+    option1: 豊富な天然資源
+    option2: 急速な人口増加
+    option3: テクノロジー、創造性、イノベーション
+    option4: 海外からの大規模投資
+    correct_answer: 3
+    explanation: マニフェストは、天然資源も人口増加もない日本が経済的成長を生み出す糸口はテクノロジー、創造性、イノベーションにこそあると述べています。
+    question_order: 3
+    is_active: true
+  - id: 61a889d9-8816-4026-b5d3-179877ef573b
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate
+    question: AIの発展に関して、マニフェストが日本にとってチャンスと捉えている点は何か？
+    option1: AIを「作る」技術で世界をリードしている点
+    option2: AIの倫理基準策定で主導権を握れる点
+    option3: AIを「使いこなす」レースが始まったばかりである点
+    option4: AIによる失業問題への対策が最も進んでいる点
+    correct_answer: 3
+    explanation: マニフェストは、AIを「作る」レースでは米中に遅れをとっているものの、AIを「使いこなす」レースはまだ始まったばかりであり、日本にとってチャンスであると述べています。
+    question_order: 4
+    is_active: true
+  - id: 9f671f2d-409a-49b8-8f80-085e49d94c0a
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate
+    question: マニフェストが提案する「未来をつくるための3ステップ」の第一歩は何か？
+    option1: 長期の成長に大胆に投資する
+    option2: デジタル時代の当たり前をやりきる
+    option3: 変化に対応できる、しなやかな仕組みづくり
+    option4: AI研究開発に国家予算の半分を投入する
+    correct_answer: 2
+    explanation: マニフェストが提案する3ステップの第一は「デジタル時代の当たり前をやりきる」ことです。
+    question_order: 5
+    is_active: true
+
+  # 政策中級2
+  - id: d70e28c8-9c2a-4bcc-9e59-da92199bc414
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate-2
+    question: チームみらい マニフェスト ステップ１「デジタル時代の当たり前をやりきる」で、まず指摘する日本社会の根本課題はどれ？
+    option1: デジタル技術を日常的に活用する基盤が整っていない
+    option2: 高齢化による年金財政の逼迫
+    option3: 少子化による人口減少
+    option4: 温室効果ガス排出の増加
+    correct_answer: 1
+    explanation: 教育・行政・産業などあらゆる場面でデジタル基盤が不足していることが最大の問題意識として挙げています。
+    question_order: 1
+    is_active: true
+  - id: 4ef0f76f-845c-4291-bfc4-dbb68da7986b
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate-2
+    question: チームみらい マニフェスト ステップ２「変化に対応できる、しなやかな仕組みづくり」で特に重要になる社会システムの特性として正しいのはどれ？
+    option1: レジリエンス（回復力）とアジリティ（すぐ動ける力）
+    option2: 経済的自立と自由貿易
+    option3: 伝統文化の保護と観光開発
+    option4: セキュリティ（安全性）とプライバシー保護
+    correct_answer: 1
+    explanation: 不確実性が高い時代に対応するにはレジリエンスとアジリティが鍵であると強調している。
+    question_order: 2
+    is_active: true
+  - id: eef84a59-b79e-468c-abaa-03d1b47f9f6d
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate-2
+    question: チームみらい マニフェスト ステップ３「長期の成長に大胆に投資する」が"再設計"すると述べるバランスはどれとどれ？
+    option1: 税制と年金制度
+    option2: 国際援助費と防衛費
+    option3: 民間投資と公共投資
+    option4: 短期的な対応策と長期的な成長投資
+    correct_answer: 4
+    explanation: 短期的ショック緩和策と百年先を見据えた長期成長投資との最適バランスを再設計すると強調。
+    question_order: 3
+    is_active: true
+  - id: 9e30d901-b61b-4a84-8e94-a777fab56733
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate-2
+    question: チームみらい マニフェスト 「国政政党成立後１００日プラン」で他党と協調して立ち上げるとされる超党派議連は主にどの分野を扱う？
+    option1: 食糧安全保障
+    option2: 原子力政策
+    option3: AI政策
+    option4: 宇宙探査
+    correct_answer: 3
+    explanation: 「AI政策について…オープンな超党派議連を立ち上げる」とあります。
+    question_order: 4
+    is_active: true
+  - id: 0d0afdc3-d2ee-4024-bfa2-308bab5d5d8f
+    category_slug: policy
+    mission_slug: quiz-policy-intermediate-2
+    question: チームみらいのマニフェストの決め方で**誤っている**ものは？
+    option1: チームみらいのミッション・ビジョンやステップ1〜3の方向性に合致している提案だけを採択対象とする。
+    option2: 改善提案は AI で自動ラベリング・要約して整理する。
+    option3: 最終的な反映方針をチームでまとめる。
+    option4: チームが作成した反映方針を、AIが一件ずつ確認し、最終的な意思決定を行う。
+    correct_answer: 4
+    explanation: 最終的な意思決定は、党首である安野たかひろが一件ずつ確認し行うとしている。
+    question_order: 5
+    is_active: true

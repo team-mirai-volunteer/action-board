@@ -100,22 +100,22 @@ export default async function MissionsByCategory({
       // mission_idがnullの場合の処理
       if (!a.mission_id || !b.mission_id) return 0;
 
-      // クリア済みミッションを後ろに
-      // ただしミッションの上限回数が設定されている場合のみ
-      if (
-        a.max_achievement_count &&
-        achievedMissionIds.includes(a.mission_id) &&
-        achievedMissionIds.includes(b.mission_id)
-      ) {
+      // 上限まで達成済みのミッションを後ろに移動
+      const aAchievementCount = userAchievementCountMap.get(a.mission_id) ?? 0;
+      const bAchievementCount = userAchievementCountMap.get(b.mission_id) ?? 0;
+
+      const aIsMaxAchieved =
+        a.max_achievement_count && aAchievementCount >= a.max_achievement_count;
+      const bIsMaxAchieved =
+        b.max_achievement_count && bAchievementCount >= b.max_achievement_count;
+
+      if (aIsMaxAchieved && !bIsMaxAchieved) {
         return 1; // a を後ろに
       }
-      if (
-        b.max_achievement_count &&
-        !achievedMissionIds.includes(a.mission_id) &&
-        achievedMissionIds.includes(b.mission_id)
-      ) {
+      if (!aIsMaxAchieved && bIsMaxAchieved) {
         return -1; // b を後ろに
       }
+
       // それ以外はリンクのソート順で比較
       return (a.link_sort_no ?? 0) - (b.link_sort_no ?? 0);
     });

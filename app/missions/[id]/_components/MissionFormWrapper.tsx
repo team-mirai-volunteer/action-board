@@ -149,91 +149,86 @@ export function MissionFormWrapper({
   const completed =
     userAchievementCount >= (mission.max_achievement_count || 1);
 
+  const renderForm = () => {
+    if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
+      // クイズミッションの場合
+      return (
+        <div className="space-y-4">
+          <QuizComponent
+            key={quizKey}
+            missionId={mission.id}
+            isCompleted={completed}
+            preloadedQuestions={preloadedQuizQuestions || []}
+            onQuizComplete={handleQuizComplete}
+            onSubmitAchievement={handleQuizSubmit}
+            isSubmittingAchievement={isQuizSubmitting}
+            buttonLabel={buttonLabel}
+            category={quizCategory}
+          />
+
+          {errorMessage && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+              {errorMessage}
+            </div>
+          )}
+        </div>
+      );
+    }
+    // 通常のアーティファクト提出ミッションの場合
+    return (
+      <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
+        <input type="hidden" name="missionId" value={mission.id} />
+        <input
+          type="hidden"
+          name="requiredArtifactType"
+          value={mission.required_artifact_type ?? ARTIFACT_TYPES.NONE.key}
+        />
+
+        <ArtifactForm
+          key={formKey}
+          mission={mission}
+          authUser={authUser}
+          disabled={isButtonDisabled || isSubmitting}
+          submittedArtifactImagePath={null}
+        />
+        <SubmitButton
+          pendingText="登録中..."
+          size="lg"
+          disabled={isButtonDisabled || isSubmitting}
+        >
+          {buttonLabel}
+        </SubmitButton>
+        <p className="text-sm text-muted-foreground">
+          ※
+          成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+        </p>
+        {errorMessage && (
+          <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
+            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+            {errorMessage}
+          </div>
+        )}
+      </form>
+    );
+  };
+
   return (
     <>
-      {!hasReachedUserMaxAchievements &&
-        userAchievementCount > 0 &&
-        mission?.max_achievement_count !== null && (
+      {mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key &&
+        !hasReachedUserMaxAchievements &&
+        userAchievementCount > 0 && (
           <div className="rounded-lg border bg-muted/50 p-4 text-center mb-4">
             <p className="text-sm font-medium text-muted-foreground">
-              {userAchievementCount === mission.max_achievement_count - 1 ? (
-                <>
-                  復習用チャレンジ（最終回）: {userAchievementCount} /{" "}
-                  {mission.max_achievement_count}回
-                </>
-              ) : (
-                <>
-                  復習用チャレンジ: {userAchievementCount} /{" "}
-                  {mission.max_achievement_count}回
-                </>
-              )}
+              <>
+                復習用チャレンジ: {userAchievementCount} /{" "}
+                {mission.max_achievement_count}回
+              </>
             </p>
           </div>
         )}
 
-      {!completed &&
-        (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ? (
-          // クイズミッションの場合
-          <div className="space-y-4">
-            <QuizComponent
-              key={quizKey}
-              missionId={mission.id}
-              isCompleted={completed}
-              preloadedQuestions={preloadedQuizQuestions || []}
-              onQuizComplete={handleQuizComplete}
-              onSubmitAchievement={handleQuizSubmit}
-              isSubmittingAchievement={isQuizSubmitting}
-              buttonLabel={buttonLabel}
-              category={quizCategory}
-            />
-
-            {errorMessage && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
-                <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                {errorMessage}
-              </div>
-            )}
-          </div>
-        ) : (
-          // 通常のアーティファクト提出ミッションの場合
-          <form
-            ref={formRef}
-            action={handleSubmit}
-            className="flex flex-col gap-4"
-          >
-            <input type="hidden" name="missionId" value={mission.id} />
-            <input
-              type="hidden"
-              name="requiredArtifactType"
-              value={mission.required_artifact_type ?? ARTIFACT_TYPES.NONE.key}
-            />
-
-            <ArtifactForm
-              key={formKey}
-              mission={mission}
-              authUser={authUser}
-              disabled={isButtonDisabled || isSubmitting}
-              submittedArtifactImagePath={null}
-            />
-            <SubmitButton
-              pendingText="登録中..."
-              size="lg"
-              disabled={isButtonDisabled || isSubmitting}
-            >
-              {buttonLabel}
-            </SubmitButton>
-            <p className="text-sm text-muted-foreground">
-              ※
-              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
-            </p>
-            {errorMessage && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
-                <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                {errorMessage}
-              </div>
-            )}
-          </form>
-        ))}
+      {!hasReachedUserMaxAchievements && renderForm()}
 
       {(completed ||
         (userAchievementCount > 0 &&
