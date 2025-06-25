@@ -26,6 +26,7 @@ describe("posting_activities テーブルのRLSテスト", () => {
       content: "これはRLSテスト用のポスティングミッションです",
       difficulty: 1,
       required_artifact_type: "POSTING" as const,
+      slug: `test-posting-mission-${crypto.randomUUID()}`,
     };
 
     const { error: missionError } = await adminClient
