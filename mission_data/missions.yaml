@@ -43,6 +43,18 @@ missions:
     is_hidden: false
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//11_follow_teammirai_x.png
+  - slug: follow-teammirai-tiktok
+    title: 公式Tiktokをフォローしよう
+    icon_url: /img/mission_fallback.svg
+    content: '<a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式Tiktokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツがたくさんあります。'
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのTiktokアカウント名
+    ogp_image_url: null
+    event_date: null
   - slug: share-manifest-sns
     title: マニフェストの感想をSNSでシェアしよう
     icon_url: /img/mission_fallback.svg
