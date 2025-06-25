@@ -69,7 +69,7 @@ function SocialShareSection({
           <h2 className="text-xl font-bold mb-4 flex items-center justify-center gap-2">
             📢 このページをシェアしよう！
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-sm text-gray-600 mb-8">
             あなたの周りの人にもアクションボードを届けよう。
           </p>
           <div className="flex justify-center gap-4 mb-8">
@@ -132,7 +132,7 @@ function FeedbackSection() {
     <div className="bg-white py-12">
       <div className="px-4 md:container md:mx-auto text-center">
         <h2 className="text-xl font-bold mb-4">ご意見をお聞かせください</h2>
-        <p className="text-gray-600 mb-8">
+        <p className="text-sm text-gray-600 mb-8">
           チームみらいアクションボードをより良いサービスにするため、
           <br />
           皆様のご意見・ご要望をお聞かせください。
@@ -173,7 +173,7 @@ function OfficialSNSSection() {
     <div className="bg-teal-50 py-12">
       <div className="px-4 md:container md:mx-auto text-center">
         <h2 className="text-xl font-bold mb-4">チームみらい公式SNS</h2>
-        <p className="text-gray-600 mb-8">
+        <p className="text-sm text-gray-600 mb-8">
           最新の活動情報や舞台裏を、いち早くお届けします。ぜひフォロー＆チャンネル登録で応援してください！
         </p>
         <div className="bg-white rounded-lg p-6">
