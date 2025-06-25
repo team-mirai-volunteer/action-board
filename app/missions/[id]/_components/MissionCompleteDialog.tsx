@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Tables } from "@/lib/types/supabase";
+import { X } from "lucide-react";
 import { ShareButton } from "./ShareButton";
 import { ShareFacebookButton } from "./ShareFacebookButton";
 import { ShareLineButton } from "./ShareLineButton";
@@ -32,10 +33,48 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
       ? `${window.location.origin}/missions/${mission.id}?type=complete`
       : "";
 
+  const handleShareClick = (platform: string) => {
+    switch (platform) {
+      case "x":
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`,
+          "_blank",
+        );
+        break;
+      case "facebook":
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+          "_blank",
+        );
+        break;
+      case "share":
+        if (navigator.share) {
+          navigator.share({
+            title: message,
+            text: shareMessage,
+            url: shareUrl,
+          });
+        }
+        break;
+      case "copy":
+        navigator.clipboard.writeText(shareUrl);
+        break;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-md p-8">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+          aria-label="閉じる"
+        >
+          <X size={24} />
+        </button>
+
+        <DialogHeader className="space-y-4">
           <DialogTitle className="text-center text-xl">
             おめでとうございます！
           </DialogTitle>
@@ -49,50 +88,73 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
                 : `/api/missions/${mission.id}/og?type=complete`
             }
             alt="ミッションクリア"
+            className="mx-auto"
           />
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 py-4">
-          <ShareTwitterButton
-            message={shareMessage}
-            missionId={mission.id}
-            className="w-full"
-            url={shareUrl}
-          >
-            Xでシェア
-          </ShareTwitterButton>
-          <ShareFacebookButton
-            missionId={mission.id}
-            className="w-full"
-            url={shareUrl}
-          >
-            Facebookでシェア
-          </ShareFacebookButton>
-          {/* 内部で判定しておりモバイルのみ表示 */}
-          <ShareLineButton
-            className="w-full md:hidden"
-            missionId={mission.id}
-            url={shareUrl}
-          >
-            LINEでシェア
-          </ShareLineButton>
-          {/* navigator.share()を使っているのでモバイルのみ表示 */}
-          <ShareButton
-            className="w-full md:hidden"
-            message={shareMessage}
-            missionId={mission.id}
-            url={shareUrl}
-          >
-            その他のサービスにシェア
-          </ShareButton>
-          <ShareUrlButton url={shareUrl} className="w-full">
-            シェアURLをコピー
-          </ShareUrlButton>
-        </div>
+        <section className="py-8">
+          <header className="text-center mb-4">
+            <p className="text-sm font-medium">シェアして応援の輪を広げよう</p>
+          </header>
 
-        <DialogFooter>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => handleShareClick("x")}
+              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              aria-label="Xでシェア"
+            >
+              <img
+                src="/img/icon-X2x.png"
+                alt="X"
+                className="w-full h-full object-contain"
+              />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleShareClick("facebook")}
+              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              aria-label="Facebookでシェア"
+            >
+              <img
+                src="/img/icon-facebook2x.png"
+                alt="Facebook"
+                className="w-full h-full object-contain"
+              />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleShareClick("share")}
+              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              aria-label="その他のサービスでシェア"
+            >
+              <img
+                src="/img/icon-Shere2x.png"
+                alt="Share"
+                className="w-full h-full object-contain"
+              />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleShareClick("copy")}
+              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              aria-label="シェアURLをコピー"
+            >
+              <img
+                src="/img/icon-Copy2x.png"
+                alt="Copy"
+                className="w-full h-full object-contain"
+              />
+            </button>
+          </div>
+        </section>
+
+        <DialogFooter className="pt-4">
           <Button onClick={onClose} className="w-full">
-            OK
+            このまま閉じる
           </Button>
         </DialogFooter>
       </DialogContent>
