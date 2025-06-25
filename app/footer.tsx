@@ -118,7 +118,7 @@ function SocialShareSection({
             <button
               type="button"
               onClick={onCopyUrl}
-              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="URLをコピー"
             >
               <Copy className="w-5 h-5 text-gray-600" />
