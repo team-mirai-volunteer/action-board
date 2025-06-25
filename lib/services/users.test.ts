@@ -18,17 +18,15 @@ describe("users service", () => {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+      insert: jest.fn().mockResolvedValue({ data: null, error: null }),
       update: jest.fn().mockReturnThis(),
     };
 
     mockSupabase.from.mockReturnValue(mockSupabase);
     mockSupabase.select.mockReturnValue(mockSupabase);
     mockSupabase.eq.mockReturnValue(mockSupabase);
-    mockSupabase.single.mockReturnValue(mockSupabase);
     mockSupabase.update.mockReturnValue(mockSupabase);
-    mockSupabase.insert.mockReturnValue(mockSupabase);
   });
 
   afterEach(() => {
@@ -134,9 +132,11 @@ describe("users service", () => {
         data: mockExistingProfile,
         error: null,
       });
-      mockSupabase.eq.mockResolvedValue({
-        data: mockUpdatedProfile,
-        error: null,
+      mockSupabase.update.mockReturnValue({
+        eq: jest.fn().mockResolvedValue({
+          data: mockUpdatedProfile,
+          error: null,
+        }),
       });
 
       const result = await updateProfile(mockUser);
@@ -183,9 +183,11 @@ describe("users service", () => {
         data: mockExistingProfile,
         error: null,
       });
-      mockSupabase.eq.mockResolvedValue({
-        data: null,
-        error: { message: "更新エラー" },
+      mockSupabase.update.mockReturnValue({
+        eq: jest.fn().mockResolvedValue({
+          data: null,
+          error: { message: "更新エラー" },
+        }),
       });
 
       await expect(updateProfile(mockUser)).rejects.toThrow(
