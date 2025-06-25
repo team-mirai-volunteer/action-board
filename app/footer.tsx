@@ -6,6 +6,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 import {
   Copy,
   Edit,
@@ -17,8 +19,31 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+
   const handleLineShare = () => {
     const shareUrl = window.location.href;
     const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
@@ -272,6 +297,21 @@ export default function Footer() {
                       お寄せいただいた寄付の使い途全公開
                     </div>
                   </Link>
+                  {user && (
+                    <Link
+                      href="https://team-mirai.notion.site/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
+                    >
+                      <div className="text-sm font-bold text-black">
+                        チームみらいサポーターガイド
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        サポーター向け限定情報
+                      </div>
+                    </Link>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>
