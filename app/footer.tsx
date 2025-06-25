@@ -192,50 +192,50 @@ export default function Footer() {
             className="w-full"
           >
             <AccordionItem value="useful-sites">
-              <AccordionTrigger className="text-base font-bold">
+              <AccordionTrigger className="text-base font-bold no-underline">
                 チームみらいお役立ちサイト
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4 p-4">
-                  <div className="flex justify-between items-center">
-                    <Link
-                      href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
-                    >
+                  <Link
+                    href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center hover:bg-gray-50 p-2 rounded transition-colors"
+                  >
+                    <span className="text-sm font-bold text-blue-600">
                       ダッシュボード
-                    </Link>
+                    </span>
                     <span className="text-xs text-gray-600">
                       サポーター数など更新中
                     </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <Link
-                      href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_lvnweavysd"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
-                    >
+                  </Link>
+                  <Link
+                    href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_lvnweavysd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center hover:bg-gray-50 p-2 rounded transition-colors"
+                  >
+                    <span className="text-sm font-bold text-blue-600">
                       寄付金額
-                    </Link>
+                    </span>
                     <span className="text-xs text-gray-600">
                       お寄せいただいた気合🔥を公開
                     </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <Link
-                      href="https://polimoney.dd2030.org/demo-takahiro-anno-2024"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
-                    >
+                  </Link>
+                  <Link
+                    href="https://polimoney.dd2030.org/demo-takahiro-anno-2024"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center hover:bg-gray-50 p-2 rounded transition-colors"
+                  >
+                    <span className="text-sm font-bold text-blue-600">
                       ポリマネー
-                    </Link>
+                    </span>
                     <span className="text-xs text-gray-600">
                       お寄せいただいた寄付の使い途全公開
                     </span>
-                  </div>
+                  </Link>
                 </div>
               </AccordionContent>
             </AccordionItem>
