@@ -13,10 +13,7 @@ import type { User } from "@supabase/supabase-js";
 import {
   Copy,
   Edit,
-  Facebook,
   Instagram,
-  MessageSquare,
-  Twitter,
   Youtube,
 } from "lucide-react";
 import Image from "next/image";
@@ -73,7 +70,12 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
               aria-label="LINEでシェア"
             >
-              <MessageSquare className="w-5 h-5" />
+              <Image
+                src="https://team-mir.ai/images/sns/icon_line.png"
+                alt="LINE"
+                width={20}
+                height={20}
+              />
             </button>
             <button
               type="button"
@@ -81,7 +83,12 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
               aria-label="Xでシェア"
             >
-              <Twitter className="w-5 h-5" />
+              <Image
+                src="https://team-mir.ai/images/sns/icon_x.png"
+                alt="X (Twitter)"
+                width={20}
+                height={20}
+              />
             </button>
             <button
               type="button"
@@ -89,7 +96,12 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
               aria-label="Facebookでシェア"
             >
-              <Facebook className="w-5 h-5" />
+              <Image
+                src="https://team-mir.ai/images/sns/icon_facebook.png"
+                alt="Facebook"
+                width={20}
+                height={20}
+              />
             </button>
             <button
               type="button"
