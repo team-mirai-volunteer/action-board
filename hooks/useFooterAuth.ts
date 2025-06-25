@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import type { User } from '@supabase/supabase-js';
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 export function useFooterAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -21,9 +21,9 @@ export function useFooterAuth() {
           setLoading(false);
         }
       } catch (err) {
-        console.error('Footer認証状態の取得に失敗:', err);
+        console.error("Footer認証状態の取得に失敗:", err);
         if (mounted) {
-          setError(err instanceof Error ? err.message : '認証エラー');
+          setError(err instanceof Error ? err.message : "認証エラー");
           setUser(null);
           setLoading(false);
         }
@@ -36,7 +36,7 @@ export function useFooterAuth() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (mounted) {
-        console.log('Footer認証状態変更:', event, session?.user?.id);
+        console.log("Footer認証状態変更:", event, session?.user?.id);
         setUser(session?.user ?? null);
         setLoading(false);
         setError(null);
@@ -49,13 +49,13 @@ export function useFooterAuth() {
     };
   }, []);
 
-  return { 
-    user, 
-    loading, 
-    error, 
+  return {
+    user,
+    loading,
+    error,
     isAuthenticated: !!user,
     refreshAuth: () => {
       setLoading(true);
-    }
+    },
   };
 }

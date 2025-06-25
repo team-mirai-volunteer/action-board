@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
 export function useFooterSocialShare() {
   const handleLineShare = useCallback(() => {
@@ -9,7 +9,8 @@ export function useFooterSocialShare() {
 
   const handleTwitterShare = useCallback(() => {
     const shareUrl = window.location.href;
-    const message = "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！";
+    const message =
+      "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！";
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
   }, []);
@@ -23,7 +24,7 @@ export function useFooterSocialShare() {
   const handleCopyUrl = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      console.log('URLをコピーしました');
+      console.log("URLをコピーしました");
     } catch (error) {
       try {
         const textArea = document.createElement("textarea");
@@ -34,9 +35,9 @@ export function useFooterSocialShare() {
         textArea.select();
         document.execCommand("copy");
         document.body.removeChild(textArea);
-        console.log('URLをコピーしました（フォールバック）');
+        console.log("URLをコピーしました（フォールバック）");
       } catch (fallbackError) {
-        console.error('URLのコピーに失敗:', fallbackError);
+        console.error("URLのコピーに失敗:", fallbackError);
       }
     }
   }, []);
