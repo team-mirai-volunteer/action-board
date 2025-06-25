@@ -68,8 +68,8 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               <Image
                 src="https://team-mir.ai/images/sns/icon_line.png"
                 alt="LINE"
-                width={20}
-                height={20}
+                width={48}
+                height={48}
               />
             </button>
             <button
@@ -81,8 +81,8 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               <Image
                 src="https://team-mir.ai/images/sns/icon_x.png"
                 alt="X (Twitter)"
-                width={20}
-                height={20}
+                width={48}
+                height={48}
               />
             </button>
             <button
@@ -94,8 +94,8 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               <Image
                 src="https://team-mir.ai/images/sns/icon_facebook.png"
                 alt="Facebook"
-                width={20}
-                height={20}
+                width={48}
+                height={48}
               />
             </button>
             <button
@@ -104,7 +104,7 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center text-white hover:bg-gray-500 transition-colors"
               aria-label="URLをコピー"
             >
-              <Copy className="w-5 h-5" />
+              <Copy className="w-12 h-12" />
             </button>
           </div>
         </div>
