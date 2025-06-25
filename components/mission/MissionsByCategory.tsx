@@ -122,7 +122,7 @@ export default async function MissionsByCategory({
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="">
       <div className="flex flex-col">
         {/* タイトル */}
         <div className="text-center py-8">
@@ -139,6 +139,7 @@ export default async function MissionsByCategory({
               className="
                 relative               /* オーバーレイ配置のため */
                 w-screen
+                md:pl-10
                 py-5
               "
             >
@@ -149,7 +150,7 @@ export default async function MissionsByCategory({
 
               {/* 横スクロール領域 */}
               <div
-                className="w-full overflow-x-auto custom-scrollbar cursor-grab"
+                className="w-full overflow-x-auto custom-scrollbar"
                 style={{ scrollbarWidth: "none" }}
               >
                 <div className="flex w-fit gap-4 px-4 pb-2">
