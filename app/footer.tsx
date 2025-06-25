@@ -76,7 +76,7 @@ function SocialShareSection({
             <button
               type="button"
               onClick={onLineShare}
-              className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="LINEでシェア"
             >
               <Image
@@ -89,7 +89,7 @@ function SocialShareSection({
             <button
               type="button"
               onClick={onTwitterShare}
-              className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="Xでシェア"
             >
               <Image
@@ -102,7 +102,7 @@ function SocialShareSection({
             <button
               type="button"
               onClick={onFacebookShare}
-              className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="Facebookでシェア"
             >
               <Image
@@ -115,10 +115,10 @@ function SocialShareSection({
             <button
               type="button"
               onClick={onCopyUrl}
-              className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center text-white hover:bg-gray-500 transition-colors"
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="URLをコピー"
             >
-              <Copy className="w-5 h-5" />
+              <Copy className="w-5 h-5 text-gray-600" />
             </button>
           </div>
         </div>
