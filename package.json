@@ -8,17 +8,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "types": "supabase gen types typescript --local > lib/types/supabase.ts",
+    "types": "npx supabase gen types typescript --local > lib/types/supabase.ts",
     "biome:check:write": "biome check --write .",
     "test": "jest && playwright test",
-    "test:ci": "jest --ci --reporters=default --reporters=jest-junit && CI=true playwright test",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns=tests/rls/ && jest --ci --reporters=default --reporters=jest-junit --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node && CI=true playwright test",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:unit": "jest /tests/{app,components,lib,stories}",
-    "test:rls": "jest",
+    "test:unit": "jest --testPathIgnorePatterns=tests/rls/",
+    "test:rls": "jest --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "mission:sync": "tsx mission_data/src/sync.ts",
+    "mission:sync:dry": "tsx mission_data/src/sync.ts --dry-run",
+    "mission:export": "tsx mission_data/src/export.ts"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
@@ -50,7 +53,10 @@
     "react-dom": "^19.1.0",
     "react-qr-code": "^2.0.15",
     "sonner": "^2.0.4",
-    "zod": "^3.25.23"
+    "zod": "^3.25.23",
+    "js-yaml": "^4.1.0",
+    "commander": "^11.1.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -63,6 +69,8 @@
     "@storybook/experimental-nextjs-vite": "^8.6.14",
     "@storybook/react": "^8.6.14",
     "@storybook/test": "^8.6.14",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",
     "@types/nodemailer": "^6.4.17",
@@ -72,6 +80,7 @@
     "@vitest/coverage-v8": "^3.1.4",
     "dotenv": "^16.5.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.2",
     "jest-junit": "^16.0.0",
     "lefthook": "^1.11.13",
     "playwright": "^1.52.0",
@@ -82,7 +91,10 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.4"
+    "vitest": "^3.1.4",
+    "@types/js-yaml": "^4.0.9",
+    "tsx": "^4.7.0",
+    "@types/uuid": "^9.0.7"
   },
   "jest-junit": {
     "outputDirectory": "./jest-report",

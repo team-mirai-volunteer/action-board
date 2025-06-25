@@ -185,6 +185,28 @@ migrationファイルの追加や編集で、テーブルの追加や更新を�
 npx supabase gen types typescript --local > lib/types/supabase.ts
 ```
 
+## 単体テスト
+
+このプロジェクトでは、Jestを使用した単体テストを実装しています。テストは各資材と同じディレクトリに配置されています。
+
+### テストの実行方法
+
+1. 以下のコマンドですべてのテストを実行できます:
+
+   ```bash
+   npm run test:unit
+   ```
+
+### テストレポートの確認
+
+テスト実行後、`coverage/`ディレクトリにレポートが出力されます。（標準出力でも確認できます。）\
+カバレッジ（コード網羅性）が80%を超えることを基準に、テストを作成してください。
+
+### テストの追加方法
+
+新しいテストを追加する場合は、`機能名.test.(ts|tsx)`の命名規則に従ってください。
+
+
 ## E2Eテスト
 
 このプロジェクトでは、Playwrightを使用したE2Eテストを実装しています。テストは`tests/e2e`ディレクトリに配置されています。
@@ -416,6 +438,30 @@ HUBSPOT_CONTACT_LIST_ID=123456
 
    * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
    * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
+
+## 開発時の留意事項
+
+### ミッション登録フロー変更のお知らせ
+
+#### 背景
+- **ISSUE（#398） の対応により、`missions` テーブルへ新規ミッションを登録する際、  
+  同時に `mission_category_link` テーブルへの登録が必須になりました。  
+  - もし `mission_category_link` への登録を忘れると、トップページにミッションが表示されません。
+
+#### 対応内容
+1. **新規ミッション登録**  
+   - `missions` テーブルへのデータ登録  
+   - **必ず** `mission_category_link` テーブルへカテゴリー紐づけデータを登録
+2. **カテゴリーの選定**  
+   - 登録するミッションを **どのカテゴリー** に紐づけるかは、PM（プロダクトマネージャー）と相談して決定してください。
+   - カテゴリ管理は以下の Notion ページで一元管理しています。
+
+#### 管理ページ
+- カテゴリ管理 Notion: https://team-mirai.notion.site/203f6f56bae181598a0cfbcd03853b69?v=203f6f56bae18185b448000ca7dcf05f
+
+#### 手順
+ミッションデータの詳細については[mission_data/README.md を参照してください](./mission_data/README.md)
+
 
 ---
 

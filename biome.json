@@ -13,7 +13,8 @@
       "**/supabase/.temp/**",
       "**/playwright-report/**",
       "**/coverage/**",
-      "**/mobile_flutter/**"
+      "**/mobile_flutter/**",
+      "**/tests/**"
     ]
   },
   "formatter": {
@@ -30,6 +31,20 @@
       "recommended": true
     }
   },
+  "overrides": [
+    {
+      "include": ["**/*.test.tsx", "**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noThenProperty": "off"
+          }
+        }
+      }
+    }
+  ],
+
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
