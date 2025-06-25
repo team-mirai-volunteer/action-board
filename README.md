@@ -467,3 +467,4 @@ HUBSPOT_CONTACT_LIST_ID=123456
 
 # for CodeRabbit
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/team-mirai-volunteer/action-board?utm_source=oss&utm_medium=github&utm_campaign=team-mirai-volunteer%2Faction-board&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+# Trigger CI
