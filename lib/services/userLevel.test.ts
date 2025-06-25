@@ -395,12 +395,10 @@ describe("userLevel service", () => {
 
       const mockCountQuery = {
         select: jest.fn().mockReturnValue({
-          gt: jest
-            .fn()
-            .mockResolvedValue({
-              count: null,
-              error: { message: "計算エラー" },
-            }),
+          gt: jest.fn().mockResolvedValue({
+            count: null,
+            error: { message: "計算エラー" },
+          }),
         }),
       };
       mockSupabase.from
