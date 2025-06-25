@@ -233,26 +233,7 @@ function UsefulLinksSection({ user, loading, isAuthenticated }: {
               </div>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="future-links-1">
-            <AccordionTrigger className="text-base font-bold no-underline hover:no-underline">
-              今後のリンク
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="p-4">
-                <span className="text-sm text-gray-600">準備中です</span>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="future-links-2">
-            <AccordionTrigger className="text-base font-bold no-underline hover:no-underline">
-              今後のリンク
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="p-4">
-                <span className="text-sm text-gray-600">準備中です</span>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+
         </Accordion>
       </div>
     </div>
