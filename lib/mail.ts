@@ -1,15 +1,23 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import nodemailer from "nodemailer";
+import formData from "form-data";
+import Mailgun from "mailgun.js";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+const MAILGUN_DOMAIN: string = process.env.MAILGUN_DOMAIN ?? "";
+
+if (!MAILGUN_API_KEY) {
+  throw new Error("MAILGUN_API_KEY is not set");
+}
+if (!MAILGUN_DOMAIN) {
+  throw new Error("MAILGUN_DOMAIN is not set");
+}
+
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: "api",
+  key: MAILGUN_API_KEY,
+  url: process.env.MAILGUN_API_BASE_URL || "https://api.mailgun.net",
 });
 
 export async function sendMail({
@@ -21,12 +29,20 @@ export async function sendMail({
   subject: string;
   html: string;
 }) {
-  await transporter.sendMail({
-    from: `"${process.env.SMTP_SENDER_NAME}" <${process.env.SMTP_ADMIN_EMAIL}>`,
-    to,
-    subject,
-    html,
-  });
+  await mg.messages
+    .create(MAILGUN_DOMAIN, {
+      from: `"チームみらい" <noreply@${MAILGUN_DOMAIN}>`,
+      to,
+      subject,
+      html,
+    })
+    .then((msg) => {
+      console.log("Mailgun response:", msg);
+    })
+    .catch((err) => {
+      console.error("Mailgun error:", err);
+      throw err;
+    });
 }
 
 export async function sendWelcomeMail(to: string) {
@@ -35,8 +51,6 @@ export async function sendWelcomeMail(to: string) {
     "supabase/templates/welcome.html",
   );
   const html = await fs.readFile(templatePath, "utf8");
-
-  console.log(`Sending welcome email to: ${to}`);
 
   await sendMail({
     to,
