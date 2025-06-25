@@ -198,16 +198,13 @@ function generateAccordionContent(
   loading: boolean,
   isAuthenticated: boolean,
 ): React.ReactNode {
-  if (section.contentType === "links") {
-    const links =
-      section.linksSource === "usefulLinks"
-        ? FOOTER_CONFIG.usefulLinks.filter(
-            (link) => link.public || isAuthenticated,
-          )
-        : [];
+  if (section.contentType === "links" && section.content.links) {
+    const links = section.content.links.filter(
+      (link) => link.public || isAuthenticated,
+    );
 
     return (
-      <div className={section.containerClassName}>
+      <div className={section.styling.containerClassName}>
         {loading ? (
           <div className="text-center py-4">
             <span className="text-gray-500">読み込み中...</span>
@@ -219,10 +216,10 @@ function generateAccordionContent(
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={section.linkClassName}
+              className={section.styling.linkClassName}
             >
-              <div className={section.titleClassName}>{link.title}</div>
-              <div className={section.descriptionClassName}>
+              <div className={section.styling.titleClassName}>{link.title}</div>
+              <div className={section.styling.descriptionClassName}>
                 {link.description}
               </div>
             </Link>
