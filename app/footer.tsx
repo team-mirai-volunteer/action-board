@@ -1,3 +1,5 @@
+"use client";
+
 import { Copy, Facebook, MessageSquare, Twitter } from "lucide-react";
 import Link from "next/link";
 
