@@ -1,20 +1,21 @@
 export const FOOTER_CONFIG = {
   socialShare: {
-    message: "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！",
+    message:
+      "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！",
   },
   snsLinks: {
-    line: process.env.NEXT_PUBLIC_LINE_URL || "https://line.me/R/ti/p/@teammirai",
-    youtube: process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com/@teammirai",
-    twitter: process.env.NEXT_PUBLIC_TWITTER_URL || "https://twitter.com/teammirai",
-    instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/teammirai",
-    facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://facebook.com/teammirai",
-    note: process.env.NEXT_PUBLIC_NOTE_URL || "https://note.com/teammirai",
+    line: "https://line.me/R/ti/p/@teammirai",
+    youtube: "https://youtube.com/@teammirai",
+    twitter: "https://twitter.com/teammirai",
+    instagram: "https://instagram.com/teammirai",
+    facebook: "https://facebook.com/teammirai",
+    note: "https://note.com/teammirai",
   },
   images: {
     basePath: "https://team-mir.ai/images/sns",
     icons: {
       line: "icon_line.png",
-      youtube: "icon_youtube.png", 
+      youtube: "icon_youtube.png",
       twitter: "icon_x.png",
       instagram: "icon_instagram.png",
       facebook: "icon_facebook.png",
@@ -59,7 +60,8 @@ export const FOOTER_CONFIG = {
       requiresAuth: false,
       linksSource: "usefulLinks" as const,
       containerClassName: "space-y-4 p-4",
-      linkClassName: "flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors",
+      linkClassName:
+        "flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors",
       titleClassName: "text-sm font-bold text-black",
       descriptionClassName: "text-xs text-gray-600",
     },

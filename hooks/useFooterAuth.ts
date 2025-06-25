@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 
 export function useFooterAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,9 +13,12 @@ export function useFooterAuth() {
 
     const initializeAuth = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
         if (error) throw error;
-        
+
         if (mounted) {
           setUser(user);
           setLoading(false);

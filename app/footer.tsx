@@ -1,49 +1,61 @@
 "use client";
 
-import { AccordionSection, AccordionSectionItem } from "@/components/ui/accordion-section";
+import {
+  AccordionSection,
+  type AccordionSectionItem,
+} from "@/components/ui/accordion-section";
+import { FOOTER_CONFIG } from "@/config/footer";
 import { useFooterAuth } from "@/hooks/useFooterAuth";
 import { useFooterSocialShare } from "@/hooks/useFooterSocialShare";
-import { FOOTER_CONFIG } from "@/config/footer";
 import type { User } from "@supabase/supabase-js";
-import {
-  Copy,
-  Edit,
-  Instagram,
-  Youtube,
-} from "lucide-react";
+import { Copy, Edit, Instagram, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import type React from "react";
 
 export default function Footer() {
   const { user, loading, error, isAuthenticated } = useFooterAuth();
-  const { handleLineShare, handleTwitterShare, handleFacebookShare, handleCopyUrl } = useFooterSocialShare();
+  const {
+    handleLineShare,
+    handleTwitterShare,
+    handleFacebookShare,
+    handleCopyUrl,
+  } = useFooterSocialShare();
 
   if (error) {
-    console.error('Footer認証エラー:', error);
+    console.error("Footer認証エラー:", error);
   }
 
   return (
     <footer className="w-full mt-16 bg-background">
-      <SocialShareSection 
+      <SocialShareSection
         onLineShare={handleLineShare}
         onTwitterShare={handleTwitterShare}
         onFacebookShare={handleFacebookShare}
         onCopyUrl={handleCopyUrl}
       />
-      
+
       <FeedbackSection />
-      
+
       <OfficialSNSSection />
-      
-      <UsefulLinksSection user={user} loading={loading} isAuthenticated={isAuthenticated} />
-      
+
+      <UsefulLinksSection
+        user={user}
+        loading={loading}
+        isAuthenticated={isAuthenticated}
+      />
+
       <CopyrightSection />
     </footer>
   );
 }
 
-function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCopyUrl }: {
+function SocialShareSection({
+  onLineShare,
+  onTwitterShare,
+  onFacebookShare,
+  onCopyUrl,
+}: {
   onLineShare: () => void;
   onTwitterShare: () => void;
   onFacebookShare: () => void;
@@ -182,14 +194,17 @@ function OfficialSNSSection() {
 }
 
 function generateAccordionContent(
-  section: typeof FOOTER_CONFIG.accordionSections[0],
+  section: (typeof FOOTER_CONFIG.accordionSections)[0],
   loading: boolean,
-  isAuthenticated: boolean
+  isAuthenticated: boolean,
 ): React.ReactNode {
   if (section.contentType === "links") {
-    const links = section.linksSource === "usefulLinks" 
-      ? FOOTER_CONFIG.usefulLinks.filter(link => link.public || isAuthenticated)
-      : [];
+    const links =
+      section.linksSource === "usefulLinks"
+        ? FOOTER_CONFIG.usefulLinks.filter(
+            (link) => link.public || isAuthenticated,
+          )
+        : [];
 
     return (
       <div className={section.containerClassName}>
@@ -198,17 +213,15 @@ function generateAccordionContent(
             <span className="text-gray-500">読み込み中...</span>
           </div>
         ) : (
-          links.map((link, index) => (
+          links.map((link) => (
             <Link
-              key={index}
+              key={link.url}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
               className={section.linkClassName}
             >
-              <div className={section.titleClassName}>
-                {link.title}
-              </div>
+              <div className={section.titleClassName}>{link.title}</div>
               <div className={section.descriptionClassName}>
                 {link.description}
               </div>
@@ -218,24 +231,29 @@ function generateAccordionContent(
       </div>
     );
   }
-  
+
   return null;
 }
 
-function UsefulLinksSection({ user, loading, isAuthenticated }: { 
-  user: User | null; 
-  loading: boolean; 
-  isAuthenticated: boolean; 
+function UsefulLinksSection({
+  user,
+  loading,
+  isAuthenticated,
+}: {
+  user: User | null;
+  loading: boolean;
+  isAuthenticated: boolean;
 }) {
-  const accordionItems: AccordionSectionItem[] = FOOTER_CONFIG.accordionSections.map(section => ({
-    value: section.value,
-    title: section.title,
-    content: generateAccordionContent(section, loading, isAuthenticated),
-  }));
+  const accordionItems: AccordionSectionItem[] =
+    FOOTER_CONFIG.accordionSections.map((section) => ({
+      value: section.value,
+      title: section.title,
+      content: generateAccordionContent(section, loading, isAuthenticated),
+    }));
 
   const defaultOpenSections = FOOTER_CONFIG.accordionSections
-    .filter(section => section.defaultOpen)
-    .map(section => section.value);
+    .filter((section) => section.defaultOpen)
+    .map((section) => section.value);
 
   return (
     <div className="bg-white py-12">
