@@ -82,8 +82,8 @@ function SocialShareSection({
               <Image
                 src="https://team-mir.ai/images/sns/icon_line.png"
                 alt="LINE"
-                width={24}
-                height={24}
+                width={48}
+                height={48}
                 className="rounded-full"
               />
             </button>
@@ -96,8 +96,8 @@ function SocialShareSection({
               <Image
                 src="https://team-mir.ai/images/sns/icon_x.png"
                 alt="X (Twitter)"
-                width={24}
-                height={24}
+                width={48}
+                height={48}
                 className="rounded-full"
               />
             </button>
@@ -110,8 +110,8 @@ function SocialShareSection({
               <Image
                 src="https://team-mir.ai/images/sns/icon_facebook.png"
                 alt="Facebook"
-                width={24}
-                height={24}
+                width={48}
+                height={48}
                 className="rounded-full"
               />
             </button>
