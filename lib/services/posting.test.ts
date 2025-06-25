@@ -1,14 +1,16 @@
+const mockSupabaseClient = {
+  from: jest.fn().mockReturnThis(),
+  insert: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  single: jest.fn(),
+  delete: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  update: jest.fn().mockReturnThis(),
+  order: jest.fn(),
+};
+
 jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn(),
-    update: jest.fn().mockReturnThis(),
-    order: jest.fn(),
-  })),
+  createClient: jest.fn(() => mockSupabaseClient),
 }));
 
 import {
@@ -25,12 +27,8 @@ const mockCreateClient = createClient as jest.MockedFunction<
 >;
 
 describe("posting service", () => {
-  let mockSupabaseClient: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockSupabaseClient = mockCreateClient();
 
     mockSupabaseClient.from.mockReturnThis();
     mockSupabaseClient.insert.mockReturnThis();
