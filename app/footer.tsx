@@ -1,6 +1,14 @@
 "use client";
 
-import { Copy, Edit, Facebook, MessageSquare, Twitter } from "lucide-react";
+import {
+  Copy,
+  Edit,
+  Facebook,
+  Instagram,
+  MessageSquare,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -116,38 +124,44 @@ export default function Footer() {
             <Link
               href="#"
               className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
+              aria-label="LINE公式アカウント"
             >
-              <span className="font-bold text-sm">LINE</span>
+              <span className="font-bold text-xs">LINE</span>
             </Link>
             <Link
               href="#"
               className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors"
+              aria-label="YouTube公式チャンネル"
             >
-              <span className="font-bold text-sm">YT</span>
+              <Youtube className="w-5 h-5" />
             </Link>
             <Link
               href="#"
               className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+              aria-label="X公式アカウント"
             >
-              <span className="font-bold text-sm">X</span>
+              <Twitter className="w-5 h-5" />
             </Link>
             <Link
               href="#"
-              className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white hover:from-purple-600 hover:to-pink-600 transition-colors"
+              className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-full flex items-center justify-center text-white hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 transition-colors"
+              aria-label="Instagram公式アカウント"
             >
-              <span className="font-bold text-sm">IG</span>
+              <Instagram className="w-5 h-5" />
             </Link>
             <Link
               href="#"
               className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+              aria-label="Facebook公式ページ"
             >
-              <span className="font-bold text-sm">f</span>
+              <Facebook className="w-5 h-5" />
             </Link>
             <Link
               href="#"
-              className="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white hover:bg-blue-800 transition-colors"
+              className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+              aria-label="note公式アカウント"
             >
-              <span className="font-bold text-sm">n</span>
+              <span className="font-bold text-lg">n</span>
             </Link>
           </div>
 
