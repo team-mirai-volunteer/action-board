@@ -24,7 +24,15 @@ type Props = {
 
 export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   const message = `「${mission.title}」を達成しました！`;
-  const shareMessage = `チームみらいアクションボードで${message} #チームみらい\n`;
+  const shareMessage = `チームみらいでは、皆さんが楽しみながらチームみらいの活動を応援できる「アクションボード」を公開しました！
+ご自身の応援が目に見える形で分かります。応援が楽しくなる、様々なランキングもあります。
+登録しても義務や費用は一切発生しないのでご安心ください！
+
+👇1分でLINEまたはメールでかんたんに登録できます！
+[ここに紹介コード]
+
+ご登録よろしくお願いします！
+#チームみらい`;
 
   // OGP画像付きURLを生成
   const shareUrl =
