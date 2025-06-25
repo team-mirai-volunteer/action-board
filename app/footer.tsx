@@ -7,6 +7,7 @@ import {
 import { FOOTER_CONFIG } from "@/config/footer";
 import { useFooterAuth } from "@/hooks/useFooterAuth";
 import { useFooterSocialShare } from "@/hooks/useFooterSocialShare";
+import type { FooterAccordionSection, FooterSNSPlatform } from "@/types/footer";
 import type { User } from "@supabase/supabase-js";
 import { Copy, Edit, Instagram, Youtube } from "lucide-react";
 import Image from "next/image";
@@ -160,7 +161,12 @@ function OfficialSNSSection() {
         </p>
         <div className="bg-white rounded-lg p-6">
           <div className="flex gap-4 justify-center">
-            {Object.entries(FOOTER_CONFIG.snsLinks).map(([platform, url]) => (
+            {(
+              Object.entries(FOOTER_CONFIG.snsLinks) as [
+                FooterSNSPlatform,
+                string,
+              ][]
+            ).map(([platform, url]) => (
               <Link
                 key={platform}
                 href={url}
@@ -168,7 +174,7 @@ function OfficialSNSSection() {
                 aria-label={`${platform}公式アカウント`}
               >
                 <Image
-                  src={`${FOOTER_CONFIG.images.basePath}/${FOOTER_CONFIG.images.icons[platform as keyof typeof FOOTER_CONFIG.images.icons]}`}
+                  src={`${FOOTER_CONFIG.images.basePath}/${FOOTER_CONFIG.images.icons[platform]}`}
                   alt={platform}
                   width={48}
                   height={48}
@@ -194,7 +200,7 @@ function OfficialSNSSection() {
 }
 
 function generateAccordionContent(
-  section: (typeof FOOTER_CONFIG.accordionSections)[0],
+  section: FooterAccordionSection,
   loading: boolean,
   isAuthenticated: boolean,
 ): React.ReactNode {
@@ -242,15 +248,15 @@ function UsefulLinksSection({
   isAuthenticated: boolean;
 }) {
   const accordionItems: AccordionSectionItem[] =
-    FOOTER_CONFIG.accordionSections.map((section) => ({
+    FOOTER_CONFIG.accordionSections.map((section: FooterAccordionSection) => ({
       value: section.value,
       title: section.title,
       content: generateAccordionContent(section, loading, isAuthenticated),
     }));
 
   const defaultOpenSections = FOOTER_CONFIG.accordionSections
-    .filter((section) => section.defaultOpen)
-    .map((section) => section.value);
+    .filter((section: FooterAccordionSection) => section.defaultOpen)
+    .map((section: FooterAccordionSection) => section.value);
 
   return (
     <div className="bg-white py-12">

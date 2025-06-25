@@ -1,4 +1,6 @@
-export const FOOTER_CONFIG = {
+import type { FooterConfig } from "@/types/footer";
+
+export const FOOTER_CONFIG: FooterConfig = {
   socialShare: {
     message:
       "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！",
