@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Copy,
   Edit,
   Facebook,
@@ -175,6 +181,60 @@ export default function Footer() {
             </div>
             <p className="text-sm text-gray-600">アクションボード</p>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white py-12">
+        <div className="px-4 md:container md:mx-auto">
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="useful-sites">
+              <AccordionTrigger className="text-base font-bold">
+                チームみらいお役立ちサイト
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4 p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-bold">ダッシュボード</span>
+                    <span className="text-xs text-gray-600">
+                      サポーター数など更新中
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-bold">寄付金額</span>
+                    <span className="text-xs text-gray-600">
+                      お寄せいただいた気合🔥を公開
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-bold">ポリマネー</span>
+                    <span className="text-xs text-gray-600">
+                      お寄せいただいた寄付の使い途全公開
+                    </span>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="future-links-1">
+              <AccordionTrigger className="text-base font-bold">
+                今後のリンク
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-4">
+                  <span className="text-sm text-gray-600">準備中です</span>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="future-links-2">
+              <AccordionTrigger className="text-base font-bold">
+                今後のリンク
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-4">
+                  <span className="text-sm text-gray-600">準備中です</span>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
 
