@@ -21,7 +21,7 @@ export default function Footer() {
     handleTwitterShare,
     handleFacebookShare,
     handleCopyUrl,
-  } = useFooterSocialShare();
+  } = useFooterSocialShare(user);
 
   if (error) {
     console.error("Footer認証エラー:", error);

@@ -1,6 +1,60 @@
-import { useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import { nanoid } from "nanoid";
+import { useCallback, useEffect, useState } from "react";
 
-export function useFooterSocialShare() {
+async function getReferralCodeClient(userId: string): Promise<string> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_referral")
+    .select("referral_code")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Referral code fetch error:", error.message);
+    throw new Error("紹介コードの取得に失敗しました");
+  }
+
+  if (data) {
+    return data.referral_code;
+  }
+
+  const referralCode = nanoid(8);
+
+  const { data: insertData, error: insertError } = await supabase
+    .from("user_referral")
+    .insert({
+      user_id: userId,
+      referral_code: referralCode,
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    console.error("Referral code insert error:", insertError.message);
+    throw new Error("紹介コードの作成に失敗しました");
+  }
+  return insertData.referral_code;
+}
+
+export function useFooterSocialShare(user: User | null) {
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      getReferralCodeClient(user.id)
+        .then(setReferralCode)
+        .catch((error) => {
+          console.error("Failed to fetch referral code:", error);
+          setReferralCode(null);
+        });
+    } else {
+      setReferralCode(null);
+    }
+  }, [user?.id]);
+
   const handleLineShare = useCallback(() => {
     const shareUrl = window.location.href;
     const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
@@ -9,11 +63,25 @@ export function useFooterSocialShare() {
 
   const handleTwitterShare = useCallback(() => {
     const shareUrl = window.location.href;
-    const message =
-      "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！";
+    const origin =
+      process.env.NEXT_PUBLIC_APP_ORIGIN ||
+      (typeof window !== "undefined" ? window.location.origin : "");
+    const referralUrl = referralCode
+      ? `${origin}/sign-up?ref=${referralCode}`
+      : `${origin}/sign-up`;
+
+    const message = `チームみらいでは、皆さんが楽しみながらチームみらいの活動を応援できる「アクションボード」を公開しました！
+ご自身の応援が目に見える形で分かります。応援が楽しくなる、様々なランキングもあります。
+登録しても義務や費用は一切発生しないのでご安心ください！
+
+👇1分でLINEまたはメールでかんたんに登録できます！
+${referralUrl}
+
+ご登録よろしくお願いします！
+#チームみらい`;
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
-  }, []);
+  }, [referralCode]);
 
   const handleFacebookShare = useCallback(() => {
     const shareUrl = window.location.href;
