@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { AccordionSection, AccordionSectionItem } from "@/components/ui/accordion-section";
 import { useFooterAuth } from "@/hooks/useFooterAuth";
 import { useFooterSocialShare } from "@/hooks/useFooterSocialShare";
 import { FOOTER_CONFIG } from "@/config/footer";
@@ -194,48 +189,46 @@ function UsefulLinksSection({ user, loading, isAuthenticated }: {
     link.public || isAuthenticated
   );
 
+  const accordionItems: AccordionSectionItem[] = [
+    {
+      value: "useful-sites",
+      title: "チームみらいお役立ちサイト",
+      content: (
+        <div className="space-y-4 p-4">
+          {loading ? (
+            <div className="text-center py-4">
+              <span className="text-gray-500">読み込み中...</span>
+            </div>
+          ) : (
+            availableLinks.map((link, index) => (
+              <Link
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
+              >
+                <div className="text-sm font-bold text-black">
+                  {link.title}
+                </div>
+                <div className="text-xs text-gray-600">
+                  {link.description}
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="bg-white py-12">
-      <div className="px-4 md:container md:mx-auto">
-        <Accordion
-          type="multiple"
-          defaultValue={["useful-sites"]}
-          className="w-full"
-        >
-          <AccordionItem value="useful-sites">
-            <AccordionTrigger className="text-base font-bold no-underline hover:no-underline">
-              チームみらいお役立ちサイト
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-4 p-4">
-                {loading ? (
-                  <div className="text-center py-4">
-                    <span className="text-gray-500">読み込み中...</span>
-                  </div>
-                ) : (
-                  availableLinks.map((link, index) => (
-                    <Link
-                      key={index}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
-                    >
-                      <div className="text-sm font-bold text-black">
-                        {link.title}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {link.description}
-                      </div>
-                    </Link>
-                  ))
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-        </Accordion>
-      </div>
+      <AccordionSection
+        items={accordionItems}
+        type="multiple"
+        defaultValue={["useful-sites"]}
+      />
     </div>
   );
 }
