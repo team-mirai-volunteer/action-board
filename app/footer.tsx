@@ -186,7 +186,11 @@ export default function Footer() {
 
       <div className="bg-white py-12">
         <div className="px-4 md:container md:mx-auto">
-          <Accordion type="multiple" className="w-full">
+          <Accordion
+            type="multiple"
+            defaultValue={["useful-sites"]}
+            className="w-full"
+          >
             <AccordionItem value="useful-sites">
               <AccordionTrigger className="text-base font-bold">
                 チームみらいお役立ちサイト
@@ -194,19 +198,40 @@ export default function Footer() {
               <AccordionContent>
                 <div className="space-y-4 p-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold">ダッシュボード</span>
+                    <Link
+                      href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      ダッシュボード
+                    </Link>
                     <span className="text-xs text-gray-600">
                       サポーター数など更新中
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold">寄付金額</span>
+                    <Link
+                      href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_lvnweavysd"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      寄付金額
+                    </Link>
                     <span className="text-xs text-gray-600">
                       お寄せいただいた気合🔥を公開
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold">ポリマネー</span>
+                    <Link
+                      href="https://polimoney.dd2030.org/demo-takahiro-anno-2024"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      ポリマネー
+                    </Link>
                     <span className="text-xs text-gray-600">
                       お寄せいただいた寄付の使い途全公開
                     </span>
