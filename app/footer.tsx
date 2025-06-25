@@ -63,7 +63,7 @@ function SocialShareSection({
   onCopyUrl: () => void;
 }) {
   return (
-    <div className="bg-gray-50 py-12">
+    <div className="bg-white py-12">
       <div className="px-4 md:container md:mx-auto">
         <div className="text-center">
           <h2 className="text-xl font-bold mb-4 flex items-center justify-center gap-2">
@@ -129,7 +129,7 @@ function SocialShareSection({
 
 function FeedbackSection() {
   return (
-    <div className="bg-white py-12">
+    <div className="bg-white py-12 border-t border-gray-200">
       <div className="px-4 md:container md:mx-auto text-center">
         <h2 className="text-xl font-bold mb-4">ご意見をお聞かせください</h2>
         <p className="text-sm text-gray-600 mb-8">
@@ -176,30 +176,28 @@ function OfficialSNSSection() {
         <p className="text-sm text-gray-600 mb-8">
           最新の活動情報や舞台裏を、いち早くお届けします。ぜひフォロー＆チャンネル登録で応援してください！
         </p>
-        <div className="bg-white rounded-lg p-6">
-          <div className="flex gap-4 justify-center">
-            {(
-              Object.entries(FOOTER_CONFIG.snsLinks) as [
-                FooterSNSPlatform,
-                string,
-              ][]
-            ).map(([platform, url]) => (
-              <Link
-                key={platform}
-                href={url}
-                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
-                aria-label={`${platform}公式アカウント`}
-              >
-                <Image
-                  src={`${FOOTER_CONFIG.images.basePath}/${FOOTER_CONFIG.images.icons[platform]}`}
-                  alt={platform}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              </Link>
-            ))}
-          </div>
+        <div className="flex gap-4 justify-center">
+          {(
+            Object.entries(FOOTER_CONFIG.snsLinks) as [
+              FooterSNSPlatform,
+              string,
+            ][]
+          ).map(([platform, url]) => (
+            <Link
+              key={platform}
+              href={url}
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label={`${platform}公式アカウント`}
+            >
+              <Image
+                src={`${FOOTER_CONFIG.images.basePath}/${FOOTER_CONFIG.images.icons[platform]}`}
+                alt={platform}
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+            </Link>
+          ))}
         </div>
 
         <div className="text-center mt-8">
