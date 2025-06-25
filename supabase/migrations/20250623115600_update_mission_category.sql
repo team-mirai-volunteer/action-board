@@ -1,7 +1,7 @@
 -- mission-categoryを一度削除。
 TRUNCATE mission_category_link, mission_category;
 
-正のカゴリ定義でINSRT。
+-- 正のカテゴリ定義でINSERT。
 insert into mission_category (id, category_title, sort_no, category_kbn)
 values  
 ('0cc2f4f9-ab0a-480c-c1e2-442513421dfc', 'チームみらいのことを知ろう', 100, 'DEFAULT'),
