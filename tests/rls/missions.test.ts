@@ -19,6 +19,7 @@ describe("missions テーブルのRLSテスト", () => {
       title: "テストミッション for RLS",
       content: "これはRLSテスト用のミッションです",
       difficulty: 1,
+      slug: `test-mission-rls-${crypto.randomUUID()}`,
     };
 
     const { error } = await adminClient.from("missions").insert(missionData);
@@ -59,6 +60,7 @@ describe("missions テーブルのRLSテスト", () => {
       title: "匿名ユーザーからのミッション",
       content: "これは失敗するはずです",
       difficulty: 1,
+      slug: `test-anon-mission-${crypto.randomUUID()}`,
     });
 
     expect(error).toBeTruthy();
@@ -73,6 +75,7 @@ describe("missions テーブルのRLSテスト", () => {
       title: "一般ユーザーからのミッション",
       content: "これは失敗するはずです",
       difficulty: 1,
+      slug: `test-user-mission-${crypto.randomUUID()}`,
     });
 
     expect(error).toBeTruthy();
