@@ -120,49 +120,51 @@ export default function Footer() {
           <p className="text-gray-600 mb-8">
             最新の活動情報や舞台裏を、いち早くお届けします。ぜひフォロー＆チャンネル登録で応援してください！
           </p>
-          <div className="flex gap-4 mb-8">
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-green-500 rounded-full flex items-center justify-center text-green-500 hover:bg-green-50 transition-colors"
-              aria-label="LINE公式アカウント"
-            >
-              <span className="font-bold text-xs">LINE</span>
-            </Link>
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-red-600 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors"
-              aria-label="YouTube公式チャンネル"
-            >
-              <Youtube className="w-5 h-5" />
-            </Link>
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center text-black hover:bg-gray-50 transition-colors"
-              aria-label="X公式アカウント"
-            >
-              <Twitter className="w-5 h-5" />
-            </Link>
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-pink-500 rounded-full flex items-center justify-center text-pink-500 hover:bg-pink-50 transition-colors"
-              aria-label="Instagram公式アカウント"
-            >
-              <Instagram className="w-5 h-5" />
-            </Link>
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-blue-600 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors"
-              aria-label="Facebook公式ページ"
-            >
-              <Facebook className="w-5 h-5" />
-            </Link>
-            <Link
-              href="#"
-              className="w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center text-black hover:bg-gray-50 transition-colors"
-              aria-label="note公式アカウント"
-            >
-              <span className="font-bold text-lg">n</span>
-            </Link>
+          <div className="bg-white rounded-lg p-6">
+            <div className="flex gap-4 justify-center">
+              <Link
+                href="#"
+                className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
+                aria-label="LINE公式アカウント"
+              >
+                <span className="font-bold text-xs">LINE</span>
+              </Link>
+              <Link
+                href="#"
+                className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors"
+                aria-label="YouTube公式チャンネル"
+              >
+                <Youtube className="w-5 h-5" />
+              </Link>
+              <Link
+                href="#"
+                className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+                aria-label="X公式アカウント"
+              >
+                <Twitter className="w-5 h-5" />
+              </Link>
+              <Link
+                href="#"
+                className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-full flex items-center justify-center text-white hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 transition-colors"
+                aria-label="Instagram公式アカウント"
+              >
+                <Instagram className="w-5 h-5" />
+              </Link>
+              <Link
+                href="#"
+                className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                aria-label="Facebook公式ページ"
+              >
+                <Facebook className="w-5 h-5" />
+              </Link>
+              <Link
+                href="#"
+                className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+                aria-label="note公式アカウント"
+              >
+                <span className="font-bold text-lg">n</span>
+              </Link>
+            </div>
           </div>
 
           <div className="text-center">
