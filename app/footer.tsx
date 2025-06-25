@@ -210,7 +210,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-8">
             <Image
               src="/img/logo.png"
               alt="チームみらい"
@@ -218,7 +218,6 @@ export default function Footer() {
               height={64}
               className="mx-auto mb-4"
             />
-            <p className="text-sm text-gray-600">アクションボード</p>
           </div>
         </div>
       </div>
@@ -242,7 +241,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
-                    <div className="text-sm font-bold text-blue-600">
+                    <div className="text-sm font-bold text-black">
                       ダッシュボード
                     </div>
                     <div className="text-xs text-gray-600">
@@ -255,9 +254,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
-                    <div className="text-sm font-bold text-blue-600">
-                      寄付金額
-                    </div>
+                    <div className="text-sm font-bold text-black">寄付金額</div>
                     <div className="text-xs text-gray-600">
                       お寄せいただいた気合🔥を公開
                     </div>
@@ -268,7 +265,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
-                    <div className="text-sm font-bold text-blue-600">
+                    <div className="text-sm font-bold text-black">
                       ポリマネー
                     </div>
                     <div className="text-xs text-gray-600">
