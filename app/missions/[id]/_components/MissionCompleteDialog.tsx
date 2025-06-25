@@ -64,7 +64,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md p-8 rounded-2xl [&>button]:w-6 [&>button]:h-6 [&>button>svg]:w-6 [&>button>svg]:h-6">
+      <DialogContent className="sm:max-w-md mx-[18px] p-8 rounded-2xl [&>button]:w-6 [&>button]:h-6 [&>button>svg]:w-6 [&>button>svg]:h-6">
         <DialogHeader className="space-y-4">
           <DialogTitle className="text-center text-xl">
             おめでとうございます！
