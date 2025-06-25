@@ -104,7 +104,7 @@ function SocialShareSection({ onLineShare, onTwitterShare, onFacebookShare, onCo
               className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center text-white hover:bg-gray-500 transition-colors"
               aria-label="URLをコピー"
             >
-              <Copy className="w-12 h-12" />
+              <Copy className="w-5 h-5" />
             </button>
           </div>
         </div>
