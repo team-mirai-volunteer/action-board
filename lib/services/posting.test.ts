@@ -1,31 +1,18 @@
-jest.mock("@/lib/supabase/client", () => {
-  const mockClient = {
-    from: jest.fn(),
-    insert: jest.fn(),
-    select: jest.fn(),
-    single: jest.fn(),
-    delete: jest.fn(),
-    eq: jest.fn(),
-    update: jest.fn(),
-    order: jest.fn(),
-  };
+const mockSupabaseClient = {
+  from: jest.fn().mockReturnThis(),
+  insert: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  single: jest.fn(),
+  delete: jest.fn().mockReturnThis(),
+  eq: jest.fn(),
+  update: jest.fn().mockReturnThis(),
+  order: jest.fn(),
+};
 
-  mockClient.from.mockReturnValue(mockClient);
-  mockClient.insert.mockReturnValue(mockClient);
-  mockClient.select.mockReturnValue(mockClient);
-  mockClient.delete.mockReturnValue(mockClient);
-  mockClient.update.mockReturnValue(mockClient);
-  mockClient.eq.mockReturnValue(mockClient);
+jest.mock("@/lib/supabase/client", () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
 
-  mockClient.single.mockResolvedValue({ data: {}, error: null });
-  mockClient.order.mockResolvedValue({ data: [], error: null });
-
-  return {
-    createClient: jest.fn(() => mockClient),
-  };
-});
-
-import { createClient } from "@/lib/supabase/client";
 import {
   type MapShape,
   deleteShape,
@@ -34,17 +21,24 @@ import {
   updateShape,
 } from "./posting";
 
+const { createClient } = require("@/lib/supabase/client");
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
 
 describe("posting service", () => {
-  let mockSupabaseClient: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockSupabaseClient = mockCreateClient();
+    mockSupabaseClient.from.mockReturnThis();
+    mockSupabaseClient.insert.mockReturnThis();
+    mockSupabaseClient.select.mockReturnThis();
+    mockSupabaseClient.delete.mockReturnThis();
+    mockSupabaseClient.update.mockReturnThis();
+    mockSupabaseClient.eq.mockReturnThis();
+
+    mockSupabaseClient.single.mockResolvedValue({ data: {}, error: null });
+    mockSupabaseClient.order.mockResolvedValue({ data: [], error: null });
   });
 
   afterEach(() => {

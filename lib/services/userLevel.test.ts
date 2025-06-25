@@ -57,29 +57,37 @@ const mockExecuteChunkedQuery = executeChunkedQuery as jest.MockedFunction<
   typeof executeChunkedQuery
 >;
 
-describe("userLevel service", () => {
-  let mockSupabase: any;
+const mockSupabase = {
+  from: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  single: jest.fn(),
+  upsert: jest.fn(),
+  maybeSingle: jest.fn(),
+  insert: jest.fn().mockReturnThis(),
+  update: jest.fn().mockReturnThis(),
+  order: jest.fn().mockReturnThis(),
+  limit: jest.fn(),
+  gt: jest.fn().mockReturnThis(),
+  in: jest.fn().mockReturnThis(),
+};
 
+describe("userLevel service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      upsert: jest.fn(),
-      maybeSingle: jest.fn(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn(),
-      gt: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-    };
-
     mockCreateServiceClient.mockResolvedValue(mockSupabase);
     mockGetUser.mockResolvedValue({ id: "user-1", email: "test@example.com" });
+
+    mockSupabase.from.mockReturnThis();
+    mockSupabase.select.mockReturnThis();
+    mockSupabase.eq.mockReturnThis();
+    mockSupabase.insert.mockReturnThis();
+    mockSupabase.update.mockReturnThis();
+    mockSupabase.order.mockReturnThis();
+    mockSupabase.limit.mockReturnThis();
+    mockSupabase.gt.mockReturnThis();
+    mockSupabase.in.mockReturnThis();
   });
 
   afterEach(() => {

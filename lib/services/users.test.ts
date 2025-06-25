@@ -13,25 +13,28 @@ const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
 
-describe("users service", () => {
-  let mockSupabase: any;
+const mockSupabase = {
+  auth: {
+    getUser: jest.fn(),
+  },
+  from: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  single: jest.fn(),
+  insert: jest.fn(),
+  update: jest.fn().mockReturnThis(),
+};
 
+describe("users service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockSupabase = {
-      auth: {
-        getUser: jest.fn(),
-      },
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      insert: jest.fn(),
-      update: jest.fn().mockReturnThis(),
-    };
-
     mockCreateClient.mockResolvedValue(mockSupabase);
+
+    mockSupabase.from.mockReturnThis();
+    mockSupabase.select.mockReturnThis();
+    mockSupabase.eq.mockReturnThis();
+    mockSupabase.update.mockReturnThis();
   });
 
   afterEach(() => {
