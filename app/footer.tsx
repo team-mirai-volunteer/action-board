@@ -286,42 +286,42 @@ function UsefulLinksSection({
 
 function CopyrightSection() {
   return (
-    <div className="border-t border-border bg-background">
-      <div className="px-4 md:container md:mx-auto py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-6 text-sm">
+    <div className="bg-white py-8">
+      <div className="px-4 md:container md:mx-auto">
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-2 text-sm text-teal-600">
             <Link
               href="https://team-mir.ai/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200 block"
+              className="hover:text-teal-700 transition-colors duration-200"
             >
               運営組織
             </Link>
+            <span>|</span>
             <Link
               href="/terms"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+              className="hover:text-teal-700 transition-colors duration-200"
             >
               利用規約
             </Link>
+            <span>|</span>
             <Link
               href="/privacy"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+              className="hover:text-teal-700 transition-colors duration-200"
             >
               プライバシーポリシー
             </Link>
+            <span>|</span>
             <Link
               href={FOOTER_CONFIG.feedback.url}
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+              className="hover:text-teal-700 transition-colors duration-200"
               target="_blank"
               rel="noopener noreferrer"
             >
               ご意見箱
             </Link>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © 2025 Team Mirai. All rights reserved.
-          </p>
         </div>
       </div>
     </div>
