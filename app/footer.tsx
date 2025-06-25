@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
 export default function Footer() {
   const { user, loading, error, isAuthenticated } = useFooterAuth();
@@ -180,54 +181,68 @@ function OfficialSNSSection() {
   );
 }
 
+function generateAccordionContent(
+  section: typeof FOOTER_CONFIG.accordionSections[0],
+  loading: boolean,
+  isAuthenticated: boolean
+): React.ReactNode {
+  if (section.contentType === "links") {
+    const links = section.linksSource === "usefulLinks" 
+      ? FOOTER_CONFIG.usefulLinks.filter(link => link.public || isAuthenticated)
+      : [];
+
+    return (
+      <div className={section.containerClassName}>
+        {loading ? (
+          <div className="text-center py-4">
+            <span className="text-gray-500">読み込み中...</span>
+          </div>
+        ) : (
+          links.map((link, index) => (
+            <Link
+              key={index}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={section.linkClassName}
+            >
+              <div className={section.titleClassName}>
+                {link.title}
+              </div>
+              <div className={section.descriptionClassName}>
+                {link.description}
+              </div>
+            </Link>
+          ))
+        )}
+      </div>
+    );
+  }
+  
+  return null;
+}
+
 function UsefulLinksSection({ user, loading, isAuthenticated }: { 
   user: User | null; 
   loading: boolean; 
   isAuthenticated: boolean; 
 }) {
-  const availableLinks = FOOTER_CONFIG.usefulLinks.filter(link => 
-    link.public || isAuthenticated
-  );
+  const accordionItems: AccordionSectionItem[] = FOOTER_CONFIG.accordionSections.map(section => ({
+    value: section.value,
+    title: section.title,
+    content: generateAccordionContent(section, loading, isAuthenticated),
+  }));
 
-  const accordionItems: AccordionSectionItem[] = [
-    {
-      value: "useful-sites",
-      title: "チームみらいお役立ちサイト",
-      content: (
-        <div className="space-y-4 p-4">
-          {loading ? (
-            <div className="text-center py-4">
-              <span className="text-gray-500">読み込み中...</span>
-            </div>
-          ) : (
-            availableLinks.map((link, index) => (
-              <Link
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
-              >
-                <div className="text-sm font-bold text-black">
-                  {link.title}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {link.description}
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
-      ),
-    },
-  ];
+  const defaultOpenSections = FOOTER_CONFIG.accordionSections
+    .filter(section => section.defaultOpen)
+    .map(section => section.value);
 
   return (
     <div className="bg-white py-12">
       <AccordionSection
         items={accordionItems}
         type="multiple"
-        defaultValue={["useful-sites"]}
+        defaultValue={defaultOpenSections}
       />
     </div>
   );

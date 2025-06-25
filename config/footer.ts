@@ -50,4 +50,18 @@ export const FOOTER_CONFIG = {
   feedback: {
     url: "https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105",
   },
+  accordionSections: [
+    {
+      value: "useful-sites",
+      title: "チームみらいお役立ちサイト",
+      contentType: "links" as const,
+      defaultOpen: true,
+      requiresAuth: false,
+      linksSource: "usefulLinks" as const,
+      containerClassName: "space-y-4 p-4",
+      linkClassName: "flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors",
+      titleClassName: "text-sm font-bold text-black",
+      descriptionClassName: "text-xs text-gray-600",
+    },
+  ],
 } as const;
