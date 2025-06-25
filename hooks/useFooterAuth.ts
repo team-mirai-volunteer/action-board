@@ -14,13 +14,13 @@ export function useFooterAuth() {
     const initializeAuth = async () => {
       try {
         const {
-          data: { user },
+          data: { session },
           error,
-        } = await supabase.auth.getUser();
+        } = await supabase.auth.getSession();
         if (error) throw error;
 
         if (mounted) {
-          setUser(user);
+          setUser(session?.user ?? null);
           setLoading(false);
         }
       } catch (err) {
