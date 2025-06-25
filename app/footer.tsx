@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Facebook, MessageSquare, Twitter } from "lucide-react";
+import { Copy, Edit, Facebook, MessageSquare, Twitter } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -98,9 +98,10 @@ export default function Footer() {
             href="https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-teal-500 text-white px-8 py-3 rounded-full hover:bg-teal-600 transition-colors"
+            className="inline-flex items-center gap-2 bg-teal-500 text-white px-8 py-3 rounded-full hover:bg-teal-600 transition-colors font-medium"
           >
-            ✏️ フィードバックする
+            <Edit className="w-5 h-5" />
+            フィードバックする
           </Link>
         </div>
       </div>
