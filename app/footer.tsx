@@ -1,6 +1,40 @@
+import { Copy, Facebook, MessageSquare, Twitter } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
+  const handleLineShare = () => {
+    const shareUrl = window.location.href;
+    const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
+    window.open(lineIntentUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleTwitterShare = () => {
+    const shareUrl = window.location.href;
+    const message =
+      "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！";
+    const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleFacebookShare = () => {
+    const shareUrl = window.location.href;
+    const facebookIntentUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookIntentUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+    } catch (error) {
+      const textArea = document.createElement("textarea");
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+  };
+
   return (
     <footer className="w-full mt-16 bg-background">
       <div className="bg-gray-50 py-12">
@@ -15,27 +49,35 @@ export default function Footer() {
             <div className="flex justify-center gap-4 mb-8">
               <button
                 type="button"
+                onClick={handleLineShare}
                 className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
+                aria-label="LINEでシェア"
               >
-                <span className="font-bold text-sm">LINE</span>
+                <MessageSquare className="w-5 h-5" />
               </button>
               <button
                 type="button"
+                onClick={handleTwitterShare}
                 className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+                aria-label="Xでシェア"
               >
-                <span className="font-bold text-sm">X</span>
+                <Twitter className="w-5 h-5" />
               </button>
               <button
                 type="button"
+                onClick={handleFacebookShare}
                 className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                aria-label="Facebookでシェア"
               >
-                <span className="font-bold text-sm">f</span>
+                <Facebook className="w-5 h-5" />
               </button>
               <button
                 type="button"
+                onClick={handleCopyUrl}
                 className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center text-white hover:bg-gray-500 transition-colors"
+                aria-label="URLをコピー"
               >
-                <span className="font-bold text-sm">📋</span>
+                <Copy className="w-5 h-5" />
               </button>
             </div>
           </div>
