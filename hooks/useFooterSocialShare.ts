@@ -1,57 +1,35 @@
-import { createClient } from "@/lib/supabase/client";
+import { getReferralUrlAction } from "@/app/actions";
 import type { User } from "@supabase/supabase-js";
-import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 
-async function getReferralCodeClient(userId: string): Promise<string> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("user_referral")
-    .select("referral_code")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error) {
-    console.error("Referral code fetch error:", error.message);
-    throw new Error("紹介コードの取得に失敗しました");
-  }
-
-  if (data) {
-    return data.referral_code;
-  }
-
-  const referralCode = nanoid(8);
-
-  const { data: insertData, error: insertError } = await supabase
-    .from("user_referral")
-    .insert({
-      user_id: userId,
-      referral_code: referralCode,
-    })
-    .select()
-    .single();
-
-  if (insertError) {
-    console.error("Referral code insert error:", insertError.message);
-    throw new Error("紹介コードの作成に失敗しました");
-  }
-  return insertData.referral_code;
-}
-
 export function useFooterSocialShare(user: User | null) {
-  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralUrl, setReferralUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
-      getReferralCodeClient(user.id)
-        .then(setReferralCode)
+      setLoading(true);
+      getReferralUrlAction()
+        .then((result) => {
+          if (result.success && result.referralUrl) {
+            setReferralUrl(result.referralUrl);
+          } else {
+            const origin =
+              typeof window !== "undefined" ? window.location.origin : "";
+            setReferralUrl(`${origin}/sign-up`);
+          }
+        })
         .catch((error) => {
-          console.error("Failed to fetch referral code:", error);
-          setReferralCode(null);
-        });
+          console.error("Failed to fetch referral URL:", error);
+          const origin =
+            typeof window !== "undefined" ? window.location.origin : "";
+          setReferralUrl(`${origin}/sign-up`);
+        })
+        .finally(() => setLoading(false));
     } else {
-      setReferralCode(null);
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      setReferralUrl(`${origin}/sign-up`);
     }
   }, [user?.id]);
 
@@ -62,25 +40,23 @@ export function useFooterSocialShare(user: User | null) {
   }, []);
 
   const handleTwitterShare = useCallback(() => {
-    const shareUrl = window.location.href;
-    const origin =
-      process.env.NEXT_PUBLIC_APP_ORIGIN ||
-      (typeof window !== "undefined" ? window.location.origin : "");
-    const referralUrl = referralCode
-      ? `${origin}/sign-up?ref=${referralCode}`
-      : `${origin}/sign-up`;
+    const fallbackUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/sign-up`
+        : "/sign-up";
+    const shareReferralUrl = referralUrl || fallbackUrl;
 
     const message = `チームみらいでは、楽しみながらチームみらいの活動を応援できる「アクションボード」を公開中です！
 応援が楽しくなる、様々なランキングもあります。
 
 👇1分でLINEまたはメールでかんたんに登録できます！
-${referralUrl}
+${shareReferralUrl}
 
 ご登録よろしくお願いします！
 #チームみらい`;
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
-  }, [referralCode]);
+  }, [referralUrl]);
 
   const handleFacebookShare = useCallback(() => {
     const shareUrl = window.location.href;
@@ -114,5 +90,6 @@ ${referralUrl}
     handleTwitterShare,
     handleFacebookShare,
     handleCopyUrl,
+    loading,
   };
 }
