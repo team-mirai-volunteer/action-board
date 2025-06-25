@@ -37,3 +37,21 @@ export async function getMissionSlugToIdMap(): Promise<Record<string, string>> {
 
   return map;
 }
+
+export async function getQuizCategorySlugToIdMap(): Promise<
+  Record<string, string>
+> {
+  const supabase = await createServiceClient();
+  const { data, error } = await supabase
+    .from("quiz_categories")
+    .select("id, slug");
+
+  if (error) throw error;
+
+  const map: Record<string, string> = {};
+  for (const cat of data || []) {
+    if (cat.slug) map[cat.slug] = cat.id;
+  }
+
+  return map;
+}
