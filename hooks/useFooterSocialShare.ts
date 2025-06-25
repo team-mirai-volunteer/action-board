@@ -70,8 +70,8 @@ export function useFooterSocialShare(user: User | null) {
       ? `${origin}/sign-up?ref=${referralCode}`
       : `${origin}/sign-up`;
 
-    const message = `チームみらいでは、皆さんが楽しみながらチームみらいの活動を応援できる「アクションボード」を公開しました！
-ご自身の応援が目に見える形で分かります。応援が楽しくなる、様々なランキングもあります。
+    const message = `チームみらいでは、楽しみながらチームみらいの活動を応援できる「アクションボード」を公開中です！
+応援が楽しくなる、様々なランキングもあります。
 
 👇1分でLINEまたはメールでかんたんに登録できます！
 ${referralUrl}
