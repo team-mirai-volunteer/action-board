@@ -90,6 +90,21 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "MAILGUN_DOMAIN"
+        value = var.MAILGUN_DOMAIN
+      }
+
+      env {
+        name = "MAILGUN_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.mailgun_api_key.id
+            version = "latest"
+          }
+        }
+      }
+
+      env {
         name  = "HUBSPOT_CONTACT_LIST_ID"
         value = var.HUBSPOT_CONTACT_LIST_ID
       }
