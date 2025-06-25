@@ -78,7 +78,7 @@ ${referralUrl}
 
 ご登録よろしくお願いします！
 #チームみらい`;
-    const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
+    const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
   }, [referralCode]);
 
