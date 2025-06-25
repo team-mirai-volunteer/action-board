@@ -151,7 +151,8 @@ export function MissionFormWrapper({
 
   return (
     <>
-      {!hasReachedUserMaxAchievements &&
+      {mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key &&
+        !hasReachedUserMaxAchievements &&
         userAchievementCount > 0 &&
         mission?.max_achievement_count !== null && (
           <div className="rounded-lg border bg-muted/50 p-4 text-center mb-4">
@@ -171,7 +172,7 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {!completed &&
+      {!hasReachedUserMaxAchievements &&
         (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ? (
           // クイズミッションの場合
           <div className="space-y-4">
