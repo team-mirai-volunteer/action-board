@@ -72,59 +72,57 @@ function SocialShareSection({
           <p className="text-sm text-gray-600 mb-8">
             あなたの周りの人にもアクションボードを届けよう。
           </p>
-          <div className="bg-gray-100 rounded-lg p-6">
-            <div className="flex gap-4 justify-center">
-              <button
-                type="button"
-                onClick={onLineShare}
-                className="w-12 h-12 bg-white rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="LINEでシェア"
-              >
-                <Image
-                  src="https://team-mir.ai/images/sns/icon_line.png"
-                  alt="LINE"
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              </button>
-              <button
-                type="button"
-                onClick={onTwitterShare}
-                className="w-12 h-12 bg-white rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Xでシェア"
-              >
-                <Image
-                  src="https://team-mir.ai/images/sns/icon_x.png"
-                  alt="X (Twitter)"
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              </button>
-              <button
-                type="button"
-                onClick={onFacebookShare}
-                className="w-12 h-12 bg-white rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="Facebookでシェア"
-              >
-                <Image
-                  src="https://team-mir.ai/images/sns/icon_facebook.png"
-                  alt="Facebook"
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              </button>
-              <button
-                type="button"
-                onClick={onCopyUrl}
-                className="w-12 h-12 bg-white rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                aria-label="URLをコピー"
-              >
-                <Copy className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
+          <div className="flex justify-center gap-4 mb-8">
+            <button
+              type="button"
+              onClick={onLineShare}
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label="LINEでシェア"
+            >
+              <Image
+                src="https://team-mir.ai/images/sns/icon_line.png"
+                alt="LINE"
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={onTwitterShare}
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label="Xでシェア"
+            >
+              <Image
+                src="https://team-mir.ai/images/sns/icon_x.png"
+                alt="X (Twitter)"
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={onFacebookShare}
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label="Facebookでシェア"
+            >
+              <Image
+                src="https://team-mir.ai/images/sns/icon_facebook.png"
+                alt="Facebook"
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={onCopyUrl}
+              className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label="URLをコピー"
+            >
+              <Copy className="w-5 h-5 text-gray-600" />
+            </button>
           </div>
         </div>
       </div>
