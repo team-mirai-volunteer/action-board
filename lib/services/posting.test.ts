@@ -1,16 +1,31 @@
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockResolvedValue({ data: null, error: null }),
-    order: jest.fn().mockResolvedValue({ data: null, error: null }),
-    update: jest.fn().mockReturnThis(),
-  })),
-}));
+jest.mock("@/lib/supabase/client", () => {
+  const mockClient = {
+    from: jest.fn(),
+    insert: jest.fn(),
+    select: jest.fn(),
+    single: jest.fn(),
+    delete: jest.fn(),
+    eq: jest.fn(),
+    update: jest.fn(),
+    order: jest.fn(),
+  };
 
+  mockClient.from.mockReturnValue(mockClient);
+  mockClient.insert.mockReturnValue(mockClient);
+  mockClient.select.mockReturnValue(mockClient);
+  mockClient.delete.mockReturnValue(mockClient);
+  mockClient.update.mockReturnValue(mockClient);
+  mockClient.eq.mockReturnValue(mockClient);
+
+  mockClient.single.mockResolvedValue({ data: {}, error: null });
+  mockClient.order.mockResolvedValue({ data: [], error: null });
+
+  return {
+    createClient: jest.fn(() => mockClient),
+  };
+});
+
+import { createClient } from "@/lib/supabase/client";
 import {
   type MapShape,
   deleteShape,
@@ -19,7 +34,6 @@ import {
   updateShape,
 } from "./posting";
 
-const { createClient } = require("@/lib/supabase/client");
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
@@ -28,25 +42,9 @@ describe("posting service", () => {
   let mockSupabaseClient: any;
 
   beforeEach(() => {
-    mockSupabaseClient = {
-      from: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockResolvedValue({ data: null, error: null }),
-      order: jest.fn().mockResolvedValue({ data: null, error: null }),
-      update: jest.fn().mockReturnThis(),
-    };
-
-    mockCreateClient.mockReturnValue(mockSupabaseClient);
     jest.clearAllMocks();
 
-    mockSupabaseClient.from.mockReturnValue(mockSupabaseClient);
-    mockSupabaseClient.insert.mockReturnValue(mockSupabaseClient);
-    mockSupabaseClient.select.mockReturnValue(mockSupabaseClient);
-    mockSupabaseClient.delete.mockReturnValue(mockSupabaseClient);
-    mockSupabaseClient.update.mockReturnValue(mockSupabaseClient);
+    mockSupabaseClient = mockCreateClient();
   });
 
   afterEach(() => {
@@ -238,11 +236,13 @@ describe("posting service", () => {
       };
 
       mockSupabaseClient.update.mockReturnValue({
-        eq: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
-          data: mockUpdatedShape,
-          error: null,
+        eq: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: mockUpdatedShape,
+              error: null,
+            }),
+          }),
         }),
       });
 
@@ -268,9 +268,11 @@ describe("posting service", () => {
       };
 
       mockSupabaseClient.update.mockReturnValue({
-        eq: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+        eq: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+          }),
+        }),
       });
 
       await updateShape("shape-123", mockUpdateDataWithProtectedFields);
@@ -284,14 +286,17 @@ describe("posting service", () => {
 
     it("更新エラーが発生した場合は例外を投げる", async () => {
       const mockError = { message: "更新エラー", code: "23505" };
-      mockSupabaseClient.update.mockReturnValue({
-        eq: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
-          data: null,
-          error: mockError,
+      const mockUpdateError = {
+        eq: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: null,
+              error: mockError,
+            }),
+          }),
         }),
-      });
+      };
+      mockSupabaseClient.update.mockReturnValue(mockUpdateError);
 
       await expect(updateShape("shape-123", mockUpdateData)).rejects.toEqual(
         mockError,

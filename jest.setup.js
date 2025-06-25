@@ -243,35 +243,6 @@ jest.mock("react-dom", () => ({
   useFormStatus: jest.fn(() => ({ pending: false })),
 }));
 
-jest.mock("@/lib/services/userLevel", () => ({
-  getUserLevel: jest.fn(() =>
-    Promise.resolve({
-      level: 2,
-      current_xp: 100,
-      xp_to_next_level: 200,
-    }),
-  ),
-}));
-
-jest.mock("@/lib/services/users", () => ({
-  getPrivateUserData: jest.fn(() =>
-    Promise.resolve({
-      id: "test-user-id",
-      name: "テストユーザー",
-      address_prefecture: "東京都",
-      avatar_url: null,
-    }),
-  ),
-  getProfile: jest.fn(() =>
-    Promise.resolve({
-      id: "test-user-id",
-      name: "テストユーザー",
-      address_prefecture: "東京都",
-      avatar_url: null,
-    }),
-  ),
-}));
-
 jest.mock("@radix-ui/react-dialog", () => {
   const mockReact = require("react");
 

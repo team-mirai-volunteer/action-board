@@ -1,16 +1,24 @@
-import { getMyProfile, getProfile, getUser, updateProfile } from "./users";
-
-let mockSupabase: any;
-
 jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
+  createClient: jest.fn(),
 }));
+
 jest.mock("react", () => ({
   cache: (fn: any) => fn,
 }));
 
+import { getMyProfile, getProfile, getUser, updateProfile } from "./users";
+
+const { createClient } = require("@/lib/supabase/server");
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
+
 describe("users service", () => {
+  let mockSupabase: any;
+
   beforeEach(() => {
+    jest.clearAllMocks();
+
     mockSupabase = {
       auth: {
         getUser: jest.fn(),
@@ -18,15 +26,12 @@ describe("users service", () => {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ data: null, error: null }),
+      single: jest.fn(),
+      insert: jest.fn(),
       update: jest.fn().mockReturnThis(),
     };
 
-    mockSupabase.from.mockReturnValue(mockSupabase);
-    mockSupabase.select.mockReturnValue(mockSupabase);
-    mockSupabase.eq.mockReturnValue(mockSupabase);
-    mockSupabase.update.mockReturnValue(mockSupabase);
+    mockCreateClient.mockResolvedValue(mockSupabase);
   });
 
   afterEach(() => {
