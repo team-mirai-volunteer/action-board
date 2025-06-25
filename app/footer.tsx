@@ -147,7 +147,7 @@ export default function Footer() {
       </div>
 
       <div className="bg-teal-50 py-12">
-        <div className="px-4 md:container md:mx-auto">
+        <div className="px-4 md:container md:mx-auto text-center">
           <h2 className="text-xl font-bold mb-4">チームみらい公式SNS</h2>
           <p className="text-gray-600 mb-8">
             最新の活動情報や舞台裏を、いち早くお届けします。ぜひフォロー＆チャンネル登録で応援してください！
