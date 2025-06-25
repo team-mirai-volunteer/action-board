@@ -54,4 +54,4 @@ copilot-instructions.md
 .env.sentry-build-plugin
 
 .cursor
-.issues
+.issues# Trigger CI retry
