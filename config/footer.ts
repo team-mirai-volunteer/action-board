@@ -6,12 +6,12 @@ export const FOOTER_CONFIG: FooterConfig = {
       "チームみらい Action Board - あなたの周りの人にもアクションボードを届けよう！",
   },
   snsLinks: {
-    line: "https://line.me/R/ti/p/@teammirai",
-    youtube: "https://youtube.com/@teammirai",
-    twitter: "https://twitter.com/teammirai",
-    instagram: "https://instagram.com/teammirai",
-    facebook: "https://facebook.com/teammirai",
-    note: "https://note.com/teammirai",
+    line: "https://lin.ee/EllKv15",
+    youtube: "https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw",
+    twitter: "https://x.com/team_mirai_jp",
+    instagram: "https://www.instagram.com/annotakahiro2024/",
+    facebook: "https://www.facebook.com/teammirai.official",
+    note: "https://note.com/annotakahiro24",
   },
   images: {
     basePath: "https://team-mir.ai/images/sns",
