@@ -131,45 +131,81 @@ export default function Footer() {
             <div className="flex gap-4 justify-center">
               <Link
                 href="#"
-                className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="LINE公式アカウント"
               >
-                <span className="font-bold text-xs">LINE</span>
+                <Image
+                  src="https://team-mir.ai/images/sns/icon_line.png"
+                  alt="LINE"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
               <Link
                 href="#"
-                className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="YouTube公式チャンネル"
               >
-                <Youtube className="w-5 h-5" />
+                <Image
+                  src="https://team-mir.ai/images/sns/icon_youtube.png"
+                  alt="YouTube"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
               <Link
                 href="#"
-                className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="X公式アカウント"
               >
-                <Twitter className="w-5 h-5" />
+                <Image
+                  src="http://team-mir.ai/images/sns/icon_x.png"
+                  alt="X"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
               <Link
                 href="#"
-                className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-full flex items-center justify-center text-white hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="Instagram公式アカウント"
               >
-                <Instagram className="w-5 h-5" />
+                <Image
+                  src="https://team-mir.ai/images/sns/icon_instagram.png"
+                  alt="Instagram"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
               <Link
                 href="#"
-                className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="Facebook公式ページ"
               >
-                <Facebook className="w-5 h-5" />
+                <Image
+                  src="https://team-mir.ai/images/sns/icon_facebook.png"
+                  alt="Facebook"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
               <Link
                 href="#"
-                className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors"
+                className="w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
                 aria-label="note公式アカウント"
               >
-                <span className="font-bold text-lg">n</span>
+                <Image
+                  src="https://team-mir.ai/images/sns/icon_note.png"
+                  alt="note"
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
               </Link>
             </div>
           </div>
