@@ -240,7 +240,7 @@ export default function Footer() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="future-links-1">
-              <AccordionTrigger className="text-base font-bold">
+              <AccordionTrigger className="text-base font-bold no-underline hover:no-underline">
                 今後のリンク
               </AccordionTrigger>
               <AccordionContent>
@@ -250,7 +250,7 @@ export default function Footer() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="future-links-2">
-              <AccordionTrigger className="text-base font-bold">
+              <AccordionTrigger className="text-base font-bold no-underline hover:no-underline">
                 今後のリンク
               </AccordionTrigger>
               <AccordionContent>
