@@ -15,6 +15,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
@@ -174,11 +175,13 @@ export default function Footer() {
           </div>
 
           <div className="text-center">
-            <div className="inline-block bg-teal-500 text-white px-6 py-3 rounded-lg font-bold text-lg mb-4">
-              チーム
-              <br />
-              みらい
-            </div>
+            <Image
+              src="/img/logo.png"
+              alt="チームみらい"
+              width={64}
+              height={64}
+              className="mx-auto mb-4"
+            />
             <p className="text-sm text-gray-600">アクションボード</p>
           </div>
         </div>
@@ -201,7 +204,7 @@ export default function Footer() {
                     href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:bg-gray-50 p-2 rounded transition-colors"
+                    className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
                     <div className="text-sm font-bold text-blue-600">
                       ダッシュボード
@@ -214,7 +217,7 @@ export default function Footer() {
                     href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_lvnweavysd"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:bg-gray-50 p-2 rounded transition-colors"
+                    className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
                     <div className="text-sm font-bold text-blue-600">
                       寄付金額
@@ -227,7 +230,7 @@ export default function Footer() {
                     href="https://polimoney.dd2030.org/demo-takahiro-anno-2024"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:bg-gray-50 p-2 rounded transition-colors"
+                    className="flex gap-4 hover:bg-gray-50 p-2 rounded transition-colors"
                   >
                     <div className="text-sm font-bold text-blue-600">
                       ポリマネー
