@@ -22,7 +22,6 @@ type Props = {
   authUser: User;
   userAchievementCount: number;
   onSubmissionSuccess?: () => void;
-  referralCode?: string | null;
   preloadedQuizQuestions?:
     | {
         id: string;
@@ -38,7 +37,6 @@ export function MissionFormWrapper({
   authUser,
   userAchievementCount,
   onSubmissionSuccess,
-  referralCode,
   preloadedQuizQuestions,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
@@ -263,7 +261,6 @@ export function MissionFormWrapper({
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
         mission={mission}
-        referralCode={referralCode}
       />
     </>
   );

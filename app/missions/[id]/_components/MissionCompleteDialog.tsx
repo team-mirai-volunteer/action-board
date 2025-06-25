@@ -20,33 +20,11 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   mission: Tables<"missions">;
-  referralCode?: string | null;
 };
 
-export function MissionCompleteDialog({
-  isOpen,
-  onClose,
-  mission,
-  referralCode,
-}: Props) {
+export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   const message = `「${mission.title}」を達成しました！`;
-
-  const origin =
-    process.env.NEXT_PUBLIC_APP_ORIGIN ||
-    (typeof window !== "undefined" ? window.location.origin : "");
-  const referralUrl = referralCode
-    ? `${origin}/sign-up?ref=${referralCode}`
-    : `${origin}/sign-up`;
-
-  const shareMessage = `チームみらいでは、皆さんが楽しみながらチームみらいの活動を応援できる「アクションボード」を公開しました！
-ご自身の応援が目に見える形で分かります。応援が楽しくなる、様々なランキングもあります。
-登録しても義務や費用は一切発生しないのでご安心ください！
-
-👇1分でLINEまたはメールでかんたんに登録できます！
-${referralUrl}
-
-ご登録よろしくお願いします！
-#チームみらい`;
+  const shareMessage = `チームみらいアクションボードで${message} #チームみらい\n`;
 
   // OGP画像付きURLを生成
   const shareUrl =

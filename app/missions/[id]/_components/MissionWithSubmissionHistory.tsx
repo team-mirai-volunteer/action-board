@@ -191,7 +191,6 @@ export function MissionWithSubmissionHistory({
           authUser={authUser}
           userAchievementCount={userAchievementCount}
           onSubmissionSuccess={refreshSubmissions}
-          referralCode={referralCode}
           preloadedQuizQuestions={preloadedQuizQuestions}
         />
       )}
