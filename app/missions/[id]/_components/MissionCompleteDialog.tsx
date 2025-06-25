@@ -29,7 +29,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
 登録しても義務や費用は一切発生しないのでご安心ください！
 
 👇1分でLINEまたはメールでかんたんに登録できます！
-[ここに紹介コード]
+${referralUrl}
 
 ご登録よろしくお願いします！
 #チームみらい`;
