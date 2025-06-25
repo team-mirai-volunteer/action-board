@@ -133,9 +133,11 @@ function FeedbackSection() {
       <div className="px-4 md:container md:mx-auto text-center">
         <h2 className="text-xl font-bold mb-4">ご意見をお聞かせください</h2>
         <p className="text-gray-600 mb-8">
-          チームみらいアクションボードより良いサービスにするため、
+          チームみらいアクションボードをより良いサービスにするため、
           <br />
-          フィードバックをお寄せください。
+          皆様のご意見・ご要望をお聞かせください。
+          <br />
+          いただいたフィードバックは今後の改善に活用させていただきます。
         </p>
         <Link
           href={FOOTER_CONFIG.feedback.url}
