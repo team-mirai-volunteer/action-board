@@ -29,6 +29,28 @@ export default async function Metrics() {
     .select("*", { count: "exact", head: true })
     .gte("created_at", date.toISOString());
 
+  // count total supporters (users who created mission artifacts)
+  const { data: supporterData } = await supabase
+    .from("mission_artifacts")
+    .select("user_id");
+
+  const totalSupporterCount = supporterData
+    ? new Set(supporterData.map((item: { user_id: string }) => item.user_id))
+        .size
+    : 0;
+
+  // count today's new supporters
+  const { data: todaySupporterData } = await supabase
+    .from("mission_artifacts")
+    .select("user_id")
+    .gte("created_at", date.toISOString());
+
+  const todaySupporterCount = todaySupporterData
+    ? new Set(
+        todaySupporterData.map((item: { user_id: string }) => item.user_id),
+      ).size
+    : 0;
+
   return (
     <div className="max-w-6xl mx-auto px-4">
       <div className="flex flex-col gap-6">
@@ -38,7 +60,7 @@ export default async function Metrics() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <MetricCard
             title="みんなで達成したアクション数"
             value={achievementCount}
@@ -51,6 +73,13 @@ export default async function Metrics() {
             value={totalRegistrationCount}
             unit="人"
             todayValue={todayRegistrationCount}
+            todayUnit="人"
+          />
+          <MetricCard
+            title="参加サポーター"
+            value={totalSupporterCount}
+            unit="人"
+            todayValue={todaySupporterCount}
             todayUnit="人"
           />
         </div>
