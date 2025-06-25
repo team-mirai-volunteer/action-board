@@ -1,5 +1,4 @@
 import type { FooterAccordionSection } from "@/types/footer";
-import type React from "react";
 import { LinksList } from "./LinksList";
 
 interface AccordionContentGeneratorProps {
@@ -12,7 +11,7 @@ export function AccordionContentGenerator({
   section,
   loading,
   isAuthenticated,
-}: AccordionContentGeneratorProps): React.ReactNode {
+}: AccordionContentGeneratorProps) {
   if (section.contentType === "links" && section.content.links) {
     return (
       <LinksList
