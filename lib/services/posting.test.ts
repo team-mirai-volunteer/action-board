@@ -1,18 +1,4 @@
-const mockSupabaseClient = {
-  from: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  single: jest.fn(),
-  delete: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockReturnThis(),
-  update: jest.fn().mockReturnThis(),
-  order: jest.fn(),
-};
-
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: () => mockSupabaseClient,
-}));
-
+import { createClient } from "@/lib/supabase/client";
 import {
   type MapShape,
   deleteShape,
@@ -21,9 +7,17 @@ import {
   updateShape,
 } from "./posting";
 
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
+
 describe("posting service", () => {
+  let mockSupabaseClient: any;
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockSupabaseClient = mockCreateClient();
 
     mockSupabaseClient.from.mockReturnThis();
     mockSupabaseClient.insert.mockReturnThis();
