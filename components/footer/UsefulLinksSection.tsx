@@ -2,7 +2,7 @@ import {
   AccordionSection,
   type AccordionSectionItem,
 } from "@/components/ui/accordion-section";
-import { FOOTER_CONFIG } from "@/config/footer";
+import { USEFUL_LINKS_CONFIG } from "@/config/footer";
 import type { FooterAccordionSection } from "@/types/footer";
 import type { User } from "@supabase/supabase-js";
 import { AccordionContentGenerator } from "./useful-links";
@@ -19,19 +19,21 @@ export function UsefulLinksSection({
   isAuthenticated,
 }: UsefulLinksSectionProps) {
   const accordionItems: AccordionSectionItem[] =
-    FOOTER_CONFIG.accordionSections.map((section: FooterAccordionSection) => ({
-      value: section.value,
-      title: section.title,
-      content: (
-        <AccordionContentGenerator
-          section={section}
-          loading={loading}
-          isAuthenticated={isAuthenticated}
-        />
-      ),
-    }));
+    USEFUL_LINKS_CONFIG.accordionSections.map(
+      (section: FooterAccordionSection) => ({
+        value: section.value,
+        title: section.title,
+        content: (
+          <AccordionContentGenerator
+            section={section}
+            loading={loading}
+            isAuthenticated={isAuthenticated}
+          />
+        ),
+      }),
+    );
 
-  const defaultOpenSections = FOOTER_CONFIG.accordionSections
+  const defaultOpenSections = USEFUL_LINKS_CONFIG.accordionSections
     .filter((section: FooterAccordionSection) => section.defaultOpen)
     .map((section: FooterAccordionSection) => section.value);
 
