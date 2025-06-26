@@ -49,7 +49,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
                 : `/api/missions/${mission.id}/og?type=complete`
             }
             alt="ミッションクリア"
-            className="w-full mx-auto"
+            className="w-full mx-auto min-h-[158px] md:min-h-[215px]"
           />
         </DialogHeader>
 
