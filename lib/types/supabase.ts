@@ -527,7 +527,6 @@ export type Database = {
           registered_at: string;
           updated_at: string;
           x_username: string | null;
-          github_username: string | null;
         };
         Insert: {
           address_prefecture: string;
@@ -541,7 +540,6 @@ export type Database = {
           registered_at?: string;
           updated_at?: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
@@ -555,7 +553,6 @@ export type Database = {
           registered_at?: string;
           updated_at?: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Relationships: [];
       };

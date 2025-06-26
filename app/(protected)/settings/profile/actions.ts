@@ -219,17 +219,15 @@ export async function updateProfile(
       .from("private_users")
       .insert({
         id: user.id,
-        name: validatedData.name, // TODO: private_user テーブルに不要
+        name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
-        x_username: validatedData.x_username || null, // TODO: private_user テーブルに不要
-        github_username: validatedData.github_username || null, // TODO: private_user テーブルに不要
-        avatar_url: avatar_path, // TODO: private_user テーブルに不要
+        x_username: validatedData.x_username || null,
+        avatar_url: avatar_path,
         hubspot_contact_id: null, // 初期値はnull、HubSpot連携後に更新
         updated_at: new Date().toISOString(),
       });
-    // TODO: ここに　public_users テーブルの更新処理を追加する
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
       return {
@@ -241,19 +239,31 @@ export async function updateProfile(
     const { error: privateUserError } = await supabaseClient
       .from("private_users")
       .update({
-        name: validatedData.name, // TODO: private_user テーブルに不要
+        name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
-        x_username: validatedData.x_username || null, // TODO: private_user テーブルに不要
-        github_username: validatedData.github_username || null, // TODO: private_user テーブルに不要
-        avatar_url: avatar_path, // TODO: private_user テーブルに不要
+        x_username: validatedData.x_username || null,
+        avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
-    // TODO: ここに　public_users テーブルの更新処理を追加する
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
+      return {
+        success: false,
+        error: "ユーザー情報の更新に失敗しました",
+      };
+    }
+
+    const { error: publicUserError } = await supabaseServiceClient
+      .from("public_user_profiles")
+      .update({
+        github_username: validatedData.github_username || null,
+      })
+      .eq("id", user.id);
+    if (publicUserError) {
+      console.error("Error updating public_user_profiles:", publicUserError);
       return {
         success: false,
         error: "ユーザー情報の更新に失敗しました",
