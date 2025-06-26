@@ -154,7 +154,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             >
               <img
                 src="/img/icon-Shere2x.png"
-                alt="Share"
+                alt="シェア"
                 className="w-full h-full object-contain"
               />
             </button>
@@ -167,7 +167,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             >
               <img
                 src="/img/icon-Copy2x.png"
-                alt="Copy"
+                alt="コピー"
                 className="w-full h-full object-contain"
               />
             </button>
