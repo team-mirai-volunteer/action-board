@@ -132,7 +132,7 @@ export default function PosterMapPage() {
       </div>
 
       {/* Map Container */}
-      <div className="rounded-lg overflow-hidden shadow-lg">
+      <div className="rounded-lg overflow-hidden shadow-lg relative z-0">
         <PosterMap boards={boards} onBoardClick={handleBoardClick} />
       </div>
 

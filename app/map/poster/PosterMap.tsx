@@ -3,6 +3,7 @@
 import L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
+import "./poster-map.css";
 import type { Database } from "@/lib/types/supabase";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -105,5 +106,5 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
     };
   }, [boards, onBoardClick]);
 
-  return <div id="poster-map" className="h-[600px] w-full" />;
+  return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
 }

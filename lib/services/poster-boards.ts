@@ -1,4 +1,4 @@
-import { createBrowserClient } from "@/lib/supabase/supabase-browser";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
@@ -7,7 +7,7 @@ type StatusHistory =
   Database["public"]["Tables"]["poster_board_status_history"]["Row"];
 
 export async function getPosterBoards(prefecture?: string) {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   let query = supabase
     .from("poster_boards")
@@ -33,7 +33,7 @@ export async function updateBoardStatus(
   newStatus: BoardStatus,
   note?: string,
 ) {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   // Get current board status
   const { data: currentBoard, error: fetchError } = await supabase
@@ -83,7 +83,7 @@ export async function updateBoardStatus(
 }
 
 export async function getBoardStatusHistory(boardId: string) {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("poster_board_status_history")
@@ -107,7 +107,7 @@ export async function getBoardStatusHistory(boardId: string) {
 
 // Get unique prefectures that have poster boards
 export async function getPrefecturesWithBoards() {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
