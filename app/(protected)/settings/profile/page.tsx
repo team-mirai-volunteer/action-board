@@ -29,6 +29,7 @@ export default async function ProfileSettingsPage({
     .select("*")
     .eq("id", user.id)
     .single();
+  // TODO: public_usersからの情報取得も必要
 
   // 新規ユーザーかどうか判定
   const isNew = Boolean(params?.new);
