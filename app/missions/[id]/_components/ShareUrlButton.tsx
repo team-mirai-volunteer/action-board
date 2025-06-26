@@ -14,6 +14,7 @@ export function ShareUrlButton({ url, className, children }: Props) {
       await navigator.clipboard.writeText(url);
       toast.success("URLをコピーしました！");
     } catch (error) {
+      // フォールバック: 古いブラウザ対応
       const textArea = document.createElement("textarea");
       textArea.value = url;
       document.body.appendChild(textArea);

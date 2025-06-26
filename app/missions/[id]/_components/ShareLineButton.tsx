@@ -13,6 +13,7 @@ export function ShareLineButton({
   className,
   url,
 }: Props) {
+  // SNSシェア用のハンドラ関数
   const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
   const handleShare = () => {
     const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
