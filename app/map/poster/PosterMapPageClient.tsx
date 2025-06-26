@@ -11,20 +11,9 @@ import {
 import { getSampleBoardsForPreview } from "@/lib/services/poster-boards";
 import type { Database } from "@/lib/types/supabase";
 import { ChevronRight, MapPin } from "lucide-react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-// Dynamic import to avoid SSR issues
-const PosterMapPreview = dynamic(() => import("./PosterMapPreview"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full items-center justify-center">
-      地図を読み込み中...
-    </div>
-  ),
-});
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["board_status"];
@@ -77,13 +66,7 @@ const prefectureData = [
   },
 ];
 
-interface PosterMapPageClientProps {
-  userId: string;
-}
-
-export default function PosterMapPageClient({
-  userId,
-}: PosterMapPageClientProps) {
+export default function PosterMapPageClient() {
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const [boardStats, setBoardStats] = useState<
@@ -198,19 +181,6 @@ export default function PosterMapPageClient({
             </div>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Map Preview */}
-      <Card className="overflow-hidden">
-        <CardHeader className="pb-3">
-          <CardTitle>掲示板配置マップ</CardTitle>
-          <CardDescription>
-            地図上のピンをクリックして詳細を確認できます
-          </CardDescription>
-        </CardHeader>
-        <div className="h-[400px] w-full">
-          <PosterMapPreview boards={boards} />
-        </div>
       </Card>
 
       {/* Prefecture List */}

@@ -19,5 +19,5 @@ export default async function PosterMapPage() {
     return redirect("/sign-in");
   }
 
-  return <PosterMapPageClient userId={user.id} />;
+  return <PosterMapPageClient />;
 }
