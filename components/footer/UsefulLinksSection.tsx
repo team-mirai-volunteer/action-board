@@ -13,11 +13,16 @@ interface UsefulLinksSectionProps {
   isAuthenticated: boolean;
 }
 
+/**
+ * チームみらいお役立ちサイトセクション
+ * 認証状態に基づいてリンクの表示/非表示を制御するアコーディオン形式のセクション
+ */
 export function UsefulLinksSection({
   user,
   loading,
   isAuthenticated,
 }: UsefulLinksSectionProps) {
+  // 設定からアコーディオンアイテムを生成
   const accordionItems: AccordionSectionItem[] =
     USEFUL_LINKS_CONFIG.accordionSections.map(
       (section: FooterAccordionSection) => ({
@@ -33,6 +38,7 @@ export function UsefulLinksSection({
       }),
     );
 
+  // デフォルトで開くセクションを抽出
   const defaultOpenSections = USEFUL_LINKS_CONFIG.accordionSections
     .filter((section: FooterAccordionSection) => section.defaultOpen)
     .map((section: FooterAccordionSection) => section.value);
