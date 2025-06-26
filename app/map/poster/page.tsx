@@ -88,8 +88,8 @@ export default function PosterMapPage() {
 
       // Calculate statistics per prefecture
       const stats: Record<string, Record<BoardStatus, number>> = {};
-      data.forEach((board) => {
-        if (!board.prefecture) return;
+      for (const board of data) {
+        if (!board.prefecture) continue;
         if (!stats[board.prefecture]) {
           stats[board.prefecture] = {
             not_yet: 0,
@@ -101,7 +101,7 @@ export default function PosterMapPage() {
           };
         }
         stats[board.prefecture][board.status]++;
-      });
+      }
       setBoardStats(stats);
     } catch (error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
