@@ -110,7 +110,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("x")}
-              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
               aria-label="Xでシェア"
             >
               <img
@@ -123,7 +123,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("facebook")}
-              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
               aria-label="Facebookでシェア"
             >
               <img
@@ -136,16 +136,20 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("line")}
-              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity bg-green-500 flex items-center justify-center"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
               aria-label="LINEでシェア"
             >
-              <span className="text-white font-bold text-sm">LINE</span>
+              <img
+                src="/img/icon-line2x.png"
+                alt="LINE"
+                className="w-full h-full object-contain"
+              />
             </button>
 
             <button
               type="button"
               onClick={() => handleShareClick("share")}
-              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
               aria-label="その他のサービスでシェア"
             >
               <img
@@ -158,7 +162,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("copy")}
-              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
               aria-label="シェアURLをコピー"
             >
               <img
