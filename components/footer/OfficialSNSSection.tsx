@@ -15,7 +15,7 @@ export function OfficialSNSSection() {
         <p className="text-sm text-gray-600 mb-8">
           最新の活動情報や舞台裏を、いち早くお届けします。ぜひフォロー＆チャンネル登録で応援してください！
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center mb-8 p-4 bg-white rounded-lg max-w-6xl mx-auto">
           {(
             Object.entries(FOOTER_CONFIG.snsLinks) as [
               FooterSNSPlatform,

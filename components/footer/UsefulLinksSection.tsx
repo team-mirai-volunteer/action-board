@@ -36,7 +36,7 @@ export function UsefulLinksSection({
     .map((section: FooterAccordionSection) => section.value);
 
   return (
-    <div className="bg-white py-12">
+    <div className="bg-white py-12 max-w-6xl mx-auto">
       <AccordionSection
         items={accordionItems}
         type="multiple"

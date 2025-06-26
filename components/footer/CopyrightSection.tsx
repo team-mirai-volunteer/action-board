@@ -40,6 +40,9 @@ export function CopyrightSection() {
             </Link>
           </div>
         </div>
+        <p className="text-sm text-muted-foreground text-center mt-4">
+          © 2025 Team Mirai. All rights reserved.
+        </p>
       </div>
     </div>
   );

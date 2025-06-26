@@ -30,7 +30,7 @@ export function SocialShareSection({
           <p className="text-sm text-gray-600 mb-8">
             あなたの周りの人にもアクションボードを届けよう。
           </p>
-          <div className="flex justify-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
+          <div className="flex justify-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg  max-w-6xl mx-auto">
             <button
               type="button"
               onClick={onLineShare}
