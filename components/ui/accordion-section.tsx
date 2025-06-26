@@ -34,6 +34,23 @@ export function AccordionSection({
   const accordionDefaultValue =
     defaultValue || (type === "multiple" ? [] : undefined);
 
+  const renderAccordionItems = () =>
+    items.map((item) => (
+      <AccordionItem key={item.value} value={item.value}>
+        <AccordionTrigger
+          className={
+            item.triggerClassName ||
+            "text-base font-bold no-underline hover:no-underline"
+          }
+        >
+          {item.title}
+        </AccordionTrigger>
+        <AccordionContent className={item.contentClassName}>
+          {item.content}
+        </AccordionContent>
+      </AccordionItem>
+    ));
+
   return (
     <div className={containerClassName}>
       {type === "multiple" ? (
@@ -42,21 +59,7 @@ export function AccordionSection({
           defaultValue={accordionDefaultValue as string[]}
           className={className}
         >
-          {items.map((item) => (
-            <AccordionItem key={item.value} value={item.value}>
-              <AccordionTrigger
-                className={
-                  item.triggerClassName ||
-                  "text-base font-bold no-underline hover:no-underline"
-                }
-              >
-                {item.title}
-              </AccordionTrigger>
-              <AccordionContent className={item.contentClassName}>
-                {item.content}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+          {renderAccordionItems()}
         </Accordion>
       ) : (
         <Accordion
@@ -64,21 +67,7 @@ export function AccordionSection({
           defaultValue={accordionDefaultValue as string}
           className={className}
         >
-          {items.map((item) => (
-            <AccordionItem key={item.value} value={item.value}>
-              <AccordionTrigger
-                className={
-                  item.triggerClassName ||
-                  "text-base font-bold no-underline hover:no-underline"
-                }
-              >
-                {item.title}
-              </AccordionTrigger>
-              <AccordionContent className={item.contentClassName}>
-                {item.content}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+          {renderAccordionItems()}
         </Accordion>
       )}
     </div>
