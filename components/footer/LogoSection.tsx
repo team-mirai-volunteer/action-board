@@ -12,7 +12,6 @@ export function LogoSection() {
           height={FOOTER_IMAGE_SIZES.logo.height}
           className="mx-auto"
         />
-        <p className="text-sm text-gray-600 mt-2">アクションボード</p>
       </div>
     </div>
   );
