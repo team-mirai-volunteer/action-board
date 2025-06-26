@@ -1,4 +1,14 @@
 missions:
+  - slug: link-official-site
+    title: チームみらい公式サイトを見てみよう
+    icon_url: /img/mission_fallback.svg
+    content: 'チームみらいの活動や政策について、もっと詳しく知りたいなら、まずは公式サイトをチェック！<br />チームみらいのビジョンや価値観、政策の詳細がわかります。'
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: x-repost
     title: Xでチームみらいの投稿をリポストしよう
     icon_url: /img/mission_fallback.svg

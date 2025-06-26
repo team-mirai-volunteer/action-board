@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
+import { MainLinkButton } from "./MainLinkButton";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
@@ -30,6 +31,7 @@ type Props = {
         category?: string;
       }[]
     | null;
+  mainLink?: Tables<"mission_main_links"> | null;
 };
 
 export function MissionFormWrapper({
@@ -38,6 +40,7 @@ export function MissionFormWrapper({
   userAchievementCount,
   onSubmissionSuccess,
   preloadedQuizQuestions,
+  mainLink,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
@@ -75,6 +78,20 @@ export function MissionFormWrapper({
     scrollToTop,
   });
 
+  // XPアニメーションデータを設定する共通関数
+  const handleXpAnimation = (result: {
+    xpGranted?: number;
+    userLevel?: { xp: number };
+  }) => {
+    if (result.xpGranted && result.userLevel) {
+      const initialXp = result.userLevel.xp - result.xpGranted;
+      setXpAnimationData({
+        initialXp,
+        xpGained: result.xpGranted,
+      });
+    }
+  };
+
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     setErrorMessage(null);
@@ -88,13 +105,7 @@ export function MissionFormWrapper({
         setFormKey((prev) => prev + 1);
 
         // XPアニメーション表示
-        if (result.xpGranted && result.userLevel) {
-          const initialXp = result.userLevel.xp - result.xpGranted;
-          setXpAnimationData({
-            initialXp,
-            xpGained: result.xpGranted,
-          });
-        }
+        handleXpAnimation(result);
 
         setIsDialogOpen(true);
 
@@ -175,6 +186,60 @@ export function MissionFormWrapper({
         </div>
       );
     }
+
+    // LINK_ACCESSミッションの場合
+    if (
+      mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
+      mainLink
+    ) {
+      const isCompleted = hasReachedUserMaxAchievements;
+
+      const handleLinkAccessClick = async () => {
+        // クリア済みの場合は通常のリンクとして動作
+        if (isCompleted) {
+          return { success: true };
+        }
+
+        const formData = new FormData();
+        formData.append("missionId", mission.id);
+        formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
+
+        const result = await achieveMissionAction(formData);
+
+        if (result.success) {
+          handleXpAnimation(result);
+          setIsDialogOpen(true);
+          onSubmissionSuccess?.();
+        }
+
+        return result;
+      };
+
+      return (
+        <div className="space-y-4 flex flex-col items-center">
+          <MainLinkButton
+            mission={mission}
+            mainLink={mainLink}
+            onLinkClick={isCompleted ? undefined : handleLinkAccessClick}
+            isDisabled={false}
+          />
+
+          {!isCompleted && (
+            <div className="text-sm text-muted-foreground">
+              リンクを開くとミッションクリアとなります
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+              {errorMessage}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // 通常のアーティファクト提出ミッションの場合
     return (
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
@@ -228,7 +293,9 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {!hasReachedUserMaxAchievements && renderForm()}
+      {(!hasReachedUserMaxAchievements ||
+        mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) &&
+        renderForm()}
 
       {(completed ||
         (userAchievementCount > 0 &&
