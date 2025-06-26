@@ -25,6 +25,7 @@ export function ShareButton({
           url: shareUrl,
         });
       } catch (error) {
+        // シェアがキャンセルされた場合やエラー時は何もしない
         console.log("Share was cancelled or failed:", error);
       }
     }
