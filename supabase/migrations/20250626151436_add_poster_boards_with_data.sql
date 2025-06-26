@@ -1,7 +1,7 @@
 -- Create enum type for board status
 CREATE TYPE board_status AS ENUM ('not_yet', 'posted', 'checked', 'damaged', 'error', 'other');
 
--- Create poster_boards table
+-- Create poster_boards table with number column
 CREATE TABLE poster_boards (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
@@ -9,6 +9,7 @@ CREATE TABLE poster_boards (
   lon decimal(11, 8) NOT NULL,
   prefecture text,
   status board_status DEFAULT 'not_yet' NOT NULL,
+  number integer,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );

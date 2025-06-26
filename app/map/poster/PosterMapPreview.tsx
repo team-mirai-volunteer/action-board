@@ -19,9 +19,8 @@ L.Icon.Default.mergeOptions({
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["board_status"];
 
-interface PosterMapProps {
+interface PosterMapPreviewProps {
   boards: PosterBoard[];
-  onBoardClick: (board: PosterBoard) => void;
 }
 
 // Status colors for markers
@@ -42,27 +41,34 @@ function createMarkerIcon(status: BoardStatus) {
     html: `
       <div style="
         background-color: ${color};
-        width: 24px;
-        height: 24px;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        border: 2px solid white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
       "></div>
     `,
     className: "custom-marker",
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   });
 }
 
-export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
+export default function PosterMapPreview({ boards }: PosterMapPreviewProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     if (!mapRef.current) {
-      // Initialize map
-      mapRef.current = L.map("poster-map").setView([35.6762, 139.6503], 10);
+      // Initialize map centered on Japan
+      mapRef.current = L.map("poster-map-preview", {
+        zoomControl: false,
+        dragging: true,
+        doubleClickZoom: true,
+        scrollWheelZoom: false,
+        touchZoom: false,
+        keyboard: false,
+      }).setView([38.0, 138.0], 5);
 
       // Add tile layer (using GSI tiles)
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
@@ -83,13 +89,8 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
       if (mapRef.current) {
         const marker = L.marker([board.lat, board.lon], {
           icon: createMarkerIcon(board.status),
-        })
-          .addTo(mapRef.current)
-          .bindTooltip(
-            `${board.number ? `#${board.number} ` : ""}${board.name}`,
-            { permanent: false, direction: "top" },
-          )
-          .on("click", () => onBoardClick(board));
+          interactive: false, // Disable interaction
+        }).addTo(mapRef.current);
 
         markersRef.current.push(marker);
       }
@@ -98,7 +99,7 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
     // Fit map to show all markers if there are any
     if (boards.length > 0 && mapRef.current) {
       const bounds = L.latLngBounds(boards.map((b) => [b.lat, b.lon]));
-      mapRef.current.fitBounds(bounds, { padding: [50, 50] });
+      mapRef.current.fitBounds(bounds, { padding: [30, 30] });
     }
 
     // Cleanup function
@@ -107,7 +108,7 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
         marker.remove();
       }
     };
-  }, [boards, onBoardClick]);
+  }, [boards]);
 
-  return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
+  return <div id="poster-map-preview" className="h-full w-full relative z-0" />;
 }

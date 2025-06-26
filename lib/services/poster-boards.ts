@@ -127,3 +127,34 @@ export async function getPrefecturesWithBoards() {
 
   return uniquePrefectures;
 }
+
+// Get sample boards for preview (max 10 per prefecture, total max 150)
+export async function getSampleBoardsForPreview() {
+  const supabase = createClient();
+
+  // List of initial prefectures to show
+  const targetPrefectures = ["東京都", "大阪府", "兵庫県", "北海道"];
+
+  // Get up to 10 boards from each prefecture
+  const boardPromises = targetPrefectures.map(async (prefecture) => {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("*")
+      .eq("prefecture", prefecture)
+      .order("number", { ascending: true })
+      .limit(10);
+
+    if (error) {
+      console.error(`Error fetching boards for ${prefecture}:`, error);
+      return [];
+    }
+
+    return data || [];
+  });
+
+  const results = await Promise.all(boardPromises);
+  const allBoards = results.flat();
+
+  // Return up to 150 boards total
+  return allBoards.slice(0, 150);
+}

@@ -5,7 +5,7 @@ we want to add a poster map
 
 ## idea
 the basic idea of the poster map is that we have
-- boards: [lat, lon, name, status]
+- boards: [prefecture, number, lat, lon, name, status]
 which represent billing boards. people will put posters on this billing board for the upcoming election.
 
 ## basic functionality
@@ -22,3 +22,7 @@ which represent billing boards. people will put posters on this billing board fo
     - damaged: the poster is damaged
     - error: the poster board is not there (wrong lat/lon in db)
     - other: other
+
+### what's left
+- RLS so anon can't do anything
+- add tests

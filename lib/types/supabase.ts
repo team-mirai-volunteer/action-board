@@ -497,6 +497,7 @@ export type Database = {
           lat: number;
           lon: number;
           name: string;
+          number: number | null;
           prefecture: string | null;
           status: Database["public"]["Enums"]["board_status"];
           updated_at: string;
@@ -507,6 +508,7 @@ export type Database = {
           lat: number;
           lon: number;
           name: string;
+          number?: number | null;
           prefecture?: string | null;
           status?: Database["public"]["Enums"]["board_status"];
           updated_at?: string;
@@ -517,6 +519,7 @@ export type Database = {
           lat?: number;
           lon?: number;
           name?: string;
+          number?: number | null;
           prefecture?: string | null;
           status?: Database["public"]["Enums"]["board_status"];
           updated_at?: string;

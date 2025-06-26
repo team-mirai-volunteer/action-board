@@ -188,6 +188,7 @@ export default function PrefecturePosterMapPage() {
           <DialogHeader>
             <DialogTitle>ステータス更新</DialogTitle>
             <DialogDescription>
+              {selectedBoard?.number ? `#${selectedBoard.number} ` : ""}
               {selectedBoard?.name}のステータスを更新します
             </DialogDescription>
           </DialogHeader>
