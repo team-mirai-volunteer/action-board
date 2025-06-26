@@ -8,3 +8,6 @@ export const YOUTUBE_MISSION_CONFIG = {
   // 安野たかひろYouTubeチャンネルID
   CHANNEL_ID: "UCiMwbmcCSMORJ-85XWhStBw",
 } as const;
+
+// ポスティングミッションでの最大枚数
+export const MAX_POSTING_COUNT = 100000;

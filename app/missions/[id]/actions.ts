@@ -5,7 +5,7 @@ import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
-import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
+import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
@@ -105,7 +105,9 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
   postingCount: z.coerce
     .number()
     .min(1, { message: "ポスティング枚数は1枚以上で入力してください" })
-    .max(1000, { message: "ポスティング枚数は1000枚以下で入力してください" }),
+    .max(MAX_POSTING_COUNT, {
+      message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
+    }),
   locationText: z
     .string()
     .min(1, { message: "ポスティング場所を入力してください" })
