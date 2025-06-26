@@ -1,8 +1,24 @@
+"use client";
+
+import { UsefulLinksSection } from "@/components/footer";
+import { useFooterAuth } from "@/hooks/useFooterAuth";
 import Link from "next/link";
 
 export default function Footer() {
+  const { user, loading, error, isAuthenticated } = useFooterAuth();
+
+  if (error) {
+    console.error("Footer認証エラー:", error);
+  }
+
   return (
     <footer className="w-full mt-16 border-t border-border bg-background md:container md:mx-auto">
+      <UsefulLinksSection
+        user={user}
+        loading={loading}
+        isAuthenticated={isAuthenticated}
+      />
+
       <div className="px-4 md:container md:mx-auto py-8">
         {/* 下部のコピーライト */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
