@@ -6,7 +6,6 @@ import {
   LogoSection,
   OfficialSNSSection,
   SocialShareSection,
-  UsefulLinksSection,
 } from "@/components/footer";
 import { useFooterAuth } from "@/hooks/useFooterAuth";
 import { useFooterSocialShare } from "@/hooks/useFooterSocialShare";
@@ -38,12 +37,6 @@ export default function Footer() {
       <OfficialSNSSection />
 
       <LogoSection />
-
-      <UsefulLinksSection
-        user={user}
-        loading={loading}
-        isAuthenticated={isAuthenticated}
-      />
 
       <CopyrightSection />
     </footer>
