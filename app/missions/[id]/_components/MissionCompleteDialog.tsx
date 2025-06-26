@@ -45,11 +45,15 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
         break;
       case "share":
         if (navigator.share) {
-          navigator.share({
-            title: message,
-            text: shareMessage,
-            url: shareUrl,
-          });
+          try {
+            await navigator.share({
+              title: message,
+              text: shareMessage,
+              url: shareUrl,
+            });
+          } catch (error) {
+            console.log("Share was cancelled or failed:", error);
+          }
         }
         break;
       case "copy":
