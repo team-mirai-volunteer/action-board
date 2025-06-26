@@ -136,7 +136,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("line")}
-              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity md:hidden"
               aria-label="LINEでシェア"
             >
               <img
@@ -149,7 +149,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <button
               type="button"
               onClick={() => handleShareClick("share")}
-              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
+              className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity md:hidden"
               aria-label="その他のサービスでシェア"
             >
               <img
