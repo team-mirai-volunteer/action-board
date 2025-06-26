@@ -56,6 +56,12 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           }
         }
         break;
+      case "line":
+        window.open(
+          `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`,
+          "_blank",
+        );
+        break;
       case "copy":
         try {
           await navigator.clipboard.writeText(shareUrl);
@@ -100,7 +106,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             <p className="text-sm font-medium">シェアして応援の輪を広げよう</p>
           </header>
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-3 flex-wrap">
             <button
               type="button"
               onClick={() => handleShareClick("x")}
@@ -125,6 +131,15 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
                 alt="Facebook"
                 className="w-full h-full object-contain"
               />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleShareClick("line")}
+              className="w-[60px] h-[60px] rounded-full hover:opacity-80 transition-opacity bg-green-500 flex items-center justify-center"
+              aria-label="LINEでシェア"
+            >
+              <span className="text-white font-bold text-sm">LINE</span>
             </button>
 
             <button
