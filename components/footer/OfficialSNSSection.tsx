@@ -1,5 +1,8 @@
 import { FOOTER_CONFIG } from "@/config/footer";
-import { FOOTER_BUTTON_STYLES, FOOTER_IMAGE_SIZES } from "@/lib/constants/footer";
+import {
+  FOOTER_BUTTON_STYLES,
+  FOOTER_IMAGE_SIZES,
+} from "@/lib/constants/footer";
 import type { FooterSNSPlatform } from "@/types/footer";
 import Image from "next/image";
 import Link from "next/link";

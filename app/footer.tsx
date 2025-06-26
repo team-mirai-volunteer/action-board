@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  SocialShareSection,
+  CopyrightSection,
   FeedbackSection,
   OfficialSNSSection,
+  SocialShareSection,
   UsefulLinksSection,
-  CopyrightSection,
 } from "@/components/footer";
 import { useFooterAuth } from "@/hooks/useFooterAuth";
 import { useFooterSocialShare } from "@/hooks/useFooterSocialShare";

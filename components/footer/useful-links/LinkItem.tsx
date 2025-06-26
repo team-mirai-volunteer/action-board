@@ -1,5 +1,5 @@
+import type { FooterAccordionStyling, FooterLink } from "@/types/footer";
 import Link from "next/link";
-import type { FooterLink, FooterAccordionStyling } from "@/types/footer";
 
 interface LinkItemProps {
   link: FooterLink;

@@ -1,6 +1,9 @@
 "use client";
 
-import { FOOTER_BUTTON_STYLES, FOOTER_IMAGE_SIZES } from "@/lib/constants/footer";
+import {
+  FOOTER_BUTTON_STYLES,
+  FOOTER_IMAGE_SIZES,
+} from "@/lib/constants/footer";
 import { Copy } from "lucide-react";
 import Image from "next/image";
 
