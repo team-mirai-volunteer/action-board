@@ -28,6 +28,8 @@ export function ShareButton({
         // シェアがキャンセルされた場合やエラー時は何もしない
         console.log("Share was cancelled or failed:", error);
       }
+    } else {
+      alert("このブラウザはWebシェアAPIに対応していません。");
     }
   };
 
