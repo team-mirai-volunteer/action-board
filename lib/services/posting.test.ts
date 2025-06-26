@@ -10,7 +10,7 @@ const mockSupabaseClient = {
 };
 
 jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => mockSupabaseClient),
+  createClient: () => mockSupabaseClient,
 }));
 
 import {
