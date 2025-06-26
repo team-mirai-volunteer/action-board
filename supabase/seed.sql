@@ -211,3 +211,15 @@ VALUES
    '{"type":"Point","coordinates":[139.6350,35.6350]}',
    '{"text":"世田谷区","originalType":"Text"}',
    '2025-06-14 10:00:00.000', '2025-06-14 10:00:00.000');
+
+-- バッジ定義マスター INSERT
+INSERT INTO public.badges (id, code, name, description, icon_url)
+VALUES 
+  (gen_random_uuid(), 'TOP10_DAILY', 'デイリーTOP10', 'その日のランキングでTOP10に入賞', '/storage/v1/object/public/badge_icons/top10_daily.png'),
+  (gen_random_uuid(), 'TOP100_OVERALL', '全体TOP100', '全体ランキングで100位以内にランクイン', '/storage/v1/object/public/badge_icons/top100_overall.png'),
+  (gen_random_uuid(), 'TOP50_OVERALL', '全体TOP50', '全体ランキングで50位以内にランクイン', '/storage/v1/object/public/badge_icons/top50_overall.png'),
+  (gen_random_uuid(), 'TOP20_OVERALL', '全体TOP20', '全体ランキングで20位以内にランクイン', '/storage/v1/object/public/badge_icons/top20_overall.png'),
+  (gen_random_uuid(), 'TOP10_OVERALL', '全体TOP10', '全体ランキングで10位以内にランクイン', '/storage/v1/object/public/badge_icons/top10_overall.png'),
+  (gen_random_uuid(), 'TOP10_PREFECTURE', '都道府県TOP10', '都道府県別ランキングでTOP10に入賞', '/storage/v1/object/public/badge_icons/top10_prefecture.png'),
+  (gen_random_uuid(), 'TOP10_MISSION', 'ミッションTOP10', '特定のミッションでTOP10に入賞', '/storage/v1/object/public/badge_icons/top10_mission.png'),
+  (gen_random_uuid(), 'REFERRAL_5', '5人紹介バッジ', '5人を紹介して参加させた証', '/storage/v1/object/public/badge_icons/referral_5.png');
