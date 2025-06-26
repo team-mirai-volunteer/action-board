@@ -34,8 +34,8 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="w-[calc(100vw-36px)] max-w-md mx-auto p-[18px] rounded-2xl [&>button]:w-6 [&>button]:h-6 [&>button>svg]:w-6 [&>button>svg]:h-6">
+        <DialogHeader className="space-y-4">
           <DialogTitle className="text-center text-xl">
             おめでとうございます！
           </DialogTitle>
@@ -49,50 +49,35 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
                 : `/api/missions/${mission.id}/og?type=complete`
             }
             alt="ミッションクリア"
+            className="w-full mx-auto min-h-[158px] md:min-h-[215px]"
           />
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 py-4">
-          <ShareTwitterButton
-            message={shareMessage}
-            missionId={mission.id}
-            className="w-full"
-            url={shareUrl}
-          >
-            Xでシェア
-          </ShareTwitterButton>
-          <ShareFacebookButton
-            missionId={mission.id}
-            className="w-full"
-            url={shareUrl}
-          >
-            Facebookでシェア
-          </ShareFacebookButton>
-          {/* 内部で判定しておりモバイルのみ表示 */}
-          <ShareLineButton
-            className="w-full md:hidden"
-            missionId={mission.id}
-            url={shareUrl}
-          >
-            LINEでシェア
-          </ShareLineButton>
-          {/* navigator.share()を使っているのでモバイルのみ表示 */}
-          <ShareButton
-            className="w-full md:hidden"
-            message={shareMessage}
-            missionId={mission.id}
-            url={shareUrl}
-          >
-            その他のサービスにシェア
-          </ShareButton>
-          <ShareUrlButton url={shareUrl} className="w-full">
-            シェアURLをコピー
-          </ShareUrlButton>
-        </div>
+        <section className="py-4">
+          <header className="text-center mb-4">
+            <p className="text-sm font-medium">シェアして応援の輪を広げよう</p>
+          </header>
 
-        <DialogFooter>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <ShareTwitterButton
+              message={shareMessage}
+              missionId={mission.id}
+              url={shareUrl}
+            />
+            <ShareFacebookButton missionId={mission.id} url={shareUrl} />
+            <ShareLineButton missionId={mission.id} url={shareUrl} />
+            <ShareButton
+              message={shareMessage}
+              missionId={mission.id}
+              url={shareUrl}
+            />
+            <ShareUrlButton url={shareUrl} />
+          </div>
+        </section>
+
+        <DialogFooter className="pt-4">
           <Button onClick={onClose} className="w-full">
-            OK
+            このまま閉じる
           </Button>
         </DialogFooter>
       </DialogContent>

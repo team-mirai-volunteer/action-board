@@ -1,0 +1,115 @@
+import { render, screen } from "@testing-library/react";
+import type React from "react";
+import Hero from "./hero";
+
+jest.mock("@/lib/services/users", () => ({
+  getUser: jest.fn(() => Promise.resolve(null)),
+}));
+
+jest.mock("./levels", () => {
+  return function MockLevels({ userId, clickable }: any) {
+    return <div data-testid="levels">Levels Component for {userId}</div>;
+  };
+});
+
+jest.mock("next/link", () => {
+  return ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  );
+});
+
+jest.mock("@/components/ui/button", () => ({
+  Button: ({ children, className, variant, size, ...props }: any) => (
+    <button className={className} {...props}>
+      {children}
+    </button>
+  ),
+}));
+
+describe("Hero", () => {
+  describe("基本的な表示", () => {
+    it("ヒーローセクションが正しくレンダリングされる", async () => {
+      const result = await Hero();
+      render(result);
+
+      expect(screen.getByText("チームみらい")).toBeInTheDocument();
+      expect(screen.getByText("アクションボード")).toBeInTheDocument();
+    });
+
+    it("メインタイトルが表示される", async () => {
+      const result = await Hero();
+      render(result);
+
+      const heading = screen.getByRole("heading", { level: 1 });
+      expect(heading).toBeInTheDocument();
+    });
+
+    it("説明文が表示される", async () => {
+      const result = await Hero();
+      render(result);
+
+      expect(
+        screen.getByText(/テクノロジーで政治をかえる/),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("CTA要素", () => {
+    it("開始ボタンが表示される", async () => {
+      const result = await Hero();
+      render(result);
+
+      const startButton = screen.getByRole("button", {
+        name: /チームみらいで手を動かす/,
+      });
+      expect(startButton).toBeInTheDocument();
+    });
+
+    it("詳細リンクが表示される", async () => {
+      const result = await Hero();
+      render(result);
+
+      const detailLink = screen.getByRole("link");
+      expect(detailLink).toBeInTheDocument();
+    });
+  });
+
+  describe("レイアウトとスタイル", () => {
+    it("適切なCSSクラスが設定される", async () => {
+      const result = await Hero();
+      const { container } = render(result);
+
+      const heroSection = container.querySelector("section");
+      expect(heroSection).toHaveClass("relative");
+    });
+
+    it("グラデーション背景が設定される", async () => {
+      const result = await Hero();
+      const { container } = render(result);
+
+      const gradientElement = container.querySelector(".bg-gradient-to-br");
+      expect(gradientElement).toBeInTheDocument();
+    });
+  });
+
+  describe("アクセシビリティ", () => {
+    it("見出し階層が適切に設定される", async () => {
+      const result = await Hero();
+      render(result);
+
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1).toBeInTheDocument();
+    });
+
+    it("ボタンとリンクが適切に設定される", async () => {
+      const result = await Hero();
+      render(result);
+
+      const buttons = screen.getAllByRole("button");
+      const links = screen.getAllByRole("link");
+
+      expect(buttons.length).toBeGreaterThan(0);
+      expect(links.length).toBeGreaterThan(0);
+    });
+  });
+});

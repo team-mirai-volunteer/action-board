@@ -13,6 +13,8 @@ category_links:
         sort_no: 500
   - category_slug: learn-about-teammirai
     missions:
+      - mission_slug: link-official-site
+        sort_no: 100
       - mission_slug: quiz-teammirai-anno
         sort_no: 200
       - mission_slug: quiz-teammirai-vision

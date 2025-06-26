@@ -45,6 +45,11 @@ export const ARTIFACT_TYPES = {
     displayName: "クイズ",
     prompt: "クイズに正解してミッションを達成しましょう。",
   },
+  LINK_ACCESS: {
+    key: "LINK_ACCESS",
+    displayName: "リンクアクセス",
+    prompt: "リンクをクリックするとミッションが達成されます。",
+  },
   NONE: {
     key: "NONE",
     displayName: "添付データ不要",

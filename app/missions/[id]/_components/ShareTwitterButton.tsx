@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   message: string;
   missionId: string;
   className?: string;
@@ -17,15 +15,24 @@ export function ShareTwitterButton({
   className,
   url,
 }: Props) {
-  // SNSシェア用のハンドラ関数
   const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
   const handleShare = () => {
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");
   };
+
   return (
-    <Button variant="outline" onClick={handleShare} className={className}>
-      {children}
-    </Button>
+    <button
+      type="button"
+      onClick={handleShare}
+      className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
+      aria-label="Xでシェア"
+    >
+      <img
+        src="/img/icon-X2x.png"
+        alt="X"
+        className="w-full h-full object-contain"
+      />
+    </button>
   );
 }

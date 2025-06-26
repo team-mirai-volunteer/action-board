@@ -1,10 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Share } from "lucide-react";
-
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   message: string;
   missionId: string;
   className?: string;
@@ -29,15 +26,25 @@ export function ShareButton({
         });
       } catch (error) {
         // シェアがキャンセルされた場合やエラー時は何もしない
+        console.log("Share was cancelled or failed:", error);
       }
     } else {
       alert("このブラウザはWebシェアAPIに対応していません。");
     }
   };
+
   return (
-    <Button variant="outline" onClick={handleShare} className={className}>
-      <Share className="w-4 h-4" />
-      {children}
-    </Button>
+    <button
+      type="button"
+      onClick={handleShare}
+      className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity md:hidden"
+      aria-label="その他のサービスでシェア"
+    >
+      <img
+        src="/img/icon-Shere2x.png"
+        alt="シェア"
+        className="w-full h-full object-contain"
+      />
+    </button>
   );
 }

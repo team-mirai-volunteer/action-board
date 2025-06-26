@@ -1,5 +1,6 @@
 "use client";
 
+import { MainLinkButton } from "@/app/missions/[id]/_components/MainLinkButton";
 import { YouTubeSubscribeButton } from "@/app/missions/[id]/_components/YouTubeSubscribeButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,9 +12,15 @@ import type { Tables } from "@/lib/types/supabase";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;
+  mainLink?: Tables<"mission_main_links"> | null;
+  onMainLinkClick?: () => Promise<{ success: boolean; error?: string }>;
 };
 
-export function MissionDetails({ mission }: MissionDetailsProps) {
+export function MissionDetails({
+  mission,
+  mainLink,
+  onMainLinkClick,
+}: MissionDetailsProps) {
   return (
     <Card>
       <CardHeader>
