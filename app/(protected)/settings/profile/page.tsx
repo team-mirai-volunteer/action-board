@@ -30,6 +30,12 @@ export default async function ProfileSettingsPage({
     .eq("id", user.id)
     .single();
 
+  const { data: publicUser } = await supabase
+    .from("public_user_profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
   // 新規ユーザーかどうか判定
   const isNew = Boolean(params?.new);
 
@@ -44,6 +50,7 @@ export default async function ProfileSettingsPage({
           date_of_birth:
             privateUser?.date_of_birth ?? user.user_metadata.date_of_birth,
           x_username: privateUser?.x_username || null,
+          github_username: publicUser?.github_username || null,
           avatar_url: privateUser?.avatar_url || null,
         }}
         initialPrivateUser={privateUser}
