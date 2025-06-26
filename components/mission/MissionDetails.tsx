@@ -13,6 +13,16 @@ type MissionDetailsProps = {
   mission: Tables<"missions">;
 };
 
+declare global {
+  interface Window {
+    twttr?: {
+      widgets: {
+        load: (el?: HTMLElement) => void;
+      };
+    };
+  }
+}
+
 export function MissionDetails({ mission }: MissionDetailsProps) {
   return (
     <Card>
@@ -38,8 +48,17 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
         <div
           className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
           ref={(el) => {
-            if (el && mission.content) {
-              el.innerHTML = mission.content;
+            if (!el || !mission.content) return;
+            el.innerHTML = mission.content;
+
+            if (window.twttr?.widgets) {
+              window.twttr.widgets.load(el);
+            } else {
+              const script = document.createElement("script");
+              script.src = "https://platform.twitter.com/widgets.js";
+              script.async = true;
+              script.onload = () => window.twttr?.widgets?.load(el);
+              document.body.appendChild(script);
             }
           }}
         />
