@@ -101,7 +101,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           />
         </DialogHeader>
 
-        <section className="py-8">
+        <section className="py-4">
           <header className="text-center mb-4">
             <p className="text-sm font-medium">シェアして応援の輪を広げよう</p>
           </header>
