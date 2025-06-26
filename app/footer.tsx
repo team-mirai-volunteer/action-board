@@ -3,6 +3,7 @@
 import {
   CopyrightSection,
   FeedbackSection,
+  LogoSection,
   OfficialSNSSection,
   SocialShareSection,
   UsefulLinksSection,
@@ -35,6 +36,8 @@ export default function Footer() {
       <FeedbackSection />
 
       <OfficialSNSSection />
+
+      <LogoSection />
 
       <UsefulLinksSection
         user={user}

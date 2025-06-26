@@ -38,16 +38,6 @@ export function OfficialSNSSection() {
             </Link>
           ))}
         </div>
-
-        <div className="text-center mt-8">
-          <Image
-            src="/img/logo.png"
-            alt="チームみらい"
-            width={FOOTER_IMAGE_SIZES.logo.width}
-            height={FOOTER_IMAGE_SIZES.logo.height}
-            className="mx-auto mb-4"
-          />
-        </div>
       </div>
     </div>
   );
