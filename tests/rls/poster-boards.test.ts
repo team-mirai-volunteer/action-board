@@ -41,7 +41,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
   });
 
   describe("SELECT操作", () => {
-    it("匿名ユーザーでもボードを閲覧できる", async () => {
+    it("匿名ユーザーはボードを閲覧できない", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_boards")
@@ -49,11 +49,10 @@ describe("poster_boards テーブルのRLSテスト", () => {
         .eq("id", testBoardId);
 
       expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      expect(data![0].id).toBe(testBoardId);
+      expect(data).toEqual([]);
     });
 
-    it("認証済みユーザーもボードを閲覧できる", async () => {
+    it("認証済みユーザーはボードを閲覧できる", async () => {
       const { data, error } = await testUser.client
         .from("poster_boards")
         .select("*")
@@ -84,23 +83,26 @@ describe("poster_boards テーブルのRLSテスト", () => {
       expect(data?.status).toBe("posted");
     });
 
-    it("匿名ユーザーもボードを更新できる", async () => {
+    it("匿名ユーザーはボードを更新できない", async () => {
       const anonClient = getAnonClient();
-      const { error } = await anonClient
+      const { data, error } = await anonClient
         .from("poster_boards")
         .update({ status: "posted" })
-        .eq("id", testBoardId);
+        .eq("id", testBoardId)
+        .select();
 
+      // RLS should block the update and return empty data
       expect(error).toBeNull();
+      expect(data).toEqual([]);
       
-      // Verify the update
-      const { data } = await adminClient
+      // Verify the update did not happen
+      const { data: verifyData } = await adminClient
         .from("poster_boards")
         .select("status")
         .eq("id", testBoardId)
         .single();
 
-      expect(data?.status).toBe("posted");
+      expect(verifyData?.status).toBe("not_yet");
     });
   });
 
@@ -195,7 +197,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
   });
 
   describe("SELECT操作", () => {
-    it("匿名ユーザーでも履歴を閲覧できる", async () => {
+    it("匿名ユーザーは履歴を閲覧できない", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_board_status_history")
@@ -203,10 +205,10 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         .eq("board_id", testBoardId);
 
       expect(error).toBeNull();
-      expect(data).toHaveLength(1);
+      expect(data).toEqual([]);
     });
 
-    it("認証済みユーザーも履歴を閲覧できる", async () => {
+    it("認証済みユーザーは履歴を閲覧できる", async () => {
       const { data, error } = await testUser1.client
         .from("poster_board_status_history")
         .select("*")
@@ -257,9 +259,9 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
       expect(error).not.toBeNull();
     });
 
-    it("匿名ユーザーも履歴を作成できる（user_idはnull）", async () => {
+    it("匿名ユーザーは履歴を作成できない", async () => {
       const anonClient = getAnonClient();
-      const { data, error } = await anonClient
+      const { error } = await anonClient
         .from("poster_board_status_history")
         .insert({
           board_id: testBoardId,
@@ -268,20 +270,10 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
           new_status: "checked",
           note: "Anonymous check",
         })
-        .select()
-        .single();
+        .select();
 
-      expect(error).toBeNull();
-      expect(data).not.toBeNull();
-      expect(data!.user_id).toBeNull();
-
-      // Cleanup
-      if (data) {
-        await adminClient
-          .from("poster_board_status_history")
-          .delete()
-          .eq("id", data.id);
-      }
+      expect(error).not.toBeNull();
+      expect(error?.code).toBe("42501"); // insufficient_privilege
     });
   });
 });

@@ -37,33 +37,30 @@ ALTER TABLE poster_boards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE poster_board_status_history ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for poster_boards
--- Everyone can view boards
+-- Only authenticated users can view boards
 CREATE POLICY "poster_boards_select_policy" ON poster_boards
   FOR SELECT
-  USING (true);
+  USING (auth.uid() IS NOT NULL);
 
--- Anyone can update status (both anonymous and authenticated users)
+-- Only authenticated users can update status
 CREATE POLICY "poster_boards_update_policy" ON poster_boards
   FOR UPDATE
-  USING (true)
-  WITH CHECK (true);
+  USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Only service role can insert and delete boards
 -- (No INSERT or DELETE policies means only admin can do these operations)
 
 -- RLS Policies for poster_board_status_history
--- Everyone can view history
+-- Only authenticated users can view history
 CREATE POLICY "poster_board_status_history_select_policy" ON poster_board_status_history
   FOR SELECT
-  USING (true);
+  USING (auth.uid() IS NOT NULL);
 
--- Allow both anonymous and authenticated users to insert history records
+-- Only authenticated users can insert history records
 CREATE POLICY "poster_board_status_history_insert_policy" ON poster_board_status_history
   FOR INSERT
-  WITH CHECK (
-    (auth.uid() IS NULL AND user_id IS NULL) OR 
-    (auth.uid() = user_id)
-  );
+  WITH CHECK (auth.uid() = user_id);
 
 -- Function to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

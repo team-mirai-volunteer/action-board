@@ -23,11 +23,12 @@ import {
   getPosterBoards,
   updateBoardStatus,
 } from "@/lib/services/poster-boards";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -55,10 +56,12 @@ const statusConfig: Record<BoardStatus, { label: string; color: string }> = {
 
 export default function PrefecturePosterMapPage() {
   const params = useParams();
+  const router = useRouter();
   const prefecture = decodeURIComponent(params.prefecture as string);
 
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);
   const [newStatus, setNewStatus] = useState<BoardStatus>("not_yet");
   const [statusNote, setStatusNote] = useState("");
@@ -66,8 +69,25 @@ export default function PrefecturePosterMapPage() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: prefecture is used in loadBoards
   useEffect(() => {
-    loadBoards();
+    checkAuthAndLoadBoards();
   }, [prefecture]);
+
+  const checkAuthAndLoadBoards = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      // Redirect to sign in if not authenticated
+      toast.error("ポスター掲示板を表示するにはログインが必要です");
+      router.push("/sign-in");
+      return;
+    }
+
+    setIsAuthenticated(true);
+    await loadBoards();
+  };
 
   const loadBoards = async () => {
     try {
@@ -109,7 +129,7 @@ export default function PrefecturePosterMapPage() {
     }
   };
 
-  if (loading) {
+  if (loading || !isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center h-96">
