@@ -11,11 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import type { Tables } from "@/lib/types/supabase";
 import { X } from "lucide-react";
-import { ShareButton } from "./ShareButton";
-import { ShareFacebookButton } from "./ShareFacebookButton";
-import { ShareLineButton } from "./ShareLineButton";
-import { ShareTwitterButton } from "./ShareTwitterButton";
-import { ShareUrlButton } from "./ShareUrlButton";
+import { toast } from "sonner";
 
 type Props = {
   isOpen: boolean;
@@ -33,7 +29,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
       ? `${window.location.origin}/missions/${mission.id}?type=complete`
       : "";
 
-  const handleShareClick = (platform: string) => {
+  const handleShareClick = async (platform: string) => {
     switch (platform) {
       case "x":
         window.open(
@@ -57,7 +53,19 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
         }
         break;
       case "copy":
-        navigator.clipboard.writeText(shareUrl);
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          toast.success("URLをコピーしました！");
+        } catch (error) {
+          // フォールバック: 古いブラウザ対応
+          const textArea = document.createElement("textarea");
+          textArea.value = shareUrl;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+          toast.success("URLをコピーしました！");
+        }
         break;
     }
   };
