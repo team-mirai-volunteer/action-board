@@ -260,6 +260,7 @@ export type Database = {
           created_at: string;
           del_flg: boolean;
           id: string;
+          slug: string;
           sort_no: number;
           updated_at: string;
         };
@@ -269,6 +270,7 @@ export type Database = {
           created_at?: string;
           del_flg?: boolean;
           id: string;
+          slug: string;
           sort_no?: number;
           updated_at?: string;
         };
@@ -278,6 +280,7 @@ export type Database = {
           created_at?: string;
           del_flg?: boolean;
           id?: string;
+          slug?: string;
           sort_no?: number;
           updated_at?: string;
         };
@@ -409,6 +412,7 @@ export type Database = {
           max_achievement_count: number | null;
           ogp_image_url: string | null;
           required_artifact_type: string;
+          slug: string;
           title: string;
           updated_at: string;
         };
@@ -425,6 +429,7 @@ export type Database = {
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
+          slug: string;
           title: string;
           updated_at?: string;
         };
@@ -441,6 +446,7 @@ export type Database = {
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
+          slug?: string;
           title?: string;
           updated_at?: string;
         };
@@ -591,6 +597,7 @@ export type Database = {
           id: string;
           is_active: boolean;
           name: string;
+          slug: string;
           updated_at: string;
         };
         Insert: {
@@ -600,6 +607,7 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name: string;
+          slug: string;
           updated_at?: string;
         };
         Update: {
@@ -609,6 +617,7 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name?: string;
+          slug?: string;
           updated_at?: string;
         };
         Relationships: [];

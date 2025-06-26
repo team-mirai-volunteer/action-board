@@ -96,6 +96,8 @@
    ```
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 
+   # `supabase start` 実行時に表示される値を指定します。
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
    # SentryのDSNを指定します。開発時は空でもかまいません。
@@ -184,6 +186,28 @@ migrationファイルの追加や編集で、テーブルの追加や更新を�
 ```
 npx supabase gen types typescript --local > lib/types/supabase.ts
 ```
+
+## 単体テスト
+
+このプロジェクトでは、Jestを使用した単体テストを実装しています。テストは各資材と同じディレクトリに配置されています。
+
+### テストの実行方法
+
+1. 以下のコマンドですべてのテストを実行できます:
+
+   ```bash
+   npm run test:unit
+   ```
+
+### テストレポートの確認
+
+テスト実行後、`coverage/`ディレクトリにレポートが出力されます。（標準出力でも確認できます。）\
+カバレッジ（コード網羅性）が80%を超えることを基準に、テストを作成してください。
+
+### テストの追加方法
+
+新しいテストを追加する場合は、`機能名.test.(ts|tsx)`の命名規則に従ってください。
+
 
 ## E2Eテスト
 
@@ -437,12 +461,9 @@ HUBSPOT_CONTACT_LIST_ID=123456
 #### 管理ページ
 - カテゴリ管理 Notion: https://team-mirai.notion.site/203f6f56bae181598a0cfbcd03853b69?v=203f6f56bae18185b448000ca7dcf05f
 
-#### 手順例
-1. 新しいミッションを作成  
-2. `missions` テーブルに INSERT  
-3. PM と紐づけるカテゴリーを確認  
-4. missiosとmission_category_link テーブルに INSERT  
-　mission_category_linkへの登録例：action-board/supabase/migrations/20250623115600_update_mission_category.sql
+#### 手順
+ミッションデータの詳細については[mission_data/README.md を参照してください](./mission_data/README.md)
+
 
 ---
 

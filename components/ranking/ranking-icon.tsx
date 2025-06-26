@@ -1,6 +1,6 @@
 import { Crown, Medal, Trophy } from "lucide-react";
 
-function getRankIcon(rank: number) {
+export function getRankIcon(rank: number) {
   switch (rank) {
     case 1:
       return <Crown className="w-6 h-6 text-yellow-500" />;

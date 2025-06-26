@@ -42,9 +42,14 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           <DialogDescription className="text-center">
             {message}
           </DialogDescription>
-          {mission.ogp_image_url && (
-            <img src={mission.ogp_image_url} alt="ミッションクリア" />
-          )}
+          <img
+            src={
+              mission.ogp_image_url
+                ? mission.ogp_image_url
+                : `/api/missions/${mission.id}/og?type=complete`
+            }
+            alt="ミッションクリア"
+          />
         </DialogHeader>
 
         <div className="flex flex-col gap-3 py-4">
@@ -69,7 +74,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             missionId={mission.id}
             url={shareUrl}
           >
-            Lineでシェア
+            LINEでシェア
           </ShareLineButton>
           {/* navigator.share()を使っているのでモバイルのみ表示 */}
           <ShareButton

@@ -100,26 +100,29 @@ export default async function MissionsByCategory({
       // mission_idがnullの場合の処理
       if (!a.mission_id || !b.mission_id) return 0;
 
-      // クリア済みミッションを後ろに
-      if (
-        achievedMissionIds.includes(a.mission_id) &&
-        !achievedMissionIds.includes(b.mission_id)
-      ) {
+      // 上限まで達成済みのミッションを後ろに移動
+      const aAchievementCount = userAchievementCountMap.get(a.mission_id) ?? 0;
+      const bAchievementCount = userAchievementCountMap.get(b.mission_id) ?? 0;
+
+      const aIsMaxAchieved =
+        a.max_achievement_count && aAchievementCount >= a.max_achievement_count;
+      const bIsMaxAchieved =
+        b.max_achievement_count && bAchievementCount >= b.max_achievement_count;
+
+      if (aIsMaxAchieved && !bIsMaxAchieved) {
         return 1; // a を後ろに
       }
-      if (
-        !achievedMissionIds.includes(a.mission_id) &&
-        achievedMissionIds.includes(b.mission_id)
-      ) {
+      if (!aIsMaxAchieved && bIsMaxAchieved) {
         return -1; // b を後ろに
       }
+
       // それ以外はリンクのソート順で比較
       return (a.link_sort_no ?? 0) - (b.link_sort_no ?? 0);
     });
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="">
       <div className="flex flex-col">
         {/* タイトル */}
         <div className="text-center py-8">
@@ -136,6 +139,7 @@ export default async function MissionsByCategory({
               className="
                 relative               /* オーバーレイ配置のため */
                 w-screen
+                md:pl-10
                 py-5
               "
             >
@@ -146,7 +150,7 @@ export default async function MissionsByCategory({
 
               {/* 横スクロール領域 */}
               <div
-                className="w-full overflow-x-auto custom-scrollbar cursor-grab"
+                className="w-full overflow-x-auto custom-scrollbar"
                 style={{ scrollbarWidth: "none" }}
               >
                 <div className="flex w-fit gap-4 px-4 pb-2">
@@ -162,7 +166,7 @@ export default async function MissionsByCategory({
                       // mission_idが存在することが保証されているので、安全にアクセス
                       const missionId = m.mission_id as string;
 
-                      const missionForComponent: Tables<"missions"> = {
+                      const missionForComponent = {
                         id: missionId,
                         title: m.title || "",
                         icon_url: m.icon_url,

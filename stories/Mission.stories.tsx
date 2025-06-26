@@ -16,6 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 const dummyMission: Tables<"missions"> = {
   id: "mission-1",
+  slug: "mission-1",
   title:
     "ミッションタイトルです。ミッションタイトルです。ミッションタイトルです。",
   content: "これはサンプルのミッション内容です。",

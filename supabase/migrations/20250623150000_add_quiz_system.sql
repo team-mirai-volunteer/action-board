@@ -107,7 +107,7 @@ DROP CONSTRAINT IF EXISTS check_artifact_type;
 
 ALTER TABLE mission_artifacts 
 ADD CONSTRAINT check_artifact_type 
-CHECK (artifact_type IN ('LINK', 'TEXT', 'IMAGE', 'IMAGE_WITH_GEOLOCATION', 'REFERRAL', 'POSTING', 'QUIZ'));
+CHECK (artifact_type IN ('LINK', 'TEXT', 'EMAIL', 'IMAGE', 'IMAGE_WITH_GEOLOCATION', 'REFERRAL', 'POSTING', 'QUIZ'));
 
 -- ensure_artifact_data制約にQUIZタイプを追加
 ALTER TABLE mission_artifacts
@@ -124,6 +124,12 @@ ADD CONSTRAINT ensure_artifact_data CHECK (
     )
     OR (
       (artifact_type = 'TEXT'::text)
+      AND (text_content IS NOT NULL)
+      AND (link_url IS NULL)
+      AND (image_storage_path IS NULL)
+    )
+    OR (
+      (artifact_type = 'EMAIL'::text)
       AND (text_content IS NOT NULL)
       AND (link_url IS NULL)
       AND (image_storage_path IS NULL)
