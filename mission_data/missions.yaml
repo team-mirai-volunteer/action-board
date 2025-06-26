@@ -282,7 +282,7 @@ missions:
   - slug: chat-idobata-ai
     title: いどばた政策サイトでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいでは、みんなで政治をもっと身近に、もっとおもしろくする取り組みを進めています！そのひとつ、「いどばた政策サイト」でAIとチャットしてみましょう！チャットに使った「いどばたのユーザー名」を入力してください。
+    content: チームみらいでは、みんなで政治をもっと身近に、もっとおもしろくする取り組みを進めています！そのひとつ、<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策サイト</a>でAIとチャットしてみましょう！チャットに使った「いどばたのユーザー名」を入力してください。
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: 1
