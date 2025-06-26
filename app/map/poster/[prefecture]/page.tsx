@@ -6,9 +6,10 @@ import PrefecturePosterMapClient from "./PrefecturePosterMapClient";
 export async function generateMetadata({
   params,
 }: {
-  params: { prefecture: string };
+  params: Promise<{ prefecture: string }>;
 }): Promise<Metadata> {
-  const decodedPrefecture = decodeURIComponent(params.prefecture);
+  const { prefecture } = await params;
+  const decodedPrefecture = decodeURIComponent(prefecture);
   return {
     title: `${decodedPrefecture}のポスター掲示板マップ`,
     description: `${decodedPrefecture}のポスター掲示板の配置状況を確認できます`,
@@ -18,9 +19,10 @@ export async function generateMetadata({
 export default async function PrefecturePosterMapPage({
   params,
 }: {
-  params: { prefecture: string };
+  params: Promise<{ prefecture: string }>;
 }) {
   const supabase = await createClient();
+  const { prefecture } = await params;
 
   const {
     data: { user },
@@ -30,10 +32,5 @@ export default async function PrefecturePosterMapPage({
     return redirect("/sign-in");
   }
 
-  return (
-    <PrefecturePosterMapClient
-      userId={user.id}
-      prefecture={params.prefecture}
-    />
-  );
+  return <PrefecturePosterMapClient userId={user.id} prefecture={prefecture} />;
 }

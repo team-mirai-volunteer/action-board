@@ -190,7 +190,7 @@ export default function PrefecturePosterMapClient({
 
       {/* Map */}
       <div className="overflow-hidden rounded-lg border bg-card">
-        <PosterMap boards={boards} onBoardSelect={handleBoardSelect} />
+        <PosterMap boards={boards} onBoardClick={handleBoardSelect} />
       </div>
 
       {/* Board List */}
