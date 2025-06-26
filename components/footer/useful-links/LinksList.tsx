@@ -1,5 +1,5 @@
 import type { FooterAccordionStyling, FooterLink } from "@/types/footer";
-import { LinkItem } from "./LinkItem";
+import Link from "next/link";
 import { LoadingState } from "./LoadingState";
 
 interface LinksListProps {
@@ -24,7 +24,16 @@ export function LinksList({
   return (
     <div className={styling.containerClassName}>
       {visibleLinks.map((link) => (
-        <LinkItem key={link.url} link={link} styling={styling} />
+        <Link
+          key={link.url}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styling.linkClassName}
+        >
+          <div className={styling.titleClassName}>{link.title}</div>
+          <div className={styling.descriptionClassName}>{link.description}</div>
+        </Link>
       ))}
     </div>
   );
