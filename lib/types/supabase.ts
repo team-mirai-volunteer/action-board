@@ -460,7 +460,7 @@ export type Database = {
           new_status: Database["public"]["Enums"]["board_status"];
           note: string | null;
           previous_status: Database["public"]["Enums"]["board_status"] | null;
-          user_id: string;
+          user_id: string | null;
         };
         Insert: {
           board_id: string;
@@ -469,7 +469,7 @@ export type Database = {
           new_status: Database["public"]["Enums"]["board_status"];
           note?: string | null;
           previous_status?: Database["public"]["Enums"]["board_status"] | null;
-          user_id: string;
+          user_id?: string | null;
         };
         Update: {
           board_id?: string;
@@ -478,7 +478,7 @@ export type Database = {
           new_status?: Database["public"]["Enums"]["board_status"];
           note?: string | null;
           previous_status?: Database["public"]["Enums"]["board_status"] | null;
-          user_id?: string;
+          user_id?: string | null;
         };
         Relationships: [
           {
