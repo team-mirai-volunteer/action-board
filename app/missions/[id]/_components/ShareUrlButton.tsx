@@ -1,13 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = {
   url: string;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export function ShareUrlButton({ url, className, children }: Props) {
@@ -28,9 +26,17 @@ export function ShareUrlButton({ url, className, children }: Props) {
   };
 
   return (
-    <Button onClick={handleCopyUrl} variant="outline" className={className}>
-      <Copy className="mr-2 h-4 w-4" />
-      {children}
-    </Button>
+    <button
+      type="button"
+      onClick={handleCopyUrl}
+      className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
+      aria-label="シェアURLをコピー"
+    >
+      <img
+        src="/img/icon-Copy2x.png"
+        alt="コピー"
+        className="w-full h-full object-contain"
+      />
+    </button>
   );
 }

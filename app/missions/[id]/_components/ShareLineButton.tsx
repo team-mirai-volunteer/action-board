@@ -1,17 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   missionId: string;
   className?: string;
   url?: string;
 };
-
-const isMobile =
-  typeof window !== "undefined" &&
-  /iPhone|Android.+Mobile/.test(navigator.userAgent);
 
 export function ShareLineButton({
   children,
@@ -25,11 +19,19 @@ export function ShareLineButton({
     const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
     window.open(lineIntentUrl, "_blank", "noopener,noreferrer");
   };
+
   return (
-    isMobile && (
-      <Button variant="outline" onClick={handleShare} className={className}>
-        {children}
-      </Button>
-    )
+    <button
+      type="button"
+      onClick={handleShare}
+      className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity md:hidden"
+      aria-label="LINEでシェア"
+    >
+      <img
+        src="/img/icon-line2x.png"
+        alt="LINE"
+        className="w-full h-full object-contain"
+      />
+    </button>
   );
 }
