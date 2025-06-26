@@ -1,7 +1,10 @@
 export const FOOTER_BUTTON_STYLES = {
-  socialShare: "w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors",
-  socialShareCopy: "w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors",
-  officialSns: "w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors",
+  socialShare:
+    "w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors",
+  socialShareCopy:
+    "w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors",
+  officialSns:
+    "w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors",
 } as const;
 
 export const FOOTER_IMAGE_SIZES = {

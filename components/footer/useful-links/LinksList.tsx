@@ -1,4 +1,4 @@
-import type { FooterLink, FooterAccordionStyling } from "@/types/footer";
+import type { FooterAccordionStyling, FooterLink } from "@/types/footer";
 import { LinkItem } from "./LinkItem";
 import { LoadingState } from "./LoadingState";
 
@@ -9,10 +9,13 @@ interface LinksListProps {
   isAuthenticated: boolean;
 }
 
-export function LinksList({ links, styling, loading, isAuthenticated }: LinksListProps) {
-  const visibleLinks = links.filter(
-    (link) => link.public || isAuthenticated,
-  );
+export function LinksList({
+  links,
+  styling,
+  loading,
+  isAuthenticated,
+}: LinksListProps) {
+  const visibleLinks = links.filter((link) => link.public || isAuthenticated);
 
   if (loading) {
     return <LoadingState />;
@@ -21,11 +24,7 @@ export function LinksList({ links, styling, loading, isAuthenticated }: LinksLis
   return (
     <div className={styling.containerClassName}>
       {visibleLinks.map((link) => (
-        <LinkItem
-          key={link.url}
-          link={link}
-          styling={styling}
-        />
+        <LinkItem key={link.url} link={link} styling={styling} />
       ))}
     </div>
   );

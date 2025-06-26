@@ -1,5 +1,5 @@
 import { getReferralUrlAction } from "@/app/actions";
-import { getOrigin, getCurrentUrl } from "@/lib/utils/browser";
+import { getCurrentUrl, getOrigin } from "@/lib/utils/browser";
 import type { User } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 

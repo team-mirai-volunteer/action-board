@@ -15,9 +15,7 @@ export function LinkItem({ link, styling }: LinkItemProps) {
       className={styling.linkClassName}
     >
       <div className={styling.titleClassName}>{link.title}</div>
-      <div className={styling.descriptionClassName}>
-        {link.description}
-      </div>
+      <div className={styling.descriptionClassName}>{link.description}</div>
     </Link>
   );
 }
