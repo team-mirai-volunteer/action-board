@@ -349,6 +349,55 @@ export type Database = {
           },
         ];
       };
+      mission_main_links: {
+        Row: {
+          created_at: string;
+          id: string;
+          label: string;
+          link: string;
+          mission_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          label: string;
+          link: string;
+          mission_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          label?: string;
+          link?: string;
+          mission_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       mission_quiz_links: {
         Row: {
           created_at: string;

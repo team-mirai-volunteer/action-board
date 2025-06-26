@@ -117,6 +117,11 @@ const quizArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
 });
 
+// LINK_ACCESSタイプ用スキーマ
+const linkAccessArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK_ACCESS.key),
+});
+
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
@@ -126,7 +131,8 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   imageWithGeolocationArtifactSchema,
   noneArtifactSchema,
   postingArtifactSchema,
-  quizArtifactSchema, // 追加
+  quizArtifactSchema,
+  linkAccessArtifactSchema, // 追加
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -273,9 +279,11 @@ export const achieveMissionAction = async (formData: FormData) => {
   }
 
   // 成果物がある場合は mission_artifacts に記録
+  // LINK_ACCESSタイプの場合は成果物の保存をスキップ
   if (
     validatedRequiredArtifactType &&
-    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key &&
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.LINK_ACCESS.key
   ) {
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,

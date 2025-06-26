@@ -26,6 +26,7 @@ type Props = {
         category?: string;
       }[]
     | null;
+  mainLink: Tables<"mission_main_links"> | null;
 };
 
 export function MissionWithSubmissionHistory({
@@ -36,6 +37,7 @@ export function MissionWithSubmissionHistory({
   initialSubmissions,
   missionId,
   preloadedQuizQuestions,
+  mainLink,
 }: Props) {
   const [submissions, setSubmissions] =
     useState<SubmissionData[]>(initialSubmissions);
@@ -192,6 +194,7 @@ export function MissionWithSubmissionHistory({
           userAchievementCount={userAchievementCount}
           onSubmissionSuccess={refreshSubmissions}
           preloadedQuizQuestions={preloadedQuizQuestions}
+          mainLink={mainLink}
         />
       )}
 
