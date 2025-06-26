@@ -452,6 +452,77 @@ export type Database = {
         };
         Relationships: [];
       };
+      poster_board_status_history: {
+        Row: {
+          board_id: string;
+          created_at: string;
+          id: string;
+          new_status: Database["public"]["Enums"]["board_status"];
+          note: string | null;
+          previous_status: Database["public"]["Enums"]["board_status"] | null;
+          user_id: string;
+        };
+        Insert: {
+          board_id: string;
+          created_at?: string;
+          id?: string;
+          new_status: Database["public"]["Enums"]["board_status"];
+          note?: string | null;
+          previous_status?: Database["public"]["Enums"]["board_status"] | null;
+          user_id: string;
+        };
+        Update: {
+          board_id?: string;
+          created_at?: string;
+          id?: string;
+          new_status?: Database["public"]["Enums"]["board_status"];
+          note?: string | null;
+          previous_status?: Database["public"]["Enums"]["board_status"] | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "poster_board_status_history_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      poster_boards: {
+        Row: {
+          created_at: string;
+          id: string;
+          lat: number;
+          lon: number;
+          name: string;
+          prefecture: string | null;
+          status: Database["public"]["Enums"]["board_status"];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          lat: number;
+          lon: number;
+          name: string;
+          prefecture?: string | null;
+          status?: Database["public"]["Enums"]["board_status"];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          lat?: number;
+          lon?: number;
+          name?: string;
+          prefecture?: string | null;
+          status?: Database["public"]["Enums"]["board_status"];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       posting_activities: {
         Row: {
           created_at: string;
@@ -1070,7 +1141,13 @@ export type Database = {
       };
     };
     Enums: {
-      [_ in never]: never;
+      board_status:
+        | "not_yet"
+        | "posted"
+        | "checked"
+        | "damaged"
+        | "error"
+        | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1188,6 +1265,15 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      board_status: [
+        "not_yet",
+        "posted",
+        "checked",
+        "damaged",
+        "error",
+        "other",
+      ],
+    },
   },
 } as const;
