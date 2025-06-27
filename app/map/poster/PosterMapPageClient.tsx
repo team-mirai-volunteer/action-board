@@ -296,23 +296,6 @@ export default function PosterMapPageClient() {
         </div>
       </div>
 
-      {/* Status Legend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">ステータス凡例</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {Object.entries(statusConfig).map(([status, config]) => (
-              <div key={status} className="flex items-center gap-2">
-                <div className={`h-3 w-3 rounded-full ${config.color}`} />
-                <span className="text-sm">{config.label}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Action Button */}
       <div className="flex justify-center pt-4">
         <Button size="lg" asChild>
