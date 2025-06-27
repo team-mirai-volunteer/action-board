@@ -59,17 +59,21 @@ export async function updateBoardStatus(
     throw updateError;
   }
 
-  // Get current user (may be null for anonymous users)
+  // Get current user - required for history tracking
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User must be authenticated to update board status");
+  }
 
   // Insert history record
   const { error: historyError } = await supabase
     .from("poster_board_status_history")
     .insert({
       board_id: boardId,
-      user_id: user?.id || null,
+      user_id: user.id,
       previous_status: currentBoard.status,
       new_status: newStatus,
       note: note || null,
