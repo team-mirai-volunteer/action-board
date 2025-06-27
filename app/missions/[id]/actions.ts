@@ -148,7 +148,7 @@ const cancelSubmissionFormSchema = z.object({
  * YouTube URL重複チェック関数
  */
 async function checkYouTubeDuplicate(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
   missionId: string,
   url: string,
