@@ -54,7 +54,7 @@ const statusConfig: Record<BoardStatus, { label: string; color: string }> = {
 };
 
 // Map prefecture enum values to Japanese names
-const prefectureNameMap: Record<string, string> = {
+const prefectureNameMap: Record<PrefectureEnum, string> = {
   hokkaido: "北海道",
   miyagi: "宮城県",
   saitama: "埼玉県",
@@ -69,9 +69,11 @@ const prefectureNameMap: Record<string, string> = {
   fukuoka: "福岡県",
 };
 
+type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
+
 interface PrefecturePosterMapClientProps {
   userId: string;
-  prefecture: string;
+  prefecture: PrefectureEnum;
 }
 
 export default function PrefecturePosterMapClient({

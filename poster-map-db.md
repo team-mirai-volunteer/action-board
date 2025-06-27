@@ -24,14 +24,5 @@ which represent billing boards. people will put posters on this billing board fo
     - other: other
 
 ### what's left
-- remove "description" cause it's weird
-// app/map/poster/PosterMapPageClient.tsx
-// Prefecture data with coordinates for centering map
-const prefectureData = [
-  {
-    id: "hokkaido",
-    name: "北海道",
-    nameEn: "Hokkaido",
-    center: [43.0642, 141.3469] as [number, number],
-    description: "日本最北の地",
-  },
+- add a e2e test where you go to the page, change the status of a pin from not-yet to reserved
+- revist the page and check that the status is changed to reserved
