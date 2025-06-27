@@ -1,28 +1,35 @@
 // TOPページ用のランキングコンポーネント
 import { getPrefecturesRanking } from "@/lib/services/prefecturesRanking";
 import BaseRanking from "./base-ranking";
+import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
 interface RankingPrefectureProps {
   limit?: number;
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   prefecture?: string;
+  period?: RankingPeriod;
 }
 
 export default async function RankingPrefecture({
   prefecture,
   limit = 10,
   showDetailedInfo = false,
+  period = "all",
 }: RankingPrefectureProps) {
   if (!prefecture) {
     return null;
   }
 
-  const rankings = await getPrefecturesRanking(prefecture, limit);
+  const rankings = await getPrefecturesRanking(prefecture, limit, period);
+
+  const periodLabel =
+    period === "weekly" ? "週間" : period === "daily" ? "日間" : "";
+  const title = `🏅${prefecture}${periodLabel}トップ${limit}`;
 
   return (
     <BaseRanking
-      title={`🏅${prefecture}トップ${limit}`}
+      title={title}
       detailsHref={`/ranking/ranking-prefecture?prefecture=${prefecture}`}
       showDetailedInfo={showDetailedInfo}
     >

@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
 
@@ -11,17 +12,39 @@ export interface UserMissionRanking extends UserRanking {
 export async function getMissionRanking(
   missionId: string,
   limit = 10,
+  period: RankingPeriod = "all",
 ): Promise<UserMissionRanking[]> {
   try {
     const supabase = await createClient();
 
+    // 期間に応じた日付フィルタを設定
+    let dateFilter: Date | null = null;
+    const now = new Date();
+
+    switch (period) {
+      case "daily":
+        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
+        break;
+      case "weekly":
+        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        break;
+      default:
+        dateFilter = null;
+    }
+
     // データベース関数を使用してランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      "get_mission_ranking",
-      {
-        mission_id: missionId,
-        limit_count: limit,
-      },
+      period === "all" ? "get_mission_ranking" : "get_period_mission_ranking",
+      period === "all"
+        ? {
+            mission_id: missionId,
+            limit_count: limit,
+          }
+        : {
+            p_mission_id: missionId,
+            p_limit: limit,
+            p_start_date: dateFilter?.toISOString(),
+          },
     );
 
     if (rankingsError) {
@@ -36,17 +59,34 @@ export async function getMissionRanking(
     }
 
     // ランキングデータを変換
+    if (period === "all") {
+      return rankings.map(
+        (ranking: Record<string, unknown>) =>
+          ({
+            user_id: ranking.user_id,
+            name: ranking.user_name,
+            address_prefecture: ranking.address_prefecture,
+            rank: ranking.rank,
+            level: ranking.level,
+            xp: ranking.xp,
+            updated_at: ranking.updated_at,
+            user_achievement_count: ranking.clear_count,
+            total_points: ranking.total_points,
+          }) as UserMissionRanking,
+      );
+    }
+    // 期間別の場合
     return rankings.map(
-      (ranking) =>
+      (ranking: Record<string, unknown>) =>
         ({
           user_id: ranking.user_id,
-          name: ranking.user_name,
+          name: ranking.name,
           address_prefecture: ranking.address_prefecture,
           rank: ranking.rank,
-          level: ranking.level,
-          xp: ranking.xp,
-          updated_at: ranking.updated_at,
-          user_achievement_count: ranking.clear_count,
+          level: null, // 期間別では取得しない
+          xp: null, // 期間別では取得しない
+          updated_at: null,
+          user_achievement_count: ranking.user_achievement_count,
           total_points: ranking.total_points,
         }) as UserMissionRanking,
     );
@@ -59,17 +99,42 @@ export async function getMissionRanking(
 export async function getUserMissionRanking(
   missionId: string,
   userId: string,
+  period: RankingPeriod = "all",
 ): Promise<UserMissionRanking | null> {
   try {
     const supabase = await createClient();
 
+    // 期間に応じた日付フィルタを設定
+    let dateFilter: Date | null = null;
+    const now = new Date();
+
+    switch (period) {
+      case "daily":
+        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
+        break;
+      case "weekly":
+        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        break;
+      default:
+        dateFilter = null;
+    }
+
     // データベース関数を使用して特定ユーザーのランキングを取得
-    const { data: rankings, error: rankingsError } = await supabase
-      .rpc("get_user_mission_ranking", {
-        mission_id: missionId,
-        user_id: userId,
-      })
-      .limit(1);
+    const { data: rankings, error: rankingsError } = await supabase.rpc(
+      period === "all"
+        ? "get_user_mission_ranking"
+        : "get_user_period_mission_ranking",
+      period === "all"
+        ? {
+            mission_id: missionId,
+            user_id: userId,
+          }
+        : {
+            p_mission_id: missionId,
+            p_user_id: userId,
+            p_start_date: dateFilter?.toISOString(),
+          },
+    );
 
     if (rankingsError) {
       console.error("Failed to fetch user mission ranking:", rankingsError);
@@ -78,20 +143,34 @@ export async function getUserMissionRanking(
       );
     }
 
-    if (!rankings || rankings.length === 0) {
+    if (!rankings || !Array.isArray(rankings) || rankings.length === 0) {
       return null;
     }
 
-    const ranking = rankings[0];
+    const ranking = rankings[0] as Record<string, unknown>;
+    if (period === "all") {
+      return {
+        user_id: ranking.user_id,
+        name: ranking.user_name,
+        address_prefecture: ranking.address_prefecture,
+        rank: ranking.rank,
+        level: ranking.level,
+        xp: ranking.xp,
+        updated_at: ranking.updated_at,
+        user_achievement_count: ranking.clear_count,
+        total_points: ranking.total_points,
+      } as UserMissionRanking;
+    }
+    // 期間別の場合
     return {
       user_id: ranking.user_id,
-      name: ranking.user_name,
+      name: ranking.name,
       address_prefecture: ranking.address_prefecture,
       rank: ranking.rank,
-      level: ranking.level,
-      xp: ranking.xp,
-      updated_at: ranking.updated_at,
-      user_achievement_count: ranking.clear_count,
+      level: null,
+      xp: null,
+      updated_at: null,
+      user_achievement_count: ranking.user_achievement_count,
       total_points: ranking.total_points,
     } as UserMissionRanking;
   } catch (error) {

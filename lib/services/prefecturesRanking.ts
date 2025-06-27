@@ -1,22 +1,47 @@
 import "server-only";
 
+import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
 
 export async function getPrefecturesRanking(
   prefecture: string,
   limit = 10,
+  period: RankingPeriod = "all",
 ): Promise<UserRanking[]> {
   try {
     const supabase = await createClient();
 
+    // 期間に応じた日付フィルタを設定
+    let dateFilter: Date | null = null;
+    const now = new Date();
+
+    switch (period) {
+      case "daily":
+        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
+        break;
+      case "weekly":
+        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        break;
+      default:
+        dateFilter = null;
+    }
+
     // データベース関数を使用して都道府県別ランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      "get_prefecture_ranking",
-      {
-        prefecture: prefecture,
-        limit_count: limit,
-      },
+      period === "all"
+        ? "get_prefecture_ranking"
+        : "get_period_prefecture_ranking",
+      period === "all"
+        ? {
+            prefecture: prefecture,
+            limit_count: limit,
+          }
+        : {
+            p_prefecture: prefecture,
+            p_limit: limit,
+            p_start_date: dateFilter?.toISOString(),
+          },
     );
 
     if (rankingsError) {
@@ -31,16 +56,31 @@ export async function getPrefecturesRanking(
     }
 
     // ランキングデータを変換
+    if (period === "all") {
+      return rankings.map(
+        (ranking: Record<string, unknown>) =>
+          ({
+            user_id: ranking.user_id,
+            name: ranking.user_name,
+            address_prefecture: ranking.address_prefecture,
+            rank: ranking.rank,
+            level: ranking.level,
+            xp: ranking.xp,
+            updated_at: ranking.updated_at,
+          }) as UserRanking,
+      );
+    }
+    // 期間別の場合
     return rankings.map(
-      (ranking) =>
+      (ranking: Record<string, unknown>) =>
         ({
           user_id: ranking.user_id,
-          name: ranking.user_name,
-          address_prefecture: ranking.address_prefecture,
+          name: ranking.name,
+          address_prefecture: prefecture, // 都道府県は取得されないので引数を使用
           rank: ranking.rank,
-          level: ranking.level,
+          level: null, // 期間別では取得しない
           xp: ranking.xp,
-          updated_at: ranking.updated_at,
+          updated_at: null,
         }) as UserRanking,
     );
   } catch (error) {
@@ -52,17 +92,41 @@ export async function getPrefecturesRanking(
 export async function getUserPrefecturesRanking(
   prefecture: string,
   userId: string,
+  period: RankingPeriod = "all",
 ): Promise<UserRanking | null> {
   try {
     const supabase = await createClient();
 
+    // 期間に応じた日付フィルタを設定
+    let dateFilter: Date | null = null;
+    const now = new Date();
+
+    switch (period) {
+      case "daily":
+        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
+        break;
+      case "weekly":
+        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        break;
+      default:
+        dateFilter = null;
+    }
+
     // データベース関数を使用して特定ユーザーのランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      "get_user_prefecture_ranking",
-      {
-        prefecture: prefecture,
-        target_user_id: userId,
-      },
+      period === "all"
+        ? "get_user_prefecture_ranking"
+        : "get_user_period_prefecture_ranking",
+      period === "all"
+        ? {
+            prefecture: prefecture,
+            target_user_id: userId,
+          }
+        : {
+            p_prefecture: prefecture,
+            p_user_id: userId,
+            p_start_date: dateFilter?.toISOString(),
+          },
     );
 
     if (rankingsError) {
@@ -76,15 +140,27 @@ export async function getUserPrefecturesRanking(
       return null;
     }
 
-    const ranking = rankings[0];
+    const ranking = rankings[0] as Record<string, unknown>;
+    if (period === "all") {
+      return {
+        user_id: ranking.user_id,
+        name: ranking.user_name,
+        address_prefecture: ranking.address_prefecture,
+        rank: ranking.rank,
+        level: ranking.level,
+        xp: ranking.xp,
+        updated_at: ranking.updated_at,
+      } as UserRanking;
+    }
+    // 期間別の場合
     return {
       user_id: ranking.user_id,
-      name: ranking.user_name,
-      address_prefecture: ranking.address_prefecture,
+      name: ranking.name,
+      address_prefecture: prefecture,
       rank: ranking.rank,
-      level: ranking.level,
+      level: null,
       xp: ranking.xp,
-      updated_at: ranking.updated_at,
+      updated_at: null,
     } as UserRanking;
   } catch (error) {
     console.error("User prefecture ranking service error:", error);
