@@ -162,6 +162,12 @@ jest.mock("@/lib/supabase/server", () => ({
         upsert: jest.fn(() => createMockSupabaseQuery()),
       };
     }),
+    rpc: jest.fn((functionName) => {
+      if (functionName === "get_total_posting_count") {
+        return Promise.resolve({ data: 30000, error: null });
+      }
+      return Promise.resolve({ data: null, error: null });
+    }),
   })),
 }));
 
@@ -235,6 +241,12 @@ jest.mock("@/lib/supabase/client", () => ({
         })),
       })),
     },
+    rpc: jest.fn((functionName) => {
+      if (functionName === "get_total_posting_count") {
+        return Promise.resolve({ data: 30000, error: null });
+      }
+      return Promise.resolve({ data: null, error: null });
+    }),
   })),
 }));
 
