@@ -34,7 +34,7 @@ CREATE TABLE poster_boards (
 CREATE TABLE poster_board_status_history (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   board_id uuid NOT NULL REFERENCES poster_boards(id) ON DELETE CASCADE,
-  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   previous_status board_status,
   new_status board_status NOT NULL,
   note text,
