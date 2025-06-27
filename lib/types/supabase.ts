@@ -610,28 +610,28 @@ export type Database = {
           address_prefecture: string;
           avatar_url: string | null;
           created_at: string;
+          github_username: string | null;
           id: string;
           name: string;
           x_username: string | null;
-          github_username: string | null;
         };
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
           created_at: string;
+          github_username?: string | null;
           id: string;
           name: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
           avatar_url?: string | null;
           created_at?: string;
+          github_username?: string | null;
           id?: string;
           name?: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Relationships: [];
       };
@@ -1081,6 +1081,10 @@ export type Database = {
           user_id: string;
           posting_count: number;
         }[];
+      };
+      get_total_posting_count: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
       };
       get_user_by_email: {
         Args: { user_email: string };
