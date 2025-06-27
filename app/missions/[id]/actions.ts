@@ -1,7 +1,11 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
+import {
+  getUserXpBonus,
+  grantMissionCompletionXp,
+  grantXp,
+} from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
@@ -616,9 +620,15 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  const bonusXp =
+    missionData.title === "チームみらいの機関誌をポスティングしよう"
+      ? await getUserXpBonus(authUser.id, validatedAchievementId)
+      : 0;
+  const totalXpToRevoke = xpToRevoke + bonusXp;
+
   const xpResult = await grantXp(
     authUser.id,
-    -xpToRevoke, // 負の値でXPを減算
+    -totalXpToRevoke, // 負の値でXPを減算
     "MISSION_CANCELLATION",
     validatedAchievementId,
     `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,
