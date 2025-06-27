@@ -23,13 +23,12 @@ missions:
   - slug: read-manifest
     title: チームみらいのマニフェスト(要約版)をみてみよう！
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2" target="_blank" rel="noopener noreferrer">チームみらいのマニフェスト(要約版)</a>は、スライド形式で手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
+    content: チームみらいのマニフェスト(要約版)は、スライド形式で手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
     difficulty: 2
-    required_artifact_type: NONE
+    required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
     is_featured: false
     is_hidden: false
-    artifact_label: null
     ogp_image_url: null
   - slug: propose-manifest-idobata
     title: いどばた政策サイトからマニフェストを提案しよう
