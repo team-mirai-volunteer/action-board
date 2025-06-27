@@ -671,7 +671,7 @@ export async function handleLineAuthAction(
       if (finalReferralCode && email) {
         await handleReferralCode(finalReferralCode, email);
         // 紹介コード処理完了後、cookieを削除
-        deleteCookie("referral_code");
+        await deleteCookie("referral_code");
       }
     }
 
