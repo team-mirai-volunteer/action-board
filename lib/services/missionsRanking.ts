@@ -139,3 +139,16 @@ export async function getTopUsersPostingCount(
   // dataがnullやundefinedの場合は空配列を返す
   return (data as { user_id: string; posting_count: number }[]) || [];
 }
+
+export async function getTotalPostingCount(): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_total_posting_count");
+
+  if (error) {
+    console.error("Failed to fetch total posting count:", error);
+    return 0;
+  }
+
+  // dataがnullやundefinedの場合は0を返す
+  return typeof data === "number" ? data : 0;
+}

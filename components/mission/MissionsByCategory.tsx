@@ -1,3 +1,4 @@
+import { getTotalPostingCount } from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
@@ -43,6 +44,8 @@ export default async function MissionsByCategory({
   const achievementCountMap = new Map(
     achievementCounts?.map((a) => [a.mission_id, a.achievement_count]) ?? [],
   );
+
+  const totalPostingCount = await getTotalPostingCount();
 
   // View からミッションデータ取得
   const { data, error } = await supabase
@@ -196,6 +199,12 @@ export default async function MissionsByCategory({
                             }
                             userAchievementCount={
                               userAchievementCountMap.get(missionId) ?? 0
+                            }
+                            postingCount={
+                              missionForComponent.required_artifact_type ===
+                              "POSTING"
+                                ? totalPostingCount
+                                : undefined
                             }
                           />
                         </div>

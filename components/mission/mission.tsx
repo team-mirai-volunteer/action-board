@@ -14,6 +14,7 @@ interface MissionProps {
   achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
+  postingCount?: number;
 }
 
 export default function Mission({
@@ -21,6 +22,7 @@ export default function Mission({
   achieved,
   achievementsCount,
   userAchievementCount = 0,
+  postingCount,
 }: MissionProps) {
   // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
   const hasReachedMaxAchievements =
@@ -91,9 +93,12 @@ export default function Mission({
                 hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
               )}
             >
-              {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "みんなで0回達成"}
+              {mission.required_artifact_type === "POSTING" &&
+              postingCount !== undefined
+                ? `みんなで${postingCount.toLocaleString()}枚達成`
+                : achievementsCount !== undefined
+                  ? `みんなで${achievementsCount.toLocaleString()}回達成`
+                  : "みんなで0回達成"}
             </span>
           </div>
           <div className="flex items-center gap-2">
