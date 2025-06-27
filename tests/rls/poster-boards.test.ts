@@ -20,8 +20,9 @@ describe("poster_boards テーブルのRLSテスト", () => {
         name: "Test Board",
         lat: 35.6762,
         lon: 139.6503,
-        prefecture: "東京都",
+        prefecture: "tokyo",
         status: "not_yet",
+        number: "TEST-001",
       })
       .select()
       .single();
@@ -114,7 +115,9 @@ describe("poster_boards テーブルのRLSテスト", () => {
           name: "Unauthorized Board",
           lat: 35.0,
           lon: 139.0,
+          prefecture: "tokyo",
           status: "not_yet",
+          number: "TEST-002",
         });
 
       expect(error).not.toBeNull();
@@ -161,7 +164,9 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         name: "History Test Board",
         lat: 35.6762,
         lon: 139.6503,
+        prefecture: "tokyo",
         status: "not_yet",
+        number: "TEST-003",
       })
       .select()
       .single();
@@ -265,7 +270,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         .from("poster_board_status_history")
         .insert({
           board_id: testBoardId,
-          user_id: null,
+          user_id: "00000000-0000-0000-0000-000000000000", // Dummy UUID since null is not allowed
           previous_status: "posted",
           new_status: "checked",
           note: "Anonymous check",
