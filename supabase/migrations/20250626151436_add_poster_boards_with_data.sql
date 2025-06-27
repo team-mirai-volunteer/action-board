@@ -23,7 +23,7 @@ CREATE TABLE poster_boards (
   name text NOT NULL,
   lat decimal(10, 8) NOT NULL,
   lon decimal(11, 8) NOT NULL,
-  prefecture prefecture_enum,
+  prefecture prefecture_enum NOT NULL,
   status board_status DEFAULT 'not_yet' NOT NULL,
   number integer,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,

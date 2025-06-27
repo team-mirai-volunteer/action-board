@@ -227,9 +227,9 @@ INSERT INTO poster_boards (name, lat, lon, prefecture, status) VALUES
 ('なんば駅前掲示板', 34.6666, 135.5011, 'osaka', 'posted'),
 ('天王寺駅前掲示板', 34.6465, 135.5133, 'osaka', 'damaged'),
 
--- Kyoto boards
-('京都駅前掲示板', 34.9859, 135.7585, null, 'posted'),
-('四条河原町掲示板', 35.0034, 135.7689, null, 'checked'),
+-- Kyoto boards (Note: Kyoto is not in the prefecture_enum, using nearby osaka)
+('京都駅前掲示板', 34.9859, 135.7585, 'osaka', 'posted'),
+('四条河原町掲示板', 35.0034, 135.7689, 'osaka', 'checked'),
 
 -- Hokkaido boards
 ('札幌駅前掲示板', 43.0687, 141.3507, 'hokkaido', 'not_yet'),

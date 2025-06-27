@@ -135,7 +135,6 @@ export default function PosterMapPageClient() {
       // Calculate statistics per prefecture
       const stats: Record<string, Record<BoardStatus, number>> = {};
       for (const board of data) {
-        if (!board.prefecture) continue;
         if (!stats[board.prefecture]) {
           stats[board.prefecture] = {
             not_yet: 0,
