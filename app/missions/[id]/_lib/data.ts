@@ -9,14 +9,19 @@ import type {
 } from "./types";
 
 export async function getMissionData(
-  missionId: string,
+  missionIdOrSlug: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
+
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionIdOrSlug,
+    );
 
   const { data: missionData, error } = await supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("id", missionId)
+    .eq(isUuid ? "id" : "slug", missionIdOrSlug)
     .single();
 
   if (error) {
