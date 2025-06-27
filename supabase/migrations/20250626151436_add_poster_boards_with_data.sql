@@ -1,5 +1,5 @@
 -- Create enum type for board status
-CREATE TYPE board_status AS ENUM ('not_yet', 'posted', 'checked', 'damaged', 'error', 'other');
+CREATE TYPE board_status AS ENUM ('not_yet', 'reserved', 'posted', 'checked', 'damaged', 'error', 'other');
 
 -- Create enum type for prefectures
 CREATE TYPE prefecture_enum AS ENUM (

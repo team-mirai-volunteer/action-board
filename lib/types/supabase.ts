@@ -498,7 +498,7 @@ export type Database = {
           lon: number;
           name: string;
           number: number | null;
-          prefecture: string | null;
+          prefecture: Database["public"]["Enums"]["prefecture_enum"] | null;
           status: Database["public"]["Enums"]["board_status"];
           updated_at: string;
         };
@@ -509,7 +509,7 @@ export type Database = {
           lon: number;
           name: string;
           number?: number | null;
-          prefecture?: string | null;
+          prefecture?: Database["public"]["Enums"]["prefecture_enum"] | null;
           status?: Database["public"]["Enums"]["board_status"];
           updated_at?: string;
         };
@@ -520,7 +520,7 @@ export type Database = {
           lon?: number;
           name?: string;
           number?: number | null;
-          prefecture?: string | null;
+          prefecture?: Database["public"]["Enums"]["prefecture_enum"] | null;
           status?: Database["public"]["Enums"]["board_status"];
           updated_at?: string;
         };
@@ -1146,11 +1146,25 @@ export type Database = {
     Enums: {
       board_status:
         | "not_yet"
+        | "reserved"
         | "posted"
         | "checked"
         | "damaged"
         | "error"
         | "other";
+      prefecture_enum:
+        | "hokkaido"
+        | "miyagi"
+        | "saitama"
+        | "chiba"
+        | "tokyo"
+        | "kanagawa"
+        | "nagano"
+        | "aichi"
+        | "osaka"
+        | "hyogo"
+        | "ehime"
+        | "fukuoka";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1271,11 +1285,26 @@ export const Constants = {
     Enums: {
       board_status: [
         "not_yet",
+        "reserved",
         "posted",
         "checked",
         "damaged",
         "error",
         "other",
+      ],
+      prefecture_enum: [
+        "hokkaido",
+        "miyagi",
+        "saitama",
+        "chiba",
+        "tokyo",
+        "kanagawa",
+        "nagano",
+        "aichi",
+        "osaka",
+        "hyogo",
+        "ehime",
+        "fukuoka",
       ],
     },
   },

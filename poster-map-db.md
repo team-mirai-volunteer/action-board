@@ -24,5 +24,14 @@ which represent billing boards. people will put posters on this billing board fo
     - other: other
 
 ### what's left
-- RLS so anon can't do anything
-- add tests
+- remove "description" cause it's weird
+// app/map/poster/PosterMapPageClient.tsx
+// Prefecture data with coordinates for centering map
+const prefectureData = [
+  {
+    id: "hokkaido",
+    name: "北海道",
+    nameEn: "Hokkaido",
+    center: [43.0642, 141.3469] as [number, number],
+    description: "日本最北の地",
+  },
