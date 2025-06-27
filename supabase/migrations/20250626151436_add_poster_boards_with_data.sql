@@ -25,7 +25,7 @@ CREATE TABLE poster_boards (
   lon decimal(11, 8) NOT NULL,
   prefecture prefecture_enum NOT NULL,
   status board_status DEFAULT 'not_yet' NOT NULL,
-  number integer,
+  number text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -40,6 +40,9 @@ CREATE TABLE poster_board_status_history (
   note text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Add unique constraint for prefecture and number combination
+ALTER TABLE poster_boards ADD CONSTRAINT poster_boards_unique UNIQUE(prefecture, number);
 
 -- Create indexes for better performance
 CREATE INDEX idx_poster_boards_lat_lon ON poster_boards(lat, lon);
