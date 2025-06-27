@@ -90,6 +90,7 @@ describe("missionsRanking service", () => {
             name: "テストユーザー1",
             address_prefecture: "東京都",
             user_achievement_count: 2,
+            total_points: 100,
             rank: 1,
           },
         ];
@@ -115,7 +116,7 @@ describe("missionsRanking service", () => {
           user_achievement_count: 2,
           level: null,
           xp: null,
-          total_points: null,
+          total_points: 100,
         });
       });
 
@@ -184,11 +185,9 @@ describe("missionsRanking service", () => {
           },
         ];
 
-        mockSupabase.rpc.mockReturnValue({
-          limit: jest.fn().mockResolvedValue({
-            data: mockRankingData,
-            error: null,
-          }),
+        mockSupabase.rpc.mockResolvedValue({
+          data: mockRankingData,
+          error: null,
         });
 
         const result = await getUserMissionRanking(missionId, userId);
@@ -218,15 +217,14 @@ describe("missionsRanking service", () => {
             name: "テストユーザー",
             address_prefecture: "東京都",
             user_achievement_count: 2,
+            total_points: 50,
             rank: 5,
           },
         ];
 
-        mockSupabase.rpc.mockReturnValue({
-          limit: jest.fn().mockResolvedValue({
-            data: mockRankingData,
-            error: null,
-          }),
+        mockSupabase.rpc.mockResolvedValue({
+          data: mockRankingData,
+          error: null,
         });
 
         const result = await getUserMissionRanking(missionId, userId, "daily");
@@ -245,16 +243,15 @@ describe("missionsRanking service", () => {
           rank: 5,
           level: null,
           xp: null,
+          total_points: 50,
         });
       });
     });
 
     it("ユーザーがランキングに存在しない場合はnullを返す", async () => {
-      mockSupabase.rpc.mockReturnValue({
-        limit: jest.fn().mockResolvedValue({
-          data: [],
-          error: null,
-        }),
+      mockSupabase.rpc.mockResolvedValue({
+        data: [],
+        error: null,
       });
 
       const result = await getUserMissionRanking(missionId, userId);
@@ -262,11 +259,9 @@ describe("missionsRanking service", () => {
     });
 
     it("エラー時は例外をスローする", async () => {
-      mockSupabase.rpc.mockReturnValue({
-        limit: jest.fn().mockResolvedValue({
-          data: null,
-          error: { message: "Database error" },
-        }),
+      mockSupabase.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "Database error" },
       });
 
       await expect(getUserMissionRanking(missionId, userId)).rejects.toThrow(
