@@ -44,6 +44,11 @@ CREATE TABLE poster_board_status_history (
 -- Add unique constraint for prefecture and number combination
 ALTER TABLE poster_boards ADD CONSTRAINT poster_boards_unique UNIQUE(prefecture, number);
 
+-- Add check constraints for valid lat/lon ranges
+ALTER TABLE poster_boards
+  ADD CONSTRAINT chk_lat CHECK (lat BETWEEN -90 AND 90),
+  ADD CONSTRAINT chk_lon CHECK (lon BETWEEN -180 AND 180);
+
 -- Create indexes for better performance
 CREATE INDEX idx_poster_boards_lat_lon ON poster_boards(lat, lon);
 CREATE INDEX idx_poster_boards_prefecture ON poster_boards(prefecture);
