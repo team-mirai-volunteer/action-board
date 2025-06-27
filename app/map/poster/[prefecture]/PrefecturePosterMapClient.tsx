@@ -53,37 +53,22 @@ const statusConfig: Record<BoardStatus, { label: string; color: string }> = {
   other: { label: "その他", color: "bg-purple-500" },
 };
 
-// Map prefecture enum values to Japanese names
-const prefectureNameMap: Record<PrefectureEnum, string> = {
-  hokkaido: "北海道",
-  miyagi: "宮城県",
-  saitama: "埼玉県",
-  chiba: "千葉県",
-  tokyo: "東京都",
-  kanagawa: "神奈川県",
-  nagano: "長野県",
-  aichi: "愛知県",
-  osaka: "大阪府",
-  hyogo: "兵庫県",
-  ehime: "愛媛県",
-  fukuoka: "福岡県",
-};
-
 type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
 
 interface PrefecturePosterMapClientProps {
   userId: string;
   prefecture: PrefectureEnum;
+  prefectureName: string;
   center: [number, number];
 }
 
 export default function PrefecturePosterMapClient({
   userId,
   prefecture,
+  prefectureName,
   center,
 }: PrefecturePosterMapClientProps) {
   const params = useParams();
-  const prefectureName = prefectureNameMap[prefecture] || prefecture;
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);

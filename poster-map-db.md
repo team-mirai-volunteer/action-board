@@ -1,6 +1,6 @@
 # poster map
 we want to add a poster map
-- ./app/mas/poster/page.tsx
+- ./app/map/poster/page.tsx
 - ./app/map/poster/[prefecture]/page.tsx
 
 ## idea

@@ -77,12 +77,13 @@ export default async function PrefecturePosterMapPage({
   }
 
   const validPrefecture = prefecture as PrefectureEnum;
-  const center = prefectureData[validPrefecture].center;
+  const { name: prefectureName, center } = prefectureData[validPrefecture];
 
   return (
     <PrefecturePosterMapClient
       userId={user.id}
       prefecture={validPrefecture}
+      prefectureName={prefectureName}
       center={center}
     />
   );
