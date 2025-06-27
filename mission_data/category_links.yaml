@@ -41,6 +41,8 @@ category_links:
     missions:
       - mission_slug: x-like
         sort_no: 100
+      - mission_slug: tiktok-like
+        sort_no: 150
       - mission_slug: note-like
         sort_no: 200
       - mission_slug: instagram-like
@@ -125,3 +127,7 @@ category_links:
         sort_no: 200
       - mission_slug: github-pull-request
         sort_no: 300
+  - category_slug: support-on-tiktok
+    missions:
+      - mission_slug: tiktok-like
+        sort_no: 200
