@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPosterBoards } from "@/lib/services/poster-boards";
 import type { Database } from "@/lib/types/supabase";
 import { ChevronRight, MapPin } from "lucide-react";
@@ -35,84 +29,72 @@ const prefectureData = [
     name: "北海道",
     nameEn: "Hokkaido",
     center: [43.0642, 141.3469] as [number, number],
-    description: "日本最北の地",
   },
   {
     id: "miyagi",
     name: "宮城県",
     nameEn: "Miyagi",
     center: [38.2688, 140.8721] as [number, number],
-    description: "東北地方の中心地",
   },
   {
     id: "saitama",
     name: "埼玉県",
     nameEn: "Saitama",
     center: [35.857, 139.649] as [number, number],
-    description: "首都圏のベッドタウン",
   },
   {
     id: "chiba",
     name: "千葉県",
     nameEn: "Chiba",
     center: [35.605, 140.1233] as [number, number],
-    description: "首都圏東部の要所",
   },
   {
     id: "tokyo",
     name: "東京都",
     nameEn: "Tokyo",
     center: [35.6762, 139.6503] as [number, number],
-    description: "首都圏の中心地",
   },
   {
     id: "kanagawa",
     name: "神奈川県",
     nameEn: "Kanagawa",
     center: [35.4478, 139.6425] as [number, number],
-    description: "首都圏南部の要所",
   },
   {
     id: "nagano",
     name: "長野県",
     nameEn: "Nagano",
     center: [36.6513, 138.181] as [number, number],
-    description: "日本アルプスの地",
   },
   {
     id: "aichi",
     name: "愛知県",
     nameEn: "Aichi",
     center: [35.1802, 136.9066] as [number, number],
-    description: "中部地方の中心地",
   },
   {
     id: "osaka",
     name: "大阪府",
     nameEn: "Osaka",
     center: [34.6937, 135.5023] as [number, number],
-    description: "関西地方の中心地",
   },
   {
     id: "hyogo",
     name: "兵庫県",
     nameEn: "Hyogo",
     center: [34.6913, 135.1831] as [number, number],
-    description: "関西地方の要所",
   },
   {
     id: "ehime",
     name: "愛媛県",
     nameEn: "Ehime",
     center: [33.8416, 132.7658] as [number, number],
-    description: "四国地方西部",
   },
   {
     id: "fukuoka",
     name: "福岡県",
     nameEn: "Fukuoka",
     center: [33.5904, 130.4017] as [number, number],
-    description: "九州地方の中心地",
   },
 ];
 
@@ -267,9 +249,6 @@ export default function PosterMapPageClient() {
                           <CardTitle className="text-lg">
                             {prefecture.name}
                           </CardTitle>
-                          <CardDescription className="text-sm">
-                            {prefecture.description}
-                          </CardDescription>
                         </div>
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground" />
