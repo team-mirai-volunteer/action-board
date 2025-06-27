@@ -74,11 +74,13 @@ type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
 interface PrefecturePosterMapClientProps {
   userId: string;
   prefecture: PrefectureEnum;
+  center: [number, number];
 }
 
 export default function PrefecturePosterMapClient({
   userId,
   prefecture,
+  center,
 }: PrefecturePosterMapClientProps) {
   const params = useParams();
   const prefectureName = prefectureNameMap[prefecture] || prefecture;
@@ -208,7 +210,11 @@ export default function PrefecturePosterMapClient({
 
       {/* Map */}
       <div className="overflow-hidden rounded-lg border bg-card">
-        <PosterMap boards={boards} onBoardClick={handleBoardSelect} />
+        <PosterMap
+          boards={boards}
+          onBoardClick={handleBoardSelect}
+          center={center}
+        />
       </div>
 
       {/* Update Dialog */}

@@ -22,6 +22,7 @@ type BoardStatus = Database["public"]["Enums"]["board_status"];
 interface PosterMapProps {
   boards: PosterBoard[];
   onBoardClick: (board: PosterBoard) => void;
+  center: [number, number];
 }
 
 // Status colors for markers
@@ -56,14 +57,18 @@ function createMarkerIcon(status: BoardStatus) {
   });
 }
 
-export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
+export default function PosterMap({
+  boards,
+  onBoardClick,
+  center,
+}: PosterMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     if (!mapRef.current) {
-      // Initialize map
-      mapRef.current = L.map("poster-map").setView([35.6762, 139.6503], 10);
+      // Initialize map with center from props
+      mapRef.current = L.map("poster-map").setView(center, 12);
 
       // Add tile layer (using GSI tiles)
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
@@ -96,10 +101,9 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
       }
     }
 
-    // Fit map to show all markers if there are any
-    if (boards.length > 0 && mapRef.current) {
-      const bounds = L.latLngBounds(boards.map((b) => [b.lat, b.lon]));
-      mapRef.current.fitBounds(bounds, { padding: [50, 50] });
+    // Update map view when center changes
+    if (mapRef.current) {
+      mapRef.current.setView(center, 12);
     }
 
     // Cleanup function
@@ -108,7 +112,7 @@ export default function PosterMap({ boards, onBoardClick }: PosterMapProps) {
         marker.remove();
       }
     };
-  }, [boards, onBoardClick]);
+  }, [boards, onBoardClick, center]);
 
   return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
 }
