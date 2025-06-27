@@ -147,11 +147,6 @@ export default function EmailSignUpForm({
         name="date_of_birth"
         value={sessionData.dateOfBirth || ""}
       />
-      <input
-        type="hidden"
-        name="ref"
-        value={sessionData.referralCode || referralCode || ""}
-      />
 
       <h1 className="text-2xl font-medium text-center mb-2">
         メールアドレスとパスワードを入力

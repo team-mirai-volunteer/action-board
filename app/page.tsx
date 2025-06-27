@@ -1,3 +1,4 @@
+import { ReferralCodeHandler } from "@/components/ReferralCodeHandler";
 import Activities from "@/components/activities";
 import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
@@ -19,8 +20,14 @@ import { redirect } from "next/navigation";
 // メタデータ生成を外部関数に委譲
 export const generateMetadata = generateRootMetadata;
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ ref?: string }>;
+}) {
   const supabase = await createClient();
+  const params = await searchParams;
+  const referralCode = params.ref;
 
   const {
     data: { user },
@@ -52,6 +59,9 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen py-4">
+      {/* リファラルコード処理 */}
+      {referralCode && <ReferralCodeHandler referralCode={referralCode} />}
+
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />

@@ -214,7 +214,7 @@ function LoginSelectionPhase({
         "lineLoginData",
         JSON.stringify({
           dateOfBirth: formattedDate,
-          referralCode: referralCode,
+          referralCode: null, // リファラルコードはcookieから取得するためnull
         }),
       );
 
@@ -267,7 +267,7 @@ function LoginSelectionPhase({
             "signupData",
             JSON.stringify({
               dateOfBirth: formattedDate,
-              referralCode: referralCode,
+              referralCode: null, // リファラルコードはcookieから取得するためnull
             }),
           );
           router.push("/sign-up-email");
