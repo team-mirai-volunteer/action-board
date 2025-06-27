@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PrefecturePosterMapClient from "./PrefecturePosterMapClient";
 
-type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
+type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
 
 // Map prefecture enum values to Japanese names and center coordinates
 const prefectureData: Record<

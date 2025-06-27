@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { statusConfig } from "./statusConfig";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["board_status"];
+type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
 // Prefecture data with coordinates for centering map
 const prefectureData = [

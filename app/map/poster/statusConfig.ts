@@ -1,6 +1,6 @@
 import type { Database } from "@/lib/types/supabase";
 
-type BoardStatus = Database["public"]["Enums"]["board_status"];
+type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
 export const statusConfig: Record<
   BoardStatus,

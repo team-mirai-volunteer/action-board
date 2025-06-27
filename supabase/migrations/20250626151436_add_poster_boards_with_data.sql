@@ -1,8 +1,8 @@
 -- Create enum type for board status
-CREATE TYPE board_status AS ENUM ('not_yet', 'reserved', 'posted', 'checked', 'damaged', 'error', 'other');
+CREATE TYPE poster_board_status AS ENUM ('not_yet', 'reserved', 'posted', 'checked', 'damaged', 'error', 'other');
 
 -- Create enum type for prefectures
-CREATE TYPE prefecture_enum AS ENUM (
+CREATE TYPE poster_prefecture_enum AS ENUM (
   'hokkaido', 
   'miyagi', 
   'saitama', 
@@ -23,8 +23,8 @@ CREATE TABLE poster_boards (
   name text NOT NULL,
   lat decimal(10, 8) NOT NULL,
   lon decimal(11, 8) NOT NULL,
-  prefecture prefecture_enum NOT NULL,
-  status board_status DEFAULT 'not_yet' NOT NULL,
+  prefecture poster_prefecture_enum NOT NULL,
+  status poster_board_status DEFAULT 'not_yet' NOT NULL,
   number text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -35,8 +35,8 @@ CREATE TABLE poster_board_status_history (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   board_id uuid NOT NULL REFERENCES poster_boards(id) ON DELETE CASCADE,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  previous_status board_status,
-  new_status board_status NOT NULL,
+  previous_status poster_board_status,
+  new_status poster_board_status NOT NULL,
   note text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );

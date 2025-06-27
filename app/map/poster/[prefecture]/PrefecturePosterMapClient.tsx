@@ -43,9 +43,9 @@ const PosterMap = dynamic(() => import("../PosterMap"), {
 });
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["board_status"];
+type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
-type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
+type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
 
 interface PrefecturePosterMapClientProps {
   userId: string;

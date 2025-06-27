@@ -457,27 +457,33 @@ export type Database = {
           board_id: string;
           created_at: string;
           id: string;
-          new_status: Database["public"]["Enums"]["board_status"];
+          new_status: Database["public"]["Enums"]["poster_board_status"];
           note: string | null;
-          previous_status: Database["public"]["Enums"]["board_status"] | null;
+          previous_status:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
           user_id: string;
         };
         Insert: {
           board_id: string;
           created_at?: string;
           id?: string;
-          new_status: Database["public"]["Enums"]["board_status"];
+          new_status: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
-          previous_status?: Database["public"]["Enums"]["board_status"] | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
           user_id: string;
         };
         Update: {
           board_id?: string;
           created_at?: string;
           id?: string;
-          new_status?: Database["public"]["Enums"]["board_status"];
+          new_status?: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
-          previous_status?: Database["public"]["Enums"]["board_status"] | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
           user_id?: string;
         };
         Relationships: [
@@ -498,8 +504,8 @@ export type Database = {
           lon: number;
           name: string;
           number: string | null;
-          prefecture: Database["public"]["Enums"]["prefecture_enum"];
-          status: Database["public"]["Enums"]["board_status"];
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status: Database["public"]["Enums"]["poster_board_status"];
           updated_at: string;
         };
         Insert: {
@@ -509,8 +515,8 @@ export type Database = {
           lon: number;
           name: string;
           number?: string | null;
-          prefecture: Database["public"]["Enums"]["prefecture_enum"];
-          status?: Database["public"]["Enums"]["board_status"];
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status?: Database["public"]["Enums"]["poster_board_status"];
           updated_at?: string;
         };
         Update: {
@@ -520,8 +526,8 @@ export type Database = {
           lon?: number;
           name?: string;
           number?: string | null;
-          prefecture?: Database["public"]["Enums"]["prefecture_enum"];
-          status?: Database["public"]["Enums"]["board_status"];
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status?: Database["public"]["Enums"]["poster_board_status"];
           updated_at?: string;
         };
         Relationships: [];
@@ -1144,7 +1150,7 @@ export type Database = {
       };
     };
     Enums: {
-      board_status:
+      poster_board_status:
         | "not_yet"
         | "reserved"
         | "posted"
@@ -1152,7 +1158,7 @@ export type Database = {
         | "damaged"
         | "error"
         | "other";
-      prefecture_enum:
+      poster_prefecture_enum:
         | "hokkaido"
         | "miyagi"
         | "saitama"
@@ -1283,7 +1289,7 @@ export const Constants = {
   },
   public: {
     Enums: {
-      board_status: [
+      poster_board_status: [
         "not_yet",
         "reserved",
         "posted",
@@ -1292,7 +1298,7 @@ export const Constants = {
         "error",
         "other",
       ],
-      prefecture_enum: [
+      poster_prefecture_enum: [
         "hokkaido",
         "miyagi",
         "saitama",

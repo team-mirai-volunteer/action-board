@@ -17,7 +17,7 @@ L.Icon.Default.mergeOptions({
 });
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["board_status"];
+type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
 interface PosterMapProps {
   boards: PosterBoard[];

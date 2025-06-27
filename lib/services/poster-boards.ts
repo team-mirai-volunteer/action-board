@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["board_status"];
-type PrefectureEnum = Database["public"]["Enums"]["prefecture_enum"];
+type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
+type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
 type StatusHistory =
   Database["public"]["Tables"]["poster_board_status_history"]["Row"];
 
