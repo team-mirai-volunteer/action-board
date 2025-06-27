@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -53,6 +52,22 @@ const statusConfig: Record<BoardStatus, { label: string; color: string }> = {
   other: { label: "その他", color: "bg-purple-500" },
 };
 
+// Map prefecture enum values to Japanese names
+const prefectureNameMap: Record<string, string> = {
+  hokkaido: "北海道",
+  miyagi: "宮城県",
+  saitama: "埼玉県",
+  chiba: "千葉県",
+  tokyo: "東京都",
+  kanagawa: "神奈川県",
+  nagano: "長野県",
+  aichi: "愛知県",
+  osaka: "大阪府",
+  hyogo: "兵庫県",
+  ehime: "愛媛県",
+  fukuoka: "福岡県",
+};
+
 interface PrefecturePosterMapClientProps {
   userId: string;
   prefecture: string;
@@ -63,7 +78,7 @@ export default function PrefecturePosterMapClient({
   prefecture,
 }: PrefecturePosterMapClientProps) {
   const params = useParams();
-  const decodedPrefecture = decodeURIComponent(prefecture);
+  const prefectureName = prefectureNameMap[prefecture] || prefecture;
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);
@@ -78,7 +93,7 @@ export default function PrefecturePosterMapClient({
 
   const loadBoards = async () => {
     try {
-      const data = await getPosterBoards(decodedPrefecture);
+      const data = await getPosterBoards(prefecture);
       setBoards(data);
     } catch (error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
@@ -144,7 +159,7 @@ export default function PrefecturePosterMapClient({
         </Link>
         <div>
           <h1 className="text-2xl font-bold">
-            {decodedPrefecture}のポスター掲示板
+            {prefectureName}のポスター掲示板
           </h1>
           <p className="text-muted-foreground">
             掲示板をクリックしてステータスを更新できます
@@ -191,39 +206,6 @@ export default function PrefecturePosterMapClient({
       {/* Map */}
       <div className="overflow-hidden rounded-lg border bg-card">
         <PosterMap boards={boards} onBoardClick={handleBoardSelect} />
-      </div>
-
-      {/* Board List */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">掲示板一覧</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {boards.map((board) => {
-            const config = statusConfig[board.status];
-            return (
-              <button
-                type="button"
-                key={board.id}
-                className="cursor-pointer rounded-lg border bg-card p-4 text-left transition-shadow hover:shadow-lg w-full"
-                onClick={() => handleBoardSelect(board)}
-              >
-                <div className="mb-2 flex items-start justify-between">
-                  <h3 className="font-semibold">{board.name}</h3>
-                  <Badge
-                    variant="secondary"
-                    className={`${config.color} text-white`}
-                  >
-                    {config.label}
-                  </Badge>
-                </div>
-                {board.number && (
-                  <p className="text-sm text-muted-foreground">
-                    掲示板番号: {board.number}
-                  </p>
-                )}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* Update Dialog */}

@@ -1,13 +1,29 @@
 -- Create enum type for board status
 CREATE TYPE board_status AS ENUM ('not_yet', 'posted', 'checked', 'damaged', 'error', 'other');
 
+-- Create enum type for prefectures
+CREATE TYPE prefecture_enum AS ENUM (
+  'hokkaido', 
+  'miyagi', 
+  'saitama', 
+  'chiba', 
+  'tokyo', 
+  'kanagawa', 
+  'nagano', 
+  'aichi', 
+  'osaka', 
+  'hyogo', 
+  'ehime', 
+  'fukuoka'
+);
+
 -- Create poster_boards table with number column
 CREATE TABLE poster_boards (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
   lat decimal(10, 8) NOT NULL,
   lon decimal(11, 8) NOT NULL,
-  prefecture text,
+  prefecture prefecture_enum,
   status board_status DEFAULT 'not_yet' NOT NULL,
   number integer,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
