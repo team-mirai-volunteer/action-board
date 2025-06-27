@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
+import { DuplicateUrlDialog } from "./DuplicateUrlDialog";
 import { MainLinkButton } from "./MainLinkButton";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
@@ -56,6 +57,9 @@ export function MissionFormWrapper({
     initialXp: number;
     xpGained: number;
   } | null>(null);
+
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [duplicateUrl, setDuplicateUrl] = useState<string>("");
 
   // スクロール位置をトップにリセットする関数
   const scrollToTop = () => {
@@ -112,7 +116,12 @@ export function MissionFormWrapper({
         // スクロール位置をリセット
         scrollToTop();
       } else {
-        setErrorMessage(result.error || "エラーが発生しました");
+        if (result.error === "YOUTUBE_DUPLICATE") {
+          setDuplicateUrl(result.duplicateUrl || "");
+          setDuplicateDialogOpen(true);
+        } else {
+          setErrorMessage(result.error || "エラーが発生しました");
+        }
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -328,6 +337,13 @@ export function MissionFormWrapper({
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
         mission={mission}
+      />
+
+      <DuplicateUrlDialog
+        isOpen={duplicateDialogOpen}
+        onClose={() => setDuplicateDialogOpen(false)}
+        duplicateUrl={duplicateUrl}
+        missionTitle={mission.title}
       />
     </>
   );
