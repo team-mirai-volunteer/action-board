@@ -15,6 +15,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
+    "test:e2e:with-seed": "supabase db reset && playwright test",
     "test:unit": "jest --testPathIgnorePatterns=tests/rls/",
     "test:rls": "jest --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node --coverage=false",
     "storybook": "storybook dev -p 6006",

@@ -217,9 +217,9 @@ VALUES
 INSERT INTO poster_boards (name, lat, lon, prefecture, status, number) VALUES
 -- Tokyo boards
 ('東京駅前掲示板', 35.6812, 139.7671, 'tokyo', 'not_yet', '10-1'),
-('新宿駅南口掲示板', 35.6896, 139.7006, 'tokyo', 'posted', '10-2'),
+('新宿駅南口掲示板', 35.6896, 139.7006, 'tokyo', 'not_yet', '10-2'),
 ('渋谷駅ハチ公前掲示板', 35.6590, 139.7005, 'tokyo', 'checked', '10-3'),
-('池袋駅東口掲示板', 35.7295, 139.7104, 'tokyo', 'not_yet', '10-4'),
+('池袋駅東口掲示板', 35.7295, 139.7104, 'tokyo', 'posted', '10-4'),
 ('上野駅公園口掲示板', 35.7141, 139.7774, 'tokyo', 'reserved', '10-5'),
 
 -- Osaka boards
