@@ -1,4 +1,5 @@
 import { MissionDetails } from "@/components/mission/MissionDetails";
+import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { Button } from "@/components/ui/button";
@@ -122,10 +123,42 @@ export default async function MissionPage({ params }: Props) {
     }
   }
 
+  const handleMainLinkClick = async () => {
+    if (userAchievementCount >= (mission.max_achievement_count || 1)) {
+      return { success: true };
+    }
+
+    const formData = new FormData();
+    formData.append("missionId", id);
+    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
+
+    try {
+      const { achieveMissionAction } = await import("./actions");
+      const result = await achieveMissionAction(formData);
+      return result;
+    } catch (error) {
+      console.error("Mission achievement error:", error);
+      return { success: false, error: "予期しないエラーが発生しました" };
+    }
+  };
+
+  const isLinkAccessMission =
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key;
+  const isCompleted =
+    userAchievementCount >= (mission.max_achievement_count || 1);
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <MissionDetails mission={mission} />
+        <MissionDetails
+          mission={mission}
+          mainLink={mainLink}
+          onMainLinkClick={user ? handleMainLinkClick : undefined}
+          isCompleted={isCompleted}
+        />
+
+        {/* LINK_ACCESSミッション以外の場合のみ視覚的導線を表示 */}
+        {user && !isLinkAccessMission && <MissionGuidanceArrow />}
 
         {user ? (
           <>
