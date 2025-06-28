@@ -46,14 +46,10 @@ export async function sendMail({
 }
 
 export async function sendWelcomeMail(to: string) {
-  const html = "";
+  let html = "";
   try {
-    const templatePath = path.join(
-      process.cwd(),
-      process.env.EMAIL_TEMPLATE_DIR || "supabase/templates",
-      "welcome.html",
-    );
-    const html = await fs.readFile(templatePath, "utf8");
+    const templatePath = path.join(process.cwd(), "public/welcome.html");
+    html = await fs.readFile(templatePath, "utf8");
   } catch (error) {
     console.error(
       "ウェルカムメールテンプレートの読み込みに失敗しました:",
