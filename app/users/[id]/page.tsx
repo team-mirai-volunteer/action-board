@@ -46,7 +46,7 @@ export default async function UserDetailPage({ params }: Props) {
     ]);
 
   return (
-    <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
+    <div className="flex flex-col items-stretch w-full max-w-xl gap-4 py-8">
       <Levels userId={user.id} hideProgress />
       <div className="flex justify-center gap-2">
         {user.x_username && (

@@ -1,7 +1,11 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
+import {
+  getUserXpBonus,
+  grantMissionCompletionXp,
+  grantXp,
+} from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
@@ -176,6 +180,9 @@ export const achieveMissionAction = async (formData: FormData) => {
     postingCount,
     locationText,
   });
+
+  // ポスティングボーナスXP + ミッション達成XP 用の変数
+  let totalXpGranted = 0;
 
   if (!validatedFields.success) {
     return {
@@ -503,6 +510,8 @@ export const achieveMissionAction = async (formData: FormData) => {
           bonusXpResult.error,
         );
         // ボーナスXP付与の失敗はミッション達成の成功を妨げない
+      } else {
+        totalXpGranted += totalPoints;
       }
     }
   }
@@ -518,11 +527,11 @@ export const achieveMissionAction = async (formData: FormData) => {
     console.error("XP付与に失敗しました:", xpResult.error);
     // XP付与の失敗はミッション達成の成功を妨げない
   }
-
+  totalXpGranted += xpResult?.xpGranted ?? 0;
   return {
     success: true,
     message: "ミッションを達成しました！",
-    xpGranted: xpResult.xpGranted,
+    xpGranted: totalXpGranted,
     userLevel: xpResult.userLevel,
   };
 };
@@ -588,7 +597,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // ミッション情報を取得してXP計算のための難易度を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("difficulty, title")
+    .select("difficulty, title, slug")
     .eq("id", achievement.mission_id)
     .single();
 
@@ -616,9 +625,15 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  const bonusXp =
+    missionData.slug === "posting-magazine"
+      ? await getUserXpBonus(authUser.id, validatedAchievementId)
+      : 0;
+  const totalXpToRevoke = xpToRevoke + bonusXp;
+
   const xpResult = await grantXp(
     authUser.id,
-    -xpToRevoke, // 負の値でXPを減算
+    -totalXpToRevoke, // 負の値でXPを減算
     "MISSION_CANCELLATION",
     validatedAchievementId,
     `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,
