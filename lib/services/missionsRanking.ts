@@ -15,11 +15,31 @@ export async function getMissionRanking(
   try {
     const supabase = await createClient();
 
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        missionId,
+      );
+    let resolvedMissionId = missionId;
+
+    if (!isUUID) {
+      const { data: missionData, error: missionError } = await supabase
+        .from("missions")
+        .select("id")
+        .eq("slug", missionId)
+        .single();
+
+      if (missionError || !missionData) {
+        console.error("Mission ID resolution error for ranking:", missionError);
+        return [];
+      }
+      resolvedMissionId = missionData.id;
+    }
+
     // データベース関数を使用してランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
       "get_mission_ranking",
       {
-        mission_id: missionId,
+        mission_id: resolvedMissionId,
         limit_count: limit,
       },
     );
@@ -63,10 +83,33 @@ export async function getUserMissionRanking(
   try {
     const supabase = await createClient();
 
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        missionId,
+      );
+    let resolvedMissionId = missionId;
+
+    if (!isUUID) {
+      const { data: missionData, error: missionError } = await supabase
+        .from("missions")
+        .select("id")
+        .eq("slug", missionId)
+        .single();
+
+      if (missionError || !missionData) {
+        console.error(
+          "Mission ID resolution error for user ranking:",
+          missionError,
+        );
+        return null;
+      }
+      resolvedMissionId = missionData.id;
+    }
+
     // データベース関数を使用して特定ユーザーのランキングを取得
     const { data: rankings, error: rankingsError } = await supabase
       .rpc("get_user_mission_ranking", {
-        mission_id: missionId,
+        mission_id: resolvedMissionId,
         user_id: userId,
       })
       .limit(1);

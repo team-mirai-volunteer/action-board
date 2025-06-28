@@ -55,25 +55,6 @@ export function MissionDetails({ mission, mainLink }: MissionDetailsProps) {
             />
           </div>
         )}
-
-        {/* LINKミッションの場合、アクションボタンを表示 */}
-        {mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
-          mainLink && (
-            <div className="flex flex-col items-center mt-6 space-y-4">
-              <MainLinkButton
-                mission={mission}
-                mainLink={mainLink}
-                onLinkClick={undefined}
-                isDisabled={false}
-                size="lg"
-                className="w-full"
-              />
-
-              <div className="text-sm text-muted-foreground text-center">
-                下記のフォームからミッション完了を報告してください
-              </div>
-            </div>
-          )}
       </CardContent>
     </Card>
   );
