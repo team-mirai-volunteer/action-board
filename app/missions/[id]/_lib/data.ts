@@ -44,14 +44,21 @@ export async function getTotalAchievementCount(
 ): Promise<number> {
   const supabase = await createServerClient();
 
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionSlug,
+    );
+
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", missionSlug)
+    .eq(isUUID ? "id" : "slug", missionSlug)
     .single();
 
   if (missionError || !missionData) {
     console.error("Mission ID fetch error for count:", missionError);
+    console.error("Query type:", isUUID ? "UUID" : "slug");
+    console.error("Input value:", missionSlug);
     return 0;
   }
 
@@ -77,14 +84,21 @@ export async function getUserAchievements(
 ): Promise<{ achievements: Achievement[]; count: number }> {
   const supabase = await createServerClient();
 
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionSlug,
+    );
+
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", missionSlug)
+    .eq(isUUID ? "id" : "slug", missionSlug)
     .single();
 
   if (missionError || !missionData) {
     console.error("Mission ID fetch error for achievements:", missionError);
+    console.error("Query type:", isUUID ? "UUID" : "slug");
+    console.error("Input value:", missionSlug);
     return { achievements: [], count: 0 };
   }
 
@@ -112,10 +126,15 @@ export async function getSubmissionHistory(
 ): Promise<SubmissionData[]> {
   const supabase = await createServerClient();
 
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionSlug,
+    );
+
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", missionSlug)
+    .eq(isUUID ? "id" : "slug", missionSlug)
     .single();
 
   if (missionError || !missionData) {
@@ -123,6 +142,8 @@ export async function getSubmissionHistory(
       "Mission ID fetch error for submission history:",
       missionError,
     );
+    console.error("Query type:", isUUID ? "UUID" : "slug");
+    console.error("Input value:", missionSlug);
     return [];
   }
 
@@ -240,14 +261,21 @@ export async function getMissionMainLink(
 ): Promise<Tables<"mission_main_links"> | null> {
   const supabase = await createServerClient();
 
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionSlug,
+    );
+
   const { data: missionData, error: missionError } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", missionSlug)
+    .eq(isUUID ? "id" : "slug", missionSlug)
     .single();
 
   if (missionError || !missionData) {
     console.error("Mission ID fetch error for main link:", missionError);
+    console.error("Query type:", isUUID ? "UUID" : "slug");
+    console.error("Input value:", missionSlug);
     return null;
   }
 
