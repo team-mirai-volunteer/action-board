@@ -1304,6 +1304,39 @@ export type Database = {
           rank: number;
         }[];
       };
+      get_period_mission_ranking: {
+        Args: { p_mission_id: string; p_limit?: number; p_start_date?: string };
+        Returns: {
+          mission_id: string;
+          user_id: string;
+          name: string;
+          address_prefecture: string;
+          user_achievement_count: number;
+          total_points: number;
+          rank: number;
+        }[];
+      };
+      get_period_prefecture_ranking: {
+        Args: { p_prefecture: string; p_limit?: number; p_start_date?: string };
+        Returns: {
+          user_id: string;
+          name: string;
+          rank: number;
+          xp: number;
+        }[];
+      };
+      get_period_ranking: {
+        Args: { p_limit?: number; p_start_date?: string };
+        Returns: {
+          user_id: string;
+          address_prefecture: string;
+          level: number;
+          name: string;
+          rank: number;
+          updated_at: string;
+          xp: number;
+        }[];
+      };
       get_poster_board_stats: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -1382,6 +1415,47 @@ export type Database = {
           clear_count: number;
           total_points: number;
           rank: number;
+        }[];
+      };
+      get_user_period_mission_ranking: {
+        Args: {
+          p_mission_id: string;
+          p_user_id: string;
+          p_start_date?: string;
+        };
+        Returns: {
+          mission_id: string;
+          user_id: string;
+          name: string;
+          address_prefecture: string;
+          user_achievement_count: number;
+          total_points: number;
+          rank: number;
+        }[];
+      };
+      get_user_period_prefecture_ranking: {
+        Args: {
+          p_prefecture: string;
+          p_user_id: string;
+          p_start_date?: string;
+        };
+        Returns: {
+          user_id: string;
+          name: string;
+          rank: number;
+          xp: number;
+        }[];
+      };
+      get_user_period_ranking: {
+        Args: { target_user_id: string; start_date?: string };
+        Returns: {
+          user_id: string;
+          address_prefecture: string;
+          level: number;
+          name: string;
+          rank: number;
+          updated_at: string;
+          xp: number;
         }[];
       };
       get_user_posting_count: {
