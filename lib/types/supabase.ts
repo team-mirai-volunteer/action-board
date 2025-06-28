@@ -349,6 +349,55 @@ export type Database = {
           },
         ];
       };
+      mission_main_links: {
+        Row: {
+          created_at: string;
+          id: string;
+          label: string;
+          link: string;
+          mission_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          label: string;
+          link: string;
+          mission_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          label?: string;
+          link?: string;
+          mission_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "mission_category_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "mission_main_links_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: true;
+            referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       mission_quiz_links: {
         Row: {
           created_at: string;
@@ -448,6 +497,86 @@ export type Database = {
           required_artifact_type?: string;
           slug?: string;
           title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      poster_board_status_history: {
+        Row: {
+          board_id: string;
+          created_at: string;
+          id: string;
+          new_status: Database["public"]["Enums"]["poster_board_status"];
+          note: string | null;
+          previous_status:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id: string;
+        };
+        Insert: {
+          board_id: string;
+          created_at?: string;
+          id?: string;
+          new_status: Database["public"]["Enums"]["poster_board_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id: string;
+        };
+        Update: {
+          board_id?: string;
+          created_at?: string;
+          id?: string;
+          new_status?: Database["public"]["Enums"]["poster_board_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "poster_board_status_history_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      poster_boards: {
+        Row: {
+          created_at: string;
+          id: string;
+          lat: number;
+          lon: number;
+          name: string;
+          number: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status: Database["public"]["Enums"]["poster_board_status"];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          lat: number;
+          lon: number;
+          name: string;
+          number?: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status?: Database["public"]["Enums"]["poster_board_status"];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          lat?: number;
+          lon?: number;
+          name?: string;
+          number?: string | null;
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          status?: Database["public"]["Enums"]["poster_board_status"];
           updated_at?: string;
         };
         Relationships: [];
@@ -564,6 +693,7 @@ export type Database = {
           id: string;
           name: string;
           x_username: string | null;
+          github_username: string | null;
         };
         Insert: {
           address_prefecture: string;
@@ -572,6 +702,7 @@ export type Database = {
           id: string;
           name: string;
           x_username?: string | null;
+          github_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
@@ -580,6 +711,7 @@ export type Database = {
           id?: string;
           name?: string;
           x_username?: string | null;
+          github_username?: string | null;
         };
         Relationships: [];
       };
@@ -1070,7 +1202,27 @@ export type Database = {
       };
     };
     Enums: {
-      [_ in never]: never;
+      poster_board_status:
+        | "not_yet"
+        | "reserved"
+        | "posted"
+        | "checked"
+        | "damaged"
+        | "error"
+        | "other";
+      poster_prefecture_enum:
+        | "hokkaido"
+        | "miyagi"
+        | "saitama"
+        | "chiba"
+        | "tokyo"
+        | "kanagawa"
+        | "nagano"
+        | "aichi"
+        | "osaka"
+        | "hyogo"
+        | "ehime"
+        | "fukuoka";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1188,6 +1340,30 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      poster_board_status: [
+        "not_yet",
+        "reserved",
+        "posted",
+        "checked",
+        "damaged",
+        "error",
+        "other",
+      ],
+      poster_prefecture_enum: [
+        "hokkaido",
+        "miyagi",
+        "saitama",
+        "chiba",
+        "tokyo",
+        "kanagawa",
+        "nagano",
+        "aichi",
+        "osaka",
+        "hyogo",
+        "ehime",
+        "fukuoka",
+      ],
+    },
   },
 } as const;

@@ -169,6 +169,17 @@ variable "LINE_CLIENT_SECRET" {
   sensitive   = true
 }
 
+variable "MAILGUN_DOMAIN" {
+  description = "Mailgun Domain for sending emails (public)"
+  type        = string
+}
+
+variable "MAILGUN_API_KEY" {
+  description = "Mailgun API Key for sending emails (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
 variable "HUBSPOT_CONTACT_LIST_ID" {
   description = "HubSpot Contact List ID for referral missions (public)"
   type        = string

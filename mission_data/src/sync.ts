@@ -13,6 +13,7 @@ import type {
   Category,
   CategoryLink,
   Mission,
+  MissionMainLink,
   MissionQuizLink,
   QuizCategory,
   QuizQuestion,
@@ -359,6 +360,61 @@ async function syncMissionQuizLinks(
   }
 }
 
+async function syncMissionMainLinks(
+  missionMainLinks: MissionMainLink[],
+  dryRun: boolean,
+) {
+  console.log("\n🔗 Syncing mission main links...");
+  const supabase = await createServiceClient();
+
+  const missionMap = await getMissionSlugToIdMap();
+
+  // First, delete all existing links if not dry run
+  if (!dryRun) {
+    const { error } = await supabase
+      .from("mission_main_links")
+      .delete()
+      .neq("mission_id", "00000000-0000-0000-0000-000000000000"); // Delete all
+
+    if (error) {
+      console.error("  ❌ Error deleting existing main links:", error);
+      return;
+    }
+  }
+
+  for (const link of missionMainLinks) {
+    const missionId = missionMap[link.mission_slug];
+
+    if (!missionId) {
+      console.error(`  ❌ Mission not found: ${link.mission_slug}`);
+      continue;
+    }
+
+    if (dryRun) {
+      console.log(
+        `  [DRY RUN] Would create main link: ${link.mission_slug} -> ${link.link}`,
+      );
+    } else {
+      const { error } = await supabase.from("mission_main_links").insert({
+        mission_id: missionId,
+        label: link.label,
+        link: link.link,
+      });
+
+      if (error) {
+        console.error(
+          `  ❌ Error creating main link for ${link.mission_slug}:`,
+          error,
+        );
+      } else {
+        console.log(
+          `  ✅ Created main link: ${link.mission_slug} -> ${link.link}`,
+        );
+      }
+    }
+  }
+}
+
 async function main() {
   try {
     console.log("🚀 Starting mission data sync...");
@@ -404,6 +460,13 @@ async function main() {
         mission_quiz_links: MissionQuizLink[];
       }>("mission_quiz_links.yaml");
       await syncMissionQuizLinks(mission_quiz_links, options.dryRun);
+    }
+
+    if (!options.only || options.only === "main-links") {
+      const { mission_main_links } = await loadYamlFile<{
+        mission_main_links: MissionMainLink[];
+      }>("mission_main_links.yaml");
+      await syncMissionMainLinks(mission_main_links, options.dryRun);
     }
 
     console.log("\n✨ Sync completed!");

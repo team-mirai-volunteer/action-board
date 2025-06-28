@@ -1,0 +1,7 @@
+mission_main_links:
+  - mission_slug: link-official-site
+    label: チームみらい公式サイトを見る
+    link: https://team-mir.ai
+  - mission_slug: read-manifest
+    label: チームみらいのマニフェスト(要約版)を読む
+    link: https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2

@@ -49,6 +49,10 @@ const updateProfileFormSchema = z.object({
     .string()
     .max(50, { message: "Xユーザー名は50文字以内で入力してください" })
     .optional(),
+  github_username: z
+    .string()
+    .max(39, { message: "GitHubユーザー名は39文字以内で入力してください" })
+    .optional(),
 });
 
 export async function updateProfile(
@@ -73,6 +77,7 @@ export async function updateProfile(
   const date_of_birth = formData.get("date_of_birth")?.toString();
   const postcode = formData.get("postcode")?.toString();
   const x_username = formData.get("x_username")?.toString() || "";
+  const github_username = formData.get("github_username")?.toString() || "";
 
   // バリデーション
   const validatedFields = updateProfileFormSchema.safeParse({
@@ -81,6 +86,7 @@ export async function updateProfile(
     date_of_birth,
     postcode,
     x_username,
+    github_username,
   });
 
   if (!validatedFields.success) {
@@ -252,6 +258,20 @@ export async function updateProfile(
       .eq("id", user.id);
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
+      return {
+        success: false,
+        error: "ユーザー情報の更新に失敗しました",
+      };
+    }
+
+    const { error: publicUserError } = await supabaseServiceClient
+      .from("public_user_profiles")
+      .update({
+        github_username: validatedData.github_username || null,
+      })
+      .eq("id", user.id);
+    if (publicUserError) {
+      console.error("Error updating public_user_profiles:", publicUserError);
       return {
         success: false,
         error: "ユーザー情報の更新に失敗しました",

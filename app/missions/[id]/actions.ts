@@ -1,11 +1,15 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
+import {
+  getUserXpBonus,
+  grantMissionCompletionXp,
+  grantXp,
+} from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
-import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
+import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
@@ -105,7 +109,9 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
   postingCount: z.coerce
     .number()
     .min(1, { message: "ポスティング枚数は1枚以上で入力してください" })
-    .max(1000, { message: "ポスティング枚数は1000枚以下で入力してください" }),
+    .max(MAX_POSTING_COUNT, {
+      message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
+    }),
   locationText: z
     .string()
     .min(1, { message: "ポスティング場所を入力してください" })
@@ -117,6 +123,11 @@ const quizArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
 });
 
+// LINK_ACCESSタイプ用スキーマ
+const linkAccessArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK_ACCESS.key),
+});
+
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
@@ -126,7 +137,8 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   imageWithGeolocationArtifactSchema,
   noneArtifactSchema,
   postingArtifactSchema,
-  quizArtifactSchema, // 追加
+  quizArtifactSchema,
+  linkAccessArtifactSchema, // 追加
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -273,9 +285,11 @@ export const achieveMissionAction = async (formData: FormData) => {
   }
 
   // 成果物がある場合は mission_artifacts に記録
+  // LINK_ACCESSタイプの場合は成果物の保存をスキップ
   if (
     validatedRequiredArtifactType &&
-    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key &&
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.LINK_ACCESS.key
   ) {
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,
@@ -578,7 +592,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // ミッション情報を取得してXP計算のための難易度を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("difficulty, title")
+    .select("difficulty, title, slug")
     .eq("id", achievement.mission_id)
     .single();
 
@@ -606,9 +620,15 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  const bonusXp =
+    missionData.slug === "posting-magazine"
+      ? await getUserXpBonus(authUser.id, validatedAchievementId)
+      : 0;
+  const totalXpToRevoke = xpToRevoke + bonusXp;
+
   const xpResult = await grantXp(
     authUser.id,
-    -xpToRevoke, // 負の値でXPを減算
+    -totalXpToRevoke, // 負の値でXPを減算
     "MISSION_CANCELLATION",
     validatedAchievementId,
     `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,

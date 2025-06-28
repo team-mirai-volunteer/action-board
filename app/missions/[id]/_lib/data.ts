@@ -185,6 +185,25 @@ export async function getSubmissionHistory(
   return validSubmissions;
 }
 
+export async function getMissionMainLink(
+  missionId: string,
+): Promise<Tables<"mission_main_links"> | null> {
+  const supabase = await createServerClient();
+
+  const { data, error } = await supabase
+    .from("mission_main_links")
+    .select("*")
+    .eq("mission_id", missionId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Mission main link fetch error:", error);
+    return null;
+  }
+
+  return data;
+}
+
 export async function getMissionPageData(
   missionId: string,
   userId?: string,
@@ -212,6 +231,9 @@ export async function getMissionPageData(
   // 総達成回数の取得
   const totalAchievementCount = await getTotalAchievementCount(missionId);
 
+  // メインリンクの取得
+  const mainLink = await getMissionMainLink(missionId);
+
   return {
     mission,
     userAchievements,
@@ -219,6 +241,7 @@ export async function getMissionPageData(
     userAchievementCount,
     totalAchievementCount,
     referralCode,
+    mainLink,
   };
 }
 
