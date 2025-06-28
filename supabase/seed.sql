@@ -211,3 +211,31 @@ VALUES
    '{"type":"Point","coordinates":[139.6350,35.6350]}',
    '{"text":"世田谷区","originalType":"Text"}',
    '2025-06-14 10:00:00.000', '2025-06-14 10:00:00.000');
+
+-- ポスター掲示板の情報
+
+INSERT INTO poster_boards (name, lat, lon, prefecture, status, number) VALUES
+-- Tokyo boards
+('東京駅前掲示板', 35.6812, 139.7671, 'tokyo', 'not_yet', '10-1'),
+('新宿駅南口掲示板', 35.6896, 139.7006, 'tokyo', 'posted', '10-2'),
+('渋谷駅ハチ公前掲示板', 35.6590, 139.7005, 'tokyo', 'checked', '10-3'),
+('池袋駅東口掲示板', 35.7295, 139.7104, 'tokyo', 'not_yet', '10-4'),
+('上野駅公園口掲示板', 35.7141, 139.7774, 'tokyo', 'reserved', '10-5'),
+
+-- Osaka boards
+('大阪駅前掲示板', 34.7024, 135.4959, 'osaka', 'not_yet', '27-1'),
+('なんば駅前掲示板', 34.6666, 135.5011, 'osaka', 'posted', '27-2'),
+('天王寺駅前掲示板', 34.6465, 135.5133, 'osaka', 'damaged', '27-3'),
+
+-- Kyoto boards (Note: Kyoto is not in the prefecture_enum, using nearby osaka)
+('京都駅前掲示板', 34.9859, 135.7585, 'osaka', 'posted', '27-4'),
+('四条河原町掲示板', 35.0034, 135.7689, 'osaka', 'checked', '27-5'),
+
+-- Hokkaido boards
+('札幌駅前掲示板', 43.0687, 141.3507, 'hokkaido', 'not_yet', '01-1'),
+('すすきの交差点掲示板', 43.0556, 141.3529, 'hokkaido', 'reserved', '01-2'),
+
+-- Fukuoka boards
+('博多駅前掲示板', 33.5903, 130.4208, 'fukuoka', 'posted', '40-1'),
+('天神駅前掲示板', 33.5911, 130.3983, 'fukuoka', 'not_yet', '40-2')
+ON CONFLICT DO NOTHING;
