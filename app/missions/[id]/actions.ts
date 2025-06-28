@@ -592,7 +592,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // ミッション情報を取得してXP計算のための難易度を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("difficulty, title")
+    .select("difficulty, title, slug")
     .eq("id", achievement.mission_id)
     .single();
 
@@ -621,7 +621,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
   const bonusXp =
-    missionData.title === "チームみらいの機関誌をポスティングしよう"
+    missionData.slug === "posting-magazine"
       ? await getUserXpBonus(authUser.id, validatedAchievementId)
       : 0;
   const totalXpToRevoke = xpToRevoke + bonusXp;
