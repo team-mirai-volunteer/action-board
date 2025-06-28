@@ -124,7 +124,7 @@ export default async function MissionPage({ params }: Props) {
   }
 
   const isLinkMission =
-    mission.required_artifact_type === ARTIFACT_TYPES.LINK.key;
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key;
   const isCompleted =
     userAchievementCount >= (mission.max_achievement_count || 1);
 

@@ -36,7 +36,7 @@ export function MissionDetails({
 
     const formData = new FormData();
     formData.append("missionId", missionId);
-    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK.key);
+    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
 
     try {
       const { achieveMissionAction } = await import(
@@ -89,7 +89,7 @@ export function MissionDetails({
         )}
 
         {/* LINKミッションの場合、アクションボタンを表示 */}
-        {mission.required_artifact_type === ARTIFACT_TYPES.LINK.key &&
+        {mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
           mainLink && (
             <div className="flex flex-col items-center mt-6 space-y-4">
               <MainLinkButton
