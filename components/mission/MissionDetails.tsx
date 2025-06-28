@@ -14,16 +14,41 @@ import type { Tables } from "@/lib/types/supabase";
 type MissionDetailsProps = {
   mission: Tables<"missions">;
   mainLink?: Tables<"mission_main_links"> | null;
-  onMainLinkClick?: () => Promise<{ success: boolean; error?: string }>;
+  missionId?: string;
+  userAchievementCount?: number;
   isCompleted?: boolean;
 };
 
 export function MissionDetails({
   mission,
   mainLink,
-  onMainLinkClick,
+  missionId,
+  userAchievementCount = 0,
   isCompleted = false,
 }: MissionDetailsProps) {
+  const handleMainLinkClick = async () => {
+    if (!missionId)
+      return { success: false, error: "ミッションIDが見つかりません" };
+
+    if (userAchievementCount >= (mission.max_achievement_count || 1)) {
+      return { success: true };
+    }
+
+    const formData = new FormData();
+    formData.append("missionId", missionId);
+    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK.key);
+
+    try {
+      const { achieveMissionAction } = await import(
+        "@/app/missions/[id]/actions"
+      );
+      const result = await achieveMissionAction(formData);
+      return result;
+    } catch (error) {
+      console.error("Mission achievement error:", error);
+      return { success: false, error: "予期しないエラーが発生しました" };
+    }
+  };
   return (
     <Card>
       <CardHeader>
@@ -70,7 +95,9 @@ export function MissionDetails({
               <MainLinkButton
                 mission={mission}
                 mainLink={mainLink}
-                onLinkClick={isCompleted ? undefined : onMainLinkClick}
+                onLinkClick={
+                  isCompleted || !missionId ? undefined : handleMainLinkClick
+                }
                 isDisabled={false}
                 size="lg"
                 className="w-full"

@@ -123,25 +123,6 @@ export default async function MissionPage({ params }: Props) {
     }
   }
 
-  const handleMainLinkClick = async () => {
-    if (userAchievementCount >= (mission.max_achievement_count || 1)) {
-      return { success: true };
-    }
-
-    const formData = new FormData();
-    formData.append("missionId", id);
-    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK.key);
-
-    try {
-      const { achieveMissionAction } = await import("./actions");
-      const result = await achieveMissionAction(formData);
-      return result;
-    } catch (error) {
-      console.error("Mission achievement error:", error);
-      return { success: false, error: "予期しないエラーが発生しました" };
-    }
-  };
-
   const isLinkMission =
     mission.required_artifact_type === ARTIFACT_TYPES.LINK.key;
   const isCompleted =
@@ -153,7 +134,8 @@ export default async function MissionPage({ params }: Props) {
         <MissionDetails
           mission={mission}
           mainLink={mainLink}
-          onMainLinkClick={user ? handleMainLinkClick : undefined}
+          missionId={user ? id : undefined}
+          userAchievementCount={userAchievementCount}
           isCompleted={isCompleted}
         />
 
