@@ -130,7 +130,7 @@ export default async function MissionPage({ params }: Props) {
 
     const formData = new FormData();
     formData.append("missionId", id);
-    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
+    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK.key);
 
     try {
       const { achieveMissionAction } = await import("./actions");
@@ -142,8 +142,8 @@ export default async function MissionPage({ params }: Props) {
     }
   };
 
-  const isLinkAccessMission =
-    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key;
+  const isLinkMission =
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK.key;
   const isCompleted =
     userAchievementCount >= (mission.max_achievement_count || 1);
 
@@ -157,8 +157,8 @@ export default async function MissionPage({ params }: Props) {
           isCompleted={isCompleted}
         />
 
-        {/* LINK_ACCESSミッション以外の場合のみ視覚的導線を表示 */}
-        {user && !isLinkAccessMission && <MissionGuidanceArrow />}
+        {/* LINKミッション以外の場合のみ視覚的導線を表示 */}
+        {user && !isLinkMission && <MissionGuidanceArrow />}
 
         {user ? (
           <>

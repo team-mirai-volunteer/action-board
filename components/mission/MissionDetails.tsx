@@ -63,8 +63,8 @@ export function MissionDetails({
           </div>
         )}
 
-        {/* LINK_ACCESSミッションの場合、アクションボタンを表示 */}
-        {mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
+        {/* LINKミッションの場合、アクションボタンを表示 */}
+        {mission.required_artifact_type === ARTIFACT_TYPES.LINK.key &&
           mainLink && (
             <div className="flex flex-col items-center mt-6 space-y-4">
               <MainLinkButton
