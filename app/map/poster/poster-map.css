@@ -1,0 +1,38 @@
+/* Fix for Leaflet z-index issues with dialogs */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 10 !important;
+}
+
+.leaflet-control {
+  z-index: 10 !important;
+}
+
+/* Ensure custom markers don't interfere with dialog */
+.custom-marker {
+  z-index: 1 !important;
+}
+
+/* Ensure the map container doesn't overlap dialog */
+#poster-map {
+  position: relative;
+  z-index: 0;
+}
+
+/* Ensure Radix UI portal/dialog components are above map */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
+}
+
+/* Additional fix for dialog overlay and content */
+[role="dialog"] {
+  z-index: 50 !important;
+}
