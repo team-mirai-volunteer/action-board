@@ -367,3 +367,14 @@ missions:
     is_hidden: true
     artifact_label: null
     ogp_image_url: null
+  - slug: tiktok-like
+    title: TikTokでチームみらい動画に♡をつけよう
+    icon_url: /img/mission_fallback.svg
+    content:  チームみらい関連のTikTok投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.tiktok.com/tag/チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 一番応援したくなった投稿のURL
+    ogp_image_url: null
