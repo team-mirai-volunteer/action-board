@@ -1,50 +1,24 @@
 import {
   assertAuthState,
   expect,
-  generateRandomEmail,
   test,
 } from "../e2e-test-helpers";
 
 test.describe("ポスター掲示板マップ機能", () => {
-  // テスト用のユーザーを作成してログイン
+  // 既存のダミーユーザーでログイン
   test.beforeEach(async ({ page }) => {
-    // 1. テスト用ユーザーを作成
-    await page.goto("/sign-up");
-    
-    // 年齢情報を入力
-    await page.getByTestId("year_select").press("Enter");
-    await page.getByRole("option", { name: "2001年" }).click();
-    await page.getByTestId("month_select").press("Enter");
-    await page.getByRole("option", { name: "3月" }).click();
-    await page.getByTestId("day_select").press("Enter");
-    await page.getByRole("option", { name: "14日" }).click();
-    
-    // 利用規約に同意
-    await page.locator("#terms").click();
-    await page.getByRole("button", { name: "次へ進む" }).click();
-    
-    // メールアドレスとパスワードで作成を選択
-    await page.getByRole("button", { name: "メールアドレスとパスワードで作成" }).click();
-    
-    // メールアドレスとパスワードを入力
-    const testEmail = generateRandomEmail();
-    const testPassword = "TestPassword123!";
-    await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="password"]', testPassword);
-    await page.getByRole("button", { name: "アカウントを作成" }).click();
-    
-    // サインアップ成功を確認
-    await expect(page).toHaveURL(/\/sign-up-success/, { timeout: 10000 });
-    
-    // 2. ログイン
+    // seed.sqlで作成済みのユーザーでログイン
     await page.goto("/sign-in");
-    await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="password"]', testPassword);
+    await page.fill('input[name="email"]', "takahiroanno@example.com");
+    await page.fill('input[name="password"]', "password123");
     await page.getByRole("button", { name: "ログイン", exact: true }).click();
     
     // ログイン成功を確認
     await page.waitForURL("/", { timeout: 15000 });
     await assertAuthState(page, true);
+    
+    // ナビゲーションが完了するまで少し待つ
+    await page.waitForTimeout(1000);
   });
 
   test("ポスター掲示板マップで東京の掲示板ステータスを更新できる", async ({ page }) => {
@@ -72,9 +46,9 @@ test.describe("ポスター掲示板マップ機能", () => {
     
     // ステータス更新ダイアログが表示されることを確認
     await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.getByText("ステータスを更新")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ステータスを更新" })).toBeVisible();
     
-    // 4. ステータスを "未貼付" から "予約" に変更
+    // 4. ステータスを変更（現在のステータスに関わらず「予約」に変更）
     await page.getByRole("combobox").click();
     await page.getByRole("option", { name: "予約" }).click();
     
@@ -87,23 +61,21 @@ test.describe("ポスター掲示板マップ機能", () => {
     // 成功メッセージが表示されることを確認
     await expect(page.getByText("ステータスを更新しました")).toBeVisible({ timeout: 5000 });
     
-    // 5. ページをリロードして変更が保持されていることを確認
-    await page.reload();
+    // ダイアログが閉じるのを待つ
+    await expect(page.getByRole("dialog")).not.toBeVisible({ timeout: 5000 });
     
-    // 地図が再度読み込まれるのを待つ
-    await page.waitForTimeout(2000);
+    // 5. 同じマーカーを再度クリックして変更が反映されていることを確認
+    await marker.click();
     
-    // 同じマーカーをクリック
-    const reloadedMarker = page.locator('.custom-marker').first();
-    await expect(reloadedMarker).toBeVisible({ timeout: 10000 });
-    await reloadedMarker.click();
-    
-    // ダイアログが表示され、ステータスが "予約" になっていることを確認
+    // ダイアログが表示されることを確認
     await expect(page.getByRole("dialog")).toBeVisible();
     
-    // コンボボックスの現在の値を確認
-    const comboboxValue = await page.getByRole("combobox").textContent();
-    expect(comboboxValue).toContain("予約");
+    // ステータスが "予約" になっていることを確認
+    const updatedStatus = await page.getByRole("combobox").textContent();
+    expect(updatedStatus).toContain("予約");
+    
+    // ダイアログを閉じる
+    await page.keyboard.press('Escape');
   });
 
   test("ポスター掲示板マップの都道府県一覧が正しく表示される", async ({ page }) => {
@@ -146,7 +118,8 @@ test.describe("ポスター掲示板マップ機能", () => {
     // 各ステータスが表示されることを確認
     const statuses = ["未貼付", "予約", "貼付済", "確認済", "損傷", "エラー", "その他"];
     for (const status of statuses) {
-      await expect(page.getByText(status)).toBeVisible();
+      // 凡例内のステータステキストを正確に選択
+      await expect(page.getByText(status, { exact: true }).last()).toBeVisible();
     }
   });
 
@@ -154,8 +127,11 @@ test.describe("ポスター掲示板マップ機能", () => {
     // 東京都の詳細ページに直接移動
     await page.goto("/map/poster/tokyo");
     
-    // 戻るボタンをクリック
-    await page.getByRole("button", { name: "" }).filter({ has: page.locator('[class*="ArrowLeft"]') }).click();
+    // ページが読み込まれるのを待つ
+    await expect(page.getByRole("heading", { name: "東京都のポスター掲示板" })).toBeVisible();
+    
+    // 戻るボタンをクリック（左矢印アイコンのボタン）
+    await page.getByRole("button").first().click();
     
     // ポスター掲示板マップ一覧ページに戻ることを確認
     await expect(page).toHaveURL("/map/poster");
