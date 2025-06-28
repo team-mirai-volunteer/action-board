@@ -290,7 +290,7 @@ export default function PosterMapPageClient() {
       {/* Action Button */}
       <div className="flex justify-center pt-4">
         <Button size="lg" asChild>
-          <Link href="/missions">
+          <Link href="/#featured-missions">
             ミッション一覧に戻る
             <ChevronRight className="ml-2 h-4 w-4" />
           </Link>
