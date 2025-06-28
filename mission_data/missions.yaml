@@ -156,7 +156,7 @@ missions:
     title: '開発者向け: Githubでプルリクエストを出そう'
     icon_url: /img/mission_fallback.svg
     content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
-    difficulty: 2
+    difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
@@ -349,7 +349,7 @@ missions:
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission_fallback.svg
     content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
-    difficulty: 2
+    difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
