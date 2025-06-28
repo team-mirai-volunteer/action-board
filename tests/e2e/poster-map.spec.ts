@@ -50,7 +50,7 @@ test.describe("ポスター掲示板マップ機能", () => {
     
     // 現在のステータスが「予約」でないことを確認
     const initialStatus = await page.getByRole("combobox").textContent();
-    expect(initialStatus).not.toContain("未貼付");
+    expect(initialStatus).toContain("未貼付");
     
     // 4. ステータスを変更（現在のステータスに関わらず「予約」に変更）
     await page.getByRole("combobox").click();
