@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { MissionIcon } from "@/components/ui/mission-icon";
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants";
 import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";
@@ -14,12 +15,14 @@ type MissionDetailsProps = {
   mission: Tables<"missions">;
   mainLink?: Tables<"mission_main_links"> | null;
   onMainLinkClick?: () => Promise<{ success: boolean; error?: string }>;
+  isCompleted?: boolean;
 };
 
 export function MissionDetails({
   mission,
   mainLink,
   onMainLinkClick,
+  isCompleted = false,
 }: MissionDetailsProps) {
   return (
     <Card>
@@ -59,6 +62,27 @@ export function MissionDetails({
             />
           </div>
         )}
+
+        {/* LINK_ACCESSミッションの場合、アクションボタンを表示 */}
+        {mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
+          mainLink && (
+            <div className="flex flex-col items-center mt-6 space-y-4">
+              <MainLinkButton
+                mission={mission}
+                mainLink={mainLink}
+                onLinkClick={isCompleted ? undefined : onMainLinkClick}
+                isDisabled={false}
+                size="lg"
+                className="w-full"
+              />
+
+              {!isCompleted && (
+                <div className="text-sm text-muted-foreground text-center">
+                  リンクを開くとミッションクリアとなります
+                </div>
+              )}
+            </div>
+          )}
       </CardContent>
     </Card>
   );
