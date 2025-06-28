@@ -13,7 +13,6 @@ import { useFormStatus } from "react-dom";
 
 interface EmailSignUpFormProps {
   searchParams: Message;
-  referralCode: string | null;
 }
 
 function EmailSignUpFormContent({
@@ -81,7 +80,6 @@ function EmailSignUpFormContent({
 
 export default function EmailSignUpForm({
   searchParams,
-  referralCode,
 }: EmailSignUpFormProps) {
   const router = useRouter();
 

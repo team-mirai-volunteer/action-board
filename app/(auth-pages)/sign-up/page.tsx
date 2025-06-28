@@ -12,7 +12,7 @@ export default async function Signup(props: {
       <div className="flex justify-center items-center m-4">
         <Image src="/img/logo.png" alt="logo" width={114} height={96} />
       </div>
-      <TwoStepSignUpForm searchParams={searchParams} referralCode={null} />
+      <TwoStepSignUpForm searchParams={searchParams} />
     </div>
   );
 }

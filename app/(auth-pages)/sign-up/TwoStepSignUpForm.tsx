@@ -20,7 +20,6 @@ import { useCallback, useEffect, useState } from "react";
 
 interface TwoStepSignUpFormProps {
   searchParams: Message;
-  referralCode: string | null;
 }
 
 // フェーズ1: 同意・生年月日入力
@@ -194,11 +193,9 @@ function ConsentPhase({
 // フェーズ2: ログイン方法選択
 function LoginSelectionPhase({
   formattedDate,
-  referralCode,
   onBack,
 }: {
   formattedDate: string;
-  referralCode: string | null;
   onBack: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -290,7 +287,6 @@ function LoginSelectionPhase({
 
 export default function TwoStepSignUpForm({
   searchParams,
-  referralCode,
 }: TwoStepSignUpFormProps) {
   // フェーズ管理
   const [currentPhase, setCurrentPhase] = useState<
@@ -404,7 +400,6 @@ export default function TwoStepSignUpForm({
       ) : (
         <LoginSelectionPhase
           formattedDate={formattedDate}
-          referralCode={referralCode}
           onBack={handleBack}
         />
       )}

@@ -12,7 +12,7 @@ export default async function EmailSignup(props: {
       <div className="flex justify-center items-center m-4">
         <Image src="/img/logo.png" alt="logo" width={114} height={96} />
       </div>
-      <EmailSignUpForm searchParams={searchParams} referralCode={null} />
+      <EmailSignUpForm searchParams={searchParams} />
     </div>
   );
 }
