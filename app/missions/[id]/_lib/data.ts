@@ -13,10 +13,15 @@ export async function getMissionData(
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
 
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionId,
+    );
+
   const { data: missionData, error } = await supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("slug", missionId)
+    .eq(isUUID ? "id" : "slug", missionId)
     .single();
 
   if (error) {
@@ -26,6 +31,7 @@ export async function getMissionData(
       JSON.stringify(error, null, 2),
     );
     console.error("Mission ID being queried:", missionId);
+    console.error("Query type:", isUUID ? "UUID" : "slug");
     console.error("Supabase client status:", !!supabase);
     return null;
   }
