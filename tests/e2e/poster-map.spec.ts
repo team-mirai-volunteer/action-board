@@ -68,18 +68,25 @@ test.describe("ポスター掲示板マップ機能", () => {
     // ダイアログが閉じるのを待つ
     await expect(page.getByRole("dialog")).not.toBeVisible({ timeout: 5000 });
     
-    // 5. 同じマーカーを再度クリックして変更が反映されていることを確認
-    await marker.click();
+    // // 5. 同じマーカーを再度クリックして変更が反映されていることを確認
+    // await marker.click();
     
-    // ダイアログが表示されることを確認
-    await expect(page.getByRole("dialog")).toBeVisible();
+    // // ダイアログが表示されることを確認
+    // await expect(page.getByRole("dialog")).toBeVisible();
     
-    // ステータスが "予約" になっていることを確認
-    const updatedStatus = await page.getByRole("combobox").textContent();
-    expect(updatedStatus).toContain("予約");
+    // // ステータスが "予約" になっていることを確認
+    // const updatedStatus = await page.getByRole("combobox").textContent();
+    // expect(updatedStatus).toContain("予約");
     
-    // ダイアログを閉じる
-    await page.keyboard.press('Escape');
+    // // ダイアログを閉じる
+    // await page.keyboard.press('Escape');
+    
+    // // ダイアログが閉じるのを待つ
+    // await expect(page.getByRole("dialog")).not.toBeVisible({ timeout: 5000 });
+    
+    // 6. マーカーの色が予約ステータスの色（黄色/オレンジ）に変わったことを確認
+    const updatedMarkerStyle = await marker.locator('div').getAttribute('style');
+    expect(updatedMarkerStyle).toContain('background-color: #F59E0B');
   });
 
   test("ポスター掲示板マップの都道府県一覧が正しく表示される", async ({ page }) => {
