@@ -25,6 +25,8 @@ category_links:
         sort_no: 300
       - mission_slug: chat-idobata-ai
         sort_no: 400
+      - mission_slug: read-manifest
+        sort_no: 500
   - category_slug: join-community
     missions:
       - mission_slug: join-slack
@@ -83,14 +85,16 @@ category_links:
     missions:
       - mission_slug: chat-idobata-ai
         sort_no: 100
-      - mission_slug: quiz-policy-intermediate
+      - mission_slug: read-manifest
         sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
+      - mission_slug: quiz-policy-intermediate
         sort_no: 300
-      - mission_slug: propose-manifest-idobata
+      - mission_slug: quiz-policy-intermediate-2
         sort_no: 400
-      - mission_slug: share-manifest-sns
+      - mission_slug: propose-manifest-idobata
         sort_no: 500
+      - mission_slug: share-manifest-sns
+        sort_no: 600
   - category_slug: support-on-x
     missions:
       - mission_slug: follow-teammirai-x
