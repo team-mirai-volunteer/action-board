@@ -1,7 +1,7 @@
 CREATE TABLE public.user_badges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES auth.users(id),
-  badge_id uuid NOT NULL REFERENCES public.badges(id),
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  badge_id uuid NOT NULL REFERENCES public.badges(id) ON DELETE CASCADE,
   is_visible boolean NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT user_badges_user_badge_unique UNIQUE (user_id, badge_id) -- 重複防止

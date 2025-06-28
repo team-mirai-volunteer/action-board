@@ -7,4 +7,5 @@ VALUES (
   false, -- avif自動検出無効
   5242880, -- ファイルサイズ制限 5MB
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'] -- 許可するMIMEタイプ
-);
+)
+ON CONFLICT (id) DO NOTHING;
