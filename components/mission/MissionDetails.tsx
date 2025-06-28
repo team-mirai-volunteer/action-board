@@ -14,41 +14,9 @@ import type { Tables } from "@/lib/types/supabase";
 type MissionDetailsProps = {
   mission: Tables<"missions">;
   mainLink?: Tables<"mission_main_links"> | null;
-  missionId?: string;
-  userAchievementCount?: number;
-  isCompleted?: boolean;
 };
 
-export function MissionDetails({
-  mission,
-  mainLink,
-  missionId,
-  userAchievementCount = 0,
-  isCompleted = false,
-}: MissionDetailsProps) {
-  const handleMainLinkClick = async () => {
-    if (!missionId)
-      return { success: false, error: "ミッションIDが見つかりません" };
-
-    if (userAchievementCount >= (mission.max_achievement_count || 1)) {
-      return { success: true };
-    }
-
-    const formData = new FormData();
-    formData.append("missionId", missionId);
-    formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
-
-    try {
-      const { achieveMissionAction } = await import(
-        "@/app/missions/[id]/actions"
-      );
-      const result = await achieveMissionAction(formData);
-      return result;
-    } catch (error) {
-      console.error("Mission achievement error:", error);
-      return { success: false, error: "予期しないエラーが発生しました" };
-    }
-  };
+export function MissionDetails({ mission, mainLink }: MissionDetailsProps) {
   return (
     <Card>
       <CardHeader>
@@ -95,19 +63,15 @@ export function MissionDetails({
               <MainLinkButton
                 mission={mission}
                 mainLink={mainLink}
-                onLinkClick={
-                  isCompleted || !missionId ? undefined : handleMainLinkClick
-                }
+                onLinkClick={undefined}
                 isDisabled={false}
                 size="lg"
                 className="w-full"
               />
 
-              {!isCompleted && (
-                <div className="text-sm text-muted-foreground text-center">
-                  リンクを開くとミッションクリアとなります
-                </div>
-              )}
+              <div className="text-sm text-muted-foreground text-center">
+                下記のフォームからミッション完了を報告してください
+              </div>
             </div>
           )}
       </CardContent>

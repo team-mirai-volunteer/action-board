@@ -293,10 +293,8 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {/* LINKミッションの場合はMissionDetailsでボタンを表示するため、ここでは表示しない */}
-      {mission.required_artifact_type !== ARTIFACT_TYPES.LINK_ACCESS.key &&
-        !hasReachedUserMaxAchievements &&
-        renderForm()}
+      {/* ミッションが未達成の場合のみフォームを表示 */}
+      {!hasReachedUserMaxAchievements && renderForm()}
 
       {(completed ||
         (userAchievementCount > 0 &&
