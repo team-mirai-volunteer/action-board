@@ -21,6 +21,12 @@ export async function getMissionData(
 
   if (error) {
     console.error("Mission fetch error:", error);
+    console.error(
+      "Mission fetch error details:",
+      JSON.stringify(error, null, 2),
+    );
+    console.error("Mission ID being queried:", missionId);
+    console.error("Supabase client status:", !!supabase);
     return null;
   }
 
@@ -28,18 +34,31 @@ export async function getMissionData(
 }
 
 export async function getTotalAchievementCount(
-  missionId: string,
+  missionSlug: string,
 ): Promise<number> {
   const supabase = await createServerClient();
+
+  const { data: missionData, error: missionError } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", missionSlug)
+    .single();
+
+  if (missionError || !missionData) {
+    console.error("Mission ID fetch error for count:", missionError);
+    return 0;
+  }
 
   const { data: countData, error } = await supabase
     .from("mission_achievement_count_view")
     .select("achievement_count")
-    .eq("mission_id", missionId)
+    .eq("mission_id", missionData.id)
     .single();
 
   if (error) {
     console.error("Count fetch error:", error);
+    console.error("Count fetch error details:", JSON.stringify(error, null, 2));
+    console.error("Mission ID for count query:", missionData.id);
     return 0;
   }
 
@@ -48,15 +67,26 @@ export async function getTotalAchievementCount(
 
 export async function getUserAchievements(
   userId: string,
-  missionId: string,
+  missionSlug: string,
 ): Promise<{ achievements: Achievement[]; count: number }> {
   const supabase = await createServerClient();
+
+  const { data: missionData, error: missionError } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", missionSlug)
+    .single();
+
+  if (missionError || !missionData) {
+    console.error("Mission ID fetch error for achievements:", missionError);
+    return { achievements: [], count: 0 };
+  }
 
   const { data: achievementsData, error } = await supabase
     .from("achievements")
     .select("id, created_at, mission_id, user_id")
     .eq("user_id", userId)
-    .eq("mission_id", missionId)
+    .eq("mission_id", missionData.id)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -72,16 +102,30 @@ export async function getUserAchievements(
 
 export async function getSubmissionHistory(
   userId: string,
-  missionId: string,
+  missionSlug: string,
 ): Promise<SubmissionData[]> {
   const supabase = await createServerClient();
+
+  const { data: missionData, error: missionError } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", missionSlug)
+    .single();
+
+  if (missionError || !missionData) {
+    console.error(
+      "Mission ID fetch error for submission history:",
+      missionError,
+    );
+    return [];
+  }
 
   // ユーザーの達成履歴を取得
   const { data: achievementsData, error: achievementsError } = await supabase
     .from("achievements")
     .select("id, created_at, mission_id, user_id")
     .eq("user_id", userId)
-    .eq("mission_id", missionId)
+    .eq("mission_id", missionData.id)
     .order("created_at", { ascending: false });
 
   if (achievementsError) {
@@ -186,14 +230,25 @@ export async function getSubmissionHistory(
 }
 
 export async function getMissionMainLink(
-  missionId: string,
+  missionSlug: string,
 ): Promise<Tables<"mission_main_links"> | null> {
   const supabase = await createServerClient();
+
+  const { data: missionData, error: missionError } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", missionSlug)
+    .single();
+
+  if (missionError || !missionData) {
+    console.error("Mission ID fetch error for main link:", missionError);
+    return null;
+  }
 
   const { data, error } = await supabase
     .from("mission_main_links")
     .select("*")
-    .eq("mission_id", missionId)
+    .eq("mission_id", missionData.id)
     .maybeSingle();
 
   if (error) {
@@ -205,10 +260,10 @@ export async function getMissionMainLink(
 }
 
 export async function getMissionPageData(
-  missionId: string,
+  missionSlug: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionId);
+  const mission = await getMissionData(missionSlug);
 
   if (!mission) return null;
 
@@ -220,19 +275,19 @@ export async function getMissionPageData(
   if (userId) {
     const { achievements, count } = await getUserAchievements(
       userId,
-      missionId,
+      missionSlug,
     );
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, missionId);
+    submissions = await getSubmissionHistory(userId, missionSlug);
     referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(missionId);
+  const totalAchievementCount = await getTotalAchievementCount(missionSlug);
 
   // メインリンクの取得
-  const mainLink = await getMissionMainLink(missionId);
+  const mainLink = await getMissionMainLink(missionSlug);
 
   return {
     mission,
