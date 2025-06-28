@@ -153,18 +153,32 @@ async function checkYouTubeDuplicate(
   missionId: string,
   url: string,
 ): Promise<{ isDuplicate: boolean; normalizedUrl?: string }> {
+  console.log("[DEBUG] checkYouTubeDuplicate called with:", {
+    userId,
+    missionId,
+    url,
+  });
+
   const normalizedUrl = normalizeYouTubeUrl(url);
+  console.log("[DEBUG] Normalized URL:", normalizedUrl);
 
   if (!normalizedUrl) {
+    console.log("[DEBUG] URL normalization failed, returning false");
     return { isDuplicate: false };
   }
 
   const { data: existingArtifacts, error } = await supabase
     .from("mission_artifacts")
-    .select("link_url")
+    .select(`
+      link_url,
+      achievements!inner(mission_id)
+    `)
     .eq("user_id", userId)
     .eq("artifact_type", "LINK")
+    .eq("achievements.mission_id", missionId)
     .not("link_url", "is", null);
+
+  console.log("[DEBUG] Database query result:", { existingArtifacts, error });
 
   if (error) {
     console.error("Duplicate check error:", error);
@@ -174,9 +188,15 @@ async function checkYouTubeDuplicate(
   const isDuplicate =
     existingArtifacts?.some((artifact) => {
       const existingNormalized = normalizeYouTubeUrl(artifact.link_url || "");
+      console.log("[DEBUG] Comparing:", {
+        existing: artifact.link_url,
+        existingNormalized,
+        newNormalized: normalizedUrl,
+      });
       return existingNormalized === normalizedUrl;
     }) || false;
 
+  console.log("[DEBUG] Final duplicate check result:", isDuplicate);
   return { isDuplicate, normalizedUrl };
 }
 
