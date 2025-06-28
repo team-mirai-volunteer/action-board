@@ -177,6 +177,9 @@ export const achieveMissionAction = async (formData: FormData) => {
     locationText,
   });
 
+  // ポスティングボーナスXP + ミッション達成XP 用の変数
+  let totalXpGranted = 0;
+
   if (!validatedFields.success) {
     return {
       success: false,
@@ -487,6 +490,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       // ポスティング用のポイント計算とXP付与
       const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
       const totalPoints = validatedData.postingCount * pointsPerUnit;
+      totalXpGranted += totalPoints;
 
       // 通常のXP（ミッション難易度ベース）に加えて、ポスティングボーナスXPを付与
       const bonusXpResult = await grantXp(
@@ -518,11 +522,11 @@ export const achieveMissionAction = async (formData: FormData) => {
     console.error("XP付与に失敗しました:", xpResult.error);
     // XP付与の失敗はミッション達成の成功を妨げない
   }
-
+  totalXpGranted += xpResult?.xpGranted ?? 0;
   return {
     success: true,
     message: "ミッションを達成しました！",
-    xpGranted: xpResult.xpGranted,
+    xpGranted: totalXpGranted,
     userLevel: xpResult.userLevel,
   };
 };
