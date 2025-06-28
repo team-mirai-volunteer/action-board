@@ -48,6 +48,10 @@ test.describe("ポスター掲示板マップ機能", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
     await expect(page.getByRole("heading", { name: "ステータスを更新" })).toBeVisible();
     
+    // 現在のステータスが「予約」でないことを確認
+    const initialStatus = await page.getByRole("combobox").textContent();
+    expect(initialStatus).not.toContain("未貼付");
+    
     // 4. ステータスを変更（現在のステータスに関わらず「予約」に変更）
     await page.getByRole("combobox").click();
     await page.getByRole("option", { name: "予約" }).click();
@@ -121,6 +125,51 @@ test.describe("ポスター掲示板マップ機能", () => {
       // 凡例内のステータステキストを正確に選択
       await expect(page.getByText(status, { exact: true }).last()).toBeVisible();
     }
+  });
+
+  test("再度マップに戻ると状態が保存されている", async ({ page }) => {
+    // 東京都の詳細ページに直接移動
+    await page.goto("/map/poster/tokyo");
+    
+    // ページが読み込まれるのを待つ
+    await expect(page.getByRole("heading", { name: "東京都のポスター掲示板" })).toBeVisible();
+    
+    // 地図が読み込まれるのを待つ
+    await page.waitForTimeout(2000);
+    
+    // 最初のマーカーが「予約」ステータスになっていることを確認
+    // (前のテストで更新したマーカーが予約状態であることを確認)
+    const firstMarker = page.locator('.custom-marker').first();
+    await expect(firstMarker).toBeVisible({ timeout: 10000 });
+    
+    // マーカーの色が予約ステータスの色（黄色/オレンジ）であることを視覚的に確認
+    // 予約ステータスの色は #F59E0B
+    const markerStyle = await firstMarker.locator('div').getAttribute('style');
+    expect(markerStyle).toContain('background-color: #F59E0B');
+    
+    // テストクリーンアップ: マーカーをクリックしてステータスを「未貼付」に戻す
+    await firstMarker.click();
+    
+    // ステータス更新ダイアログが表示されることを確認
+    await expect(page.getByRole("dialog")).toBeVisible();
+    
+    // ステータスを「未貼付」に変更
+    await page.getByRole("combobox").click();
+    await page.getByRole("option", { name: "未貼付" }).click();
+    
+    // 更新ボタンをクリック
+    await page.getByRole("button", { name: "更新" }).click();
+    
+    // 成功メッセージが表示されることを確認
+    await expect(page.getByText("ステータスを更新しました")).toBeVisible({ timeout: 5000 });
+    
+    // ダイアログが閉じるのを待つ
+    await expect(page.getByRole("dialog")).not.toBeVisible({ timeout: 5000 });
+    
+    // マーカーが「未貼付」ステータスに戻ったことを確認
+    // 未貼付ステータスの色は #6B7280 (gray)
+    const updatedMarkerStyle = await firstMarker.locator('div').getAttribute('style');
+    expect(updatedMarkerStyle).toContain('background-color: #6B7280');
   });
 
   test("都道府県詳細ページから一覧に戻れる", async ({ page }) => {
