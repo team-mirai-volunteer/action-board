@@ -9,7 +9,12 @@ import {
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
-import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
+import {
+  MAX_POSTER_COUNT,
+  MAX_POSTING_COUNT,
+  POSTER_POINTS_PER_UNIT,
+  POSTING_POINTS_PER_UNIT,
+} from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
@@ -118,6 +123,17 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
     .max(100, { message: "ポスティング場所は100文字以下で入力してください" }),
 });
 
+// POSTERタイプ用スキーマ
+const posterArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.POSTER.key),
+  posterCount: z.coerce
+    .number()
+    .min(1, { message: "ポスティング枚数は1枚以上で入力してください" })
+    .max(MAX_POSTER_COUNT, {
+      message: `ポスティング枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
+    }),
+});
+
 // QUIZタイプ用スキーマ（sessionIdは不要）
 const quizArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
@@ -137,6 +153,7 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   imageWithGeolocationArtifactSchema,
   noneArtifactSchema,
   postingArtifactSchema,
+  posterArtifactSchema,
   quizArtifactSchema,
   linkAccessArtifactSchema, // 追加
 ]);
@@ -164,6 +181,8 @@ export const achieveMissionAction = async (formData: FormData) => {
   // ポスティング用データの取得
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
+  // ポスター用データの取得
+  const posterCount = formData.get("posterCount")?.toString();
 
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
@@ -178,6 +197,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     accuracy,
     altitude,
     postingCount,
+    posterCount,
     locationText,
   });
 
@@ -364,6 +384,15 @@ export const achieveMissionAction = async (formData: FormData) => {
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
       }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
+      artifactTypeLabel = "POSTER";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
+        // ポスティング情報をtext_contentに格納
+        artifactPayload.text_content = `${validatedData.posterCount}枚を貼付`;
+        // CHECK制約: text_content必須、他はnull
+        artifactPayload.link_url = null;
+        artifactPayload.image_storage_path = null;
+      }
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
       artifactTypeLabel = "QUIZ";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
@@ -514,6 +543,35 @@ export const achieveMissionAction = async (formData: FormData) => {
         totalXpGranted += totalPoints;
       }
     }
+
+    // ポスターミッションのボーナスXP付与
+    if (
+      validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key &&
+      validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
+    ) {
+      // ポスター用のポイント計算とXP付与
+      const pointsPerUnit = POSTER_POINTS_PER_UNIT;
+      const totalPoints = validatedData.posterCount * pointsPerUnit;
+
+      // 通常のXP（ミッション難易度ベース）に加えて、ポスターボーナスXPを付与
+      const bonusXpResult = await grantXp(
+        authUser.id,
+        totalPoints,
+        "BONUS",
+        achievement.id,
+        `ポスターボーナス（${validatedData.posterCount}枚×${pointsPerUnit}ポイント）`,
+      );
+
+      if (!bonusXpResult.success) {
+        console.error(
+          "ポスターボーナスXP付与に失敗しました:",
+          bonusXpResult.error,
+        );
+        // ボーナスXP付与の失敗はミッション達成の成功を妨げない
+      } else {
+        totalXpGranted += totalPoints;
+      }
+    }
   }
 
   // ミッション達成時にXPを付与
@@ -625,10 +683,13 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
-  const bonusXp =
-    missionData.slug === "posting-magazine"
-      ? await getUserXpBonus(authUser.id, validatedAchievementId)
-      : 0;
+  const isBonusMission = [
+    "posting-magazine",
+    "put-up-poster-on-board",
+  ].includes(missionData.slug);
+  const bonusXp = isBonusMission
+    ? await getUserXpBonus(authUser.id, validatedAchievementId)
+    : 0;
   const totalXpToRevoke = xpToRevoke + bonusXp;
 
   const xpResult = await grantXp(
