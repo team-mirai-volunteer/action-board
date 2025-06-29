@@ -547,10 +547,12 @@ export type Database = {
       };
       poster_boards: {
         Row: {
+          address: string;
+          city: string;
           created_at: string;
           id: string;
           lat: number;
-          lon: number;
+          long: number;
           name: string;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -558,10 +560,12 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          address: string;
+          city: string;
           created_at?: string;
           id?: string;
           lat: number;
-          lon: number;
+          long: number;
           name: string;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -569,10 +573,12 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          address?: string;
+          city?: string;
           created_at?: string;
           id?: string;
           lat?: number;
-          lon?: number;
+          long?: number;
           name?: string;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -690,28 +696,28 @@ export type Database = {
           address_prefecture: string;
           avatar_url: string | null;
           created_at: string;
+          github_username: string | null;
           id: string;
           name: string;
           x_username: string | null;
-          github_username: string | null;
         };
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
           created_at: string;
+          github_username?: string | null;
           id: string;
           name: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
           avatar_url?: string | null;
           created_at?: string;
+          github_username?: string | null;
           id?: string;
           name?: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Relationships: [];
       };
