@@ -81,24 +81,32 @@ category_links:
         sort_no: 110
       - mission_slug: quiz-teammirai-values
         sort_no: 120
-      - mission_slug: quiz-policy-intermediate
+      - mission_slug: quiz-policy-vision
         sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
+      - mission_slug: quiz-policy-step1
         sort_no: 300
+      - mission_slug: quiz-policy-step2
+        sort_no: 400
+      - mission_slug: quiz-policy-step3
+        sort_no: 500
   - category_slug: improve-policies
     missions:
       - mission_slug: chat-idobata-ai
         sort_no: 100
-      - mission_slug: read-manifest
+      - mission_slug: quiz-policy-vision
         sort_no: 200
-      - mission_slug: quiz-policy-intermediate
+      - mission_slug: quiz-policy-step1
+        sort_no: 210
+      - mission_slug: quiz-policy-step2
+        sort_no: 220
+      - mission_slug: quiz-policy-step3
+        sort_no: 230
+      - mission_slug: read-manifest
         sort_no: 300
-      - mission_slug: quiz-policy-intermediate-2
-        sort_no: 400
       - mission_slug: propose-manifest-idobata
-        sort_no: 500
+        sort_no: 400
       - mission_slug: share-manifest-sns
-        sort_no: 600
+        sort_no: 500
   - category_slug: support-on-x
     missions:
       - mission_slug: follow-teammirai-x

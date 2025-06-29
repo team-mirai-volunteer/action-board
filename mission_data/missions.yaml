@@ -64,15 +64,15 @@ missions:
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//11_follow_teammirai_x.png
   - slug: follow-teammirai-tiktok
-    title: 公式Tiktokをフォローしよう
+    title: 公式TikTokをフォローしよう
     icon_url: /img/mission_fallback.svg
-    content: '<a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式Tiktokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
+    content: '<a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
     is_hidden: false
-    artifact_label: あなたのTiktokアカウント名
+    artifact_label: あなたのTikTokアカウント名
     ogp_image_url: null
     event_date: null
   - slug: share-manifest-sns
@@ -315,7 +315,7 @@ missions:
   - slug: quiz-teammirai-anno
     title: チームみらいクイズ（安野編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの党首・安野たかひろについてのクイズです。全部で4問！全問正解でミッション達成！
+    content: チームみらいの党首・安野たかひろについてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
     max_achievement_count: 3
@@ -326,7 +326,7 @@ missions:
   - slug: quiz-teammirai-vision
     title: チームみらいクイズ（ビジョン編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのビジョンについてのクイズです。全部で4問！全問正解でミッション達成！
+    content: チームみらいのビジョンについてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
     max_achievement_count: 3
@@ -337,7 +337,7 @@ missions:
   - slug: quiz-teammirai-values
     title: チームみらいクイズ（価値観編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの価値観についてのクイズです。全部で4問！全問正解でミッション達成！
+    content: チームみらいの価値観についてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
     max_achievement_count: 3
@@ -345,28 +345,48 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
-  - slug: quiz-policy-intermediate
-    title: 政策・マニフェストクイズ（中級）に挑戦しよう
+  - slug: quiz-policy-vision
+    title: 政策クイズ（ビジョン編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの政策・マニフェストについてのクイズです。全部で5問！全問正解でミッション達成！
+    content: チームみらいの政策ビジョンについてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
-    max_achievement_count: 2
+    max_achievement_count: 3
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: null
     ogp_image_url: null
-  - slug: quiz-policy-intermediate-2
-    title: 政策・マニフェストクイズ（中級2）に挑戦しよう
+  - slug: quiz-policy-step1
+    title: 政策クイズ（ステップ１）に挑戦しよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの政策・マニフェストについてのクイズです。全部で5問！全問正解でミッション達成！
+    content: チームみらいの政策ステップ１についてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
-    max_achievement_count: 2
+    max_achievement_count: 3
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: null
     ogp_image_url: null
+  - slug: quiz-policy-step2
+    title: 政策クイズ（ステップ２）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの政策ステップ２についてのクイズです。全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+  - slug: quiz-policy-step3
+    title: 政策クイズ（ステップ３）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの政策ステップ３についてのクイズです。全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
   - slug: tiktok-like
     title: TikTokでチームみらい動画に♡をつけよう
     icon_url: /img/mission_fallback.svg
