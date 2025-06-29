@@ -50,11 +50,9 @@ type StatusHistory =
     user: { id: string; name: string; address_prefecture: string } | null;
   };
 
-type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
-
 interface PrefecturePosterMapClientProps {
   userId: string;
-  prefecture: PrefectureEnum;
+  prefecture: string;
   prefectureName: string;
   center: [number, number];
 }

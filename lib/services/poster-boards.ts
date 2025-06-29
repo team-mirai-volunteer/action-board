@@ -3,11 +3,10 @@ import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
 type StatusHistory =
   Database["public"]["Tables"]["poster_board_status_history"]["Row"];
 
-export async function getPosterBoards(prefecture?: PrefectureEnum) {
+export async function getPosterBoards(prefecture?: string) {
   const supabase = createClient();
 
   let query = supabase

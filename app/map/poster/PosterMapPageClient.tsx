@@ -16,75 +16,51 @@ type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 // Prefecture data with coordinates for centering map
 const prefectureData = [
   {
-    id: "hokkaido",
     name: "北海道",
-    nameEn: "Hokkaido",
     center: [43.0642, 141.3469] as [number, number],
   },
   {
-    id: "miyagi",
     name: "宮城県",
-    nameEn: "Miyagi",
     center: [38.2688, 140.8721] as [number, number],
   },
   {
-    id: "saitama",
     name: "埼玉県",
-    nameEn: "Saitama",
     center: [35.857, 139.649] as [number, number],
   },
   {
-    id: "chiba",
     name: "千葉県",
-    nameEn: "Chiba",
     center: [35.605, 140.1233] as [number, number],
   },
   {
-    id: "tokyo",
     name: "東京都",
-    nameEn: "Tokyo",
     center: [35.6762, 139.6503] as [number, number],
   },
   {
-    id: "kanagawa",
     name: "神奈川県",
-    nameEn: "Kanagawa",
     center: [35.4478, 139.6425] as [number, number],
   },
   {
-    id: "nagano",
     name: "長野県",
-    nameEn: "Nagano",
     center: [36.6513, 138.181] as [number, number],
   },
   {
-    id: "aichi",
     name: "愛知県",
-    nameEn: "Aichi",
     center: [35.1802, 136.9066] as [number, number],
   },
   {
-    id: "osaka",
     name: "大阪府",
-    nameEn: "Osaka",
     center: [34.6937, 135.5023] as [number, number],
   },
   {
-    id: "hyogo",
     name: "兵庫県",
-    nameEn: "Hyogo",
     center: [34.6913, 135.1831] as [number, number],
   },
   {
-    id: "ehime",
     name: "愛媛県",
-    nameEn: "Ehime",
     center: [33.8416, 132.7658] as [number, number],
   },
   {
-    id: "fukuoka",
     name: "福岡県",
-    nameEn: "Fukuoka",
     center: [33.5904, 130.4017] as [number, number],
   },
 ];
@@ -211,13 +187,14 @@ export default function PosterMapPageClient() {
         <h2 className="text-xl font-semibold">都道府県から選択</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {prefectureData.map((prefecture) => {
-            const stats = boardStats[prefecture.id] || {
+            const stats = boardStats[prefecture.name] || {
               not_yet: 0,
               posted: 0,
               checked: 0,
               damaged: 0,
               error: 0,
               other: 0,
+              reserved: 0,
             };
             const totalInPrefecture = Object.values(stats).reduce(
               (sum, count) => sum + count,
@@ -227,8 +204,8 @@ export default function PosterMapPageClient() {
 
             return (
               <Link
-                key={prefecture.id}
-                href={`/map/poster/${prefecture.id}`}
+                key={prefecture.name}
+                href={`/map/poster/${encodeURIComponent(prefecture.name)}`}
                 className="block"
               >
                 <Card className="transition-all hover:shadow-lg">
