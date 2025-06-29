@@ -351,7 +351,6 @@ export type Database = {
       };
       mission_main_links: {
         Row: {
-          auto_complete: boolean;
           created_at: string;
           id: string;
           label: string;
@@ -360,7 +359,6 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          auto_complete?: boolean;
           created_at?: string;
           id?: string;
           label: string;
@@ -369,7 +367,6 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          auto_complete?: boolean;
           created_at?: string;
           id?: string;
           label?: string;

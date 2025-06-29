@@ -34,12 +34,8 @@ export function MainLinkButton({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    // auto_completeがtrueかつLINK_ACCESSタイプでonLinkClickが提供されている場合
-    if (
-      mainLink.auto_complete &&
-      mission.required_artifact_type === "LINK_ACCESS" &&
-      onLinkClick
-    ) {
+    // LINK_ACCESSタイプでonLinkClickが提供されている場合
+    if (mission.required_artifact_type === "LINK_ACCESS" && onLinkClick) {
       setIsLoading(true);
 
       try {

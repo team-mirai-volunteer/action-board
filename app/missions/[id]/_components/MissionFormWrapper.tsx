@@ -220,15 +220,11 @@ export function MissionFormWrapper({
           <MainLinkButton
             mission={mission}
             mainLink={mainLink}
-            onLinkClick={
-              isCompleted || !mainLink.auto_complete
-                ? undefined
-                : handleLinkAccessClick
-            }
+            onLinkClick={isCompleted ? undefined : handleLinkAccessClick}
             isDisabled={false}
           />
 
-          {!isCompleted && mainLink.auto_complete && (
+          {!isCompleted && (
             <div className="text-sm text-muted-foreground">
               リンクを開くとミッションクリアとなります
             </div>
