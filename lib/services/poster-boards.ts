@@ -90,15 +90,9 @@ export async function updateBoardStatus(
 export async function getBoardStatusHistory(boardId: string) {
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  const { data: historyData, error } = await supabase
     .from("poster_board_status_history")
-    .select(`
-      *,
-      user:public_user_profiles!user_id (
-        name,
-        address_prefecture
-      )
-    `)
+    .select("*")
     .eq("board_id", boardId)
     .order("created_at", { ascending: false });
 
@@ -106,6 +100,20 @@ export async function getBoardStatusHistory(boardId: string) {
     console.error("Error fetching status history:", error);
     throw error;
   }
+
+  // Fetch user profiles for each history entry
+  const userIds = Array.from(new Set(historyData?.map((h) => h.user_id) || []));
+  const { data: users } = await supabase
+    .from("public_user_profiles")
+    .select("id, name, address_prefecture")
+    .in("id", userIds);
+
+  // Combine history with user data
+  const data =
+    historyData?.map((history) => ({
+      ...history,
+      user: users?.find((u) => u.id === history.user_id) || null,
+    })) || [];
 
   return data;
 }
