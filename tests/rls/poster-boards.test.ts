@@ -23,6 +23,8 @@ describe("poster_boards テーブルのRLSテスト", () => {
         prefecture: "tokyo",
         status: "not_yet",
         number: "TEST-001",
+        address: "テストアドレス1-1-1",
+        city: "テスト市",
       })
       .select()
       .single();
@@ -118,6 +120,8 @@ describe("poster_boards テーブルのRLSテスト", () => {
           prefecture: "tokyo",
           status: "not_yet",
           number: "TEST-002",
+          address: "テストアドレス2-2-2",
+          city: "テスト市2",
         });
 
       expect(error).not.toBeNull();

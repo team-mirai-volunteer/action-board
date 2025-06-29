@@ -547,8 +547,8 @@ export type Database = {
       };
       poster_boards: {
         Row: {
-          address: string | null;
-          city: string | null;
+          address: string;
+          city: string;
           created_at: string;
           id: string;
           lat: number;
@@ -560,8 +560,8 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          address?: string | null;
-          city?: string | null;
+          address: string;
+          city: string;
           created_at?: string;
           id?: string;
           lat: number;
@@ -573,8 +573,8 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          address?: string | null;
-          city?: string | null;
+          address?: string;
+          city?: string;
           created_at?: string;
           id?: string;
           lat?: number;

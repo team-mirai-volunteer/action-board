@@ -218,11 +218,11 @@ export default function PrefecturePosterMapClient({
             <DialogTitle>ステータスを更新</DialogTitle>
             <DialogDescription>
               <div>{selectedBoard?.name}のステータスを更新します</div>
-              {selectedBoard?.address && (
-                <div className="mt-1 text-sm">{selectedBoard.address}</div>
-              )}
-              {selectedBoard?.city && (
-                <div className="text-sm">{selectedBoard.city}</div>
+              {selectedBoard && (
+                <>
+                  <div className="mt-1 text-sm">{selectedBoard.address}</div>
+                  <div className="text-sm">{selectedBoard.city}</div>
+                </>
               )}
             </DialogDescription>
           </DialogHeader>

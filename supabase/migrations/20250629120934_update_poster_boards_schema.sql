@@ -1,7 +1,7 @@
 -- Add address and city columns to poster_boards table
 ALTER TABLE poster_boards 
-  ADD COLUMN address text,
-  ADD COLUMN city text;
+  ADD COLUMN address text NOT NULL,
+  ADD COLUMN city text NOT NULL;
 
 -- Rename lon column to long
 ALTER TABLE poster_boards 
