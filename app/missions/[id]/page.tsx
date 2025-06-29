@@ -128,16 +128,6 @@ export default async function MissionPage({ params }: Props) {
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
         <MissionDetails mission={mission} />
 
-        {/* 視覚的導線の表示条件: ログイン済み、LINK_ACCESS/QUIZ/REFERRALミッション以外、未達成 */}
-        {user &&
-          mission.required_artifact_type !== "LINK_ACCESS" &&
-          mission.required_artifact_type !== "QUIZ" &&
-          mission.required_artifact_type !== "REFERRAL" &&
-          (mission.max_achievement_count === null ||
-            userAchievementCount < mission.max_achievement_count) && (
-            <MissionGuidanceArrow />
-          )}
-
         {user ? (
           <>
             <Suspense
