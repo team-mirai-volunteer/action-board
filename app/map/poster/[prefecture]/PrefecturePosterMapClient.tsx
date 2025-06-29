@@ -20,11 +20,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  getBoardStatusHistory,
   getPosterBoards,
   updateBoardStatus,
 } from "@/lib/services/poster-boards";
 import type { Database } from "@/lib/types/supabase";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -44,6 +45,10 @@ const PosterMap = dynamic(() => import("../PosterMap"), {
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
+type StatusHistory =
+  Database["public"]["Tables"]["poster_board_status_history"]["Row"] & {
+    user: { id: string; name: string; address_prefecture: string } | null;
+  };
 
 type PrefectureEnum = Database["public"]["Enums"]["poster_prefecture_enum"];
 
@@ -68,6 +73,9 @@ export default function PrefecturePosterMapClient({
   const [updateStatus, setUpdateStatus] = useState<BoardStatus>("not_yet");
   const [updateNote, setUpdateNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [history, setHistory] = useState<StatusHistory[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   useEffect(() => {
     loadBoards();
@@ -88,7 +96,23 @@ export default function PrefecturePosterMapClient({
     setSelectedBoard(board);
     setUpdateStatus(board.status);
     setUpdateNote("");
+    setHistory([]);
+    setShowHistory(false);
     setIsUpdateDialogOpen(true);
+  };
+
+  const loadHistory = async () => {
+    if (!selectedBoard) return;
+
+    setLoadingHistory(true);
+    try {
+      const data = await getBoardStatusHistory(selectedBoard.id);
+      setHistory(data);
+    } catch (error) {
+      toast.error("履歴の読み込みに失敗しました");
+    } finally {
+      setLoadingHistory(false);
+    }
   };
 
   const handleStatusUpdate = async () => {
@@ -100,6 +124,9 @@ export default function PrefecturePosterMapClient({
       toast.success("ステータスを更新しました");
       setIsUpdateDialogOpen(false);
       await loadBoards(); // Reload to get updated data
+      // Clear history so it's fresh next time
+      setHistory([]);
+      setShowHistory(false);
     } catch (error) {
       toast.error("ステータスの更新に失敗しました");
     } finally {
@@ -261,17 +288,75 @@ export default function PrefecturePosterMapClient({
               />
             </div>
           </div>
-          <DialogFooter>
+
+          {/* History Section */}
+          {showHistory && (
+            <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
+              <h3 className="font-semibold mb-2">更新履歴</h3>
+              {loadingHistory ? (
+                <div className="text-sm text-muted-foreground">
+                  読み込み中...
+                </div>
+              ) : history.length === 0 ? (
+                <div className="text-sm text-muted-foreground">
+                  履歴がありません
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {history.map((item) => (
+                    <div key={item.id} className="text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {item.user?.name || "不明なユーザー"}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {statusConfig[item.previous_status as BoardStatus]
+                            ?.label || item.previous_status}
+                          →
+                          {statusConfig[item.new_status as BoardStatus]
+                            ?.label || item.new_status}
+                        </span>
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        {new Date(item.created_at).toLocaleString("ja-JP")}
+                        {item.note && (
+                          <span className="ml-2">「{item.note}」</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="flex items-center justify-between">
             <Button
-              variant="outline"
-              onClick={() => setIsUpdateDialogOpen(false)}
-              disabled={isUpdating}
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (!showHistory) {
+                  loadHistory();
+                }
+                setShowHistory(!showHistory);
+              }}
+              type="button"
             >
-              キャンセル
+              <History className="mr-2 h-4 w-4" />
+              履歴
             </Button>
-            <Button onClick={handleStatusUpdate} disabled={isUpdating}>
-              {isUpdating ? "更新中..." : "更新"}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsUpdateDialogOpen(false)}
+                disabled={isUpdating}
+              >
+                キャンセル
+              </Button>
+              <Button onClick={handleStatusUpdate} disabled={isUpdating}>
+                {isUpdating ? "更新中..." : "更新"}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
