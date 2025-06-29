@@ -1217,18 +1217,18 @@ export type Database = {
         | "error"
         | "other";
       poster_prefecture_enum:
-        | "hokkaido"
-        | "miyagi"
-        | "saitama"
-        | "chiba"
-        | "tokyo"
-        | "kanagawa"
-        | "nagano"
-        | "aichi"
-        | "osaka"
-        | "hyogo"
-        | "ehime"
-        | "fukuoka";
+        | "北海道"
+        | "宮城県"
+        | "埼玉県"
+        | "千葉県"
+        | "東京都"
+        | "神奈川県"
+        | "長野県"
+        | "愛知県"
+        | "大阪府"
+        | "兵庫県"
+        | "愛媛県"
+        | "福岡県";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1357,18 +1357,18 @@ export const Constants = {
         "other",
       ],
       poster_prefecture_enum: [
-        "hokkaido",
-        "miyagi",
-        "saitama",
-        "chiba",
-        "tokyo",
-        "kanagawa",
-        "nagano",
-        "aichi",
-        "osaka",
-        "hyogo",
-        "ehime",
-        "fukuoka",
+        "北海道",
+        "宮城県",
+        "埼玉県",
+        "千葉県",
+        "東京都",
+        "神奈川県",
+        "長野県",
+        "愛知県",
+        "大阪府",
+        "兵庫県",
+        "愛媛県",
+        "福岡県",
       ],
     },
   },
