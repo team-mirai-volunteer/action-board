@@ -15,7 +15,10 @@ export async function getPosterBoards(prefecture?: string) {
     .order("created_at", { ascending: false });
 
   if (prefecture) {
-    query = query.eq("prefecture", prefecture);
+    query = query.eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    );
   }
 
   const { data, error } = await query;
