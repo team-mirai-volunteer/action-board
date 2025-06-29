@@ -123,10 +123,13 @@ export default async function MissionPage({ params }: Props) {
     }
   }
 
+  const isLinkMission =
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key;
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <MissionDetails mission={mission} />
+        <MissionDetails mission={mission} mainLink={mainLink} />
 
         {/* LINKミッション以外の場合のみ視覚的導線を表示 */}
         {user && !isLinkMission && <MissionGuidanceArrow />}
