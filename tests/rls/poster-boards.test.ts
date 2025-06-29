@@ -171,6 +171,8 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         prefecture: "tokyo",
         status: "not_yet",
         number: "TEST-003",
+        address: "テストアドレス3-3-3",
+        city: "テスト市3",
       })
       .select()
       .single();
