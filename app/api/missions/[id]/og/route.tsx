@@ -58,7 +58,7 @@ export async function GET(
 
   // completeタイプの場合のみキャッシュを使用
   if (type === "complete") {
-    const key = [id, pageData?.mission.title ?? ""].join("|");
+    const key = [id, pageData?.mission.slug ?? ""].join("|");
 
     // キャッシュにヒットした場合はそれを返す
     if (cache.has(key)) {
@@ -257,7 +257,7 @@ export async function GET(
 
   // completeタイプの場合のみキャッシュに保存
   if (type === "complete") {
-    const key = [id, pageData?.mission.title ?? ""].join("|");
+    const key = [id, pageData?.mission.slug ?? ""].join("|");
     cache.set(key, buf);
   }
 
