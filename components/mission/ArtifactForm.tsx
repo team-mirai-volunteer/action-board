@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
-import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
+import {
+  MAX_POSTER_COUNT,
+  MAX_POSTING_COUNT,
+  POSTER_POINTS_PER_UNIT,
+  POSTING_POINTS_PER_UNIT,
+} from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
@@ -151,6 +156,31 @@ export function ArtifactForm({
               />
               <p className="text-xs text-gray-500">
                 対象エリアの郵便番号をご入力ください
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ポスター入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="posterCount">
+                ポスター枚数 <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="number"
+                name="posterCount"
+                id="posterCount"
+                min="1"
+                max={MAX_POSTER_COUNT}
+                required
+                disabled={disabled}
+                placeholder="例：10"
+              />
+              <p className="text-xs text-gray-500">
+                貼り付けた枚数を入力してください（1枚＝{POSTER_POINTS_PER_UNIT}
+                ポイント）
               </p>
             </div>
           </div>

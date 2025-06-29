@@ -40,6 +40,11 @@ export const ARTIFACT_TYPES = {
     displayName: "ポスティング",
     prompt: "ポスティングした枚数と場所を入力してください。",
   },
+  POSTER: {
+    key: "POSTER",
+    displayName: "選挙区ポスター",
+    prompt: "選挙区ポスターを貼った枚数を入力してください。",
+  },
   QUIZ: {
     key: "QUIZ",
     displayName: "クイズ",
@@ -82,4 +87,5 @@ export type MissionRequiredArtifactType =
   | "IMAGE_WITH_GEOLOCATION"
   | "REFERRAL"
   | "POSTING"
+  | "POSTER"
   | "NONE";
