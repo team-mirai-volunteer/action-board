@@ -128,9 +128,9 @@ const posterArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.POSTER.key),
   posterCount: z.coerce
     .number()
-    .min(1, { message: "ポスティング枚数は1枚以上で入力してください" })
+    .min(1, { message: "ポスター枚数は1枚以上で入力してください" })
     .max(MAX_POSTER_COUNT, {
-      message: `ポスティング枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
+      message: `ポスター枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
     }),
 });
 
@@ -387,7 +387,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
       artifactTypeLabel = "POSTER";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
-        // ポスティング情報をtext_contentに格納
+        // ポスター情報をtext_contentに格納
         artifactPayload.text_content = `${validatedData.posterCount}枚を貼付`;
         // CHECK制約: text_content必須、他はnull
         artifactPayload.link_url = null;
