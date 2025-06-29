@@ -2,20 +2,41 @@ import { createReadStream } from "node:fs";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
+import dotenv from "dotenv";
 import { glob } from "glob";
 import { Client } from "pg";
 import { from as copyFrom } from "pg-copy-streams";
+
+// Load environment variables from .env.local
+dotenv.config({ path: ".env.local" });
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
 async function main() {
-  // Get database URL from environment
-  const dbUrl = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
-  if (!dbUrl) {
+  // Construct database URL from Supabase environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error(
-      "Database URL not found. Set DATABASE_URL or SUPABASE_DB_URL environment variable.",
+      "Supabase environment variables not found. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env.local",
     );
+  }
+
+  // Parse the Supabase URL to get the database connection string
+  // Supabase URL format: http://localhost:54321 (for local) or https://xxx.supabase.co (for cloud)
+  const url = new URL(supabaseUrl);
+  const isLocal = url.hostname === "localhost";
+
+  let dbUrl: string;
+  if (isLocal) {
+    // For local development, use the standard local postgres connection
+    dbUrl = "postgresql://postgres:postgres@localhost:54322/postgres";
+  } else {
+    // For cloud, extract project ID from subdomain and construct the connection string
+    const projectId = url.hostname.split(".")[0];
+    dbUrl = `postgresql://postgres.${projectId}:${supabaseServiceKey}@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`;
   }
 
   const db = new Client({ connectionString: dbUrl });
