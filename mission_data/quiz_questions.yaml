@@ -153,126 +153,227 @@ quiz_questions:
     question_order: 5
     is_active: true
 
-  # 政策中級1
-  - id: be7891d1-d832-4a91-a4d5-8589d3a59b18
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが指摘する日本の現状として、**誤っている**ものはどれか？
-    option1: 平均年収が20年間増えていない
-    option2: 出生数が過去最少を更新している
-    option3: デジタル分野で世界的な企業が多数生まれている
-    option4: 実質GDPがほとんど成長していない
+  # 政策（ビジョン）
+  - id: "6b1a9c1e-85ed-4f53-9dc2-1b6a0fcb93d1"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが指摘する日本の現状として、**誤っている**ものはどれか？"
+    option1: "平均年収が20年間増えていない"
+    option2: "出生数が過去最少を更新している"
+    option3: "日本から世界的なインターネット企業が多数生まれている"
+    option4: "実質GDPがほとんど成長していない"
     correct_answer: 3
-    explanation: マニフェストでは、日本から世界的なインターネット企業は生まれず、デジタル赤字が増え続けていると指摘しています。
+    explanation: "マニフェストでは、日本から世界的なインターネット企業は生まれず、デジタル赤字が増え続けていると指摘しています。"
     question_order: 1
-    is_active: true
-  - id: 4b713c16-c3a0-47aa-91fd-efe643db7351
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが現在の政治に不足していると指摘している議論は何か？
-    option1: 社会保障の充実
-    option2: どう成長するか
-    option3: 格差の是正
-    option4: 環境問題への対策
-    correct_answer: 2
-    explanation: マニフェストは、現在の政治では『どう再分配するか』の話ばかりで『どう成長するか』の議論が不足していると指摘しています。
-    question_order: 2
-    is_active: true
-  - id: 5dc313ff-39be-4b79-bc9f-11ac193ee7af
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが日本の経済成長の糸口として最も重要視しているものは何か？
-    option1: 豊富な天然資源
-    option2: 急速な人口増加
-    option3: テクノロジー、創造性、イノベーション
-    option4: 海外からの大規模投資
-    correct_answer: 3
-    explanation: マニフェストは、天然資源も人口増加もない日本が経済的成長を生み出す糸口はテクノロジー、創造性、イノベーションにこそあると述べています。
-    question_order: 3
-    is_active: true
-  - id: 61a889d9-8816-4026-b5d3-179877ef573b
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: AIの発展に関して、マニフェストが日本にとってチャンスと捉えている点は何か？
-    option1: AIを「作る」技術で世界をリードしている点
-    option2: AIの倫理基準策定で主導権を握れる点
-    option3: AIを「使いこなす」レースが始まったばかりである点
-    option4: AIによる失業問題への対策が最も進んでいる点
-    correct_answer: 3
-    explanation: マニフェストは、AIを「作る」レースでは米中に遅れをとっているものの、AIを「使いこなす」レースはまだ始まったばかりであり、日本にとってチャンスであると述べています。
-    question_order: 4
-    is_active: true
-  - id: 9f671f2d-409a-49b8-8f80-085e49d94c0a
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが提案する「未来をつくるための3ステップ」の第一歩は何か？
-    option1: 長期の成長に大胆に投資する
-    option2: デジタル時代の当たり前をやりきる
-    option3: 変化に対応できる、しなやかな仕組みづくり
-    option4: AI研究開発に国家予算の半分を投入する
-    correct_answer: 2
-    explanation: マニフェストが提案する3ステップの第一は「デジタル時代の当たり前をやりきる」ことです。
-    question_order: 5
     is_active: true
 
-  # 政策中級2
-  - id: d70e28c8-9c2a-4bcc-9e59-da92199bc414
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ１「デジタル時代の当たり前をやりきる」で、まず指摘する日本社会の根本課題はどれ？
-    option1: デジタル技術を日常的に活用する基盤が整っていない
-    option2: 高齢化による年金財政の逼迫
-    option3: 少子化による人口減少
-    option4: 温室効果ガス排出の増加
-    correct_answer: 1
-    explanation: 教育・行政・産業などあらゆる場面でデジタル基盤が不足していることが最大の問題意識として挙げています。
-    question_order: 1
-    is_active: true
-  - id: 4ef0f76f-845c-4291-bfc4-dbb68da7986b
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ２「変化に対応できる、しなやかな仕組みづくり」で特に重要になる社会システムの特性として正しいのはどれ？
-    option1: レジリエンス（回復力）とアジリティ（すぐ動ける力）
-    option2: 経済的自立と自由貿易
-    option3: 伝統文化の保護と観光開発
-    option4: セキュリティ（安全性）とプライバシー保護
-    correct_answer: 1
-    explanation: 不確実性が高い時代に対応するにはレジリエンスとアジリティが鍵であると強調している。
+  - id: "d28be630-2f0b-47b1-a19e-44e07039e891"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが現在の政治に不足していると指摘している議論は何か？"
+    option1: "社会保障の充実"
+    option2: "どう成長するか"
+    option3: "格差の是正"
+    option4: "環境問題への対策"
+    correct_answer: 2
+    explanation: "マニフェストは、現在の政治では『どう再分配するか』の話ばかりで『どう成長するか』の議論が不足していると指摘しています。"
     question_order: 2
     is_active: true
-  - id: eef84a59-b79e-468c-abaa-03d1b47f9f6d
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ３「長期の成長に大胆に投資する」が"再設計"すると述べるバランスはどれとどれ？
-    option1: 税制と年金制度
-    option2: 国際援助費と防衛費
-    option3: 民間投資と公共投資
-    option4: 短期的な対応策と長期的な成長投資
-    correct_answer: 4
-    explanation: 短期的ショック緩和策と百年先を見据えた長期成長投資との最適バランスを再設計すると強調。
+
+  - id: "2e7b82d5-67ae-44f0-aac0-506c28b4b2e3"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが日本の経済成長の糸口として最も重要視しているものは何か？"
+    option1: "豊富な天然資源"
+    option2: "急速な人口増加"
+    option3: "テクノロジー、創造性、イノベーション"
+    option4: "海外からの大規模投資"
+    correct_answer: 3
+    explanation: "マニフェストは、天然資源も人口増加もない日本が経済的成長を生み出す糸口はテクノロジー、創造性、イノベーションにこそあると述べています。"
     question_order: 3
     is_active: true
-  - id: 9e30d901-b61b-4a84-8e94-a777fab56733
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト 「国政政党成立後１００日プラン」で他党と協調して立ち上げるとされる超党派議連は主にどの分野を扱う？
-    option1: 食糧安全保障
-    option2: 原子力政策
-    option3: AI政策
-    option4: 宇宙探査
+
+  - id: "1ca5e9da-ea71-4cfa-9c91-bd2e9f6c744a"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "AIの発展に関して、マニフェストが日本にとってチャンスと捉えている点は何か？"
+    option1: "AIを「作る」技術で世界をリードしている点"
+    option2: "AIの倫理基準策定で主導権を握れる点"
+    option3: "AIを「使いこなす」レースが始まったばかりである点"
+    option4: "AIによる失業問題への対策が最も進んでいる点"
     correct_answer: 3
-    explanation: 「AI政策について…オープンな超党派議連を立ち上げる」とあります。
+    explanation: "マニフェストは、AIを「作る」レースでは米中に遅れをとっているものの、AIを「使いこなす」レースはまだ始まったばかりであり、日本にとってチャンスであると述べています。"
     question_order: 4
     is_active: true
-  - id: 0d0afdc3-d2ee-4024-bfa2-308bab5d5d8f
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらいのマニフェストの決め方で**誤っている**ものは？
-    option1: チームみらいのミッション・ビジョンやステップ1〜3の方向性に合致している提案だけを採択対象とする。
-    option2: 改善提案は AI で自動ラベリング・要約して整理する。
-    option3: 最終的な反映方針をチームでまとめる。
-    option4: チームが作成した反映方針を、AIが一件ずつ確認し、最終的な意思決定を行う。
+
+  # 政策（ステップ1）
+  - id: "ff2b2b9a-41f8-40e1-a1c7-942ff3eec205"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「デジタル時代の当たり前をやりきる」で、まず指摘する日本社会の根本課題はどれ？"
+    option1: "デジタル技術を日常的に活用する基盤が整っていない"
+    option2: "高齢化による年金財政の逼迫"
+    option3: "少子化による人口減少"
+    option4: "温室効果ガス排出の増加"
+    correct_answer: 1
+    explanation: "教育・行政・産業などあらゆる場面でデジタル基盤が不足していることが最大の問題意識として挙げています。"
+    question_order: 1
+    is_active: true
+
+  - id: "6370a2ad-29d8-4cb1-b4b0-e8881e7431f5"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「大きな問題意識」で、日本が遅れをとっていると指摘されている分野はどれ？"
+    option1: "産業界におけるデジタルトランスフォーメーション（DX）の推進"
+    option2: "再生可能エネルギーの普及促進"
+    option3: "都市部の空き家リノベーション支援"
+    option4: "観光産業のデジタルマーケティング"
+    correct_answer: 1
+    explanation: "日本が遅れをとっている分野として、『産業界におけるデジタルトランスフォーメーション（DX）の推進』などが具体例として挙げられています。"
+    question_order: 2
+    is_active: true
+
+  - id: "0a9da3f0-3192-4707-8ee5-faedaf1b15a7"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「当たり前」のデジタル化を進めるうえで特に重要だと強調されているのは何？"
+    option1: "明確な意思決定と社会への実装力"
+    option2: "唯一無二の新技術の開発"
+    option3: "伝統的書類文化の徹底維持"
+    option4: "サイコロで方針を決めること"
+    correct_answer: 1
+    explanation: "『デジタル化を断行する明確な「意思決定」と、それを浸透させる「実装力」』が必要だと記されています。"
+    question_order: 3
+    is_active: true
+
+  - id: "82bc1a74-3f4f-4605-a67b-9c24b38caef4"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "課題の根底にある問題として本文で挙げられているのはどれ？"
+    option1: "政治とテクノロジーの距離とリーダーシップ不足"
+    option2: "国民のパソコン所有率が高すぎること"
+    option3: "エンタメ産業への依存が大きすぎること"
+    option4: "気候変動対策が進みすぎていること"
+    correct_answer: 1
+    explanation: "『政治とテクノロジーとの間に距離があり、リーダーシップが十分発揮されてこなかった』と指摘しています。"
+    question_order: 4
+    is_active: true
+
+  # 政策（ステップ2）
+  - id: "c3fe3bea-5920-47b3-afb0-5a3d610448bb"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "「変化に対応できる、しなやかな仕組みづくり」で特に重要になる社会システムの特性として正しいのはどれ？"
+    option1: "回復力と敏捷性"
+    option2: "経済的自立と自由貿易"
+    option3: "伝統文化の保護と観光開発"
+    option4: "セキュリティ（安全性）とプライバシー保護"
+    correct_answer: 1
+    explanation: "不確実性が高い時代に対応するには、『回復力（レジリエンス）』と『敏捷性（アジリティ）』が鍵であると強調しています。"
+    question_order: 1
+    is_active: true
+
+  - id: "019675ce-bd71-4b53-9ab8-0981a8457d4b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "税制・教育・医療など制度について、既存の設計思想の課題として示されている問題は次のうちどれ？"
+    option1: "個々の複雑な事情をすべて汲み取るのは困難だという前提"
+    option2: "AIが十分に発達しているという前提"
+    option3: "国民全員がデジタルデバイスを保有しているという前提"
+    option4: "財政黒字が長期的に続くという前提"
+    correct_answer: 1
+    explanation: "現行の制度は、複雑な事情を全て汲み取ることが困難という前提で設計されてきたと指摘しています。"
+    question_order: 2
+    is_active: true
+
+  - id: "1d3e245f-0192-4aac-9352-a2c398a42289"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "AI 技術の発展によって可能になると述べられているは次のうちどれ？"
+    option1: "個々の状況に即したきめ細かな政策判断が行えるようになる"
+    option2: "海底資源を完全自動で採掘できるようになる"
+    option3: "無制限のクリーンエネルギーを生成できるようになる"
+    option4: "地球規模で気候変動を即時停止できるようになる"
+    correct_answer: 1
+    explanation: "本文は、AI により『個別の状況や複雑な現実の事情に即した、きめ細やかで高度な判断』が可能になり、より国民一人ひとりに寄り添った政策が実現できると述べています。"
+    question_order: 3
+    is_active: true
+
+  - id: "b8fc512d-8299-48b2-80f7-f3632a5fdb5b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "将来像として掲げられているスローガンはどれ？"
+    option1: "テクノロジーで誰も取り残さない日本へ"
+    option2: "伝統文化で世界を魅了する日本へ"
+    option3: "自然エネルギーで富を築く日本へ"
+    option4: "観光立国で暮らしを支える日本へ"
+    correct_answer: 1
+    explanation: "スローガンとして『テクノロジーで誰も取り残さない日本へ』が示されています。"
+    question_order: 4
+    is_active: true
+
+  # 政策（ステップ3）
+  - id: "dabbccd4-e50a-4e58-97be-6cb8b9f6f16c"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "再分配の議論と並びまず直視すべき課題として挙げられているのはどれ？"
+    option1: "国家全体の経済的な富（“パイ”）の縮小"
+    option2: "地方と都市の所得格差の拡大"
+    option3: "労働市場の流動性不足"
+    option4: "中小企業の事業承継問題"
+    correct_answer: 1
+    explanation: "『“パイ”そのものが縮小してしまっては公平な分配も限定的になる』と述べています。"
+    question_order: 1
+    is_active: true
+
+  - id: "66e6762d-e3e1-4c20-a67d-9e6ce6fef843"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "少子高齢化など構造的課題を乗り越えるうえで不可欠と述べられているのはどれ？"
+    option1: "持続的な経済成長"
+    option2: "徹底した歳出削減"
+    option3: "超長期国債の大量発行"
+    option4: "社会保障給付の段階的縮小"
+    correct_answer: 1
+    explanation: "『社会全体の活力を維持・向上させていくためには、持続的な経済成長の実現が不可欠です』と述べています。"
+    question_order: 2
+    is_active: true
+
+  - id: "8c346d89-4be6-4c31-bb40-f307d9c2d63b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "人工知能（AI）の急速な発展についての捉え方として最も本文に近いものはどれ？"
+    option1: "新たな成長の波を掴む絶好の機会と前向きに捉える"
+    option2: "危険性が高いため全面的に禁止すべきと強調している"
+    option3: "実用化は当面先なので様子見姿勢を推奨している"
+    option4: "国際規制が整うまで国内利用を凍結すべきと示唆している"
+    correct_answer: 1
+    explanation: "AIの急速な発展を『新たな成長の波を掴む絶好の機会』と前向きに認識すべきだと述べています。"
+    question_order: 3
+    is_active: true
+
+  - id: "4307705e-4d0c-40cb-9df3-b17d8e4bdcf6"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "経済成長を達成する鍵として最も重要だと強調されているものはどれ？"
+    option1: "テクノロジーの力を最大限に活用する"
+    option2: "短期的な減税のみを行う"
+    option3: "国内消費を意図的に抑える"
+    option4: "印刷物の宣伝を拡大する"
+    correct_answer: 1
+    explanation: "「日進月歩で進化するテクノロジーの力を最大限に活用すること」が成長の鍵であると明記されています。"
+    question_order: 4
+    is_active: true
+
+  - id: "3e8680a5-1fc2-4fda-be6f-e6601601831f"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "「長期の成長に大胆に投資する」が“再設計”すると述べるバランスはどれとどれ？"
+    option1: "税制と年金制度"
+    option2: "国際援助費と防衛費"
+    option3: "民間投資と公共投資"
+    option4: "短期的な対応策と長期的な成長投資"
     correct_answer: 4
-    explanation: 最終的な意思決定は、党首である安野たかひろが一件ずつ確認し行うとしている。
+    explanation: "短期的な対応策と長期的な成長投資との最適なバランスを再設計するとしています。"
     question_order: 5
     is_active: true
