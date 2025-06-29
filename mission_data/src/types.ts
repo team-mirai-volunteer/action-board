@@ -62,6 +62,7 @@ export interface MissionMainLink {
   mission_slug: string;
   label: string;
   link: string;
+  auto_complete?: boolean;
 }
 
 export interface MissionData {

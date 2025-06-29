@@ -399,6 +399,7 @@ async function syncMissionMainLinks(
         mission_id: missionId,
         label: link.label,
         link: link.link,
+        auto_complete: link.auto_complete ?? true,
       });
 
       if (error) {

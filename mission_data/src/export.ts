@@ -256,6 +256,7 @@ async function exportMissionMainLinks() {
     mission_slug: item.missions.slug,
     label: item.label,
     link: item.link,
+    auto_complete: item.auto_complete,
   }));
 
   const yamlContent = yaml.dump(
