@@ -214,7 +214,7 @@ VALUES
 
 -- ポスター掲示板の情報
 
-INSERT INTO poster_boards (name, lat, lon, prefecture, status, number) VALUES
+INSERT INTO poster_boards (name, lat, long, prefecture, status, number) VALUES
 -- Tokyo boards
 ('東京駅前掲示板', 35.6812, 139.7671, 'tokyo', 'not_yet', '10-1'),
 ('新宿駅南口掲示板', 35.6896, 139.7006, 'tokyo', 'posted', '10-2'),

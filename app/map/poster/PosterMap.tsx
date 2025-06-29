@@ -87,12 +87,14 @@ export default function PosterMap({
     // Add markers for each board
     for (const board of boards) {
       if (mapRef.current) {
-        const marker = L.marker([board.lat, board.lon], {
+        const marker = L.marker([board.lat, board.long], {
           icon: createMarkerIcon(board.status),
         })
           .addTo(mapRef.current)
           .bindTooltip(
-            `${board.number ? `#${board.number} ` : ""}${board.name}`,
+            `${board.number ? `#${board.number} ` : ""}${board.name}${
+              board.address ? `<br/>${board.address}` : ""
+            }${board.city ? `<br/>${board.city}` : ""}`,
             { permanent: false, direction: "top" },
           )
           .on("click", () => onBoardClick(board));

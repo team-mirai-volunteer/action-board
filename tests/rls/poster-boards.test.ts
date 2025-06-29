@@ -19,7 +19,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
       .insert({
         name: "Test Board",
         lat: 35.6762,
-        lon: 139.6503,
+        long: 139.6503,
         prefecture: "tokyo",
         status: "not_yet",
         number: "TEST-001",
@@ -114,7 +114,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
         .insert({
           name: "Unauthorized Board",
           lat: 35.0,
-          lon: 139.0,
+          long: 139.0,
           prefecture: "tokyo",
           status: "not_yet",
           number: "TEST-002",
@@ -163,7 +163,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
       .insert({
         name: "History Test Board",
         lat: 35.6762,
-        lon: 139.6503,
+        long: 139.6503,
         prefecture: "tokyo",
         status: "not_yet",
         number: "TEST-003",

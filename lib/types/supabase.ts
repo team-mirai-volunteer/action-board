@@ -547,10 +547,12 @@ export type Database = {
       };
       poster_boards: {
         Row: {
+          address: string | null;
+          city: string | null;
           created_at: string;
           id: string;
           lat: number;
-          lon: number;
+          long: number;
           name: string;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -558,10 +560,12 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          address?: string | null;
+          city?: string | null;
           created_at?: string;
           id?: string;
           lat: number;
-          lon: number;
+          long: number;
           name: string;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -569,10 +573,12 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          address?: string | null;
+          city?: string | null;
           created_at?: string;
           id?: string;
           lat?: number;
-          lon?: number;
+          long?: number;
           name?: string;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
