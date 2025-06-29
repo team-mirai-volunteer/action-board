@@ -7,6 +7,7 @@ import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
 // キャッシュ用Mapを定義（メモリキャッシュ）- completeタイプのみキャッシュ
+const MAX_CACHE_SIZE = 100;
 const cache = new Map<string, ArrayBuffer>();
 
 const size = {
@@ -56,11 +57,9 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type");
 
-  // completeタイプの場合のみキャッシュを使用
   if (type === "complete") {
     const key = [id, pageData?.mission.slug ?? ""].join("|");
 
-    // キャッシュにヒットした場合はそれを返す
     if (cache.has(key)) {
       const buf = cache.get(key);
       if (buf) {
@@ -255,9 +254,17 @@ export async function GET(
   // ImageResponseからArrayBufferを取得
   const buf = await imageResponse.arrayBuffer();
 
-  // completeタイプの場合のみキャッシュに保存
   if (type === "complete") {
     const key = [id, pageData?.mission.slug ?? ""].join("|");
+
+    // キャッシュサイズ制限（FIFO方式）
+    if (cache.size >= MAX_CACHE_SIZE) {
+      const firstKey = cache.keys().next().value;
+      if (typeof firstKey === "string") {
+        cache.delete(firstKey);
+      }
+    }
+
     cache.set(key, buf);
   }
 
