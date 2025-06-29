@@ -5,3 +5,39 @@ mission_main_links:
   - mission_slug: read-manifest
     label: チームみらいのマニフェスト(要約版)を読む
     link: https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2
+  - mission_slug: add-line-friend
+    label: チームみらいのLINEアカウント
+    link: https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204
+  - mission_slug: follow-teammirai-tiktok
+    label: チームみらいの公式TikTokアカウント
+    link: https://www.tiktok.com/@annotakahiro2024
+  - mission_slug: share-manifest-sns
+    label: いどばた政策
+    link: https://policy.team-mir.ai/view/README.md
+  - mission_slug: follow-anno-x
+    label: 安野たかひろの公式X（旧Twitter）
+    link: https://x.com/takahiroanno
+  - mission_slug: youtube-subscribe
+    label: チームみらいの公式YouTubeチャンネル
+    link: https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw
+  - mission_slug: follow-note
+    label: 公式note
+    link: https://note.com/annotakahiro24
+  - mission_slug: join-prefecture-openchat
+    label: チームみらいの都道府県別LINEオープンチャット
+    link: https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3
+  - mission_slug: join-slack
+    label: チームみらいサポーターのSlack
+    link: https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-356o7vi9d-wGvz9UXGnwHT7BrOdXe9OA
+  - mission_slug: youtube-watch
+    label: チームみらいの公式YouTubeチャンネル
+    link: https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw
+  - mission_slug: instagram-like
+    label: 「#チームみらい」で検索
+    link: https://www.instagram.com/explore/tags/チームみらい/
+  - mission_slug: x-like
+    label: 「#チームみらい」で検索
+    link: https://x.com/search?q=%23チームみらい
+  - mission_slug: note-like
+    label: 「チームみらい」で検索
+    link: https://note.com/search?q=チームみらい
