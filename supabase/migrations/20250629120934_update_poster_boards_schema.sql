@@ -12,6 +12,5 @@ ALTER TABLE poster_boards
   DROP CONSTRAINT chk_lon,
   ADD CONSTRAINT chk_long CHECK (long BETWEEN -180 AND 180);
 
--- Update index to use the new column name
-DROP INDEX idx_poster_boards_lat_lon;
-CREATE INDEX idx_poster_boards_lat_long ON poster_boards(lat, long);
+-- Rename index to reflect the new column name
+ALTER INDEX idx_poster_boards_lat_lon RENAME TO idx_poster_boards_lat_long;
