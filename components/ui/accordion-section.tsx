@@ -31,20 +31,17 @@ export function AccordionSection({
   className = "w-full",
   containerClassName = "px-4 md:container md:mx-auto",
 }: AccordionSectionProps) {
+  const accordionProps =
+    type === "multiple"
+      ? {
+          type: "multiple" as const,
+          defaultValue: (defaultValue as string[]) || [],
+        }
+      : { type: "single" as const, defaultValue: defaultValue as string };
+
   return (
     <div className={containerClassName}>
-      <Accordion
-        {...(type === "multiple"
-          ? {
-              type: "multiple" as const,
-              defaultValue: (defaultValue as string[]) || [],
-            }
-          : {
-              type: "single" as const,
-              defaultValue: (defaultValue as string) || undefined,
-            })}
-        className={className}
-      >
+      <Accordion {...accordionProps} className={className}>
         {items.map((item) => (
           <AccordionItem key={item.value} value={item.value}>
             <AccordionTrigger

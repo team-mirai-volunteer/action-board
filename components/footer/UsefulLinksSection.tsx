@@ -5,7 +5,7 @@ import {
 import { USEFUL_LINKS_CONFIG } from "@/config/footer";
 import type { FooterAccordionSection } from "@/types/footer";
 import type { User } from "@supabase/supabase-js";
-import { AccordionContentGenerator } from "./useful-links";
+import { LinksList } from "./useful-links";
 
 interface UsefulLinksSectionProps {
   user: User | null;
@@ -22,15 +22,14 @@ export function UsefulLinksSection({
   loading,
   isAuthenticated,
 }: UsefulLinksSectionProps) {
-  // 設定からアコーディオンアイテムを生成
   const accordionItems: AccordionSectionItem[] =
     USEFUL_LINKS_CONFIG.accordionSections.map(
       (section: FooterAccordionSection) => ({
         value: section.value,
         title: section.title,
         content: (
-          <AccordionContentGenerator
-            section={section}
+          <LinksList
+            links={section.links}
             loading={loading}
             isAuthenticated={isAuthenticated}
           />
@@ -38,7 +37,6 @@ export function UsefulLinksSection({
       }),
     );
 
-  // デフォルトで開くセクションを抽出
   const defaultOpenSections = USEFUL_LINKS_CONFIG.accordionSections
     .filter((section: FooterAccordionSection) => section.defaultOpen)
     .map((section: FooterAccordionSection) => section.value);
