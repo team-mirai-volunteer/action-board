@@ -128,6 +128,37 @@ describe("ArtifactForm", () => {
     expect(screen.getByPlaceholderText("例：1540017")).toBeInTheDocument();
   });
 
+  it("POSTERタイプの場合はポスター入力フォームが表示される", () => {
+    const mission = {
+      ...baseMission,
+      required_artifact_type: "POSTER" as const,
+    };
+
+    render(
+      <ArtifactForm
+        mission={mission}
+        authUser={mockUser}
+        disabled={false}
+        submittedArtifactImagePath={null}
+      />,
+    );
+
+    expect(screen.getByText("ポスター枚数")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("例：10")).toBeInTheDocument();
+    expect(
+      screen.getByText(/貼り付けた枚数を入力してください/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/1枚＝30ポイント/)).toBeInTheDocument();
+
+    // ポスター入力フィールドの属性を確認
+    const posterCountInput = screen.getByPlaceholderText("例：10");
+    expect(posterCountInput).toHaveAttribute("type", "number");
+    expect(posterCountInput).toHaveAttribute("name", "posterCount");
+    expect(posterCountInput).toHaveAttribute("min", "1");
+    expect(posterCountInput).toHaveAttribute("max", "10000");
+    expect(posterCountInput).toBeRequired();
+  });
+
   it("IMAGEタイプの場合は画像アップロードフォームが表示される", () => {
     const mission = {
       ...baseMission,
