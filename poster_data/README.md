@@ -10,7 +10,7 @@ npm run poster:load-csv
 
 This script will:
 1. Connect to your Supabase database using the DATABASE_URL from .env.local
-2. Create a staging_raw table if it doesn't exist
+2. Create a staging_poster_boards table if it doesn't exist
 3. Add a composite unique constraint (prefecture, city, number) to poster_boards table
 4. Find all CSV files in poster_data/**/*.csv
 5. Load each CSV into the staging table using pg-copy-streams for fast import
