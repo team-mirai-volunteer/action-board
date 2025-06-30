@@ -2,8 +2,8 @@
 import { Badge } from "@/components/ui/badge";
 import type { UserMissionRanking } from "@/lib/services/missionsRanking";
 import type { UserRanking } from "@/lib/services/ranking";
-import { Crown, Medal, Trophy } from "lucide-react";
 import Link from "next/link";
+import { getRankIcon } from "./ranking-icon";
 
 interface RankingItemProps {
   user: UserRanking;
@@ -14,25 +14,6 @@ interface RankingItemProps {
     name: string;
   };
   badgeText?: string;
-}
-
-function getRankIcon(rank: number | null) {
-  const displayRank = rank ?? 0;
-
-  switch (displayRank) {
-    case 1:
-      return <Crown className="w-6 h-6 text-yellow-500" />;
-    case 2:
-      return <Trophy className="w-6 h-6 text-gray-400" />;
-    case 3:
-      return <Medal className="w-6 h-6 text-orange-500" />;
-    default:
-      return (
-        <div className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold">
-          {displayRank}
-        </div>
-      );
-  }
 }
 
 function getLevelBadgeColor(level: number | null) {
@@ -58,7 +39,7 @@ export function RankingItem({
       className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
     >
       <div className="flex items-center gap-4">
-        {getRankIcon(user.rank)}
+        {getRankIcon(user.rank ?? 0)}
         <div>
           <div className="font-bold text-lg">{user.name}</div>
           <div className="text-sm text-gray-600">{user.address_prefecture}</div>

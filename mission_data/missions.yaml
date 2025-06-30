@@ -387,6 +387,16 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: null
+  - slug: quiz-policy-100days
+    title: 政策クイズ（100日プラン）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの国政政党成立後１００日プランについてのクイズです。全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
   - slug: tiktok-like
     title: TikTokでチームみらい動画に♡をつけよう
     icon_url: /img/mission_fallback.svg
