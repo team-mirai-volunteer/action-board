@@ -187,10 +187,11 @@ export function MissionFormWrapper({
       );
     }
 
-    if (mainLink) {
+    if (
+      mainLink &&
+      mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key
+    ) {
       const isCompleted = hasReachedUserMaxAchievements;
-      const isLinkAccessMission =
-        mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key;
 
       const handleLinkAccessClick = async () => {
         // クリア済みの場合は通常のリンクとして動作
@@ -218,15 +219,11 @@ export function MissionFormWrapper({
           <MainLinkButton
             mission={mission}
             mainLink={mainLink}
-            onLinkClick={
-              isLinkAccessMission && !isCompleted
-                ? handleLinkAccessClick
-                : undefined
-            }
+            onLinkClick={!isCompleted ? handleLinkAccessClick : undefined}
             isDisabled={false}
           />
 
-          {isLinkAccessMission && !isCompleted && (
+          {!isCompleted && (
             <div className="text-sm text-muted-foreground">
               リンクを開くとミッションクリアとなります
             </div>
@@ -243,7 +240,7 @@ export function MissionFormWrapper({
     }
 
     // 通常のアーティファクト提出ミッションの場合
-    return (
+    const normalForm = (
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
         <input type="hidden" name="missionId" value={mission.id} />
         <input
@@ -278,6 +275,30 @@ export function MissionFormWrapper({
         )}
       </form>
     );
+
+    if (
+      mainLink &&
+      mission.required_artifact_type !== ARTIFACT_TYPES.LINK_ACCESS.key
+    ) {
+      return (
+        <div className="space-y-6">
+          {normalForm}
+          <div className="flex flex-col items-center space-y-2">
+            <MainLinkButton
+              mission={mission}
+              mainLink={mainLink}
+              onLinkClick={undefined}
+              isDisabled={false}
+            />
+            <div className="text-sm text-muted-foreground text-center">
+              上記のリンクも参考にしてください
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return normalForm;
   };
 
   return (
