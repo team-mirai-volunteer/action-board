@@ -294,10 +294,7 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {(!hasReachedUserMaxAchievements ||
-        mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key ||
-        mainLink) &&
-        renderForm()}
+      {!hasReachedUserMaxAchievements && renderForm()}
 
       {(completed ||
         (userAchievementCount > 0 &&
