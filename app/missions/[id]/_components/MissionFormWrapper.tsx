@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
-import { MainLinkButton } from "./MainLinkButton";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
@@ -275,28 +274,6 @@ export function MissionFormWrapper({
         )}
       </form>
     );
-
-    if (
-      mainLink &&
-      mission.required_artifact_type !== ARTIFACT_TYPES.LINK_ACCESS.key
-    ) {
-      return (
-        <div className="space-y-6">
-          <div className="flex flex-col items-center space-y-2">
-            <MainLinkButton
-              mission={mission}
-              mainLink={mainLink}
-              onLinkClick={undefined}
-              isDisabled={false}
-            />
-            <div className="text-sm text-muted-foreground text-center">
-              上記のリンクも参考にしてください
-            </div>
-          </div>
-          {normalForm}
-        </div>
-      );
-    }
 
     return normalForm;
   };

@@ -26,6 +26,7 @@ import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { MainLinkButton } from "./_components/MainLinkButton";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
 import { getQuizQuestionsAction } from "./actions";
@@ -130,6 +131,21 @@ export default async function MissionPage({ params }: Props) {
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
         <MissionDetails mission={mission} mainLink={mainLink} />
+
+        {/* MainLinkButton for non-LINK_ACCESS missions with main links */}
+        {user && !isLinkMission && mainLink && (
+          <div className="flex flex-col items-center space-y-2">
+            <MainLinkButton
+              mission={mission}
+              mainLink={mainLink}
+              onLinkClick={undefined}
+              isDisabled={false}
+            />
+            <div className="text-sm text-muted-foreground text-center">
+              上記のリンクも参考にしてください
+            </div>
+          </div>
+        )}
 
         {/* LINKミッション以外の場合のみ視覚的導線を表示 */}
         {user && !isLinkMission && <MissionGuidanceArrow />}
