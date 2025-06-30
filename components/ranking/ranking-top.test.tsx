@@ -161,13 +161,35 @@ describe("RankingTop", () => {
     });
   });
 
+  describe("期間別ランキング表示", () => {
+    it("週間ランキングのタイトルが正しく表示される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      render(await RankingTop({ limit: 10, period: "weekly" }));
+
+      expect(
+        screen.getByText("🏅週間アクションリーダートップ10"),
+      ).toBeInTheDocument();
+    });
+
+    it("日間ランキングのタイトルが正しく表示される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      render(await RankingTop({ limit: 10, period: "daily" }));
+
+      expect(
+        screen.getByText("🏅日間アクションリーダートップ10"),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe("サービス関数の呼び出し", () => {
     it("getRankingが正しいパラメータで呼ばれる", async () => {
       getRanking.mockResolvedValue(mockRankings);
 
       await RankingTop({ limit: 15 });
 
-      expect(getRanking).toHaveBeenCalledWith(15);
+      expect(getRanking).toHaveBeenCalledWith(15, "all");
     });
 
     it("デフォルトのlimit値で呼ばれる", async () => {
@@ -175,7 +197,15 @@ describe("RankingTop", () => {
 
       await RankingTop({});
 
-      expect(getRanking).toHaveBeenCalledWith(10);
+      expect(getRanking).toHaveBeenCalledWith(10, "all");
+    });
+
+    it("期間パラメータが渡される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      await RankingTop({ period: "weekly" });
+
+      expect(getRanking).toHaveBeenCalledWith(10, "weekly");
     });
   });
 

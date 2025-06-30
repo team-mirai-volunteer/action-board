@@ -1,5 +1,9 @@
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import { MissionSelect } from "@/components/ranking/mission-select";
+import {
+  PeriodToggle,
+  type RankingPeriod,
+} from "@/components/ranking/period-toggle";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import {
@@ -11,12 +15,14 @@ import { createClient } from "@/lib/supabase/server";
 interface PageProps {
   searchParams: Promise<{
     missionId?: string;
+    period?: RankingPeriod;
   }>;
 }
 
 export default async function RankingMissionPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
+  const period = resolvedSearchParams.period || "all";
 
   // ユーザー情報取得
   const {
@@ -67,7 +73,11 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
 
   if (user) {
     // 現在のユーザーのミッション別ランキングを探す
-    userRanking = await getUserMissionRanking(selectedMission.id, user.id);
+    userRanking = await getUserMissionRanking(
+      selectedMission.id,
+      user.id,
+      period,
+    );
   }
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
@@ -87,6 +97,11 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
       <RankingTabs>
+        {/* 期間選択トグル */}
+        <section className="py-4 bg-white">
+          <PeriodToggle defaultPeriod={period} />
+        </section>
+
         {/* ミッション選択 */}
         <section className="py-4 bg-white">
           <MissionSelect missions={missions} />
@@ -109,6 +124,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
             limit={100}
             mission={selectedMission}
             isPostingMission={isPostingMission}
+            period={period}
           />
         </section>
       </RankingTabs>
