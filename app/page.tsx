@@ -1,4 +1,3 @@
-import { ReferralCodeHandler } from "@/components/ReferralCodeHandler";
 import Activities from "@/components/activities";
 import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
@@ -59,9 +58,6 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen py-4">
-      {/* リファラルコード処理 */}
-      {referralCode && <ReferralCodeHandler referralCode={referralCode} />}
-
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />
