@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { createServiceClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/types/supabase";
 import { Command } from "commander";
 import { glob } from "glob";
 
@@ -137,19 +138,8 @@ async function loadCSVFiles() {
         for (const record of batch) {
           const key = `${record.prefecture}-${record.city}-${record.number}`;
           const data = {
-            prefecture: record.prefecture as
-              | "hokkaido"
-              | "miyagi"
-              | "saitama"
-              | "chiba"
-              | "tokyo"
-              | "kanagawa"
-              | "nagano"
-              | "aichi"
-              | "osaka"
-              | "hyogo"
-              | "ehime"
-              | "fukuoka",
+            prefecture:
+              record.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
             city: record.city,
             number: record.number,
             name: record.name,
