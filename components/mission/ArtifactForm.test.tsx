@@ -148,7 +148,7 @@ describe("ArtifactForm", () => {
     expect(
       screen.getByText(/貼り付けた枚数を入力してください/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/1枚＝30ポイント/)).toBeInTheDocument();
+    expect(screen.getByText(/1枚＝400ポイント/)).toBeInTheDocument();
 
     // ポスター入力フィールドの属性を確認
     const posterCountInput = screen.getByPlaceholderText("例：10");
