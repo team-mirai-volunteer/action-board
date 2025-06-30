@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
+import { MainLinkButton } from "./MainLinkButton";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
