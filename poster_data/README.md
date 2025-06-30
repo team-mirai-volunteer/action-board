@@ -1,0 +1,74 @@
+# Poster Data CSV to Migration Tool
+
+This directory contains poster board location data in CSV format and a tool to convert them into Supabase migrations.
+
+## Directory Structure
+
+```
+poster_data/
+├── README.md
+├── csv-to-migration.js    # Conversion script
+├── kanagawa/              # Kanagawa prefecture data
+│   └── 青葉区_normalized.csv
+└── tokyo/                 # Tokyo prefecture data
+```
+
+## CSV Format
+
+The CSV files should have the following columns:
+- `prefecture` - Prefecture name in Japanese (e.g., 神奈川県)
+- `city` - City/ward name (e.g., 横浜市青葉区)
+- `number` - Board number (e.g., 1-1)
+- `address` - Street address
+- `name` - Location name/description
+- `lat` - Latitude
+- `long` - Longitude
+
+## Usage
+
+To generate a migration file from a CSV:
+
+```bash
+cd poster_data
+node csv-to-migration.js <csv-file> [migration-name]
+```
+
+### Examples
+
+Generate migration for Aoba ward:
+```bash
+node csv-to-migration.js kanagawa/青葉区_normalized.csv add_aoba_poster_boards
+```
+
+The script will:
+1. Read the CSV file
+2. Convert prefecture names to enum values
+3. Generate SQL INSERT statements
+4. Create a timestamped migration file in `../supabase/migrations/`
+
+### Supported Prefectures
+
+The following prefectures are supported (Japanese name → enum value):
+- 北海道 → hokkaido
+- 宮城県 → miyagi
+- 埼玉県 → saitama
+- 千葉県 → chiba
+- 東京都 → tokyo
+- 神奈川県 → kanagawa
+- 長野県 → nagano
+- 愛知県 → aichi
+- 大阪府 → osaka
+- 兵庫県 → hyogo
+- 愛媛県 → ehime
+- 福岡県 → fukuoka
+
+## Running Migrations
+
+After generating a migration file, apply it to your database:
+
+```bash
+cd ..  # Go back to project root
+supabase db reset  # This will apply all migrations including the new one
+```
+
+Or for production, commit the migration file and it will be applied during deployment.
