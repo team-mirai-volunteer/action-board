@@ -44,6 +44,7 @@ jobs:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
           BQ_USER_PASSWORD: bq_user_password
+          ENABLE_CONFIRMATIONS: false
 
       # Supabaseの起動を待機
       - name: Wait for Supabase
@@ -61,6 +62,7 @@ jobs:
         env:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
+          ENABLE_CONFIRMATIONS: false
 
       - name: Install dependencies
         run: npm ci
