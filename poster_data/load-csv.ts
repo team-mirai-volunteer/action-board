@@ -45,6 +45,9 @@ async function main() {
   await db.connect();
 
   try {
+    // Start transaction
+    await db.query("BEGIN");
+
     // Clear staging table
     console.log("Clearing staging table...");
     await db.query(`TRUNCATE ${STAGING_TABLE}`);
@@ -97,8 +100,14 @@ async function main() {
     console.log(
       `\nTotal records in ${TARGET_TABLE}: ${countResult.rows[0].count}`,
     );
+
+    // Commit transaction
+    await db.query("COMMIT");
+    console.log("✓ Transaction committed successfully");
   } catch (error) {
-    console.error("Error during import:", error);
+    // Rollback transaction on error
+    await db.query("ROLLBACK");
+    console.error("✗ Transaction rolled back due to error:", error);
     process.exit(1);
   } finally {
     await db.end();
