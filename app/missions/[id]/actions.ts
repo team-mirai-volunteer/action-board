@@ -8,6 +8,7 @@ import {
 } from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
+import { isYouTubeUrl, normalizeYouTubeUrl } from "@/lib/utils/youtube-utils";
 
 import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { TablesInsert } from "@/lib/types/supabase";
@@ -146,6 +147,62 @@ const cancelSubmissionFormSchema = z.object({
   achievementId: z.string().nonempty({ message: "達成IDが必要です" }),
   missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
 });
+
+/**
+ * YouTube URL重複チェック関数
+ */
+async function checkYouTubeDuplicate(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  missionId: string,
+  url: string,
+): Promise<{ isDuplicate: boolean; normalizedUrl?: string }> {
+  console.log("[DEBUG] checkYouTubeDuplicate called with:", {
+    userId,
+    missionId,
+    url,
+  });
+
+  const normalizedUrl = normalizeYouTubeUrl(url);
+  console.log("[DEBUG] Normalized URL:", normalizedUrl);
+
+  if (!normalizedUrl) {
+    console.log("[DEBUG] URL normalization failed, returning false");
+    return { isDuplicate: false };
+  }
+
+  const { data: existingArtifacts, error } = await supabase
+    .from("mission_artifacts")
+    .select(`
+      link_url,
+      achievements!inner(mission_id)
+    `)
+    .eq("user_id", userId)
+    .eq("artifact_type", "LINK")
+    .eq("achievements.mission_id", missionId)
+    .not("link_url", "is", null);
+
+  console.log("[DEBUG] Database query result:", { existingArtifacts, error });
+
+  if (error) {
+    console.error("Duplicate check error:", error);
+    return { isDuplicate: false };
+  }
+
+  const isDuplicate =
+    existingArtifacts?.some((artifact) => {
+      const existingNormalized = normalizeYouTubeUrl(artifact.link_url || "");
+      console.log("[DEBUG] Comparing:", {
+        existing: artifact.link_url,
+        existingNormalized,
+        newNormalized: normalizedUrl,
+      });
+      return existingNormalized === normalizedUrl;
+    }) || false;
+
+  console.log("[DEBUG] Final duplicate check result:", isDuplicate);
+  return { isDuplicate, normalizedUrl };
+}
 
 export const achieveMissionAction = async (formData: FormData) => {
   const supabase = await createClient();
@@ -313,7 +370,37 @@ export const achieveMissionAction = async (formData: FormData) => {
     if (validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key) {
       artifactTypeLabel = "LINK";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key) {
-        artifactPayload.link_url = validatedData.artifactLink;
+        const linkUrl = validatedData.artifactLink;
+
+        const { data: missionData } = await supabase
+          .from("missions")
+          .select("slug")
+          .eq("id", validatedMissionId)
+          .single();
+
+        if (
+          missionData?.slug === "youtube-clip" ||
+          missionData?.slug === "youtube-watch"
+        ) {
+          if (isYouTubeUrl(linkUrl)) {
+            const duplicateCheck = await checkYouTubeDuplicate(
+              supabase,
+              authUser.id,
+              validatedMissionId,
+              linkUrl,
+            );
+
+            if (duplicateCheck.isDuplicate) {
+              return {
+                success: false,
+                error: "YOUTUBE_DUPLICATE",
+                duplicateUrl: duplicateCheck.normalizedUrl,
+              };
+            }
+          }
+        }
+
+        artifactPayload.link_url = linkUrl;
         // CHECK制約: link_url必須、他はnull
         artifactPayload.image_storage_path = null;
         artifactPayload.text_content = null;
