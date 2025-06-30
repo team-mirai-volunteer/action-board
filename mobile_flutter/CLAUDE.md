@@ -2,24 +2,39 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+日本語で話すこと。
+
 ## 開発コマンド
 
 ### 基本開発フロー
 - `flutter run` - アプリケーションを実行（デバッグモード）
 - `flutter run --release` - リリースモードで実行
+- `flutter run -d chrome` - Chromeでウェブ版を実行
 - `dart run build_runner build` - コード生成を実行（Freezed、Riverpod、JSON等）
 - `dart run build_runner build --delete-conflicting-outputs` - 競合ファイルを削除してコード生成
 - `dart run build_runner watch` - ファイル変更を監視して自動コード生成
 
 ### テストとコード品質
 - `flutter test` - 全テストを実行
-- `flutter analyze` - 静的解析を実行
+- `flutter test test/path/to/test_file.dart` - 特定のテストファイルを実行
+- `flutter test --coverage` - カバレッジ付きでテストを実行
+- `flutter analyze` - 静的解析を実行（lintルールはanalysis_options.yamlで定義）
 - `dart format .` - コードフォーマット
+- `dart fix --apply` - 自動修正可能なlintエラーを修正
 
 ### ビルド
 - `flutter build apk` - Android APKビルド
+- `flutter build apk --split-per-abi` - ABI別にAPKを分割ビルド
 - `flutter build ios` - iOS ビルド（macOSのみ）
 - `flutter build web` - Webビルド
+- `flutter build web --web-renderer html` - HTML レンダラーでWebビルド（パフォーマンス向上）
+
+### デバッグとトラブルシューティング
+- `flutter doctor` - Flutter環境の診断
+- `flutter clean` - ビルドキャッシュをクリア
+- `flutter pub get` - 依存関係を取得
+- `flutter pub upgrade` - 依存関係をアップグレード
+- `flutter logs` - デバイスログを表示
 
 ## プロジェクトアーキテクチャ
 
@@ -151,3 +166,122 @@ class Failure with _$Failure {
 - `.env`ファイルでSupabase設定を管理
 - `SUPABASE_URL`と`SUPABASE_ANON_KEY`が必須
 - `flutter_dotenv`で環境変数をロード
+
+### UIガイドライン
+- **UI_GUIDELINES.md**を参照して一貫性のあるUIを実装
+- フォームの最大幅: 320px
+- 一般コンテンツの最大幅: 342px
+- ボタンの高さ: 44px
+- プライマリカラー: #089781
+
+## 主要な技術パターン
+
+### Feature-First Architecture
+各機能は以下の3層構造で整理：
+1. **Data Layer** (`data/`) - API通信とデータ永続化
+   - `datasources/` - 外部データソース（API、ローカルストレージ）
+   - `models/` - データ転送オブジェクト（DTO）
+   - `repositories/` - Repository実装
+
+2. **Domain Layer** (`domain/`) - ビジネスロジック
+   - `entities/` - ビジネスエンティティ（Freezedで定義）
+   - `repositories/` - Repository抽象化（インターフェース）
+   - `usecases/` - ユースケース（必要に応じて）
+
+3. **Presentation Layer** (`presentation/`) - UI
+   - `pages/` - 画面ウィジェット
+   - `widgets/` - 再利用可能なUIコンポーネント
+   - `providers/` - Riverpodプロバイダー（状態管理）
+
+### Riverpod パターン
+```dart
+// Notifierパターン（推奨）
+@riverpod
+class FeatureNotifier extends _$FeatureNotifier {
+  @override
+  FeatureState build() => const FeatureState.initial();
+  
+  Future<void> someAction() async {
+    state = const FeatureState.loading();
+    // ビジネスロジック
+  }
+}
+
+// Provider生成（自動生成される）
+final featureNotifierProvider = ...;
+```
+
+### エラーハンドリング
+- `Failure`型で統一的にエラーを表現
+- `try-catch`でキャッチした例外は`Failure`に変換
+- UIレイヤーでは`state.whenOrNull`でエラー状態を処理
+
+### ルーティング管理
+- `GoRouter`の`redirect`で認証状態に基づく自動遷移
+- `CustomTransitionPage`でページ遷移アニメーションを統一
+- パスパラメータは`state.pathParameters['id']`で取得
+
+## テスト戦略
+
+### ユニットテスト
+- `test/`ディレクトリにミラー構造でテストファイルを配置
+- Freezedエンティティのequality testは自動生成されるため不要
+- Repositoryはモック化してプロバイダーをテスト
+
+### ウィジェットテスト
+```dart
+testWidgets('description', (tester) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        // プロバイダーのオーバーライド
+      ],
+      child: MaterialApp(home: TargetWidget()),
+    ),
+  );
+});
+```
+
+### 統合テスト
+- `integration_test/`ディレクトリに配置
+- 実際のSupabaseインスタンスを使用する場合は環境変数で切り替え
+
+## よくある開発パターン
+
+### 新しい画面を追加する場合
+1. `features/機能名/`ディレクトリを作成
+2. エンティティとRepositoryインターフェースを`domain/`に定義
+3. Repository実装を`data/`に作成
+4. Riverpodプロバイダーを`presentation/providers/`に作成
+5. UIを`presentation/pages/`に実装
+6. `app_router.dart`にルートを追加
+7. `dart run build_runner build --delete-conflicting-outputs`を実行
+
+### 既存機能を拡張する場合
+1. 必要に応じてエンティティを更新（Freezedの再生成が必要）
+2. Repositoryメソッドを追加
+3. プロバイダーに新しいアクションを追加
+4. UIを更新
+
+### Supabaseテーブルを追加する場合
+1. Supabaseダッシュボードでテーブル作成
+2. 対応するFreezedエンティティを作成
+3. Repository抽象化とSupabase実装を作成
+4. RLSポリシーを適切に設定
+
+## 注意事項
+
+### コード生成
+- **必ず実行**: Freezed、Riverpod、JSONシリアライゼーションを使用する際
+- 生成ファイル（`*.g.dart`, `*.freezed.dart`）はgitにコミットする
+- `build_runner watch`は開発中便利だが、時々再起動が必要
+
+### パフォーマンス
+- `const`コンストラクタを積極的に使用（lintルールで強制）
+- 大きなリストには`ListView.builder`を使用
+- 画像は適切なサイズにリサイズしてから表示
+
+### セキュリティ
+- 環境変数は`.env`ファイルで管理（gitignoreに追加済み）
+- Supabaseの`anon key`はクライアントで使用可、`service role key`は絶対に含めない
+- RLSポリシーで適切にデータアクセスを制限
