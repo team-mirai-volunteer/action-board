@@ -2,7 +2,7 @@
 export const POSTING_POINTS_PER_UNIT = 10;
 
 // ポスターミッションで1枚の貼り付けで付与するポイント
-export const POSTER_POINTS_PER_UNIT = 30;
+export const POSTER_POINTS_PER_UNIT = 400;
 
 // YouTubeチャンネル登録ミッションの設定
 export const YOUTUBE_MISSION_CONFIG = {
