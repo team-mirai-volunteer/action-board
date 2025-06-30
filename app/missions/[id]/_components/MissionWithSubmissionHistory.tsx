@@ -1,5 +1,6 @@
 "use client";
 
+import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -170,6 +171,15 @@ export function MissionWithSubmissionHistory({
 
   return (
     <>
+      {/* 視覚的導線の表示条件: LINK_ACCESS/QUIZ/REFERRALミッション以外、未達成 */}
+      {mission.required_artifact_type !== "LINK_ACCESS" &&
+        mission.required_artifact_type !== "QUIZ" &&
+        mission.required_artifact_type !== "REFERRAL" &&
+        (mission.max_achievement_count === null ||
+          userAchievementCount < mission.max_achievement_count) && (
+          <MissionGuidanceArrow />
+        )}
+
       {mission.required_artifact_type === "REFERRAL" &&
         authUser &&
         referralCode && (
