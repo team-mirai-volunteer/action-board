@@ -41,3 +41,42 @@ mission_main_links:
   - mission_slug: note-like
     label: 「チームみらい」で検索
     link: https://note.com/search?q=チームみらい
+  - mission_slug: propose-manifest-idobata
+    label: いどばた政策サイト
+    link: https://policy.team-mir.ai/view/README.md
+  - mission_slug: follow-teammirai-x
+    label: チームみらいの公式X（旧Twitter）
+    link: https://x.com/team_mirai_jp
+  - mission_slug: youtube-clip
+    label: チームみらいの公式YouTubeチャンネル
+    link: https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw
+  - mission_slug: join-purpose-openchat
+    label: 目的別LINEオープンチャット
+    link: https://silent-tent-c92.notion.site/1f9f6f56bae1802aa4e9ff90f1308062
+  - mission_slug: join-event
+    label: イベントスケジュール
+    link: https://www.notion.so/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e&source=copy_link#1fef6f56bae1800ab385f544ea22062a
+  - mission_slug: github-pull-request
+    label: チームみらいのSlack
+    link: https://team-mirai-volunteer.slack.com/ssb/redirect
+  - mission_slug: join-street-speech
+    label: イベントスケジュール
+    link: https://team-mirai.notion.site/1fef6f56bae180fe9560d8ef50d3e44a?v=1fef6f56bae1802c8f15000c3f0195e0
+  - mission_slug: posting-magazine
+    label: 機関誌ポスティングガイド
+    link: https://team-mirai.notion.site/206f6f56bae18049a2c2f989bc183a53
+  - mission_slug: help-event-operation
+    label: イベント運営募集ページ
+    link: https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link
+  - mission_slug: put-up-poster
+    label: 政治ポスター掲示ガイド
+    link: https://team-mirai.notion.site/206f6f56bae180e6b471ec5360653227
+  - mission_slug: chat-idobata-ai
+    label: いどばた政策サイト
+    link: https://policy.team-mir.ai/view/README.md
+  - mission_slug: tiktok-like
+    label: 「#チームみらい」で検索
+    link: https://www.tiktok.com/tag/チームみらい
+  - mission_slug: design-create
+    label: チームみらいのSlack
+    link: https://team-mirai-volunteer.slack.com/ssb/redirect
