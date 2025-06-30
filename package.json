@@ -22,8 +22,7 @@
     "mission:sync": "tsx mission_data/src/sync.ts",
     "mission:sync:dry": "tsx mission_data/src/sync.ts --dry-run",
     "mission:export": "tsx mission_data/src/export.ts",
-    "poster:load-csv": "tsx poster_data/load-csv.ts",
-    "poster:load-csv-supabase": "tsx poster_data/load-csv-supabase.ts"
+    "poster:load-csv": "tsx poster_data/load-csv.ts"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
