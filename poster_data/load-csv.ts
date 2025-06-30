@@ -7,8 +7,10 @@ import { glob } from "glob";
 import { Client } from "pg";
 import { from as copyFrom } from "pg-copy-streams";
 
-// Load environment variables from .env.local
-dotenv.config({ path: ".env.local" });
+// Load environment variables with proper precedence
+// Order: actual env vars > .env.local > .env
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local", override: true });
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
