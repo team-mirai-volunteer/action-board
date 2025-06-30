@@ -282,7 +282,6 @@ export function MissionFormWrapper({
     ) {
       return (
         <div className="space-y-6">
-          {normalForm}
           <div className="flex flex-col items-center space-y-2">
             <MainLinkButton
               mission={mission}
@@ -294,6 +293,7 @@ export function MissionFormWrapper({
               上記のリンクも参考にしてください
             </div>
           </div>
+          {normalForm}
         </div>
       );
     }
