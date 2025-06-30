@@ -21,9 +21,7 @@
     "build-storybook": "storybook build",
     "mission:sync": "tsx mission_data/src/sync.ts",
     "mission:sync:dry": "tsx mission_data/src/sync.ts --dry-run",
-    "mission:export": "tsx mission_data/src/export.ts",
-    "poster:load-csv": "tsx poster_data/load-csv.ts",
-    "poster:load-csv-supabase": "tsx poster_data/load-csv-supabase.ts"
+    "mission:export": "tsx mission_data/src/export.ts"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
@@ -77,8 +75,6 @@
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.15.21",
-    "@types/pg": "^8.15.4",
-    "@types/pg-copy-streams": "^1.2.5",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.1.5",
     "@types/uuid": "^9.0.7",
@@ -89,8 +85,6 @@
     "jest-environment-jsdom": "^30.0.2",
     "jest-junit": "^16.0.0",
     "lefthook": "^1.11.13",
-    "pg": "^8.16.3",
-    "pg-copy-streams": "^7.0.0",
     "playwright": "^1.52.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
