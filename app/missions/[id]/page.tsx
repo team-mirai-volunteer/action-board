@@ -141,9 +141,6 @@ export default async function MissionPage({ params }: Props) {
               onLinkClick={undefined}
               isDisabled={false}
             />
-            <div className="text-sm text-muted-foreground text-center">
-              上記のリンクも参考にしてください
-            </div>
           </div>
         )}
 
