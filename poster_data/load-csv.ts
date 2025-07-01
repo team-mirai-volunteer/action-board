@@ -1,6 +1,4 @@
 import { createReadStream } from "node:fs";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import dotenv from "dotenv";
 import { glob } from "glob";
@@ -8,9 +6,12 @@ import { Client } from "pg";
 import { from as copyFrom } from "pg-copy-streams";
 
 // Load environment variables with proper precedence
-// Order: actual env vars > .env.local > .env
-dotenv.config({ path: ".env" });
-dotenv.config({ path: ".env.local", override: true });
+// Don't load .env files if environment variables are already set (e.g., from cloud build or manual export)
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  // Order: .env.local > .env
+  dotenv.config({ path: ".env" });
+  dotenv.config({ path: ".env.local", override: true });
+}
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
@@ -18,11 +19,11 @@ const TARGET_TABLE = "poster_boards";
 async function main() {
   // Construct database URL from Supabase environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseDbPassword = process.env.SUPABASE_DB_PASSWORD;
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl) {
     throw new Error(
-      "Supabase environment variables not found. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env.local",
+      "NEXT_PUBLIC_SUPABASE_URL not found. Make sure it's set in .env.local",
     );
   }
 
@@ -36,9 +37,15 @@ async function main() {
     // For local development, use the standard local postgres connection
     dbUrl = "postgresql://postgres:postgres@localhost:54322/postgres";
   } else {
-    // For cloud, extract project ID from subdomain and construct the connection string
+    // For cloud, we need the database password
+    if (!supabaseDbPassword) {
+      throw new Error(
+        "SUPABASE_DB_PASSWORD not found. This is required for cloud database connections.",
+      );
+    }
+    // Extract project ID from subdomain and construct the connection string
     const projectId = url.hostname.split(".")[0];
-    dbUrl = `postgresql://postgres.${projectId}:${supabaseServiceKey}@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`;
+    dbUrl = `postgresql://postgres.${projectId}:${supabaseDbPassword}@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`;
   }
 
   const db = new Client({ connectionString: dbUrl });
@@ -63,37 +70,192 @@ async function main() {
     for (const file of csvFiles) {
       console.log(`Loading ${file}...`);
 
-      const copyQuery = copyFrom(
-        `COPY ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
-         FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
-      );
+      // Extract just the filename from the full path
+      const fileName = file.split("/").pop() || file;
 
+      // We always need to use a temp table because of the enum type
+      const tempTable = `temp_import_${Date.now()}`;
+
+      // Create a savepoint for this file
+      const savepoint = `sp_${Date.now()}`;
+      await db.query(`SAVEPOINT ${savepoint}`);
+
+      // First try with 7 columns (no note)
       try {
+        await db.query(`
+          CREATE TEMP TABLE ${tempTable} (
+            row_num SERIAL,
+            prefecture TEXT,
+            city TEXT,
+            number TEXT,
+            name TEXT,
+            address TEXT,
+            lat TEXT,
+            long TEXT
+          )
+        `);
+
+        const copyQuery = copyFrom(
+          `COPY ${tempTable} (prefecture, city, number, name, address, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+        );
+
         await pipeline(createReadStream(file), db.query(copyQuery));
-        console.log(`✓ Loaded ${file}`);
+
+        // Insert with type casting, skipping rows with invalid lat/long
+        const insertResult = await db.query(
+          `
+          INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
+          SELECT 
+            prefecture::poster_prefecture_enum,
+            city,
+            number,
+            name,
+            address,
+            lat::decimal(10, 8),
+            long::decimal(11, 8),
+            row_num,
+            $1
+          FROM ${tempTable}
+          WHERE lat NOT IN ('None', '') 
+            AND long NOT IN ('None', '')
+            AND lat IS NOT NULL 
+            AND long IS NOT NULL
+        `,
+          [fileName],
+        );
+
+        // Check if any rows were skipped
+        const totalRows = await db.query(`SELECT COUNT(*) FROM ${tempTable}`);
+        const skipped =
+          Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
+        if (skipped > 0) {
+          console.log(`  ⚠️  Skipped ${skipped} rows with invalid coordinates`);
+        }
+
+        await db.query(`DROP TABLE ${tempTable}`);
+        console.log(`✓ Loaded ${file} (7 columns)`);
+        await db.query(`RELEASE SAVEPOINT ${savepoint}`);
       } catch (error) {
-        console.error(`✗ Failed to load ${file}:`, error);
-        throw error;
+        // Rollback to savepoint to clear the error state
+        await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
+
+        // If it fails with "extra data", try with note column
+        if (
+          error instanceof Error &&
+          "code" in error &&
+          error.code === "22P04" &&
+          error.message.includes("extra data")
+        ) {
+          console.log("  Retrying with note column...");
+
+          // Create a new temp table with note column
+          await db.query(`
+            CREATE TEMP TABLE ${tempTable} (
+              row_num SERIAL,
+              prefecture TEXT,
+              city TEXT,
+              number TEXT,
+              address TEXT,
+              name TEXT,
+              lat TEXT,
+              long TEXT,
+              note TEXT
+            )
+          `);
+
+          const copyQueryWithNote = copyFrom(
+            `COPY ${tempTable} (prefecture, city, number, address, name, lat, long, note) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+          );
+
+          try {
+            await pipeline(createReadStream(file), db.query(copyQueryWithNote));
+
+            // Insert only the columns we need from temp to staging
+            const insertResult = await db.query(
+              `
+              INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
+              SELECT 
+                prefecture::poster_prefecture_enum,
+                city,
+                number,
+                name,
+                address,
+                lat::decimal(10, 8),
+                long::decimal(11, 8),
+                row_num,
+                $1
+              FROM ${tempTable}
+              WHERE lat NOT IN ('None', '') 
+                AND long NOT IN ('None', '')
+                AND lat IS NOT NULL 
+                AND long IS NOT NULL
+            `,
+              [fileName],
+            );
+
+            // Check if any rows were skipped
+            const totalRows = await db.query(
+              `SELECT COUNT(*) FROM ${tempTable}`,
+            );
+            const skipped =
+              Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
+            if (skipped > 0) {
+              console.log(
+                `  ⚠️  Skipped ${skipped} rows with invalid coordinates`,
+              );
+            }
+
+            await db.query(`DROP TABLE ${tempTable}`);
+            console.log(`✓ Loaded ${file} (8 columns, note ignored)`);
+            await db.query(`RELEASE SAVEPOINT ${savepoint}`);
+          } catch (error2) {
+            console.error(`✗ Failed to load ${file}:`, error2);
+            throw error2;
+          }
+        } else {
+          console.error(`✗ Failed to load ${file}:`, error);
+          throw error;
+        }
       }
     }
 
-    // Insert from staging to production table
+    // Insert from staging to production table using row_number + file_name as unique key
     console.log("\nInserting data into production table...");
     const result = await db.query(`
-      INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long)
-      SELECT prefecture, city, number, name, address, lat, long
+      INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
+      SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
       FROM ${STAGING_TABLE}
-      ON CONFLICT (prefecture, city, number)
+      ON CONFLICT (row_number, file_name) 
       DO UPDATE SET
+        prefecture = EXCLUDED.prefecture,
+        city = EXCLUDED.city,
+        number = EXCLUDED.number,
         name = EXCLUDED.name,
         address = EXCLUDED.address,
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         updated_at = timezone('utc'::text, now())
-      RETURNING id
+      WHERE 
+        ${TARGET_TABLE}.prefecture IS DISTINCT FROM EXCLUDED.prefecture OR
+        ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
+        ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
+        ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
+        ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
+        ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
+      RETURNING id, 
+        CASE 
+          WHEN xmax = 0 THEN 'inserted'
+          ELSE 'updated'
+        END as action
     `);
 
-    console.log(`✓ Inserted/updated ${result.rowCount} records`);
+    // Count inserts vs updates
+    const inserted = result.rows.filter((r) => r.action === "inserted").length;
+    const updated = result.rows.filter((r) => r.action === "updated").length;
+    console.log(
+      `✓ Inserted ${inserted} new records, updated ${updated} existing records`,
+    );
 
     // Get final count
     const countResult = await db.query(`SELECT COUNT(*) FROM ${TARGET_TABLE}`);
