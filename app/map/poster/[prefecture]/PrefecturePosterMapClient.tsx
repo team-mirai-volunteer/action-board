@@ -365,7 +365,7 @@ export default function PrefecturePosterMapClient({
                 キャンセル
               </Button>
               <Button onClick={handleStatusUpdate} disabled={isUpdating}>
-                {isUpdating ? "更新中..." : "報告する"}
+                {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
           </DialogFooter>
