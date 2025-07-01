@@ -253,9 +253,9 @@ export default function PrefecturePosterMapClient({
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>ステータスを更新</DialogTitle>
+            <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.name}のステータスを更新します
+              {selectedBoard?.name}の状況を教えてください
             </DialogDescription>
           </DialogHeader>
           {selectedBoard && (
@@ -266,7 +266,7 @@ export default function PrefecturePosterMapClient({
           )}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="status">新しいステータス</Label>
+              <Label htmlFor="status">ポスターの状況</Label>
               <Select
                 value={updateStatus}
                 onValueChange={(value) => setUpdateStatus(value as BoardStatus)}
@@ -289,12 +289,12 @@ export default function PrefecturePosterMapClient({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="note">メモ（任意）</Label>
+              <Label htmlFor="note">連絡事項など</Label>
               <Textarea
                 id="note"
                 value={updateNote}
                 onChange={(e) => setUpdateNote(e.target.value)}
-                placeholder="状況の詳細などを記入..."
+                placeholder="「ポスターが破れていた」「他のポスターで隠れていた」など、気づいたことを教えてください。"
                 rows={3}
               />
             </div>
@@ -354,7 +354,7 @@ export default function PrefecturePosterMapClient({
               type="button"
             >
               <History className="mr-2 h-4 w-4" />
-              履歴
+              これまでの報告
             </Button>
             <div className="flex gap-2">
               <Button
@@ -365,7 +365,7 @@ export default function PrefecturePosterMapClient({
                 キャンセル
               </Button>
               <Button onClick={handleStatusUpdate} disabled={isUpdating}>
-                {isUpdating ? "更新中..." : "更新"}
+                {isUpdating ? "更新中..." : "報告する"}
               </Button>
             </div>
           </DialogFooter>
