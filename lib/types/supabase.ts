@@ -504,6 +504,7 @@ export type Database = {
       poster_activities: {
         Row: {
           address: string | null;
+          board_id: string | null;
           city: string;
           created_at: string;
           id: string;
@@ -520,6 +521,7 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
+          board_id?: string | null;
           city: string;
           created_at?: string;
           id?: string;
@@ -536,6 +538,7 @@ export type Database = {
         };
         Update: {
           address?: string | null;
+          board_id?: string | null;
           city?: string;
           created_at?: string;
           id?: string;
