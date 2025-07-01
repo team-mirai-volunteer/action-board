@@ -1,6 +1,4 @@
 import { createReadStream } from "node:fs";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import dotenv from "dotenv";
 import { glob } from "glob";
@@ -84,6 +82,28 @@ async function main() {
         console.error(`✗ Failed to load ${file}:`, error);
         throw error;
       }
+    }
+
+    // Check for duplicates in staging
+    const dupCheck = await db.query(`
+      SELECT prefecture, city, number, COUNT(*) as count
+      FROM ${STAGING_TABLE}
+      GROUP BY prefecture, city, number
+      HAVING COUNT(*) > 1
+      ORDER BY COUNT(*) DESC
+      LIMIT 10
+    `);
+
+    if (dupCheck.rowCount && dupCheck.rowCount > 0) {
+      console.error("\n❌ ERROR: Found duplicate entries in CSV files:");
+      for (const row of dupCheck.rows) {
+        console.error(
+          `   ${row.prefecture} ${row.city} ${row.number}: ${row.count} duplicates`,
+        );
+      }
+      throw new Error(
+        "Cannot proceed with duplicate entries. Please fix the CSV files.",
+      );
     }
 
     // Insert from staging to production table
