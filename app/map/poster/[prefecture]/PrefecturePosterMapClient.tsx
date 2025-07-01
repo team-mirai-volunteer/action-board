@@ -51,7 +51,7 @@ type StatusHistory =
   };
 
 interface PrefecturePosterMapClientProps {
-  userId: string;
+  userId?: string;
   prefecture: string;
   prefectureName: string;
   center: [number, number];
@@ -91,6 +91,10 @@ export default function PrefecturePosterMapClient({
   };
 
   const handleBoardSelect = (board: PosterBoard) => {
+    if (!userId) {
+      toast.info("ステータスを更新するにはログインが必要です");
+      return;
+    }
     setSelectedBoard(board);
     setUpdateStatus(board.status);
     setUpdateNote("");
@@ -100,7 +104,7 @@ export default function PrefecturePosterMapClient({
   };
 
   const loadHistory = async () => {
-    if (!selectedBoard) return;
+    if (!selectedBoard || !userId) return;
 
     setLoadingHistory(true);
     try {
@@ -169,7 +173,9 @@ export default function PrefecturePosterMapClient({
             {prefectureName}のポスター掲示板
           </h1>
           <p className="text-muted-foreground">
-            掲示板をクリックしてステータスを更新できます
+            {userId
+              ? "掲示板をクリックしてステータスを更新できます"
+              : "ログインするとステータスを更新できます"}
           </p>
         </div>
       </div>
@@ -329,20 +335,23 @@ export default function PrefecturePosterMapClient({
           )}
 
           <DialogFooter className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (!showHistory) {
-                  loadHistory();
-                }
-                setShowHistory(!showHistory);
-              }}
-              type="button"
-            >
-              <History className="mr-2 h-4 w-4" />
-              履歴
-            </Button>
+            {userId && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (!showHistory) {
+                    loadHistory();
+                  }
+                  setShowHistory(!showHistory);
+                }}
+                type="button"
+              >
+                <History className="mr-2 h-4 w-4" />
+                履歴
+              </Button>
+            )}
+            {!userId && <div />}
             <div className="flex gap-2">
               <Button
                 variant="outline"
