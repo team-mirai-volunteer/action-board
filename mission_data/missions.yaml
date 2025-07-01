@@ -177,7 +177,7 @@ missions:
   - slug: github-pull-request
     title: '開発者向け: Githubでプルリクエストを出そう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -188,7 +188,7 @@ missions:
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-356o7vi9d-wGvz9UXGnwHT7BrOdXe9OA" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
@@ -411,7 +411,7 @@ missions:
   - slug: design-create
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
+    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
