@@ -8,9 +8,12 @@ import { Client } from "pg";
 import { from as copyFrom } from "pg-copy-streams";
 
 // Load environment variables with proper precedence
-// Order: actual env vars > .env.local > .env
-dotenv.config({ path: ".env" });
-dotenv.config({ path: ".env.local", override: true });
+// Don't load .env files if environment variables are already set (e.g., from cloud build or manual export)
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  // Order: .env.local > .env
+  dotenv.config({ path: ".env" });
+  dotenv.config({ path: ".env.local", override: true });
+}
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
@@ -18,11 +21,11 @@ const TARGET_TABLE = "poster_boards";
 async function main() {
   // Construct database URL from Supabase environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseDbPassword = process.env.SUPABASE_DB_PASSWORD;
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl) {
     throw new Error(
-      "Supabase environment variables not found. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env.local",
+      "NEXT_PUBLIC_SUPABASE_URL not found. Make sure it's set in .env.local",
     );
   }
 
@@ -36,9 +39,15 @@ async function main() {
     // For local development, use the standard local postgres connection
     dbUrl = "postgresql://postgres:postgres@localhost:54322/postgres";
   } else {
-    // For cloud, extract project ID from subdomain and construct the connection string
+    // For cloud, we need the database password
+    if (!supabaseDbPassword) {
+      throw new Error(
+        "SUPABASE_DB_PASSWORD not found. This is required for cloud database connections.",
+      );
+    }
+    // Extract project ID from subdomain and construct the connection string
     const projectId = url.hostname.split(".")[0];
-    dbUrl = `postgresql://postgres.${projectId}:${supabaseServiceKey}@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`;
+    dbUrl = `postgresql://postgres.${projectId}:${supabaseDbPassword}@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`;
   }
 
   const db = new Client({ connectionString: dbUrl });
