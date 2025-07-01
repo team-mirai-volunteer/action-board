@@ -132,7 +132,7 @@ describe("poster_activities テーブルのRLSテスト", () => {
     expect(user1Data?.[0].poster_count).toBe(5);
     expect(user1Data?.[0].prefecture).toBe("東京都");
     expect(user1Data?.[0].city).toBe("渋谷区");
-    expect(user1Data?.[0].number).toBe("A-1");
+    expect(user1Data?.[0].number).toBe("10-3");
 
     // user2は他人のポスター活動を読み取れない
     const { data: user2Data, error: user2Error } = await user2.client
@@ -153,7 +153,7 @@ describe("poster_activities テーブルのRLSテスト", () => {
       poster_count: 3,
       prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "新宿区",
-      number: "B-5",
+      number: "1-5",
       name: "新宿駅西口掲示板",
       address: "東京都新宿区西新宿1-1",
       lat: 35.6896,
@@ -170,7 +170,7 @@ describe("poster_activities テーブルのRLSテスト", () => {
     expect(insertData?.[0].poster_count).toBe(3);
     expect(insertData?.[0].prefecture).toBe("東京都");
     expect(insertData?.[0].city).toBe("新宿区");
-    expect(insertData?.[0].number).toBe("B-5");
+    expect(insertData?.[0].number).toBe("1-5");
 
     // クリーンアップ
     await adminClient
@@ -488,7 +488,7 @@ describe("poster_activities テーブルのRLSテスト", () => {
     expect(insertData?.[0].poster_count).toBe(1);
     expect(insertData?.[0].prefecture).toBe("東京都");
     expect(insertData?.[0].city).toBe("港区");
-    expect(insertData?.[0].number).toBe("G-1");
+    expect(insertData?.[0].number).toBe("10-3");
     expect(insertData?.[0].name).toBeNull();
     expect(insertData?.[0].note).toBeNull();
     expect(insertData?.[0].address).toBeNull();
