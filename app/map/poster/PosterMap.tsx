@@ -65,6 +65,7 @@ export default function PosterMap({
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 予期せぬタイミングでの再レンダリングによってマップの位置が変わるのを避けるため、依存配列を空にしています
   useEffect(() => {
     if (!mapRef.current) {
       // Initialize map with center from props
@@ -112,7 +113,7 @@ export default function PosterMap({
         marker.remove();
       }
     };
-  }, [boards, onBoardClick, center]);
+  }, []);
 
   return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
 }
