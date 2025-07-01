@@ -70,13 +70,39 @@ async function main() {
     for (const file of csvFiles) {
       console.log(`Loading ${file}...`);
 
+      // Create a temporary table that accepts all columns
+      const tempTable = `temp_import_${Date.now()}`;
+      await db.query(`
+        CREATE TEMP TABLE ${tempTable} (
+          prefecture TEXT,
+          city TEXT,
+          number TEXT,
+          address TEXT,
+          name TEXT,
+          lat TEXT,
+          long TEXT,
+          note TEXT
+        )
+      `);
+
+      // Copy all data including the note column
       const copyQuery = copyFrom(
-        `COPY ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
-         FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+        `COPY ${tempTable} FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
       );
 
       try {
         await pipeline(createReadStream(file), db.query(copyQuery));
+
+        // Insert only the columns we need from temp to staging
+        await db.query(`
+          INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
+          SELECT prefecture, city, number, name, address, lat, long
+          FROM ${tempTable}
+        `);
+
+        // Clean up temp table
+        await db.query(`DROP TABLE ${tempTable}`);
+
         console.log(`✓ Loaded ${file}`);
       } catch (error) {
         console.error(`✗ Failed to load ${file}:`, error);
