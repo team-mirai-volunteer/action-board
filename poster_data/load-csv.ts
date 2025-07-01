@@ -146,7 +146,14 @@ async function main() {
             // Insert only the columns we need from temp to staging
             await db.query(`
               INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
-              SELECT prefecture::poster_prefecture_enum, city, number, name, address, lat, long
+              SELECT 
+                prefecture::poster_prefecture_enum,
+                city,
+                number,
+                name,
+                address,
+                lat::decimal(10, 8),
+                long::decimal(11, 8)
               FROM ${tempTable}
             `);
 
