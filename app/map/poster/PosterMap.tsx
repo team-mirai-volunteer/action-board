@@ -83,7 +83,7 @@ export default function PosterMap({
     }
   }, [center]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 予期せぬタイミングでの再レンダリングによってマップの位置が変わるのを避けるため、依存配列を空にしています
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 予期せぬタイミングでの再レンダリングによってマップの位置が変わるのを避けるため、依存配列を最低限にしています
   useEffect(() => {
     // Clear existing markers
     for (const marker of markersRef.current) {
