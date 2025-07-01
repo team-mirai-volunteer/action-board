@@ -44,7 +44,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
   });
 
   describe("SELECT操作", () => {
-    it("匿名ユーザーはボードを閲覧できない", async () => {
+    it("匿名ユーザーはボードを閲覧できる", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_boards")
@@ -52,7 +52,8 @@ describe("poster_boards テーブルのRLSテスト", () => {
         .eq("id", testBoardId);
 
       expect(error).toBeNull();
-      expect(data).toEqual([]);
+      expect(data).toHaveLength(1);
+      expect(data![0].id).toBe(testBoardId);
     });
 
     it("認証済みユーザーはボードを閲覧できる", async () => {
