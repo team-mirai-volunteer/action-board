@@ -23,6 +23,8 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
+import { getDefaultRedirectUrl, validateReturnUrl } from "@/lib/validation/url";
+
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
   prevState: {
@@ -243,7 +245,9 @@ export const signInActionWithState = async (
     };
   }
 
-  return redirect(returnUrl || "/");
+  // Validate returnUrl before redirecting
+  const validatedReturnUrl = validateReturnUrl(returnUrl);
+  return redirect(validatedReturnUrl || "/");
 };
 
 export const signInAction = async (formData: FormData) => {
@@ -706,10 +710,13 @@ export async function handleLineAuthAction(
     }
 
     // 7. リダイレクト先を返す
+    // returnUrlを検証
+    const validatedReturnUrl = validateReturnUrl(returnUrl);
+
     if (isNewUser) {
       // 新規ユーザーの場合、プロフィール設定へ（returnUrlを保持）
-      const profileUrl = returnUrl
-        ? `/settings/profile?new=true&returnUrl=${encodeURIComponent(returnUrl)}`
+      const profileUrl = validatedReturnUrl
+        ? `/settings/profile?new=true&returnUrl=${encodeURIComponent(validatedReturnUrl)}`
         : "/settings/profile?new=true";
       return {
         success: true,
@@ -717,10 +724,10 @@ export async function handleLineAuthAction(
       };
     }
 
-    // 既存ユーザーの場合、returnUrlまたはホームへ
+    // 既存ユーザーの場合、検証済みのreturnUrlまたはデフォルトへ
     return {
       success: true,
-      redirectTo: returnUrl || "/?login=success",
+      redirectTo: validatedReturnUrl || "/?login=success",
     };
   } catch (error) {
     return {
