@@ -70,7 +70,9 @@ async function main() {
     for (const file of csvFiles) {
       console.log(`Loading ${file}...`);
 
-      let loaded = false;
+      // Create a savepoint for this file
+      const savepoint = `file_${Date.now()}`;
+      await db.query(`SAVEPOINT ${savepoint}`);
 
       // First try without note column (7 columns)
       try {
@@ -80,8 +82,11 @@ async function main() {
         );
         await pipeline(createReadStream(file), db.query(copyQuery));
         console.log(`✓ Loaded ${file} (7 columns)`);
-        loaded = true;
+        await db.query(`RELEASE SAVEPOINT ${savepoint}`);
       } catch (error) {
+        // Rollback to savepoint to clear the error state
+        await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
+
         // If it fails with "extra data", try with note column
         if (
           error instanceof Error &&
@@ -123,7 +128,7 @@ async function main() {
 
             await db.query(`DROP TABLE ${tempTable}`);
             console.log(`✓ Loaded ${file} (8 columns, note ignored)`);
-            loaded = true;
+            await db.query(`RELEASE SAVEPOINT ${savepoint}`);
           } catch (error2) {
             console.error(`✗ Failed to load ${file}:`, error2);
             throw error2;
