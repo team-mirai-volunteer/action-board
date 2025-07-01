@@ -117,7 +117,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
           name: "Unauthorized Board",
           lat: 35.0,
           long: 139.0,
-          prefecture: "tokyo",
+          prefecture: "東京都",
           status: "not_yet",
           number: "TEST-002",
           address: "テストアドレス2-2-2",
