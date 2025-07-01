@@ -204,6 +204,7 @@ export const signInActionWithState = async (
 ) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const returnUrl = formData.get("returnUrl")?.toString();
 
   // フォームデータを保存（エラー時の状態復元用、メールアドレスのみ）
   const currentFormData = {
@@ -242,7 +243,7 @@ export const signInActionWithState = async (
     };
   }
 
-  return redirect("/");
+  return redirect(returnUrl || "/");
 };
 
 export const signInAction = async (formData: FormData) => {
@@ -474,6 +475,7 @@ export async function handleLineAuthAction(
   code: string,
   dateOfBirth?: string,
   referralCode?: string | null,
+  returnUrl?: string,
 ): Promise<
   { success: true; redirectTo: string } | { success: false; error: string }
 > {
@@ -705,14 +707,20 @@ export async function handleLineAuthAction(
 
     // 7. リダイレクト先を返す
     if (isNewUser) {
+      // 新規ユーザーの場合、プロフィール設定へ（returnUrlを保持）
+      const profileUrl = returnUrl
+        ? `/settings/profile?new=true&returnUrl=${encodeURIComponent(returnUrl)}`
+        : "/settings/profile?new=true";
       return {
         success: true,
-        redirectTo: "/settings/profile?new=true",
+        redirectTo: profileUrl,
       };
     }
+
+    // 既存ユーザーの場合、returnUrlまたはホームへ
     return {
       success: true,
-      redirectTo: "/?login=success",
+      redirectTo: returnUrl || "/?login=success",
     };
   } catch (error) {
     return {

@@ -28,6 +28,7 @@ import { updateProfile } from "./actions";
 interface ProfileFormProps {
   message?: Message;
   isNew: boolean;
+  returnUrl?: string;
   initialProfile: {
     name?: string;
     address_prefecture?: string;
@@ -45,6 +46,7 @@ interface ProfileFormProps {
 export default function ProfileForm({
   message,
   isNew,
+  returnUrl,
   initialProfile,
   initialPrivateUser,
 }: ProfileFormProps) {
@@ -71,12 +73,13 @@ export default function ProfileForm({
   useEffect(() => {
     // フォーム送信成功時の処理
     if (state?.success && isNew) {
-      router.push("/");
+      // 新規ユーザーの場合、returnUrlがあればそこへ、なければホームへ
+      router.push(returnUrl || "/");
     }
     if (state?.success) {
       setQueryMessage(undefined);
     }
-  }, [state?.success, isNew, router]);
+  }, [state?.success, isNew, router, returnUrl]);
 
   // ファイル選択時のプレビュー処理
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

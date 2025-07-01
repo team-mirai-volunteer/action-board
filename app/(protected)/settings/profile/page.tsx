@@ -5,6 +5,7 @@ import ProfileForm from "./ProfileForm";
 
 type ProfileSettingsPageSearchParams = {
   new: string;
+  returnUrl?: string;
 } & Message;
 
 export default async function ProfileSettingsPage({
@@ -44,6 +45,7 @@ export default async function ProfileSettingsPage({
       <ProfileForm
         message={params}
         isNew={isNew}
+        returnUrl={params?.returnUrl}
         initialProfile={{
           name: privateUser?.name || user.user_metadata.name || "",
           address_prefecture: privateUser?.address_prefecture || "",
