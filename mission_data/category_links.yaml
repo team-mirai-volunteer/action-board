@@ -35,8 +35,10 @@ category_links:
         sort_no: 100
       - mission_slug: join-prefecture-openchat
         sort_no: 200
-      - mission_slug: join-purpose-openchat
-        sort_no: 250
+      - mission_slug: join-street-speech
+        sort_no: 210
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: join-event
         sort_no: 300
       - mission_slug: help-event-operation
@@ -67,6 +69,8 @@ category_links:
         sort_no: 100
       - mission_slug: join-street-speech
         sort_no: 200
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: put-up-poster
         sort_no: 300
       - mission_slug: join-event
