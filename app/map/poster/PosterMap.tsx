@@ -88,7 +88,14 @@ export default function PosterMap({
         maxZoom: 18,
       }).addTo(mapRef.current);
     }
+    // Update map view when center changes
+    if (mapRef.current) {
+      mapRef.current.setView(center, zoomLevel);
+    }
+  }, [center, prefectureKey]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 予期せぬタイミングでの再レンダリングによってマップの位置が変わるのを避けるため、依存配列を最低限にしています
+  useEffect(() => {
     // Clear existing markers
     for (const marker of markersRef.current) {
       marker.remove();
@@ -112,18 +119,13 @@ export default function PosterMap({
       }
     }
 
-    // Update map view when center changes
-    if (mapRef.current) {
-      mapRef.current.setView(center, zoomLevel);
-    }
-
     // Cleanup function
     return () => {
       for (const marker of markersRef.current) {
         marker.remove();
       }
     };
-  }, [boards, onBoardClick, center, prefectureKey]);
+  }, [boards]);
 
   return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
 }

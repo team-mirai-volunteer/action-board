@@ -55,7 +55,7 @@ type StatusHistory =
   };
 
 interface PrefecturePosterMapClientProps {
-  userId: string;
+  userId?: string;
   prefecture: string;
   prefectureName: string;
   center: [number, number];
@@ -95,6 +95,10 @@ export default function PrefecturePosterMapClient({
   };
 
   const handleBoardSelect = (board: PosterBoard) => {
+    if (!userId) {
+      toast.info("ステータスを更新するにはログインが必要です");
+      return;
+    }
     setSelectedBoard(board);
     setUpdateStatus(board.status);
     setUpdateNote("");
@@ -104,7 +108,7 @@ export default function PrefecturePosterMapClient({
   };
 
   const loadHistory = async () => {
-    if (!selectedBoard) return;
+    if (!selectedBoard || !userId) return;
 
     setLoadingHistory(true);
     try {
@@ -173,7 +177,9 @@ export default function PrefecturePosterMapClient({
             {prefectureName}のポスター掲示板
           </h1>
           <p className="text-muted-foreground">
-            掲示板をクリックしてステータスを更新できます
+            {userId
+              ? "掲示板をクリックしてステータスを更新できます"
+              : "ログインするとステータスを更新できます"}
           </p>
         </div>
       </div>
@@ -249,15 +255,15 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ステータスを更新</DialogTitle>
             <DialogDescription>
-              <div>{selectedBoard?.name}のステータスを更新します</div>
-              {selectedBoard && (
-                <>
-                  <div className="mt-1 text-sm">{selectedBoard.address}</div>
-                  <div className="text-sm">{selectedBoard.city}</div>
-                </>
-              )}
+              {selectedBoard?.name}のステータスを更新します
             </DialogDescription>
           </DialogHeader>
+          {selectedBoard && (
+            <div className="mb-4 text-sm text-muted-foreground">
+              <div>{selectedBoard.address}</div>
+              <div>{selectedBoard.city}</div>
+            </div>
+          )}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="status">新しいステータス</Label>
