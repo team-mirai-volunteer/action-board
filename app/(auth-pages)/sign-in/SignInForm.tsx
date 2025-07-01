@@ -10,14 +10,18 @@ import { signInWithLine } from "@/lib/auth/line-auth";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
-export default function SignInForm() {
+interface SignInFormProps {
+  returnUrl?: string;
+}
+
+export default function SignInForm({ returnUrl }: SignInFormProps) {
   const [state, formAction] = useActionState(signInActionWithState, null);
   const [isLineLoading, setIsLineLoading] = useState(false);
 
   const handleLINELogin = async () => {
     try {
       setIsLineLoading(true);
-      await signInWithLine();
+      await signInWithLine(returnUrl);
     } catch (error) {
       setIsLineLoading(false);
     }
@@ -50,6 +54,9 @@ export default function SignInForm() {
       <form action={formAction} className="flex flex-col gap-2 [&>input]:mb-3">
         {state?.error && (
           <FormMessage message={{ error: state.error }} className="mb-4" />
+        )}
+        {returnUrl && (
+          <input type="hidden" name="returnUrl" value={returnUrl} />
         )}
 
         <Label htmlFor="email">メールアドレス</Label>

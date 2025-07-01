@@ -92,7 +92,8 @@ export default function PrefecturePosterMapClient({
 
   const handleBoardSelect = (board: PosterBoard) => {
     if (!userId) {
-      toast.info("ステータスを更新するにはログインが必要です");
+      const returnUrl = `/map/poster/${prefecture}`;
+      window.location.href = `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`;
       return;
     }
     setSelectedBoard(board);
