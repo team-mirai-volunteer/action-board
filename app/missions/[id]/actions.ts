@@ -152,10 +152,7 @@ const posterArtifactSchema = baseMissionFormSchema.extend({
   boardNumber: z
     .string()
     .min(1, { message: "番号を入力してください" })
-    .max(20, { message: "番号は20文字以下で入力してください" })
-    .regex(/^[A-Za-z0-9]+-[A-Za-z0-9]+$/, {
-      message: "番号は「番号-番号」の形式で入力してください（例：10-1、27-2）",
-    }),
+    .max(20, { message: "番号は20文字以下で入力してください" }),
   boardName: z
     .string()
     .max(100, { message: "名前は100文字以下で入力してください" })
@@ -253,6 +250,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   const boardAddress = formData.get("boardAddress")?.toString();
   const boardLat = formData.get("boardLat")?.toString();
   const boardLong = formData.get("boardLong")?.toString();
+  const boardId = formData.get("boardId")?.toString();
 
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
@@ -653,6 +651,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         long: validatedData.boardLong
           ? Number.parseFloat(validatedData.boardLong)
           : null,
+        board_id: boardId || null,
       };
 
       const { error: posterActivityError } = await supabase

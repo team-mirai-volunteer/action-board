@@ -346,7 +346,7 @@ missions:
     difficulty: 2
     required_artifact_type: POSTER
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
     ogp_image_url: null
   - slug: chat-idobata-ai
