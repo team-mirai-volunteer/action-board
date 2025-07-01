@@ -177,7 +177,7 @@ missions:
   - slug: github-pull-request
     title: '開発者向け: Githubでプルリクエストを出そう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -188,7 +188,7 @@ missions:
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-356o7vi9d-wGvz9UXGnwHT7BrOdXe9OA" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
@@ -207,6 +207,31 @@ missions:
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
+  - slug: join-73-mirai-kaigi
+    title: 7/3(木)の「街頭みらい会議」に参加しよう
+    icon_url: /img/mission_fallback.svg
+    content: |-
+      7/3(木)に各地で「街頭みらい会議」を行います！ ✨🔥
+      多くの人に集まっていただきメディアに注目新党として取り上げてもらうことで、今後のメディア露出の時間や頻度が大きく変わる、とても重要なイベントです。
+      ぜひ皆さまご参加をお願いいたします！！
+
+      ■7/3(木) 街頭みらい会議
+      【東京】10:00- 東京・渋谷スクランブル交差点（安野たかひろ・みねしま侑也）
+      【埼玉】10:00- 埼玉・浦和駅東口（武藤かずこ）
+      【北海道】10:00- 大通公園西3丁目（稲原むねよし）
+      【宮城】10:00- 宮城・仙台三越前（角野なすか）
+      【長野】10:00- 長野駅前（山田ゆうじ）
+      【福岡】10:00- 福岡・博多駅博多口（古川あおい）
+      【大阪】10:30- 大阪・阪急うめだ本店前(JR側)（平りさこ）
+      【愛知】10:30- 愛知・名古屋駅JRゲートタワー前（山根ゆきや）
+      【神奈川】10:30- 神奈川・桜木町駅前（河合みちお）
+    difficulty: 5
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: true
+    is_hidden: false
+    artifact_label: 「参加します または 参加しました」のテキスト
+    ogp_image_url: null
   - slug: posting-magazine
     title: チームみらいの機関誌をポスティングしよう
     icon_url: /img/mission_fallback.svg
@@ -220,7 +245,7 @@ missions:
     difficulty: 2
     required_artifact_type: POSTING
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
@@ -246,10 +271,23 @@ missions:
     is_hidden: false
     artifact_label: 投稿したポストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/18_x_post.png
+  - slug: help-street-speech
+    title: 街頭演説を手伝おう
+    icon_url: /img/mission_fallback.svg
+    content: |-
+      選挙期間中は、全国各地で街頭演説を行います！当日現地に駆けつけていただき、拍手・盛り上げ・合いの手などにご協力いただけるだけでも大変ありがたいですし、街頭演説を行うための事前準備や街頭演説中のサポート（撮影・証紙ビラ配布・場所取り等）もご協力いただければ、さらに嬉しいです🚀
+      <a href="https://team-mirai.notion.site/223f6f56bae1809796bbde536950ebac" target="_blank" rel="noopener noreferrer">街頭演説イベントサポーターガイドはこちら</a>
+    difficulty: 4
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 参加した街頭演説の場所と日付
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: help-event-operation
     title: イベント運営を手伝おう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいでは、サポーターの皆さんと一緒に、イベントや街頭演説をつくりあげています。イベント会場の調整や当日のスタッフ対応、街頭演説での運営補助など、さまざまなかたちで運営を支えてくれる方を<a href="https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link" target="_blank" rel="noopener noreferrer">募集</a>しています！ <br />成果物として、イベント内で公開されるイベントコードを入力ください。
+    content: チームみらいでは、サポーターの皆さんと一緒に、イベントをつくりあげています。イベント会場の調整や当日のスタッフ対応、運営補助など、さまざまなかたちで運営を支えてくれる方を<a href="https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link" target="_blank" rel="noopener noreferrer">募集</a>しています！ <br />成果物として、イベント内で公開されるイベントコードを入力ください。
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -300,6 +338,16 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: ポスターを貼った場所の郵便番号
+    ogp_image_url: null
+  - slug: put-up-poster-on-board
+    title: 選挙区ポスターを貼ろう
+    icon_url: /img/mission_fallback.svg
+    content: 掲示板に選挙区ポスターを貼ろう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/223f6f56bae180b6a6f6f47d7d688a3c" target="_blank">選挙区ポスターを貼る</a>
+    difficulty: 2
+    required_artifact_type: POSTER
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
     ogp_image_url: null
   - slug: chat-idobata-ai
     title: いどばた政策サイトでAIとチャットしよう
@@ -387,6 +435,16 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: null
+  - slug: quiz-policy-100days
+    title: 政策クイズ（100日プラン）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの国政政党成立後１００日プランについてのクイズです。全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
   - slug: tiktok-like
     title: TikTokでチームみらい動画に♡をつけよう
     icon_url: /img/mission_fallback.svg
@@ -401,7 +459,7 @@ missions:
   - slug: design-create
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://team-mirai-volunteer.slack.com/ssb/redirect" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
+    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null

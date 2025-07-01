@@ -38,10 +38,6 @@ export default async function PrefecturePosterMapPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return redirect("/sign-in");
-  }
-
   // Validate prefecture parameter
   if (!validPrefectures.includes(prefecture as PosterPrefectureKey)) {
     return redirect("/map/poster");
@@ -52,7 +48,7 @@ export default async function PrefecturePosterMapPage({
 
   return (
     <PrefecturePosterMapClient
-      userId={user.id}
+      userId={user?.id}
       prefecture={prefectureNameJp}
       prefectureName={prefectureNameJp}
       center={center}

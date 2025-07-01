@@ -20,7 +20,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
         name: "Test Board",
         lat: 35.6762,
         long: 139.6503,
-        prefecture: "tokyo",
+        prefecture: "東京都",
         status: "not_yet",
         number: "TEST-001",
         address: "テストアドレス1-1-1",
@@ -44,7 +44,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
   });
 
   describe("SELECT操作", () => {
-    it("匿名ユーザーはボードを閲覧できない", async () => {
+    it("匿名ユーザーはボードを閲覧できる", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_boards")
@@ -52,7 +52,8 @@ describe("poster_boards テーブルのRLSテスト", () => {
         .eq("id", testBoardId);
 
       expect(error).toBeNull();
-      expect(data).toEqual([]);
+      expect(data).toHaveLength(1);
+      expect(data![0].id).toBe(testBoardId);
     });
 
     it("認証済みユーザーはボードを閲覧できる", async () => {
@@ -117,7 +118,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
           name: "Unauthorized Board",
           lat: 35.0,
           long: 139.0,
-          prefecture: "tokyo",
+          prefecture: "東京都",
           status: "not_yet",
           number: "TEST-002",
           address: "テストアドレス2-2-2",
@@ -168,7 +169,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         name: "History Test Board",
         lat: 35.6762,
         long: 139.6503,
-        prefecture: "tokyo",
+        prefecture: "東京都",
         status: "not_yet",
         number: "TEST-003",
         address: "テストアドレス3-3-3",

@@ -35,8 +35,10 @@ category_links:
         sort_no: 100
       - mission_slug: join-prefecture-openchat
         sort_no: 200
-      - mission_slug: join-purpose-openchat
-        sort_no: 250
+      - mission_slug: join-street-speech
+        sort_no: 210
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: join-event
         sort_no: 300
       - mission_slug: help-event-operation
@@ -67,8 +69,12 @@ category_links:
         sort_no: 100
       - mission_slug: join-street-speech
         sort_no: 200
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: put-up-poster
         sort_no: 300
+      - mission_slug: put-up-poster-on-board
+        sort_no: 400
       - mission_slug: join-event
         sort_no: 500
       - mission_slug: help-event-operation
@@ -89,6 +95,8 @@ category_links:
         sort_no: 400
       - mission_slug: quiz-policy-step3
         sort_no: 500
+      - mission_slug: quiz-policy-100days
+        sort_no: 600
   - category_slug: improve-policies
     missions:
       - mission_slug: chat-idobata-ai
@@ -101,6 +109,8 @@ category_links:
         sort_no: 220
       - mission_slug: quiz-policy-step3
         sort_no: 230
+      - mission_slug: quiz-policy-100days
+        sort_no: 240
       - mission_slug: read-manifest
         sort_no: 300
       - mission_slug: propose-manifest-idobata

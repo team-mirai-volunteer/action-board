@@ -377,3 +377,56 @@ quiz_questions:
     explanation: "短期的な対応策と長期的な成長投資との最適なバランスを再設計するとしています。"
     question_order: 5
     is_active: true
+
+  # 政策（国政政党成立後１００日プラン）
+  - id: "4c1d0e43-3a6b-466b-9f1b-5f87017e4e2d"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "永田町エンジニアチームと並び100日プランで組織すると計画している小規模チームはどれ？"
+    option1: "実務家集団（政策立案・情報発信チーム）"
+    option2: "ブロックチェーン研究会"
+    option3: "デザインシステム検討会"
+    option4: "海外投資家交流チーム"
+    correct_answer: 1
+    explanation: "本格始動へ向けた組織づくりでは「永田町エンジニアチーム」と「実務家集団（政策立案・情報発信チーム）」の2チームを立ち上げると記載されています。"
+    question_order: 1
+    is_active: true
+
+  - id: "0abf8c3e-1e2a-49e8-97c2-1d0a1075628b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "オープンな政策立案プロセスを支える基盤として挙げられているデジタル民主主義2030由来のシステムはどれ？"
+    option1: "電子投票ブロックチェーン"
+    option2: "気候予測AI"
+    option3: "いどばたシステム"
+    option4: "スマート市役所ダッシュボード"
+    correct_answer: 3
+    explanation: "ユーティリティ政党フェーズでは『いどばたシステム』や広聴AI・YouTube中継を組み合わせてオープンな政策議論を行うと書かれています。"
+    question_order: 2
+    is_active: true
+
+  - id: "dca2cb3d-5e2f-43ec-9e4b-8872f3d557f7"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "100日プランの柱に含まれないものはどれ？"
+    option1: "本格始動へ向けた組織づくり"
+    option2: "スモールチームでの社会実装を爆速で遂行"
+    option3: "世界の技術者たちと独自の議員外交"
+    option4: "全国の高速道路を無料化"
+    correct_answer: 4
+    explanation: "柱は①組織づくり②ユーティリティ政党としての連携③社会実装④議員外交の4本で、高速道路無料化は触れられていません。"
+    question_order: 3
+    is_active: true
+
+  - id: "b377424b-86c2-4e0e-9a98-fa42fbb57066"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "「ユーティリティ政党」として他党・自治体と連携するために立ち上げると記載されているものはどれ？"
+    option1: "AI政策に関するオープンな超党派議連"
+    option2: "全国知事会との共同ファンド"
+    option3: "党職員向け語学学校"
+    option4: "全国一律最低賃金1500円法案の提出"
+    correct_answer: 1
+    explanation: "100日プランには“AI政策についてオープンかつ国民的な検討を進めるための超党派議連”を立ち上げると書かれています。"
+    question_order: 4
+    is_active: true

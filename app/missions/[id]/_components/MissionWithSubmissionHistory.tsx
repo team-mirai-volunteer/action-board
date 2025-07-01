@@ -166,7 +166,7 @@ export function MissionWithSubmissionHistory({
   const origin =
     process.env.NEXT_PUBLIC_APP_ORIGIN ||
     (typeof window !== "undefined" ? window.location.origin : "");
-  const signupUrl = `${origin}/sign-up?ref=${referralCode}`;
+  const signupUrl = `${origin}/?ref=${referralCode}`;
 
   return (
     <>
