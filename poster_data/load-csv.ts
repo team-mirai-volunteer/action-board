@@ -70,6 +70,9 @@ async function main() {
     for (const file of csvFiles) {
       console.log(`Loading ${file}...`);
 
+      // Extract just the filename from the full path
+      const fileName = file.split("/").pop() || file;
+
       // We always need to use a temp table because of the enum type
       const tempTable = `temp_import_${Date.now()}`;
 
@@ -81,6 +84,7 @@ async function main() {
       try {
         await db.query(`
           CREATE TEMP TABLE ${tempTable} (
+            row_num SERIAL,
             prefecture TEXT,
             city TEXT,
             number TEXT,
@@ -92,14 +96,15 @@ async function main() {
         `);
 
         const copyQuery = copyFrom(
-          `COPY ${tempTable} FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+          `COPY ${tempTable} (prefecture, city, number, name, address, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
         );
 
         await pipeline(createReadStream(file), db.query(copyQuery));
 
         // Insert with type casting, skipping rows with invalid lat/long
-        const insertResult = await db.query(`
-          INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
+        const insertResult = await db.query(
+          `
+          INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
           SELECT 
             prefecture::poster_prefecture_enum,
             city,
@@ -107,13 +112,17 @@ async function main() {
             name,
             address,
             lat::decimal(10, 8),
-            long::decimal(11, 8)
+            long::decimal(11, 8),
+            row_num,
+            $1
           FROM ${tempTable}
           WHERE lat NOT IN ('None', '') 
             AND long NOT IN ('None', '')
             AND lat IS NOT NULL 
             AND long IS NOT NULL
-        `);
+        `,
+          [fileName],
+        );
 
         // Check if any rows were skipped
         const totalRows = await db.query(`SELECT COUNT(*) FROM ${tempTable}`);
@@ -142,6 +151,7 @@ async function main() {
           // Create a new temp table with note column
           await db.query(`
             CREATE TEMP TABLE ${tempTable} (
+              row_num SERIAL,
               prefecture TEXT,
               city TEXT,
               number TEXT,
@@ -154,15 +164,16 @@ async function main() {
           `);
 
           const copyQueryWithNote = copyFrom(
-            `COPY ${tempTable} FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+            `COPY ${tempTable} (prefecture, city, number, address, name, lat, long, note) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
           );
 
           try {
             await pipeline(createReadStream(file), db.query(copyQueryWithNote));
 
             // Insert only the columns we need from temp to staging
-            const insertResult = await db.query(`
-              INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
+            const insertResult = await db.query(
+              `
+              INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
               SELECT 
                 prefecture::poster_prefecture_enum,
                 city,
@@ -170,13 +181,17 @@ async function main() {
                 name,
                 address,
                 lat::decimal(10, 8),
-                long::decimal(11, 8)
+                long::decimal(11, 8),
+                row_num,
+                $1
               FROM ${tempTable}
               WHERE lat NOT IN ('None', '') 
                 AND long NOT IN ('None', '')
                 AND lat IS NOT NULL 
                 AND long IS NOT NULL
-            `);
+            `,
+              [fileName],
+            );
 
             // Check if any rows were skipped
             const totalRows = await db.query(
@@ -204,17 +219,43 @@ async function main() {
       }
     }
 
-    // Insert from staging to production table
-    // Note: Duplicates are now allowed, so we insert all records
+    // Insert from staging to production table using row_number + file_name as unique key
     console.log("\nInserting data into production table...");
     const result = await db.query(`
-      INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long)
-      SELECT prefecture, city, number, name, address, lat, long
+      INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
+      SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
       FROM ${STAGING_TABLE}
-      RETURNING id
+      ON CONFLICT (row_number, file_name) 
+      DO UPDATE SET
+        prefecture = EXCLUDED.prefecture,
+        city = EXCLUDED.city,
+        number = EXCLUDED.number,
+        name = EXCLUDED.name,
+        address = EXCLUDED.address,
+        lat = EXCLUDED.lat,
+        long = EXCLUDED.long,
+        updated_at = timezone('utc'::text, now())
+      WHERE 
+        ${TARGET_TABLE}.prefecture IS DISTINCT FROM EXCLUDED.prefecture OR
+        ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
+        ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
+        ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
+        ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
+        ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
+      RETURNING id, 
+        CASE 
+          WHEN xmax = 0 THEN 'inserted'
+          ELSE 'updated'
+        END as action
     `);
 
-    console.log(`✓ Inserted/updated ${result.rowCount} records`);
+    // Count inserts vs updates
+    const inserted = result.rows.filter((r) => r.action === "inserted").length;
+    const updated = result.rows.filter((r) => r.action === "updated").length;
+    console.log(
+      `✓ Inserted ${inserted} new records, updated ${updated} existing records`,
+    );
 
     // Get final count
     const countResult = await db.query(`SELECT COUNT(*) FROM ${TARGET_TABLE}`);
