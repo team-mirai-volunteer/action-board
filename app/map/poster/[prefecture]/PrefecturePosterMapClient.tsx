@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  JP_TO_EN_PREFECTURE,
+  type PosterPrefectureKey,
+} from "@/lib/constants/poster-prefectures";
+import {
   getBoardStatusHistory,
   getPosterBoards,
   updateBoardStatus,
@@ -216,6 +220,9 @@ export default function PrefecturePosterMapClient({
           boards={boards}
           onBoardClick={handleBoardSelect}
           center={center}
+          prefectureKey={
+            JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
+          }
         />
       </div>
 

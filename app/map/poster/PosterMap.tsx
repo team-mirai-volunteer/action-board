@@ -4,6 +4,10 @@ import L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "./poster-map.css";
+import {
+  type PosterPrefectureKey,
+  getPrefectureDefaultZoom,
+} from "@/lib/constants/poster-prefectures";
 import type { Database } from "@/lib/types/supabase";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -23,6 +27,7 @@ interface PosterMapProps {
   boards: PosterBoard[];
   onBoardClick: (board: PosterBoard) => void;
   center: [number, number];
+  prefectureKey?: PosterPrefectureKey;
 }
 
 // Status colors for markers
@@ -61,14 +66,20 @@ export default function PosterMap({
   boards,
   onBoardClick,
   center,
+  prefectureKey,
 }: PosterMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
+    // Get zoom level for the prefecture
+    const zoomLevel = prefectureKey
+      ? getPrefectureDefaultZoom(prefectureKey)
+      : 12;
+
     if (!mapRef.current) {
-      // Initialize map with center from props
-      mapRef.current = L.map("poster-map").setView(center, 12);
+      // Initialize map with calculated zoom
+      mapRef.current = L.map("poster-map").setView(center, zoomLevel);
 
       // Add tile layer (using GSI tiles)
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
@@ -103,7 +114,7 @@ export default function PosterMap({
 
     // Update map view when center changes
     if (mapRef.current) {
-      mapRef.current.setView(center, 12);
+      mapRef.current.setView(center, zoomLevel);
     }
 
     // Cleanup function
@@ -112,7 +123,7 @@ export default function PosterMap({
         marker.remove();
       }
     };
-  }, [boards, onBoardClick, center]);
+  }, [boards, onBoardClick, center, prefectureKey]);
 
   return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
 }
