@@ -335,23 +335,20 @@ export default function PrefecturePosterMapClient({
           )}
 
           <DialogFooter className="flex items-center justify-between">
-            {userId && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (!showHistory) {
-                    loadHistory();
-                  }
-                  setShowHistory(!showHistory);
-                }}
-                type="button"
-              >
-                <History className="mr-2 h-4 w-4" />
-                履歴
-              </Button>
-            )}
-            {!userId && <div />}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (!showHistory) {
+                  loadHistory();
+                }
+                setShowHistory(!showHistory);
+              }}
+              type="button"
+            >
+              <History className="mr-2 h-4 w-4" />
+              履歴
+            </Button>
             <div className="flex gap-2">
               <Button
                 variant="outline"
