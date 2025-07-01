@@ -73,6 +73,10 @@ async function main() {
       // We always need to use a temp table because of the enum type
       const tempTable = `temp_import_${Date.now()}`;
 
+      // Create a savepoint for this file
+      const savepoint = `sp_${Date.now()}`;
+      await db.query(`SAVEPOINT ${savepoint}`);
+
       // First try with 7 columns (no note)
       try {
         await db.query(`
@@ -93,8 +97,8 @@ async function main() {
 
         await pipeline(createReadStream(file), db.query(copyQuery));
 
-        // Insert with type casting
-        await db.query(`
+        // Insert with type casting, skipping rows with invalid lat/long
+        const insertResult = await db.query(`
           INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
           SELECT 
             prefecture::poster_prefecture_enum,
@@ -105,11 +109,27 @@ async function main() {
             lat::decimal(10, 8),
             long::decimal(11, 8)
           FROM ${tempTable}
+          WHERE lat NOT IN ('None', '') 
+            AND long NOT IN ('None', '')
+            AND lat IS NOT NULL 
+            AND long IS NOT NULL
         `);
+
+        // Check if any rows were skipped
+        const totalRows = await db.query(`SELECT COUNT(*) FROM ${tempTable}`);
+        const skipped =
+          Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
+        if (skipped > 0) {
+          console.log(`  ⚠️  Skipped ${skipped} rows with invalid coordinates`);
+        }
 
         await db.query(`DROP TABLE ${tempTable}`);
         console.log(`✓ Loaded ${file} (7 columns)`);
+        await db.query(`RELEASE SAVEPOINT ${savepoint}`);
       } catch (error) {
+        // Rollback to savepoint to clear the error state
+        await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
+
         // If it fails with "extra data", try with note column
         if (
           error instanceof Error &&
@@ -118,9 +138,6 @@ async function main() {
           error.message.includes("extra data")
         ) {
           console.log("  Retrying with note column...");
-
-          // Drop the failed temp table if it exists
-          await db.query(`DROP TABLE IF EXISTS ${tempTable}`);
 
           // Create a new temp table with note column
           await db.query(`
@@ -144,7 +161,7 @@ async function main() {
             await pipeline(createReadStream(file), db.query(copyQueryWithNote));
 
             // Insert only the columns we need from temp to staging
-            await db.query(`
+            const insertResult = await db.query(`
               INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long)
               SELECT 
                 prefecture::poster_prefecture_enum,
@@ -155,10 +172,27 @@ async function main() {
                 lat::decimal(10, 8),
                 long::decimal(11, 8)
               FROM ${tempTable}
+              WHERE lat NOT IN ('None', '') 
+                AND long NOT IN ('None', '')
+                AND lat IS NOT NULL 
+                AND long IS NOT NULL
             `);
+
+            // Check if any rows were skipped
+            const totalRows = await db.query(
+              `SELECT COUNT(*) FROM ${tempTable}`,
+            );
+            const skipped =
+              Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
+            if (skipped > 0) {
+              console.log(
+                `  ⚠️  Skipped ${skipped} rows with invalid coordinates`,
+              );
+            }
 
             await db.query(`DROP TABLE ${tempTable}`);
             console.log(`✓ Loaded ${file} (8 columns, note ignored)`);
+            await db.query(`RELEASE SAVEPOINT ${savepoint}`);
           } catch (error2) {
             console.error(`✗ Failed to load ${file}:`, error2);
             throw error2;
