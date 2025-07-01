@@ -31,3 +31,19 @@ mission_quiz_links:
     link: https://policy.team-mir.ai/view/40_%E5%9B%BD%E6%94%BF%E6%94%BF%E5%85%9A%E6%88%90%E7%AB%8B%E5%BE%8C100%E6%97%A5%E3%83%97%E3%83%A9%E3%83%B3.md
     remark: 「国政政党成立後１００日プラン」のページ
     display_order: 1
+  - mission_slug: "quiz-electionlaw-basic"
+    link: https://team-mirai.notion.site/20af6f56bae180f283cfc5873511a9e5#222f6f56bae1807a871cf1132ba3de9a
+    remark: 活動にあたっての注意事項（公職選挙法など）
+    display_order: 1
+  - mission_slug: "quiz-electionlaw-speech"
+    link: https://team-mirai.notion.site/20af6f56bae180f283cfc5873511a9e5#222f6f56bae1807a871cf1132ba3de9a
+    remark: 活動にあたっての注意事項（公職選挙法など）
+    display_order: 1
+  - mission_slug: "quiz-electionlaw-sns"
+    link: https://team-mirai.notion.site/20af6f56bae180f283cfc5873511a9e5#222f6f56bae1807a871cf1132ba3de9a
+    remark: 活動にあたっての注意事項（公職選挙法など）
+    display_order: 1
+  - mission_slug: "quiz-electionlaw-period"
+    link: https://team-mirai.notion.site/20af6f56bae180f283cfc5873511a9e5#222f6f56bae1807a871cf1132ba3de9a
+    remark: 活動にあたっての注意事項（公職選挙法など）
+    display_order: 1

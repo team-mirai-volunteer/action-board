@@ -430,3 +430,216 @@ quiz_questions:
     explanation: "100日プランには“AI政策についてオープンかつ国民的な検討を進めるための超党派議連”を立ち上げると書かれています。"
     question_order: 4
     is_active: true
+
+
+  # 公職選挙法（基礎知識）
+  - id: "6e2e0bd4-7c5e-49b5-9120-d39f41fd7e54"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "選挙運動期間中でも常に禁止されている行為はどれ？"
+    option1: "戸別訪問をして投票依頼をする"
+    option2: "電話で知人に投票をお願いする"
+    option3: "公営掲示板に公式ポスターを貼る"
+    option4: "SNS で応援メッセージを投稿する"
+    correct_answer: 1
+    explanation: "戸別訪問による投票依頼は公職選挙法で全面禁止。"
+    question_order: 1
+    is_active: true
+
+  - id: "32c3d0f1-1e1e-45d3-81fa-71e461f0c6a8"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "18歳未満の人が行えない活動はどれ？"
+    option1: "候補者のチラシをSNSで投票依頼付きで拡散する"
+    option2: "選挙事務所で電話番をする"
+    option3: "資料の封入作業を手伝う"
+    option4: "事務所内の掃除をする"
+    correct_answer: 1
+    explanation: "18歳未満は選挙運動（投票依頼を伴う行為）が禁止。電話番などは機械的労務として適法だが、チームみらいでは安全のため未成年の参加を断っている。"
+    question_order: 2
+    is_active: true
+
+  - id: "e55a9f6d-1ea0-4591-97eb-81dd06db12af"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "サポーターの報酬（ボランティア報酬）に関して正しい説明はどれ？"
+    option1: "原則として無報酬で活動する"
+    option2: "候補者は自由に報酬を支払える"
+    option3: "ボランティアには一律 1日1万円まで支払える"
+    option4: "交通費は金額無制限で支払える"
+    correct_answer: 1
+    explanation: "一部例外を除き報酬の支払いは禁止。違反すると買収罪に問われうる。"
+    question_order: 3
+    is_active: true
+
+  - id: "9d5e23c9-6f60-46ef-a8f8-f00e860a8021"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "文書図画（チラシ・ポスターなど）の扱いについて正しいものはどれ？"
+    option1: "ネットで見つけた応援画像を自分で印刷し配布するのはNG"
+    option2: "ビラは自由に何枚でも印刷・配布してよい"
+    option3: "候補者の顔写真シールを自作し配布してよい"
+    option4: "オリジナルステッカーを街頭で配布しても問題ない"
+    correct_answer: 1
+    explanation: "配布物は法定ビラなど規定枚数・様式のものに限られるため、私製印刷物の配布は違法。"
+    question_order: 4
+    is_active: true
+
+  # 公職選挙法（街頭演説）
+  - id: "4d810e07-bf14-4bc8-b283-f3c6a24e5383"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-speech"
+    question: "街頭演説でサポーターが候補者の名前を短いフレーズで連呼することは？"
+    option1: "原則として禁止されている"
+    option2: "時間帯を守れば自由にできる"
+    option3: "音楽に合わせれば問題ない"
+    option4: "サポーターならいつでも可能"
+    correct_answer: 1
+    explanation: "公職選挙法により連呼行為は演説会場・選挙カーなどを除き原則禁止。"
+    question_order: 1
+    is_active: true
+
+  - id: "0f6e2ab2-5a23-4ebd-bf99-9a9fa05676c0"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-speech"
+    question: "街頭演説の現場でサポーターが合法的に行える活動はどれ？"
+    option1: "演説場所の設営や聴衆の整理"
+    option2: "現金を配って聴衆を集める"
+    option3: "大音量の音楽を流して盛り上げる"
+    option4: "候補者の名前をひたすら連呼する"
+    correct_answer: 1
+    explanation: "設営・整理はOKだが買収行為や連呼行為は違法。"
+    question_order: 2
+    is_active: true
+
+  - id: "52a6687a-9d41-4c68-9f42-5a14e1565bd9"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-speech"
+    question: "街頭演説で禁止されている「気勢を張る行為」とみなされうるものは、次のうちどれ？"
+    option1: "大人数でダンスやコールなど派手なパフォーマンスを行う"
+    option2: "チラシを配布するスタッフを配置する"
+    option3: "普通の音量でマイク演説を行う"
+    option4: "サポーターが列を整理する"
+    correct_answer: 1
+    explanation: '多数人が一体となり大声やリズムで盛り上げるパフォーマンスは"気勢を張る行為"とされ違法。'
+    question_order: 3
+    is_active: true
+
+  - id: "7dc01d25-8c7c-402a-ae5e-d8b67a7613d4"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-speech"
+    question: "街頭演説でサポーターが配布できるビラについて正しいものはどれ？"
+    option1: "候補者の許可を得れば自作ビラを何枚でも配れる"
+    option2: "法定ビラなど規定枚数・様式のもののみ配れる"
+    option3: "ネットで拾った応援画像を印刷して自由に配れる"
+    option4: "ビラではなく商品サンプルを配れば問題ない"
+    correct_answer: 2
+    explanation: "文書図画は公職選挙法で枚数・様式が定められており、自作ビラの配布は違法。"
+    question_order: 4
+    is_active: true
+
+  # 公職選挙法（SNS・インターネット・メール）
+  - id: "5c9eeb29-2f3a-487b-b4bc-dd0fad23fd6c"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-sns"
+    question: "公示日より前にサポーターがX（旧Twitter）で「○○候補に投票してね！」と投稿する行為は？"
+    option1: "事前運動と見なされ禁止される"
+    option2: "友人限定公開なら許される"
+    option3: "候補者の名前を伏せれば問題ない"
+    option4: "ハッシュタグを付けなければ自由"
+    correct_answer: 1
+    explanation: "公示日前の具体的な投票依頼は事前運動として公職選挙法違反。"
+    question_order: 1
+    is_active: true
+
+  - id: "3a73d569-2b2f-4112-adcb-9a73fda51fd9"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-sns"
+    question: "投票日当日にサポーターがInstagramストーリーで「#チームみらい必勝」と投票を促す投稿をすることは？"
+    option1: "投票日当日の選挙運動として禁止される"
+    option2: "24時間で消える投稿なので問題ない"
+    option3: "外国語で書けば合法"
+    option4: "自宅からなら自由"
+    correct_answer: 1
+    explanation: "投票日当日はSNSを含むすべての選挙運動が完全に禁止。"
+    question_order: 2
+    is_active: true
+
+  - id: "8d913ae9-1b17-4c89-bf1e-bb200dbac31a"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-sns"
+    question: "サポーターが選挙運動期間中に個人メールで知人へ「○○候補をよろしく！」と送ることは？"
+    option1: "一般有権者のメール選挙運動は禁止されている"
+    option2: "メールは私的通信なので自由"
+    option3: "1日1回までなら許可される"
+    option4: "添付ファイルがなければOK"
+    correct_answer: 1
+    explanation: "有権者が電子メールを使って選挙運動することも禁止されている。"
+    question_order: 3
+    is_active: true
+
+  - id: "df0943ab-9013-457d-8e11-2cd529f3b2a5"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-sns"
+    question: "選挙運動期間中、サポーターがSNSで応援投稿を行う際に必要とされる表示はどれ？"
+    option1: "投稿者自身の連絡先（アカウント名など）"
+    option2: "候補者の身長・体重"
+    option3: "総務省のロゴ"
+    option4: "投稿した日時のハッシュタグ"
+    correct_answer: 1
+    explanation: "SNSで選挙運動を行う場合は投稿者の連絡先表示が義務。"
+    question_order: 4
+    is_active: true
+
+  # 公職選挙法（選挙期間・選挙当日）
+  - id: "0df9e9a2-717f-4d14-8b55-bb2b6239e5a0"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "選挙運動が認められる期間はどれ？"
+    option1: "公示日から投票日前日まで"
+    option2: "公示日の前日から投票日当日まで"
+    option3: "公示日から投票日当日まで"
+    option4: "告示日の2週間前から1週間後まで"
+    correct_answer: 1
+    explanation: "選挙運動期間は公示（告示）日から投票日前日まで。"
+    question_order: 1
+    is_active: true
+
+  - id: "a3b6f0f9-5949-4b3e-9c90-9f1b3c939c3d"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "投票日当日に過去の応援ツイートをリツイートすることは？"
+    option1: "投票日当日の選挙運動として禁止される"
+    option2: "過去投稿の再共有なので問題ない"
+    option3: "ハッシュタグを外せば合法"
+    option4: "深夜0時〜6時ならOK"
+    correct_answer: 1
+    explanation: "投票日当日はSNS上でも一切の選挙運動が禁止されるためリツイートもNG。"
+    question_order: 2
+    is_active: true
+
+  - id: "f04bea70-60c8-4aeb-95f9-18e01d85f219"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "投票日当日に禁止されている行為はどれ？"
+    option1: "候補者への投票を SNS で呼びかける"
+    option2: "選挙事務所で事務作業をする"
+    option3: "家族に「投票に行ったよ」と伝える"
+    option4: "総務省の選挙啓発サイトを読む"
+    correct_answer: 1
+    explanation: "投票日当日は選挙運動が禁止されており、SNSでの投票呼びかけも違法。"
+    question_order: 3
+    is_active: true
+
+  - id: "ba4c7cc4-bb60-4423-9923-4d14495e70e4"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "投票日当日にサポーターが投票所の入口付近で行っても違法とならない行動はどれ？"
+    option1: "候補者の名前入りバッジを付けて立つ"
+    option2: "候補者への投票を呼びかける"
+    option3: "候補者のチラシを配布する"
+    option4: "投票所前を静かに通行する"
+    correct_answer: 4
+    explanation: "投票所周辺での選挙運動は全面禁止。静かに通行するだけなら合法。"
+    question_order: 4
+    is_active: true
