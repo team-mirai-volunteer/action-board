@@ -4,6 +4,11 @@ import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
+// Mock lucide-react icons
+jest.mock("lucide-react", () => ({
+  ChevronDown: () => <div data-testid="chevron-down-icon" />,
+}));
+
 const mockUser: User = {
   id: "test-user-id",
   email: "test@example.com",
@@ -28,6 +33,7 @@ const baseMission: Tables<"missions"> = {
   ogp_image_url: null,
   created_at: "2025-06-22T00:00:00Z",
   updated_at: "2025-06-22T00:00:00Z",
+  slug: "test-mission-1",
   required_artifact_type: "LINK",
 };
 
@@ -144,19 +150,7 @@ describe("ArtifactForm", () => {
     );
 
     expect(screen.getByText("ポスター枚数")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("例：10")).toBeInTheDocument();
-    expect(
-      screen.getByText(/貼り付けた枚数を入力してください/),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/1枚＝400ポイント/)).toBeInTheDocument();
-
-    // ポスター入力フィールドの属性を確認
-    const posterCountInput = screen.getByPlaceholderText("例：10");
-    expect(posterCountInput).toHaveAttribute("type", "number");
-    expect(posterCountInput).toHaveAttribute("name", "posterCount");
-    expect(posterCountInput).toHaveAttribute("min", "1");
-    expect(posterCountInput).toHaveAttribute("max", "10000");
-    expect(posterCountInput).toBeRequired();
+    // 詳細はPosterForm.test.tsxで確認
   });
 
   it("IMAGEタイプの場合は画像アップロードフォームが表示される", () => {

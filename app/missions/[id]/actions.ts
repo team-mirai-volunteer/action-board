@@ -1,6 +1,7 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
+import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import {
   getUserXpBonus,
   grantMissionCompletionXp,
@@ -15,7 +16,7 @@ import {
   POSTER_POINTS_PER_UNIT,
   POSTING_POINTS_PER_UNIT,
 } from "@/lib/constants";
-import type { TablesInsert } from "@/lib/types/supabase";
+import type { Database, TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
 // Quiz関連のServer ActionsとQuizQuestion型をインポート
@@ -132,6 +133,67 @@ const posterArtifactSchema = baseMissionFormSchema.extend({
     .max(MAX_POSTER_COUNT, {
       message: `ポスター枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
     }),
+  prefecture: z
+    .string()
+    .min(1, { message: "都道府県を選択してください" })
+    .refine(
+      (val): val is (typeof VALID_JP_PREFECTURES)[number] =>
+        VALID_JP_PREFECTURES.includes(
+          val as (typeof VALID_JP_PREFECTURES)[number],
+        ),
+      {
+        message: "有効な都道府県を選択してください",
+      },
+    ),
+  city: z
+    .string()
+    .min(1, { message: "市町村＋区を入力してください" })
+    .max(100, { message: "市町村＋区は100文字以下で入力してください" }),
+  boardNumber: z
+    .string()
+    .min(1, { message: "番号を入力してください" })
+    .max(20, { message: "番号は20文字以下で入力してください" })
+    .regex(/^[A-Za-z0-9]+-[A-Za-z0-9]+$/, {
+      message: "番号は「番号-番号」の形式で入力してください（例：10-1、27-2）",
+    }),
+  boardName: z
+    .string()
+    .max(100, { message: "名前は100文字以下で入力してください" })
+    .optional(),
+  boardNote: z
+    .string()
+    .max(200, { message: "状況は200文字以下で入力してください" })
+    .optional(),
+  boardAddress: z
+    .string()
+    .max(200, { message: "住所は200文字以下で入力してください" })
+    .optional(),
+  boardLat: z
+    .string()
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (!Number.isNaN(Number.parseFloat(val)) &&
+          Number.parseFloat(val) >= -90 &&
+          Number.parseFloat(val) <= 90),
+      {
+        message: "緯度は-90から90の間の数値で入力してください",
+      },
+    ),
+  boardLong: z
+    .string()
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (!Number.isNaN(Number.parseFloat(val)) &&
+          Number.parseFloat(val) >= -180 &&
+          Number.parseFloat(val) <= 180),
+      {
+        message: "経度は-180から180の間の数値で入力してください",
+      },
+    ),
 });
 
 // QUIZタイプ用スキーマ（sessionIdは不要）
@@ -183,6 +245,14 @@ export const achieveMissionAction = async (formData: FormData) => {
   const locationText = formData.get("locationText")?.toString();
   // ポスター用データの取得
   const posterCount = formData.get("posterCount")?.toString();
+  const prefecture = formData.get("prefecture")?.toString();
+  const city = formData.get("city")?.toString();
+  const boardNumber = formData.get("boardNumber")?.toString();
+  const boardName = formData.get("boardName")?.toString();
+  const boardNote = formData.get("boardNote")?.toString();
+  const boardAddress = formData.get("boardAddress")?.toString();
+  const boardLat = formData.get("boardLat")?.toString();
+  const boardLong = formData.get("boardLong")?.toString();
 
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
@@ -199,6 +269,14 @@ export const achieveMissionAction = async (formData: FormData) => {
     postingCount,
     posterCount,
     locationText,
+    prefecture,
+    city,
+    boardNumber,
+    boardName,
+    boardNote,
+    boardAddress,
+    boardLat,
+    boardLong,
   });
 
   // ポスティングボーナスXP + ミッション達成XP 用の変数
@@ -387,8 +465,16 @@ export const achieveMissionAction = async (formData: FormData) => {
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
       artifactTypeLabel = "POSTER";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
-        // ポスター情報をtext_contentに格納
-        artifactPayload.text_content = `${validatedData.posterCount}枚を貼付`;
+        // ポスター情報をtext_contentに詳細に格納
+        const locationInfo = `${validatedData.prefecture}${validatedData.city} ${validatedData.boardNumber}`;
+        const nameInfo = validatedData.boardName
+          ? ` (${validatedData.boardName})`
+          : "";
+        const statusInfo = validatedData.boardNote
+          ? ` - 状況: ${validatedData.boardNote}`
+          : "";
+
+        artifactPayload.text_content = `${validatedData.posterCount}枚を${locationInfo}${nameInfo}に貼付${statusInfo}`;
         // CHECK制約: text_content必須、他はnull
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
@@ -544,11 +630,43 @@ export const achieveMissionAction = async (formData: FormData) => {
       }
     }
 
-    // ポスターミッションのボーナスXP付与
+    // ポスター活動の詳細情報をposter_activitiesテーブルに保存
     if (
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key &&
       validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
     ) {
+      // poster_activitiesテーブルに必要なデータを準備
+      const posterActivityPayload = {
+        user_id: authUser.id,
+        mission_artifact_id: newArtifact.id,
+        poster_count: validatedData.posterCount,
+        prefecture:
+          validatedData.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+        city: validatedData.city,
+        number: validatedData.boardNumber,
+        name: validatedData.boardName || null,
+        note: validatedData.boardNote || null,
+        address: validatedData.boardAddress || null,
+        lat: validatedData.boardLat
+          ? Number.parseFloat(validatedData.boardLat)
+          : null,
+        long: validatedData.boardLong
+          ? Number.parseFloat(validatedData.boardLong)
+          : null,
+      };
+
+      const { error: posterActivityError } = await supabase
+        .from("poster_activities")
+        .insert(posterActivityPayload);
+
+      if (posterActivityError) {
+        console.error("Poster activity save error:", posterActivityError);
+        return {
+          success: false,
+          error: `ポスター活動の保存に失敗しました: ${posterActivityError.message}`,
+        };
+      }
+
       // ポスター用のポイント計算とXP付与
       const pointsPerUnit = POSTER_POINTS_PER_UNIT;
       const totalPoints = validatedData.posterCount * pointsPerUnit;
