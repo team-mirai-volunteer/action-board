@@ -204,41 +204,13 @@ async function main() {
       }
     }
 
-    // Check for duplicates in staging
-    const dupCheck = await db.query(`
-      SELECT prefecture, city, number, COUNT(*) as count
-      FROM ${STAGING_TABLE}
-      GROUP BY prefecture, city, number
-      HAVING COUNT(*) > 1
-      ORDER BY COUNT(*) DESC
-      LIMIT 10
-    `);
-
-    if (dupCheck.rowCount && dupCheck.rowCount > 0) {
-      console.error("\n❌ ERROR: Found duplicate entries in CSV files:");
-      for (const row of dupCheck.rows) {
-        console.error(
-          `   ${row.prefecture} ${row.city} ${row.number}: ${row.count} duplicates`,
-        );
-      }
-      throw new Error(
-        "Cannot proceed with duplicate entries. Please fix the CSV files.",
-      );
-    }
-
     // Insert from staging to production table
+    // Note: Duplicates are now allowed, so we insert all records
     console.log("\nInserting data into production table...");
     const result = await db.query(`
       INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long)
       SELECT prefecture, city, number, name, address, lat, long
       FROM ${STAGING_TABLE}
-      ON CONFLICT (prefecture, city, number)
-      DO UPDATE SET
-        name = EXCLUDED.name,
-        address = EXCLUDED.address,
-        lat = EXCLUDED.lat,
-        long = EXCLUDED.long,
-        updated_at = timezone('utc'::text, now())
       RETURNING id
     `);
 
