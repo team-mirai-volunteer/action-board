@@ -9,33 +9,6 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("/settings/profile?new=true")).toBe("/settings/profile?new=true");
     });
 
-    it("should accept same-origin absolute URLs in development", () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
-
-      expect(validateReturnUrl("http://localhost:3000/")).toBe("http://localhost:3000/");
-      expect(validateReturnUrl("https://localhost:3000/home")).toBe("https://localhost:3000/home");
-      expect(validateReturnUrl("http://127.0.0.1:3000/")).toBe("http://127.0.0.1:3000/");
-      
-      process.env.NODE_ENV = originalEnv;
-    });
-
-    it("should accept configured app URL", () => {
-      const originalUrl = process.env.NEXT_PUBLIC_APP_URL;
-      process.env.NEXT_PUBLIC_APP_URL = "https://example.com";
-
-      expect(validateReturnUrl("https://example.com/")).toBe("https://example.com/");
-      expect(validateReturnUrl("https://example.com/missions")).toBe("https://example.com/missions");
-
-      process.env.NEXT_PUBLIC_APP_URL = originalUrl;
-    });
-
-    it("should accept allowed external hosts", () => {
-      const allowedHosts = ["trusted.com", "api.example.com"];
-      expect(validateReturnUrl("https://trusted.com/callback", allowedHosts)).toBe("https://trusted.com/callback");
-      expect(validateReturnUrl("https://api.example.com/auth", allowedHosts)).toBe("https://api.example.com/auth");
-    });
-
     it("should handle null and undefined", () => {
       expect(validateReturnUrl(null)).toBe(null);
       expect(validateReturnUrl(undefined)).toBe(null);
@@ -77,15 +50,18 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("/home\\revil.com")).toBe(null);
     });
 
-    it("should reject external domains not in allowlist", () => {
+    it("should reject absolute URLs", () => {
       expect(validateReturnUrl("https://evil.com")).toBe(null);
       expect(validateReturnUrl("http://malicious.site/steal")).toBe(null);
-      expect(validateReturnUrl("https://example.com.evil.com")).toBe(null);
+      expect(validateReturnUrl("https://example.com")).toBe(null);
+      expect(validateReturnUrl("http://localhost:3000/")).toBe(null);
+      expect(validateReturnUrl("https://localhost:3000/home")).toBe(null);
     });
 
-    it("should reject malformed URLs", () => {
-      expect(validateReturnUrl("ht!tp://invalid")).toBe(null);
-      expect(validateReturnUrl("not-a-url")).toBe(null);
+    it("should reject any URL with colon (protocol indicator)", () => {
+      expect(validateReturnUrl("http://invalid")).toBe(null);
+      expect(validateReturnUrl("custom:scheme")).toBe(null);
+      expect(validateReturnUrl("not:a:url")).toBe(null);
     });
 
     it("should trim whitespace and still validate", () => {
@@ -97,6 +73,9 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("http://evil.com#@localhost:3000")).toBe(null);
       expect(validateReturnUrl("http://localhost:3000@evil.com")).toBe(null);
       expect(validateReturnUrl("http://evil.com?redirect=localhost:3000")).toBe(null);
+      expect(validateReturnUrl("home")).toBe(null); // Not starting with /
+      expect(validateReturnUrl("./home")).toBe(null); // Relative but not starting with /
+      expect(validateReturnUrl("../home")).toBe(null); // Relative but not starting with /
     });
   });
 });

@@ -23,7 +23,7 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
-import { getDefaultRedirectUrl, validateReturnUrl } from "@/lib/validation/url";
+import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
