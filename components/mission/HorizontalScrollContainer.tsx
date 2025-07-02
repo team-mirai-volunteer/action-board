@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useRef } from "react";
 
 interface HorizontalScrollContainerProps {
   children: ReactNode;
@@ -17,29 +17,19 @@ export default function HorizontalScrollContainer({
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!scrollContainerRef.current) return;
-
-    isDraggingRef.current = true;
-    startXRef.current = e.touches[0].clientX;
-    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current || !scrollContainerRef.current) return;
-
-    e.preventDefault();
-    const x = e.touches[0].clientX;
-    const walk = (startXRef.current - x) * 1.5;
-    scrollContainerRef.current.scrollLeft = scrollLeftRef.current + walk;
-  };
-
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false;
-  };
+  const isTouchDevice =
+    typeof window !== "undefined" && "ontouchstart" in window;
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollContainerRef.current) return;
+    if (!scrollContainerRef.current || isTouchDevice) return;
+
+    const target = e.target;
+    if (
+      target instanceof HTMLElement &&
+      ["BUTTON", "A"].includes(target.tagName)
+    ) {
+      return;
+    }
 
     isDraggingRef.current = true;
     startXRef.current = e.pageX - scrollContainerRef.current.offsetLeft;
@@ -50,7 +40,8 @@ export default function HorizontalScrollContainer({
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current || !scrollContainerRef.current) return;
+    if (!isDraggingRef.current || !scrollContainerRef.current || isTouchDevice)
+      return;
 
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
@@ -58,21 +49,27 @@ export default function HorizontalScrollContainer({
     scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
 
-  const handleMouseUp = () => {
+  const stopDragging = useCallback(() => {
     if (!scrollContainerRef.current) return;
-
     isDraggingRef.current = false;
     scrollContainerRef.current.style.cursor = "grab";
     scrollContainerRef.current.style.userSelect = "auto";
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
-    if (!scrollContainerRef.current) return;
+  useEffect(() => {
+    if (isTouchDevice) return;
 
-    isDraggingRef.current = false;
-    scrollContainerRef.current.style.cursor = "grab";
-    scrollContainerRef.current.style.userSelect = "auto";
-  };
+    const handleWindowMouseUp = () => {
+      if (isDraggingRef.current) {
+        stopDragging();
+      }
+    };
+
+    window.addEventListener("mouseup", handleWindowMouseUp);
+    return () => {
+      window.removeEventListener("mouseup", handleWindowMouseUp);
+    };
+  }, [isTouchDevice, stopDragging]);
 
   return (
     <div
@@ -81,15 +78,10 @@ export default function HorizontalScrollContainer({
       style={{
         scrollbarWidth: "thin",
         cursor: "grab",
-        scrollBehavior: "smooth",
+        WebkitOverflowScrolling: "touch",
       }}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
     >
       {children}
     </div>
