@@ -208,6 +208,31 @@ export async function getUserXpHistory(
 }
 
 /**
+ * ユーザーのBONUSXPを取得する
+ */
+export async function getUserXpBonus(
+  userId: string,
+  achievementId: string,
+): Promise<number> {
+  const supabase = await createServiceClient();
+
+  const { data, error } = await supabase
+    .from("xp_transactions")
+    .select("xp_amount")
+    .eq("user_id", userId)
+    .eq("source_id", achievementId)
+    .eq("source_type", "BONUS")
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch BONUS XP:", error);
+    return 0;
+  }
+
+  return data.xp_amount || 0;
+}
+
+/**
  * 特定ユーザーのランクを取得する
  */
 export async function getUserRank(userId: string): Promise<number | null> {

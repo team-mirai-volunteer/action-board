@@ -13,7 +13,6 @@ import { useFormStatus } from "react-dom";
 
 interface EmailSignUpFormProps {
   searchParams: Message;
-  referralCode: string | null;
 }
 
 function EmailSignUpFormContent({
@@ -81,7 +80,6 @@ function EmailSignUpFormContent({
 
 export default function EmailSignUpForm({
   searchParams,
-  referralCode,
 }: EmailSignUpFormProps) {
   const router = useRouter();
 
@@ -146,11 +144,6 @@ export default function EmailSignUpForm({
         type="hidden"
         name="date_of_birth"
         value={sessionData.dateOfBirth || ""}
-      />
-      <input
-        type="hidden"
-        name="ref"
-        value={sessionData.referralCode || referralCode || ""}
       />
 
       <h1 className="text-2xl font-medium text-center mb-2">

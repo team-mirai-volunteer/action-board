@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
-import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
+import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { GeolocationInput } from "./GeolocationInput";
 import { ImageUploader } from "./ImageUploader";
+import { PosterForm } from "./PosterForm";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
@@ -124,7 +125,7 @@ export function ArtifactForm({
                 name="postingCount"
                 id="postingCount"
                 min="1"
-                max="1000"
+                max={MAX_POSTING_COUNT}
                 required
                 disabled={disabled}
                 placeholder="例：50"
@@ -154,6 +155,11 @@ export function ArtifactForm({
               </p>
             </div>
           </div>
+        )}
+
+        {/* ポスター入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
+          <PosterForm disabled={disabled} />
         )}
 
         {/* 画像アップロードフォーム */}

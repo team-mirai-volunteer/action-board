@@ -1,12 +1,22 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
+import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
+import {
+  getUserXpBonus,
+  grantMissionCompletionXp,
+  grantXp,
+} from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
-import { POSTING_POINTS_PER_UNIT } from "@/lib/constants";
-import type { TablesInsert } from "@/lib/types/supabase";
+import {
+  MAX_POSTER_COUNT,
+  MAX_POSTING_COUNT,
+  POSTER_POINTS_PER_UNIT,
+  POSTING_POINTS_PER_UNIT,
+} from "@/lib/constants";
+import type { Database, TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
 // Quiz関連のServer ActionsとQuizQuestion型をインポート
@@ -105,16 +115,92 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
   postingCount: z.coerce
     .number()
     .min(1, { message: "ポスティング枚数は1枚以上で入力してください" })
-    .max(1000, { message: "ポスティング枚数は1000枚以下で入力してください" }),
+    .max(MAX_POSTING_COUNT, {
+      message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
+    }),
   locationText: z
     .string()
     .min(1, { message: "ポスティング場所を入力してください" })
     .max(100, { message: "ポスティング場所は100文字以下で入力してください" }),
 });
 
+// POSTERタイプ用スキーマ
+const posterArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.POSTER.key),
+  posterCount: z.coerce
+    .number()
+    .min(1, { message: "ポスター枚数は1枚以上で入力してください" })
+    .max(MAX_POSTER_COUNT, {
+      message: `ポスター枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
+    }),
+  prefecture: z
+    .string()
+    .min(1, { message: "都道府県を選択してください" })
+    .refine(
+      (val): val is (typeof VALID_JP_PREFECTURES)[number] =>
+        VALID_JP_PREFECTURES.includes(
+          val as (typeof VALID_JP_PREFECTURES)[number],
+        ),
+      {
+        message: "有効な都道府県を選択してください",
+      },
+    ),
+  city: z
+    .string()
+    .min(1, { message: "市町村＋区を入力してください" })
+    .max(100, { message: "市町村＋区は100文字以下で入力してください" }),
+  boardNumber: z
+    .string()
+    .min(1, { message: "番号を入力してください" })
+    .max(20, { message: "番号は20文字以下で入力してください" }),
+  boardName: z
+    .string()
+    .max(100, { message: "名前は100文字以下で入力してください" })
+    .optional(),
+  boardNote: z
+    .string()
+    .max(200, { message: "状況は200文字以下で入力してください" })
+    .optional(),
+  boardAddress: z
+    .string()
+    .max(200, { message: "住所は200文字以下で入力してください" })
+    .optional(),
+  boardLat: z
+    .string()
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (!Number.isNaN(Number.parseFloat(val)) &&
+          Number.parseFloat(val) >= -90 &&
+          Number.parseFloat(val) <= 90),
+      {
+        message: "緯度は-90から90の間の数値で入力してください",
+      },
+    ),
+  boardLong: z
+    .string()
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (!Number.isNaN(Number.parseFloat(val)) &&
+          Number.parseFloat(val) >= -180 &&
+          Number.parseFloat(val) <= 180),
+      {
+        message: "経度は-180から180の間の数値で入力してください",
+      },
+    ),
+});
+
 // QUIZタイプ用スキーマ（sessionIdは不要）
 const quizArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
+});
+
+// LINK_ACCESSタイプ用スキーマ
+const linkAccessArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK_ACCESS.key),
 });
 
 // 統合スキーマ
@@ -126,7 +212,9 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   imageWithGeolocationArtifactSchema,
   noneArtifactSchema,
   postingArtifactSchema,
-  quizArtifactSchema, // 追加
+  posterArtifactSchema,
+  quizArtifactSchema,
+  linkAccessArtifactSchema, // 追加
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -152,6 +240,17 @@ export const achieveMissionAction = async (formData: FormData) => {
   // ポスティング用データの取得
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
+  // ポスター用データの取得
+  const posterCount = formData.get("posterCount")?.toString();
+  const prefecture = formData.get("prefecture")?.toString();
+  const city = formData.get("city")?.toString();
+  const boardNumber = formData.get("boardNumber")?.toString();
+  const boardName = formData.get("boardName")?.toString();
+  const boardNote = formData.get("boardNote")?.toString();
+  const boardAddress = formData.get("boardAddress")?.toString();
+  const boardLat = formData.get("boardLat")?.toString();
+  const boardLong = formData.get("boardLong")?.toString();
+  const boardId = formData.get("boardId")?.toString();
 
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
@@ -166,8 +265,20 @@ export const achieveMissionAction = async (formData: FormData) => {
     accuracy,
     altitude,
     postingCount,
+    posterCount,
     locationText,
+    prefecture,
+    city,
+    boardNumber,
+    boardName,
+    boardNote,
+    boardAddress,
+    boardLat,
+    boardLong,
   });
+
+  // ポスティングボーナスXP + ミッション達成XP 用の変数
+  let totalXpGranted = 0;
 
   if (!validatedFields.success) {
     return {
@@ -273,9 +384,11 @@ export const achieveMissionAction = async (formData: FormData) => {
   }
 
   // 成果物がある場合は mission_artifacts に記録
+  // LINK_ACCESSタイプの場合は成果物の保存をスキップ
   if (
     validatedRequiredArtifactType &&
-    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key &&
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.LINK_ACCESS.key
   ) {
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,
@@ -343,6 +456,23 @@ export const achieveMissionAction = async (formData: FormData) => {
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key) {
         // ポスティング情報をtext_contentに格納
         artifactPayload.text_content = `${validatedData.postingCount}枚を${validatedData.locationText}に配布`;
+        // CHECK制約: text_content必須、他はnull
+        artifactPayload.link_url = null;
+        artifactPayload.image_storage_path = null;
+      }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
+      artifactTypeLabel = "POSTER";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
+        // ポスター情報をtext_contentに詳細に格納
+        const locationInfo = `${validatedData.prefecture}${validatedData.city} ${validatedData.boardNumber}`;
+        const nameInfo = validatedData.boardName
+          ? ` (${validatedData.boardName})`
+          : "";
+        const statusInfo = validatedData.boardNote
+          ? ` - 状況: ${validatedData.boardNote}`
+          : "";
+
+        artifactPayload.text_content = `${validatedData.posterCount}枚を${locationInfo}${nameInfo}に貼付${statusInfo}`;
         // CHECK制約: text_content必須、他はnull
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
@@ -493,6 +623,70 @@ export const achieveMissionAction = async (formData: FormData) => {
           bonusXpResult.error,
         );
         // ボーナスXP付与の失敗はミッション達成の成功を妨げない
+      } else {
+        totalXpGranted += totalPoints;
+      }
+    }
+
+    // ポスター活動の詳細情報をposter_activitiesテーブルに保存
+    if (
+      validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key &&
+      validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
+    ) {
+      // poster_activitiesテーブルに必要なデータを準備
+      const posterActivityPayload = {
+        user_id: authUser.id,
+        mission_artifact_id: newArtifact.id,
+        poster_count: validatedData.posterCount,
+        prefecture:
+          validatedData.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+        city: validatedData.city,
+        number: validatedData.boardNumber,
+        name: validatedData.boardName || null,
+        note: validatedData.boardNote || null,
+        address: validatedData.boardAddress || null,
+        lat: validatedData.boardLat
+          ? Number.parseFloat(validatedData.boardLat)
+          : null,
+        long: validatedData.boardLong
+          ? Number.parseFloat(validatedData.boardLong)
+          : null,
+        board_id: boardId || null,
+      };
+
+      const { error: posterActivityError } = await supabase
+        .from("poster_activities")
+        .insert(posterActivityPayload);
+
+      if (posterActivityError) {
+        console.error("Poster activity save error:", posterActivityError);
+        return {
+          success: false,
+          error: `ポスター活動の保存に失敗しました: ${posterActivityError.message}`,
+        };
+      }
+
+      // ポスター用のポイント計算とXP付与
+      const pointsPerUnit = POSTER_POINTS_PER_UNIT;
+      const totalPoints = validatedData.posterCount * pointsPerUnit;
+
+      // 通常のXP（ミッション難易度ベース）に加えて、ポスターボーナスXPを付与
+      const bonusXpResult = await grantXp(
+        authUser.id,
+        totalPoints,
+        "BONUS",
+        achievement.id,
+        `ポスターボーナス（${validatedData.posterCount}枚×${pointsPerUnit}ポイント）`,
+      );
+
+      if (!bonusXpResult.success) {
+        console.error(
+          "ポスターボーナスXP付与に失敗しました:",
+          bonusXpResult.error,
+        );
+        // ボーナスXP付与の失敗はミッション達成の成功を妨げない
+      } else {
+        totalXpGranted += totalPoints;
       }
     }
   }
@@ -508,11 +702,11 @@ export const achieveMissionAction = async (formData: FormData) => {
     console.error("XP付与に失敗しました:", xpResult.error);
     // XP付与の失敗はミッション達成の成功を妨げない
   }
-
+  totalXpGranted += xpResult?.xpGranted ?? 0;
   return {
     success: true,
     message: "ミッションを達成しました！",
-    xpGranted: xpResult.xpGranted,
+    xpGranted: totalXpGranted,
     userLevel: xpResult.userLevel,
   };
 };
@@ -578,7 +772,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // ミッション情報を取得してXP計算のための難易度を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("difficulty, title")
+    .select("difficulty, title, slug")
     .eq("id", achievement.mission_id)
     .single();
 
@@ -606,9 +800,18 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   // XPを減算する（ミッション達成時に付与されたXPを取り消し）
   const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  const isBonusMission = [
+    "posting-magazine",
+    "put-up-poster-on-board",
+  ].includes(missionData.slug);
+  const bonusXp = isBonusMission
+    ? await getUserXpBonus(authUser.id, validatedAchievementId)
+    : 0;
+  const totalXpToRevoke = xpToRevoke + bonusXp;
+
   const xpResult = await grantXp(
     authUser.id,
-    -xpToRevoke, // 負の値でXPを減算
+    -totalXpToRevoke, // 負の値でXPを減算
     "MISSION_CANCELLATION",
     validatedAchievementId,
     `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,

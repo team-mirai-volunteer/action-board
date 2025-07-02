@@ -153,126 +153,440 @@ quiz_questions:
     question_order: 5
     is_active: true
 
-  # 政策中級1
-  - id: be7891d1-d832-4a91-a4d5-8589d3a59b18
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが指摘する日本の現状として、**誤っている**ものはどれか？
-    option1: 平均年収が20年間増えていない
-    option2: 出生数が過去最少を更新している
-    option3: デジタル分野で世界的な企業が多数生まれている
-    option4: 実質GDPがほとんど成長していない
+  # 政策（ビジョン）
+  - id: "6b1a9c1e-85ed-4f53-9dc2-1b6a0fcb93d1"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが指摘する日本の現状として、**誤っている**ものはどれか？"
+    option1: "平均年収が20年間増えていない"
+    option2: "出生数が過去最少を更新している"
+    option3: "日本から世界的なインターネット企業が多数生まれている"
+    option4: "実質GDPがほとんど成長していない"
     correct_answer: 3
-    explanation: マニフェストでは、日本から世界的なインターネット企業は生まれず、デジタル赤字が増え続けていると指摘しています。
+    explanation: "マニフェストでは、日本から世界的なインターネット企業は生まれず、デジタル赤字が増え続けていると指摘しています。"
     question_order: 1
     is_active: true
-  - id: 4b713c16-c3a0-47aa-91fd-efe643db7351
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが現在の政治に不足していると指摘している議論は何か？
-    option1: 社会保障の充実
-    option2: どう成長するか
-    option3: 格差の是正
-    option4: 環境問題への対策
+
+  - id: "d28be630-2f0b-47b1-a19e-44e07039e891"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが現在の政治に不足していると指摘している議論は何か？"
+    option1: "社会保障の充実"
+    option2: "どう成長するか"
+    option3: "格差の是正"
+    option4: "環境問題への対策"
     correct_answer: 2
-    explanation: マニフェストは、現在の政治では『どう再分配するか』の話ばかりで『どう成長するか』の議論が不足していると指摘しています。
+    explanation: "マニフェストは、現在の政治では『どう再分配するか』の話ばかりで『どう成長するか』の議論が不足していると指摘しています。"
     question_order: 2
     is_active: true
-  - id: 5dc313ff-39be-4b79-bc9f-11ac193ee7af
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが日本の経済成長の糸口として最も重要視しているものは何か？
-    option1: 豊富な天然資源
-    option2: 急速な人口増加
-    option3: テクノロジー、創造性、イノベーション
-    option4: 海外からの大規模投資
+
+  - id: "2e7b82d5-67ae-44f0-aac0-506c28b4b2e3"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "マニフェストが日本の経済成長の糸口として最も重要視しているものは何か？"
+    option1: "豊富な天然資源"
+    option2: "急速な人口増加"
+    option3: "テクノロジー、創造性、イノベーション"
+    option4: "海外からの大規模投資"
     correct_answer: 3
-    explanation: マニフェストは、天然資源も人口増加もない日本が経済的成長を生み出す糸口はテクノロジー、創造性、イノベーションにこそあると述べています。
+    explanation: "マニフェストは、天然資源も人口増加もない日本が経済的成長を生み出す糸口はテクノロジー、創造性、イノベーションにこそあると述べています。"
     question_order: 3
     is_active: true
-  - id: 61a889d9-8816-4026-b5d3-179877ef573b
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: AIの発展に関して、マニフェストが日本にとってチャンスと捉えている点は何か？
-    option1: AIを「作る」技術で世界をリードしている点
-    option2: AIの倫理基準策定で主導権を握れる点
-    option3: AIを「使いこなす」レースが始まったばかりである点
-    option4: AIによる失業問題への対策が最も進んでいる点
+
+  - id: "1ca5e9da-ea71-4cfa-9c91-bd2e9f6c744a"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-vision"
+    question: "AIの発展に関して、マニフェストが日本にとってチャンスと捉えている点は何か？"
+    option1: "AIを「作る」技術で世界をリードしている点"
+    option2: "AIの倫理基準策定で主導権を握れる点"
+    option3: "AIを「使いこなす」レースが始まったばかりである点"
+    option4: "AIによる失業問題への対策が最も進んでいる点"
     correct_answer: 3
-    explanation: マニフェストは、AIを「作る」レースでは米中に遅れをとっているものの、AIを「使いこなす」レースはまだ始まったばかりであり、日本にとってチャンスであると述べています。
+    explanation: "マニフェストは、AIを「作る」レースでは米中に遅れをとっているものの、AIを「使いこなす」レースはまだ始まったばかりであり、日本にとってチャンスであると述べています。"
     question_order: 4
     is_active: true
-  - id: 9f671f2d-409a-49b8-8f80-085e49d94c0a
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate
-    question: マニフェストが提案する「未来をつくるための3ステップ」の第一歩は何か？
-    option1: 長期の成長に大胆に投資する
-    option2: デジタル時代の当たり前をやりきる
-    option3: 変化に対応できる、しなやかな仕組みづくり
-    option4: AI研究開発に国家予算の半分を投入する
-    correct_answer: 2
-    explanation: マニフェストが提案する3ステップの第一は「デジタル時代の当たり前をやりきる」ことです。
+
+  # 政策（ステップ1）
+  - id: "ff2b2b9a-41f8-40e1-a1c7-942ff3eec205"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「デジタル時代の当たり前をやりきる」で、まず指摘する日本社会の根本課題はどれ？"
+    option1: "デジタル技術を日常的に活用する基盤が整っていない"
+    option2: "高齢化による年金財政の逼迫"
+    option3: "少子化による人口減少"
+    option4: "温室効果ガス排出の増加"
+    correct_answer: 1
+    explanation: "教育・行政・産業などあらゆる場面でデジタル基盤が不足していることが最大の問題意識として挙げています。"
+    question_order: 1
+    is_active: true
+
+  - id: "6370a2ad-29d8-4cb1-b4b0-e8881e7431f5"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「大きな問題意識」で、日本が遅れをとっていると指摘されている分野はどれ？"
+    option1: "産業界におけるデジタルトランスフォーメーション（DX）の推進"
+    option2: "再生可能エネルギーの普及促進"
+    option3: "都市部の空き家リノベーション支援"
+    option4: "観光産業のデジタルマーケティング"
+    correct_answer: 1
+    explanation: "日本が遅れをとっている分野として、『産業界におけるデジタルトランスフォーメーション（DX）の推進』などが具体例として挙げられています。"
+    question_order: 2
+    is_active: true
+
+  - id: "0a9da3f0-3192-4707-8ee5-faedaf1b15a7"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "「当たり前」のデジタル化を進めるうえで特に重要だと強調されているのは何？"
+    option1: "明確な意思決定と社会への実装力"
+    option2: "唯一無二の新技術の開発"
+    option3: "伝統的書類文化の徹底維持"
+    option4: "サイコロで方針を決めること"
+    correct_answer: 1
+    explanation: "『デジタル化を断行する明確な「意思決定」と、それを浸透させる「実装力」』が必要だと記されています。"
+    question_order: 3
+    is_active: true
+
+  - id: "82bc1a74-3f4f-4605-a67b-9c24b38caef4"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step1"
+    question: "課題の根底にある問題として本文で挙げられているのはどれ？"
+    option1: "政治とテクノロジーの距離とリーダーシップ不足"
+    option2: "国民のパソコン所有率が高すぎること"
+    option3: "エンタメ産業への依存が大きすぎること"
+    option4: "気候変動対策が進みすぎていること"
+    correct_answer: 1
+    explanation: "『政治とテクノロジーとの間に距離があり、リーダーシップが十分発揮されてこなかった』と指摘しています。"
+    question_order: 4
+    is_active: true
+
+  # 政策（ステップ2）
+  - id: "c3fe3bea-5920-47b3-afb0-5a3d610448bb"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "「変化に対応できる、しなやかな仕組みづくり」で特に重要になる社会システムの特性として正しいのはどれ？"
+    option1: "回復力と敏捷性"
+    option2: "経済的自立と自由貿易"
+    option3: "伝統文化の保護と観光開発"
+    option4: "セキュリティ（安全性）とプライバシー保護"
+    correct_answer: 1
+    explanation: "不確実性が高い時代に対応するには、『回復力（レジリエンス）』と『敏捷性（アジリティ）』が鍵であると強調しています。"
+    question_order: 1
+    is_active: true
+
+  - id: "019675ce-bd71-4b53-9ab8-0981a8457d4b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "税制・教育・医療など制度について、既存の設計思想の課題として示されている問題は次のうちどれ？"
+    option1: "個々の複雑な事情をすべて汲み取るのは困難だという前提"
+    option2: "AIが十分に発達しているという前提"
+    option3: "国民全員がデジタルデバイスを保有しているという前提"
+    option4: "財政黒字が長期的に続くという前提"
+    correct_answer: 1
+    explanation: "現行の制度は、複雑な事情を全て汲み取ることが困難という前提で設計されてきたと指摘しています。"
+    question_order: 2
+    is_active: true
+
+  - id: "1d3e245f-0192-4aac-9352-a2c398a42289"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "AI 技術の発展によって可能になると述べられているは次のうちどれ？"
+    option1: "個々の状況に即したきめ細かな政策判断が行えるようになる"
+    option2: "海底資源を完全自動で採掘できるようになる"
+    option3: "無制限のクリーンエネルギーを生成できるようになる"
+    option4: "地球規模で気候変動を即時停止できるようになる"
+    correct_answer: 1
+    explanation: "本文は、AI により『個別の状況や複雑な現実の事情に即した、きめ細やかで高度な判断』が可能になり、より国民一人ひとりに寄り添った政策が実現できると述べています。"
+    question_order: 3
+    is_active: true
+
+  - id: "b8fc512d-8299-48b2-80f7-f3632a5fdb5b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step2"
+    question: "将来像として掲げられているスローガンはどれ？"
+    option1: "テクノロジーで誰も取り残さない日本へ"
+    option2: "伝統文化で世界を魅了する日本へ"
+    option3: "自然エネルギーで富を築く日本へ"
+    option4: "観光立国で暮らしを支える日本へ"
+    correct_answer: 1
+    explanation: "スローガンとして『テクノロジーで誰も取り残さない日本へ』が示されています。"
+    question_order: 4
+    is_active: true
+
+  # 政策（ステップ3）
+  - id: "dabbccd4-e50a-4e58-97be-6cb8b9f6f16c"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "再分配の議論と並びまず直視すべき課題として挙げられているのはどれ？"
+    option1: "国家全体の経済的な富（“パイ”）の縮小"
+    option2: "地方と都市の所得格差の拡大"
+    option3: "労働市場の流動性不足"
+    option4: "中小企業の事業承継問題"
+    correct_answer: 1
+    explanation: "『“パイ”そのものが縮小してしまっては公平な分配も限定的になる』と述べています。"
+    question_order: 1
+    is_active: true
+
+  - id: "66e6762d-e3e1-4c20-a67d-9e6ce6fef843"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "少子高齢化など構造的課題を乗り越えるうえで不可欠と述べられているのはどれ？"
+    option1: "持続的な経済成長"
+    option2: "徹底した歳出削減"
+    option3: "超長期国債の大量発行"
+    option4: "社会保障給付の段階的縮小"
+    correct_answer: 1
+    explanation: "『社会全体の活力を維持・向上させていくためには、持続的な経済成長の実現が不可欠です』と述べています。"
+    question_order: 2
+    is_active: true
+
+  - id: "8c346d89-4be6-4c31-bb40-f307d9c2d63b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "人工知能（AI）の急速な発展についての捉え方として最も本文に近いものはどれ？"
+    option1: "新たな成長の波を掴む絶好の機会と前向きに捉える"
+    option2: "危険性が高いため全面的に禁止すべきと強調している"
+    option3: "実用化は当面先なので様子見姿勢を推奨している"
+    option4: "国際規制が整うまで国内利用を凍結すべきと示唆している"
+    correct_answer: 1
+    explanation: "AIの急速な発展を『新たな成長の波を掴む絶好の機会』と前向きに認識すべきだと述べています。"
+    question_order: 3
+    is_active: true
+
+  - id: "4307705e-4d0c-40cb-9df3-b17d8e4bdcf6"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "経済成長を達成する鍵として最も重要だと強調されているものはどれ？"
+    option1: "テクノロジーの力を最大限に活用する"
+    option2: "短期的な減税のみを行う"
+    option3: "国内消費を意図的に抑える"
+    option4: "印刷物の宣伝を拡大する"
+    correct_answer: 1
+    explanation: "「日進月歩で進化するテクノロジーの力を最大限に活用すること」が成長の鍵であると明記されています。"
+    question_order: 4
+    is_active: true
+
+  - id: "3e8680a5-1fc2-4fda-be6f-e6601601831f"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-step3"
+    question: "「長期の成長に大胆に投資する」が“再設計”すると述べるバランスはどれとどれ？"
+    option1: "税制と年金制度"
+    option2: "国際援助費と防衛費"
+    option3: "民間投資と公共投資"
+    option4: "短期的な対応策と長期的な成長投資"
+    correct_answer: 4
+    explanation: "短期的な対応策と長期的な成長投資との最適なバランスを再設計するとしています。"
     question_order: 5
     is_active: true
 
-  # 政策中級2
-  - id: d70e28c8-9c2a-4bcc-9e59-da92199bc414
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ１「デジタル時代の当たり前をやりきる」で、まず指摘する日本社会の根本課題はどれ？
-    option1: デジタル技術を日常的に活用する基盤が整っていない
-    option2: 高齢化による年金財政の逼迫
-    option3: 少子化による人口減少
-    option4: 温室効果ガス排出の増加
+  # 政策（国政政党成立後１００日プラン）
+  - id: "4c1d0e43-3a6b-466b-9f1b-5f87017e4e2d"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "永田町エンジニアチームと並び100日プランで組織すると計画している小規模チームはどれ？"
+    option1: "実務家集団（政策立案・情報発信チーム）"
+    option2: "ブロックチェーン研究会"
+    option3: "デザインシステム検討会"
+    option4: "海外投資家交流チーム"
     correct_answer: 1
-    explanation: 教育・行政・産業などあらゆる場面でデジタル基盤が不足していることが最大の問題意識として挙げています。
+    explanation: "本格始動へ向けた組織づくりでは「永田町エンジニアチーム」と「実務家集団（政策立案・情報発信チーム）」の2チームを立ち上げると記載されています。"
     question_order: 1
     is_active: true
-  - id: 4ef0f76f-845c-4291-bfc4-dbb68da7986b
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ２「変化に対応できる、しなやかな仕組みづくり」で特に重要になる社会システムの特性として正しいのはどれ？
-    option1: レジリエンス（回復力）とアジリティ（すぐ動ける力）
-    option2: 経済的自立と自由貿易
-    option3: 伝統文化の保護と観光開発
-    option4: セキュリティ（安全性）とプライバシー保護
-    correct_answer: 1
-    explanation: 不確実性が高い時代に対応するにはレジリエンスとアジリティが鍵であると強調している。
+
+  - id: "0abf8c3e-1e2a-49e8-97c2-1d0a1075628b"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "オープンな政策立案プロセスを支える基盤として挙げられているデジタル民主主義2030由来のシステムはどれ？"
+    option1: "電子投票ブロックチェーン"
+    option2: "気候予測AI"
+    option3: "いどばたシステム"
+    option4: "スマート市役所ダッシュボード"
+    correct_answer: 3
+    explanation: "ユーティリティ政党フェーズでは『いどばたシステム』や広聴AI・YouTube中継を組み合わせてオープンな政策議論を行うと書かれています。"
     question_order: 2
     is_active: true
-  - id: eef84a59-b79e-468c-abaa-03d1b47f9f6d
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト ステップ３「長期の成長に大胆に投資する」が"再設計"すると述べるバランスはどれとどれ？
-    option1: 税制と年金制度
-    option2: 国際援助費と防衛費
-    option3: 民間投資と公共投資
-    option4: 短期的な対応策と長期的な成長投資
+
+  - id: "dca2cb3d-5e2f-43ec-9e4b-8872f3d557f7"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "100日プランの柱に含まれないものはどれ？"
+    option1: "本格始動へ向けた組織づくり"
+    option2: "スモールチームでの社会実装を爆速で遂行"
+    option3: "世界の技術者たちと独自の議員外交"
+    option4: "全国の高速道路を無料化"
     correct_answer: 4
-    explanation: 短期的ショック緩和策と百年先を見据えた長期成長投資との最適バランスを再設計すると強調。
+    explanation: "柱は①組織づくり②ユーティリティ政党としての連携③社会実装④議員外交の4本で、高速道路無料化は触れられていません。"
     question_order: 3
     is_active: true
-  - id: 9e30d901-b61b-4a84-8e94-a777fab56733
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらい マニフェスト 「国政政党成立後１００日プラン」で他党と協調して立ち上げるとされる超党派議連は主にどの分野を扱う？
-    option1: 食糧安全保障
-    option2: 原子力政策
-    option3: AI政策
-    option4: 宇宙探査
-    correct_answer: 3
-    explanation: 「AI政策について…オープンな超党派議連を立ち上げる」とあります。
+
+  - id: "b377424b-86c2-4e0e-9a98-fa42fbb57066"
+    category_slug: "policy"
+    mission_slug: "quiz-policy-100days"
+    question: "「ユーティリティ政党」として他党・自治体と連携するために立ち上げると記載されているものはどれ？"
+    option1: "AI政策に関するオープンな超党派議連"
+    option2: "全国知事会との共同ファンド"
+    option3: "党職員向け語学学校"
+    option4: "全国一律最低賃金1500円法案の提出"
+    correct_answer: 1
+    explanation: "100日プランには“AI政策についてオープンかつ国民的な検討を進めるための超党派議連”を立ち上げると書かれています。"
     question_order: 4
     is_active: true
-  - id: 0d0afdc3-d2ee-4024-bfa2-308bab5d5d8f
-    category_slug: policy
-    mission_slug: quiz-policy-intermediate-2
-    question: チームみらいのマニフェストの決め方で**誤っている**ものは？
-    option1: チームみらいのミッション・ビジョンやステップ1〜3の方向性に合致している提案だけを採択対象とする。
-    option2: 改善提案は AI で自動ラベリング・要約して整理する。
-    option3: 最終的な反映方針をチームでまとめる。
-    option4: チームが作成した反映方針を、AIが一件ずつ確認し、最終的な意思決定を行う。
+
+
+  # 公職選挙法（動画クイズ）
+  - id: "71e5a32b-9e5e-452d-890e-9a9834d61b51"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "選挙運動が認められる期間はどれ？"
+    option1: "公示日から投票日前日まで"
+    option2: "公示日の前日から投票日当日まで"
+    option3: "公示日から投票日当日まで"
+    option4: "告示日の2週間前から1週間後まで"
+    correct_answer: 1
+    explanation: "選挙運動期間は公示（告示）日から投票日前日までとFAQに記載されている。"
+    question_order: 1
+    is_active: true
+
+  - id: "e4e8baaa-0be9-4689-bd95-9486335f7bb4"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "選挙運動期間中でも常に禁止されている行為はどれ？"
+    option1: "戸別訪問をして投票依頼をする"
+    option2: "電話で知人に投票をお願いする"
+    option3: "公営掲示板に公式ポスターを貼る"
+    option4: "SNS で応援メッセージを投稿する"
+    correct_answer: 1
+    explanation: "戸別訪問による投票依頼は公職選挙法で全面禁止。"
+    question_order: 2
+    is_active: true
+
+  - id: "4f6d96fd-b50e-4c8c-9340-76e4e13b3081"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "18歳未満の人が行えない活動はどれ？"
+    option1: "候補者のチラシをSNSで投票依頼付きで拡散する"
+    option2: "選挙事務所で電話番をする"
+    option3: "資料の封入作業を手伝う"
+    option4: "事務所内の掃除をする"
+    correct_answer: 1
+    explanation: "18歳未満は選挙運動（投票依頼を伴う行為）が禁止されているため。電話番など機械的労務は適法とされるが、チームみらいでは安全のため未成年者の参加はお断りしている。"
+    question_order: 3
+    is_active: true
+
+  - id: "47a9b4d2-a864-4f2b-8c03-4d3d2d137843"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-basic"
+    question: "サポーターの報酬（ボランティア報酬）に関して正しい説明はどれ？"
+    option1: "原則として無報酬で活動する"
+    option2: "候補者は自由に報酬を支払える"
+    option3: "ボランティアには一律 1日1万円まで支払える"
+    option4: "交通費は金額無制限で支払える"
+    correct_answer: 1
+    explanation: "一部の例外（届け出をした車上運動員など）を除き、報酬の支払いは禁止されており、違反すると買収罪に問われる可能性がある。"
+    question_order: 4
+    is_active: true
+
+  # 公職選挙法（公示後（選挙期間中）の活動について）
+  - id: "d6b58f63-771e-46c9-95c4-c71d49cda097"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "文書図画（チラシ・ポスターなど）の扱いについて正しいものはどれ？"
+    option1: "ネットで見つけた応援画像を自分で印刷し配布するのはNG"
+    option2: "ビラは自由に何枚でも印刷・配布してよい"
+    option3: "候補者の顔写真シールを自作し配布してよい"
+    option4: "オリジナルステッカーを街頭で配布しても問題ない"
+    correct_answer: 1
+    explanation: "配布物は法定ビラなど規定枚数・様式のものに限られるため、私製の印刷物を配布するのは違法。"
+    question_order: 1
+    is_active: true
+
+  - id: "e3f2872e-671c-4c87-bb18-a3eb3ffa1ff9"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "街頭演説でサポーターが候補者の名前を連呼することは？"
+    option1: "原則として禁止されている"
+    option2: "時間帯を守れば自由にできる"
+    option3: "音楽に合わせれば問題ない"
+    option4: "サポーターならいつでも可能"
+    correct_answer: 1
+    explanation: "公職選挙法により連呼行為は演説会場・選挙カーなどを除き原則禁止。"
+    question_order: 2
+    is_active: true
+
+  - id: "e9cf3b59-7292-4bae-b761-100c9669e13b"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "選挙運動期間中、サポーターがSNSで応援投稿を行う際に必要とされる表示はどれ？"
+    option1: "投稿者自身の連絡先（アカウント名など）"
+    option2: "候補者の身長・体重"
+    option3: "総務省のロゴ"
+    option4: "投稿した日時のハッシュタグ"
+    correct_answer: 1
+    explanation: "SNS で選挙運動を行う場合は自身の連絡先表示が義務。"
+    question_order: 3
+    is_active: true
+
+  - id: "8c7b3fa2-4b19-4c66-9c9c-43c6ac9e178b"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-period"
+    question: "街頭演説で禁止されている「気勢を張る行為」とみなされうるものは、次のうちどれ？"
+    option1: "大人数でダンスやコールなど派手なパフォーマンスを行う"
+    option2: "チラシを配布するスタッフを配置する"
+    option3: "普通の音量でマイク演説を行う"
+    option4: "サポーターが列を整理する"
+    correct_answer: 1
+    explanation: "多数人が一体となって大声やリズムで盛り上げるパフォーマンスは「気勢を張る行為」に該当し違法。"
+    question_order: 4
+    is_active: true
+
+  # 公示後（選挙当日の活動について）の活動について
+  - id: "6c4ceeb2-fad5-4adf-8c3b-9e1e02525d99"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-electionday"
+    question: "投票日当日にサポーターが Instagram ストーリーで「#チームみらい必勝」と投票を促す投稿をすることは？"
+    option1: "投票日当日の選挙運動として禁止される"
+    option2: "24時間で消える投稿なので問題ない"
+    option3: "外国語で書けば合法"
+    option4: "自宅からなら自由"
+    correct_answer: 1
+    explanation: "投票日当日は SNS を含むすべての選挙運動が完全に禁止される。"
+    question_order: 1
+    is_active: true
+
+  - id: "5120766c-51c2-49e8-9693-12ae94234f9e"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-electionday"
+    question: "投票日当日に過去の応援ツイートをリツイートすることは？"
+    option1: "投票日当日の選挙運動として禁止される"
+    option2: "過去投稿の再共有なので問題ない"
+    option3: "ハッシュタグを外せば合法"
+    option4: "深夜0時〜6時ならOK"
+    correct_answer: 1
+    explanation: "投票日当日は SNS 上でも一切の選挙運動が禁止されるためリツイートもNG。"
+    question_order: 2
+    is_active: true
+
+  - id: "0ccd0bc9-72e4-480a-a4ae-1188efae50b3"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-electionday"
+    question: "投票日当日に禁止されている行為はどれ？"
+    option1: "候補者への投票をSNSで呼びかける"
+    option2: "選挙事務所で事務作業をする"
+    option3: "家族に「投票に行ったよ」と伝える"
+    option4: "総務省の選挙啓発サイトを読む"
+    correct_answer: 1
+    explanation: "投票日当日は選挙運動が禁止されており、SNSでの投票呼びかけも違法。"
+    question_order: 3
+    is_active: true
+
+  - id: "9b57d323-0f26-4b62-8847-0606b80b1e9c"
+    category_slug: "electionlaw"
+    mission_slug: "quiz-electionlaw-electionday"
+    question: "投票日当日にサポーターが投票所の入口付近で行っても違法とならない行動はどれ？"
+    option1: "候補者の名前入りバッジを付けて立つ"
+    option2: "候補者への投票を呼びかける"
+    option3: "候補者のチラシを配布する"
+    option4: "投票所前を静かに通行する"
     correct_answer: 4
-    explanation: 最終的な意思決定は、党首である安野たかひろが一件ずつ確認し行うとしている。
-    question_order: 5
+    explanation: "投票所内や周辺での選挙運動（呼びかけ・宣伝物掲示など）は全面禁止だが、静かに通行するだけなら問題ない。"
+    question_order: 4
     is_active: true

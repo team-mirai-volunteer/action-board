@@ -58,6 +58,12 @@ export interface MissionQuizLink {
   display_order: number;
 }
 
+export interface MissionMainLink {
+  mission_slug: string;
+  label: string;
+  link: string;
+}
+
 export interface MissionData {
   categories: Category[];
   missions: Mission[];
@@ -65,4 +71,5 @@ export interface MissionData {
   quiz_categories: QuizCategory[];
   quiz_questions: QuizQuestion[];
   mission_quiz_links: MissionQuizLink[];
+  mission_main_links?: MissionMainLink[];
 }

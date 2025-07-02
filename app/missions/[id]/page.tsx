@@ -87,7 +87,8 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, submissions, userAchievementCount, referralCode } = pageData;
+  const { mission, submissions, userAchievementCount, referralCode, mainLink } =
+    pageData;
 
   // クイズミッションの場合は問題を事前取得
   let quizQuestions = null;
@@ -124,7 +125,7 @@ export default async function MissionPage({ params }: Props) {
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <MissionDetails mission={mission} />
+        <MissionDetails mission={mission} mainLink={mainLink} />
 
         {user ? (
           <>
@@ -139,6 +140,7 @@ export default async function MissionPage({ params }: Props) {
                 initialSubmissions={submissions}
                 missionId={id}
                 preloadedQuizQuestions={quizQuestions}
+                mainLink={mainLink}
               />
             </Suspense>
             {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
