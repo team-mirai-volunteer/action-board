@@ -7,6 +7,7 @@ import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
+import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import type { SubmissionData } from "../_lib/types";
 import { CopyReferralButton } from "./CopyReferralButton";
 import { MissionFormWrapper } from "./MissionFormWrapper";
@@ -45,6 +46,12 @@ export function MissionWithSubmissionHistory({
     useState<SubmissionData[]>(initialSubmissions);
   const [userAchievementCount, setUserAchievementCount] = useState(
     initialUserAchievementCount,
+  );
+
+  // useMissionSubmissionフックを使用して統一
+  const { hasReachedUserMaxAchievements } = useMissionSubmission(
+    mission,
+    userAchievementCount,
   );
 
   const refreshSubmissions = async () => {
@@ -175,11 +182,6 @@ export function MissionWithSubmissionHistory({
     mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key ||
     mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ||
     mission.required_artifact_type === ARTIFACT_TYPES.REFERRAL.key;
-
-  // ミッションが挑戦可能か（フォームと同じ条件）
-  const hasReachedUserMaxAchievements =
-    mission.max_achievement_count !== null &&
-    userAchievementCount >= mission.max_achievement_count;
 
   // フォームが表示される条件と同じ
   const shouldShowGuidanceArrow =
