@@ -72,7 +72,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
     it("認証済みユーザーはボードのステータスを更新できる", async () => {
       const { error } = await testUser.client
         .from("poster_boards")
-        .update({ status: "posted" })
+        .update({ status: "done" })
         .eq("id", testBoardId);
 
       expect(error).toBeNull();
@@ -84,14 +84,14 @@ describe("poster_boards テーブルのRLSテスト", () => {
         .eq("id", testBoardId)
         .single();
 
-      expect(data?.status).toBe("posted");
+      expect(data?.status).toBe("done");
     });
 
     it("匿名ユーザーはボードを更新できない", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_boards")
-        .update({ status: "posted" })
+        .update({ status: "done" })
         .eq("id", testBoardId)
         .select();
 
@@ -187,7 +187,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         board_id: testBoardId,
         user_id: testUser1.user.userId,
         previous_status: "not_yet",
-        new_status: "posted",
+        new_status: "done",
         note: "Test note",
       });
   });
@@ -238,8 +238,8 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         .insert({
           board_id: testBoardId,
           user_id: testUser1.user.userId,
-          previous_status: "posted",
-          new_status: "checked",
+          previous_status: "reserved",
+          new_status: "done",
           note: "Verified poster is present",
         })
         .select()
@@ -264,8 +264,8 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         .insert({
           board_id: testBoardId,
           user_id: testUser2.user.userId, // Different user
-          previous_status: "posted",
-          new_status: "checked",
+          previous_status: "reserved",
+          new_status: "done",
         });
 
       expect(error).not.toBeNull();
@@ -278,8 +278,8 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         .insert({
           board_id: testBoardId,
           user_id: "00000000-0000-0000-0000-000000000000", // Dummy UUID since null is not allowed
-          previous_status: "posted",
-          new_status: "checked",
+          previous_status: "reserved",
+          new_status: "done",
           note: "Anonymous check",
         })
         .select();
