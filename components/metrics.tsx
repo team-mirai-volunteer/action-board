@@ -32,7 +32,7 @@ export default async function Metrics() {
   return (
     <div className="max-w-6xl mx-auto px-4">
       <section className="bg-gradient-hero flex justify-center py-8 px-4">
-        <div className="w-full max-w-md bg-white rounded-lg p-6">
+        <div className="w-full max-w-md bg-white rounded-md shadow-sm p-4">
           <div className="text-center mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-1">
               チームみらいの活動状況🚀
