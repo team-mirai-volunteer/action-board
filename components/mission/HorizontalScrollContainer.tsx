@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useRef } from "react";
 
 interface HorizontalScrollContainerProps {
   children: ReactNode;
@@ -16,101 +16,27 @@ export default function HorizontalScrollContainer({
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
-  const lastTouchXRef = useRef(0);
-  const lastTouchTimeRef = useRef(0);
-  const velocityRef = useRef(0);
-  const animationFrameRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    const element = scrollContainerRef.current;
-    if (!element) return;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!scrollContainerRef.current) return;
 
-    const startMomentumAnimation = () => {
-      if (Math.abs(velocityRef.current) < 0.5) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.touches[0].clientX;
+    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+  };
 
-      const animate = () => {
-        if (!element) return;
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current || !scrollContainerRef.current) return;
 
-        velocityRef.current *= 0.98;
+    e.preventDefault();
+    const x = e.touches[0].clientX;
+    const walk = (startXRef.current - x) * 1.5;
+    scrollContainerRef.current.scrollLeft = scrollLeftRef.current + walk;
+  };
 
-        if (Math.abs(velocityRef.current) < 0.5) {
-          animationFrameRef.current = null;
-          return;
-        }
-
-        element.scrollLeft += velocityRef.current;
-
-        if (element.scrollLeft <= 0) {
-          element.scrollLeft = 0;
-          animationFrameRef.current = null;
-          return;
-        }
-
-        if (element.scrollLeft >= element.scrollWidth - element.clientWidth) {
-          element.scrollLeft = element.scrollWidth - element.clientWidth;
-          animationFrameRef.current = null;
-          return;
-        }
-
-        animationFrameRef.current = requestAnimationFrame(animate);
-      };
-
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
-
-      isDraggingRef.current = true;
-      startXRef.current = e.touches[0].clientX;
-      scrollLeftRef.current = element.scrollLeft;
-      lastTouchXRef.current = e.touches[0].clientX;
-      lastTouchTimeRef.current = Date.now();
-      velocityRef.current = 0;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDraggingRef.current) return;
-
-      e.preventDefault();
-      const x = e.touches[0].clientX;
-      const currentTime = Date.now();
-      const deltaTime = currentTime - lastTouchTimeRef.current;
-
-      if (deltaTime > 0) {
-        velocityRef.current = ((lastTouchXRef.current - x) / deltaTime) * 3;
-      }
-
-      const walk = (startXRef.current - x) * 1.0;
-      element.scrollLeft = scrollLeftRef.current + walk;
-
-      lastTouchXRef.current = x;
-      lastTouchTimeRef.current = currentTime;
-    };
-
-    const handleTouchEnd = () => {
-      isDraggingRef.current = false;
-      startMomentumAnimation();
-    };
-
-    element.addEventListener("touchstart", handleTouchStart, {
-      passive: false,
-    });
-    element.addEventListener("touchmove", handleTouchMove, { passive: false });
-    element.addEventListener("touchend", handleTouchEnd, { passive: false });
-
-    return () => {
-      element.removeEventListener("touchstart", handleTouchStart);
-      element.removeEventListener("touchmove", handleTouchMove);
-      element.removeEventListener("touchend", handleTouchEnd);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
+  const handleTouchEnd = () => {
+    isDraggingRef.current = false;
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
@@ -128,7 +54,7 @@ export default function HorizontalScrollContainer({
 
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startXRef.current) * 1.0; // スクロール感度調整
+    const walk = (x - startXRef.current) * 1.0;
     scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
 
@@ -157,6 +83,9 @@ export default function HorizontalScrollContainer({
         cursor: "grab",
         scrollBehavior: "smooth",
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
