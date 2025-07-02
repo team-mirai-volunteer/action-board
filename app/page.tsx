@@ -12,7 +12,7 @@ import { generateRootMetadata } from "@/lib/metadata";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
 import { createClient } from "@/lib/supabase/server";
-import { Edit3, MessageCircle } from "lucide-react";
+import { Edit3 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -104,9 +104,7 @@ export default async function Home({
         <div className="mx-auto px-4 text-center">
           <div className="bg-white rounded-2xl p-8 md:p-12">
             <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mb-4">
-                <MessageCircle className="w-8 h-8 text-white" />
-              </div>
+              <span className="text-4xl mb-4 block">📨</span>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 ご意見をお聞かせください
               </h2>
