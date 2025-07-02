@@ -3,7 +3,7 @@
 echo "🧹 Clearing poster data directories..."
 echo "This will remove:"
 echo "  - poster_data/data/"
-echo "  - broken_data/"
+echo "  - poster_data/broken_data/"
 echo "  - poster_data/processed-files.json"
 echo ""
 read -p "Are you sure you want to continue? (y/N) " -n 1 -r
@@ -20,11 +20,11 @@ then
     fi
 
     # Remove broken_data directory
-    if [ -d "broken_data" ]; then
-        rm -rf broken_data
-        echo "✓ Removed broken_data/"
+    if [ -d "poster_data/broken_data" ]; then
+        rm -rf poster_data/broken_data
+        echo "✓ Removed poster_data/broken_data/"
     else
-        echo "⚠️  broken_data/ not found"
+        echo "⚠️  poster_data/broken_data/ not found"
     fi
 
     # Remove processed files record

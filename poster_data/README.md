@@ -105,6 +105,21 @@ CSV files should have the following columns:
 
 The script automatically detects the format and handles both cases.
 
+### Clearing Local Data
+
+To remove all processed data and start fresh:
+
+```bash
+npm run poster:clear
+```
+
+This will prompt for confirmation before removing:
+- `poster_data/data/` - All successfully processed CSV files
+- `broken_data/` - All failed CSV files  
+- `poster_data/processed-files.json` - The record of processed files
+
+Note: This does NOT affect the database. To clear the database, use `supabase db reset`.
+
 ## Important Notes
 
 - Never write to the Google Drive source directory
