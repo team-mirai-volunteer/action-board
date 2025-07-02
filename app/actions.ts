@@ -254,40 +254,6 @@ export const signInActionWithState = async (
   };
 };
 
-export const signInAction = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  const validatedFields = signInAndLoginFormSchema.safeParse({
-    email,
-    password,
-  });
-  if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  return redirect("/");
-};
-
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const supabase = await createClient();
