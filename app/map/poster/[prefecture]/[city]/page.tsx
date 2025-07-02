@@ -8,14 +8,8 @@ import {
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-
-// Dynamically import the map component to avoid SSR issues with Leaflet
-const PosterMap = dynamic(
-  () => import("@/app/map/poster/PosterMap").then((mod) => mod.PosterMap),
-  { ssr: false },
-);
+import { CityPosterMapClient } from "./CityPosterMapClient";
 
 export async function generateMetadata({
   params,
@@ -138,7 +132,7 @@ export default async function CityPosterMapPage({
       </div>
 
       <div className="h-[600px] w-full overflow-hidden rounded-lg border">
-        <PosterMap
+        <CityPosterMapClient
           boards={boards}
           center={center}
           zoom={zoom}
