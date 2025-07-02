@@ -26,3 +26,10 @@ try
 this let’s us automate to get the non-broken data into the code base
 
 it also let’s us automate for further changes
+
+
+# must choose these
+
+横浜市_normalized.csv
+北九州市_normalized.csv
+福岡市_normalized.csv

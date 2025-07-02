@@ -5,3 +5,91 @@
 1. 多可町_normalized.csv (11.1 KB)
 2. takacyo_posters_normalized.csv (7.0 KB)
 -> choose 多可町_normalized.csv
+
+# Poster Data Choices - 2025-07-02T05:46:01.252Z
+
+--- 兵庫県/多可町
+1. 多可町_normalized.csv (11.1 KB)
+2. takacyo_posters_normalized.csv (7.0 KB)
+-> choose 多可町_normalized.csv
+
+--- 兵庫県/川西市
+1. 川西市_normalized.csv (50.0 KB)
+2. 川西市【5区】_normalized.csv (11.5 KB)
+3. 川西市【6区】_normalized.csv (24.2 KB)
+-> choose 川西市_normalized.csv
+
+--- 兵庫県/淡路市
+1. 淡路市_normalized.csv (27.8 KB)
+2. awaji_posters_normalized.csv (33.0 KB)
+-> choose 淡路市_normalized.csv
+
+--- 北海道/札幌市
+1. 札幌市_normalized.csv (326.0 KB)
+2. sapporo_atsubetsu_normalized.csv (18.9 KB)
+-> choose 札幌市_normalized.csv
+
+--- 北海道/登別市
+1. 登別市_normalized.csv (8.7 KB)
+2. noboribetsu_poster_full_normalized.csv (8.8 KB)
+-> choose 登別市_normalized.csv
+
+--- 大阪府/守口市
+1. 守口市_normalized.csv (23.8 KB)
+2. [R6]守口市_normalized.csv (24.6 KB)
+3. [R6]moriguchi_normalized.csv (24.6 KB)
+-> choose 守口市_normalized.csv
+
+--- 宮城県/気仙沼市
+1. 気仙沼市_normalized.csv (19.3 KB)
+2. 08_気仙沼市_normalized.csv (22.2 KB)
+-> choose 気仙沼市_normalized.csv
+
+--- 神奈川県/寒川町
+1. 寒川町_normalized.csv (8.3 KB)
+2. R6寒川町_normalized.csv (8.5 KB)
+-> choose 寒川町_normalized.csv
+
+--- 神奈川県/川崎市
+1. 川崎市_normalized.csv (161.7 KB)
+2. R6衆院選_川崎市_normalized.csv (145.9 KB)
+-> choose 川崎市_normalized.csv
+
+--- 神奈川県/横浜市
+1. 横浜市_normalized.csv (561.5 KB)
+2. 青葉区_normalized.csv (40.9 KB)
+3. 横浜市_緯度経度不精確_normalized.csv (555.7 KB)
+4. 横浜市_市位置データ版_normalized.csv (561.5 KB)
+-> choose 横浜市_normalized.csv
+
+--- 神奈川県/茅ヶ崎市
+1. 茅ヶ崎市_normalized.csv (41.3 KB)
+2. 【R6？古い情報】茅ヶ崎市_normalized.csv (37.4 KB)
+-> choose 茅ヶ崎市_normalized.csv
+
+--- 福岡県/北九州市
+1. 戸畑区_normalized.csv (11.2 KB)
+2. 若松区_normalized.csv (22.6 KB)
+3. 門司区_normalized.csv (26.3 KB)
+4. 八幡東区_normalized.csv (21.2 KB)
+5. 八幡西区_normalized.csv (47.9 KB)
+6. 北九州市_normalized.csv (221.9 KB)
+7. 小倉北区_normalized.csv (38.7 KB)
+8. 小倉南区_normalized.csv (39.3 KB)
+-> choose 戸畑区_normalized.csv
+
+--- 福岡県/福岡市
+1. 南区_normalized.csv (29.9 KB)
+2. 東区_normalized.csv (31.0 KB)
+3. 西区_normalized.csv (32.1 KB)
+4. 中央区_normalized.csv (20.7 KB)
+5. 博多区_normalized.csv (25.3 KB)
+6. 城南区_normalized.csv (34.5 KB)
+7. 早良区_normalized.csv (32.0 KB)
+8. 福岡市_normalized.csv (221.5 KB)
+-> choose 南区_normalized.csv
+
+--- 長野県/松川町
+1. 松川町_normalized.csv (4.0 KB)
+2. 長野県_松川町（注意事項あり）_normalized.csv (5.9 KB)
+-> choose 松川町_normalized.csv

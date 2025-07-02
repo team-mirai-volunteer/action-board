@@ -59,3 +59,4 @@ copilot-instructions.md
 # Poster data directories
 raw_data/
 poster_data/temp/
+poster_data/*.log

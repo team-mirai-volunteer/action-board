@@ -21,6 +21,13 @@ const TEMP_DIR = "poster_data/temp";
 const CHOICE_LOG_FILE = "poster_data/choice.md";
 const PROCESSED_FILES_LOG = "poster_data/processed-files.json";
 
+// Priority files - these should be chosen first even if they're not the shortest
+const PRIORITY_FILES = [
+  "横浜市_normalized.csv",
+  "北九州市_normalized.csv",
+  "福岡市_normalized.csv",
+];
+
 // Expand tilde to home directory
 function expandTilde(path: string): string {
   if (path.startsWith("~/")) {
@@ -159,21 +166,42 @@ async function selectFile(
   if (files.length === 0) return null;
   if (files.length === 1) return files[0];
 
-  // Sort by filename length (shortest first)
-  const sortedFiles = [...files].sort(
-    (a, b) => basename(a).length - basename(b).length,
+  let selectedFile: string;
+  let selectionReason: string;
+
+  // Check for priority files first
+  const priorityFile = files.find((file) =>
+    PRIORITY_FILES.includes(basename(file)),
   );
+
+  if (priorityFile) {
+    selectedFile = priorityFile;
+    selectionReason = "priority file";
+  } else {
+    // Sort by filename length (shortest first)
+    const sortedFiles = [...files].sort(
+      (a, b) => basename(a).length - basename(b).length,
+    );
+    selectedFile = sortedFiles[0];
+    selectionReason = "shortest filename";
+  }
 
   // Log the choice
   let logEntry = `\n--- ${prefecture}/${city}\n`;
 
-  sortedFiles.forEach((file, index) => {
+  // Sort files for display (by name for consistency)
+  const displayFiles = [...files].sort((a, b) =>
+    basename(a).localeCompare(basename(b)),
+  );
+
+  displayFiles.forEach((file, index) => {
     const filename = basename(file);
     const size = statSync(file).size;
-    logEntry += `${index + 1}. ${filename} (${formatBytes(size)})\n`;
+    const isPriority = PRIORITY_FILES.includes(filename) ? " [PRIORITY]" : "";
+    logEntry += `${index + 1}. ${filename} (${formatBytes(size)})${isPriority}\n`;
   });
 
-  logEntry += `-> choose ${basename(sortedFiles[0])}\n`;
+  logEntry += `-> choose ${basename(selectedFile)} (${selectionReason})\n`;
 
   // Append to log file
   await appendFile(CHOICE_LOG_FILE, logEntry);
@@ -182,16 +210,19 @@ async function selectFile(
   console.log(
     `\n🤔 Multiple normalized CSV files found for ${prefecture}/${city}:`,
   );
-  sortedFiles.forEach((file, index) => {
+  displayFiles.forEach((file, index) => {
     const filename = basename(file);
     const size = statSync(file).size;
-    console.log(`  ${index + 1}. ${filename} (${formatBytes(size)})`);
+    const isPriority = PRIORITY_FILES.includes(filename) ? " [PRIORITY]" : "";
+    console.log(
+      `  ${index + 1}. ${filename} (${formatBytes(size)})${isPriority}`,
+    );
   });
   console.log(
-    `📝 Automatically selecting shortest: ${basename(sortedFiles[0])}`,
+    `📝 Automatically selecting: ${basename(selectedFile)} (${selectionReason})`,
   );
 
-  return sortedFiles[0];
+  return selectedFile;
 }
 
 // Format bytes to human readable
