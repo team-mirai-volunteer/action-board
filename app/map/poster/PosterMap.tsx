@@ -138,7 +138,9 @@ export default function PosterMap({
       (pos) => {
         setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
       },
-      () => {},
+      (error) => {
+        console.warn("位置情報の取得に失敗しました:", error.message);
+      },
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
     );
     return () => {
@@ -186,7 +188,12 @@ export default function PosterMap({
       <button
         type="button"
         onClick={handleLocate}
-        className="absolute right-4 bottom-4 bg-white rounded-full shadow px-4 py-2 text-blue-600 font-bold border border-blue-200 hover:bg-blue-50"
+        disabled={!currentPos}
+        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+          currentPos
+            ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
+            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+        }`}
         style={{ zIndex: 1000 }}
         aria-label="現在地を表示"
       >
