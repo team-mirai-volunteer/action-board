@@ -64,7 +64,7 @@ export default async function Home({
       )}
 
       {/* ヒーローセクション */}
-      <section style={{ display: "none" }}>
+      <section>
         <Hero />
       </section>
 
