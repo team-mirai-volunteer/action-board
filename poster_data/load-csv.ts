@@ -1,4 +1,4 @@
-import { createReadStream } from "node:fs";
+import { createReadStream, existsSync } from "node:fs";
 import { pipeline } from "node:stream/promises";
 import dotenv from "dotenv";
 import { glob } from "glob";
@@ -17,6 +17,9 @@ const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
 async function main() {
+  // Check if a specific file was provided as argument
+  const specificFile = process.argv[2];
+
   // Construct database URL from Supabase environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseDbPassword = process.env.SUPABASE_DB_PASSWORD;
@@ -59,12 +62,26 @@ async function main() {
     console.log("Clearing staging table...");
     await db.query(`TRUNCATE ${STAGING_TABLE}`);
 
-    // Find all CSV files in poster_data directory and subdirectories
-    const csvFiles = await glob("poster_data/**/*.csv", {
-      ignore: ["**/node_modules/**", "**/.*"],
-    });
+    // Determine which files to load
+    let csvFiles: string[];
 
-    console.log(`Found ${csvFiles.length} CSV files to load`);
+    if (specificFile) {
+      // Load specific file if provided
+      if (!specificFile.endsWith(".csv")) {
+        throw new Error("File must be a CSV file");
+      }
+      if (!existsSync(specificFile)) {
+        throw new Error(`File not found: ${specificFile}`);
+      }
+      csvFiles = [specificFile];
+      console.log(`Loading specific file: ${specificFile}`);
+    } else {
+      // Find all CSV files in poster_data/data directory
+      csvFiles = await glob("poster_data/data/**/*.csv", {
+        ignore: ["**/node_modules/**", "**/.*"],
+      });
+      console.log(`Found ${csvFiles.length} CSV files to load`);
+    }
 
     // Load each CSV file into staging
     for (const file of csvFiles) {
@@ -219,26 +236,20 @@ async function main() {
       }
     }
 
-    // Insert from staging to production table using row_number + file_name as unique key
+    // Insert from staging to production table using the full unique constraint
     console.log("\nInserting data into production table...");
     const result = await db.query(`
       INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
       SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name) 
+      ON CONFLICT (row_number, file_name, prefecture, city, number) 
       DO UPDATE SET
-        prefecture = EXCLUDED.prefecture,
-        city = EXCLUDED.city,
-        number = EXCLUDED.number,
         name = EXCLUDED.name,
         address = EXCLUDED.address,
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         updated_at = timezone('utc'::text, now())
       WHERE 
-        ${TARGET_TABLE}.prefecture IS DISTINCT FROM EXCLUDED.prefecture OR
-        ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
-        ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
