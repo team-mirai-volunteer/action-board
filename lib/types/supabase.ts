@@ -501,68 +501,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      poster_activities: {
-        Row: {
-          address: string | null;
-          board_id: string | null;
-          city: string;
-          created_at: string;
-          id: string;
-          lat: number | null;
-          long: number | null;
-          mission_artifact_id: string;
-          name: string | null;
-          note: string | null;
-          number: string;
-          poster_count: number;
-          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          address?: string | null;
-          board_id?: string | null;
-          city: string;
-          created_at?: string;
-          id?: string;
-          lat?: number | null;
-          long?: number | null;
-          mission_artifact_id: string;
-          name?: string | null;
-          note?: string | null;
-          number: string;
-          poster_count: number;
-          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          address?: string | null;
-          board_id?: string | null;
-          city?: string;
-          created_at?: string;
-          id?: string;
-          lat?: number | null;
-          long?: number | null;
-          mission_artifact_id?: string;
-          name?: string | null;
-          note?: string | null;
-          number?: string;
-          poster_count?: number;
-          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "poster_activities_mission_artifact_id_fkey";
-            columns: ["mission_artifact_id"];
-            isOneToOne: false;
-            referencedRelation: "mission_artifacts";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       poster_board_status_history: {
         Row: {
           board_id: string;
