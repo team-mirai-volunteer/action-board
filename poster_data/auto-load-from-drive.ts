@@ -324,7 +324,7 @@ async function main() {
   let failCount = 0;
   let skippedCount = 0;
 
-  for (const [location, group] of locationGroups) {
+  for (const [location, group] of Array.from(locationGroups)) {
     console.log(`\n📍 Processing ${location}`);
     console.log("=".repeat(40));
 
