@@ -26,15 +26,30 @@ CREATE TYPE poster_board_status AS ENUM (
 UPDATE poster_boards SET status = 'done' WHERE status IN ('posted', 'checked');
 UPDATE poster_board_status_history SET previous_status = 'done' WHERE previous_status IN ('posted', 'checked');
 UPDATE poster_board_status_history SET new_status = 'done' WHERE new_status IN ('posted', 'checked');
-UPDATE staging_poster_boards SET status = 'done' WHERE status IN ('posted', 'checked');
+
+-- Handle staging table separately with conditional update to avoid replica identity issues
+DO $$ 
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'staging_poster_boards') THEN
+        -- Set replica identity to full temporarily
+        ALTER TABLE staging_poster_boards REPLICA IDENTITY FULL;
+        
+        -- Update statuses
+        UPDATE staging_poster_boards SET status = 'done' WHERE status IN ('posted', 'checked');
+        UPDATE staging_poster_boards SET status = 'error_damaged' WHERE status = 'damaged';
+        UPDATE staging_poster_boards SET status = 'other' WHERE status = 'error';
+        
+        -- Reset replica identity
+        ALTER TABLE staging_poster_boards REPLICA IDENTITY DEFAULT;
+    END IF;
+END $$;
+
 UPDATE poster_boards SET status = 'error_damaged' WHERE status = 'damaged';
 UPDATE poster_board_status_history SET previous_status = 'error_damaged' WHERE previous_status = 'damaged';
 UPDATE poster_board_status_history SET new_status = 'error_damaged' WHERE new_status = 'damaged';
-UPDATE staging_poster_boards SET status = 'error_damaged' WHERE status = 'damaged';
 UPDATE poster_boards SET status = 'other' WHERE status = 'error';
 UPDATE poster_board_status_history SET previous_status = 'other' WHERE previous_status = 'error';
 UPDATE poster_board_status_history SET new_status = 'other' WHERE new_status = 'error';
-UPDATE staging_poster_boards SET status = 'other' WHERE status = 'error';
 
 -- Convert the text columns back to the new enum type
 ALTER TABLE poster_boards ALTER COLUMN status TYPE poster_board_status USING status::poster_board_status;
