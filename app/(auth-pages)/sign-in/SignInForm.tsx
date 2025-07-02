@@ -8,13 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithLine } from "@/lib/auth/line-auth";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 
-interface SignInFormProps {
-  returnUrl?: string;
-}
-
-export default function SignInForm({ returnUrl }: SignInFormProps) {
+export default function SignInForm() {
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl") || undefined;
   const [state, formAction] = useActionState(signInActionWithState, null);
   const [isLineLoading, setIsLineLoading] = useState(false);
 
