@@ -340,7 +340,7 @@ async function main() {
   // Process each location one by one
   let successCount = 0;
   let failCount = 0;
-  let skippedCount = 0;
+  let unchangedCount = 0;
 
   for (const [location, group] of Array.from(locationGroups)) {
     console.log(`\n📍 Processing ${location}`);
@@ -359,9 +359,9 @@ async function main() {
 
     // Check if file has changed
     if (!hasFileChanged(selectedFile, processedFiles)) {
-      console.log(`⏭️  File hasn't changed since last run, skipping`);
-      skippedCount++;
-      continue;
+      console.log(`⏭️  File hasn't changed since last run`);
+      unchangedCount++;
+      // continue; // DISABLED FOR NOW - process all files
     }
 
     // Process this file with optional validation
@@ -391,8 +391,8 @@ async function main() {
   console.log("=".repeat(40));
   console.log(`✅ Successfully loaded: ${successCount}`);
   console.log(`❌ Failed to load: ${failCount}`);
-  console.log(`⏭️  Skipped (unchanged): ${skippedCount}`);
-  console.log(`📁 Total files: ${successCount + failCount + skippedCount}`);
+  console.log(`⏭️  (unchanged): ${unchangedCount}`);
+  console.log(`📁 Total files: ${successCount + failCount + unchangedCount}`);
 
   // Cleanup temp directory
   await rm(TEMP_DIR, { recursive: true, force: true });
