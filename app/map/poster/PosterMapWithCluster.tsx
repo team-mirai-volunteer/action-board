@@ -336,7 +336,7 @@ export default function PosterMapWithCluster({
         cluster.closeTooltip();
       });
 
-      mapRef.current.addLayer(markerClusterRef.current as L.Layer);
+      mapRef.current.addLayer(markerClusterRef.current as unknown as L.Layer);
     }
 
     // Update map view when center changes
