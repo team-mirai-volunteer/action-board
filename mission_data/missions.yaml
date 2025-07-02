@@ -455,27 +455,17 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: null
-  - slug: "quiz-electionlaw-speech"
-    title: 公職選挙法クイズ（街頭演説編）に挑戦しよう
-    icon_url: /img/mission_fallback.svg
-    content: 街頭演説に関する公職選挙法のクイズです。全問正解でミッション達成！
-    difficulty: 2
-    required_artifact_type: QUIZ
-    max_achievement_count: 3
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-  - slug: "quiz-electionlaw-sns"
-    title: 公職選挙法クイズ（SNS編）に挑戦しよう
-    icon_url: /img/mission_fallback.svg
-    content: SNSに関する公職選挙法のクイズです。全問正解でミッション達成！
-    difficulty: 2
-    required_artifact_type: QUIZ
-    max_achievement_count: 3
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
   - slug: "quiz-electionlaw-period"
+    title: 公職選挙法クイズ（選挙期間編）に挑戦しよう
+    icon_url: /img/mission_fallback.svg
+    content: 選挙期間に関する公職選挙法のクイズです。全問正解でミッション達成！
+    difficulty: 2
+    required_artifact_type: QUIZ
+    max_achievement_count: 3
+    is_featured: false
+    is_hidden: false
+    artifact_label: null
+  - slug: "quiz-electionlaw-electionday"
     title: 公職選挙法クイズ（投票日当日編）に挑戦しよう
     icon_url: /img/mission_fallback.svg
     content: 投票日当日に関する公職選挙法のクイズです。全問正解でミッション達成！
