@@ -535,7 +535,10 @@ export default function PrefecturePosterMapClient({
             </Button>
             <Button
               onClick={() => {
-                const returnUrl = `/map/poster/${prefecture}`;
+                const prefectureKey = JP_TO_EN_PREFECTURE[
+                  prefectureName
+                ] as PosterPrefectureKey;
+                const returnUrl = `/map/poster/${prefectureKey}`;
                 router.push(
                   `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
                 );
