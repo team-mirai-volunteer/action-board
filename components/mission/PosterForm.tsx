@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { MAX_POSTER_COUNT, POSTER_POINTS_PER_UNIT } from "@/lib/constants";
 import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 type PosterFormProps = {
   disabled: boolean;
@@ -23,6 +25,27 @@ export function PosterForm({ disabled }: PosterFormProps) {
 
   return (
     <div className="space-y-4">
+      <div>
+        <p>原則ポスターマップ上での報告をお願いします。</p>
+        <p>
+          ポスターマップ上で報告をすることで、自動的にミッションクリアとなります。
+        </p>
+        <Button
+          size={"lg"}
+          className="w-full my-4"
+          onClick={
+            // 新しいタブでポスターマップを開く
+            () => window.open("/map/poster", "_blank", "noopener,noreferrer")
+          }
+        >
+          ポスターマップを開く
+        </Button>
+
+        <Separator className="my-4" />
+        <p>
+          ポスターマップ上にデータが見つからないなど、マップで報告できない場合は以下のフォームに入力してください。
+        </p>
+      </div>
       <div className="space-y-2">
         <Label htmlFor="posterCount">
           ポスター枚数 <span className="text-red-500">*</span>
