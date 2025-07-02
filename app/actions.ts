@@ -248,7 +248,6 @@ export const signInActionWithState = async (
   // Validate returnUrl before redirecting
   const validatedReturnUrl = validateReturnUrl(returnUrl);
 
-  // useActionStateではリダイレクトではなく成功状態を返す
   return {
     success: "ログインに成功しました",
     redirectUrl: validatedReturnUrl || "/",
@@ -484,7 +483,6 @@ export async function handleLineAuthAction(
   code: string,
   dateOfBirth?: string,
   referralCode?: string | null,
-  returnUrl?: string,
 ): Promise<
   { success: true; redirectTo: string } | { success: false; error: string }
 > {
@@ -715,24 +713,15 @@ export async function handleLineAuthAction(
     }
 
     // 7. リダイレクト先を返す
-    // returnUrlを検証
-    const validatedReturnUrl = validateReturnUrl(returnUrl);
-
     if (isNewUser) {
-      // 新規ユーザーの場合、プロフィール設定へ（returnUrlを保持）
-      const profileUrl = validatedReturnUrl
-        ? `/settings/profile?new=true&returnUrl=${encodeURIComponent(validatedReturnUrl)}`
-        : "/settings/profile?new=true";
       return {
         success: true,
-        redirectTo: profileUrl,
+        redirectTo: "/settings/profile?new=true",
       };
     }
-
-    // 既存ユーザーの場合、検証済みのreturnUrlまたはデフォルトへ
     return {
       success: true,
-      redirectTo: validatedReturnUrl || "/?login=success",
+      redirectTo: "/?login=success",
     };
   } catch (error) {
     return {
