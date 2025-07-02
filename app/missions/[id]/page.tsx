@@ -1,4 +1,5 @@
 import { MissionDetails } from "@/components/mission/MissionDetails";
+import SameCategoryMissions from "@/components/mission/SameCategoryMissions";
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { Button } from "@/components/ui/button";
@@ -163,6 +164,9 @@ export default async function MissionPage({ params }: Props) {
                 </div>
               </>
             )}
+            <div className="mt-6">
+              <SameCategoryMissions currentMissionId={id} userId={user?.id} />
+            </div>
           </>
         ) : (
           <Card className="border-dashed border-2 border-muted-foreground/25">
