@@ -30,7 +30,7 @@ export default function SignInForm({ returnUrl }: SignInFormProps) {
   const handleLINELogin = async () => {
     try {
       setIsLineLoading(true);
-      await signInWithLine();
+      await signInWithLine(returnUrl);
     } catch (error) {
       setIsLineLoading(false);
     }

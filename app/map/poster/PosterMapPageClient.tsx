@@ -197,10 +197,10 @@ export default function PosterMapPageClient() {
                                 className="flex items-center gap-1"
                               >
                                 <div
-                                  className={`h-2 w-2 rounded-full ${config.color}`}
+                                  className={`h-2 w-2 rounded-full ${config?.color}`}
                                 />
                                 <span className="text-xs text-muted-foreground">
-                                  {config.label}: {count}
+                                  {config?.label}: {count}
                                 </span>
                               </div>
                             );

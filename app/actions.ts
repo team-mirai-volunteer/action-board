@@ -442,6 +442,7 @@ const lineAuthSchema = z.object({
       },
     ),
   referralCode: z.string().optional().nullable(),
+  returnUrl: z.string().optional().nullable(),
 });
 
 // LINE認証処理のServer Action
@@ -449,6 +450,7 @@ export async function handleLineAuthAction(
   code: string,
   dateOfBirth?: string,
   referralCode?: string | null,
+  returnUrl?: string | null,
 ): Promise<
   { success: true; redirectTo: string } | { success: false; error: string }
 > {
@@ -458,6 +460,7 @@ export async function handleLineAuthAction(
       code,
       dateOfBirth,
       referralCode,
+      returnUrl,
     });
 
     if (!validationResult.success) {
@@ -471,6 +474,7 @@ export async function handleLineAuthAction(
       code: validatedCode,
       dateOfBirth: validatedDateOfBirth,
       referralCode: validatedReferralCode,
+      returnUrl: validatedReturnUrl,
     } = validationResult.data;
 
     // リファラルコードが渡されていない場合はcookieから取得
@@ -679,15 +683,18 @@ export async function handleLineAuthAction(
     }
 
     // 7. リダイレクト先を返す
+    const safeReturnUrl = validateReturnUrl(validatedReturnUrl || undefined);
+
     if (isNewUser) {
       return {
         success: true,
         redirectTo: "/settings/profile?new=true",
       };
     }
+
     return {
       success: true,
-      redirectTo: "/?login=success",
+      redirectTo: safeReturnUrl || "/?login=success",
     };
   } catch (error) {
     return {
