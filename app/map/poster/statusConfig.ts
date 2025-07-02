@@ -13,10 +13,10 @@ export const statusConfig: Record<
     label: "エラー（ポスター掲示板マップと実際の場所・番号が違う）",
     color: "bg-red-500",
   },
-  error_damaged: { label: "エラー（損傷・破損）", color: "bg-orange-500" },
+  error_damaged: { label: "エラー（損傷・破損）", color: "bg-red-500" },
   error_wrong_poster: {
     label: "エラー（他党のポスターが貼られている）",
-    color: "bg-red-700",
+    color: "bg-red-500",
   },
   other: { label: "その他（詳細をメモに記載）", color: "bg-purple-500" },
 };

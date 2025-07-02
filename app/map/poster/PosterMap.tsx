@@ -36,8 +36,8 @@ const statusColors: Record<BoardStatus, string> = {
   reserved: "#F59E0B", // yellow/orange
   done: "#10B981", // green
   error_wrong_place: "#EF4444", // red
-  error_damaged: "#FB923C", // orange
-  error_wrong_poster: "#DC2626", // darker red
+  error_damaged: "#EF4444", // red
+  error_wrong_poster: "#EF4444", // red
   other: "#8B5CF6", // purple
 };
 
