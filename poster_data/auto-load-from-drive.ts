@@ -215,9 +215,9 @@ async function loadCsv(csvFile: string): Promise<boolean> {
     );
     await copyFile(csvFile, tempFile);
 
-    // Run load command
+    // Run load command with specific file
     console.log(`\n📥 Loading ${basename(csvFile)}...`);
-    execSync("npm run poster:load-csv", { stdio: "inherit" });
+    execSync(`npm run poster:load-csv "${tempFile}"`, { stdio: "inherit" });
 
     console.log("✅ Successfully loaded!");
     return true;
