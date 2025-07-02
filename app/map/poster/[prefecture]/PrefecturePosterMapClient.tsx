@@ -34,7 +34,7 @@ import type { Database } from "@/lib/types/supabase";
 import { ArrowLeft, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
@@ -69,7 +69,7 @@ export default function PrefecturePosterMapClient({
   prefectureName,
   center,
 }: PrefecturePosterMapClientProps) {
-  const params = useParams();
+  const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);
@@ -77,6 +77,9 @@ export default function PrefecturePosterMapClient({
   const [updateStatus, setUpdateStatus] = useState<BoardStatus>("not_yet");
   const [updateNote, setUpdateNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+  const [selectedBoardForLogin, setSelectedBoardForLogin] =
+    useState<PosterBoard | null>(null);
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -98,8 +101,8 @@ export default function PrefecturePosterMapClient({
 
   const handleBoardSelect = (board: PosterBoard) => {
     if (!userId) {
-      const returnUrl = `/map/poster/${prefecture}`;
-      window.location.href = `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`;
+      setSelectedBoardForLogin(board);
+      setIsLoginDialogOpen(true);
       return;
     }
     setSelectedBoard(board);
@@ -470,6 +473,48 @@ export default function PrefecturePosterMapClient({
                 {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Login Dialog */}
+      <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ログインが必要です</DialogTitle>
+            <DialogDescription>
+              ポスターの状況を更新するには、ログインが必要です。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedBoardForLogin && (
+              <div className="mt-3 rounded-md bg-muted p-3">
+                <p className="text-sm font-medium">
+                  {selectedBoardForLogin.name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {selectedBoardForLogin.address}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsLoginDialogOpen(false)}
+            >
+              キャンセル
+            </Button>
+            <Button
+              onClick={() => {
+                const returnUrl = `/map/poster/${prefecture}`;
+                router.push(
+                  `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
+                );
+              }}
+            >
+              ログインページへ
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
