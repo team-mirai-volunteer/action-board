@@ -119,12 +119,16 @@ describe("utils", () => {
         expect(calculateMissionXp(4)).toBe(400);
       });
 
+      it("難易度5（★5）は800XP", () => {
+        expect(calculateMissionXp(5)).toBe(800);
+      });
+
       it("無効な難易度（0）はデフォルト50XP", () => {
         expect(calculateMissionXp(0)).toBe(50);
       });
 
-      it("無効な難易度（5）はデフォルト50XP", () => {
-        expect(calculateMissionXp(5)).toBe(50);
+      it("無効な難易度（6）はデフォルト50XP", () => {
+        expect(calculateMissionXp(6)).toBe(50);
       });
 
       it("負の難易度はデフォルト50XP", () => {
