@@ -121,10 +121,7 @@ export default async function Home({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
-              >
+              <Button size="lg">
                 <Edit3 className="w-5 h-5 mr-2" />
                 ご意見箱を開く
               </Button>
