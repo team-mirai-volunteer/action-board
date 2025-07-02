@@ -101,16 +101,14 @@ export default async function SameCategoryMissions({
   });
 
   return (
-    <section className="relative -mx-4 md:-mx-10 py-5">
-      <h3 className="text-xl font-bold mb-4 px-4 md:px-10">
-        同じカテゴリのミッション
-      </h3>
+    <section className="relative w-screen md:pl-10 py-5">
+      <h3 className="text-xl font-bold mb-4 px-4">同じカテゴリのミッション</h3>
 
       <div
         className="w-full overflow-x-auto custom-scrollbar"
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="flex w-fit gap-4 px-4 md:px-10 pb-2">
+        <div className="flex w-fit gap-4 px-4 pb-2">
           {sortedMissions
             .filter((m) => m.mission_id)
             .map((m) => {

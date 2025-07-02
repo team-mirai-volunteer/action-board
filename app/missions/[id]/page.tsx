@@ -124,80 +124,84 @@ export default async function MissionPage({ params }: Props) {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl p-4">
-      <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <MissionDetails mission={mission} mainLink={mainLink} />
+    <>
+      <div className="container mx-auto max-w-4xl p-4">
+        <div className="flex flex-col gap-6 max-w-lg mx-auto">
+          <MissionDetails mission={mission} mainLink={mainLink} />
 
-        {user ? (
-          <>
-            <Suspense
-              fallback={<div className="text-center p-4">読み込み中...</div>}
-            >
-              <MissionWithSubmissionHistory
-                mission={mission}
-                authUser={user}
-                referralCode={referralCode}
-                initialUserAchievementCount={userAchievementCount}
-                initialSubmissions={submissions}
-                missionId={id}
-                preloadedQuizQuestions={quizQuestions}
-                mainLink={mainLink}
-              />
-            </Suspense>
-            {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
-            {mission.max_achievement_count === null && (
-              <>
-                <div className="mt-6">
-                  <CurrentUserCardMission
-                    currentUser={userWithMissionRanking}
-                    mission={mission}
-                    badgeText={badgeText}
-                  />
+          {user ? (
+            <>
+              <Suspense
+                fallback={<div className="text-center p-4">読み込み中...</div>}
+              >
+                <MissionWithSubmissionHistory
+                  mission={mission}
+                  authUser={user}
+                  referralCode={referralCode}
+                  initialUserAchievementCount={userAchievementCount}
+                  initialSubmissions={submissions}
+                  missionId={id}
+                  preloadedQuizQuestions={quizQuestions}
+                  mainLink={mainLink}
+                />
+              </Suspense>
+              {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
+              {mission.max_achievement_count === null && (
+                <>
+                  <div className="mt-6">
+                    <CurrentUserCardMission
+                      currentUser={userWithMissionRanking}
+                      mission={mission}
+                      badgeText={badgeText}
+                    />
+                  </div>
+                  <div className="mt-6">
+                    <RankingMission
+                      limit={10}
+                      showDetailedInfo={true}
+                      mission={mission}
+                      isPostingMission={isPostingMission}
+                    />
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <Card className="border-dashed border-2 border-muted-foreground/25">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Shield className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <div className="mt-6">
-                  <RankingMission
-                    limit={10}
-                    showDetailedInfo={true}
-                    mission={mission}
-                    isPostingMission={isPostingMission}
-                  />
-                </div>
-              </>
-            )}
-            <div className="mt-6">
-              <SameCategoryMissions currentMissionId={id} userId={user?.id} />
-            </div>
-          </>
-        ) : (
-          <Card className="border-dashed border-2 border-muted-foreground/25">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Shield className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <CardTitle className="text-xl">
-                ログインしてミッションを達成しよう
-              </CardTitle>
-              <CardDescription>
-                ミッションの達成を報告するには、アカウントにログインしてください。
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Link href="/sign-in">
-                <Button className="w-full sm:w-auto">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  ログインする
-                </Button>
-              </Link>
-              <p className="mt-4 text-sm text-muted-foreground">
-                アカウントをお持ちでない方は{" "}
-                <Link href="/sign-up" className="text-primary hover:underline">
-                  こちらから登録
+                <CardTitle className="text-xl">
+                  ログインしてミッションを達成しよう
+                </CardTitle>
+                <CardDescription>
+                  ミッションの達成を報告するには、アカウントにログインしてください。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Link href="/sign-in">
+                  <Button className="w-full sm:w-auto">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    ログインする
+                  </Button>
                 </Link>
-              </p>
-            </CardContent>
-          </Card>
-        )}
+                <p className="mt-4 text-sm text-muted-foreground">
+                  アカウントをお持ちでない方は{" "}
+                  <Link
+                    href="/sign-up"
+                    className="text-primary hover:underline"
+                  >
+                    こちらから登録
+                  </Link>
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
-    </div>
+      {/* 同カテゴリミッションセクションを完全に制約のない位置に移動 */}
+      {user && <SameCategoryMissions currentMissionId={id} userId={user?.id} />}
+    </>
   );
 }
