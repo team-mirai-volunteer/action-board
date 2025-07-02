@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import type { Tables } from "@/lib/types/supabase";
+import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
 import { UsersRound } from "lucide-react";
 import Link from "next/link";
@@ -82,8 +83,8 @@ export default function Mission({
       </CardHeader>
 
       <CardFooter className="flex flex-col items-stretch gap-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-1.5">
+          <div className="flex items-center">
             <UsersRound className="size-4 mr-2" />
             <span
               className={clsx(
@@ -96,24 +97,37 @@ export default function Mission({
                 : "みんなで0回達成"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <DifficultyBadge
-              difficulty={mission.difficulty}
-              className={clsx(hasReachedMaxAchievements && "opacity-60")}
-            />
+          <div className="flex items-center">
+            <span
+              className={clsx(
+                "text-sm font-medium",
+                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
+              )}
+            >
+              難易度：
+            </span>
+            <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
+            <span
+              className={clsx(
+                "text-sm font-medium ml-1.5",
+                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
+              )}
+            >
+              獲得ポイント：{calculateMissionXp(mission.difficulty)}
+            </span>
           </div>
         </div>
         <Link href={`/missions/${mission.id}`} className="block">
           <Button
             variant="default"
             className={clsx(
-              "w-full rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg",
+              "w-full rounded-full py-6 text-base font-bold text-white",
               hasReachedMaxAchievements
-                ? "bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600"
-                : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700",
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md hover:shadow-lg",
             )}
           >
-            {hasReachedMaxAchievements ? "達成内容を見る →" : "詳細を見る →"}
+            {hasReachedMaxAchievements ? "ミッションクリア🎉" : "詳細を見る →"}
           </Button>
         </Link>
       </CardFooter>
