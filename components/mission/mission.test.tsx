@@ -152,7 +152,7 @@ describe("Mission", () => {
 
     expect(screen.getByText("テストミッション")).toBeInTheDocument();
     expect(screen.getByText("みんなで10回達成")).toBeInTheDocument();
-    expect(screen.getByText("詳細を見る →")).toBeInTheDocument();
+    expect(screen.getByText("今すぐチャレンジ🔥")).toBeInTheDocument();
   });
 
   it("イベント日付が正しく表示される", () => {
@@ -178,7 +178,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("ミッションクリア🎉")).toBeInTheDocument();
+    expect(screen.getByText("ミッション完了🎉")).toBeInTheDocument();
   });
 
   it("最大達成回数が設定されていない場合は制限なし", () => {
@@ -193,7 +193,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("詳細を見る →")).toBeInTheDocument();
+    expect(screen.getByText("今すぐチャレンジ🔥")).toBeInTheDocument();
   });
 
   it("アイコンURLがnullの場合はフォールバック画像を使用", () => {
