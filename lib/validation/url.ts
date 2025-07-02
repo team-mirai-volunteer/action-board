@@ -27,8 +27,7 @@ export function validateReturnUrl(
     trimmedUrl.startsWith("javascript:") ||
     trimmedUrl.startsWith("data:") ||
     trimmedUrl.startsWith("vbscript:") ||
-    trimmedUrl.startsWith("file:") ||
-    trimmedUrl.includes(":")
+    trimmedUrl.startsWith("file:")
   ) {
     return null;
   }

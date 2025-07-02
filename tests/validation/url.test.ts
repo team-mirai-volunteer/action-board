@@ -58,10 +58,15 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("https://localhost:3000/home")).toBe(null);
     });
 
-    it("should reject any URL with colon (protocol indicator)", () => {
+    it("should reject URLs with protocols", () => {
       expect(validateReturnUrl("http://invalid")).toBe(null);
       expect(validateReturnUrl("custom:scheme")).toBe(null);
-      expect(validateReturnUrl("not:a:url")).toBe(null);
+    });
+
+    it("should accept relative URLs with colons in query parameters", () => {
+      expect(validateReturnUrl("/path?time=10:30")).toBe("/path?time=10:30");
+      expect(validateReturnUrl("/search?q=test:value")).toBe("/search?q=test:value");
+      expect(validateReturnUrl("/api/data?filter=key:value")).toBe("/api/data?filter=key:value");
     });
 
     it("should trim whitespace and still validate", () => {
