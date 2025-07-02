@@ -8,20 +8,8 @@ import {
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-
-const CityPosterMapClient = dynamic(
-  () => import("./CityPosterMapClient").then((mod) => mod.CityPosterMapClient),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-full items-center justify-center bg-gray-100">
-        <div>地図を読み込み中...</div>
-      </div>
-    ),
-  },
-);
+import { MapClient } from "./MapClient";
 
 export async function generateMetadata({
   params,
@@ -143,8 +131,8 @@ export default async function CityPosterMapPage({
         </div>
       </div>
 
-      <div className="flex-1 w-full" style={{ minHeight: "600px" }}>
-        <CityPosterMapClient
+      <div className="flex-1 w-full">
+        <MapClient
           boards={boards}
           center={center}
           zoom={zoom}

@@ -73,17 +73,7 @@ export default function PosterMap({
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("PosterMap useEffect - initializing map", {
-      hasContainer: !!mapContainerRef.current,
-      hasMap: !!mapRef.current,
-      center,
-      prefectureKey,
-    });
-
-    if (!mapContainerRef.current) {
-      console.log("No map container ref");
-      return;
-    }
+    if (!mapContainerRef.current) return;
 
     // Get zoom level for the prefecture
     const zoomLevel = prefectureKey
@@ -92,7 +82,6 @@ export default function PosterMap({
 
     if (!mapRef.current && mapContainerRef.current) {
       try {
-        console.log("Creating new map instance");
         // Initialize map with calculated zoom
         mapRef.current = L.map(mapContainerRef.current).setView(
           center,
@@ -108,8 +97,6 @@ export default function PosterMap({
             maxZoom: 18,
           },
         ).addTo(mapRef.current);
-
-        console.log("Map created successfully");
       } catch (error) {
         console.error("Error creating map:", error);
       }
@@ -163,19 +150,5 @@ export default function PosterMap({
     };
   }, [boards]);
 
-  return (
-    <>
-      <style jsx global>{`
-        .leaflet-container {
-          height: 100%;
-          width: 100%;
-        }
-      `}</style>
-      <div
-        ref={mapContainerRef}
-        className="poster-map-container h-full w-full"
-        style={{ minHeight: "400px" }}
-      />
-    </>
-  );
+  return <div ref={mapContainerRef} className="poster-map-container" />;
 }
