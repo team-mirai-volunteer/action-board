@@ -8,15 +8,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithLine } from "@/lib/auth/line-auth";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 
 interface SignInFormProps {
   returnUrl?: string;
 }
 
 export default function SignInForm({ returnUrl }: SignInFormProps) {
+  const router = useRouter();
   const [state, formAction] = useActionState(signInActionWithState, null);
   const [isLineLoading, setIsLineLoading] = useState(false);
+
+  // 成功時のリダイレクト処理
+  useEffect(() => {
+    if (state?.success && state?.redirectUrl) {
+      router.push(state.redirectUrl);
+    }
+  }, [state, router]);
 
   const handleLINELogin = async () => {
     try {

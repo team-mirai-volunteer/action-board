@@ -246,9 +246,13 @@ export const signInActionWithState = async (
   }
 
   // Validate returnUrl before redirecting
-  console.log("Validating returnUrl:", returnUrl);
   const validatedReturnUrl = validateReturnUrl(returnUrl);
-  return redirect(validatedReturnUrl || "/");
+
+  // useActionStateではリダイレクトではなく成功状態を返す
+  return {
+    success: "ログインに成功しました",
+    redirectUrl: validatedReturnUrl || "/",
+  };
 };
 
 export const signInAction = async (formData: FormData) => {
