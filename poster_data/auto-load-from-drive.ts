@@ -235,8 +235,8 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-// Run poster:load-csv and capture result
-async function loadCsv(csvFile: string): Promise<boolean> {
+// Process a single CSV file and validate all files
+async function processAndValidate(csvFile: string): Promise<boolean> {
   try {
     // Clear temp directory
     await rm(TEMP_DIR, { recursive: true, force: true });
@@ -249,14 +249,18 @@ async function loadCsv(csvFile: string): Promise<boolean> {
     );
     await copyFile(csvFile, tempFile);
 
-    // Run load command with specific file
-    console.log(`\n📥 Loading ${basename(csvFile)}...`);
+    // Run load command with specific file to process it
+    console.log(`\n📥 Processing ${basename(csvFile)}...`);
     execSync(`npm run poster:load-csv "${tempFile}"`, { stdio: "inherit" });
 
-    console.log("✅ Successfully loaded!");
+    // Now validate ALL files by running load-csv without arguments
+    console.log("\n🔍 Validating all loaded files...");
+    execSync("npm run poster:load-csv", { stdio: "inherit" });
+
+    console.log("✅ Successfully processed and validated!");
     return true;
   } catch (error) {
-    console.error("❌ Failed to load:", error);
+    console.error("❌ Failed to process or validate:", error);
     return false;
   }
 }
@@ -319,7 +323,7 @@ async function main() {
   // Group by location
   const locationGroups = groupFilesByLocation(csvFiles, sourcePath);
 
-  // Process each location
+  // Process each location one by one
   let successCount = 0;
   let failCount = 0;
   let skippedCount = 0;
@@ -346,8 +350,8 @@ async function main() {
       continue;
     }
 
-    // Load CSV
-    const success = await loadCsv(selectedFile);
+    // Process this file and validate all files
+    const success = await processAndValidate(selectedFile);
 
     // Move to appropriate destination
     await moveToDestination(selectedFile, group.prefecture, success);
