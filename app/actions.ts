@@ -23,6 +23,8 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
+import { validateReturnUrl } from "@/lib/validation/url";
+
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
   prevState: {
@@ -204,6 +206,7 @@ export const signInActionWithState = async (
 ) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const returnUrl = formData.get("returnUrl")?.toString();
 
   // フォームデータを保存（エラー時の状態復元用、メールアドレスのみ）
   const currentFormData = {
@@ -242,41 +245,13 @@ export const signInActionWithState = async (
     };
   }
 
-  return redirect("/");
-};
+  // Validate returnUrl before redirecting
+  const validatedReturnUrl = validateReturnUrl(returnUrl);
 
-export const signInAction = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  const validatedFields = signInAndLoginFormSchema.safeParse({
-    email,
-    password,
-  });
-  if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  return redirect("/");
+  return {
+    success: "ログインに成功しました",
+    redirectUrl: validatedReturnUrl || "/",
+  };
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {

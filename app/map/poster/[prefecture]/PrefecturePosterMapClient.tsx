@@ -34,7 +34,7 @@ import type { Database } from "@/lib/types/supabase";
 import { ArrowLeft, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
@@ -69,7 +69,7 @@ export default function PrefecturePosterMapClient({
   prefectureName,
   center,
 }: PrefecturePosterMapClientProps) {
-  const params = useParams();
+  const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);
@@ -77,6 +77,9 @@ export default function PrefecturePosterMapClient({
   const [updateStatus, setUpdateStatus] = useState<BoardStatus>("not_yet");
   const [updateNote, setUpdateNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+  const [selectedBoardForLogin, setSelectedBoardForLogin] =
+    useState<PosterBoard | null>(null);
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -84,6 +87,31 @@ export default function PrefecturePosterMapClient({
   useEffect(() => {
     loadBoards();
   }, []);
+
+  // ログイン後に選択した掲示板を復元
+  useEffect(() => {
+    if (userId && boards.length > 0) {
+      const savedBoardId = localStorage.getItem("selectedBoardId");
+      const savedPrefecture = localStorage.getItem("selectedBoardPrefecture");
+
+      if (savedBoardId && savedPrefecture === prefecture) {
+        const savedBoard = boards.find((board) => board.id === savedBoardId);
+        if (savedBoard) {
+          // 保存された掲示板を選択してダイアログを開く
+          setSelectedBoard(savedBoard);
+          setUpdateStatus(savedBoard.status);
+          setUpdateNote("");
+          setHistory([]);
+          setShowHistory(false);
+          setIsUpdateDialogOpen(true);
+
+          // 使用済みのデータをクリア
+          localStorage.removeItem("selectedBoardId");
+          localStorage.removeItem("selectedBoardPrefecture");
+        }
+      }
+    }
+  }, [userId, boards, prefecture]);
 
   const loadBoards = async () => {
     try {
@@ -98,7 +126,11 @@ export default function PrefecturePosterMapClient({
 
   const handleBoardSelect = (board: PosterBoard) => {
     if (!userId) {
-      toast.info("ステータスを更新するにはログインが必要です");
+      // ログイン後に戻ってきた時のために選択した掲示板情報を保存
+      localStorage.setItem("selectedBoardId", board.id);
+      localStorage.setItem("selectedBoardPrefecture", prefecture);
+      setSelectedBoardForLogin(board);
+      setIsLoginDialogOpen(true);
       return;
     }
     setSelectedBoard(board);
@@ -469,6 +501,51 @@ export default function PrefecturePosterMapClient({
                 {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Login Dialog */}
+      <Dialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ログインが必要です</DialogTitle>
+            <DialogDescription>
+              ポスターの状況を更新するには、ログインが必要です。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedBoardForLogin && (
+              <div className="mt-3 rounded-md bg-muted p-3">
+                <p className="text-sm font-medium">
+                  {selectedBoardForLogin.name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {selectedBoardForLogin.address}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsLoginDialogOpen(false)}
+            >
+              キャンセル
+            </Button>
+            <Button
+              onClick={() => {
+                const prefectureKey = JP_TO_EN_PREFECTURE[
+                  prefectureName
+                ] as PosterPrefectureKey;
+                const returnUrl = `/map/poster/${prefectureKey}`;
+                router.push(
+                  `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
+                );
+              }}
+            >
+              ログインページへ
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
