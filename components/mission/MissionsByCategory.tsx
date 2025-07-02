@@ -151,9 +151,9 @@ export default async function MissionsByCategory({
               {/* 横スクロール領域 */}
               <div
                 className="w-full overflow-x-auto custom-scrollbar"
-                style={{ scrollbarWidth: "none" }}
+                style={{ scrollbarWidth: "thin" }}
               >
-                <div className="flex w-fit gap-4 px-4 pb-2">
+                <div className="flex w-fit gap-4 px-4 pb-2 pr-8">
                   {missionsInCategory
                     .filter(
                       (m) =>
