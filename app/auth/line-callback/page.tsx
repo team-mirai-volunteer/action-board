@@ -72,18 +72,21 @@ function LineCallbackContent() {
         // ローカルストレージからサインアップ時のデータを取得
         const storedData = localStorage.getItem("lineLoginData");
         const loginData = storedData ? JSON.parse(storedData) : {};
+        const returnUrl = localStorage.getItem("lineLoginReturnUrl");
 
         // Server Actionを呼び出し
         const result = await handleLineAuthAction(
           code,
           loginData.dateOfBirth,
           loginData.referralCode,
+          returnUrl,
         );
 
         if (result.success) {
           // ローカルストレージをクリア
           localStorage.removeItem("lineLoginState");
           localStorage.removeItem("lineLoginData");
+          localStorage.removeItem("lineLoginReturnUrl");
 
           // サーバーコンポーネントを強制的に再レンダリング
           router.refresh();
