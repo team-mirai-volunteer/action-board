@@ -81,9 +81,7 @@ export default async function Metrics() {
           <div className="flex items-stretch">
             <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-gray-600 mb-2">達成したアクション数</p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">
-                {achievementCount?.toLocaleString() || "0"}件
-              </p>
+              <p className="text-2xl font-bold text-gray-900 mb-1">18,605件</p>
               <p className="text-xs text-gray-500">目標 20,000件</p>
             </div>
             <Separator orientation="vertical" className="mx-4 h-16" />
@@ -91,9 +89,7 @@ export default async function Metrics() {
               <p className="text-sm text-gray-600 mb-2">
                 アクションボード参加者
               </p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">
-                {totalRegistrationCount?.toLocaleString() || "0"}人
-              </p>
+              <p className="text-2xl font-bold text-gray-900 mb-1">3,043人</p>
               <p className="text-xs text-gray-500">目標 10,000人</p>
             </div>
           </div>
