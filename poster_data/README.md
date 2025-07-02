@@ -27,6 +27,14 @@ To automatically load poster data from Google Drive:
 npm run poster:auto-load
 ```
 
+To run with logging to both console and file:
+
+```bash
+npm run poster:auto-load:log
+```
+
+This will create a timestamped log file like `poster_data/auto-load-20250702-143000.log`
+
 This script will:
 1. Copy data from the Google Drive shared folder to `raw_data/`
 2. Find all `*_normalized.csv` files at the prefecture/city level
