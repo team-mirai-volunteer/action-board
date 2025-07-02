@@ -116,8 +116,8 @@ export default async function CityPosterMapPage({
   const progress = boards.length > 0 ? (doneCount / boards.length) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="space-y-2">
+    <div className="flex flex-col h-screen">
+      <div className="p-4 md:p-6 space-y-2">
         <h1 className="text-3xl font-bold">
           {prefectureNameJp} - {decodedCity}
         </h1>
@@ -131,7 +131,7 @@ export default async function CityPosterMapPage({
         </div>
       </div>
 
-      <div className="h-[600px] w-full overflow-hidden rounded-lg border">
+      <div className="flex-1 relative">
         <CityPosterMapClient
           boards={boards}
           center={center}
@@ -140,7 +140,7 @@ export default async function CityPosterMapPage({
         />
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm">
+      <div className="flex flex-wrap gap-4 p-4 text-sm bg-background border-t">
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-gray-500" />
           <span>未着手</span>

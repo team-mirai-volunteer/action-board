@@ -127,5 +127,5 @@ export default function PosterMap({
     };
   }, [boards]);
 
-  return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
+  return <div id="poster-map" className="h-full w-full relative z-0" />;
 }

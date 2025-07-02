@@ -9,7 +9,7 @@ type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 const PosterMap = dynamic(() => import("@/app/map/poster/PosterMap"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[600px] items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       地図を読み込み中...
     </div>
   ),
@@ -36,10 +36,12 @@ export function CityPosterMapClient({
   };
 
   return (
-    <PosterMap
-      boards={boards}
-      center={center}
-      onBoardClick={handleBoardClick}
-    />
+    <div className="h-full w-full">
+      <PosterMap
+        boards={boards}
+        center={center}
+        onBoardClick={handleBoardClick}
+      />
+    </div>
   );
 }
