@@ -1,6 +1,7 @@
 import { FormMessage, type Message } from "@/components/form-message";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import SignInForm from "./SignInForm";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
@@ -18,7 +19,15 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         </Link>
       </p>
       <FormMessage className="mt-8" message={searchParams} />
-      <SignInForm />
+      <Suspense
+        fallback={
+          <div className="flex flex-col gap-4 mt-8 min-w-72 max-w-72 mx-auto">
+            読み込み中...
+          </div>
+        }
+      >
+        <SignInForm />
+      </Suspense>
     </div>
   );
 }
