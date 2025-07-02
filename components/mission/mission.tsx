@@ -124,12 +124,7 @@ export default function Mission({
           <motion.div whileTap={{ scale: 0.95 }}>
             <Button
               variant="default"
-              className={clsx(
-                "w-full rounded-full py-6 text-base font-bold text-white",
-                hasReachedMaxAchievements
-                  ? "bg-yellow-500 hover:bg-yellow-600"
-                  : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md hover:shadow-lg",
-              )}
+              className="w-full rounded-full py-6 text-base font-bold text-white bg-yellow-500 hover:bg-yellow-600"
             >
               {hasReachedMaxAchievements
                 ? "ミッションクリア🎉"
