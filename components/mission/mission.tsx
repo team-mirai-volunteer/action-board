@@ -128,7 +128,7 @@ export default function Mission({
                 "w-full rounded-full py-6 text-base font-bold text-white",
                 hasReachedMaxAchievements
                   ? "bg-yellow-500 hover:bg-yellow-600"
-                  : "bg-[#31BCA7] hover:bg-[#2aa896] shadow-md hover:shadow-lg",
+                  : "bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg",
               )}
             >
               {hasReachedMaxAchievements
