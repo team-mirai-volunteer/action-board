@@ -39,8 +39,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
-// Dynamic import to avoid SSR issues
-const PosterMap = dynamic(() => import("../PosterMap"), {
+// Dynamic import to avoid SSR issues - using clustered version for better performance
+const PosterMap = dynamic(() => import("../PosterMapWithCluster"), {
   ssr: false,
   loading: () => (
     <div className="flex h-[600px] items-center justify-center">
