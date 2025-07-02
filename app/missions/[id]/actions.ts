@@ -361,48 +361,29 @@ export const achieveMissionAction = async (formData: FormData) => {
     validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key &&
     validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key
   ) {
-    // まず同じユーザー・LINKタイプ・同じURLの成果物を全て取得
-    const { data: candidateArtifacts, error: candidateError } = await supabase
+    const { data: duplicateArtifacts, error: duplicateError } = await supabase
       .from("mission_artifacts")
-      .select("id, achievement_id")
+      .select(`
+      id,
+      achievements!inner(mission_id)
+    `)
       .eq("user_id", authUser.id)
       .eq("artifact_type", ARTIFACT_TYPES.LINK.key)
-      .eq("link_url", validatedData.artifactLink);
+      .eq("link_url", validatedData.artifactLink)
+      .eq("achievements.mission_id", validatedMissionId);
 
-    if (candidateError) {
+    if (duplicateError) {
       return {
         success: false,
         error: "重複チェック中にエラーが発生しました。",
       };
     }
 
-    if (candidateArtifacts && candidateArtifacts.length > 0) {
-      // 各成果物のachievement_idからmission_idを取得し、今回のmissionIdと一致するものがあれば重複チェック
-      const achievementIds = candidateArtifacts.map((a) => a.achievement_id);
-      if (achievementIds.length > 0) {
-        const { data: achievements, error: achievementsError } = await supabase
-          .from("achievements")
-          .select("id, mission_id")
-          .in("id", achievementIds);
-
-        if (achievementsError) {
-          return {
-            success: false,
-            error: "重複チェック中にエラーが発生しました。",
-          };
-        }
-
-        const isDuplicate = achievements.some(
-          (ach) => ach.mission_id === validatedMissionId,
-        );
-
-        if (isDuplicate) {
-          return {
-            success: false,
-            error: "記録に失敗しました。同じURLがすでに登録されています。",
-          };
-        }
-      }
+    if (duplicateArtifacts && duplicateArtifacts.length > 0) {
+      return {
+        success: false,
+        error: "記録に失敗しました。同じURLがすでに登録されています。",
+      };
     }
   }
 
