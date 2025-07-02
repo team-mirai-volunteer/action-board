@@ -99,7 +99,7 @@ function findNormalizedCsvFiles(dir: string): string[] {
 
       for (const entry of entries) {
         const fullPath = join(currentDir, entry);
-        let stat;
+        let stat: ReturnType<typeof statSync>;
 
         try {
           stat = statSync(fullPath);
@@ -150,7 +150,10 @@ function groupFilesByLocation(
       if (!groups.has(key)) {
         groups.set(key, { prefecture, city, files: [] });
       }
-      groups.get(key)!.files.push(file);
+      const group = groups.get(key);
+      if (group) {
+        group.files.push(file);
+      }
     }
   }
 
@@ -242,7 +245,7 @@ async function loadCsv(csvFile: string): Promise<boolean> {
     // Copy file to temp
     const tempFile = join(TEMP_DIR, basename(csvFile));
     console.log(
-      `📋 Copying from Google Drive to temp... (this may take a moment)`,
+      "📋 Copying from Google Drive to temp... (this may take a moment)",
     );
     await copyFile(csvFile, tempFile);
 
