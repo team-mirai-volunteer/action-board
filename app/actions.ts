@@ -246,6 +246,7 @@ export const signInActionWithState = async (
   }
 
   // Validate returnUrl before redirecting
+  console.log("Validating returnUrl:", returnUrl);
   const validatedReturnUrl = validateReturnUrl(returnUrl);
   return redirect(validatedReturnUrl || "/");
 };

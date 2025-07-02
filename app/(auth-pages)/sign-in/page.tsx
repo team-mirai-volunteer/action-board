@@ -3,15 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 
-export default async function Login({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  const returnUrl = params?.returnUrl;
-  const returnUrlString = Array.isArray(returnUrl) ? returnUrl[0] : returnUrl;
-
+export default async function Login(props: { searchParams: Promise<Message> }) {
+  const searchParams = await props.searchParams;
   return (
     <div className="flex-1 flex flex-col min-w-72">
       <div className="flex justify-center items-center m-4">
@@ -24,7 +17,8 @@ export default async function Login({
           こちら
         </Link>
       </p>
-      <SignInForm returnUrl={returnUrlString} />
+      <FormMessage className="mt-8" message={searchParams} />
+      <SignInForm />
     </div>
   );
 }
