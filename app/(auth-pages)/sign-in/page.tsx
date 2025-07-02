@@ -6,21 +6,10 @@ import SignInForm from "./SignInForm";
 export default async function Login({
   searchParams,
 }: {
-  searchParams: Promise<{
-    error?: string;
-    success?: string;
-    message?: string;
-    returnUrl?: string;
-  }>;
+  searchParams: Promise<{ returnUrl?: string } | undefined>;
 }) {
   const params = await searchParams;
-  const message: Message | undefined = params.error
-    ? { error: params.error }
-    : params.success
-      ? { success: params.success }
-      : params.message
-        ? { message: params.message }
-        : undefined;
+  const returnUrl = params?.returnUrl || undefined;
 
   return (
     <div className="flex-1 flex flex-col min-w-72">
@@ -34,8 +23,7 @@ export default async function Login({
           こちら
         </Link>
       </p>
-      {message && <FormMessage className="mt-8" message={message} />}
-      <SignInForm returnUrl={params.returnUrl} />
+      <SignInForm returnUrl={returnUrl} />
     </div>
   );
 }

@@ -88,6 +88,31 @@ export default function PrefecturePosterMapClient({
     loadBoards();
   }, []);
 
+  // ログイン後に選択した掲示板を復元
+  useEffect(() => {
+    if (userId && boards.length > 0) {
+      const savedBoardId = localStorage.getItem("selectedBoardId");
+      const savedPrefecture = localStorage.getItem("selectedBoardPrefecture");
+
+      if (savedBoardId && savedPrefecture === prefecture) {
+        const savedBoard = boards.find((board) => board.id === savedBoardId);
+        if (savedBoard) {
+          // 保存された掲示板を選択してダイアログを開く
+          setSelectedBoard(savedBoard);
+          setUpdateStatus(savedBoard.status);
+          setUpdateNote("");
+          setHistory([]);
+          setShowHistory(false);
+          setIsUpdateDialogOpen(true);
+
+          // 使用済みのデータをクリア
+          localStorage.removeItem("selectedBoardId");
+          localStorage.removeItem("selectedBoardPrefecture");
+        }
+      }
+    }
+  }, [userId, boards, prefecture]);
+
   const loadBoards = async () => {
     try {
       const data = await getPosterBoards(prefecture);
@@ -101,6 +126,9 @@ export default function PrefecturePosterMapClient({
 
   const handleBoardSelect = (board: PosterBoard) => {
     if (!userId) {
+      // ログイン後に戻ってきた時のために選択した掲示板情報を保存
+      localStorage.setItem("selectedBoardId", board.id);
+      localStorage.setItem("selectedBoardPrefecture", prefecture);
       setSelectedBoardForLogin(board);
       setIsLoginDialogOpen(true);
       return;
