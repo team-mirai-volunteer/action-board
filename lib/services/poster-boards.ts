@@ -142,3 +142,100 @@ export async function getPrefecturesWithBoards() {
 
   return uniquePrefectures;
 }
+
+// Get unique cities within a prefecture
+export async function getCitiesByPrefecture(prefecture: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("city")
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .not("city", "is", null)
+    .order("city");
+
+  if (error) {
+    console.error("Error fetching cities:", error);
+    throw error;
+  }
+
+  // Get unique cities
+  const uniqueCities = Array.from(
+    new Set(data.map((item) => item.city).filter(Boolean)),
+  );
+
+  return uniqueCities;
+}
+
+// Get poster boards filtered by prefecture and city
+export async function getPosterBoardsByCity(prefecture: string, city: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("*")
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .eq("city", city)
+    .order("number", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching poster boards by city:", error);
+    throw error;
+  }
+
+  return data;
+}
+
+// Get cities with board counts for a prefecture
+export async function getCitiesWithBoardCounts(prefecture: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("city, status")
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .not("city", "is", null);
+
+  if (error) {
+    console.error("Error fetching cities with counts:", error);
+    throw error;
+  }
+
+  // Group by city and count statuses
+  const cityCounts = data.reduce(
+    (acc: Record<string, { total: number; done: number }>, board) => {
+      if (!board.city) return acc;
+
+      if (!acc[board.city]) {
+        acc[board.city] = { total: 0, done: 0 };
+      }
+
+      acc[board.city].total++;
+      if (board.status === "done") {
+        acc[board.city].done++;
+      }
+
+      return acc;
+    },
+    {},
+  );
+
+  // Convert to array format
+  return Object.entries(cityCounts)
+    .map(([city, counts]) => ({
+      city,
+      total: counts.total,
+      done: counts.done,
+      progress: counts.total > 0 ? (counts.done / counts.total) * 100 : 0,
+    }))
+    .sort((a, b) => a.city.localeCompare(b.city));
+}
