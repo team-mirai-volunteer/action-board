@@ -30,9 +30,9 @@ export default async function Metrics() {
     .gte("created_at", date.toISOString());
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      <section className="bg-gradient-hero flex justify-center py-8 px-4">
-        <div className="w-full max-w-md bg-white rounded-md shadow-sm p-4">
+    <div className="w-full">
+      <section className="bg-gradient-hero py-8 px-4">
+        <div className="max-w-md mx-auto bg-white rounded-md shadow-sm p-4">
           <div className="text-center mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-1">
               チームみらいの活動状況🚀
@@ -78,8 +78,8 @@ export default async function Metrics() {
             </div>
           </div>
 
-          <div className="flex">
-            <div className="flex-1 text-center">
+          <div className="flex items-stretch">
+            <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-gray-600 mb-2">達成したアクション数</p>
               <p className="text-2xl font-bold text-gray-900 mb-1">
                 {achievementCount?.toLocaleString() || "0"}件
@@ -87,7 +87,7 @@ export default async function Metrics() {
               <p className="text-xs text-gray-500">目標 20,000件</p>
             </div>
             <Separator orientation="vertical" className="mx-4 h-16" />
-            <div className="flex-1 text-center">
+            <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-gray-600 mb-2">
                 アクションボード参加者
               </p>
