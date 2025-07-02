@@ -236,26 +236,20 @@ async function main() {
       }
     }
 
-    // Insert from staging to production table using row_number + file_name as unique key
+    // Insert from staging to production table using the full unique constraint
     console.log("\nInserting data into production table...");
     const result = await db.query(`
       INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
       SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name) 
+      ON CONFLICT (row_number, file_name, prefecture, city, number) 
       DO UPDATE SET
-        prefecture = EXCLUDED.prefecture,
-        city = EXCLUDED.city,
-        number = EXCLUDED.number,
         name = EXCLUDED.name,
         address = EXCLUDED.address,
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         updated_at = timezone('utc'::text, now())
       WHERE 
-        ${TARGET_TABLE}.prefecture IS DISTINCT FROM EXCLUDED.prefecture OR
-        ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
-        ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
