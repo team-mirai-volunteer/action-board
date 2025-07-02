@@ -40,10 +40,16 @@ This script will:
 
 ### Manual CSV Loading
 
-To load all CSV files into the database:
+To load all CSV files from poster_data/data into the database:
 
 ```bash
 npm run poster:load-csv
+```
+
+To load a specific CSV file:
+
+```bash
+npm run poster:load-csv path/to/specific/file.csv
 ```
 
 This script will:
