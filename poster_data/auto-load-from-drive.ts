@@ -340,7 +340,7 @@ async function main() {
   // Process each location one by one
   let successCount = 0;
   let failCount = 0;
-  let skippedCount = 0;
+  const skippedCount = 0;
 
   for (const [location, group] of Array.from(locationGroups)) {
     console.log(`\n📍 Processing ${location}`);
@@ -357,12 +357,12 @@ async function main() {
       continue;
     }
 
-    // Check if file has changed
-    if (!hasFileChanged(selectedFile, processedFiles)) {
-      console.log(`⏭️  File hasn't changed since last run, skipping`);
-      skippedCount++;
-      continue;
-    }
+    // Check if file has changed (DISABLED FOR NOW)
+    // if (!hasFileChanged(selectedFile, processedFiles)) {
+    //   console.log(`⏭️  File hasn't changed since last run, skipping`);
+    //   skippedCount++;
+    //   continue;
+    // }
 
     // Process this file with optional validation
     const success = await processFile(selectedFile, validateAll);
