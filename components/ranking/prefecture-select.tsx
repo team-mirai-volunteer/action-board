@@ -27,7 +27,10 @@ export function PrefectureSelect({
   const handlePrefectureChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const prefecture = e.target.value;
     setCurrentPrefecture(prefecture);
-    router.push(`/ranking/ranking-prefecture?prefecture=${prefecture}`);
+    // 現在のURLパラメータを保持
+    const params = new URLSearchParams(window.location.search);
+    params.set("prefecture", prefecture);
+    router.push(`/ranking/ranking-prefecture?${params.toString()}`);
   };
 
   return (

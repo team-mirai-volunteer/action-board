@@ -28,7 +28,10 @@ export function MissionSelect({ missions }: MissionSelectProps) {
   const handleMissionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const missionId = e.target.value;
     setSelectedMissionId(missionId);
-    router.push(`/ranking/ranking-mission?missionId=${missionId}`);
+    // 現在のURLパラメータを保持
+    const params = new URLSearchParams(window.location.search);
+    params.set("missionId", missionId);
+    router.push(`/ranking/ranking-mission?${params.toString()}`);
   };
 
   return (

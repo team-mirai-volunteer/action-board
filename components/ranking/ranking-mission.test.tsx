@@ -195,7 +195,7 @@ describe("RankingMission", () => {
         limit: 15,
       });
 
-      expect(getMissionRanking).toHaveBeenCalledWith("mission-1", 15);
+      expect(getMissionRanking).toHaveBeenCalledWith("mission-1", 15, "all");
     });
 
     it("ポスティングミッションの場合はgetTopUsersPostingCountが呼ばれる", async () => {
