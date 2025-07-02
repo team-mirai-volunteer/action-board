@@ -34,10 +34,10 @@ interface PosterMapProps {
 const statusColors: Record<BoardStatus, string> = {
   not_yet: "#6B7280", // gray
   reserved: "#F59E0B", // yellow/orange
-  posted: "#10B981", // green
-  checked: "#3B82F6", // blue
-  damaged: "#EF4444", // red
-  error: "#DC2626", // darker red
+  done: "#10B981", // green
+  error_wrong_place: "#EF4444", // red
+  error_damaged: "#FB923C", // orange
+  error_wrong_poster: "#DC2626", // darker red
   other: "#8B5CF6", // purple
 };
 

@@ -6,11 +6,11 @@ export const statusConfig: Record<
   BoardStatus,
   { label: string; color: string }
 > = {
-  not_yet: { label: "未貼付", color: "bg-gray-500" },
-  reserved: { label: "予約", color: "bg-yellow-500" },
-  posted: { label: "貼付済", color: "bg-green-500" },
-  checked: { label: "確認済", color: "bg-blue-500" },
-  damaged: { label: "損傷", color: "bg-red-500" },
-  error: { label: "エラー", color: "bg-red-700" },
+  not_yet: { label: "未着手", color: "bg-gray-500" },
+  reserved: { label: "予約済み", color: "bg-yellow-500" },
+  done: { label: "完了", color: "bg-green-500" },
+  error_wrong_place: { label: "エラー：場所が違う", color: "bg-red-500" },
+  error_damaged: { label: "エラー：破損", color: "bg-orange-500" },
+  error_wrong_poster: { label: "エラー：ポスターが違う", color: "bg-red-700" },
   other: { label: "その他", color: "bg-purple-500" },
 };

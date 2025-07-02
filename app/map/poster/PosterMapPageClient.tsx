@@ -40,10 +40,10 @@ export default function PosterMapPageClient() {
           stats[board.prefecture] = {
             not_yet: 0,
             reserved: 0,
-            posted: 0,
-            checked: 0,
-            damaged: 0,
-            error: 0,
+            done: 0,
+            error_wrong_place: 0,
+            error_damaged: 0,
+            error_wrong_poster: 0,
             other: 0,
           };
         }
@@ -60,15 +60,13 @@ export default function PosterMapPageClient() {
   const getCompletionRate = (stats: Record<BoardStatus, number>) => {
     const total = Object.values(stats).reduce((sum, count) => sum + count, 0);
     if (total === 0) return 0;
-    const completed = stats.posted + stats.checked;
+    const completed = stats.done;
     return Math.round((completed / total) * 100);
   };
 
   const getTotalStats = () => {
     const total = boards.length;
-    const completed = boards.filter(
-      (b) => b.status === "posted" || b.status === "checked",
-    ).length;
+    const completed = boards.filter((b) => b.status === "done").length;
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, completed, percentage };
   };
@@ -110,7 +108,7 @@ export default function PosterMapPageClient() {
               <div className="text-2xl font-bold text-green-600">
                 {totalStats.completed}
               </div>
-              <div className="text-sm text-muted-foreground">貼付完了</div>
+              <div className="text-sm text-muted-foreground">完了</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-blue-600">
@@ -142,12 +140,12 @@ export default function PosterMapPageClient() {
             ([prefectureKey, prefectureData]) => {
               const stats = boardStats[prefectureData.jp] || {
                 not_yet: 0,
-                posted: 0,
-                checked: 0,
-                damaged: 0,
-                error: 0,
-                other: 0,
                 reserved: 0,
+                done: 0,
+                error_wrong_place: 0,
+                error_damaged: 0,
+                error_wrong_poster: 0,
+                other: 0,
               };
               const totalInPrefecture = Object.values(stats).reduce(
                 (sum, count) => sum + count,
