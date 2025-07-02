@@ -1,5 +1,7 @@
 "use client";
 
+import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -168,8 +170,27 @@ export function MissionWithSubmissionHistory({
     (typeof window !== "undefined" ? window.location.origin : "");
   const signupUrl = `${origin}/?ref=${referralCode}`;
 
+  // LINK,QUIZ,リファラルは視覚的導線を表示しない
+  const isNoGuidanceArrow =
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key ||
+    mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ||
+    mission.required_artifact_type === ARTIFACT_TYPES.REFERRAL.key;
+
+  // ミッションが挑戦可能か（フォームと同じ条件）
+  const hasReachedUserMaxAchievements =
+    mission.max_achievement_count !== null &&
+    userAchievementCount >= mission.max_achievement_count;
+
+  // フォームが表示される条件と同じ
+  const shouldShowGuidanceArrow =
+    (!hasReachedUserMaxAchievements ||
+      mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) &&
+    !isNoGuidanceArrow;
+
   return (
     <>
+      {/* フォームと同じ条件で視覚的導線を表示 */}
+      {shouldShowGuidanceArrow && <MissionGuidanceArrow />}
       {mission.required_artifact_type === "REFERRAL" &&
         authUser &&
         referralCode && (
