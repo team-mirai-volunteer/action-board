@@ -205,7 +205,7 @@ export default function PrefecturePosterMapClient({
       await updateBoardStatus(selectedBoard.id, updateStatus, updateNote);
 
       // ステータスが「完了」に変更された場合のみミッション達成処理
-      if (updateStatus === "posted") {
+      if (updateStatus === "done") {
         const supabase = createClient();
         const {
           data: { user },
@@ -259,7 +259,7 @@ export default function PrefecturePosterMapClient({
     {} as Record<BoardStatus, number>,
   );
 
-  const completedCount = (stats.posted || 0) + (stats.checked || 0);
+  const completedCount = stats.done || 0;
   const totalCount = boards.length;
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;

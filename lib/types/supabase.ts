@@ -555,6 +555,13 @@ export type Database = {
         };
         Relationships: [
           {
+            foreignKeyName: "poster_activities_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "poster_activities_mission_artifact_id_fkey";
             columns: ["mission_artifact_id"];
             isOneToOne: false;
@@ -1327,10 +1334,10 @@ export type Database = {
       poster_board_status:
         | "not_yet"
         | "reserved"
-        | "posted"
-        | "checked"
-        | "damaged"
-        | "error"
+        | "done"
+        | "error_wrong_place"
+        | "error_damaged"
+        | "error_wrong_poster"
         | "other";
       poster_prefecture_enum:
         | "北海道"
@@ -1466,10 +1473,10 @@ export const Constants = {
       poster_board_status: [
         "not_yet",
         "reserved",
-        "posted",
-        "checked",
-        "damaged",
-        "error",
+        "done",
+        "error_wrong_place",
+        "error_damaged",
+        "error_wrong_poster",
         "other",
       ],
       poster_prefecture_enum: [
