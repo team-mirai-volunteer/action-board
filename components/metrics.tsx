@@ -30,7 +30,7 @@ export default async function Metrics() {
     .gte("created_at", date.toISOString());
 
   return (
-    <section className="bg-gradient-hero flex justify-center py-8 px-4">
+    <section className="bg-gradient-hero flex justify-center py-6 px-4">
       <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
         <div className="text-center mb-6">
           <h2 className="text-xl font-bold text-black mb-1">
