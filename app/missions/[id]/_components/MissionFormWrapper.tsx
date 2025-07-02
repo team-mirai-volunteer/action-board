@@ -187,11 +187,7 @@ export function MissionFormWrapper({
       );
     }
 
-    // LINK_ACCESSミッションの場合
-    if (
-      mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key &&
-      mainLink
-    ) {
+    if (mainLink) {
       const isCompleted = hasReachedUserMaxAchievements;
 
       const handleLinkAccessClick = async () => {
@@ -200,19 +196,28 @@ export function MissionFormWrapper({
           return { success: true };
         }
 
-        const formData = new FormData();
-        formData.append("missionId", mission.id);
-        formData.append("requiredArtifactType", ARTIFACT_TYPES.LINK_ACCESS.key);
+        // LINK_ACCESSタイプのミッションの場合のみミッション達成処理を行う
+        if (mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) {
+          const formData = new FormData();
+          formData.append("missionId", mission.id);
+          formData.append(
+            "requiredArtifactType",
+            ARTIFACT_TYPES.LINK_ACCESS.key,
+          );
 
-        const result = await achieveMissionAction(formData);
+          const result = await achieveMissionAction(formData);
 
-        if (result.success) {
-          handleXpAnimation(result);
-          setIsDialogOpen(true);
-          onSubmissionSuccess?.();
+          if (result.success) {
+            handleXpAnimation(result);
+            setIsDialogOpen(true);
+            onSubmissionSuccess?.();
+          }
+
+          return result;
         }
 
-        return result;
+        // LINK_ACCESS以外のミッションの場合は通常のリンクとして動作
+        return { success: true };
       };
 
       return (
@@ -220,15 +225,17 @@ export function MissionFormWrapper({
           <MainLinkButton
             mission={mission}
             mainLink={mainLink}
-            onLinkClick={isCompleted ? undefined : handleLinkAccessClick}
+            onLinkClick={!isCompleted ? handleLinkAccessClick : undefined}
             isDisabled={false}
           />
 
-          {!isCompleted && (
-            <div className="text-sm text-muted-foreground">
-              リンクを開くとミッションクリアとなります
-            </div>
-          )}
+          {!isCompleted &&
+            mission.required_artifact_type ===
+              ARTIFACT_TYPES.LINK_ACCESS.key && (
+              <div className="text-sm text-muted-foreground">
+                リンクを開くとミッションクリアとなります
+              </div>
+            )}
 
           {errorMessage && (
             <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
@@ -241,7 +248,7 @@ export function MissionFormWrapper({
     }
 
     // 通常のアーティファクト提出ミッションの場合
-    return (
+    const normalForm = (
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
         <input type="hidden" name="missionId" value={mission.id} />
         <input
@@ -276,6 +283,8 @@ export function MissionFormWrapper({
         )}
       </form>
     );
+
+    return normalForm;
   };
 
   return (
@@ -293,9 +302,7 @@ export function MissionFormWrapper({
           </div>
         )}
 
-      {(!hasReachedUserMaxAchievements ||
-        mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) &&
-        renderForm()}
+      {!hasReachedUserMaxAchievements && renderForm()}
 
       {(completed ||
         (userAchievementCount > 0 &&

@@ -187,16 +187,17 @@ export function MissionWithSubmissionHistory({
           </div>
         )}
 
-      {mission.required_artifact_type !== "REFERRAL" && (
-        <MissionFormWrapper
-          mission={mission}
-          authUser={authUser}
-          userAchievementCount={userAchievementCount}
-          onSubmissionSuccess={refreshSubmissions}
-          preloadedQuizQuestions={preloadedQuizQuestions}
-          mainLink={mainLink}
-        />
-      )}
+      {mission.required_artifact_type !== "REFERRAL" &&
+        mission.required_artifact_type !== "LINK_ACCESS" && (
+          <MissionFormWrapper
+            mission={mission}
+            authUser={authUser}
+            userAchievementCount={userAchievementCount}
+            onSubmissionSuccess={refreshSubmissions}
+            preloadedQuizQuestions={preloadedQuizQuestions}
+            mainLink={mainLink}
+          />
+        )}
 
       {submissions.length > 0 && (
         <SubmissionHistoryWrapper
