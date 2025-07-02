@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 interface HorizontalScrollContainerProps {
   children: ReactNode;
@@ -17,26 +17,41 @@ export default function HorizontalScrollContainer({
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!scrollContainerRef.current) return;
+  useEffect(() => {
+    const element = scrollContainerRef.current;
+    if (!element) return;
 
-    isDraggingRef.current = true;
-    startXRef.current = e.touches[0].clientX;
-    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
-  };
+    const handleTouchStart = (e: TouchEvent) => {
+      isDraggingRef.current = true;
+      startXRef.current = e.touches[0].clientX;
+      scrollLeftRef.current = element.scrollLeft;
+    };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current || !scrollContainerRef.current) return;
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDraggingRef.current) return;
 
-    e.preventDefault();
-    const x = e.touches[0].clientX;
-    const walk = (startXRef.current - x) * 1.5; // スクロール感度調整
-    scrollContainerRef.current.scrollLeft = scrollLeftRef.current + walk;
-  };
+      e.preventDefault();
+      const x = e.touches[0].clientX;
+      const walk = (startXRef.current - x) * 1.5;
+      element.scrollLeft = scrollLeftRef.current + walk;
+    };
 
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false;
-  };
+    const handleTouchEnd = () => {
+      isDraggingRef.current = false;
+    };
+
+    element.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    element.addEventListener("touchmove", handleTouchMove, { passive: false });
+    element.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+    return () => {
+      element.removeEventListener("touchstart", handleTouchStart);
+      element.removeEventListener("touchmove", handleTouchMove);
+      element.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
@@ -82,9 +97,6 @@ export default function HorizontalScrollContainer({
         scrollbarWidth: "thin",
         cursor: "grab",
       }}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
