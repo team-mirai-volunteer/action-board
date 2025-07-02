@@ -33,7 +33,7 @@ export default async function Metrics() {
     <div className="w-full">
       <section className="bg-gradient-hero py-8 px-4">
         <div className="max-w-md mx-auto bg-white rounded-md shadow-sm p-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <h2 className="text-xl font-bold text-black mb-1">
               チームみらいの活動状況🚀
             </h2>
@@ -41,7 +41,7 @@ export default async function Metrics() {
           </div>
 
           <div className="mb-6">
-            <div className="text-center">
+            <div className="bg-gray-100 rounded-lg p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <p className="text-sm text-black">現在の寄付金額</p>
                 <div className="group relative">
@@ -71,22 +71,34 @@ export default async function Metrics() {
                   </div>
                 </div>
               </div>
-              <p className="text-2xl font-bold text-black mb-1">75,982,000円</p>
-              <p className="text-sm text-black">前日増加分 +1,710,000円</p>
+              <p className="text-3xl font-bold text-black mb-1">
+                75,982,000<span className="text-xl">円</span>
+              </p>
+              <p className="text-sm text-black">
+                前日増加分 +1,710,000<span className="text-xs">円</span>
+              </p>
             </div>
           </div>
 
           <div className="flex items-stretch">
             <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-black mb-2">達成したアクション数</p>
-              <p className="text-2xl font-black text-black mb-1">18,605件</p>
-              <p className="text-xs text-black">目標 20,000件</p>
+              <p className="text-2xl font-black text-black mb-1">
+                18,605<span className="text-lg">件</span>
+              </p>
+              <p className="text-xs text-black">
+                目標 20,000<span className="text-xs">件</span>
+              </p>
             </div>
             <Separator orientation="vertical" className="mx-4 h-16" />
             <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-black mb-2">アクションボード参加者</p>
-              <p className="text-2xl font-black text-black mb-1">3,043人</p>
-              <p className="text-xs text-black">目標 10,000人</p>
+              <p className="text-2xl font-black text-black mb-1">
+                3,043<span className="text-lg">人</span>
+              </p>
+              <p className="text-xs text-black">
+                目標 10,000<span className="text-xs">人</span>
+              </p>
             </div>
           </div>
         </div>
