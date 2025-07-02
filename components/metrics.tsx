@@ -31,8 +31,8 @@ export default async function Metrics() {
 
   return (
     <div className="w-full">
-      <section className="bg-gradient-hero py-8 px-4">
-        <div className="max-w-md mx-auto bg-white rounded-md shadow-sm p-4">
+      <section className="bg-gradient-hero py-10 px-4">
+        <div className="max-w-md mx-auto bg-white rounded-md shadow-custom p-4">
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold text-black mb-1">
               チームみらいの活動状況🚀
@@ -41,7 +41,7 @@ export default async function Metrics() {
           </div>
 
           <div className="mb-6">
-            <div className="bg-gray-100 rounded-lg p-4 text-center">
+            <div className="bg-gray-100 p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <p className="text-sm text-black">現在の寄付金額</p>
                 <div className="group relative">
@@ -75,7 +75,10 @@ export default async function Metrics() {
                 75,982,000<span className="text-xl">円</span>
               </p>
               <p className="text-sm text-black">
-                前日増加分 +1,710,000<span className="text-xs">円</span>
+                前日増加分{" "}
+                <span className="font-bold text-teal-700">
+                  +1,710,000<span className="text-xs">円</span>
+                </span>
               </p>
             </div>
           </div>
@@ -90,7 +93,7 @@ export default async function Metrics() {
                 目標 20,000<span className="text-xs">件</span>
               </p>
             </div>
-            <Separator orientation="vertical" className="mx-4 h-16" />
+            <Separator orientation="vertical" className="mx-4 h-full" />
             <div className="flex-1 text-center flex flex-col justify-center">
               <p className="text-sm text-black mb-2">アクションボード参加者</p>
               <p className="text-2xl font-black text-black mb-1">
