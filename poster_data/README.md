@@ -17,6 +17,26 @@ poster_data/
 └── .processed-files.json  # Track of processed files
 ```
 
+## Prerequisites
+
+### Mount Google Drive (macOS)
+
+1. Install Google Drive for desktop if not already installed:
+   - Download from: https://www.google.com/drive/download/
+   - Sign in with your Google account that has access to the shared drive
+
+2. Ensure the shared drive is synced:
+   - In Google Drive preferences, go to "Google Drive" tab
+   - Under "My Drive syncing options", make sure shared drives are enabled
+   - The shared drive should appear at: `~/Google Drive/Shared drives/`
+
+3. Verify the path exists:
+   ```bash
+   ls ~/Google\ Drive/Shared\ drives/チームみらい\(外部共有\)/
+   ```
+
+   If you see the folder contents, Google Drive is properly mounted.
+
 ## Usage
 
 ### Automated Loading from Google Drive
