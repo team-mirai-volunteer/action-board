@@ -127,3 +127,9 @@ Note: This does NOT affect the database. To clear the database, use `supabase db
 - Successfully processed files are kept in `poster_data/data/<prefecture>/` for version control
 - Files with invalid coordinates (None, empty, or null) are automatically skipped
 - The database uses `row_number` + `file_name` as unique keys to prevent duplicates
+
+## sanity check
+
+```
+find poster_data/data poster_data/broken_data -name "*.csv" 2>/dev/null | awk -F/ '{print $1"/"$2}'   | sort | uniq -c
+```
