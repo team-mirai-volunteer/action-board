@@ -1,5 +1,6 @@
 "use client";
 
+import { achieveMissionAction } from "@/app/missions/[id]/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -28,6 +29,7 @@ import {
   getPosterBoards,
   updateBoardStatus,
 } from "@/lib/services/poster-boards";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { ArrowLeft, History } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -121,12 +123,111 @@ export default function PrefecturePosterMapClient({
     }
   };
 
+  // 掲示板でミッション達成済みかチェック
+  const checkBoardMissionCompleted = async (
+    boardId: string,
+    userId: string,
+  ): Promise<boolean> => {
+    const supabase = createClient();
+
+    // put-up-poster-on-boardミッションのIDを取得
+    const { data: mission } = await supabase
+      .from("missions")
+      .select("id")
+      .eq("slug", "put-up-poster-on-board")
+      .single();
+
+    if (!mission) return false;
+
+    // この掲示板で既にミッション達成しているかチェック
+    const { data: activities } = await supabase
+      .from("poster_activities")
+      .select(`
+        id,
+        mission_artifacts!inner(
+          achievements!inner(
+            mission_id,
+            user_id
+          )
+        )
+      `)
+      .eq("board_id", boardId)
+      .eq("mission_artifacts.achievements.user_id", userId)
+      .eq("mission_artifacts.achievements.mission_id", mission.id);
+
+    return !!(activities && activities.length > 0);
+  };
+
+  // ミッション達成処理
+  const completePosterBoardMission = async (
+    board: PosterBoard,
+  ): Promise<void> => {
+    const supabase = createClient();
+    const { data: mission } = await supabase
+      .from("missions")
+      .select("id")
+      .eq("slug", "put-up-poster-on-board")
+      .single();
+
+    if (!mission) {
+      console.error("put-up-poster-on-board mission not found");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("missionId", mission.id);
+    formData.append("requiredArtifactType", "POSTER");
+    formData.append("posterCount", "1");
+    formData.append("prefecture", board.prefecture);
+    formData.append("city", board.city);
+    formData.append("boardNumber", board.number || "");
+    formData.append("boardName", board.name || "");
+    formData.append("boardNote", updateNote || "");
+    formData.append("boardAddress", board.address || "");
+    formData.append("boardLat", board.lat?.toString() || "");
+    formData.append("boardLong", board.long?.toString() || "");
+    formData.append("boardId", board.id);
+
+    const result = await achieveMissionAction(formData);
+
+    if (result.success) {
+      toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
+    } else {
+      console.error("Mission completion failed:", result.error);
+    }
+  };
+
   const handleStatusUpdate = async () => {
     if (!selectedBoard) return;
 
     setIsUpdating(true);
     try {
       await updateBoardStatus(selectedBoard.id, updateStatus, updateNote);
+
+      // ステータスが「完了」に変更された場合のみミッション達成処理
+      if (updateStatus === "done") {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          // この掲示板で既にミッション達成済みかチェック
+          const hasCompleted = await checkBoardMissionCompleted(
+            selectedBoard.id,
+            user.id,
+          );
+
+          if (!hasCompleted) {
+            // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
+            completePosterBoardMission(selectedBoard).catch((error) => {
+              console.error("Mission completion error:", error);
+              // エラーは記録するが、ステータス更新自体は成功として扱う
+            });
+          }
+        }
+      }
+
       toast.success("ステータスを更新しました");
       setIsUpdateDialogOpen(false);
       await loadBoards(); // Reload to get updated data
@@ -158,7 +259,7 @@ export default function PrefecturePosterMapClient({
     {} as Record<BoardStatus, number>,
   );
 
-  const completedCount = (stats.posted || 0) + (stats.checked || 0);
+  const completedCount = stats.done || 0;
   const totalCount = boards.length;
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -253,9 +354,9 @@ export default function PrefecturePosterMapClient({
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>ステータスを更新</DialogTitle>
+            <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.name}のステータスを更新します
+              {selectedBoard?.name}の状況を教えてください
             </DialogDescription>
           </DialogHeader>
           {selectedBoard && (
@@ -266,7 +367,7 @@ export default function PrefecturePosterMapClient({
           )}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="status">新しいステータス</Label>
+              <Label htmlFor="status">ポスターの状況</Label>
               <Select
                 value={updateStatus}
                 onValueChange={(value) => setUpdateStatus(value as BoardStatus)}
@@ -289,12 +390,12 @@ export default function PrefecturePosterMapClient({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="note">メモ（任意）</Label>
+              <Label htmlFor="note">連絡事項など</Label>
               <Textarea
                 id="note"
                 value={updateNote}
                 onChange={(e) => setUpdateNote(e.target.value)}
-                placeholder="状況の詳細などを記入..."
+                placeholder="「ポスターが破れていた」「他のポスターで隠れていた」など、気づいたことを教えてください。"
                 rows={3}
               />
             </div>
@@ -354,7 +455,7 @@ export default function PrefecturePosterMapClient({
               type="button"
             >
               <History className="mr-2 h-4 w-4" />
-              履歴
+              これまでの報告
             </Button>
             <div className="flex gap-2">
               <Button
@@ -365,7 +466,7 @@ export default function PrefecturePosterMapClient({
                 キャンセル
               </Button>
               <Button onClick={handleStatusUpdate} disabled={isUpdating}>
-                {isUpdating ? "更新中..." : "更新"}
+                {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
           </DialogFooter>

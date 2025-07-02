@@ -8,9 +8,15 @@ export const statusConfig: Record<
 > = {
   not_yet: { label: "未貼付", color: "bg-gray-500" },
   reserved: { label: "予約", color: "bg-yellow-500" },
-  posted: { label: "貼付済", color: "bg-green-500" },
-  checked: { label: "確認済", color: "bg-blue-500" },
-  damaged: { label: "損傷", color: "bg-red-500" },
-  error: { label: "エラー", color: "bg-red-700" },
-  other: { label: "その他", color: "bg-purple-500" },
+  done: { label: "完了", color: "bg-green-500" },
+  error_wrong_place: {
+    label: "エラー（ポスター掲示板マップと実際の場所・番号が違う）",
+    color: "bg-red-500",
+  },
+  error_damaged: { label: "エラー（損傷・破損）", color: "bg-red-500" },
+  error_wrong_poster: {
+    label: "エラー（他党のポスターが貼られている）",
+    color: "bg-red-500",
+  },
+  other: { label: "その他（詳細をメモに記載）", color: "bg-purple-500" },
 };
