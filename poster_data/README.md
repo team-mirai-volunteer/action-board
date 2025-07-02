@@ -44,13 +44,21 @@ poster_data/
 To automatically load poster data from Google Drive:
 
 ```bash
+# Default: validates all files after each load (safer but slower)
 npm run poster:auto-load
+
+# Fast mode: skip validation after each file (faster but less safe)
+npm run poster:auto-load -- --no-validate
 ```
 
 To run with logging to both console and file:
 
 ```bash
+# With validation (default)
 npm run poster:auto-load:log
+
+# Without validation (fast mode)
+npm run poster:auto-load:log -- --no-validate
 ```
 
 This will create a timestamped log file like `poster_data/auto-load-20250702-143000.log`

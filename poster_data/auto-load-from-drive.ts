@@ -235,8 +235,11 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-// Process a single CSV file and validate all files
-async function processAndValidate(csvFile: string): Promise<boolean> {
+// Process a single CSV file with optional validation
+async function processFile(
+  csvFile: string,
+  validateAll: boolean,
+): Promise<boolean> {
   try {
     // Clear temp directory
     await rm(TEMP_DIR, { recursive: true, force: true });
@@ -253,14 +256,18 @@ async function processAndValidate(csvFile: string): Promise<boolean> {
     console.log(`\n📥 Processing ${basename(csvFile)}...`);
     execSync(`npm run poster:load-csv "${tempFile}"`, { stdio: "inherit" });
 
-    // Now validate ALL files by running load-csv without arguments
-    console.log("\n🔍 Validating all loaded files...");
-    execSync("npm run poster:load-csv", { stdio: "inherit" });
+    if (validateAll) {
+      // Validate ALL files by running load-csv without arguments
+      console.log("\n🔍 Validating all loaded files...");
+      execSync("npm run poster:load-csv", { stdio: "inherit" });
+      console.log("✅ Successfully processed and validated!");
+    } else {
+      console.log("✅ Successfully processed!");
+    }
 
-    console.log("✅ Successfully processed and validated!");
     return true;
   } catch (error) {
-    console.error("❌ Failed to process or validate:", error);
+    console.error("❌ Failed to process:", error);
     return false;
   }
 }
@@ -285,8 +292,15 @@ async function moveToDestination(
 
 // Main function
 async function main() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  const validateAll = !args.includes("--no-validate");
+
   console.log("🚀 Automated Poster Data Loader (Direct from Google Drive)");
-  console.log("==========================================================\n");
+  console.log("==========================================================");
+  console.log(
+    `Mode: ${validateAll ? "Validate all files after each load" : "Fast mode (no validation)"}\n`,
+  );
 
   // Setup directories
   await ensureDir(BROKEN_DATA_DIR);
@@ -350,8 +364,8 @@ async function main() {
       continue;
     }
 
-    // Process this file and validate all files
-    const success = await processAndValidate(selectedFile);
+    // Process this file with optional validation
+    const success = await processFile(selectedFile, validateAll);
 
     // Move to appropriate destination
     await moveToDestination(selectedFile, group.prefecture, success);
