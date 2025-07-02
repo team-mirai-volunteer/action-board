@@ -1272,6 +1272,14 @@ export type Database = {
           rank: number;
         }[];
       };
+      get_poster_board_stats: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          prefecture: string;
+          status: Database["public"]["Enums"]["poster_board_status"];
+          count: number;
+        }[];
+      };
       get_prefecture_ranking: {
         Args: { prefecture: string; limit_count?: number };
         Returns: {

@@ -246,7 +246,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
   - slug: youtube-watch
@@ -336,7 +336,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスターを貼った場所の郵便番号
     ogp_image_url: null
   - slug: put-up-poster-on-board

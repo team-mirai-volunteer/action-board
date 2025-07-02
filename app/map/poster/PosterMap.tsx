@@ -1,7 +1,7 @@
 "use client";
 
 import L from "leaflet";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./poster-map.css";
 import {
@@ -70,6 +70,8 @@ export default function PosterMap({
 }: PosterMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+  const currentMarkerRef = useRef<L.Marker | L.CircleMarker | null>(null);
 
   useEffect(() => {
     // Get zoom level for the prefecture
@@ -127,5 +129,76 @@ export default function PosterMap({
     };
   }, [boards]);
 
-  return <div id="poster-map" className="h-[600px] w-full relative z-0" />;
+  // 画面を開いた瞬間から現在地をwatchし、移動に追従
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      return;
+    }
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
+      },
+      (error) => {
+        console.warn("位置情報の取得に失敗しました:", error.message);
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+    );
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  // 現在地マーカーの管理
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    // 既存の現在地マーカーを削除
+    if (currentMarkerRef.current) {
+      currentMarkerRef.current.remove();
+      currentMarkerRef.current = null;
+    }
+
+    // 現在地が取得できていればマーカーを追加
+    if (currentPos) {
+      const marker = L.circleMarker(currentPos, {
+        radius: 12,
+        color: "#2563eb",
+        fillColor: "#60a5fa",
+        fillOpacity: 0.7,
+        weight: 3,
+      })
+        .addTo(mapRef.current)
+        .bindTooltip("あなたの現在地", { permanent: false, direction: "top" });
+
+      currentMarkerRef.current = marker;
+    }
+  }, [currentPos]);
+
+  // 現在地取得ボタンのハンドラ
+  const handleLocate = () => {
+    if (currentPos && mapRef.current) {
+      const currentZoom = mapRef.current.getZoom();
+      mapRef.current.setView(currentPos, currentZoom);
+    }
+  };
+
+  return (
+    <div className="relative h-[600px] w-full z-0">
+      <div id="poster-map" className="h-full w-full" />
+      <button
+        type="button"
+        onClick={handleLocate}
+        disabled={!currentPos}
+        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+          currentPos
+            ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
+            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+        }`}
+        style={{ zIndex: 1000 }}
+        aria-label="現在地を表示"
+      >
+        📍 現在地
+      </button>
+    </div>
+  );
 }

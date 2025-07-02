@@ -354,6 +354,37 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // LINK重複バリデーション
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key
+  ) {
+    const { data: duplicateArtifacts, error: duplicateError } = await supabase
+      .from("mission_artifacts")
+      .select(`
+      id,
+      achievements!inner(mission_id)
+    `)
+      .eq("user_id", authUser.id)
+      .eq("artifact_type", ARTIFACT_TYPES.LINK.key)
+      .eq("link_url", validatedData.artifactLink)
+      .eq("achievements.mission_id", validatedMissionId);
+
+    if (duplicateError) {
+      return {
+        success: false,
+        error: "重複チェック中にエラーが発生しました。",
+      };
+    }
+
+    if (duplicateArtifacts && duplicateArtifacts.length > 0) {
+      return {
+        success: false,
+        error: "記録に失敗しました。同じURLがすでに登録されています。",
+      };
+    }
+  }
+
   // ミッション達成を記録
   const achievementPayload = {
     user_id: authUser.id,
