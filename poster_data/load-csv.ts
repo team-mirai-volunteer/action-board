@@ -59,8 +59,8 @@ async function main() {
     console.log("Clearing staging table...");
     await db.query(`TRUNCATE ${STAGING_TABLE}`);
 
-    // Find all CSV files in poster_data directory and subdirectories
-    const csvFiles = await glob("poster_data/**/*.csv", {
+    // Find all CSV files in poster_data/data directory
+    const csvFiles = await glob("poster_data/data/**/*.csv", {
       ignore: ["**/node_modules/**", "**/.*"],
     });
 

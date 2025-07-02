@@ -7,7 +7,7 @@ we want a script to auto load data.
 
 it should 
 we add poster_data/temp folder
-we copy the 自治体 folder to raw
+we look into the 自治体 folder for raw data
 
 for each folder under pref/city
 within raw, we look into each folder and look for a xxx_normalized.csv file

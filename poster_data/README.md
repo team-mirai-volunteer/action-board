@@ -1,7 +1,45 @@
-# load csv to supabase
-we can load all the csvs to supabase without overwriting status
+# Poster Data Management
 
-## usage
+This directory contains tools for managing poster board location data.
+
+## Directory Structure
+
+```
+poster_data/
+├── data/            # Successfully loaded CSV files
+│   └── <prefecture>/   # Organized by prefecture
+├── raw_data/        # Raw CSV files copied from Google Drive (gitignored)
+├── broken_data/     # CSV files that failed to load (gitignored)
+├── temp/            # Temporary directory for processing (gitignored)
+├── load-csv.ts      # Script to load CSV files into the database
+├── auto-load-from-drive.ts  # Automated script to process files from Google Drive
+├── choice.md        # Log of file selection choices
+└── .processed-files.json  # Track of processed files
+```
+
+## Usage
+
+### Automated Loading from Google Drive
+
+To automatically load poster data from Google Drive:
+
+```bash
+npm run poster:auto-load
+```
+
+This script will:
+1. Copy data from the Google Drive shared folder to `raw_data/`
+2. Find all `*_normalized.csv` files at the prefecture/city level
+3. For each location:
+   - If multiple normalized files exist, automatically selects the shortest one
+   - Logs the selection to `choice.md`
+   - Copy the file to `temp/` and run `npm run poster:load-csv`
+   - If successful, copy the file to `poster_data/data/<prefecture>/`
+   - If failed, copy the file to `broken_data/<prefecture>/`
+4. Display a summary of processed files
+
+### Manual CSV Loading
+
 To load all CSV files into the database:
 
 ```bash
@@ -20,10 +58,15 @@ This script will:
 ## CSV Format
 
 CSV files should have the following columns:
-- prefecture: Prefecture name in Japanese (e.g., "神奈川県")
-- city: City/ward name in Japanese (e.g., "横浜市青葉区")
-- number: Board number (e.g., "1-1")
-- address: Full address
-- name: Facility/location name
-- lat: Latitude
-- long: Longitude (note: column name is "long" not "lng")
+- Without note: `prefecture,city,number,name,address,lat,long`
+- With note: `prefecture,city,number,address,name,lat,long,note`
+
+The script automatically detects the format and handles both cases.
+
+## Important Notes
+
+- Never write to the Google Drive source directory
+- The `raw_data/`, `broken_data/`, and `temp/` directories are gitignored
+- Successfully processed files are kept in `poster_data/data/<prefecture>/` for version control
+- Files with invalid coordinates (None, empty, or null) are automatically skipped
+- The database uses `row_number` + `file_name` as unique keys to prevent duplicates

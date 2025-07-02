@@ -55,3 +55,7 @@ copilot-instructions.md
 
 .cursor
 .issues
+
+# Poster data directories
+raw_data/
+poster_data/temp/
