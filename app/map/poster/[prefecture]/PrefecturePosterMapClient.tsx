@@ -526,7 +526,7 @@ export default function PrefecturePosterMapClient({
               </div>
             )}
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-4">
             <Button
               variant="outline"
               onClick={() => setIsLoginDialogOpen(false)}

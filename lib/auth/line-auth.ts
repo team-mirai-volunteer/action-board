@@ -4,7 +4,7 @@
  * LINEログイン開始関数
  * LINE Web Login API を直接使用してLINE認証ページにリダイレクト
  */
-export async function signInWithLine() {
+export async function signInWithLine(returnUrl?: string) {
   // LINE Web Login API の認証URL作成
   const clientId = process.env.NEXT_PUBLIC_LINE_CLIENT_ID;
   if (!clientId) {
@@ -19,6 +19,11 @@ export async function signInWithLine() {
 
   // stateをローカルストレージに保存（CSRF対策、モバイル対応）
   localStorage.setItem("lineLoginState", state);
+
+  // returnUrlをローカルストレージに保存（リダイレクト用）
+  if (returnUrl) {
+    localStorage.setItem("lineLoginReturnUrl", returnUrl);
+  }
 
   const authUrl = new URL("https://access.line.me/oauth2/v2.1/authorize");
   authUrl.searchParams.set("response_type", "code");
