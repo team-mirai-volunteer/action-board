@@ -58,21 +58,10 @@ function LineCallbackContent() {
 
         const code = searchParams.get("code");
         const state = searchParams.get("state");
-        const storedCsrf = localStorage.getItem("lineLoginState");
-
-        // stateをデコードしてCSRFトークンとreturnUrlを取得
-        let stateData: { csrf: string; returnUrl: string | null } | null = null;
-        try {
-          if (state) {
-            stateData = JSON.parse(atob(state));
-          }
-        } catch (e) {
-          // 古い形式のstateの場合はそのまま使用
-          stateData = { csrf: state || "", returnUrl: null };
-        }
+        const storedState = localStorage.getItem("lineLoginState");
 
         // CSRF対策: stateの検証
-        if (!stateData || stateData.csrf !== storedCsrf) {
+        if (!state || state !== storedState) {
           throw new Error("セキュリティエラー: 認証状態が無効です");
         }
 
@@ -89,7 +78,6 @@ function LineCallbackContent() {
           code,
           loginData.dateOfBirth,
           loginData.referralCode,
-          stateData?.returnUrl || undefined,
         );
 
         if (result.success) {
