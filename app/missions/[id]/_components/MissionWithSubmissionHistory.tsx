@@ -1,10 +1,13 @@
 "use client";
 
+import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
+import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import type { SubmissionData } from "../_lib/types";
 import { CopyReferralButton } from "./CopyReferralButton";
 import { MissionFormWrapper } from "./MissionFormWrapper";
@@ -43,6 +46,12 @@ export function MissionWithSubmissionHistory({
     useState<SubmissionData[]>(initialSubmissions);
   const [userAchievementCount, setUserAchievementCount] = useState(
     initialUserAchievementCount,
+  );
+
+  // useMissionSubmissionフックを使用して統一
+  const { hasReachedUserMaxAchievements } = useMissionSubmission(
+    mission,
+    userAchievementCount,
   );
 
   const refreshSubmissions = async () => {
@@ -168,8 +177,22 @@ export function MissionWithSubmissionHistory({
     (typeof window !== "undefined" ? window.location.origin : "");
   const signupUrl = `${origin}/?ref=${referralCode}`;
 
+  // LINK,QUIZ,リファラルは視覚的導線を表示しない
+  const isNoGuidanceArrow =
+    mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key ||
+    mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key ||
+    mission.required_artifact_type === ARTIFACT_TYPES.REFERRAL.key;
+
+  // フォームが表示される条件と同じ
+  const shouldShowGuidanceArrow =
+    (!hasReachedUserMaxAchievements ||
+      mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) &&
+    !isNoGuidanceArrow;
+
   return (
     <>
+      {/* フォームと同じ条件で視覚的導線を表示 */}
+      {shouldShowGuidanceArrow && <MissionGuidanceArrow />}
       {mission.required_artifact_type === "REFERRAL" &&
         authUser &&
         referralCode && (
