@@ -32,15 +32,15 @@ export default async function Metrics() {
   return (
     <div className="max-w-6xl mx-auto px-4">
       <section className="bg-gradient-hero flex justify-center py-8 px-4">
-        <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-lg">
-          <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="w-full max-w-md bg-white rounded-lg p-6">
+          <div className="text-center mb-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-1">
               チームみらいの活動状況🚀
             </h2>
-            <p className="text-sm text-gray-600">2025.07.03 02:20 更新</p>
+            <p className="text-xs text-gray-500">2025.07.03 02:20 更新</p>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-6 mb-8">
+          <div className="mb-6">
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <p className="text-sm text-gray-600">現在の寄付金額</p>
@@ -71,12 +71,10 @@ export default async function Metrics() {
                   </div>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900 mb-2">
+              <p className="text-2xl font-bold text-gray-900 mb-1">
                 75,982,000円
               </p>
-              <p className="text-sm text-emerald-600 font-semibold">
-                前日増加分 +1,710,000円
-              </p>
+              <p className="text-sm text-gray-600">前日増加分 +1,710,000円</p>
             </div>
           </div>
 
@@ -88,7 +86,7 @@ export default async function Metrics() {
               </p>
               <p className="text-xs text-gray-500">目標 20,000件</p>
             </div>
-            <Separator orientation="vertical" className="mx-6 h-20" />
+            <Separator orientation="vertical" className="mx-4 h-16" />
             <div className="flex-1 text-center">
               <p className="text-sm text-gray-600 mb-2">
                 アクションボード参加者
