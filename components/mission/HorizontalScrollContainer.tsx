@@ -26,14 +26,14 @@ export default function HorizontalScrollContainer({
     if (!element) return;
 
     const startMomentumAnimation = () => {
-      if (Math.abs(velocityRef.current) < 0.1) return;
+      if (Math.abs(velocityRef.current) < 0.5) return;
 
       const animate = () => {
         if (!element) return;
 
-        velocityRef.current *= 0.95;
+        velocityRef.current *= 0.98;
 
-        if (Math.abs(velocityRef.current) < 0.1) {
+        if (Math.abs(velocityRef.current) < 0.5) {
           animationFrameRef.current = null;
           return;
         }
@@ -81,7 +81,7 @@ export default function HorizontalScrollContainer({
       const deltaTime = currentTime - lastTouchTimeRef.current;
 
       if (deltaTime > 0) {
-        velocityRef.current = ((lastTouchXRef.current - x) / deltaTime) * 16;
+        velocityRef.current = ((lastTouchXRef.current - x) / deltaTime) * 3;
       }
 
       const walk = (startXRef.current - x) * 1.0;
