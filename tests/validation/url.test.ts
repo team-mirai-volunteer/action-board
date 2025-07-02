@@ -82,5 +82,19 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("./home")).toBe(null); // Relative but not starting with /
       expect(validateReturnUrl("../home")).toBe(null); // Relative but not starting with /
     });
+
+    it("should reject extremely long URLs to prevent DoS attacks", () => {
+      // URL with exactly 2048 characters should be accepted
+      const maxLengthUrl = "/" + "a".repeat(2047);
+      expect(validateReturnUrl(maxLengthUrl)).toBe(maxLengthUrl);
+
+      // URL with 2049 characters should be rejected
+      const tooLongUrl = "/" + "a".repeat(2048);
+      expect(validateReturnUrl(tooLongUrl)).toBe(null);
+
+      // Very long URL with query parameters
+      const longQueryUrl = "/path?" + "param=value&".repeat(200);
+      expect(validateReturnUrl(longQueryUrl)).toBe(null);
+    });
   });
 });

@@ -17,6 +17,12 @@ export function validateReturnUrl(
   // Remove any leading/trailing whitespace
   const trimmedUrl = url.trim();
 
+  // Prevent DoS attacks by limiting URL length
+  // Maximum URL length set to 2048 characters (common browser limit)
+  if (trimmedUrl.length > 2048) {
+    return null;
+  }
+
   // Check for common bypass attempts
   if (
     trimmedUrl.includes("//") ||
