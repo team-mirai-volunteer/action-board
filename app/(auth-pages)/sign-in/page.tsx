@@ -3,14 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 
-type SignInSearchParams = Message & {
-  returnUrl?: string;
-};
-
-export default async function Login(props: {
-  searchParams: Promise<SignInSearchParams>;
+export default async function Login({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    error?: string;
+    success?: string;
+    message?: string;
+    returnUrl?: string;
+  }>;
 }) {
-  const searchParams = await props.searchParams;
+  const params = await searchParams;
+  const message: Message | undefined = params.error
+    ? { error: params.error }
+    : params.success
+      ? { success: params.success }
+      : params.message
+        ? { message: params.message }
+        : undefined;
 
   return (
     <div className="flex-1 flex flex-col min-w-72">
@@ -24,8 +34,8 @@ export default async function Login(props: {
           こちら
         </Link>
       </p>
-      <FormMessage className="mt-8" message={searchParams} />
-      <SignInForm returnUrl={searchParams.returnUrl} />
+      {message && <FormMessage className="mt-8" message={message} />}
+      <SignInForm returnUrl={params.returnUrl} />
     </div>
   );
 }
