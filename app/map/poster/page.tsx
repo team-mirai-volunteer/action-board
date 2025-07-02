@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PosterMapPageClient from "./PosterMapPageClient";
+import PosterMapPageClientOptimized from "./PosterMapPageClientOptimized";
 
 export const metadata: Metadata = {
   title: "ポスター掲示板マップ",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default async function PosterMapPage() {
-  return <PosterMapPageClient />;
+  return <PosterMapPageClientOptimized />;
 }
