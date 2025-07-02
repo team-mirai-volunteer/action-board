@@ -22,7 +22,7 @@
 }
 
 /* Ensure the map container doesn't overlap dialog */
-#poster-map {
+.poster-map-container {
   position: relative;
   z-index: 0;
 }

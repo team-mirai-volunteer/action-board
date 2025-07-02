@@ -3,5 +3,5 @@ export default function MapLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="relative flex-1 w-full">{children}</div>;
+  return <div className="w-full">{children}</div>;
 }

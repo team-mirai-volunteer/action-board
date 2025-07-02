@@ -70,29 +70,65 @@ export default function PosterMap({
 }: PosterMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log("PosterMap useEffect - initializing map", {
+      hasContainer: !!mapContainerRef.current,
+      hasMap: !!mapRef.current,
+      center,
+      prefectureKey,
+    });
+
+    if (!mapContainerRef.current) {
+      console.log("No map container ref");
+      return;
+    }
+
     // Get zoom level for the prefecture
     const zoomLevel = prefectureKey
       ? getPrefectureDefaultZoom(prefectureKey)
       : 12;
 
-    if (!mapRef.current) {
-      // Initialize map with calculated zoom
-      mapRef.current = L.map("poster-map").setView(center, zoomLevel);
+    if (!mapRef.current && mapContainerRef.current) {
+      try {
+        console.log("Creating new map instance");
+        // Initialize map with calculated zoom
+        mapRef.current = L.map(mapContainerRef.current).setView(
+          center,
+          zoomLevel,
+        );
 
-      // Add tile layer (using GSI tiles)
-      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-        attribution:
-          '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: 18,
-      }).addTo(mapRef.current);
+        // Add tile layer (using GSI tiles)
+        L.tileLayer(
+          "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
+            maxZoom: 18,
+          },
+        ).addTo(mapRef.current);
+
+        console.log("Map created successfully");
+      } catch (error) {
+        console.error("Error creating map:", error);
+      }
     }
     // Update map view when center changes
     if (mapRef.current) {
       mapRef.current.setView(center, zoomLevel);
     }
   }, [center, prefectureKey]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: 予期せぬタイミングでの再レンダリングによってマップの位置が変わるのを避けるため、依存配列を最低限にしています
   useEffect(() => {
@@ -127,5 +163,19 @@ export default function PosterMap({
     };
   }, [boards]);
 
-  return <div id="poster-map" className="h-full w-full relative z-0" />;
+  return (
+    <>
+      <style jsx global>{`
+        .leaflet-container {
+          height: 100%;
+          width: 100%;
+        }
+      `}</style>
+      <div
+        ref={mapContainerRef}
+        className="poster-map-container h-full w-full"
+        style={{ minHeight: "400px" }}
+      />
+    </>
+  );
 }

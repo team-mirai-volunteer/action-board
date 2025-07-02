@@ -1,19 +1,10 @@
 "use client";
 
+import PosterMap from "@/app/map/poster/PosterMap";
 import type { Database } from "@/lib/types/supabase";
-import dynamic from "next/dynamic";
 import { toast } from "sonner";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-
-const PosterMap = dynamic(() => import("@/app/map/poster/PosterMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full items-center justify-center">
-      地図を読み込み中...
-    </div>
-  ),
-});
 
 interface CityPosterMapClientProps {
   boards: PosterBoard[];
@@ -36,7 +27,7 @@ export function CityPosterMapClient({
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full" style={{ minHeight: "600px" }}>
       <PosterMap
         boards={boards}
         center={center}
