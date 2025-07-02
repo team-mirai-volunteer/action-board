@@ -132,8 +132,8 @@ export default function Mission({
               )}
             >
               {hasReachedMaxAchievements
-                ? "ミッションクリア🎉"
-                : "詳細を見る →"}
+                ? "ミッション完了🎉"
+                : "今すぐチャレンジ🔥"}
             </Button>
           </motion.div>
         </Link>
