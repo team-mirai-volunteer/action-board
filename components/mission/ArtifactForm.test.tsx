@@ -4,6 +4,11 @@ import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
+// Mock lucide-react icons
+jest.mock("lucide-react", () => ({
+  ChevronDown: () => <div data-testid="chevron-down-icon" />,
+}));
+
 const mockUser: User = {
   id: "test-user-id",
   email: "test@example.com",
@@ -28,6 +33,7 @@ const baseMission: Tables<"missions"> = {
   ogp_image_url: null,
   created_at: "2025-06-22T00:00:00Z",
   updated_at: "2025-06-22T00:00:00Z",
+  slug: "test-mission-1",
   required_artifact_type: "LINK",
 };
 
@@ -126,6 +132,25 @@ describe("ArtifactForm", () => {
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：50")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：1540017")).toBeInTheDocument();
+  });
+
+  it("POSTERタイプの場合はポスター入力フォームが表示される", () => {
+    const mission = {
+      ...baseMission,
+      required_artifact_type: "POSTER" as const,
+    };
+
+    render(
+      <ArtifactForm
+        mission={mission}
+        authUser={mockUser}
+        disabled={false}
+        submittedArtifactImagePath={null}
+      />,
+    );
+
+    expect(screen.getByText("ポスター枚数")).toBeInTheDocument();
+    // 詳細はPosterForm.test.tsxで確認
   });
 
   it("IMAGEタイプの場合は画像アップロードフォームが表示される", () => {

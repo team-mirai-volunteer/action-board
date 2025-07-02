@@ -73,6 +73,8 @@ category_links:
         sort_no: 220
       - mission_slug: put-up-poster
         sort_no: 300
+      - mission_slug: put-up-poster-on-board
+        sort_no: 400
       - mission_slug: join-event
         sort_no: 500
       - mission_slug: help-event-operation

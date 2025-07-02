@@ -1,6 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import PosterMapPageClient from "./PosterMapPageClient";
 
 export const metadata: Metadata = {
@@ -9,15 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default async function PosterMapPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect("/sign-in");
-  }
-
   return <PosterMapPageClient />;
 }
