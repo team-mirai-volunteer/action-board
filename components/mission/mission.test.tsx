@@ -123,6 +123,7 @@ jest.mock("lucide-react", () => ({
 
 const mockMission: Tables<"missions"> = {
   id: "test-mission-1",
+  slug: "test-mission-1",
   title: "テストミッション",
   content: "テストミッションの内容",
   difficulty: 1,
@@ -177,7 +178,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("達成内容を見る →")).toBeInTheDocument();
+    expect(screen.getByText("ミッションクリア🎉")).toBeInTheDocument();
   });
 
   it("最大達成回数が設定されていない場合は制限なし", () => {
