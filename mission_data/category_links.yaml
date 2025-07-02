@@ -97,6 +97,12 @@ category_links:
         sort_no: 500
       - mission_slug: quiz-policy-100days
         sort_no: 600
+      - mission_slug: "quiz-electionlaw-basic"
+        sort_no: 700
+      - mission_slug: "quiz-electionlaw-period"
+        sort_no: 710
+      - mission_slug: "quiz-electionlaw-electionday"
+        sort_no: 720
   - category_slug: improve-policies
     missions:
       - mission_slug: chat-idobata-ai
