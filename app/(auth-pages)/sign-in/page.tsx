@@ -3,35 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 
-type SearchParams = {
-  error?: string;
-  success?: string;
-  message?: string;
+type SignInSearchParams = Message & {
   returnUrl?: string;
 };
 
 export default async function Login(props: {
-  searchParams: Promise<SearchParams>;
+  searchParams: Promise<SignInSearchParams>;
 }) {
-  let searchParams: SearchParams | undefined;
-  let message: Message | null = null;
-  let returnUrl: string | undefined;
-
-  try {
-    searchParams = await props.searchParams;
-    returnUrl = searchParams?.returnUrl;
-
-    if (searchParams?.error) {
-      message = { error: searchParams.error };
-    } else if (searchParams?.success) {
-      message = { success: searchParams.success };
-    } else if (searchParams?.message) {
-      message = { message: searchParams.message };
-    }
-  } catch (error) {
-    console.error("Error parsing search params:", error);
-    message = { error: "エラーが発生しました" };
-  }
+  const searchParams = await props.searchParams;
 
   return (
     <div className="flex-1 flex flex-col min-w-72">
@@ -45,8 +24,8 @@ export default async function Login(props: {
           こちら
         </Link>
       </p>
-      {message && <FormMessage className="mt-8" message={message} />}
-      <SignInForm returnUrl={returnUrl} />
+      <FormMessage className="mt-8" message={searchParams} />
+      <SignInForm returnUrl={searchParams.returnUrl} />
     </div>
   );
 }
