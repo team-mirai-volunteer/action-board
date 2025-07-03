@@ -1,0 +1,87 @@
+name: Check poster CSV validity
+on:
+  pull_request:
+    paths:
+      - 'poster_data/**/*.csv'
+      - 'poster_data/load-csv.ts'
+      - 'supabase/migrations/**'
+      - '.github/workflows/check_poster_csv.yaml'
+
+jobs:
+  check-csv:
+    name: Validate Poster CSV Files
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 環境変数を設定（ローカルSupabaseの接続情報）
+      - name: Set Supabase environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
+
+      # Supabase CLIのセットアップと起動
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: |
+          echo "Starting Supabase..."
+          supabase start -x studio,postgres-meta,imgproxy
+        env:
+          SMTP_ENABLED: false
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          BQ_USER_PASSWORD: bq_user_password
+          ENABLE_CONFIRMATIONS: false
+
+      # Supabaseの起動を待機
+      - name: Wait for Supabase
+        run: |
+          echo "Waiting for Supabase to be ready..."
+          timeout 30 bash -c 'until curl -s http://localhost:54321/rest/v1/ > /dev/null; do sleep 1; done'
+          echo "Supabase is ready!"
+
+      # データベースをリセット（マイグレーションを適用）
+      - name: Reset Supabase database
+        run: |
+          echo "Resetting Supabase database..."
+          supabase db reset
+          echo "Supabase database reset completed."
+        env:
+          SMTP_ENABLED: false
+          BQ_USER_PASSWORD: bq_user_password
+          ENABLE_CONFIRMATIONS: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      # CSVファイルの検証
+      - name: Validate CSV files
+        run: |
+          echo "Checking poster CSV files..."
+          npm run poster:load-csv
+          echo "✅ All CSV files are valid and successfully loaded!"
+
+      # オプション: CSVファイルの統計を表示
+      - name: Show CSV statistics
+        run: |
+          echo "📊 CSV File Statistics:"
+          echo "Total CSV files: $(find poster_data -name "*.csv" -type f | wc -l)"
+          echo ""
+          echo "Files per directory:"
+          find poster_data -name "*.csv" -type f | xargs -I {} dirname {} | sort | uniq -c
+          echo ""
+          echo "Total rows across all CSV files:"
+          find poster_data -name "*.csv" -type f -exec wc -l {} + | tail -n 1

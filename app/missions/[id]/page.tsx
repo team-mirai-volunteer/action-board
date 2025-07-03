@@ -125,7 +125,7 @@ export default async function MissionPage({ params }: Props) {
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <MissionDetails mission={mission} />
+        <MissionDetails mission={mission} mainLink={mainLink} />
 
         {user ? (
           <>

@@ -3,9 +3,11 @@ import { notoSansJP } from "@/lib/metadata";
 import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
+import { ReferralCodeHandlerWrapper } from "@/components/ReferralCodeHandlerWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
+import { Suspense } from "react";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -52,6 +54,9 @@ export default function RootLayout({
         >
           <Navbar />
           <main className="md:container md:mx-auto flex flex-col items-center">
+            <Suspense>
+              <ReferralCodeHandlerWrapper />
+            </Suspense>
             {children}
           </main>
           <Footer />
