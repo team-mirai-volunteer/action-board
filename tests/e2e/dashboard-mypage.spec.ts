@@ -10,8 +10,9 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
-    await expect(signedInPage.getByRole('heading', { name: /チームみらい/ })).toBeVisible();
-    await expect(signedInPage.getByRole('heading', { name: /アクションボード/ })).toBeVisible();
+    await expect(signedInPage.getByText(/LV\./)).toBeVisible();
+    
+    await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
     
     await expect(signedInPage.locator("section").filter({ hasText: /メトリクス|統計|数値/ }).or(signedInPage.locator('[class*="metric"]')).first()).toBeVisible({ timeout: 5000 }).catch(() => {
       console.log("メトリクス要素が見つかりませんでした（オプション要素）");
