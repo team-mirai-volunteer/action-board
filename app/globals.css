@@ -129,4 +129,13 @@
   .custom-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* CSS-only solution for PC horizontal scrolling breakout */
+  @media (min-width: 768px) {
+    .mission-section-breakout {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+    }
+  }
 }
