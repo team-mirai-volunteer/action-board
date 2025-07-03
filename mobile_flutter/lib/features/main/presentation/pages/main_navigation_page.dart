@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_flutter/core/theme/app_theme.dart';
+import 'package:mobile_flutter/features/home/presentation/pages/home_page.dart';
+import 'package:mobile_flutter/features/settings/presentation/pages/settings_page.dart';
+
+// 選択されているタブのインデックスを管理するプロバイダー
+final selectedTabIndexProvider = StateProvider<int>((ref) => 0);
+
+class MainNavigationPage extends ConsumerWidget {
+  const MainNavigationPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = ref.watch(selectedTabIndexProvider);
+
+    // タブごとのページ
+    final pages = [
+      const HomePage(),
+      const SettingsPage(),
+    ];
+
+    return Scaffold(
+      body: IndexedStack(
+        index: selectedIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(0, -1),
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: SizedBox(
+            height: 65,
+            child: BottomNavigationBar(
+              currentIndex: selectedIndex,
+              onTap: (index) {
+                ref.read(selectedTabIndexProvider.notifier).state = index;
+              },
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.white,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: AppColors.textTertiary,
+              selectedLabelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: Theme.of(context).textTheme.bodySmall,
+              elevation: 0,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
+                  label: 'ホーム',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings_outlined),
+                  activeIcon: Icon(Icons.settings),
+                  label: '設定',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
