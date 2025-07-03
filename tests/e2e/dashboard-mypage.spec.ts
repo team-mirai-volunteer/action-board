@@ -23,7 +23,7 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     });
 
     await signedInPage.getByTestId("usermenubutton").click();
-    await signedInPage.getByText("設定").or(signedInPage.getByText("プロフィール")).first().click();
+    await signedInPage.getByText("アカウント").click();
 
     await expect(signedInPage).toHaveURL(/\/settings\/profile/, { timeout: 10000 });
 
