@@ -84,9 +84,9 @@ jobs:
         run: |
           echo "🔍 Checking for duplicate filenames between data and broken_data directories..."
           
-          DATA_FILES=$(find poster_data/data -name "*.csv" -type f 2>/dev/null | xargs -I {} basename {} || true)
+          DATA_FILES=$(find poster_data/data -name "*.csv" -type f 2>/dev/null | sed 's|poster_data/data/||' || true)
           
-          BROKEN_FILES=$(find poster_data/broken_data -name "*.csv" -type f 2>/dev/null | xargs -I {} basename {} || true)
+          BROKEN_FILES=$(find poster_data/broken_data -name "*.csv" -type f 2>/dev/null | sed 's|poster_data/broken_data/||' || true)
           
           if [ -z "$DATA_FILES" ]; then
             echo "✅ No CSV files found in poster_data/data"
@@ -98,16 +98,16 @@ jobs:
             exit 0
           fi
           
-          DUPLICATES=$(echo "$DATA_FILES" | sort | uniq -d)
           COMMON_FILES=$(comm -12 <(echo "$DATA_FILES" | sort) <(echo "$BROKEN_FILES" | sort))
           
           if [ -n "$COMMON_FILES" ]; then
-            echo "❌ ERROR: Duplicate filenames found between data and broken_data:"
+            echo "❌ ERROR: Duplicate file paths found between data and broken_data:"
             echo "$COMMON_FILES"
+            echo "This indicates the same file exists in both directories with the same prefecture path."
             exit 1
           fi
           
-          echo "✅ No duplicate filenames found between data and broken_data directories"
+          echo "✅ No duplicate file paths found between data and broken_data directories"
 
       - name: Show validation summary
         run: |
