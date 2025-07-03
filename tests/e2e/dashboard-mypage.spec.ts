@@ -67,4 +67,3 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     await expect(signedInPage.locator('[name="address_prefecture"]')).toBeVisible();
   });
 });
-# CI refresh Thu Jul  3 17:15:53 UTC 2025
