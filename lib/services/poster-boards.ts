@@ -19,6 +19,7 @@ export async function getPosterBoards(prefecture?: string) {
       .from("poster_boards")
       .select("*")
       .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (prefecture) {
@@ -155,6 +156,7 @@ export async function getPrefecturesWithBoards() {
       .select("prefecture")
       .not("prefecture", "is", null)
       .order("prefecture")
+      .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
