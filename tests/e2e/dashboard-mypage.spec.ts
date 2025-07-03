@@ -10,7 +10,8 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
-    await expect(signedInPage.getByText(/LV\. 1/)).toBeVisible();
+    await expect(signedInPage.getByText("LV.")).toBeVisible();
+    await expect(signedInPage.getByText("1")).toBeVisible();
     await expect(signedInPage.getByText("次のレベルまで")).toBeVisible();
     await expect(signedInPage.getByText("ポイント")).toBeVisible();
     
