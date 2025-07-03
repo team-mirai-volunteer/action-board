@@ -279,7 +279,9 @@ export default function PosterMapWithCluster({
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
-        disableClusteringAtZoom: 16, // Disable clustering at high zoom levels
+        // disableClusteringAtZoom: 16, // コメントアウト - 最大ズーム時でもクラスタリングを維持
+        spiderfyDistanceMultiplier: 2, // スパイダリー表示時の距離を2倍に
+        spiderLegPolylineOptions: { weight: 2, color: "#222", opacity: 0.5 },
       });
 
       // Add cluster events for tooltips
@@ -353,22 +355,58 @@ export default function PosterMapWithCluster({
     // Clear existing markers
     markerClusterRef.current.clearLayers();
 
-    // Add markers for each board
+    // 同じ位置のマーカーをグループ化し、少しずらして配置
+    const locationGroups = new Map<string, PosterBoard[]>();
+
     for (const board of boards) {
       if (board.lat && board.long) {
-        const marker = L.marker([board.lat, board.long], {
-          icon: createMarkerIcon(board.status),
-        })
-          .bindTooltip(
-            `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}`,
-            { permanent: false, direction: "top" },
-          )
-          .on("click", () => onBoardClick(board));
+        const locationKey = `${board.lat.toFixed(6)}_${board.long.toFixed(6)}`;
+        if (!locationGroups.has(locationKey)) {
+          locationGroups.set(locationKey, []);
+        }
+        const group = locationGroups.get(locationKey);
+        if (group) {
+          group.push(board);
+        }
+      }
+    }
 
-        // Store board data in marker for cluster icon calculation
-        (marker as MarkerWithBoard).boardData = board;
+    // Add markers for each board
+    for (const boardsAtLocation of Array.from(locationGroups.values())) {
+      for (let index = 0; index < boardsAtLocation.length; index++) {
+        const board = boardsAtLocation[index];
+        if (board.lat && board.long) {
+          let lat = board.lat;
+          let lng = board.long;
 
-        markerClusterRef.current.addLayer(marker);
+          // 同じ位置に複数のマーカーがある場合、少しずらして配置
+          if (boardsAtLocation.length > 1) {
+            const angle = (index * 360) / boardsAtLocation.length;
+            const radius = 0.0001 + index * 0.00005; // 約10-15m程度のオフセット
+            lat += radius * Math.cos((angle * Math.PI) / 180);
+            lng += radius * Math.sin((angle * Math.PI) / 180);
+          }
+
+          const marker = L.marker([lat, lng], {
+            icon: createMarkerIcon(board.status),
+          })
+            .bindTooltip(
+              `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}${
+                boardsAtLocation.length > 1
+                  ? `<br><small>※この位置に${boardsAtLocation.length}件のマーカーがあります</small>`
+                  : ""
+              }`,
+              { permanent: false, direction: "top" },
+            )
+            .on("click", () => onBoardClick(board));
+
+          // Store board data in marker for cluster icon calculation
+          (marker as MarkerWithBoard).boardData = board;
+
+          if (markerClusterRef.current) {
+            markerClusterRef.current.addLayer(marker);
+          }
+        }
       }
     }
   }, [boards, onBoardClick]);
