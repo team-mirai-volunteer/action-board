@@ -1,17 +1,24 @@
 import { type Page, test as base, expect } from "@playwright/test";
+import { createTestUser, cleanupTestUser, type TestUser } from "./rls/utils";
 
 // カスタムテストフィクスチャを定義
 type TestFixtures = {
   signedInPage: Page;
+  testUser: TestUser;
 };
 
 // テストヘルパー関数を拡張したテストオブジェクト
 export const test = base.extend<TestFixtures>({
-  signedInPage: async ({ page }, use) => {
-    // ログイン処理
+  testUser: async ({}, use) => {
+    const { user } = await createTestUser();
+    await use(user);
+    await cleanupTestUser(user.userId);
+  },
+  
+  signedInPage: async ({ page, testUser }, use) => {
     await page.goto("/sign-in");
-    await page.fill('input[name="email"]', "test@example.com");
-    await page.fill('input[name="password"]', "password123");
+    await page.fill('input[name="email"]', testUser.email);
+    await page.fill('input[name="password"]', testUser.password);
     await page.click('button[type="submit"]');
 
     // ログイン完了を確認（ホームページにリダイレクトされることを想定）
