@@ -6,6 +6,7 @@ import {
   grantMissionCompletionXp,
 } from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -21,6 +22,8 @@ import {
   isEmailAlreadyUsedInReferral,
   isValidReferralCode,
 } from "@/lib/validation/referral";
+
+import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
@@ -44,10 +47,15 @@ export const signUpActionWithState = async (
   const terms_agreed = formData.get("terms_agreed")?.toString();
   const privacy_agreed = formData.get("privacy_agreed")?.toString();
 
-  //クエリストリングからリファラルコードを取得
+  //クエリストリングからリファラルコードを取得（フォームから）
   const rawReferral = formData.get("ref");
-  const referralCode =
+  let referralCode =
     typeof rawReferral === "string" ? rawReferral.trim() : null;
+
+  // フォームにリファラルコードがない場合はcookieから取得
+  if (!referralCode) {
+    referralCode = (await getCookie("referral_code")) || null;
+  }
 
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
@@ -167,6 +175,9 @@ export const signUpActionWithState = async (
         console.warn("紹介ミッション登録処理に失敗:", e);
       }
     }
+
+    // 紹介コード処理完了後、cookieを削除
+    await deleteCookie("referral_code");
   }
 
   if (data.user?.id) {
@@ -195,6 +206,7 @@ export const signInActionWithState = async (
 ) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const returnUrl = formData.get("returnUrl")?.toString();
 
   // フォームデータを保存（エラー時の状態復元用、メールアドレスのみ）
   const currentFormData = {
@@ -233,41 +245,13 @@ export const signInActionWithState = async (
     };
   }
 
-  return redirect("/");
-};
+  // Validate returnUrl before redirecting
+  const validatedReturnUrl = validateReturnUrl(returnUrl);
 
-export const signInAction = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  const validatedFields = signInAndLoginFormSchema.safeParse({
-    email,
-    password,
-  });
-  if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "メールアドレスまたはパスワードが間違っています",
-    );
-  }
-
-  return redirect("/");
+  return {
+    success: "ログインに成功しました",
+    redirectUrl: validatedReturnUrl || "/",
+  };
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -458,6 +442,7 @@ const lineAuthSchema = z.object({
       },
     ),
   referralCode: z.string().optional().nullable(),
+  returnUrl: z.string().optional().nullable(),
 });
 
 // LINE認証処理のServer Action
@@ -465,6 +450,7 @@ export async function handleLineAuthAction(
   code: string,
   dateOfBirth?: string,
   referralCode?: string | null,
+  returnUrl?: string | null,
 ): Promise<
   { success: true; redirectTo: string } | { success: false; error: string }
 > {
@@ -474,6 +460,7 @@ export async function handleLineAuthAction(
       code,
       dateOfBirth,
       referralCode,
+      returnUrl,
     });
 
     if (!validationResult.success) {
@@ -487,7 +474,15 @@ export async function handleLineAuthAction(
       code: validatedCode,
       dateOfBirth: validatedDateOfBirth,
       referralCode: validatedReferralCode,
+      returnUrl: validatedReturnUrl,
     } = validationResult.data;
+
+    // リファラルコードが渡されていない場合はcookieから取得
+    let finalReferralCode = validatedReferralCode;
+    if (!finalReferralCode) {
+      const cookieReferralCode = await getCookie("referral_code");
+      finalReferralCode = cookieReferralCode || null;
+    }
 
     // 1. LINE APIでトークンと交換
     const clientId = process.env.NEXT_PUBLIC_LINE_CLIENT_ID;
@@ -652,8 +647,10 @@ export async function handleLineAuthAction(
       await getOrInitializeUserLevel(userId);
 
       // 紹介コード処理（新規ユーザーのみ）
-      if (validatedReferralCode && email) {
-        await handleReferralCode(validatedReferralCode, email);
+      if (finalReferralCode && email) {
+        await handleReferralCode(finalReferralCode, email);
+        // 紹介コード処理完了後、cookieを削除
+        await deleteCookie("referral_code");
       }
     }
 
@@ -686,15 +683,18 @@ export async function handleLineAuthAction(
     }
 
     // 7. リダイレクト先を返す
+    const safeReturnUrl = validateReturnUrl(validatedReturnUrl || undefined);
+
     if (isNewUser) {
       return {
         success: true,
         redirectTo: "/settings/profile?new=true",
       };
     }
+
     return {
       success: true,
-      redirectTo: "/?login=success",
+      redirectTo: safeReturnUrl || "/?login=success",
     };
   } catch (error) {
     return {

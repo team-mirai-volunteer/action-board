@@ -9,6 +9,8 @@ category_links:
         sort_no: 300
       - mission_slug: follow-anno-x
         sort_no: 350
+      - mission_slug: follow-teammirai-tiktok
+        sort_no: 400
       - mission_slug: follow-note
         sort_no: 500
   - category_slug: learn-about-teammirai
@@ -25,14 +27,18 @@ category_links:
         sort_no: 300
       - mission_slug: chat-idobata-ai
         sort_no: 400
+      - mission_slug: read-manifest
+        sort_no: 500
   - category_slug: join-community
     missions:
       - mission_slug: join-slack
         sort_no: 100
       - mission_slug: join-prefecture-openchat
         sort_no: 200
-      - mission_slug: join-purpose-openchat
-        sort_no: 250
+      - mission_slug: join-street-speech
+        sort_no: 210
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: join-event
         sort_no: 300
       - mission_slug: help-event-operation
@@ -41,6 +47,8 @@ category_links:
     missions:
       - mission_slug: x-like
         sort_no: 100
+      - mission_slug: tiktok-like
+        sort_no: 150
       - mission_slug: note-like
         sort_no: 200
       - mission_slug: instagram-like
@@ -61,8 +69,12 @@ category_links:
         sort_no: 100
       - mission_slug: join-street-speech
         sort_no: 200
+      - mission_slug: help-street-speech
+        sort_no: 220
       - mission_slug: put-up-poster
         sort_no: 300
+      - mission_slug: put-up-poster-on-board
+        sort_no: 400
       - mission_slug: join-event
         sort_no: 500
       - mission_slug: help-event-operation
@@ -75,17 +87,37 @@ category_links:
         sort_no: 110
       - mission_slug: quiz-teammirai-values
         sort_no: 120
-      - mission_slug: quiz-policy-intermediate
+      - mission_slug: quiz-policy-vision
         sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
+      - mission_slug: quiz-policy-step1
         sort_no: 300
+      - mission_slug: quiz-policy-step2
+        sort_no: 400
+      - mission_slug: quiz-policy-step3
+        sort_no: 500
+      - mission_slug: quiz-policy-100days
+        sort_no: 600
+      - mission_slug: "quiz-electionlaw-basic"
+        sort_no: 700
+      - mission_slug: "quiz-electionlaw-period"
+        sort_no: 710
+      - mission_slug: "quiz-electionlaw-electionday"
+        sort_no: 720
   - category_slug: improve-policies
     missions:
       - mission_slug: chat-idobata-ai
         sort_no: 100
-      - mission_slug: quiz-policy-intermediate
+      - mission_slug: quiz-policy-vision
         sort_no: 200
-      - mission_slug: quiz-policy-intermediate-2
+      - mission_slug: quiz-policy-step1
+        sort_no: 210
+      - mission_slug: quiz-policy-step2
+        sort_no: 220
+      - mission_slug: quiz-policy-step3
+        sort_no: 230
+      - mission_slug: quiz-policy-100days
+        sort_no: 240
+      - mission_slug: read-manifest
         sort_no: 300
       - mission_slug: propose-manifest-idobata
         sort_no: 400
@@ -125,3 +157,11 @@ category_links:
         sort_no: 200
       - mission_slug: github-pull-request
         sort_no: 300
+      - mission_slug: design-create
+        sort_no: 400
+  - category_slug: support-on-tiktok
+    missions:
+      - mission_slug: follow-teammirai-tiktok
+        sort_no: 100
+      - mission_slug: tiktok-like
+        sort_no: 200

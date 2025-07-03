@@ -77,13 +77,15 @@ export function calculateLevel(xp: number): number {
 export function calculateMissionXp(difficulty: number): number {
   switch (difficulty) {
     case 1:
-      return 50; // ★1 Easy
+      return 50; // ★1
     case 2:
-      return 100; // ★2 Normal
+      return 100; // ★2
     case 3:
-      return 200; // ★3 Hard
+      return 200; // ★3
     case 4:
-      return 400; // ★4 Super hard
+      return 400; // ★4
+    case 5:
+      return 800; // ★5
     default:
       return 50; // デフォルト（Easy相当）
   }

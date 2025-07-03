@@ -501,6 +501,167 @@ export type Database = {
         };
         Relationships: [];
       };
+      poster_activities: {
+        Row: {
+          address: string | null;
+          board_id: string | null;
+          city: string;
+          created_at: string;
+          id: string;
+          lat: number | null;
+          long: number | null;
+          mission_artifact_id: string;
+          name: string | null;
+          note: string | null;
+          number: string;
+          poster_count: number;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          board_id?: string | null;
+          city: string;
+          created_at?: string;
+          id?: string;
+          lat?: number | null;
+          long?: number | null;
+          mission_artifact_id: string;
+          name?: string | null;
+          note?: string | null;
+          number: string;
+          poster_count: number;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          address?: string | null;
+          board_id?: string | null;
+          city?: string;
+          created_at?: string;
+          id?: string;
+          lat?: number | null;
+          long?: number | null;
+          mission_artifact_id?: string;
+          name?: string | null;
+          note?: string | null;
+          number?: string;
+          poster_count?: number;
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "poster_activities_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "poster_activities_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      poster_board_status_history: {
+        Row: {
+          board_id: string;
+          created_at: string;
+          id: string;
+          new_status: Database["public"]["Enums"]["poster_board_status"];
+          note: string | null;
+          previous_status:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id: string;
+        };
+        Insert: {
+          board_id: string;
+          created_at?: string;
+          id?: string;
+          new_status: Database["public"]["Enums"]["poster_board_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id: string;
+        };
+        Update: {
+          board_id?: string;
+          created_at?: string;
+          id?: string;
+          new_status?: Database["public"]["Enums"]["poster_board_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "poster_board_status_history_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
+            referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      poster_boards: {
+        Row: {
+          address: string;
+          city: string;
+          created_at: string;
+          file_name: string | null;
+          id: string;
+          lat: number;
+          long: number;
+          name: string;
+          number: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number: number | null;
+          status: Database["public"]["Enums"]["poster_board_status"];
+          updated_at: string;
+        };
+        Insert: {
+          address: string;
+          city: string;
+          created_at?: string;
+          file_name?: string | null;
+          id?: string;
+          lat: number;
+          long: number;
+          name: string;
+          number?: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number?: number | null;
+          status?: Database["public"]["Enums"]["poster_board_status"];
+          updated_at?: string;
+        };
+        Update: {
+          address?: string;
+          city?: string;
+          created_at?: string;
+          file_name?: string | null;
+          id?: string;
+          lat?: number;
+          long?: number;
+          name?: string;
+          number?: string | null;
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number?: number | null;
+          status?: Database["public"]["Enums"]["poster_board_status"];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       posting_activities: {
         Row: {
           created_at: string;
@@ -610,28 +771,28 @@ export type Database = {
           address_prefecture: string;
           avatar_url: string | null;
           created_at: string;
+          github_username: string | null;
           id: string;
           name: string;
           x_username: string | null;
-          github_username: string | null;
         };
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
           created_at: string;
+          github_username?: string | null;
           id: string;
           name: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
           avatar_url?: string | null;
           created_at?: string;
+          github_username?: string | null;
           id?: string;
           name?: string;
           x_username?: string | null;
-          github_username?: string | null;
         };
         Relationships: [];
       };
@@ -747,6 +908,54 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      staging_poster_boards: {
+        Row: {
+          address: string;
+          city: string;
+          created_at: string;
+          file_name: string | null;
+          id: string | null;
+          lat: number;
+          long: number;
+          name: string;
+          number: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number: number | null;
+          status: Database["public"]["Enums"]["poster_board_status"];
+          updated_at: string;
+        };
+        Insert: {
+          address: string;
+          city: string;
+          created_at?: string;
+          file_name?: string | null;
+          id?: string | null;
+          lat: number;
+          long: number;
+          name: string;
+          number?: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number?: number | null;
+          status?: Database["public"]["Enums"]["poster_board_status"];
+          updated_at?: string;
+        };
+        Update: {
+          address?: string;
+          city?: string;
+          created_at?: string;
+          file_name?: string | null;
+          id?: string | null;
+          lat?: number;
+          long?: number;
+          name?: string;
+          number?: string | null;
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          row_number?: number | null;
+          status?: Database["public"]["Enums"]["poster_board_status"];
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       user_levels: {
         Row: {
@@ -1122,7 +1331,27 @@ export type Database = {
       };
     };
     Enums: {
-      [_ in never]: never;
+      poster_board_status:
+        | "not_yet"
+        | "reserved"
+        | "done"
+        | "error_wrong_place"
+        | "error_damaged"
+        | "error_wrong_poster"
+        | "other";
+      poster_prefecture_enum:
+        | "北海道"
+        | "宮城県"
+        | "埼玉県"
+        | "千葉県"
+        | "東京都"
+        | "神奈川県"
+        | "長野県"
+        | "愛知県"
+        | "大阪府"
+        | "兵庫県"
+        | "愛媛県"
+        | "福岡県";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1240,6 +1469,30 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      poster_board_status: [
+        "not_yet",
+        "reserved",
+        "done",
+        "error_wrong_place",
+        "error_damaged",
+        "error_wrong_poster",
+        "other",
+      ],
+      poster_prefecture_enum: [
+        "北海道",
+        "宮城県",
+        "埼玉県",
+        "千葉県",
+        "東京都",
+        "神奈川県",
+        "長野県",
+        "愛知県",
+        "大阪府",
+        "兵庫県",
+        "愛媛県",
+        "福岡県",
+      ],
+    },
   },
 } as const;

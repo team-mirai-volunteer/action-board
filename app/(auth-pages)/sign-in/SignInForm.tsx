@@ -8,16 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithLine } from "@/lib/auth/line-auth";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 
-export default function SignInForm() {
+interface SignInFormProps {
+  returnUrl?: string;
+}
+
+export default function SignInForm({ returnUrl }: SignInFormProps) {
+  const router = useRouter();
   const [state, formAction] = useActionState(signInActionWithState, null);
   const [isLineLoading, setIsLineLoading] = useState(false);
+
+  // 成功時のリダイレクト処理
+  useEffect(() => {
+    if (state?.success && state?.redirectUrl) {
+      router.push(state.redirectUrl);
+    }
+  }, [state, router]);
 
   const handleLINELogin = async () => {
     try {
       setIsLineLoading(true);
-      await signInWithLine();
+      await signInWithLine(returnUrl);
     } catch (error) {
       setIsLineLoading(false);
     }
@@ -50,6 +63,9 @@ export default function SignInForm() {
       <form action={formAction} className="flex flex-col gap-2 [&>input]:mb-3">
         {state?.error && (
           <FormMessage message={{ error: state.error }} className="mb-4" />
+        )}
+        {returnUrl && (
+          <input type="hidden" name="returnUrl" value={returnUrl} />
         )}
 
         <Label htmlFor="email">メールアドレス</Label>
