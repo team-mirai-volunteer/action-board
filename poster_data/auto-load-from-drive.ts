@@ -302,6 +302,12 @@ async function main() {
     `Mode: ${validateAll ? "Validate all files after each load" : "Fast mode (no validation)"}\n`,
   );
 
+  // Clean up existing data directories before processing
+  console.log("🧹 Cleaning up existing data directories...");
+  await rm(SUCCESS_DATA_DIR, { recursive: true, force: true });
+  await rm(BROKEN_DATA_DIR, { recursive: true, force: true });
+  console.log("✅ Cleanup complete\n");
+
   // Setup directories
   await ensureDir(BROKEN_DATA_DIR);
   await ensureDir(TEMP_DIR);
