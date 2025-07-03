@@ -138,7 +138,7 @@ export default async function MissionsByCategory({
               key={category.category_id}
               className="
                 relative               /* オーバーレイ配置のため */
-                mission-section-breakout
+                w-screen
                 md:pl-10
                 py-5
               "
