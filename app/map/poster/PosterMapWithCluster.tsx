@@ -26,6 +26,11 @@ L.Icon.Default.mergeOptions({
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
+type PosterBoardWithOffset = PosterBoard & {
+  offsetLat: number;
+  offsetLong: number;
+};
+
 interface PosterMapWithClusterProps {
   boards: PosterBoard[];
   onBoardClick: (board: PosterBoard) => void;
@@ -62,6 +67,30 @@ function createMarkerIcon(status: BoardStatus) {
     className: "custom-marker",
     iconSize: [20, 20],
     iconAnchor: [10, 10],
+  });
+}
+
+function offsetDuplicateCoordinates(
+  boards: PosterBoard[],
+): PosterBoardWithOffset[] {
+  const coordinateMap = new Map<string, number>();
+
+  return boards.map((board) => {
+    const coordKey = `${board.lat.toFixed(6)},${board.long.toFixed(6)}`;
+    const duplicateCount = coordinateMap.get(coordKey) || 0;
+    coordinateMap.set(coordKey, duplicateCount + 1);
+
+    const offsetDistance = 0.0001;
+    const angle = duplicateCount * 60 * (Math.PI / 180); // 60 degrees apart
+
+    return {
+      ...board,
+      offsetLat:
+        board.lat + (duplicateCount > 0 ? Math.cos(angle) * offsetDistance : 0),
+      offsetLong:
+        board.long +
+        (duplicateCount > 0 ? Math.sin(angle) * offsetDistance : 0),
+    };
   });
 }
 
@@ -353,10 +382,12 @@ export default function PosterMapWithCluster({
     // Clear existing markers
     markerClusterRef.current.clearLayers();
 
+    const boardsWithOffset = offsetDuplicateCoordinates(boards);
+
     // Add markers for each board
-    for (const board of boards) {
+    for (const board of boardsWithOffset) {
       if (board.lat && board.long) {
-        const marker = L.marker([board.lat, board.long], {
+        const marker = L.marker([board.offsetLat, board.offsetLong], {
           icon: createMarkerIcon(board.status),
         })
           .bindTooltip(
