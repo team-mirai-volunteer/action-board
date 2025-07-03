@@ -14,13 +14,15 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
     
-    await expect(signedInPage.locator("section").filter({ hasText: /メトリクス|統計|数値/ }).or(signedInPage.locator('[class*="metric"]')).first()).toBeVisible({ timeout: 5000 }).catch(() => {
-      console.log("メトリクス要素が見つかりませんでした（オプション要素）");
-    });
-
-    await expect(signedInPage.getByText("ランキング").or(signedInPage.getByText("順位")).first()).toBeVisible({ timeout: 5000 }).catch(() => {
-      console.log("ランキング要素が見つかりませんでした（オプション要素）");
-    });
+    await expect(signedInPage.getByText("みんなで達成したアクション数")).toBeVisible();
+    
+    await expect(signedInPage.getByText("アクションボード参加者")).toBeVisible();
+    
+    await expect(signedInPage.getByText("アクションリーダートップ5")).toBeVisible();
+    
+    await expect(signedInPage.getByText("重要ミッション")).toBeVisible();
+    
+    await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
 
     await signedInPage.getByTestId("usermenubutton").click();
     await signedInPage.getByText("アカウント").click();
