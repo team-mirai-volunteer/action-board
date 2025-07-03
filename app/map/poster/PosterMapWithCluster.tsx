@@ -80,7 +80,7 @@ function offsetDuplicateCoordinates(
     const duplicateCount = coordinateMap.get(coordKey) || 0;
     coordinateMap.set(coordKey, duplicateCount + 1);
 
-    const offsetDistance = 0.0001;
+    const offsetDistance = 0.00005;
     const angle = duplicateCount * 60 * (Math.PI / 180); // 60 degrees apart
 
     return {
