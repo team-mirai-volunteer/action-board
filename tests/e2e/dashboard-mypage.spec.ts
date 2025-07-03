@@ -63,12 +63,30 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
 
     await Promise.race([
       page.waitForURL("/", { timeout: 15000 }),
+      page.waitForURL(/\/settings\/profile/, { timeout: 15000 }),
       page.locator('[role="alert"]').waitFor({ timeout: 15000 }),
     ]);
 
-    if (!page.url().endsWith("/")) {
+    if (await page.locator('[role="alert"]').isVisible()) {
+      console.log("Login failed with error");
       return;
     }
+
+    if (page.url().includes("/settings/profile")) {
+      console.log("New user redirected to profile setup, completing profile...");
+      
+      await expect(page.getByText("プロフィール設定")).toBeVisible();
+      
+      await page.fill('input[name="name"]', "テストユーザー");
+      await page.selectOption('[name="address_prefecture"]', "東京都");
+      await page.fill('input[name="postcode"]', "1000001");
+      
+      await page.getByRole("button", { name: "登録する" }).click();
+      
+      await page.waitForURL("/", { timeout: 10000 });
+    }
+
+    console.log("Successfully reached homepage after login/profile setup");
 
     await assertAuthState(page, true);
 
