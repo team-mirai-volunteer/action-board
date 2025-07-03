@@ -120,4 +120,13 @@
   .mission-content a {
     @apply text-primary underline transition-colors duration-200;
   }
+
+  .custom-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
