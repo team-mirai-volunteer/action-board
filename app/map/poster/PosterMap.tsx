@@ -83,23 +83,43 @@ export default function PosterMap({
 
   // Fetch current user and board info
   useEffect(() => {
+    let isMounted = true;
     const fetchUserAndBoardInfo = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id);
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-      if (boards.length > 0) {
-        const boardIds = boards.map((b) => b.id);
+        if (userError) {
+          console.error("ユーザー情報の取得に失敗しました:", userError);
+          return;
+        }
 
-        // Get latest editor info for all boards
-        const latestEditorInfo = await getBoardsLatestEditor(boardIds);
-        setBoardsLatestEditor(latestEditorInfo);
+        if (isMounted) {
+          setCurrentUserId(user?.id);
+        }
+
+        if (boards.length > 0 && isMounted) {
+          const boardIds = boards.map((b) => b.id);
+
+          // Get latest editor info for all boards
+          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
+          if (isMounted) {
+            setBoardsLatestEditor(latestEditorInfo);
+          }
+        }
+      } catch (error) {
+        console.error("データの取得中にエラーが発生しました:", error);
       }
     };
 
     fetchUserAndBoardInfo();
+
+    return () => {
+      isMounted = false;
+    };
   }, [boards]);
 
   // Use filter hook

@@ -17,16 +17,18 @@ interface UsePosterBoardFilterProps {
   boardsWithLatestEditor?: Map<string, string | null>; // boardId -> userId of latest editor
 }
 
+const ALL_STATUSES: FilterStatus[] = [
+  "not_yet",
+  "reserved",
+  "done",
+  "error_wrong_place",
+  "error_damaged",
+  "error_wrong_poster",
+  "other",
+];
+
 const defaultFilterState: PosterBoardFilterState = {
-  statuses: new Set<FilterStatus>([
-    "not_yet",
-    "reserved",
-    "done",
-    "error_wrong_place",
-    "error_damaged",
-    "error_wrong_poster",
-    "other",
-  ]),
+  statuses: new Set<FilterStatus>(ALL_STATUSES),
   showOnlyMine: false,
 };
 
@@ -63,15 +65,7 @@ export function usePosterBoardFilter({
 
   const selectAll = useCallback(() => {
     setFilterState((prev) => ({
-      statuses: new Set<FilterStatus>([
-        "not_yet",
-        "reserved",
-        "done",
-        "error_wrong_place",
-        "error_damaged",
-        "error_wrong_poster",
-        "other",
-      ]),
+      statuses: new Set<FilterStatus>(ALL_STATUSES),
       showOnlyMine: prev.showOnlyMine, // Preserve this setting
     }));
   }, []);
