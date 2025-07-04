@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./poster-map.css";
+import { MAX_ZOOM } from "@/lib/constants";
 import {
   type PosterPrefectureKey,
   getPrefectureDefaultZoom,
@@ -269,7 +270,7 @@ export default function PosterMapWithCluster({
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
         attribution:
           '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: 18,
+        maxZoom: MAX_ZOOM,
       }).addTo(mapRef.current);
 
       // Initialize marker cluster group
@@ -432,8 +433,10 @@ export default function PosterMapWithCluster({
   // 現在地取得ボタンのハンドラ
   const handleLocate = () => {
     if (currentPos && mapRef.current) {
-      const currentZoom = mapRef.current.getZoom();
-      mapRef.current.setView(currentPos, currentZoom);
+      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+        animate: true,
+        duration: 0.8,
+      });
     }
   };
 
