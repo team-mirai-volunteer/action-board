@@ -2,7 +2,6 @@
 
 import { achieveMissionAction } from "@/app/missions/[id]/actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -329,52 +328,42 @@ export default function PrefecturePosterMapClient({
         />
       </div>
 
-      {/* Stats - コンパクト化 */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
-        <div className="rounded-lg border bg-card p-3 md:p-4">
-          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
-            <span className="text-xs text-muted-foreground md:order-2">
-              総掲示板数
-            </span>
-            <span className="text-xl font-bold md:order-1 md:text-2xl">
-              {totalCount}
-            </span>
+      {/* 統計情報とステータス - 統合版 */}
+      <div className="rounded-lg border bg-card p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 主要統計 */}
+          <div className="flex items-baseline gap-3">
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold">{totalCount}</span>
+              <span className="text-xs text-muted-foreground">総数</span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-green-600">
+                {completedCount}
+              </span>
+              <span className="text-xs text-muted-foreground">完了</span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-blue-600">
+                {completionRate}%
+              </span>
+              <span className="text-xs text-muted-foreground">達成率</span>
+            </div>
           </div>
-        </div>
-        <div className="rounded-lg border bg-card p-3 md:p-4">
-          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
-            <span className="text-xs text-muted-foreground md:order-2">
-              貼付完了
-            </span>
-            <span className="text-xl font-bold text-green-600 md:order-1 md:text-2xl">
-              {completedCount}
-            </span>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card p-3 md:p-4">
-          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
-            <span className="text-xs text-muted-foreground md:order-2">
-              達成率
-            </span>
-            <span className="text-xl font-bold text-blue-600 md:order-1 md:text-2xl">
-              {completionRate}%
-            </span>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card p-3 md:p-4 col-span-2 md:col-span-1">
-          <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center md:justify-start">
+
+          {/* 区切り線 */}
+          <div className="hidden sm:block h-6 w-px bg-border" />
+
+          {/* ステータス別内訳 */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
             {Object.entries(statusConfig).map(([status, config]) => {
               const count = stats[status as BoardStatus] || 0;
-              if (count === 0) return null;
               return (
                 <div key={status} className="flex items-center gap-1">
-                  <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                  <div className={`h-2.5 w-2.5 rounded-full ${config.color}`} />
                   <span className="text-xs">
-                    <span className="hidden sm:inline">{config.label}:</span>
-                    <span className="sm:hidden">
-                      {config.label.slice(0, 2)}:
-                    </span>
-                    {count}
+                    {config.label}
+                    <span className="ml-0.5 font-semibold">{count}</span>
                   </span>
                 </div>
               );
@@ -382,23 +371,6 @@ export default function PrefecturePosterMapClient({
           </div>
         </div>
       </div>
-
-      {/* Status Legend - コンパクト化 */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">ステータス凡例</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-            {Object.entries(statusConfig).map(([status, config]) => (
-              <div key={status} className="flex items-center gap-1.5">
-                <div className={`h-2.5 w-2.5 rounded-full ${config.color}`} />
-                <span className="text-xs">{config.label}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Update Dialog */}
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
