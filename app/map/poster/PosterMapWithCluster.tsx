@@ -2,7 +2,13 @@
 
 import L from "leaflet";
 import "leaflet.markercluster";
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -250,285 +256,310 @@ function createClusterIcon(cluster: L.MarkerCluster) {
   });
 }
 
-export default function PosterMapWithCluster({
-  boards,
-  onBoardClick,
-  center,
-  prefectureKey,
-}: PosterMapWithClusterProps) {
-  const mapRef = useRef<L.Map | null>(null);
-  const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
-  const currentMarkerRef = useRef<L.CircleMarker | null>(null);
-  const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
-  const [boardsLatestEditor, setBoardsLatestEditor] =
-    useState<Map<string, string | null>>();
-
-  // Fetch current user and board info
-  useEffect(() => {
-    let isMounted = true;
-    const fetchUserAndBoardInfo = async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) {
-          console.error("ユーザー情報の取得に失敗しました:", userError);
-          return;
-        }
-
-        if (isMounted) {
-          setCurrentUserId(user?.id);
-        }
-
-        if (boards.length > 0 && isMounted) {
-          const boardIds = boards.map((b) => b.id);
-
-          // Get latest editor info for all boards
-          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
-          if (isMounted) {
-            setBoardsLatestEditor(latestEditorInfo);
-          }
-        }
-      } catch (error) {
-        console.error("データの取得中にエラーが発生しました:", error);
-      }
-    };
-
-    fetchUserAndBoardInfo();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [boards]);
-
-  // Use filter hook
-  const {
-    filterState,
-    filteredBoards,
-    toggleStatus,
-    toggleShowOnlyMine,
-    selectAll,
-    deselectAll,
-    activeFilterCount,
-  } = usePosterBoardFilter({
-    boards,
-    currentUserId,
-    boardsWithLatestEditor: boardsLatestEditor,
-  });
-
-  useEffect(() => {
-    // Get zoom level for the prefecture
-    const zoomLevel = prefectureKey
-      ? getPrefectureDefaultZoom(prefectureKey)
-      : 12;
-
-    if (!mapRef.current) {
-      // Initialize map with calculated zoom
-      mapRef.current = L.map("poster-map-cluster").setView(center, zoomLevel);
-
-      // Add tile layer (using GSI tiles)
-      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-        attribution:
-          '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: MAX_ZOOM,
-      }).addTo(mapRef.current);
-
-      // Initialize marker cluster group
-      markerClusterRef.current = L.markerClusterGroup({
-        maxClusterRadius: 50,
-        iconCreateFunction: createClusterIcon,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        disableClusteringAtZoom: 16, // Disable clustering at high zoom levels
-      });
-
-      // Add cluster events for tooltips
-      markerClusterRef.current.on("clustermouseover", (e) => {
-        const cluster = e.propagatedFrom;
-        const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
-        const statusCounts: Record<BoardStatus, number> = {
-          not_yet: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        };
-
-        for (const marker of markers) {
-          const board = marker.boardData;
-          if (board) {
-            statusCounts[board.status]++;
-          }
-        }
-
-        const statusLabels: Record<BoardStatus, string> = {
-          not_yet: "未実施",
-          reserved: "予約済み",
-          done: "完了",
-          error_wrong_place: "場所違い",
-          error_damaged: "破損",
-          error_wrong_poster: "ポスター違い",
-          other: "その他",
-        };
-
-        const tooltipContent = Object.entries(statusCounts)
-          .filter(([, count]) => count > 0)
-          .map(
-            ([status, count]) =>
-              `${statusLabels[status as BoardStatus]}: ${count}`,
-          )
-          .join("<br>");
-
-        cluster
-          .bindTooltip(
-            `掲示板数: ${cluster.getChildCount()}<br>${tooltipContent}`,
-            {
-              permanent: false,
-              direction: "top",
-              className: "cluster-tooltip",
-            },
-          )
-          .openTooltip();
-      });
-
-      markerClusterRef.current.on("clustermouseout", (e) => {
-        const cluster = e.propagatedFrom;
-        cluster.closeTooltip();
-      });
-
-      mapRef.current.addLayer(markerClusterRef.current as unknown as L.Layer);
-    }
-
-    // Update map view when center changes
-    if (mapRef.current) {
-      mapRef.current.setView(center, zoomLevel);
-    }
-  }, [center, prefectureKey]);
-
-  useEffect(() => {
-    if (!markerClusterRef.current) return;
-
-    // Clear existing markers
-    markerClusterRef.current.clearLayers();
-
-    // Add markers for each board (use filtered boards)
-    for (const board of filteredBoards) {
-      if (board.lat && board.long) {
-        const marker = L.marker([board.lat, board.long], {
-          icon: createMarkerIcon(board.status),
-        })
-          .bindTooltip(
-            `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}`,
-            { permanent: false, direction: "top" },
-          )
-          .on("click", () => onBoardClick(board));
-
-        // Store board data in marker for cluster icon calculation
-        (marker as MarkerWithBoard).boardData = board;
-
-        markerClusterRef.current.addLayer(marker);
-      }
-    }
-  }, [filteredBoards, onBoardClick]);
-
-  // 画面を開いた瞬間から現在地をwatchし、移動に追従
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      return;
-    }
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
-      },
-      (error) => {
-        console.warn("位置情報の取得に失敗しました:", error.message);
-      },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
-    );
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, []);
-
-  // 現在地マーカーの管理
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    // 既存の現在地マーカーを削除
-    if (currentMarkerRef.current) {
-      currentMarkerRef.current.remove();
-      currentMarkerRef.current = null;
-    }
-
-    // 現在地が取得できていればマーカーを追加
-    if (currentPos) {
-      const marker = L.circleMarker(currentPos, {
-        radius: 12,
-        color: "#2563eb",
-        fillColor: "#60a5fa",
-        fillOpacity: 0.7,
-        weight: 3,
-      })
-        .addTo(mapRef.current)
-        .bindTooltip("あなたの現在地", { permanent: false, direction: "top" });
-
-      currentMarkerRef.current = marker;
-    }
-  }, [currentPos]);
-
-  // Cleanup
-  useEffect(() => {
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        markerClusterRef.current = null;
-      }
-    };
-  }, []);
-
-  // 現在地取得ボタンのハンドラ
-  const handleLocate = () => {
-    if (currentPos && mapRef.current) {
-      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
-        animate: true,
-        duration: 0.8,
-      });
-    }
-  };
-
-  return (
-    <div className="relative h-[600px] w-full z-0">
-      <div id="poster-map-cluster" className="h-full w-full" />
-      <PosterBoardFilter
-        filterState={filterState}
-        onToggleStatus={toggleStatus}
-        onToggleShowOnlyMine={toggleShowOnlyMine}
-        onSelectAll={selectAll}
-        onDeselectAll={deselectAll}
-        activeFilterCount={activeFilterCount}
-      />
-      <button
-        type="button"
-        onClick={handleLocate}
-        disabled={!currentPos}
-        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
-          currentPos
-            ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
-            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-        }`}
-        style={{ zIndex: 1000 }}
-        aria-label="現在地を表示"
-      >
-        📍 現在地
-      </button>
-    </div>
-  );
+interface MapHandle {
+  flyTo: (latlng: [number, number], zoom?: number) => void;
 }
+
+const PosterMapWithCluster = forwardRef<MapHandle, PosterMapWithClusterProps>(
+  ({ boards, onBoardClick, center, prefectureKey }, ref) => {
+    const mapRef = useRef<L.Map | null>(null);
+    const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
+    const currentMarkerRef = useRef<L.CircleMarker | null>(null);
+    const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+    const [boardsLatestEditor, setBoardsLatestEditor] =
+      useState<Map<string, string | null>>();
+
+    // Expose map methods to parent component
+    useImperativeHandle(
+      ref,
+      () => ({
+        flyTo: (latlng: [number, number], zoom?: number) => {
+          if (mapRef.current) {
+            mapRef.current.flyTo(latlng, zoom || 18, {
+              animate: true,
+              duration: 1.0,
+            });
+          }
+        },
+      }),
+      [],
+    );
+
+    // Fetch current user and board info
+    useEffect(() => {
+      let isMounted = true;
+      const fetchUserAndBoardInfo = async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+
+          if (userError) {
+            console.error("ユーザー情報の取得に失敗しました:", userError);
+            return;
+          }
+
+          if (isMounted) {
+            setCurrentUserId(user?.id);
+          }
+
+          if (boards.length > 0 && isMounted) {
+            const boardIds = boards.map((b) => b.id);
+
+            // Get latest editor info for all boards
+            const latestEditorInfo = await getBoardsLatestEditor(boardIds);
+            if (isMounted) {
+              setBoardsLatestEditor(latestEditorInfo);
+            }
+          }
+        } catch (error) {
+          console.error("データの取得中にエラーが発生しました:", error);
+        }
+      };
+
+      fetchUserAndBoardInfo();
+
+      return () => {
+        isMounted = false;
+      };
+    }, [boards]);
+
+    // Use filter hook
+    const {
+      filterState,
+      filteredBoards,
+      toggleStatus,
+      toggleShowOnlyMine,
+      selectAll,
+      deselectAll,
+      activeFilterCount,
+    } = usePosterBoardFilter({
+      boards,
+      currentUserId,
+      boardsWithLatestEditor: boardsLatestEditor,
+    });
+
+    useEffect(() => {
+      // Get zoom level for the prefecture
+      const zoomLevel = prefectureKey
+        ? getPrefectureDefaultZoom(prefectureKey)
+        : 12;
+
+      if (!mapRef.current) {
+        // Initialize map with calculated zoom
+        mapRef.current = L.map("poster-map-cluster").setView(center, zoomLevel);
+
+        // Add tile layer (using GSI tiles)
+        L.tileLayer(
+          "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
+            maxZoom: MAX_ZOOM,
+          },
+        ).addTo(mapRef.current);
+
+        // Initialize marker cluster group
+        markerClusterRef.current = L.markerClusterGroup({
+          maxClusterRadius: 50,
+          iconCreateFunction: createClusterIcon,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          disableClusteringAtZoom: 16, // Disable clustering at high zoom levels
+        });
+
+        // Add cluster events for tooltips
+        markerClusterRef.current.on("clustermouseover", (e) => {
+          const cluster = e.propagatedFrom;
+          const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
+          const statusCounts: Record<BoardStatus, number> = {
+            not_yet: 0,
+            reserved: 0,
+            done: 0,
+            error_wrong_place: 0,
+            error_damaged: 0,
+            error_wrong_poster: 0,
+            other: 0,
+          };
+
+          for (const marker of markers) {
+            const board = marker.boardData;
+            if (board) {
+              statusCounts[board.status]++;
+            }
+          }
+
+          const statusLabels: Record<BoardStatus, string> = {
+            not_yet: "未実施",
+            reserved: "予約済み",
+            done: "完了",
+            error_wrong_place: "場所違い",
+            error_damaged: "破損",
+            error_wrong_poster: "ポスター違い",
+            other: "その他",
+          };
+
+          const tooltipContent = Object.entries(statusCounts)
+            .filter(([, count]) => count > 0)
+            .map(
+              ([status, count]) =>
+                `${statusLabels[status as BoardStatus]}: ${count}`,
+            )
+            .join("<br>");
+
+          cluster
+            .bindTooltip(
+              `掲示板数: ${cluster.getChildCount()}<br>${tooltipContent}`,
+              {
+                permanent: false,
+                direction: "top",
+                className: "cluster-tooltip",
+              },
+            )
+            .openTooltip();
+        });
+
+        markerClusterRef.current.on("clustermouseout", (e) => {
+          const cluster = e.propagatedFrom;
+          cluster.closeTooltip();
+        });
+
+        mapRef.current.addLayer(markerClusterRef.current as unknown as L.Layer);
+      }
+
+      // Update map view when center changes
+      if (mapRef.current) {
+        mapRef.current.setView(center, zoomLevel);
+      }
+    }, [center, prefectureKey]);
+
+    useEffect(() => {
+      if (!markerClusterRef.current) return;
+
+      // Clear existing markers
+      markerClusterRef.current.clearLayers();
+
+      // Add markers for each board (use filtered boards)
+      for (const board of filteredBoards) {
+        if (board.lat && board.long) {
+          const marker = L.marker([board.lat, board.long], {
+            icon: createMarkerIcon(board.status),
+          })
+            .bindTooltip(
+              `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}`,
+              { permanent: false, direction: "top" },
+            )
+            .on("click", () => onBoardClick(board));
+
+          // Store board data in marker for cluster icon calculation
+          (marker as MarkerWithBoard).boardData = board;
+
+          markerClusterRef.current.addLayer(marker);
+        }
+      }
+    }, [filteredBoards, onBoardClick]);
+
+    // 画面を開いた瞬間から現在地をwatchし、移動に追従
+    useEffect(() => {
+      if (!navigator.geolocation) {
+        return;
+      }
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
+        },
+        (error) => {
+          console.warn("位置情報の取得に失敗しました:", error.message);
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+      );
+      return () => {
+        navigator.geolocation.clearWatch(watchId);
+      };
+    }, []);
+
+    // 現在地マーカーの管理
+    useEffect(() => {
+      if (!mapRef.current) return;
+
+      // 既存の現在地マーカーを削除
+      if (currentMarkerRef.current) {
+        currentMarkerRef.current.remove();
+        currentMarkerRef.current = null;
+      }
+
+      // 現在地が取得できていればマーカーを追加
+      if (currentPos) {
+        const marker = L.circleMarker(currentPos, {
+          radius: 12,
+          color: "#2563eb",
+          fillColor: "#60a5fa",
+          fillOpacity: 0.7,
+          weight: 3,
+        })
+          .addTo(mapRef.current)
+          .bindTooltip("あなたの現在地", {
+            permanent: false,
+            direction: "top",
+          });
+
+        currentMarkerRef.current = marker;
+      }
+    }, [currentPos]);
+
+    // Cleanup
+    useEffect(() => {
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.remove();
+          mapRef.current = null;
+          markerClusterRef.current = null;
+        }
+      };
+    }, []);
+
+    // 現在地取得ボタンのハンドラ
+    const handleLocate = () => {
+      if (currentPos && mapRef.current) {
+        mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+          animate: true,
+          duration: 0.8,
+        });
+      }
+    };
+
+    return (
+      <div className="relative h-[600px] w-full z-0">
+        <div id="poster-map-cluster" className="h-full w-full" />
+        <PosterBoardFilter
+          filterState={filterState}
+          onToggleStatus={toggleStatus}
+          onToggleShowOnlyMine={toggleShowOnlyMine}
+          onSelectAll={selectAll}
+          onDeselectAll={deselectAll}
+          activeFilterCount={activeFilterCount}
+        />
+        <button
+          type="button"
+          onClick={handleLocate}
+          disabled={!currentPos}
+          className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+            currentPos
+              ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
+              : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+          }`}
+          style={{ zIndex: 1000 }}
+          aria-label="現在地を表示"
+        >
+          📍 現在地
+        </button>
+      </div>
+    );
+  },
+);
+
+export default PosterMapWithCluster;
