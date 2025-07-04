@@ -369,9 +369,11 @@ export default function PrefecturePosterMapClient({
               const count = stats[status as BoardStatus] || 0;
               return (
                 <div key={status} className="flex items-center gap-1">
-                  <div className={`h-2.5 w-2.5 rounded-full ${config.color}`} />
-                  <span className="text-xs">
-                    {config.label}
+                  <div
+                    className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${config.color}`}
+                  />
+                  <span className="text-xs whitespace-nowrap">
+                    {config.shortLabel || config.label}
                     <span className="ml-0.5 font-semibold">{count}</span>
                   </span>
                 </div>
