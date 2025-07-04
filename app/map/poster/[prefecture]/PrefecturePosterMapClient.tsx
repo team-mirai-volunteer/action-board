@@ -449,17 +449,12 @@ export default function PrefecturePosterMapClient({
                 <div className="space-y-2">
                   {history.map((item) => (
                     <div key={item.id} className="text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {item.user?.name || "不明なユーザー"}
-                        </span>
-                        <span className="text-muted-foreground">
-                          {statusConfig[item.previous_status as BoardStatus]
-                            ?.label || item.previous_status}
-                          →
-                          {statusConfig[item.new_status as BoardStatus]
-                            ?.label || item.new_status}
-                        </span>
+                      <div className="text-muted-foreground">
+                        {statusConfig[item.previous_status as BoardStatus]
+                          ?.label || item.previous_status}
+                        →
+                        {statusConfig[item.new_status as BoardStatus]?.label ||
+                          item.new_status}
                       </div>
                       <div className="text-muted-foreground text-xs">
                         {new Date(item.created_at).toLocaleString("ja-JP")}
