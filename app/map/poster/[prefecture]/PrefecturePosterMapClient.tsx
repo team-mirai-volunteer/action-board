@@ -589,15 +589,13 @@ export default function PrefecturePosterMapClient({
 
             <div className="space-y-2">
               <h4 className="font-semibold">マーカーの色の意味</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="space-y-2 text-sm">
                 {Object.entries(statusConfig).map(([status, config]) => (
-                  <div key={status} className="flex items-center gap-2">
+                  <div key={status} className="flex items-start gap-2">
                     <div
-                      className={`h-3 w-3 rounded-full flex-shrink-0 ${config.color}`}
+                      className={`h-3 w-3 rounded-full flex-shrink-0 mt-0.5 ${config.color}`}
                     />
-                    <span className="text-xs">
-                      {config.shortLabel || config.label}
-                    </span>
+                    <span className="text-xs">{config.label}</span>
                   </div>
                 ))}
               </div>
