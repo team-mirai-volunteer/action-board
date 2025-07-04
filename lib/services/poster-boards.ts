@@ -185,3 +185,49 @@ export async function getPrefecturesWithBoards() {
 
   return uniquePrefectures;
 }
+
+// Get the user IDs who made the latest status change for each board
+export async function getBoardsLatestEditor(boardIds: string[]) {
+  const supabase = createClient();
+  const editorMap = new Map<string, string | null>();
+
+  // Process in batches to avoid query limits
+  const batchSize = 100;
+  for (let i = 0; i < boardIds.length; i += batchSize) {
+    const batch = boardIds.slice(i, i + batchSize);
+
+    const { data, error } = await supabase
+      .from("poster_board_status_history")
+      .select("board_id, user_id, created_at")
+      .in("board_id", batch)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching latest editor info:", error);
+      continue;
+    }
+
+    // Group by board_id and get the latest edit for each
+    const latestEdits = new Map<
+      string,
+      { user_id: string; created_at: string }
+    >();
+
+    for (const record of data || []) {
+      const existing = latestEdits.get(record.board_id);
+      if (!existing || record.created_at > existing.created_at) {
+        latestEdits.set(record.board_id, {
+          user_id: record.user_id,
+          created_at: record.created_at,
+        });
+      }
+    }
+
+    // Add to the result map
+    for (const [boardId, { user_id }] of Array.from(latestEdits.entries())) {
+      editorMap.set(boardId, user_id);
+    }
+  }
+
+  return editorMap;
+}

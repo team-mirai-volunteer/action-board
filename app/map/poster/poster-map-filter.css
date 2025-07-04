@@ -1,0 +1,82 @@
+/* Mobile responsive styles for poster board filter */
+@media (max-width: 640px) {
+  /* Adjust filter position on mobile */
+  .poster-filter-mobile {
+    left: auto !important;
+    right: 0.5rem !important;
+    top: 0.5rem !important;
+    max-width: 150px !important; /* Compact width */
+    z-index: 1001 !important; /* Ensure it's above map controls */
+  }
+
+  /* Expanded state on mobile */
+  .poster-filter-mobile[data-expanded="true"] {
+    max-width: 280px !important; /* Wider when expanded */
+    max-height: calc(100vh - 120px);
+  }
+
+  /* Make the filter toggle button more compact on mobile */
+  .poster-filter-mobile > button:first-child {
+    padding: 0.5rem 0.75rem !important;
+    min-height: 32px;
+  }
+
+  .poster-filter-mobile > button:first-child span {
+    font-size: 0.75rem !important;
+  }
+
+  .poster-filter-mobile > button:first-child svg {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    flex-shrink: 0;
+  }
+
+  /* Reduce padding in expanded content on mobile for better space usage */
+  .poster-filter-mobile .p-3 {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Smooth transitions */
+.filter-panel-transition {
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Transition for mobile filter expansion */
+.poster-filter-mobile {
+  transition: max-width 0.3s ease-in-out;
+}
+
+/* Prevent shape change on hover for toggle button */
+.poster-filter-mobile > button:first-child:hover {
+  transform: none !important;
+}
+
+/* Ensure consistent button layout and border radius for toggle button only */
+.poster-filter-mobile > button:first-child,
+.poster-filter-mobile > button:first-child:hover {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  white-space: nowrap !important;
+  border-radius: inherit !important;
+}
+
+/* Custom scrollbar for filter content */
+.filter-content-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-content-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.filter-content-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.filter-content-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
