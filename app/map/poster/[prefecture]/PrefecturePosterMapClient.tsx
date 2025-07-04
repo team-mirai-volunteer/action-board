@@ -317,8 +317,9 @@ export default function PrefecturePosterMapClient({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 sm:hidden"
+            className="h-8 w-8 p-0"
             onClick={() => setShowHelpDialog(true)}
+            title="使い方を見る"
           >
             <HelpCircle className="h-4 w-4" />
           </Button>
