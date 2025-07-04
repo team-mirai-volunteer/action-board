@@ -342,19 +342,19 @@ export default function PrefecturePosterMapClient({
       <div className="rounded-lg border bg-card p-3">
         <div className="flex flex-wrap items-center gap-3">
           {/* 主要統計 */}
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-baseline gap-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold">{totalCount}</span>
+              <span className="text-2xl font-bold">{totalCount}</span>
               <span className="text-xs text-muted-foreground">総数</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-green-600">
+              <span className="text-2xl font-bold text-green-600">
                 {completedCount}
               </span>
               <span className="text-xs text-muted-foreground">完了</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-blue-600">
+              <span className="text-2xl font-bold text-blue-600">
                 {completionRate}%
               </span>
               <span className="text-xs text-muted-foreground">達成率</span>
