@@ -4,10 +4,15 @@ import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./poster-map.css";
+import "./poster-map-filter.css";
+import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
 import {
   type PosterPrefectureKey,
   getPrefectureDefaultZoom,
 } from "@/lib/constants/poster-prefectures";
+import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
+import { getBoardsLatestEditor } from "@/lib/services/poster-boards";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -72,6 +77,65 @@ export default function PosterMap({
   const markersRef = useRef<L.Marker[]>([]);
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<L.Marker | L.CircleMarker | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+  const [boardsLatestEditor, setBoardsLatestEditor] =
+    useState<Map<string, string | null>>();
+
+  // Fetch current user and board info
+  useEffect(() => {
+    let isMounted = true;
+    const fetchUserAndBoardInfo = async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          console.error("ユーザー情報の取得に失敗しました:", userError);
+          return;
+        }
+
+        if (isMounted) {
+          setCurrentUserId(user?.id);
+        }
+
+        if (boards.length > 0 && isMounted) {
+          const boardIds = boards.map((b) => b.id);
+
+          // Get latest editor info for all boards
+          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
+          if (isMounted) {
+            setBoardsLatestEditor(latestEditorInfo);
+          }
+        }
+      } catch (error) {
+        console.error("データの取得中にエラーが発生しました:", error);
+      }
+    };
+
+    fetchUserAndBoardInfo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [boards]);
+
+  // Use filter hook
+  const {
+    filterState,
+    filteredBoards,
+    toggleStatus,
+    toggleShowOnlyMine,
+    selectAll,
+    deselectAll,
+    activeFilterCount,
+  } = usePosterBoardFilter({
+    boards,
+    currentUserId,
+    boardsWithLatestEditor: boardsLatestEditor,
+  });
 
   useEffect(() => {
     // Get zoom level for the prefecture
@@ -104,8 +168,8 @@ export default function PosterMap({
     }
     markersRef.current = [];
 
-    // Add markers for each board
-    for (const board of boards) {
+    // Add markers for each board (use filtered boards)
+    for (const board of filteredBoards) {
       if (mapRef.current) {
         const marker = L.marker([board.lat, board.long], {
           icon: createMarkerIcon(board.status),
@@ -127,7 +191,7 @@ export default function PosterMap({
         marker.remove();
       }
     };
-  }, [boards]);
+  }, [filteredBoards]);
 
   // 画面を開いた瞬間から現在地をwatchし、移動に追従
   useEffect(() => {
@@ -185,6 +249,14 @@ export default function PosterMap({
   return (
     <div className="relative h-[600px] w-full z-0">
       <div id="poster-map" className="h-full w-full" />
+      <PosterBoardFilter
+        filterState={filterState}
+        onToggleStatus={toggleStatus}
+        onToggleShowOnlyMine={toggleShowOnlyMine}
+        onSelectAll={selectAll}
+        onDeselectAll={deselectAll}
+        activeFilterCount={activeFilterCount}
+      />
       <button
         type="button"
         onClick={handleLocate}
