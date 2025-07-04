@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -31,11 +32,11 @@ import {
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { ArrowLeft, History } from "lucide-react";
+import { ArrowLeft, History, Search, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
@@ -83,6 +84,11 @@ export default function PrefecturePosterMapClient({
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const mapRef = useRef<{
+    flyTo: (latlng: [number, number], zoom?: number) => void;
+  } | null>(null);
+  const [selectedSearchIndex, setSelectedSearchIndex] = useState(-1);
 
   useEffect(() => {
     loadBoards();
@@ -296,6 +302,89 @@ export default function PrefecturePosterMapClient({
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+  // 検索結果の計算
+  const searchResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) {
+      // 検索クエリが変更されたら選択インデックスをリセット
+      if (selectedSearchIndex !== -1) {
+        setSelectedSearchIndex(-1);
+      }
+      return [];
+    }
+
+    const query = searchQuery.toLowerCase();
+    const results = boards.filter((board) => {
+      const number = board.number?.toLowerCase() || "";
+      const name = board.name?.toLowerCase() || "";
+      const address = board.address?.toLowerCase() || "";
+      const city = board.city?.toLowerCase() || "";
+
+      return (
+        number.includes(query) ||
+        name.includes(query) ||
+        address.includes(query) ||
+        city.includes(query)
+      );
+    });
+
+    // 検索結果が変わったら選択インデックスをリセット
+    if (selectedSearchIndex !== -1) {
+      setSelectedSearchIndex(-1);
+    }
+
+    // 最大10件まで表示
+    return results.slice(0, 10);
+  }, [boards, searchQuery, selectedSearchIndex]);
+
+  // 検索結果の選択処理
+  const handleSearchResultSelect = (board: PosterBoard) => {
+    if (board.lat && board.long && mapRef.current) {
+      // マップを掲示板の位置に移動
+      mapRef.current.flyTo([board.lat, board.long], 18);
+
+      // 掲示板の選択処理
+      handleBoardSelect(board);
+
+      // 検索をクリア
+      setSearchQuery("");
+      setSelectedSearchIndex(-1);
+    }
+  };
+
+  // キーボードイベントハンドラー
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchResults.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) =>
+          prev < searchResults.length - 1 ? prev + 1 : prev,
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) => (prev > 0 ? prev - 1 : -1));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (
+          selectedSearchIndex >= 0 &&
+          selectedSearchIndex < searchResults.length
+        ) {
+          handleSearchResultSelect(searchResults[selectedSearchIndex]);
+        } else if (searchResults.length > 0) {
+          handleSearchResultSelect(searchResults[0]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setSearchQuery("");
+        setSelectedSearchIndex(-1);
+        break;
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
       {/* Header */}
@@ -353,6 +442,68 @@ export default function PrefecturePosterMapClient({
         </div>
       </div>
 
+      {/* Search Box */}
+      <div className="rounded-lg border bg-card p-3">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="番号・名前・住所で検索..."
+              className="pl-8 pr-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="absolute right-2 top-2.5"
+                onClick={() => setSearchQuery("")}
+              >
+                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 検索結果リスト */}
+        {searchResults.length > 0 && (
+          <div className="mt-2 max-h-48 overflow-y-auto rounded border bg-background">
+            {searchResults.map((board, index) => (
+              <button
+                type="button"
+                key={board.id}
+                className={`w-full px-3 py-2 text-left hover:bg-accent hover:text-accent-foreground transition-colors ${
+                  index === selectedSearchIndex
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                }`}
+                onClick={() => handleSearchResultSelect(board)}
+                onMouseEnter={() => setSelectedSearchIndex(index)}
+              >
+                <div className="text-sm">
+                  {board.number && (
+                    <span className="font-medium">#{board.number}</span>
+                  )}
+                  {board.name && <span className="ml-2">{board.name}</span>}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {board.address} {board.city}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 検索結果なし */}
+        {searchQuery.length >= 2 && searchResults.length === 0 && (
+          <div className="mt-2 p-3 text-sm text-muted-foreground text-center">
+            検索結果がありません
+          </div>
+        )}
+      </div>
+
       {/* Map */}
       <div className="overflow-hidden rounded-lg border bg-card">
         <PosterMap
@@ -362,6 +513,7 @@ export default function PrefecturePosterMapClient({
           prefectureKey={
             JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
           }
+          ref={mapRef}
         />
       </div>
 
