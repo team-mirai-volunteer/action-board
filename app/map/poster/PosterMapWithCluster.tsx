@@ -433,7 +433,10 @@ export default function PosterMapWithCluster({
   // 現在地取得ボタンのハンドラ
   const handleLocate = () => {
     if (currentPos && mapRef.current) {
-      mapRef.current.setView(currentPos, MAX_ZOOM, { animate: true });
+      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+        animate: true,
+        duration: 0.8,
+      });
     }
   };
 
