@@ -125,7 +125,7 @@ export default function Mission({
               className={clsx(
                 "w-full rounded-full py-6 text-base font-bold text-white",
                 hasReachedMaxAchievements
-                  ? "bg-yellow-300 hover:bg-yellow/90 text-primary"
+                  ? "bg-yellow-300 hover:bg-yellow-300/90 text-primary"
                   : "bg-primary hover:bg-primary/90",
               )}
             >
