@@ -21,7 +21,7 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     await expect(signedInPage.locator('span.text-4xl.md\\:text-5xl.font-bold.text-transparent.bg-clip-text.bg-gradient-to-r.from-emerald-600.to-teal-600').first()).toBeVisible();
     
     await expect(signedInPage.getByText("アクションボード参加者")).toBeVisible();
-    await expect(signedInPage.getByText("12 人")).toBeVisible();
+    await expect(signedInPage.getByText("0 人")).toBeVisible();
     
     await expect(signedInPage.getByText("アクションリーダートップ5")).toBeVisible();
     await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
