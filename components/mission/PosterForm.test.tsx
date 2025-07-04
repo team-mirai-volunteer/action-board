@@ -143,10 +143,7 @@ describe("PosterForm", () => {
     expect(boardNumberInput).toHaveAttribute("type", "text");
     expect(boardNumberInput).toHaveAttribute("name", "boardNumber");
     expect(boardNumberInput).toHaveAttribute("maxLength", "20");
-    expect(boardNumberInput).toHaveAttribute(
-      "pattern",
-      "^[A-Za-z0-9]+-[A-Za-z0-9]+$",
-    );
+    expect(boardNumberInput).toHaveAttribute("pattern", "^(\\d+|\\d+-\\d+)$");
     expect(boardNumberInput).toBeRequired();
   });
 
@@ -204,9 +201,7 @@ describe("PosterForm", () => {
     expect(
       screen.getByText(/市町村名と区名を入力してください/),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/「番号-番号」の形式で入力してください/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/番号を入力してください/)).toBeInTheDocument();
     expect(
       screen.getByText(/場所の目印があれば入力してください/),
     ).toBeInTheDocument();
@@ -231,7 +226,9 @@ describe("PosterForm", () => {
     expect(
       screen.getByPlaceholderText("例：渋谷区、名古屋市中区"),
     ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("例：10-1、27-2")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("例：10-1、27-2、00"),
+    ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("例：東小学校前、駅前商店街"),
     ).toBeInTheDocument();
