@@ -416,7 +416,7 @@ export default function PrefecturePosterMapClient({
                         <div
                           className={`h-2 w-2 rounded-full flex-shrink-0 ${config.color}`}
                         />
-                        <span className="truncate">{config.label}</span>
+                        <span>{config.label}</span>
                       </div>
                     </SelectItem>
                   ))}
