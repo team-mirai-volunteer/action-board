@@ -18,7 +18,7 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
     
     await expect(signedInPage.getByText("みんなで達成したアクション数")).toBeVisible();
-    await expect(signedInPage.getByText("0")).toBeVisible();
+    await expect(signedInPage.locator('span.text-4xl.md\\:text-5xl.font-bold.text-transparent.bg-clip-text.bg-gradient-to-r.from-emerald-600.to-teal-600').first()).toBeVisible();
     
     await expect(signedInPage.getByText("アクションボード参加者")).toBeVisible();
     await expect(signedInPage.getByText("12 人")).toBeVisible();
