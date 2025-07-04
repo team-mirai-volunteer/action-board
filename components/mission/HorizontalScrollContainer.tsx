@@ -69,7 +69,7 @@ export function HorizontalScrollContainer({
   };
 
   const applyMomentum = useCallback(() => {
-    if (!scrollRef.current || Math.abs(velocity) < 0.1) {
+    if (!scrollRef.current || Math.abs(velocity) < 1) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
@@ -85,7 +85,7 @@ export function HorizontalScrollContainer({
 
     element.scrollLeft = boundedScroll;
 
-    setVelocity(velocity * 0.95);
+    setVelocity(velocity * 0.85);
 
     animationRef.current = requestAnimationFrame(applyMomentum);
   }, [velocity]);
@@ -143,7 +143,7 @@ export function HorizontalScrollContainer({
 
     setIsDragging(false);
 
-    if (Math.abs(velocity) > 1) {
+    if (Math.abs(velocity) > 2) {
       applyMomentum();
     }
   }, [isDragging, velocity, applyMomentum]);
@@ -204,21 +204,21 @@ export function HorizontalScrollContainer({
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        onClick={scrollLeftButton}
-        disabled={!canScrollLeft}
-        className={cn(
-          "absolute left-2 top-1/2 -translate-y-1/2 z-10",
-          "hidden md:flex items-center justify-center",
-          "w-8 h-8 rounded-full bg-white shadow-md border",
-          "hover:bg-gray-50 transition-colors",
-          "disabled:opacity-50 disabled:cursor-not-allowed",
-        )}
-        aria-label="前のミッションを表示"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
+      {canScrollLeft && (
+        <button
+          type="button"
+          onClick={scrollLeftButton}
+          className={cn(
+            "absolute left-2 top-1/2 -translate-y-1/2 z-10",
+            "hidden md:flex items-center justify-center",
+            "w-8 h-8 rounded-full bg-white shadow-md border",
+            "hover:bg-gray-50 transition-colors",
+          )}
+          aria-label="前のミッションを表示"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      )}
 
       <div
         ref={scrollRef}
@@ -242,21 +242,21 @@ export function HorizontalScrollContainer({
         {children}
       </div>
 
-      <button
-        type="button"
-        onClick={scrollRight}
-        disabled={!canScrollRight}
-        className={cn(
-          "absolute right-2 top-1/2 -translate-y-1/2 z-10",
-          "hidden md:flex items-center justify-center",
-          "w-8 h-8 rounded-full bg-white shadow-md border",
-          "hover:bg-gray-50 transition-colors",
-          "disabled:opacity-50 disabled:cursor-not-allowed",
-        )}
-        aria-label="次のミッションを表示"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
+      {canScrollRight && (
+        <button
+          type="button"
+          onClick={scrollRight}
+          className={cn(
+            "absolute right-2 top-1/2 -translate-y-1/2 z-10",
+            "hidden md:flex items-center justify-center",
+            "w-8 h-8 rounded-full bg-white shadow-md border",
+            "hover:bg-gray-50 transition-colors",
+          )}
+          aria-label="次のミッションを表示"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
