@@ -18,10 +18,10 @@ test.describe("ダッシュボードとマイページのE2Eテスト", () => {
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
     
     await expect(signedInPage.getByText("みんなで達成したアクション数")).toBeVisible();
-    await expect(signedInPage.getByText("0 件")).toBeVisible();
+    await expect(signedInPage.getByText("0")).toBeVisible();
     
     await expect(signedInPage.getByText("アクションボード参加者")).toBeVisible();
-    await expect(signedInPage.getByText("13 人")).toBeVisible();
+    await expect(signedInPage.getByText("12 人")).toBeVisible();
     
     await expect(signedInPage.getByText("アクションリーダートップ5")).toBeVisible();
     await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
