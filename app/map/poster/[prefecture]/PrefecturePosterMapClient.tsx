@@ -2,7 +2,6 @@
 
 import { achieveMissionAction } from "@/app/missions/[id]/actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +30,7 @@ import {
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { ArrowLeft, History } from "lucide-react";
+import { ArrowLeft, HelpCircle, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -83,6 +82,7 @@ export default function PrefecturePosterMapClient({
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
 
   useEffect(() => {
     loadBoards();
@@ -297,63 +297,36 @@ export default function PrefecturePosterMapClient({
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 p-4">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <div className="container mx-auto max-w-7xl space-y-3 p-3">
+      {/* Header - コンパクト化 */}
+      <div className="flex items-center gap-3">
         <Link href="/map/poster">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">
+        <div className="flex items-center gap-2 flex-1">
+          <h1 className="text-lg font-bold">
             {prefectureName}のポスター掲示板
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs text-muted-foreground hidden sm:block">
             {userId
-              ? "掲示板をクリックしてステータスを更新できます"
+              ? "掲示板をクリックしてステータスを更新"
               : "ログインするとステータスを更新できます"}
           </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => setShowHelpDialog(true)}
+            title="使い方を見る"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold">{totalCount}</div>
-          <div className="text-sm text-muted-foreground">総掲示板数</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">
-            {completedCount}
-          </div>
-          <div className="text-sm text-muted-foreground">貼付完了</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">
-            {completionRate}%
-          </div>
-          <div className="text-sm text-muted-foreground">達成率</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4">
-          <div className="space-y-2">
-            {Object.entries(statusConfig).map(([status, config]) => {
-              const count = stats[status as BoardStatus] || 0;
-              if (count === 0) return null;
-              return (
-                <div key={status} className="flex items-center gap-2">
-                  <div className={`h-3 w-3 rounded-full ${config.color}`} />
-                  <span className="text-sm">
-                    {config.label}: {count}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Map */}
+      {/* Map - 最優先表示 */}
       <div className="overflow-hidden rounded-lg border bg-card">
         <PosterMap
           boards={boards}
@@ -365,22 +338,51 @@ export default function PrefecturePosterMapClient({
         />
       </div>
 
-      {/* Status Legend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">ステータス凡例</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {Object.entries(statusConfig).map(([status, config]) => (
-              <div key={status} className="flex items-center gap-2">
-                <div className={`h-3 w-3 rounded-full ${config.color}`} />
-                <span className="text-sm">{config.label}</span>
-              </div>
-            ))}
+      {/* 統計情報とステータス - 統合版 */}
+      <div className="rounded-lg border bg-card p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 主要統計 */}
+          <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold">{totalCount}</span>
+              <span className="text-xs text-muted-foreground">総数</span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold text-green-600">
+                {completedCount}
+              </span>
+              <span className="text-xs text-muted-foreground">完了</span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold text-blue-600">
+                {completionRate}%
+              </span>
+              <span className="text-xs text-muted-foreground">達成率</span>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* 区切り線 */}
+          <div className="hidden sm:block h-6 w-px bg-border" />
+
+          {/* ステータス別内訳 */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {Object.entries(statusConfig).map(([status, config]) => {
+              const count = stats[status as BoardStatus] || 0;
+              return (
+                <div key={status} className="flex items-center gap-1">
+                  <div
+                    className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${config.color}`}
+                  />
+                  <span className="text-xs whitespace-nowrap">
+                    {config.shortLabel || config.label}
+                    <span className="ml-0.5 font-semibold">{count}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* Update Dialog */}
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
@@ -412,9 +414,9 @@ export default function PrefecturePosterMapClient({
                     <SelectItem key={status} value={status}>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`h-2 w-2 rounded-full ${config.color}`}
+                          className={`h-2 w-2 rounded-full flex-shrink-0 ${config.color}`}
                         />
-                        {config.label}
+                        <span>{config.label}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -541,6 +543,61 @@ export default function PrefecturePosterMapClient({
             >
               ログインページへ
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Help Dialog */}
+      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>使い方</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h4 className="font-semibold">地図の操作</h4>
+              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                <li>地図をドラッグして移動できます</li>
+                <li>ピンチ操作またはボタンでズームできます</li>
+                <li>現在地ボタンで自分の位置を表示できます</li>
+              </ul>
+            </div>
+
+            {userId ? (
+              <div className="space-y-2">
+                <h4 className="font-semibold">ポスターの状況報告</h4>
+                <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                  <li>地図上の掲示板マーカーをタップします</li>
+                  <li>ポスターの状況を選択します</li>
+                  <li>必要に応じて連絡事項を入力します</li>
+                  <li>「報告する」ボタンで更新完了です</li>
+                </ul>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <h4 className="font-semibold">ポスターの状況を報告するには</h4>
+                <p className="text-sm text-muted-foreground">
+                  ログインすると、掲示板をタップしてポスターの状況を報告できるようになります。
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <h4 className="font-semibold">マーカーの色の意味</h4>
+              <div className="space-y-2 text-sm">
+                {Object.entries(statusConfig).map(([status, config]) => (
+                  <div key={status} className="flex items-start gap-2">
+                    <div
+                      className={`h-3 w-3 rounded-full flex-shrink-0 mt-0.5 ${config.color}`}
+                    />
+                    <span className="text-xs">{config.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowHelpDialog(false)}>閉じる</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
