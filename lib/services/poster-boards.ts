@@ -224,7 +224,7 @@ export async function getBoardsLatestEditor(boardIds: string[]) {
     }
 
     // Add to the result map
-    for (const [boardId, { user_id }] of latestEdits) {
+    for (const [boardId, { user_id }] of Array.from(latestEdits.entries())) {
       editorMap.set(boardId, user_id);
     }
   }
