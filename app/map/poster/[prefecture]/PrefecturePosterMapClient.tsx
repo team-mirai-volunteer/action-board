@@ -30,7 +30,7 @@ import {
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { ArrowLeft, History } from "lucide-react";
+import { ArrowLeft, HelpCircle, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -82,6 +82,7 @@ export default function PrefecturePosterMapClient({
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
 
   useEffect(() => {
     loadBoards();
@@ -304,7 +305,7 @@ export default function PrefecturePosterMapClient({
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div className="flex items-baseline gap-2 flex-1">
+        <div className="flex items-center gap-2 flex-1">
           <h1 className="text-lg font-bold">
             {prefectureName}のポスター掲示板
           </h1>
@@ -313,6 +314,14 @@ export default function PrefecturePosterMapClient({
               ? "掲示板をクリックしてステータスを更新"
               : "ログインするとステータスを更新できます"}
           </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 sm:hidden"
+            onClick={() => setShowHelpDialog(true)}
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -536,6 +545,59 @@ export default function PrefecturePosterMapClient({
             >
               ログインページへ
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Help Dialog */}
+      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>使い方</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h4 className="font-semibold">地図の操作</h4>
+              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                <li>地図をドラッグして移動できます</li>
+                <li>ピンチ操作またはボタンでズームできます</li>
+                <li>現在地ボタンで自分の位置を表示できます</li>
+              </ul>
+            </div>
+
+            {userId ? (
+              <div className="space-y-2">
+                <h4 className="font-semibold">ポスターの状況報告</h4>
+                <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                  <li>地図上の掲示板マーカーをタップします</li>
+                  <li>ポスターの状況を選択します</li>
+                  <li>必要に応じて連絡事項を入力します</li>
+                  <li>「報告する」ボタンで更新完了です</li>
+                </ul>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <h4 className="font-semibold">ポスターの状況を報告するには</h4>
+                <p className="text-sm text-muted-foreground">
+                  ログインすると、掲示板をタップしてポスターの状況を報告できるようになります。
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <h4 className="font-semibold">マーカーの色の意味</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                {Object.entries(statusConfig).map(([status, config]) => (
+                  <div key={status} className="flex items-center gap-2">
+                    <div className={`h-3 w-3 rounded-full ${config.color}`} />
+                    <span>{config.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowHelpDialog(false)}>閉じる</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
