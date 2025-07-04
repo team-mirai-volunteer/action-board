@@ -122,11 +122,11 @@ export function PosterForm({ disabled }: PosterFormProps) {
           required
           maxLength={20}
           disabled={disabled}
-          placeholder="例：10-1、27-2"
-          pattern="^[A-Za-z0-9]+-[A-Za-z0-9]+$"
+          placeholder="例：10-1、27-2、00"
+          pattern="^(\d+|\d+-\d+)$"
         />
         <p className="text-xs text-gray-500">
-          「番号-番号」の形式で入力してください（例：10-1、27-2）
+          番号を入力してください（例：10-1、27-2、00）
         </p>
       </div>
 
