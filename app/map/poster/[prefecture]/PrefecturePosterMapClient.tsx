@@ -317,43 +317,7 @@ export default function PrefecturePosterMapClient({
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold">{totalCount}</div>
-          <div className="text-sm text-muted-foreground">総掲示板数</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">
-            {completedCount}
-          </div>
-          <div className="text-sm text-muted-foreground">貼付完了</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">
-            {completionRate}%
-          </div>
-          <div className="text-sm text-muted-foreground">達成率</div>
-        </div>
-        <div className="rounded-lg border bg-card p-4">
-          <div className="space-y-2">
-            {Object.entries(statusConfig).map(([status, config]) => {
-              const count = stats[status as BoardStatus] || 0;
-              if (count === 0) return null;
-              return (
-                <div key={status} className="flex items-center gap-2">
-                  <div className={`h-3 w-3 rounded-full ${config.color}`} />
-                  <span className="text-sm">
-                    {config.label}: {count}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Map */}
+      {/* Map - 最優先表示 */}
       <div className="overflow-hidden rounded-lg border bg-card">
         <PosterMap
           boards={boards}
@@ -365,17 +329,71 @@ export default function PrefecturePosterMapClient({
         />
       </div>
 
-      {/* Status Legend */}
+      {/* Stats - コンパクト化 */}
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+        <div className="rounded-lg border bg-card p-3 md:p-4">
+          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
+            <span className="text-xs text-muted-foreground md:order-2">
+              総掲示板数
+            </span>
+            <span className="text-xl font-bold md:order-1 md:text-2xl">
+              {totalCount}
+            </span>
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card p-3 md:p-4">
+          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
+            <span className="text-xs text-muted-foreground md:order-2">
+              貼付完了
+            </span>
+            <span className="text-xl font-bold text-green-600 md:order-1 md:text-2xl">
+              {completedCount}
+            </span>
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card p-3 md:p-4">
+          <div className="flex items-center justify-between md:flex-col md:items-center md:justify-center">
+            <span className="text-xs text-muted-foreground md:order-2">
+              達成率
+            </span>
+            <span className="text-xl font-bold text-blue-600 md:order-1 md:text-2xl">
+              {completionRate}%
+            </span>
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card p-3 md:p-4 col-span-2 md:col-span-1">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center md:justify-start">
+            {Object.entries(statusConfig).map(([status, config]) => {
+              const count = stats[status as BoardStatus] || 0;
+              if (count === 0) return null;
+              return (
+                <div key={status} className="flex items-center gap-1">
+                  <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                  <span className="text-xs">
+                    <span className="hidden sm:inline">{config.label}:</span>
+                    <span className="sm:hidden">
+                      {config.label.slice(0, 2)}:
+                    </span>
+                    {count}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Status Legend - コンパクト化 */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">ステータス凡例</CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">ステータス凡例</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        <CardContent className="pt-0">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
             {Object.entries(statusConfig).map(([status, config]) => (
-              <div key={status} className="flex items-center gap-2">
-                <div className={`h-3 w-3 rounded-full ${config.color}`} />
-                <span className="text-sm">{config.label}</span>
+              <div key={status} className="flex items-center gap-1.5">
+                <div className={`h-2.5 w-2.5 rounded-full ${config.color}`} />
+                <span className="text-xs">{config.label}</span>
               </div>
             ))}
           </div>
