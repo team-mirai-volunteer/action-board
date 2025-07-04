@@ -13,12 +13,14 @@ import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
   mission: Omit<Tables<"missions">, "slug">;
+  achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
 }
 
 export default function Mission({
   mission,
+  achieved,
   achievementsCount,
   userAchievementCount = 0,
 }: MissionProps) {
