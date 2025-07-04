@@ -296,21 +296,21 @@ export default function PrefecturePosterMapClient({
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 p-4">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <div className="container mx-auto max-w-7xl space-y-3 p-3">
+      {/* Header - コンパクト化 */}
+      <div className="flex items-center gap-3">
         <Link href="/map/poster">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">
+        <div className="flex items-baseline gap-2 flex-1">
+          <h1 className="text-lg font-bold">
             {prefectureName}のポスター掲示板
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs text-muted-foreground hidden sm:block">
             {userId
-              ? "掲示板をクリックしてステータスを更新できます"
+              ? "掲示板をクリックしてステータスを更新"
               : "ログインするとステータスを更新できます"}
           </p>
         </div>
