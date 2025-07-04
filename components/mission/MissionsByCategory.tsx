@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
+import { HorizontalScrollContainer } from "./HorizontalScrollContainer";
 import Mission from "./mission";
 import type { MissionsProps } from "./missions";
 
@@ -149,10 +150,7 @@ export default async function MissionsByCategory({
               </h3>
 
               {/* 横スクロール領域 */}
-              <div
-                className="w-full overflow-x-auto custom-scrollbar"
-                style={{ scrollbarWidth: "none" }}
-              >
+              <HorizontalScrollContainer>
                 <div className="flex w-fit gap-4 px-4 pb-2">
                   {missionsInCategory
                     .filter(
@@ -202,7 +200,7 @@ export default async function MissionsByCategory({
                       );
                     })}
                 </div>
-              </div>
+              </HorizontalScrollContainer>
 
               {/* スクロール余白を示すグラデーション */}
               {/* <div
