@@ -294,13 +294,22 @@ async function moveToDestination(
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
-  const validateAll = !args.includes("--no-validate");
+  const validateAll = args.includes("--validate-all");
 
   console.log("🚀 Automated Poster Data Loader (Direct from Google Drive)");
   console.log("==========================================================");
   console.log(
     `Mode: ${validateAll ? "Validate all files after each load" : "Fast mode (no validation)"}\n`,
   );
+
+  // Clean up existing data directories and processed files before processing
+  console.log(
+    "🧹 Cleaning up existing data directories and processed files...",
+  );
+  await rm(SUCCESS_DATA_DIR, { recursive: true, force: true });
+  await rm(BROKEN_DATA_DIR, { recursive: true, force: true });
+  await rm(PROCESSED_FILES_LOG, { force: true });
+  console.log("✅ Cleanup complete\n");
 
   // Setup directories
   await ensureDir(BROKEN_DATA_DIR);

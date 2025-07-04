@@ -7,10 +7,16 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./poster-map.css";
+import "./poster-map-filter.css";
+import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
+import { MAX_ZOOM } from "@/lib/constants";
 import {
   type PosterPrefectureKey,
   getPrefectureDefaultZoom,
 } from "@/lib/constants/poster-prefectures";
+import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
+import { getBoardsLatestEditor } from "@/lib/services/poster-boards";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -254,6 +260,65 @@ export default function PosterMapWithCluster({
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
   const currentMarkerRef = useRef<L.CircleMarker | null>(null);
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+  const [boardsLatestEditor, setBoardsLatestEditor] =
+    useState<Map<string, string | null>>();
+
+  // Fetch current user and board info
+  useEffect(() => {
+    let isMounted = true;
+    const fetchUserAndBoardInfo = async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          console.error("ユーザー情報の取得に失敗しました:", userError);
+          return;
+        }
+
+        if (isMounted) {
+          setCurrentUserId(user?.id);
+        }
+
+        if (boards.length > 0 && isMounted) {
+          const boardIds = boards.map((b) => b.id);
+
+          // Get latest editor info for all boards
+          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
+          if (isMounted) {
+            setBoardsLatestEditor(latestEditorInfo);
+          }
+        }
+      } catch (error) {
+        console.error("データの取得中にエラーが発生しました:", error);
+      }
+    };
+
+    fetchUserAndBoardInfo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [boards]);
+
+  // Use filter hook
+  const {
+    filterState,
+    filteredBoards,
+    toggleStatus,
+    toggleShowOnlyMine,
+    selectAll,
+    deselectAll,
+    activeFilterCount,
+  } = usePosterBoardFilter({
+    boards,
+    currentUserId,
+    boardsWithLatestEditor: boardsLatestEditor,
+  });
 
   useEffect(() => {
     // Get zoom level for the prefecture
@@ -269,7 +334,7 @@ export default function PosterMapWithCluster({
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
         attribution:
           '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: 18,
+        maxZoom: MAX_ZOOM,
       }).addTo(mapRef.current);
 
       // Initialize marker cluster group
@@ -358,7 +423,8 @@ export default function PosterMapWithCluster({
     // 同じ位置のマーカーをグループ化し、少しずらして配置
     const locationGroups = new Map<string, PosterBoard[]>();
 
-    for (const board of boards) {
+    // Add markers for each board (use filtered boards)
+    for (const board of filteredBoards) {
       if (board.lat && board.long) {
         const locationKey = `${board.lat.toFixed(6)}_${board.long.toFixed(6)}`;
         if (!locationGroups.has(locationKey)) {
@@ -409,7 +475,7 @@ export default function PosterMapWithCluster({
         }
       }
     }
-  }, [boards, onBoardClick]);
+  }, [filteredBoards, onBoardClick]);
 
   // 画面を開いた瞬間から現在地をwatchし、移動に追従
   useEffect(() => {
@@ -470,14 +536,24 @@ export default function PosterMapWithCluster({
   // 現在地取得ボタンのハンドラ
   const handleLocate = () => {
     if (currentPos && mapRef.current) {
-      const currentZoom = mapRef.current.getZoom();
-      mapRef.current.setView(currentPos, currentZoom);
+      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+        animate: true,
+        duration: 0.8,
+      });
     }
   };
 
   return (
     <div className="relative h-[600px] w-full z-0">
       <div id="poster-map-cluster" className="h-full w-full" />
+      <PosterBoardFilter
+        filterState={filterState}
+        onToggleStatus={toggleStatus}
+        onToggleShowOnlyMine={toggleShowOnlyMine}
+        onSelectAll={selectAll}
+        onDeselectAll={deselectAll}
+        activeFilterCount={activeFilterCount}
+      />
       <button
         type="button"
         onClick={handleLocate}
