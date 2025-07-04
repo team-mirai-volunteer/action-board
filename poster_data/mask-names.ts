@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { format, parse } from "csv-parse/sync";
+import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 import { glob } from "glob";
 
