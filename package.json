@@ -23,8 +23,8 @@
     "mission:sync:dry": "tsx mission_data/src/sync.ts --dry-run",
     "mission:export": "tsx mission_data/src/export.ts",
     "poster:load-csv": "tsx poster_data/load-csv.ts",
-    "poster:auto-load": "tsx poster_data/auto-load-from-drive.ts",
-    "poster:auto-load:log": "./poster_data/auto-load-with-log.sh",
+    "poster:auto-load": "tsx poster_data/auto-load-from-drive.ts && npm run poster:mask-names",
+    "poster:auto-load:log": "./poster_data/auto-load-with-log.sh && npm run poster:mask-names",
     "poster:clear": "./poster_data/clear.sh",
     "poster:mask-names": "tsx poster_data/mask-names.ts"
   },
