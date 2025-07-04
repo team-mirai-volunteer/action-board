@@ -294,7 +294,7 @@ async function moveToDestination(
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
-  const validateAll = !args.includes("--no-validate");
+  const validateAll = args.includes("--validate-all");
 
   console.log("🚀 Automated Poster Data Loader (Direct from Google Drive)");
   console.log("==========================================================");
