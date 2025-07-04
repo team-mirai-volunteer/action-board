@@ -1,8 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import type { Tables } from "@/lib/types/supabase";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
@@ -15,14 +13,12 @@ import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
   mission: Omit<Tables<"missions">, "slug">;
-  achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
 }
 
 export default function Mission({
   mission,
-  achieved,
   achievementsCount,
   userAchievementCount = 0,
 }: MissionProps) {
@@ -127,12 +123,12 @@ export default function Mission({
               className={clsx(
                 "w-full rounded-full py-6 text-base font-bold text-white",
                 hasReachedMaxAchievements
-                  ? "bg-yellow-500 hover:bg-yellow-600"
+                  ? "bg-yellow-300 hover:bg-yellow/90 text-primary"
                   : "bg-primary hover:bg-primary/90",
               )}
             >
               {hasReachedMaxAchievements
-                ? "ミッション完了🎉"
+                ? "ミッションクリア🎉"
                 : "今すぐチャレンジ🔥"}
             </Button>
           </motion.div>

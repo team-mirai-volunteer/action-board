@@ -178,7 +178,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("ミッション完了🎉")).toBeInTheDocument();
+    expect(screen.getByText("ミッションクリア🎉")).toBeInTheDocument();
   });
 
   it("最大達成回数が設定されていない場合は制限なし", () => {
