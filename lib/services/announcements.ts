@@ -1,6 +1,4 @@
-import "server-only";
-
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type Announcement = Database["public"]["Tables"]["announcements"]["Row"];
@@ -13,7 +11,7 @@ export async function getActiveAnnouncements(): Promise<{
   announcements?: Announcement[];
   error?: string;
 }> {
-  const supabase = await createServiceClient();
+  const supabase = createClient();
 
   try {
     const { data: announcements, error } = await supabase
