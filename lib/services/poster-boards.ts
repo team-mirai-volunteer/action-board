@@ -1,3 +1,4 @@
+import { getPosterBoardStatsAction } from "@/lib/actions/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
@@ -19,7 +20,6 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
       .from("poster_boards")
       .select("id,lat,long,status")
       .range(rangeStart, rangeStart + pageSize - 1)
-      .limit(5000)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
     if (prefecture) {
@@ -223,77 +223,13 @@ export async function getPrefecturesWithBoards() {
   return uniquePrefectures;
 }
 
-// 統計情報を取得（全データ）
+// 統計情報を取得（RPC関数を使用して最適化）
 export async function getPosterBoardStats(prefecture: string): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
-
-  // 各ステータスの件数を個別にカウント（Supabaseは現在GROUP BYに対応していないため）
-  const statusTypes: BoardStatus[] = [
-    "not_yet",
-    "reserved",
-    "done",
-    "error_wrong_place",
-    "error_damaged",
-    "error_wrong_poster",
-    "other",
-  ];
-
-  const statusCounts: Record<BoardStatus, number> = {
-    not_yet: 0,
-    reserved: 0,
-    done: 0,
-    error_wrong_place: 0,
-    error_damaged: 0,
-    error_wrong_poster: 0,
-    other: 0,
-  };
-
-  // 並列でカウントクエリを実行
-  const countPromises = statusTypes.map(async (status) => {
-    const { count, error } = await supabase
-      .from("poster_boards")
-      .select("*", { count: "exact", head: true })
-      .eq(
-        "prefecture",
-        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
-      )
-      .eq("status", status);
-
-    if (error) {
-      console.error(`Error counting ${status}:`, error);
-      return { status, count: 0 };
-    }
-
-    return { status, count: count || 0 };
-  });
-
-  // 全件数のカウント
-  const totalCountPromise = supabase
-    .from("poster_boards")
-    .select("*", { count: "exact", head: true })
-    .eq(
-      "prefecture",
-      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
-    );
-
-  // すべてのクエリを並列実行
-  const [statusResults, totalResult] = await Promise.all([
-    Promise.all(countPromises),
-    totalCountPromise,
-  ]);
-
-  // 結果を集計
-  for (const result of statusResults) {
-    statusCounts[result.status] = result.count;
-  }
-
-  const totalCount = totalResult.count || 0;
-
-  return {
-    totalCount,
-    statusCounts,
-  };
+  // RPC関数を使用した最適化された実装を呼び出す
+  return getPosterBoardStatsAction(
+    prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+  );
 }
