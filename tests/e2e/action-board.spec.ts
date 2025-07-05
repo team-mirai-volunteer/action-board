@@ -151,7 +151,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible({ timeout: 10000 });
 
     await signedInPage.goto('/');
-    await expect(signedInPage.locator('section').getByText("テストユーザー")).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' })).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.locator('section').getByText("LV.1")).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.locator('section').getByText("東京都")).toBeVisible({ timeout: 10000 });
 
@@ -166,7 +166,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await signedInPage.getByRole('button', { name: '削除する' }).click();
 
     await signedInPage.goto('/');
-    await expect(signedInPage.locator('section').getByText("テストユーザー")).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' })).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.locator('section').getByText("LV.1")).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.locator('section').getByText("東京都")).toBeVisible({ timeout: 10000 });
   });
