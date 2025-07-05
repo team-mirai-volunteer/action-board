@@ -1,0 +1,82 @@
+name: Auto Load Poster Data from Google Drive
+
+on:
+  schedule:
+    # 3回/日実行: 6:00, 14:00, 22:00 UTC (日本時間 15:00, 23:00, 7:00)
+    - cron: '0 6,14,22 * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  auto-load-poster-data:
+    name: Google DriveからポスターデータをCSV自動読み込み
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Google Drive Service Account認証
+      - name: Setup Google Drive Service Account
+        run: |
+          echo "Setting up Google Drive service account authentication..."
+          echo "${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/service-account-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-key.json" >> $GITHUB_ENV
+
+      # Google Drive をマウント (rclone使用)
+      - name: Install and configure rclone
+        run: |
+          curl https://rclone.org/install.sh | sudo bash
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf << EOF
+          [gdrive]
+          type = drive
+          service_account_file = /tmp/service-account-key.json
+          team_drive = 
+          EOF
+
+      - name: Mount Google Drive
+        run: |
+          mkdir -p ~/Google\ Drive/Shared\ drives
+          rclone mount gdrive: ~/Google\ Drive/Shared\ drives --daemon --allow-other --vfs-cache-mode writes
+          sleep 5
+          echo "Google Drive mounted successfully"
+
+      # Supabase環境変数を設定（本番環境用）
+      - name: Set Supabase environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ポスターデータの自動読み込み実行
+      - name: Run auto-load poster data
+        run: |
+          echo "🚀 Starting automated poster data loading from Google Drive..."
+          npm run poster:auto-load
+          echo "✅ Poster data loading completed!"
+
+      # 結果をアーティファクトとして保存
+      - name: Upload processing logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: poster-data-logs-${{ github.run_number }}
+          path: |
+            poster_data/choice.md
+            poster_data/processed-files.json
+          retention-days: 30
+
+      # Google Driveをアンマウント
+      - name: Cleanup Google Drive mount
+        if: always()
+        run: |
+          fusermount -u ~/Google\ Drive/Shared\ drives || true
+          rm -f /tmp/service-account-key.json
