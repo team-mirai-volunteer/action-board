@@ -1,8 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+"use client";
+
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import type { Tables } from "@/lib/types/supabase";
+import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -59,62 +61,50 @@ export default function Mission({
             />
           </div>
           <div className="flex-1">
-            <CardTitle
-              className={clsx(
-                "text-lg leading-tight mb-2",
-                hasReachedMaxAchievements ? "text-gray-600" : "text-gray-900",
-              )}
-            >
+            <CardTitle className="text-lg leading-tight mb-2 text-gray-900">
               {mission.title}
             </CardTitle>
             {dateStr && (
-              <div
-                className={clsx(
-                  "text-sm font-medium",
-                  hasReachedMaxAchievements ? "text-gray-500" : "text-gray-600",
-                )}
-              >
-                {dateStr}
-              </div>
+              <div className="text-sm font-medium text-gray-600">{dateStr}</div>
             )}
           </div>
         </div>
       </CardHeader>
 
       <CardFooter className="flex flex-col items-stretch gap-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-1.5">
+          <div className="flex items-center">
             <UsersRound className="size-4 mr-2" />
-            <span
-              className={clsx(
-                "text-sm font-medium",
-                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
-              )}
-            >
+            <span className="text-sm font-medium text-gray-700">
               {achievementsCount !== undefined
                 ? `みんなで${achievementsCount.toLocaleString()}回達成`
                 : "みんなで0回達成"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <DifficultyBadge
-              difficulty={mission.difficulty}
-              className={clsx(hasReachedMaxAchievements && "opacity-60")}
-            />
+          <div className="flex items-center">
+            <span className="text-sm font-medium text-gray-700">難易度：</span>
+            <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
+            <span className="text-sm font-medium ml-1.5 text-gray-700">
+              獲得ポイント：{calculateMissionXp(mission.difficulty)}
+            </span>
           </div>
         </div>
         <Link href={`/missions/${mission.id}`} className="block">
-          <Button
-            variant="default"
-            className={clsx(
-              "w-full rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg",
-              hasReachedMaxAchievements
-                ? "bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600"
-                : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700",
-            )}
-          >
-            {hasReachedMaxAchievements ? "達成内容を見る →" : "詳細を見る →"}
-          </Button>
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="default"
+              className={clsx(
+                "w-full rounded-full py-6 text-base font-bold text-white",
+                hasReachedMaxAchievements
+                  ? "bg-yellow-300 hover:bg-yellow-300/90 text-primary"
+                  : "bg-primary hover:bg-primary/90",
+              )}
+            >
+              {hasReachedMaxAchievements
+                ? "ミッションクリア🎉"
+                : "今すぐチャレンジ🔥"}
+            </Button>
+          </motion.div>
         </Link>
       </CardFooter>
     </Card>
