@@ -95,7 +95,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // 任意のユーザーページに遷移（ランキングから佐藤太郎のページへ）
-    await signedInPage.getByRole('link', { name: /佐藤太郎 東京都 Lv.10 900pt/ }).click();
+    await signedInPage.getByRole('link').filter({ hasText: '佐藤太郎' }).click();
     await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, { timeout: 10000 });
 
     // 任意のユーザーページの表示内容を確認
@@ -109,7 +109,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
-    await signedInPage.getByText("(seed) ゴミ拾いをしよう (成果物不要)").click();
+    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     // ミッションページの表示内容を確認
