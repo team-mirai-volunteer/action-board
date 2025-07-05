@@ -49,7 +49,9 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
 
     // 問い合わせフォームの表示を確認
     await expect(signedInPage.getByRole('heading', { name: /ご意見をお聞かせください/ })).toBeVisible();
-    await expect(signedInPage.getByText("チームみらいアクションボードをより良いサービスにするため、 皆様のご意見・ご要望をお聞かせください。 いただいたフィードバックは今後の改善に活用させていただきます。")).toBeVisible();
+    await expect(signedInPage.getByText("チームみらいアクションボードをより良いサービスにするため、")).toBeVisible();
+    await expect(signedInPage.getByText("皆様のご意見・ご要望をお聞かせください。")).toBeVisible();
+    await expect(signedInPage.getByText("いただいたフィードバックは今後の改善に活用させていただきます。")).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: 'ご意見箱を開く' })).toBeVisible();
   });
 
