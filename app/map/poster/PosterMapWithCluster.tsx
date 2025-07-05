@@ -312,7 +312,6 @@ export default function PosterMapWithCluster({
     selectAll,
     deselectAll,
     activeFilterCount,
-    isFiltering,
   } = usePosterBoardFilterOptimized({
     boards,
     currentUserId,
@@ -563,16 +562,6 @@ export default function PosterMapWithCluster({
   return (
     <div className="relative h-[600px] w-full z-0">
       <div id="poster-map-cluster" className="h-full w-full" />
-
-      {/* フィルタリング中の表示 */}
-      {isFiltering && (
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white/90 rounded-lg px-4 py-2 shadow-lg z-[1001]">
-          <div className="flex items-center gap-2">
-            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full" />
-            <span className="text-sm">フィルタリング中...</span>
-          </div>
-        </div>
-      )}
 
       <PosterBoardFilter
         filterState={filterState}
