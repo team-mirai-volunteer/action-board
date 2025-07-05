@@ -9,6 +9,22 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "team-mir.ai",
+        port: "",
+        pathname: "/images/sns/**",
+      },
+      {
+        protocol: "http",
+        hostname: "team-mir.ai",
+        port: "",
+        pathname: "/images/sns/**",
+      },
+    ],
+  },
 };
 
 export default withSentryConfig(nextConfig, {

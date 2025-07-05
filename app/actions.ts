@@ -18,6 +18,7 @@ import {
   signUpAndLoginFormSchema,
 } from "@/lib/validation/auth";
 
+import { getReferralCode } from "@/app/missions/[id]/_lib/data";
 import {
   isEmailAlreadyUsedInReferral,
   isValidReferralCode,
@@ -701,6 +702,45 @@ export async function handleLineAuthAction(
       success: false,
       error:
         error instanceof Error ? error.message : "ログイン処理に失敗しました",
+    };
+  }
+}
+
+export async function getReferralUrlAction(): Promise<{
+  success: boolean;
+  referralUrl?: string;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        error: "認証が必要です",
+      };
+    }
+
+    const referralCode = await getReferralCode(user.id);
+    const origin =
+      process.env.NEXT_PUBLIC_APP_ORIGIN ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "http://localhost:3000";
+    const referralUrl = `${origin}/sign-up?ref=${referralCode}`;
+
+    return {
+      success: true,
+      referralUrl,
+    };
+  } catch (error) {
+    console.error("Referral URL取得エラー:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "紹介URL取得に失敗しました",
     };
   }
 }
