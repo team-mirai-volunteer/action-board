@@ -69,9 +69,14 @@ ${shareReferralUrl}
         textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        console.log("URLをコピーしました（フォールバック）");
+        if (document.execCommand) {
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+          console.log("URLをコピーしました（フォールバック）");
+        } else {
+          document.body.removeChild(textArea);
+          throw new Error("Copy not supported");
+        }
       } catch (fallbackError) {
         console.error("URLのコピーに失敗:", fallbackError);
       }
