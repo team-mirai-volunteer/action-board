@@ -191,7 +191,7 @@ export default function PrefecturePosterMapClient({
     setLoadingHistory(true);
     try {
       const data = await getBoardStatusHistoryAction(selectedBoard.id);
-      setHistory(data as StatusHistory[]);
+      setHistory(data as unknown as StatusHistory[]);
     } catch (error) {
       toast.error("履歴の読み込みに失敗しました");
     } finally {
