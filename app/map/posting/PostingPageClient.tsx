@@ -416,6 +416,39 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.18.3/dist/leaflet-geoman.css"
       />
 
+      {/* Warning Banner */}
+      <div
+        style={{
+          position: "fixed",
+          top: "10px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1001,
+          background: "white",
+          padding: "12px 20px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          border: "2px solid #dc2626",
+          maxWidth: "90%",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: "#dc2626",
+            lineHeight: "1.4",
+          }}
+        >
+          機関誌のポスティングは7/2までです!
+          <br />
+          <span style={{ fontSize: "14px" }}>
+            (公示日以降は公職選挙法により禁止されています)
+          </span>
+        </div>
+      </div>
+
       {/* Control Panel */}
       <div
         style={{
