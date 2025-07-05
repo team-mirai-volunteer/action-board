@@ -139,7 +139,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
-    await signedInPage.getByRole('button', { name: 'ミッションを達成する' }).click();
+    await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
 
     await expect(signedInPage.getByText("ミッション達成")).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.getByText("おめでとうございます！")).toBeVisible();
