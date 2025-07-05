@@ -558,6 +558,13 @@ export type Database = {
             foreignKeyName: "poster_activities_board_id_fkey";
             columns: ["board_id"];
             isOneToOne: false;
+            referencedRelation: "poster_board_latest_editors";
+            referencedColumns: ["board_id"];
+          },
+          {
+            foreignKeyName: "poster_activities_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
             referencedRelation: "poster_boards";
             referencedColumns: ["id"];
           },
@@ -609,6 +616,13 @@ export type Database = {
             foreignKeyName: "poster_board_status_history_board_id_fkey";
             columns: ["board_id"];
             isOneToOne: false;
+            referencedRelation: "poster_board_latest_editors";
+            referencedColumns: ["board_id"];
+          },
+          {
+            foreignKeyName: "poster_board_status_history_board_id_fkey";
+            columns: ["board_id"];
+            isOneToOne: false;
             referencedRelation: "poster_boards";
             referencedColumns: ["id"];
           },
@@ -616,14 +630,14 @@ export type Database = {
       };
       poster_boards: {
         Row: {
-          address: string;
+          address: string | null;
           city: string;
           created_at: string;
           file_name: string | null;
           id: string;
           lat: number;
           long: number;
-          name: string;
+          name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number: number | null;
@@ -631,14 +645,14 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          address: string;
+          address?: string | null;
           city: string;
           created_at?: string;
           file_name?: string | null;
           id?: string;
           lat: number;
           long: number;
-          name: string;
+          name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -646,14 +660,14 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          address?: string;
+          address?: string | null;
           city?: string;
           created_at?: string;
           file_name?: string | null;
           id?: string;
           lat?: number;
           long?: number;
-          name?: string;
+          name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -911,14 +925,14 @@ export type Database = {
       };
       staging_poster_boards: {
         Row: {
-          address: string;
+          address: string | null;
           city: string;
           created_at: string;
           file_name: string | null;
           id: string | null;
           lat: number;
           long: number;
-          name: string;
+          name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number: number | null;
@@ -926,14 +940,14 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          address: string;
+          address?: string | null;
           city: string;
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
           lat: number;
           long: number;
-          name: string;
+          name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -941,14 +955,14 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          address?: string;
+          address?: string | null;
           city?: string;
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
           lat?: number;
           long?: number;
-          name?: string;
+          name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -1167,6 +1181,24 @@ export type Database = {
           },
         ];
       };
+      poster_board_latest_editors: {
+        Row: {
+          board_id: string | null;
+          last_edited_at: string | null;
+          last_editor_id: string | null;
+          lat: number | null;
+          long: number | null;
+          new_status: Database["public"]["Enums"]["poster_board_status"] | null;
+          prefecture:
+            | Database["public"]["Enums"]["poster_prefecture_enum"]
+            | null;
+          previous_status:
+            | Database["public"]["Enums"]["poster_board_status"]
+            | null;
+          status: Database["public"]["Enums"]["poster_board_status"] | null;
+        };
+        Relationships: [];
+      };
       quiz_questions_with_category: {
         Row: {
           category_description: string | null;
@@ -1280,6 +1312,15 @@ export type Database = {
           count: number;
         }[];
       };
+      get_poster_board_stats_optimized: {
+        Args: {
+          target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+        };
+        Returns: {
+          total_count: number;
+          status_counts: Json;
+        }[];
+      };
       get_prefecture_ranking: {
         Args: { prefecture: string; limit_count?: number };
         Returns: {
@@ -1305,6 +1346,28 @@ export type Database = {
           id: string;
           email: string;
           user_metadata: Json;
+        }[];
+      };
+      get_user_edited_boards_by_prefecture: {
+        Args: {
+          target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          target_user_id: string;
+        };
+        Returns: {
+          board_id: string;
+        }[];
+      };
+      get_user_edited_boards_with_details: {
+        Args: {
+          target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          target_user_id: string;
+        };
+        Returns: {
+          board_id: string;
+          lat: number;
+          long: number;
+          status: Database["public"]["Enums"]["poster_board_status"];
+          last_edited_at: string;
         }[];
       };
       get_user_mission_ranking: {

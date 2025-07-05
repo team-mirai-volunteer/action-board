@@ -1,11 +1,62 @@
+import { getPosterBoardStatsAction } from "@/lib/actions/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type StatusHistory =
-  Database["public"]["Tables"]["poster_board_status_history"]["Row"];
 
+// 最小限のデータのみ取得（マップ表示用）
+export async function getPosterBoardsMinimal(prefecture?: string) {
+  const supabase = createClient();
+
+  // 全データを取得するためページネーションを使用
+  const allBoards: Pick<
+    PosterBoard,
+    "id" | "lat" | "long" | "status" | "name" | "address" | "city" | "number"
+  >[] = [];
+  let hasMore = true;
+  let rangeStart = 0;
+  const pageSize = 5000; // 5000件ずつ取得
+
+  while (hasMore) {
+    let query = supabase
+      .from("poster_boards")
+      .select("id,lat,long,status,name,address,city,number")
+      .range(rangeStart, rangeStart + pageSize - 1)
+      .order("id", { ascending: true }); // 一貫した順序を保証
+
+    if (prefecture) {
+      query = query.eq(
+        "prefecture",
+        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching poster boards:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      hasMore = false;
+    } else {
+      allBoards.push(...data);
+
+      // 取得したデータが pageSize より少ない場合は最後のページ
+      if (data.length < pageSize) {
+        hasMore = false;
+      } else {
+        rangeStart += pageSize;
+      }
+    }
+  }
+
+  return allBoards;
+}
+
+// 全データ取得（既存の関数名を維持）
 export async function getPosterBoards(prefecture?: string) {
   const supabase = createClient();
 
@@ -50,6 +101,26 @@ export async function getPosterBoards(prefecture?: string) {
   }
 
   return allBoards;
+}
+
+// 個別の掲示板の詳細を取得
+export async function getPosterBoardDetail(
+  boardId: string,
+): Promise<PosterBoard | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("*")
+    .eq("id", boardId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching poster board detail:", error);
+    return null;
+  }
+
+  return data;
 }
 
 export async function updateBoardStatus(
@@ -110,37 +181,6 @@ export async function updateBoardStatus(
   return { success: true };
 }
 
-export async function getBoardStatusHistory(boardId: string) {
-  const supabase = createClient();
-
-  const { data: historyData, error } = await supabase
-    .from("poster_board_status_history")
-    .select("*")
-    .eq("board_id", boardId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching status history:", error);
-    throw error;
-  }
-
-  // Fetch user profiles for each history entry
-  const userIds = Array.from(new Set(historyData?.map((h) => h.user_id) || []));
-  const { data: users } = await supabase
-    .from("public_user_profiles")
-    .select("id, name, address_prefecture")
-    .in("id", userIds);
-
-  // Combine history with user data
-  const data =
-    historyData?.map((history) => ({
-      ...history,
-      user: users?.find((u) => u.id === history.user_id) || null,
-    })) || [];
-
-  return data;
-}
-
 // Get unique prefectures that have poster boards
 export async function getPrefecturesWithBoards() {
   const supabase = createClient();
@@ -186,48 +226,13 @@ export async function getPrefecturesWithBoards() {
   return uniquePrefectures;
 }
 
-// Get the user IDs who made the latest status change for each board
-export async function getBoardsLatestEditor(boardIds: string[]) {
-  const supabase = createClient();
-  const editorMap = new Map<string, string | null>();
-
-  // Process in batches to avoid query limits
-  const batchSize = 100;
-  for (let i = 0; i < boardIds.length; i += batchSize) {
-    const batch = boardIds.slice(i, i + batchSize);
-
-    const { data, error } = await supabase
-      .from("poster_board_status_history")
-      .select("board_id, user_id, created_at")
-      .in("board_id", batch)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching latest editor info:", error);
-      continue;
-    }
-
-    // Group by board_id and get the latest edit for each
-    const latestEdits = new Map<
-      string,
-      { user_id: string; created_at: string }
-    >();
-
-    for (const record of data || []) {
-      const existing = latestEdits.get(record.board_id);
-      if (!existing || record.created_at > existing.created_at) {
-        latestEdits.set(record.board_id, {
-          user_id: record.user_id,
-          created_at: record.created_at,
-        });
-      }
-    }
-
-    // Add to the result map
-    for (const [boardId, { user_id }] of Array.from(latestEdits.entries())) {
-      editorMap.set(boardId, user_id);
-    }
-  }
-
-  return editorMap;
+// 統計情報を取得（RPC関数を使用して最適化）
+export async function getPosterBoardStats(prefecture: string): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
+  // RPC関数を使用した最適化された実装を呼び出す
+  return getPosterBoardStatsAction(
+    prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+  );
 }

@@ -1,7 +1,9 @@
+import { getUserEditedBoardIdsAction } from "@/lib/actions/poster-boards";
 import {
   POSTER_PREFECTURE_MAP,
   type PosterPrefectureKey,
 } from "@/lib/constants/poster-prefectures";
+import { getPosterBoardStats } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -46,12 +48,28 @@ export default async function PrefecturePosterMapPage({
   const prefectureKey = prefecture as PosterPrefectureKey;
   const { jp: prefectureNameJp, center } = POSTER_PREFECTURE_MAP[prefectureKey];
 
+  // 統計情報を取得
+  const stats = await getPosterBoardStats(
+    prefectureNameJp as Parameters<typeof getPosterBoardStats>[0],
+  );
+
+  // ユーザーが最後に編集した掲示板IDを取得
+  let userEditedBoardIds: string[] = [];
+  if (user?.id) {
+    userEditedBoardIds = await getUserEditedBoardIdsAction(
+      prefectureNameJp as Parameters<typeof getUserEditedBoardIdsAction>[0],
+      user.id,
+    );
+  }
+
   return (
     <PrefecturePosterMapClient
       userId={user?.id}
       prefecture={prefectureNameJp}
       prefectureName={prefectureNameJp}
       center={center}
+      initialStats={stats}
+      userEditedBoardIds={userEditedBoardIds}
     />
   );
 }
