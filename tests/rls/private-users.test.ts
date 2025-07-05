@@ -91,6 +91,6 @@ describe("private_users テーブルのRLSテスト", () => {
       .eq("id", user2.user.userId)
       .single();
 
-    expect(checkData?.name).toBe("田中花子");
+    expect(checkData?.name).toBe("テストユーザー");
   });
 });

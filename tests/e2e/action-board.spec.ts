@@ -11,8 +11,8 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // 自身のステータス表示を確認
-    await expect(signedInPage.locator('section').getByText("田中花子LV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
-    await expect(signedInPage.getByRole('link', { name: '田中花子さんのプロフィールへ' })).toBeVisible();
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' })).toBeVisible();
 
     // 活動状況の表示を確認
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
@@ -80,11 +80,11 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // 自身のユーザーページに遷移
-    await signedInPage.getByRole('link', { name: '田中花子さんのプロフィールへ' }).click();
+    await signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' }).click();
     await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, { timeout: 10000 });
 
     // 自身のユーザーページの表示内容を確認
-    await expect(signedInPage.getByText("田中花子")).toBeVisible();
+    await expect(signedInPage.getByText("テストユーザー")).toBeVisible();
     await expect(signedInPage.getByText("Lv.1")).toBeVisible();
     await expect(signedInPage.getByText("東京都")).toBeVisible();
     await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
@@ -106,7 +106,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
   });
 
-  test("ミッションページ遷移が正常に動作する", async ({
+  test("ミッションページ遷移 → ミッション完了が正常に動作する", async ({
     signedInPage,
   }) => {
     await assertAuthState(signedInPage, true);
@@ -121,32 +121,16 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText('実行したら記録しよう！')).toBeVisible();
     await expect(signedInPage.getByRole('button', { name: 'ミッション完了を記録する' })).toBeVisible();
     await expect(signedInPage.getByText('※ 成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。')).toBeVisible();
-    await expect(signedInPage.getByRole('heading', { name: /ゴミ拾いをしよう/ })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: "🏅「(seed) ゴミ拾いをしよう (成果物不要)」トップ10" })).toBeVisible();
 
-    //TODO
-    // ミッションを達成する
-
-    //TODO
-    // TOP100を見る
-  });
-
-  test("ミッション達成が正常に動作する", async ({
-    signedInPage,
-  }) => {
-    await assertAuthState(signedInPage, true);
-
-    // ミッションページに遷移（ゴミ拾いミッションをクリック）
-    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
-
+    // ミッション完了ページに遷移
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
-
     await expect(signedInPage.getByText("おめでとうございます！")).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.getByText("「(seed) ゴミ拾いをしよう (成果物不要)」を達成しました！")).toBeVisible();
-
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
 
     await expect(signedInPage.getByText("このミッションは達成済みです。")).toBeVisible();
+    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible();
   });
 
   test("TOP100ランキング表示が正常に動作する", async ({
@@ -154,14 +138,14 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
+    // ランキングページに遷移
     await signedInPage.getByRole('link', { name: 'トップ100を見る' }).click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
 
     // ランキングページの表示内容を確認
-    await expect(signedInPage.getByText("🏅アクションリーダートップ100")).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: '🏅アクションリーダートップ' })).toBeVisible();
     await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
     await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
-
-    await expect(signedInPage.getByText("田中花子")).toBeVisible();
+    await expect(signedInPage.getByText("渡辺雄一")).toBeVisible();
   });
 });
