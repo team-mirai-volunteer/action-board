@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from "node:fs";
+import { createReadStream, existsSync, writeFileSync } from "node:fs";
 import { pipeline } from "node:stream/promises";
 import dotenv from "dotenv";
 import { glob } from "glob";
@@ -16,9 +16,33 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
+interface PosterBoardRecord {
+  id: number;
+  prefecture: string;
+  city: string;
+  number: string;
+  name: string;
+  address: string;
+  lat: string;
+  long: string;
+  file_name: string;
+  action: "inserted" | "updated";
+}
+
 async function main() {
-  // Check if a specific file was provided as argument
-  const specificFile = process.argv[2];
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  let specificFile: string | undefined;
+  let verbose = false;
+
+  // Parse arguments
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "-v" || args[i] === "--verbose") {
+      verbose = true;
+    } else if (!args[i].startsWith("-")) {
+      specificFile = args[i];
+    }
+  }
 
   // Construct database URL from Supabase environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -68,19 +92,35 @@ async function main() {
     if (specificFile) {
       // Load specific file if provided
       if (!specificFile.endsWith(".csv")) {
-        throw new Error("File must be a CSV file");
+        console.error("Error: File must be a CSV file");
+        console.log("\nUsage: npm run poster:load-csv [options] [file.csv]");
+        console.log("Options:");
+        console.log(
+          "  -v, --verbose    Generate data-changes.md file with details of changes",
+        );
+        process.exit(1);
       }
       if (!existsSync(specificFile)) {
-        throw new Error(`File not found: ${specificFile}`);
+        console.error(`Error: File not found: ${specificFile}`);
+        console.log("\nUsage: npm run poster:load-csv [options] [file.csv]");
+        console.log("Options:");
+        console.log(
+          "  -v, --verbose    Generate data-changes.md file with details of changes",
+        );
+        process.exit(1);
       }
       csvFiles = [specificFile];
-      console.log(`Loading specific file: ${specificFile}`);
+      console.log(
+        `Loading specific file: ${specificFile}${verbose ? " (verbose mode)" : ""}`,
+      );
     } else {
       // Find all CSV files in poster_data/data directory
       csvFiles = await glob("poster_data/data/**/*.csv", {
         ignore: ["**/node_modules/**", "**/.*"],
       });
-      console.log(`Found ${csvFiles.length} CSV files to load`);
+      console.log(
+        `Found ${csvFiles.length} CSV files to load${verbose ? " (verbose mode)" : ""}`,
+      );
     }
 
     // Load each CSV file into staging
@@ -242,19 +282,23 @@ async function main() {
       INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
       SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name, prefecture, city, number) 
+      ON CONFLICT (row_number, file_name, prefecture) 
       DO UPDATE SET
+        city = EXCLUDED.city,
+        number = EXCLUDED.number,
         name = EXCLUDED.name,
         address = EXCLUDED.address,
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         updated_at = timezone('utc'::text, now())
       WHERE 
+        ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
+        ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
         ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
-      RETURNING id, 
+      RETURNING id, prefecture, city, number, name, address, lat, long, file_name,
         CASE 
           WHEN xmax = 0 THEN 'inserted'
           ELSE 'updated'
@@ -262,11 +306,97 @@ async function main() {
     `);
 
     // Count inserts vs updates
-    const inserted = result.rows.filter((r) => r.action === "inserted").length;
-    const updated = result.rows.filter((r) => r.action === "updated").length;
+    const insertedRows = result.rows.filter(
+      (r) => r.action === "inserted",
+    ) as PosterBoardRecord[];
+    const updatedRows = result.rows.filter(
+      (r) => r.action === "updated",
+    ) as PosterBoardRecord[];
+    const inserted = insertedRows.length;
+    const updated = updatedRows.length;
     console.log(
       `✓ Inserted ${inserted} new records, updated ${updated} existing records`,
     );
+
+    // Generate data-changes.md file if there are new records or updates (and verbose mode is enabled)
+    if (verbose && (inserted > 0 || updated > 0)) {
+      const timestamp = new Date().toISOString();
+      let mdContent = "# Poster Board Data Changes\n\n";
+      mdContent += `Generated: ${timestamp}\n`;
+      mdContent += `Total new records: ${inserted}\n`;
+      mdContent += `Total updated records: ${updated}\n\n`;
+
+      // Process new records
+      if (inserted > 0) {
+        mdContent += "# New Records\n\n";
+
+        // Group by prefecture
+        const byPrefecture = insertedRows.reduce(
+          (acc, row) => {
+            if (!acc[row.prefecture]) {
+              acc[row.prefecture] = [];
+            }
+            acc[row.prefecture].push(row);
+            return acc;
+          },
+          {} as Record<string, PosterBoardRecord[]>,
+        );
+
+        // Format each prefecture's new records
+        for (const [prefecture, records] of Object.entries(byPrefecture)) {
+          mdContent += `## ${prefecture}\n\n`;
+          mdContent +=
+            "| City | Number | Name | Address | Lat | Long | File |\n";
+          mdContent +=
+            "|------|--------|------|---------|-----|------|------|\n";
+
+          for (const record of records) {
+            mdContent += `| ${record.city} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
+          }
+          mdContent += "\n";
+        }
+      }
+
+      // Process updated records
+      if (updated > 0) {
+        mdContent += "# Updated Records\n\n";
+
+        // Group by prefecture
+        const updatedByPrefecture = updatedRows.reduce(
+          (acc, row) => {
+            if (!acc[row.prefecture]) {
+              acc[row.prefecture] = [];
+            }
+            acc[row.prefecture].push(row);
+            return acc;
+          },
+          {} as Record<string, PosterBoardRecord[]>,
+        );
+
+        // Format each prefecture's updated records
+        for (const [prefecture, records] of Object.entries(
+          updatedByPrefecture,
+        )) {
+          mdContent += `## ${prefecture}\n\n`;
+          mdContent +=
+            "| City | Number | Name | Address | Lat | Long | File |\n";
+          mdContent +=
+            "|------|--------|------|---------|-----|------|------|\n";
+
+          for (const record of records) {
+            mdContent += `| ${record.city} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
+          }
+          mdContent += "\n";
+        }
+      }
+
+      // Write to file
+      const outputPath = "poster_data/data-changes.md";
+      writeFileSync(outputPath, mdContent);
+      console.log(
+        `✓ Generated ${outputPath} with details of ${inserted} new and ${updated} updated records`,
+      );
+    }
 
     // Get final count
     const countResult = await db.query(`SELECT COUNT(*) FROM ${TARGET_TABLE}`);
