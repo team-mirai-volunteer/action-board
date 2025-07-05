@@ -146,12 +146,12 @@ export function HorizontalScrollContainer({
           className={cn(
             "absolute left-2 top-1/2 -translate-y-1/2 z-10",
             "flex items-center justify-center",
-            "w-8 h-8 rounded-full bg-white shadow-md border",
+            "w-12 h-12 rounded-full bg-white shadow-lg border-2",
             "hover:bg-gray-50 transition-colors",
           )}
           aria-label="前のミッションを表示"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-6 w-6" />
         </button>
       )}
 
@@ -185,12 +185,12 @@ export function HorizontalScrollContainer({
           className={cn(
             "absolute right-2 top-1/2 -translate-y-1/2 z-10",
             "flex items-center justify-center",
-            "w-8 h-8 rounded-full bg-white shadow-md border",
+            "w-12 h-12 rounded-full bg-white shadow-lg border-2",
             "hover:bg-gray-50 transition-colors",
           )}
           aria-label="次のミッションを表示"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-6 w-6" />
         </button>
       )}
     </div>
