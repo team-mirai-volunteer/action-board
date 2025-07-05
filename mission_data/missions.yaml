@@ -199,11 +199,11 @@ missions:
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission_fallback.svg
-    content: 「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/1fef6f56bae180fe9560d8ef50d3e44a?v=1fef6f56bae1802c8f15000c3f0195e0" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>
+    content: 「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/225f6f56bae180ceb7f4db761f78d2d2" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
@@ -280,7 +280,7 @@ missions:
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
