@@ -133,3 +133,12 @@ Note: This does NOT affect the database. To clear the database, use `supabase db
 ```
 find poster_data/data poster_data/broken_data -name "*.csv" 2>/dev/null | awk -F/ '{print $1"/"$2}'   | sort | uniq -c
 ```
+
+## fixing broken data
+- we had duplicated data becaue of a bad primary key combination
+   - city and number shouldn't be but were treated as so
+- we ran the folloing sql to consolidate duplicated data
+
+```sql
+
+```
