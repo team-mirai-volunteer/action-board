@@ -17,10 +17,10 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     // 活動状況の表示を確認
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
     await expect(signedInPage.getByText("みんなで達成したアクション数")).toBeVisible();
-    await expect(signedInPage.getByText('0件', { exact: true })).toBeVisible();
+    await expect(signedInPage.getByText('0', { exact: true })).toBeVisible();
     await expect(signedInPage.getByText('1日で 0件')).toBeVisible();
     await expect(signedInPage.getByText("アクションボード参加者")).toBeVisible();
-    await expect(signedInPage.getByText('0件', { exact: true })).toBeVisible();
+    await expect(signedInPage.getByText('0', { exact: true })).toBeVisible();
     await expect(signedInPage.getByText('1日で 0件')).toBeVisible();
     
     // ランキングの表示を確認
@@ -197,15 +197,15 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
     await expect(signedInPage.getByText("渡辺雄一")).toBeVisible();
 
-    await signedInPage.getByRole('link', { name: '都道府県別' }).click();
+    await signedInPage.getByText('都道府県別').click();
     await expect(signedInPage).toHaveURL('/ranking/ranking-prefecture', { timeout: 10000 });
     await expect(signedInPage.getByText("都道府県を選択")).toBeVisible();
 
-    await signedInPage.getByRole('link', { name: 'ミッション別' }).click();
+    await signedInPage.getByText('ミッション別').click();
     await expect(signedInPage).toHaveURL('/ranking/ranking-mission', { timeout: 10000 });
     await expect(signedInPage.getByText("ミッションを選択")).toBeVisible();
 
-    await signedInPage.getByRole('link', { name: '全体' }).click();
+    await signedInPage.getByText('全体').click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
     await expect(signedInPage.getByRole('heading', { name: '🏅アクションリーダートップ' })).toBeVisible();
   });
