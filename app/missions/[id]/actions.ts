@@ -363,12 +363,11 @@ export const achieveMissionAction = async (formData: FormData) => {
       .from("mission_artifacts")
       .select(`
       id,
-      achievements!inner(mission_id)
+      achievement_id
     `)
       .eq("user_id", authUser.id)
       .eq("artifact_type", ARTIFACT_TYPES.LINK.key)
-      .eq("link_url", validatedData.artifactLink)
-      .eq("achievements.mission_id", validatedMissionId);
+      .eq("link_url", validatedData.artifactLink);
 
     if (duplicateError) {
       return {
@@ -378,10 +377,29 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
 
     if (duplicateArtifacts && duplicateArtifacts.length > 0) {
-      return {
-        success: false,
-        error: "記録に失敗しました。同じURLがすでに登録されています。",
-      };
+      const { data: relatedAchievements, error: achievementError } =
+        await supabase
+          .from("achievements")
+          .select("id")
+          .eq("mission_id", validatedMissionId)
+          .in(
+            "id",
+            duplicateArtifacts.map((artifact) => artifact.achievement_id),
+          );
+
+      if (achievementError) {
+        return {
+          success: false,
+          error: "重複チェック中にエラーが発生しました。",
+        };
+      }
+
+      if (relatedAchievements && relatedAchievements.length > 0) {
+        return {
+          success: false,
+          error: "記録に失敗しました。同じURLがすでに登録されています。",
+        };
+      }
     }
   }
 
