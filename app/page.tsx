@@ -69,14 +69,12 @@ export default async function Home({
       </section>
 
       {/* メトリクスセクション */}
-      <section className="py-12 md:py-16 bg-white">
-        <Metrics />
-      </section>
+      <Metrics />
 
       {/* ランキングセクション */}
-      <section className="py-12 md:py-16 bg-white">
+      {/* <section className="py-12 md:py-16 bg-white">
         <RankingTop limit={5} showDetailedInfo={true} />
-      </section>
+      </section> */}
 
       {/* フューチャードミッションセクション */}
       {showFeatured && (
