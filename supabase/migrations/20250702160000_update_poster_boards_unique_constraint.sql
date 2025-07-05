@@ -5,6 +5,7 @@ DROP CONSTRAINT IF EXISTS poster_boards_row_number_file_name_key;
 ALTER TABLE poster_boards 
 DROP CONSTRAINT IF EXISTS poster_boards_row_file_unique;
 
+-- comment: this was a mistake and removed in 20250704131600_fix_poster_boards_unique_constraint.sql
 -- Add new unique constraint on (row_number, file_name, prefecture, city, number)
 ALTER TABLE poster_boards 
 ADD CONSTRAINT poster_boards_unique_location 
