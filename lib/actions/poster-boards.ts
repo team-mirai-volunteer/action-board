@@ -184,23 +184,42 @@ export async function getUserEditedBoardIdsAction(
 export async function getBoardStatusHistoryAction(boardId: string) {
   const supabase = await createClient();
 
-  // JOINを使用して一度のクエリで履歴とユーザー情報を取得
-  const { data, error } = await supabase
+  // まず履歴データを取得
+  const { data: historyData, error: historyError } = await supabase
     .from("poster_board_status_history")
-    .select(`
-      *,
-      user:public_user_profiles!user_id (
-        id,
-        name,
-        address_prefecture
-      )
-    `)
+    .select("*")
     .eq("board_id", boardId)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    throw error;
+  if (historyError) {
+    throw historyError;
   }
 
-  return data || [];
+  if (!historyData || historyData.length === 0) {
+    return [];
+  }
+
+  // ユーザーIDのリストを取得
+  const userIds = Array.from(new Set(historyData.map((h) => h.user_id)));
+
+  // ユーザー情報を取得
+  const { data: userData, error: userError } = await supabase
+    .from("public_user_profiles")
+    .select("id, name, address_prefecture")
+    .in("id", userIds);
+
+  if (userError) {
+    console.error("Error fetching user profiles:", userError);
+    // ユーザー情報が取得できなくても履歴は返す
+    return historyData.map((h) => ({ ...h, user: null }));
+  }
+
+  // ユーザー情報をマップに変換
+  const userMap = new Map(userData?.map((u) => [u.id, u]) || []);
+
+  // 履歴データにユーザー情報を追加
+  return historyData.map((h) => ({
+    ...h,
+    user: userMap.get(h.user_id) || null,
+  }));
 }
