@@ -85,6 +85,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
 
     // 自身のユーザーページの表示内容を確認
     await expect(signedInPage.getByText("田中花子")).toBeVisible();
+    await expect(signedInPage.getByText("Lv.1")).toBeVisible();
     await expect(signedInPage.getByText("東京都")).toBeVisible();
     await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
   });
@@ -100,6 +101,8 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
 
     // 任意のユーザーページの表示内容を確認
     await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
+    await expect(signedInPage.getByText("Lv.10")).toBeVisible();
+    await expect(signedInPage.getByText("東京都")).toBeVisible();
     await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
   });
 
@@ -113,8 +116,18 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     // ミッションページの表示内容を確認
-    await expect(signedInPage.getByRole('heading', { name: /ゴミ拾いをしよう/ })).toBeVisible();
+    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible();
     await expect(signedInPage.getByText("近所のゴミを拾ってみよう！清掃活動の報告は任意です。")).toBeVisible();
+    await expect(signedInPage.getByText('実行したら記録しよう！')).toBeVisible();
+    await expect(signedInPage.getByRole('button', { name: 'ミッション完了を記録する' })).toBeVisible();
+    await expect(signedInPage.getByText('※ 成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。')).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: /ゴミ拾いをしよう/ })).toBeVisible();
+
+    //TODO
+    // ミッションを達成する
+
+    //TODO
+    // TOP100を見る
   });
 
   test("ミッション達成が正常に動作する", async ({
