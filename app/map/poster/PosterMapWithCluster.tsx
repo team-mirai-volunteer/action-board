@@ -14,8 +14,7 @@ import {
   type PosterPrefectureKey,
   getPrefectureDefaultZoom,
 } from "@/lib/constants/poster-prefectures";
-import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
-import { getBoardsLatestEditor } from "@/lib/services/poster-boards";
+import { usePosterBoardFilterOptimized } from "@/lib/hooks/usePosterBoardFilterOptimized";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
@@ -37,6 +36,12 @@ interface PosterMapWithClusterProps {
   onBoardClick: (board: PosterBoard) => void;
   center: [number, number];
   prefectureKey?: PosterPrefectureKey;
+  onFilterChange?: (filters: {
+    selectedStatuses: BoardStatus[];
+    showOnlyMine: boolean;
+  }) => void;
+  currentUserId?: string;
+  userEditedBoardIds?: Set<string>;
 }
 
 // Status colors for markers
@@ -255,14 +260,17 @@ export default function PosterMapWithCluster({
   onBoardClick,
   center,
   prefectureKey,
+  onFilterChange,
+  currentUserId: userIdFromProps,
+  userEditedBoardIds,
 }: PosterMapWithClusterProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
   const currentMarkerRef = useRef<L.CircleMarker | null>(null);
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
-  const [boardsLatestEditor, setBoardsLatestEditor] =
-    useState<Map<string, string | null>>();
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>(
+    userIdFromProps,
+  );
 
   // Fetch current user and board info
   useEffect(() => {
@@ -276,25 +284,15 @@ export default function PosterMapWithCluster({
         } = await supabase.auth.getUser();
 
         if (userError) {
-          console.error("ユーザー情報の取得に失敗しました:", userError);
+          // ユーザー情報の取得に失敗した場合は静かに終了
           return;
         }
 
-        if (isMounted) {
+        if (isMounted && !userIdFromProps) {
           setCurrentUserId(user?.id);
         }
-
-        if (boards.length > 0 && isMounted) {
-          const boardIds = boards.map((b) => b.id);
-
-          // Get latest editor info for all boards
-          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
-          if (isMounted) {
-            setBoardsLatestEditor(latestEditorInfo);
-          }
-        }
       } catch (error) {
-        console.error("データの取得中にエラーが発生しました:", error);
+        // エラーは静かに処理
       }
     };
 
@@ -303,9 +301,9 @@ export default function PosterMapWithCluster({
     return () => {
       isMounted = false;
     };
-  }, [boards]);
+  }, [userIdFromProps]);
 
-  // Use filter hook
+  // Use optimized filter hook for better performance with large datasets
   const {
     filterState,
     filteredBoards,
@@ -314,11 +312,22 @@ export default function PosterMapWithCluster({
     selectAll,
     deselectAll,
     activeFilterCount,
-  } = usePosterBoardFilter({
+    isFiltering,
+  } = usePosterBoardFilterOptimized({
     boards,
     currentUserId,
-    boardsWithLatestEditor: boardsLatestEditor,
+    userEditedBoardIds: userEditedBoardIds,
   });
+
+  // フィルター状態が変更されたときに親コンポーネントに通知
+  useEffect(() => {
+    if (onFilterChange) {
+      onFilterChange({
+        selectedStatuses: Array.from(filterState.statuses),
+        showOnlyMine: filterState.showOnlyMine,
+      });
+    }
+  }, [filterState, onFilterChange]);
 
   useEffect(() => {
     // Get zoom level for the prefecture
@@ -337,14 +346,19 @@ export default function PosterMapWithCluster({
         maxZoom: MAX_ZOOM,
       }).addTo(mapRef.current);
 
-      // Initialize marker cluster group
+      // Initialize marker cluster group with optimized settings
       markerClusterRef.current = L.markerClusterGroup({
         maxClusterRadius: 50,
         iconCreateFunction: createClusterIcon,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
-        // disableClusteringAtZoom: 16, // コメントアウト - 最大ズーム時でもクラスタリングを維持
+        chunkedLoading: true, // チャンク単位でロード
+        chunkInterval: 200, // チャンク間隔
+        chunkDelay: 50, // チャンク遅延
+        removeOutsideVisibleBounds: true, // 表示範囲外のマーカーを削除
+        animate: true, // アニメーションを有効化
+        animateAddingMarkers: true, // マーカー追加時のアニメーション
         spiderfyDistanceMultiplier: 2, // スパイダリー表示時の距離を2倍に
         spiderLegPolylineOptions: { weight: 2, color: "#222", opacity: 0.5 },
       });
@@ -420,7 +434,8 @@ export default function PosterMapWithCluster({
     // Clear existing markers
     markerClusterRef.current.clearLayers();
 
-    // 同じ位置のマーカーをグループ化し、少しずらして配置
+    // バッチ処理でマーカーを追加
+    const markers: L.Marker[] = [];
     const locationGroups = new Map<string, PosterBoard[]>();
 
     // Add markers for each board (use filtered boards)
@@ -437,7 +452,7 @@ export default function PosterMapWithCluster({
       }
     }
 
-    // Add markers for each board
+    // Create markers for each board
     for (const boardsAtLocation of Array.from(locationGroups.values())) {
       for (let index = 0; index < boardsAtLocation.length; index++) {
         const board = boardsAtLocation[index];
@@ -468,12 +483,14 @@ export default function PosterMapWithCluster({
 
           // Store board data in marker for cluster icon calculation
           (marker as MarkerWithBoard).boardData = board;
-
-          if (markerClusterRef.current) {
-            markerClusterRef.current.addLayer(marker);
-          }
+          markers.push(marker);
         }
       }
+    }
+
+    // バッチでマーカーを追加
+    if (markers.length > 0) {
+      markerClusterRef.current.addLayers(markers);
     }
   }, [filteredBoards, onBoardClick]);
 
@@ -486,8 +503,8 @@ export default function PosterMapWithCluster({
       (pos) => {
         setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
       },
-      (error) => {
-        console.warn("位置情報の取得に失敗しました:", error.message);
+      () => {
+        // 位置情報の取得に失敗した場合は静かに処理
       },
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
     );
@@ -546,6 +563,17 @@ export default function PosterMapWithCluster({
   return (
     <div className="relative h-[600px] w-full z-0">
       <div id="poster-map-cluster" className="h-full w-full" />
+
+      {/* フィルタリング中の表示 */}
+      {isFiltering && (
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white/90 rounded-lg px-4 py-2 shadow-lg z-[1001]">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full" />
+            <span className="text-sm">フィルタリング中...</span>
+          </div>
+        </div>
+      )}
+
       <PosterBoardFilter
         filterState={filterState}
         onToggleStatus={toggleStatus}

@@ -3,9 +3,57 @@ import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type StatusHistory =
-  Database["public"]["Tables"]["poster_board_status_history"]["Row"];
 
+// 最小限のデータのみ取得（マップ表示用）
+export async function getPosterBoardsMinimal(prefecture?: string) {
+  const supabase = createClient();
+
+  // 全データを取得するためページネーションを使用
+  const allBoards: Pick<PosterBoard, "id" | "lat" | "long" | "status">[] = [];
+  let hasMore = true;
+  let rangeStart = 0;
+  const pageSize = 5000; // 5000件ずつ取得
+
+  while (hasMore) {
+    let query = supabase
+      .from("poster_boards")
+      .select("id,lat,long,status")
+      .range(rangeStart, rangeStart + pageSize - 1)
+      .limit(5000)
+      .order("id", { ascending: true }); // 一貫した順序を保証
+
+    if (prefecture) {
+      query = query.eq(
+        "prefecture",
+        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching poster boards:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      hasMore = false;
+    } else {
+      allBoards.push(...data);
+
+      // 取得したデータが pageSize より少ない場合は最後のページ
+      if (data.length < pageSize) {
+        hasMore = false;
+      } else {
+        rangeStart += pageSize;
+      }
+    }
+  }
+
+  return allBoards;
+}
+
+// 全データ取得（既存の関数名を維持）
 export async function getPosterBoards(prefecture?: string) {
   const supabase = createClient();
 
@@ -50,6 +98,26 @@ export async function getPosterBoards(prefecture?: string) {
   }
 
   return allBoards;
+}
+
+// 個別の掲示板の詳細を取得
+export async function getPosterBoardDetail(
+  boardId: string,
+): Promise<PosterBoard | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("*")
+    .eq("id", boardId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching poster board detail:", error);
+    return null;
+  }
+
+  return data;
 }
 
 export async function updateBoardStatus(
@@ -110,37 +178,6 @@ export async function updateBoardStatus(
   return { success: true };
 }
 
-export async function getBoardStatusHistory(boardId: string) {
-  const supabase = createClient();
-
-  const { data: historyData, error } = await supabase
-    .from("poster_board_status_history")
-    .select("*")
-    .eq("board_id", boardId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching status history:", error);
-    throw error;
-  }
-
-  // Fetch user profiles for each history entry
-  const userIds = Array.from(new Set(historyData?.map((h) => h.user_id) || []));
-  const { data: users } = await supabase
-    .from("public_user_profiles")
-    .select("id, name, address_prefecture")
-    .in("id", userIds);
-
-  // Combine history with user data
-  const data =
-    historyData?.map((history) => ({
-      ...history,
-      user: users?.find((u) => u.id === history.user_id) || null,
-    })) || [];
-
-  return data;
-}
-
 // Get unique prefectures that have poster boards
 export async function getPrefecturesWithBoards() {
   const supabase = createClient();
@@ -186,48 +223,77 @@ export async function getPrefecturesWithBoards() {
   return uniquePrefectures;
 }
 
-// Get the user IDs who made the latest status change for each board
-export async function getBoardsLatestEditor(boardIds: string[]) {
+// 統計情報を取得（全データ）
+export async function getPosterBoardStats(prefecture: string): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
   const supabase = createClient();
-  const editorMap = new Map<string, string | null>();
 
-  // Process in batches to avoid query limits
-  const batchSize = 100;
-  for (let i = 0; i < boardIds.length; i += batchSize) {
-    const batch = boardIds.slice(i, i + batchSize);
+  // 各ステータスの件数を個別にカウント（Supabaseは現在GROUP BYに対応していないため）
+  const statusTypes: BoardStatus[] = [
+    "not_yet",
+    "reserved",
+    "done",
+    "error_wrong_place",
+    "error_damaged",
+    "error_wrong_poster",
+    "other",
+  ];
 
-    const { data, error } = await supabase
-      .from("poster_board_status_history")
-      .select("board_id, user_id, created_at")
-      .in("board_id", batch)
-      .order("created_at", { ascending: false });
+  const statusCounts: Record<BoardStatus, number> = {
+    not_yet: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+
+  // 並列でカウントクエリを実行
+  const countPromises = statusTypes.map(async (status) => {
+    const { count, error } = await supabase
+      .from("poster_boards")
+      .select("*", { count: "exact", head: true })
+      .eq(
+        "prefecture",
+        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+      )
+      .eq("status", status);
 
     if (error) {
-      console.error("Error fetching latest editor info:", error);
-      continue;
+      console.error(`Error counting ${status}:`, error);
+      return { status, count: 0 };
     }
 
-    // Group by board_id and get the latest edit for each
-    const latestEdits = new Map<
-      string,
-      { user_id: string; created_at: string }
-    >();
+    return { status, count: count || 0 };
+  });
 
-    for (const record of data || []) {
-      const existing = latestEdits.get(record.board_id);
-      if (!existing || record.created_at > existing.created_at) {
-        latestEdits.set(record.board_id, {
-          user_id: record.user_id,
-          created_at: record.created_at,
-        });
-      }
-    }
+  // 全件数のカウント
+  const totalCountPromise = supabase
+    .from("poster_boards")
+    .select("*", { count: "exact", head: true })
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    );
 
-    // Add to the result map
-    for (const [boardId, { user_id }] of Array.from(latestEdits.entries())) {
-      editorMap.set(boardId, user_id);
-    }
+  // すべてのクエリを並列実行
+  const [statusResults, totalResult] = await Promise.all([
+    Promise.all(countPromises),
+    totalCountPromise,
+  ]);
+
+  // 結果を集計
+  for (const result of statusResults) {
+    statusCounts[result.status] = result.count;
   }
 
-  return editorMap;
+  const totalCount = totalResult.count || 0;
+
+  return {
+    totalCount,
+    statusCounts,
+  };
 }

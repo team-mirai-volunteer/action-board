@@ -24,8 +24,8 @@ import {
   type PosterPrefectureKey,
 } from "@/lib/constants/poster-prefectures";
 import {
-  getBoardStatusHistory,
-  getPosterBoards,
+  getPosterBoardDetail,
+  getPosterBoardsMinimal,
   updateBoardStatus,
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
@@ -38,7 +38,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
-// Dynamic import to avoid SSR issues - using clustered version for better performance
+// Dynamic import to avoid SSR issues
 const PosterMap = dynamic(() => import("../PosterMapWithCluster"), {
   ssr: false,
   loading: () => (
@@ -52,14 +52,24 @@ type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type StatusHistory =
   Database["public"]["Tables"]["poster_board_status_history"]["Row"] & {
-    user: { id: string; name: string; address_prefecture: string } | null;
+    user?: { id: string; name: string; address_prefecture: string } | null;
   };
+
+import {
+  getBoardStatusHistoryAction,
+  getPosterBoardStatsAction,
+} from "@/lib/actions/poster-boards";
 
 interface PrefecturePosterMapClientProps {
   userId?: string;
   prefecture: string;
   prefectureName: string;
   center: [number, number];
+  initialStats?: {
+    totalCount: number;
+    statusCounts: Record<BoardStatus, number>;
+  };
+  userEditedBoardIds?: string[];
 }
 
 export default function PrefecturePosterMapClient({
@@ -67,6 +77,8 @@ export default function PrefecturePosterMapClient({
   prefecture,
   prefectureName,
   center,
+  initialStats,
+  userEditedBoardIds,
 }: PrefecturePosterMapClientProps) {
   const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
@@ -83,8 +95,25 @@ export default function PrefecturePosterMapClient({
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
+  const [stats, setStats] = useState(initialStats);
+  const [filters, setFilters] = useState({
+    selectedStatuses: [
+      "not_yet",
+      "reserved",
+      "done",
+      "error_wrong_place",
+      "error_damaged",
+      "error_wrong_poster",
+      "other",
+    ] as BoardStatus[],
+    showOnlyMine: false,
+  });
+  const [userEditedBoardIdsSet] = useState<Set<string>>(() => {
+    return new Set(userEditedBoardIds || []);
+  });
 
   useEffect(() => {
+    // 初回ロード時に全データをロード
     loadBoards();
   }, []);
 
@@ -115,8 +144,15 @@ export default function PrefecturePosterMapClient({
 
   const loadBoards = async () => {
     try {
-      const data = await getPosterBoards(prefecture);
-      setBoards(data);
+      // 最小限のデータのみ取得
+      const data = await getPosterBoardsMinimal(prefecture);
+      setBoards(data as PosterBoard[]);
+
+      // 統計情報も更新
+      const newStats = await getPosterBoardStatsAction(
+        prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
+      );
+      setStats(newStats);
     } catch (error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
     } finally {
@@ -124,7 +160,7 @@ export default function PrefecturePosterMapClient({
     }
   };
 
-  const handleBoardSelect = (board: PosterBoard) => {
+  const handleBoardSelect = async (board: PosterBoard) => {
     if (!userId) {
       // ログイン後に戻ってきた時のために選択した掲示板情報を保存
       localStorage.setItem("selectedBoardId", board.id);
@@ -133,8 +169,16 @@ export default function PrefecturePosterMapClient({
       setIsLoginDialogOpen(true);
       return;
     }
-    setSelectedBoard(board);
-    setUpdateStatus(board.status);
+
+    // 詳細データを取得
+    const fullBoardData = await getPosterBoardDetail(board.id);
+    if (!fullBoardData) {
+      toast.error("掲示板の詳細情報の取得に失敗しました");
+      return;
+    }
+
+    setSelectedBoard(fullBoardData);
+    setUpdateStatus(fullBoardData.status);
     setUpdateNote("");
     setHistory([]);
     setShowHistory(false);
@@ -146,7 +190,8 @@ export default function PrefecturePosterMapClient({
 
     setLoadingHistory(true);
     try {
-      const data = await getBoardStatusHistory(selectedBoard.id);
+      const data = await getBoardStatusHistoryAction(selectedBoard.id);
+      // @ts-expect-error - Supabase型の問題を回避
       setHistory(data);
     } catch (error) {
       toast.error("履歴の読み込みに失敗しました");
@@ -202,7 +247,7 @@ export default function PrefecturePosterMapClient({
       .single();
 
     if (!mission) {
-      console.error("put-up-poster-on-board mission not found");
+      // ミッションが見つからない場合は静かに終了
       return;
     }
 
@@ -224,8 +269,6 @@ export default function PrefecturePosterMapClient({
 
     if (result.success) {
       toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
-    } else {
-      console.error("Mission completion failed:", result.error);
     }
   };
 
@@ -252,9 +295,8 @@ export default function PrefecturePosterMapClient({
 
           if (!hasCompleted) {
             // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
-            completePosterBoardMission(selectedBoard).catch((error) => {
-              console.error("Mission completion error:", error);
-              // エラーは記録するが、ステータス更新自体は成功として扱う
+            completePosterBoardMission(selectedBoard).catch(() => {
+              // エラーは無視して、ステータス更新自体は成功として扱う
             });
           }
         }
@@ -283,16 +325,18 @@ export default function PrefecturePosterMapClient({
     );
   }
 
-  const stats = boards.reduce(
-    (acc, board) => {
-      acc[board.status] = (acc[board.status] || 0) + 1;
-      return acc;
-    },
-    {} as Record<BoardStatus, number>,
-  );
-
-  const completedCount = stats.done || 0;
-  const totalCount = boards.length;
+  // 統計情報を使用（初期値はサーバーから提供されたもの）
+  const statusCounts = stats?.statusCounts || {
+    not_yet: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+  const totalCount = stats?.totalCount || 0;
+  const completedCount = statusCounts.done || 0;
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
@@ -335,6 +379,9 @@ export default function PrefecturePosterMapClient({
           prefectureKey={
             JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
           }
+          onFilterChange={setFilters}
+          currentUserId={userId}
+          userEditedBoardIds={userEditedBoardIdsSet}
         />
       </div>
 
@@ -367,7 +414,7 @@ export default function PrefecturePosterMapClient({
           {/* ステータス別内訳 */}
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             {Object.entries(statusConfig).map(([status, config]) => {
-              const count = stats[status as BoardStatus] || 0;
+              const count = statusCounts[status as BoardStatus] || 0;
               return (
                 <div key={status} className="flex items-center gap-1">
                   <div
