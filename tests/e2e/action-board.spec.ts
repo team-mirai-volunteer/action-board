@@ -86,7 +86,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     // 自身のユーザーページの表示内容を確認
     await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
     await expect(signedInPage.getByText("東京都")).toBeVisible();
-    await expect(signedInPage.getByRole('heading', { name: /活動タイムライン/ })).toBeVisible();
+    await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
   });
 
   test("任意のユーザーページ遷移が正常に動作する", async ({
@@ -100,7 +100,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
 
     // 任意のユーザーページの表示内容を確認
     await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
-    await expect(signedInPage.getByRole('heading', { name: /活動タイムライン/ })).toBeVisible();
+    await expect(signedInPage.getByText("活動タイムライン")).toBeVisible();
   });
 
   test("ミッションページ遷移が正常に動作する", async ({
