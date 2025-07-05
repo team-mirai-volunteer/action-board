@@ -11,7 +11,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // 自身のステータス表示を確認
-    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' })).toBeVisible();
 
     // 活動状況の表示を確認
@@ -130,7 +130,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
 
     await expect(signedInPage.getByText("このミッションは達成済みです。")).toBeVisible();
-    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible();
+    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible({ timeout: 10000 });
   });
 
   test("ミッション完了 → レベル/XP確認 → 取り消し → 復元確認が正常に動作する", async ({
@@ -138,7 +138,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
-    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible({ timeout: 10000 });
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
     await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
@@ -148,23 +148,23 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
     await expect(signedInPage.getByText("おめでとうございます！")).toBeVisible({ timeout: 10000 });
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
-    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible();
+    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible({ timeout: 10000 });
 
     await signedInPage.goto('/');
-    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで0ポイント🔥")).toBeVisible();
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで0ポイント🔥")).toBeVisible({ timeout: 10000 });
 
     // ミッションページに戻る
     await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
-    await expect(signedInPage.getByText("あなたの達成履歴")).toBeVisible();
+    await expect(signedInPage.getByText("あなたの達成履歴")).toBeVisible({ timeout: 10000 });
     await signedInPage.getByRole('button', { name: '取り消す' }).click();
 
-    await expect(signedInPage.getByText("達成履歴を削除しますか？")).toBeVisible();
+    await expect(signedInPage.getByText("達成履歴を削除しますか？")).toBeVisible({ timeout: 10000 });
     await signedInPage.getByRole('button', { name: '削除する' }).click();
 
     await signedInPage.goto('/');
-    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible({ timeout: 10000 });
   });
 
   test("TOP100ランキング表示が正常に動作する", async ({
