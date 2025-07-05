@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       achievements: {
@@ -76,6 +51,42 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      announcements: {
+        Row: {
+          content: string;
+          created_at: string | null;
+          end_date: string | null;
+          id: string;
+          is_active: boolean;
+          start_date: string | null;
+          title: string;
+          type: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          content: string;
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean;
+          start_date?: string | null;
+          title: string;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          content?: string;
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean;
+          start_date?: string | null;
+          title?: string;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
       };
       daily_action_summary: {
         Row: {
@@ -616,14 +627,14 @@ export type Database = {
       };
       poster_boards: {
         Row: {
-          address: string;
+          address: string | null;
           city: string;
           created_at: string;
           file_name: string | null;
           id: string;
           lat: number;
           long: number;
-          name: string;
+          name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number: number | null;
@@ -631,14 +642,14 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          address: string;
+          address?: string | null;
           city: string;
           created_at?: string;
           file_name?: string | null;
           id?: string;
           lat: number;
           long: number;
-          name: string;
+          name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -646,14 +657,14 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          address?: string;
+          address?: string | null;
           city?: string;
           created_at?: string;
           file_name?: string | null;
           id?: string;
           lat?: number;
           long?: number;
-          name?: string;
+          name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -911,14 +922,14 @@ export type Database = {
       };
       staging_poster_boards: {
         Row: {
-          address: string;
+          address: string | null;
           city: string;
           created_at: string;
           file_name: string | null;
           id: string | null;
           lat: number;
           long: number;
-          name: string;
+          name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number: number | null;
@@ -926,14 +937,14 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          address: string;
+          address?: string | null;
           city: string;
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
           lat: number;
           long: number;
-          name: string;
+          name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -941,14 +952,14 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          address?: string;
+          address?: string | null;
           city?: string;
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
           lat?: number;
           long?: number;
-          name?: string;
+          name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
           row_number?: number | null;
@@ -1473,9 +1484,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       poster_board_status: [
