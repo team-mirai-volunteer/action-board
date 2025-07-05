@@ -3,6 +3,20 @@
  ******************************************************************/
 
 --------------------------------------------------------------------
+-- 0. First, update foreign key constraint to CASCADE
+--------------------------------------------------------------------
+-- Drop the existing foreign key constraint
+ALTER TABLE poster_activities 
+DROP CONSTRAINT IF EXISTS poster_activities_board_id_fkey;
+
+-- Re-add the foreign key constraint with CASCADE on DELETE
+ALTER TABLE poster_activities 
+ADD CONSTRAINT poster_activities_board_id_fkey 
+FOREIGN KEY (board_id) 
+REFERENCES poster_boards(id) 
+ON DELETE CASCADE;
+
+--------------------------------------------------------------------
 -- 1-3.  Dedup + status precedence + delete extras
 --------------------------------------------------------------------
 BEGIN;
