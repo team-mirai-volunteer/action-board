@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CollapsibleInfo } from "@/components/ui/collapsible-info";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getAvatarUrl } from "@/lib/avatar";
@@ -191,6 +192,15 @@ export default function ProfileForm({
           <div className="space-y-2">
             <Label htmlFor="date_of_birth">生年月日</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
+            {/* 生年月日が必要な理由の説明エリア（折りたたみ可能） */}
+            <CollapsibleInfo title="なぜ生年月日が必要ですか？" variant="gray">
+              <p>
+                法律により、サポーター登録は満18歳以上の方に限定されています。
+              </p>
+              <p>
+                この情報は年齢確認のみに使用され、他の目的には一切使用されません。
+              </p>
+            </CollapsibleInfo>
             <Input
               type="date"
               name="date_of_birth"
@@ -214,6 +224,15 @@ export default function ProfileForm({
           <div className="space-y-2">
             <Label htmlFor="postcode">郵便番号(ハイフンなし半角7桁)</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
+            {/* 郵便番号が必要な理由の説明エリア（折りたたみ可能） */}
+            <CollapsibleInfo title="なぜ郵便番号が必要ですか？" variant="gray">
+              <p>
+                郵便番号は、ポスティングなど地域別のミッションを適切に届けるために必要です。
+              </p>
+              <p>
+                プライバシーポリシーに従って厳重に管理され、他の目的には使用されません。
+              </p>
+            </CollapsibleInfo>
             {selectedPrefecture === "海外" && (
               <p className="text-sm text-red-600">
                 海外在住の方は0000000を入力ください
