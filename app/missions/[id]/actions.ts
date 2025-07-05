@@ -191,6 +191,7 @@ const posterArtifactSchema = baseMissionFormSchema.extend({
         message: "経度は-180から180の間の数値で入力してください",
       },
     ),
+  boardId: z.string().optional(), // Devin: 掲示板IDを追加（オプション）
 });
 
 // QUIZタイプ用スキーマ（sessionIdは不要）

@@ -16,15 +16,50 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 
-type PosterFormProps = {
-  disabled: boolean;
+// 掲示板情報の型定義
+type SelectedBoard = {
+  id: string;
+  number: string | null;
+  name: string;
+  prefecture: string;
+  city: string;
+  address: string;
 };
 
-export function PosterForm({ disabled }: PosterFormProps) {
+type PosterFormProps = {
+  disabled: boolean;
+  selectedBoard?: SelectedBoard | null; // Devin: マップから選択された掲示板情報
+};
+
+export function PosterForm({ disabled, selectedBoard }: PosterFormProps) {
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>("");
 
   return (
     <div className="space-y-4">
+      {/* Devin: 選択された掲示板情報の表示エリア */}
+      {selectedBoard && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <h3 className="text-sm font-medium text-blue-800 mb-2">
+            マップから選択された掲示板情報
+          </h3>
+          <div className="space-y-1 text-sm text-blue-700">
+            <p>
+              <span className="font-medium">掲示板番号:</span>{" "}
+              {selectedBoard.number || "未設定"}
+            </p>
+            <p>
+              <span className="font-medium">名前:</span> {selectedBoard.name}
+            </p>
+            <p>
+              <span className="font-medium">住所:</span>{" "}
+              {selectedBoard.prefecture}
+              {selectedBoard.city}
+              {selectedBoard.address}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div>
         <p>原則ポスターマップ上での報告をお願いします。</p>
         <p>
@@ -74,7 +109,7 @@ export function PosterForm({ disabled }: PosterFormProps) {
         <Select
           disabled={disabled}
           required
-          value={selectedPrefecture}
+          value={selectedBoard?.prefecture || selectedPrefecture}
           onValueChange={setSelectedPrefecture}
         >
           <SelectTrigger>
@@ -88,7 +123,14 @@ export function PosterForm({ disabled }: PosterFormProps) {
             ))}
           </SelectContent>
         </Select>
-        <Input type="hidden" name="prefecture" value={selectedPrefecture} />
+        <Input
+          type="hidden"
+          name="prefecture"
+          value={selectedBoard?.prefecture || selectedPrefecture}
+        />
+        {selectedBoard && (
+          <Input type="hidden" name="boardId" value={selectedBoard.id} />
+        )}
       </div>
 
       {/* 市町村＋区 */}
@@ -104,6 +146,7 @@ export function PosterForm({ disabled }: PosterFormProps) {
           maxLength={100}
           disabled={disabled}
           placeholder="例：渋谷区、名古屋市中区"
+          defaultValue={selectedBoard?.city || ""}
         />
         <p className="text-xs text-gray-500">
           市町村名と区名を入力してください
@@ -124,6 +167,7 @@ export function PosterForm({ disabled }: PosterFormProps) {
           disabled={disabled}
           placeholder="例：10-1、27-2、00"
           pattern="^(\d+|\d+-\d+)$"
+          defaultValue={selectedBoard?.number || ""}
         />
         <p className="text-xs text-gray-500">
           番号を入力してください（例：10-1、27-2、00）
@@ -172,6 +216,7 @@ export function PosterForm({ disabled }: PosterFormProps) {
           maxLength={200}
           disabled={disabled}
           placeholder="例：東京都渋谷区神南1-1-1"
+          defaultValue={selectedBoard?.address || ""}
         />
         <p className="text-xs text-gray-500">
           詳細な住所がわかれば入力してください
