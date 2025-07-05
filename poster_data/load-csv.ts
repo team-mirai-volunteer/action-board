@@ -16,6 +16,19 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
+interface PosterBoardRecord {
+  id: number;
+  prefecture: string;
+  city: string;
+  number: string;
+  name: string;
+  address: string;
+  lat: string;
+  long: string;
+  file_name: string;
+  action: "inserted" | "updated";
+}
+
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
@@ -289,8 +302,12 @@ async function main() {
     `);
 
     // Count inserts vs updates
-    const insertedRows = result.rows.filter((r) => r.action === "inserted");
-    const updatedRows = result.rows.filter((r) => r.action === "updated");
+    const insertedRows = result.rows.filter(
+      (r) => r.action === "inserted",
+    ) as PosterBoardRecord[];
+    const updatedRows = result.rows.filter(
+      (r) => r.action === "updated",
+    ) as PosterBoardRecord[];
     const inserted = insertedRows.length;
     const updated = updatedRows.length;
     console.log(
@@ -318,7 +335,7 @@ async function main() {
             acc[row.prefecture].push(row);
             return acc;
           },
-          {} as Record<string, any[]>,
+          {} as Record<string, PosterBoardRecord[]>,
         );
 
         // Format each prefecture's new records
@@ -349,7 +366,7 @@ async function main() {
             acc[row.prefecture].push(row);
             return acc;
           },
-          {} as Record<string, any[]>,
+          {} as Record<string, PosterBoardRecord[]>,
         );
 
         // Format each prefecture's updated records
