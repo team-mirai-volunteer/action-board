@@ -133,6 +133,40 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible();
   });
 
+  test("ミッション完了 → レベル/XP確認 → 取り消し → 復元確認が正常に動作する", async ({
+    signedInPage,
+  }) => {
+    await assertAuthState(signedInPage, true);
+
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+
+    // ミッションページに遷移（ゴミ拾いミッションをクリック）
+    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+
+    // ミッション完了
+    await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
+    await expect(signedInPage.getByText("おめでとうございます！")).toBeVisible({ timeout: 10000 });
+    await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
+    await expect(signedInPage.getByText("50ポイント獲得しました！")).toBeVisible();
+
+    await signedInPage.goto('/');
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで0ポイント🔥")).toBeVisible();
+
+    // ミッションページに戻る
+    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+
+    await expect(signedInPage.getByText("あなたの達成履歴")).toBeVisible();
+    await signedInPage.getByRole('button', { name: '取り消す' }).click();
+
+    await expect(signedInPage.getByText("達成履歴を削除しますか？")).toBeVisible();
+    await signedInPage.getByRole('button', { name: '削除する' }).click();
+
+    await signedInPage.goto('/');
+    await expect(signedInPage.locator('section').getByText("テストユーザーLV.1東京都次のレベルまで40ポイント🔥")).toBeVisible();
+  });
+
   test("TOP100ランキング表示が正常に動作する", async ({
     signedInPage,
   }) => {
@@ -147,5 +181,32 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
     await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
     await expect(signedInPage.getByText("渡辺雄一")).toBeVisible();
+  });
+
+  test("TOP100ランキング - 全タブ遷移が正常に動作する", async ({
+    signedInPage,
+  }) => {
+    await assertAuthState(signedInPage, true);
+
+    // ランキングページに遷移
+    await signedInPage.getByRole('link', { name: 'トップ100を見る' }).click();
+    await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
+
+    await expect(signedInPage.getByRole('heading', { name: '🏅アクションリーダートップ' })).toBeVisible();
+    await expect(signedInPage.getByText("安野たかひろ")).toBeVisible();
+    await expect(signedInPage.getByText("佐藤太郎")).toBeVisible();
+    await expect(signedInPage.getByText("渡辺雄一")).toBeVisible();
+
+    await signedInPage.getByRole('link', { name: '都道府県別' }).click();
+    await expect(signedInPage).toHaveURL('/ranking/ranking-prefecture', { timeout: 10000 });
+    await expect(signedInPage.getByText("都道府県を選択")).toBeVisible();
+
+    await signedInPage.getByRole('link', { name: 'ミッション別' }).click();
+    await expect(signedInPage).toHaveURL('/ranking/ranking-mission', { timeout: 10000 });
+    await expect(signedInPage.getByText("ミッションを選択")).toBeVisible();
+
+    await signedInPage.getByRole('link', { name: '全体' }).click();
+    await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
+    await expect(signedInPage.getByRole('heading', { name: '🏅アクションリーダートップ' })).toBeVisible();
   });
 });
