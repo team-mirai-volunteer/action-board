@@ -10,7 +10,10 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   const supabase = createClient();
 
   // 全データを取得するためページネーションを使用
-  const allBoards: Pick<PosterBoard, "id" | "lat" | "long" | "status">[] = [];
+  const allBoards: Pick<
+    PosterBoard,
+    "id" | "lat" | "long" | "status" | "name" | "address" | "city" | "number"
+  >[] = [];
   let hasMore = true;
   let rangeStart = 0;
   const pageSize = 5000; // 5000件ずつ取得
@@ -18,7 +21,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   while (hasMore) {
     let query = supabase
       .from("poster_boards")
-      .select("id,lat,long,status")
+      .select("id,lat,long,status,name,address,city,number")
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
