@@ -175,9 +175,9 @@ missions:
     artifact_label: null
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//12_referral.png
   - slug: github-pull-request
-    title: '開発者向け: Githubでプルリクエストを出そう'
+    title: '開発者向け: GitHubでプルリクエストを出そう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-3911q1mio-ObFPW3ZywLLQSiWXfpXoFg" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -188,7 +188,7 @@ missions:
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: <a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-3911q1mio-ObFPW3ZywLLQSiWXfpXoFg" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
@@ -228,7 +228,7 @@ missions:
     difficulty: 5
     required_artifact_type: TEXT
     max_achievement_count: 1
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
@@ -489,7 +489,7 @@ missions:
   - slug: design-create
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission_fallback.svg
-    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-37shr9uo0-uUtjteJxhUDps4q5plL7vw" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
+    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-3911q1mio-ObFPW3ZywLLQSiWXfpXoFg" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
