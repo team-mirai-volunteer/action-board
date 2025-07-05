@@ -8,10 +8,21 @@ import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
 import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { GeolocationInput } from "./GeolocationInput";
 import { ImageUploader } from "./ImageUploader";
 import { PosterForm } from "./PosterForm";
+
+// 掲示板情報の型定義
+type SelectedBoard = {
+  id: string;
+  number: string | null;
+  name: string;
+  prefecture: string;
+  city: string;
+  address: string;
+};
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
@@ -37,6 +48,31 @@ export function ArtifactForm({
     string | undefined
   >(undefined);
   const [geolocation, setGeolocation] = useState<GeolocationData | null>(null);
+  const searchParams = useSearchParams();
+  const [selectedBoard, setSelectedBoard] = useState<SelectedBoard | null>(
+    null,
+  );
+
+  // URLパラメータから掲示板情報を取得
+  useEffect(() => {
+    const boardId = searchParams.get("boardId");
+    const boardNumber = searchParams.get("boardNumber");
+    const boardName = searchParams.get("boardName");
+    const boardPrefecture = searchParams.get("boardPrefecture");
+    const boardCity = searchParams.get("boardCity");
+    const boardAddress = searchParams.get("boardAddress");
+
+    if (boardId && boardName && boardPrefecture && boardCity && boardAddress) {
+      setSelectedBoard({
+        id: boardId,
+        number: boardNumber,
+        name: boardName,
+        prefecture: boardPrefecture,
+        city: boardCity,
+        address: boardAddress,
+      });
+    }
+  }, [searchParams]);
 
   const artifactConfig = mission
     ? getArtifactConfig(mission.required_artifact_type)
@@ -161,7 +197,7 @@ export function ArtifactForm({
 
         {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
-          <PosterForm disabled={disabled} />
+          <PosterForm disabled={disabled} selectedBoard={selectedBoard} />
         )}
 
         {/* 画像アップロードフォーム */}
