@@ -399,20 +399,6 @@ export default function PrefecturePosterMapClient({
               <div>{selectedBoard.city}</div>
             </div>
           )}
-          {/* Devin: ミッション報告へのリンクを追加 */}
-          {selectedBoard && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-green-800 mb-2">
-                この掲示板でポスター貼り付けミッションを報告する場合：
-              </p>
-              <Link
-                href={`/?boardId=${selectedBoard.id}&boardNumber=${encodeURIComponent(selectedBoard.number || "")}&boardName=${encodeURIComponent(selectedBoard.name)}&boardPrefecture=${encodeURIComponent(selectedBoard.prefecture)}&boardCity=${encodeURIComponent(selectedBoard.city)}&boardAddress=${encodeURIComponent(selectedBoard.address)}`}
-                className="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
-              >
-                ミッション一覧へ（掲示板情報付き）
-              </Link>
-            </div>
-          )}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="status">ポスターの状況</Label>
