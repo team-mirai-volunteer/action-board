@@ -61,23 +61,11 @@ export default function Mission({
             />
           </div>
           <div className="flex-1">
-            <CardTitle
-              className={clsx(
-                "text-lg leading-tight mb-2",
-                hasReachedMaxAchievements ? "text-gray-600" : "text-gray-900",
-              )}
-            >
+            <CardTitle className="text-lg leading-tight mb-2 text-gray-900">
               {mission.title}
             </CardTitle>
             {dateStr && (
-              <div
-                className={clsx(
-                  "text-sm font-medium",
-                  hasReachedMaxAchievements ? "text-gray-500" : "text-gray-600",
-                )}
-              >
-                {dateStr}
-              </div>
+              <div className="text-sm font-medium text-gray-600">{dateStr}</div>
             )}
           </div>
         </div>
@@ -87,33 +75,16 @@ export default function Mission({
         <div className="flex flex-col items-start gap-1.5">
           <div className="flex items-center">
             <UsersRound className="size-4 mr-2" />
-            <span
-              className={clsx(
-                "text-sm font-medium",
-                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
-              )}
-            >
+            <span className="text-sm font-medium text-gray-700">
               {achievementsCount !== undefined
                 ? `みんなで${achievementsCount.toLocaleString()}回達成`
                 : "みんなで0回達成"}
             </span>
           </div>
           <div className="flex items-center">
-            <span
-              className={clsx(
-                "text-sm font-medium",
-                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
-              )}
-            >
-              難易度：
-            </span>
+            <span className="text-sm font-medium text-gray-700">難易度：</span>
             <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
-            <span
-              className={clsx(
-                "text-sm font-medium ml-1.5",
-                hasReachedMaxAchievements ? "text-gray-500" : "text-gray-700",
-              )}
-            >
+            <span className="text-sm font-medium ml-1.5 text-gray-700">
               獲得ポイント：{calculateMissionXp(mission.difficulty)}
             </span>
           </div>
