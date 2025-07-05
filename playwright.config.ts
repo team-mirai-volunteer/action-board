@@ -17,6 +17,7 @@ const baseURL = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./tests/e2e",
   /* 各テスト実行の最大タイムアウト時間 */
+  workers: 2,
   timeout: 30 * 1000,
   expect: {
     /* テストアサーションのタイムアウト時間 */
