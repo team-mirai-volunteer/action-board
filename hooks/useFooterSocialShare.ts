@@ -3,6 +3,10 @@ import { getCurrentUrl, getOrigin } from "@/lib/utils/browser";
 import type { User } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 
+/**
+ * フッターのソーシャルシェア機能を管理するフック
+ * 認証状態に応じて個人用紹介URLまたは汎用URLを使い分ける
+ */
 export function useFooterSocialShare(user: User | null) {
   const [referralUrl, setReferralUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -69,6 +73,7 @@ ${shareReferralUrl}
         textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.select();
+        // document.execCommandの存在チェック（非推奨APIのため）
         if (document.execCommand) {
           document.execCommand("copy");
           document.body.removeChild(textArea);
@@ -84,10 +89,10 @@ ${shareReferralUrl}
   }, []);
 
   return {
-    handleLineShare,
-    handleTwitterShare,
-    handleFacebookShare,
-    handleCopyUrl,
-    loading,
+    handleLineShare, // LINEシェア処理
+    handleTwitterShare, // Twitterシェア処理（認証状態依存）
+    handleFacebookShare, // Facebookシェア処理
+    handleCopyUrl, // URLコピー処理
+    loading, // 紹介URL取得中の読み込み状態
   };
 }

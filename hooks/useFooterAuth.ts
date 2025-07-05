@@ -2,13 +2,17 @@ import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
+/**
+ * フッターコンポーネント専用の認証状態管理フック
+ * ソーシャルシェア機能で使用するユーザー情報を提供する
+ */
 export function useFooterAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true; // コンポーネントのマウント状態を追跡
     const supabase = createClient();
 
     const initializeAuth = async () => {
@@ -47,18 +51,18 @@ export function useFooterAuth() {
     });
 
     return () => {
-      mounted = false;
-      subscription.unsubscribe();
+      mounted = false; // マウント状態をfalseに設定
+      subscription.unsubscribe(); // 認証状態変更の監視を停止
     };
   }, []);
 
   return {
-    user,
-    loading,
-    error,
-    isAuthenticated: !!user,
+    user, // ユーザー情報
+    loading, // 読み込み状態
+    error, // エラー情報
+    isAuthenticated: !!user, // 認証済みかどうかの真偽値
     refreshAuth: () => {
-      setLoading(true);
+      setLoading(true); // 認証状態の再取得をトリガー
     },
   };
 }
