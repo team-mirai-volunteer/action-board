@@ -706,6 +706,11 @@ export async function handleLineAuthAction(
   }
 }
 
+/**
+ * 認証済みユーザーの個人用紹介URLを生成するアクション
+ * ソーシャルシェア機能で使用され、ユーザー固有の紹介コードを含むURLを生成する
+ * @returns 成功時は紹介URL、失敗時はエラーメッセージを含むオブジェクト
+ */
 export async function getReferralUrlAction(): Promise<{
   success: boolean;
   referralUrl?: string;
