@@ -7,6 +7,7 @@
 --------------------------------------------------------------------
 BEGIN;
 
+-- First, update the surviving rows with the final status
 WITH dedup AS (
     SELECT
         -- keep the newest row
@@ -30,15 +31,23 @@ WITH dedup AS (
     FROM poster_boards
     GROUP BY row_number, file_name, prefecture
 )
-
--- update the surviving row (only if the status changes)
 UPDATE poster_boards pb
 SET    status = d.final_status
 FROM   dedup d
 WHERE  pb.id = d.keep_id
   AND  pb.status <> d.final_status;
 
--- remove duplicates
+-- Then, remove duplicates in a separate statement
+WITH dedup AS (
+    SELECT
+        -- keep the newest row
+        (array_agg(id ORDER BY updated_at DESC))[1]                       AS keep_id,
+        row_number,
+        file_name,
+        prefecture
+    FROM poster_boards
+    GROUP BY row_number, file_name, prefecture
+)
 DELETE FROM poster_boards pb
 USING  dedup d
 WHERE  pb.row_number  = d.row_number
