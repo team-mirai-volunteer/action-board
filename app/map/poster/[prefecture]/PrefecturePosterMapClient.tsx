@@ -406,10 +406,10 @@ export default function PrefecturePosterMapClient({
                 この掲示板でポスター貼り付けミッションを報告する場合：
               </p>
               <Link
-                href={`/missions?boardId=${selectedBoard.id}&boardNumber=${encodeURIComponent(selectedBoard.number || "")}&boardName=${encodeURIComponent(selectedBoard.name)}&boardPrefecture=${encodeURIComponent(selectedBoard.prefecture)}&boardCity=${encodeURIComponent(selectedBoard.city)}&boardAddress=${encodeURIComponent(selectedBoard.address)}`}
+                href={`/?boardId=${selectedBoard.id}&boardNumber=${encodeURIComponent(selectedBoard.number || "")}&boardName=${encodeURIComponent(selectedBoard.name)}&boardPrefecture=${encodeURIComponent(selectedBoard.prefecture)}&boardCity=${encodeURIComponent(selectedBoard.city)}&boardAddress=${encodeURIComponent(selectedBoard.address)}`}
                 className="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
               >
-                ミッション報告画面へ
+                ミッション一覧へ（掲示板情報付き）
               </Link>
             </div>
           )}
