@@ -1,6 +1,6 @@
 // TOPページ用のランキングコンポーネント
 import { Card } from "@/components/ui/card";
-import { getRanking } from "@/lib/services/ranking";
+import { type UserRanking, getRanking } from "@/lib/services/ranking";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { RankingItem } from "./ranking-item";
@@ -14,7 +14,13 @@ export default async function RankingTop({
   limit = 10,
   showDetailedInfo = false,
 }: RankingTopProps) {
-  const rankings = await getRanking(limit);
+  let rankings: UserRanking[];
+  try {
+    rankings = await getRanking(limit);
+  } catch (error) {
+    console.error("Ranking component error:", error);
+    rankings = [];
+  }
 
   return (
     <div className="max-w-6xl mx-auto">

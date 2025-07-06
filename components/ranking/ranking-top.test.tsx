@@ -182,8 +182,20 @@ describe("RankingTop", () => {
   describe("エラーハンドリング", () => {
     it("getRankingがエラーを投げても処理が継続される", async () => {
       getRanking.mockRejectedValue(new Error("API Error"));
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      await expect(RankingTop({})).rejects.toThrow("API Error");
+      render(await RankingTop({}));
+
+      expect(
+        screen.getByText("🏅アクションリーダートップ10"),
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId("ranking-item")).not.toBeInTheDocument();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Ranking component error:",
+        expect.any(Error),
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 
