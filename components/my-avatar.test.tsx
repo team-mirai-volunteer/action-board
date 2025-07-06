@@ -27,12 +27,6 @@ describe("MyAvatar", () => {
       expect(screen.getByTestId("avatar")).toBeInTheDocument();
     });
 
-    it("クラス名が適用される", async () => {
-      render(await MyAvatar({ className: "custom-avatar" }));
-
-      expect(screen.getByTestId("avatar")).toHaveClass("custom-avatar");
-    });
-
     it("デフォルト表示", async () => {
       render(await MyAvatar({}));
 

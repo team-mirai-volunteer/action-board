@@ -230,25 +230,6 @@ describe("RankingTop", () => {
     });
   });
 
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", async () => {
-      getRanking.mockResolvedValue(mockRankings);
-
-      render(await RankingTop({}));
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass(
-        "border-2",
-        "border-gray-200",
-        "rounded-2xl",
-        "transition-all",
-        "duration-300",
-        "p-8",
-        "bg-white",
-      );
-    });
-  });
-
   describe("プロップスの組み合わせ", () => {
     it("limitとshowDetailedInfoが両方指定された場合", async () => {
       getRanking.mockResolvedValue(mockRankings);

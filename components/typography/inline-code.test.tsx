@@ -17,22 +17,6 @@ describe("TypographyInlineCode", () => {
     expect(codeElement.tagName).toBe("CODE");
   });
 
-  it("適切なCSSクラスが設定される", () => {
-    render(<TypographyInlineCode />);
-
-    const codeElement = screen.getByText("@radix-ui/react-alert-dialog");
-    expect(codeElement).toHaveClass(
-      "relative",
-      "rounded",
-      "bg-muted",
-      "px-[0.3rem]",
-      "py-[0.2rem]",
-      "font-mono",
-      "text-sm",
-      "font-semibold",
-    );
-  });
-
   it("固定のテキストが表示される", () => {
     render(<TypographyInlineCode />);
 

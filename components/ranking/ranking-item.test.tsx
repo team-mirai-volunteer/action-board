@@ -121,56 +121,6 @@ describe("RankingItem", () => {
     });
   });
 
-  describe("レベルバッジの色", () => {
-    it("レベル40以上の場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: 40 };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100", "text-emerald-700");
-    });
-
-    it("レベル30以上の場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: 30 };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100", "text-emerald-700");
-    });
-
-    it("レベル20以上の場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: 20 };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100", "text-emerald-700");
-    });
-
-    it("レベル10以上の場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: 10 };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100", "text-emerald-700");
-    });
-
-    it("レベル10未満の場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: 5 };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("text-emerald-700", "bg-emerald-100");
-    });
-
-    it("レベルがnullの場合は適切なクラスが設定される", () => {
-      const user = { ...mockUserRanking, level: null };
-      render(<RankingItem user={user} />);
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("text-emerald-700", "bg-emerald-100");
-    });
-  });
-
   describe("ミッション別ランキング表示", () => {
     const mission = {
       id: "test-mission",

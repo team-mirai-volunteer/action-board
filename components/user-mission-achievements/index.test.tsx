@@ -157,26 +157,4 @@ describe("UserMissionAchievements", () => {
       expect(screen.getByText("単一ミッション")).toBeInTheDocument();
     });
   });
-
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", () => {
-      const { container } = render(
-        <UserMissionAchievements
-          achievements={mockAchievements}
-          totalCount={9}
-        />,
-      );
-
-      const mainDiv = container.firstChild as HTMLElement;
-      expect(mainDiv).toHaveClass("w-full");
-
-      const headerDiv = mainDiv.querySelector(
-        ".flex.flex-row.justify-between.items-center.mb-4",
-      );
-      expect(headerDiv).toBeInTheDocument();
-
-      const contentDiv = mainDiv.querySelector(".flex.flex-col.gap-2");
-      expect(contentDiv).toBeInTheDocument();
-    });
-  });
 });

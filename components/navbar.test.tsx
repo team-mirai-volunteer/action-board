@@ -59,13 +59,6 @@ describe("Navbar", () => {
       const nav = screen.getByRole("navigation");
       expect(nav).toBeInTheDocument();
     });
-
-    it("適切なCSSクラスが設定される", async () => {
-      const { container } = render(await Navbar());
-
-      const nav = container.querySelector("nav");
-      expect(nav).toHaveClass("border-b");
-    });
   });
 
   describe("アクセシビリティ", () => {

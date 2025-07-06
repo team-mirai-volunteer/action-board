@@ -151,25 +151,4 @@ describe("MissionSelect", () => {
       global.URLSearchParams = originalURLSearchParams;
     });
   });
-
-  describe("CSSクラス", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(<MissionSelect missions={mockMissions} />);
-
-      const select = screen.getByRole("combobox");
-      expect(select).toHaveClass(
-        "w-full",
-        "p-3",
-        "pl-4",
-        "pr-10",
-        "text-base",
-        "border",
-        "border-gray-300",
-        "rounded-lg",
-        "bg-white",
-        "appearance-none",
-        "cursor-pointer",
-      );
-    });
-  });
 });

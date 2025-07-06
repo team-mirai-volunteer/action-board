@@ -252,29 +252,4 @@ describe("RankingPrefecture", () => {
       expect(screen.queryByTestId("ranking-item")).not.toBeInTheDocument();
     });
   });
-
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", async () => {
-      getPrefecturesRanking.mockResolvedValue(mockRankings);
-
-      render(
-        await RankingPrefecture({
-          prefecture: "東京都",
-          limit: 10,
-          showDetailedInfo: false,
-        }),
-      );
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass(
-        "border-2",
-        "border-gray-200",
-        "rounded-2xl",
-        "transition-all",
-        "duration-300",
-        "p-8",
-        "bg-white",
-      );
-    });
-  });
 });

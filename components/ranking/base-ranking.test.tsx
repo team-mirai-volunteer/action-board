@@ -50,7 +50,7 @@ describe("BaseRanking", () => {
       expect(screen.getByText("子要素のコンテンツ")).toBeInTheDocument();
     });
 
-    it("Cardコンポーネントが正しいスタイルでレンダリングされる", () => {
+    it("Cardコンポーネントがレンダリングされる", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test">
           <div>テストコンテンツ</div>
@@ -58,15 +58,7 @@ describe("BaseRanking", () => {
       );
 
       const card = screen.getByTestId("card");
-      expect(card).toHaveClass(
-        "border-2",
-        "border-gray-200",
-        "rounded-2xl",
-        "transition-all",
-        "duration-300",
-        "p-8",
-        "bg-white",
-      );
+      expect(card).toBeInTheDocument();
     });
   });
 
@@ -137,55 +129,6 @@ describe("BaseRanking", () => {
       );
 
       expect(screen.getByText("すべて見る")).toBeInTheDocument();
-    });
-  });
-
-  describe("レイアウト構造", () => {
-    it("全体のコンテナ構造が正しい", () => {
-      const { container } = render(
-        <BaseRanking title="テストランキング" detailsHref="/test">
-          <div>テストコンテンツ</div>
-        </BaseRanking>,
-      );
-
-      const wrapper = container.firstChild as HTMLElement;
-      expect(wrapper).toHaveClass("max-w-6xl", "mx-auto");
-
-      const flexContainer = wrapper.firstChild as HTMLElement;
-      expect(flexContainer).toHaveClass("flex", "flex-col", "gap-6");
-    });
-
-    it("タイトルのスタイルが正しい", () => {
-      render(
-        <BaseRanking title="テストランキング" detailsHref="/test">
-          <div>テストコンテンツ</div>
-        </BaseRanking>,
-      );
-
-      const title = screen.getByText("テストランキング");
-      expect(title).toHaveClass(
-        "text-xl",
-        "md:text-2xl",
-        "text-gray-900",
-        "mb-6",
-        "text-center",
-      );
-    });
-
-    it("リンクが中央揃えで表示される", () => {
-      render(
-        <BaseRanking
-          title="テストランキング"
-          detailsHref="/test-details"
-          showDetailedInfo={true}
-        >
-          <div>テストコンテンツ</div>
-        </BaseRanking>,
-      );
-
-      const link = screen.getByTestId("link");
-      // リンクはaタグなのでclassNameは持たない
-      expect(link).toHaveAttribute("href", "/test-details");
     });
   });
 

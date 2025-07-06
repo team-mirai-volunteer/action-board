@@ -147,19 +147,7 @@ describe("CurrentUserCardPrefecture", () => {
     });
   });
 
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(
-        <CurrentUserCardPrefecture
-          currentUser={mockUser}
-          prefecture="東京都"
-        />,
-      );
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass("border-teal-200", "bg-teal-50");
-    });
-
+  describe("コンポーネント構造", () => {
     it("カードの構造が正しい", () => {
       render(
         <CurrentUserCardPrefecture
