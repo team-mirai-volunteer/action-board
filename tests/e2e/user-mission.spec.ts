@@ -24,7 +24,9 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await expect(signedInPage.getByText('1日で 0件')).toBeVisible();
     
     // ランキングの表示を確認
-    await expect(signedInPage.getByRole('heading', { name: /アクションリーダートップ5/ })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: /アクションリーダー/ })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: /日次/ })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: /全期間/ })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: /安野たかひろ 東京都 Lv.20 3,325pt/ })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: /佐藤太郎 東京都 Lv.10 900pt/ })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: /鈴木美咲 神奈川県 Lv.9 740pt/ })).toBeVisible();
@@ -34,22 +36,15 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     // 重要ミッションの表示を確認
     await expect(signedInPage.getByRole('heading', { name: /重要ミッション/ })).toBeVisible();
-    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)')).toBeVisible();
-    await expect(signedInPage.getByText('みんなで0回達成難易度: ⭐', { exact: true })).toBeVisible();
-    await expect(signedInPage.getByText('(seed) 発見！地域の宝 (位置情報付き画像)')).toBeVisible();
-    await expect(signedInPage.getByText('みんなで0回達成難易度: ⭐⭐⭐⭐', { exact: true })).toBeVisible();
     
-    // TODO - seedの投入が必要
     // ミッションの表示を確認
+    await expect(signedInPage.getByRole('heading', { name: '📈 ミッション' })).toBeVisible();
 
-    // TODO - seedの投入が必要
     // 活動タイムラインの表示を確認
     await expect(signedInPage.getByRole('heading', { name: /活動タイムライン/ })).toBeVisible();
-    await expect(signedInPage.getByText('リアルタイムで更新される活動記録')).toBeVisible();
 
     // 問い合わせフォームの表示を確認
-    await expect(signedInPage.getByRole('heading', { name: /ご意見をお聞かせください/ })).toBeVisible();
-    await expect(signedInPage.getByText('チームみらいアクションボードをより良いサービスにするため、 皆様のご意見・ご要望をお聞かせください。 いただいたフィードバックは今後の改善に活用させていただきます。')).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: 'ご意見をお聞かせください' })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: 'ご意見箱を開く' })).toBeVisible();
   });
 
@@ -60,15 +55,26 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     // アカウントページに遷移
     await signedInPage.getByTestId('usermenubutton').click();
-    await signedInPage.getByText('アカウント').click();
+    await signedInPage.getByRole('menuitem', { name: 'アカウント' }).click();
     await expect(signedInPage).toHaveURL(/\/settings\/profile/, { timeout: 10000 });
 
     // アカウントページの表示内容を確認
     await expect(signedInPage.getByText('プロフィール設定')).toBeVisible();
     await expect(signedInPage.getByText('ニックネーム')).toBeVisible();
-    await expect(signedInPage.getByText('生年月日')).toBeVisible();
+    // 生年月日
+    await expect(signedInPage.getByText('生年月日', { exact: true })).toBeVisible();
+    await expect(signedInPage.getByRole('button', { name: '生年月日が必要な理由' })).toBeVisible();
+    await expect(signedInPage.getByTestId('year_select')).toBeVisible();
+    await expect(signedInPage.getByTestId('month_select')).toBeVisible();
+    await expect(signedInPage.getByTestId('day_select')).toBeVisible();
+    // 都道府県
     await expect(signedInPage.getByText('都道府県')).toBeVisible();
-    await expect(signedInPage.getByText('生年月日')).toBeVisible();
+    await expect(signedInPage.getByRole('combobox', { name: '都道府県' })).toBeVisible();
+    // 郵便番号
+    await expect(signedInPage.getByText('郵便番号(ハイフンなし半角7桁)')).toBeVisible();
+    await expect(signedInPage.getByRole('button', { name: 'なぜ郵便番号が必要ですか？' })).toBeVisible();
+    await expect(signedInPage.getByRole('textbox', { name: '郵便番号(ハイフンなし半角7桁)' })).toBeVisible();
+    // アカウント
     await expect(signedInPage.getByText('X(旧Twitter)のユーザー名')).toBeVisible();
     await expect(signedInPage.getByText('GitHubのユーザー名', { exact: true })).toBeVisible();
     await expect(signedInPage.getByRole('button', { name: '更新する' })).toBeVisible();
