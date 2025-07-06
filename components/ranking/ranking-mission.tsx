@@ -13,7 +13,6 @@ interface RankingTopProps {
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   mission?: Tables<"missions">;
   isPostingMission?: boolean;
-  period?: RankingPeriod;
 }
 
 export default async function RankingMission({
@@ -21,13 +20,12 @@ export default async function RankingMission({
   limit = 10,
   showDetailedInfo = false,
   isPostingMission,
-  period = "all",
 }: RankingTopProps) {
   if (!mission) {
     return null;
   }
 
-  const rankings = await getMissionRanking(mission.id, limit, period);
+  const rankings = await getMissionRanking(mission.id, limit);
 
   const rankingMap = new Map(rankings.map((item) => [item.user_id, item]));
 
