@@ -398,10 +398,10 @@ quiz_questions:
     question: "オープンな政策立案プロセスを支える基盤として挙げられているデジタル民主主義2030由来のシステムはどれ？"
     option1: "電子投票ブロックチェーン"
     option2: "気候予測AI"
-    option3: "いどばたシステム"
+    option3: "チームみらいマニフェスト"
     option4: "スマート市役所ダッシュボード"
     correct_answer: 3
-    explanation: "ユーティリティ政党フェーズでは『いどばたシステム』や広聴AI・YouTube中継を組み合わせてオープンな政策議論を行うと書かれています。"
+    explanation: "ユーティリティ政党フェーズでは『チームみらいマニフェスト』や広聴AI・YouTube中継を組み合わせてオープンな政策議論を行うと書かれています。"
     question_order: 2
     is_active: true
 
