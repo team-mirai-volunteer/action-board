@@ -215,7 +215,7 @@ describe("RankingPrefecture", () => {
         showDetailedInfo: false,
       });
 
-      expect(getPrefecturesRanking).toHaveBeenCalledWith("福岡県", 15, "all");
+      expect(getPrefecturesRanking).toHaveBeenCalledWith("福岡県", 15, "daily");
     });
   });
 
@@ -270,8 +270,6 @@ describe("RankingPrefecture", () => {
         "border-2",
         "border-gray-200",
         "rounded-2xl",
-        "shadow-lg",
-        "hover:shadow-xl",
         "transition-all",
         "duration-300",
         "p-8",

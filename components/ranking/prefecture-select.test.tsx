@@ -135,7 +135,7 @@ describe("PrefectureSelect", () => {
       fireEvent.change(select, { target: { value: "愛知県" } });
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/ranking/ranking-prefecture?prefecture=愛知県",
+        "/ranking/ranking-prefecture?prefecture=%E6%84%9B%E7%9F%A5%E7%9C%8C",
       );
     });
 

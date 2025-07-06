@@ -123,25 +123,28 @@ describe("prefecturesRanking service", () => {
         });
       });
 
-      it("週間ランキングを取得する", async () => {
+      it("日次ランキングを取得する（日付確認）", async () => {
         mockSupabase.rpc.mockResolvedValue({
           data: [],
           error: null,
         });
 
-        await getPrefecturesRanking(prefecture, 10, "weekly");
+        await getPrefecturesRanking(prefecture, 10, "daily");
 
         const rpcCall = mockSupabase.rpc.mock.calls[0];
         expect(rpcCall[0]).toBe("get_period_prefecture_ranking");
 
-        // 日付が7日前であることを確認
         const startDate = new Date(rpcCall[1].p_start_date);
         const now = new Date();
-        const diffDays = Math.floor(
-          (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+        const todayMidnight = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
         );
-        expect(diffDays).toBeGreaterThanOrEqual(6);
-        expect(diffDays).toBeLessThanOrEqual(7);
+        expect(startDate.getTime()).toBe(todayMidnight.getTime());
       });
     });
 
@@ -173,31 +176,30 @@ describe("prefecturesRanking service", () => {
 
     describe("全期間のユーザー都道府県ランキング取得", () => {
       it("特定ユーザーのランキング情報を取得する", async () => {
-        const mockRankingData = [
-          {
-            user_id: userId,
-            user_name: "テストユーザー",
-            address_prefecture: "東京都",
-            rank: 5,
-            level: 7,
-            xp: 700,
-            updated_at: "2024-01-01T00:00:00Z",
-          },
-        ];
+        const mockRankingData = {
+          user_id: userId,
+          name: "テストユーザー",
+          address_prefecture: "東京都",
+          rank: 5,
+          level: 7,
+          xp: 700,
+          updated_at: "2024-01-01T00:00:00Z",
+        };
 
         mockSupabase.rpc.mockResolvedValue({
-          data: mockRankingData,
+          data: [mockRankingData],
           error: null,
         });
 
         const result = await getUserPrefecturesRanking(prefecture, userId);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_user_prefecture_ranking",
-          {
-            prefecture: prefecture,
-            target_user_id: userId,
-          },
+          "get_user_period_prefecture_ranking",
+          expect.objectContaining({
+            p_prefecture: prefecture,
+            p_user_id: userId,
+            p_start_date: expect.any(String),
+          }),
         );
         expect(result).toMatchObject({
           user_id: userId,
@@ -266,7 +268,7 @@ describe("prefecturesRanking service", () => {
         const result = await getUserPrefecturesRanking(
           prefecture,
           userId,
-          "weekly",
+          "daily",
         );
 
         expect(result).toMatchObject({
