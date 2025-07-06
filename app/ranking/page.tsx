@@ -36,16 +36,23 @@ export default async function RankingPage({ searchParams }: PageProps) {
       userRanking = data;
     } else {
       // 期間別の場合は関数を使用
-      const dateFilter = new Date();
+      const now = new Date();
+      let dateFilter: Date | null = null;
       if (period === "daily") {
-        dateFilter.setDate(dateFilter.getDate() - 1);
-      } else if (period === "weekly") {
-        dateFilter.setDate(dateFilter.getDate() - 7);
+        // 本日の0時0分を基準にする
+        dateFilter = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
+        );
       }
 
       const { data } = await supabase.rpc("get_user_period_ranking", {
         target_user_id: user.id,
-        start_date: dateFilter.toISOString(),
+        start_date: dateFilter?.toISOString(),
       });
       if (data && data.length > 0) {
         userRanking = {

@@ -52,8 +52,7 @@ export default async function RankingMission({
     return `${(rankingItem?.user_achievement_count ?? 0).toLocaleString()}回`;
   };
 
-  const periodLabel =
-    period === "weekly" ? "週間" : period === "daily" ? "日次" : "";
+  const periodLabel = period === "daily" ? "日次" : "";
   const title = `🏅「${mission.title}」${periodLabel}トップ${limit}`;
 
   return (

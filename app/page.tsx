@@ -6,6 +6,7 @@ import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import Missions from "@/components/mission/missions";
 import RankingTop from "@/components/ranking/ranking-top";
+import RankingSection from "@/components/top/ranking-section";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
@@ -75,7 +76,7 @@ export default async function Home({
 
       {/* ランキングセクション */}
       <section className="py-12 md:py-16 bg-white">
-        <RankingTop limit={5} showDetailedInfo={true} />
+        <RankingSection />
       </section>
 
       {/* フューチャードミッションセクション */}

@@ -97,7 +97,7 @@ export async function getPrefecturesRanking(
 export async function getUserPrefecturesRanking(
   prefecture: string,
   userId: string,
-  period: RankingPeriod = "all",
+  period: RankingPeriod = "daily",
 ): Promise<UserRanking | null> {
   try {
     const supabase = await createClient();
