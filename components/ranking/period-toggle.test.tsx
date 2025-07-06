@@ -71,7 +71,7 @@ describe("PeriodToggle", () => {
     const allButton = screen.getByRole("button", { name: "全期間" });
     await user.click(allButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/ranking");
+    expect(mockPush).toHaveBeenCalledWith("/ranking?period=all");
   });
 
   it("既存のURLパラメータを保持しながら期間パラメータを更新する", async () => {

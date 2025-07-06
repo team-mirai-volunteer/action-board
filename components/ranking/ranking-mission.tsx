@@ -21,12 +21,13 @@ export default async function RankingMission({
   limit = 10,
   showDetailedInfo = false,
   isPostingMission,
+  period = "all",
 }: RankingTopProps) {
   if (!mission) {
     return null;
   }
 
-  const rankings = await getMissionRanking(mission.id, limit);
+  const rankings = await getMissionRanking(mission.id, limit, period);
 
   const rankingMap = new Map(rankings.map((item) => [item.user_id, item]));
 

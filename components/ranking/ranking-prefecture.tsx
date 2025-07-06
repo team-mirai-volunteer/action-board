@@ -15,12 +15,13 @@ export default async function RankingPrefecture({
   prefecture,
   limit = 10,
   showDetailedInfo = false,
+  period = "daily",
 }: RankingPrefectureProps) {
   if (!prefecture) {
     return null;
   }
 
-  const rankings = await getPrefecturesRanking(prefecture, limit);
+  const rankings = await getPrefecturesRanking(prefecture, limit, period);
 
   const title = `🏅${prefecture}トップ${limit}`;
 
