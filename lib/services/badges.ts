@@ -8,7 +8,7 @@ import {
 } from "@/lib/types/badge";
 
 /**
- * ミッションバッジのslugをタイトルに変換する
+ * ミッションバッジにタイトル情報を追加する
  */
 async function enrichMissionBadges(badges: UserBadge[]): Promise<UserBadge[]> {
   // ミッションタイプのバッジのミッションslugを収集
@@ -22,10 +22,10 @@ async function enrichMissionBadges(badges: UserBadge[]): Promise<UserBadge[]> {
 
   const supabase = await createServiceClient();
 
-  // ミッション情報を取得
+  // ミッション情報を取得（IDも含める）
   const { data: missions, error: missionError } = await supabase
     .from("missions")
-    .select("slug, title")
+    .select("id, slug, title")
     .in("slug", missionSlugs);
 
   if (missionError || !missions) {
@@ -33,15 +33,21 @@ async function enrichMissionBadges(badges: UserBadge[]): Promise<UserBadge[]> {
     return badges;
   }
 
-  // ミッションslugとタイトルのマップを作成
-  const missionMap = new Map(missions.map((m) => [m.slug, m.title]));
+  // ミッションslugとミッション情報のマップを作成
+  const missionMap = new Map(
+    missions.map((m) => [m.slug, { id: m.id, title: m.title }]),
+  );
 
-  // バッジにミッションタイトルを追加
+  // バッジにミッションタイトルとIDを追加
   return badges.map((badge) => {
     if (badge.badge_type === "MISSION" && badge.sub_type) {
-      const missionTitle = missionMap.get(badge.sub_type);
-      if (missionTitle) {
-        return { ...badge, sub_type: missionTitle };
+      const missionInfo = missionMap.get(badge.sub_type);
+      if (missionInfo) {
+        return {
+          ...badge,
+          mission_title: missionInfo.title,
+          mission_id: missionInfo.id,
+        };
       }
     }
     return badge;
