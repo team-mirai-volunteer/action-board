@@ -65,7 +65,6 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 

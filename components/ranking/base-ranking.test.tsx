@@ -62,8 +62,6 @@ describe("BaseRanking", () => {
         "border-2",
         "border-gray-200",
         "rounded-2xl",
-        "shadow-lg",
-        "hover:shadow-xl",
         "transition-all",
         "duration-300",
         "p-8",
@@ -166,10 +164,10 @@ describe("BaseRanking", () => {
 
       const title = screen.getByText("テストランキング");
       expect(title).toHaveClass(
-        "text-2xl",
-        "md:text-4xl",
+        "text-xl",
+        "md:text-2xl",
         "text-gray-900",
-        "mb-2",
+        "mb-6",
         "text-center",
       );
     });

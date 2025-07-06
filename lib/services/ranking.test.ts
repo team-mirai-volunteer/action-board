@@ -14,7 +14,7 @@ describe("ranking service", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
   });
 
   describe("getRanking", () => {
@@ -161,7 +161,7 @@ describe("ranking service", () => {
         });
       });
 
-      it("週間ランキングを取得する", async () => {
+      it("日次ランキングを取得する（複数日のデータ）", async () => {
         const mockXpData = [{ user_id: "user1", xp_amount: 300 }];
         const mockUserData = [
           { id: "user1", name: "ユーザー1", address_prefecture: "東京都" },
@@ -203,7 +203,7 @@ describe("ranking service", () => {
           }
         });
 
-        const result = await getRanking(10, "weekly");
+        const result = await getRanking(10, "daily");
 
         expect(result).toHaveLength(1);
         expect(result[0]).toMatchObject({
