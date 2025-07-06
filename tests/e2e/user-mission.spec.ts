@@ -174,7 +174,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await signedInPage.getByRole('link', { name: 'トップ100を見る' }).click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
 
-    await expect(signedInPage.getByRole('heading', { name: 'アクションリーダートップ' })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: 'アクションリーダー' })).toBeVisible();
     await expect(signedInPage.getByText('安野たかひろ')).toBeVisible();
     await expect(signedInPage.getByText('佐藤太郎')).toBeVisible();
     await expect(signedInPage.getByText('渡辺雄一')).toBeVisible();
@@ -193,6 +193,6 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     await signedInPage.getByText('全体').click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
-    await expect(signedInPage.getByRole('heading', { name: 'アクションリーダートップ' })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: 'アクションリーダー' })).toBeVisible();
   });
 });

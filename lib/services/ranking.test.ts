@@ -91,61 +91,38 @@ describe("ranking service", () => {
 
     describe("期間別ランキング取得", () => {
       it("日間ランキングを取得する", async () => {
-        const mockXpData = [
-          { user_id: "user1", xp_amount: 100 },
-          { user_id: "user1", xp_amount: 50 },
-          { user_id: "user2", xp_amount: 200 },
+        const mockRankingData = [
+          {
+            user_id: "user2",
+            name: "ユーザー2",
+            address_prefecture: "大阪府",
+            rank: 1,
+            level: 3,
+            xp: 200,
+            updated_at: null,
+          },
+          {
+            user_id: "user1",
+            name: "ユーザー1",
+            address_prefecture: "東京都",
+            rank: 2,
+            level: 5,
+            xp: 150,
+            updated_at: null,
+          },
         ];
 
-        const mockUserData = [
-          { id: "user1", name: "ユーザー1", address_prefecture: "東京都" },
-          { id: "user2", name: "ユーザー2", address_prefecture: "大阪府" },
-        ];
-
-        const mockLevelData = [
-          { user_id: "user1", level: 5, xp: 500 },
-          { user_id: "user2", level: 3, xp: 300 },
-        ];
-
-        // xp_transactionsのモック
-        mockSupabase.from.mockImplementation((table) => {
-          if (table === "xp_transactions") {
-            return {
-              select: jest.fn().mockReturnValue({
-                gte: jest.fn().mockReturnValue({
-                  not: jest.fn().mockResolvedValue({
-                    data: mockXpData,
-                    error: null,
-                  }),
-                }),
-              }),
-            };
-          }
-          if (table === "public_user_profiles") {
-            return {
-              select: jest.fn().mockReturnValue({
-                in: jest.fn().mockResolvedValue({
-                  data: mockUserData,
-                  error: null,
-                }),
-              }),
-            };
-          }
-          if (table === "user_levels") {
-            return {
-              select: jest.fn().mockReturnValue({
-                in: jest.fn().mockResolvedValue({
-                  data: mockLevelData,
-                  error: null,
-                }),
-              }),
-            };
-          }
+        mockSupabase.rpc.mockResolvedValue({
+          data: mockRankingData,
+          error: null,
         });
 
         const result = await getRanking(10, "daily");
 
-        expect(mockSupabase.from).toHaveBeenCalledWith("xp_transactions");
+        expect(mockSupabase.rpc).toHaveBeenCalledWith("get_period_ranking", {
+          p_start_date: expect.any(String),
+          p_limit: 10,
+        });
         expect(result).toHaveLength(2);
         expect(result[0]).toMatchObject({
           user_id: "user2",
@@ -162,45 +139,21 @@ describe("ranking service", () => {
       });
 
       it("日次ランキングを取得する（複数日のデータ）", async () => {
-        const mockXpData = [{ user_id: "user1", xp_amount: 300 }];
-        const mockUserData = [
-          { id: "user1", name: "ユーザー1", address_prefecture: "東京都" },
+        const mockRankingData = [
+          {
+            user_id: "user1",
+            name: "ユーザー1",
+            address_prefecture: "東京都",
+            rank: 1,
+            level: 5,
+            xp: 300,
+            updated_at: null,
+          },
         ];
-        const mockLevelData = [{ user_id: "user1", level: 5, xp: 500 }];
 
-        mockSupabase.from.mockImplementation((table) => {
-          if (table === "xp_transactions") {
-            return {
-              select: jest.fn().mockReturnValue({
-                gte: jest.fn().mockReturnValue({
-                  not: jest.fn().mockResolvedValue({
-                    data: mockXpData,
-                    error: null,
-                  }),
-                }),
-              }),
-            };
-          }
-          if (table === "public_user_profiles") {
-            return {
-              select: jest.fn().mockReturnValue({
-                in: jest.fn().mockResolvedValue({
-                  data: mockUserData,
-                  error: null,
-                }),
-              }),
-            };
-          }
-          if (table === "user_levels") {
-            return {
-              select: jest.fn().mockReturnValue({
-                in: jest.fn().mockResolvedValue({
-                  data: mockLevelData,
-                  error: null,
-                }),
-              }),
-            };
-          }
+        mockSupabase.rpc.mockResolvedValue({
+          data: mockRankingData,
+          error: null,
         });
 
         const result = await getRanking(10, "daily");
@@ -214,19 +167,9 @@ describe("ranking service", () => {
       });
 
       it("期間内にXPを獲得したユーザーがいない場合は空配列を返す", async () => {
-        mockSupabase.from.mockImplementation((table) => {
-          if (table === "xp_transactions") {
-            return {
-              select: jest.fn().mockReturnValue({
-                gte: jest.fn().mockReturnValue({
-                  not: jest.fn().mockResolvedValue({
-                    data: [],
-                    error: null,
-                  }),
-                }),
-              }),
-            };
-          }
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
         });
 
         const result = await getRanking(10, "daily");
@@ -234,24 +177,14 @@ describe("ranking service", () => {
         expect(result).toEqual([]);
       });
 
-      it("XP取得エラー時は例外をスローする", async () => {
-        mockSupabase.from.mockImplementation((table) => {
-          if (table === "xp_transactions") {
-            return {
-              select: jest.fn().mockReturnValue({
-                gte: jest.fn().mockReturnValue({
-                  not: jest.fn().mockResolvedValue({
-                    data: null,
-                    error: { message: "XP fetch error" },
-                  }),
-                }),
-              }),
-            };
-          }
+      it("RPC取得エラー時は例外をスローする", async () => {
+        mockSupabase.rpc.mockResolvedValue({
+          data: null,
+          error: { message: "RPC fetch error" },
         });
 
         await expect(getRanking(10, "daily")).rejects.toThrow(
-          "XPトランザクションの取得に失敗しました: XP fetch error",
+          "期間別ランキングの取得に失敗しました: RPC fetch error",
         );
       });
     });
