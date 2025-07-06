@@ -31,9 +31,9 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: propose-manifest-idobata
-    title: チームみらいマニフェストから政策を提案しよう
+    title: チームみらいマニフェストに提案をしてみよう
     icon_url: /img/mission_fallback.svg
-    content: AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>は、AIとチャットしながら政策に意見を出せる新しい仕組みです。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。
+    content: AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>では、AIとチャットしながら政策に意見を出すことができます。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
