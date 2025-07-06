@@ -31,9 +31,9 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: propose-manifest-idobata
-    title: いどばた政策サイトからマニフェストを提案しよう
+    title: チームみらいマニフェストからマニフェストを提案しよう
     icon_url: /img/mission_fallback.svg
-    content: AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>は、AIとチャットしながら政策に意見を出せる新しい仕組みです。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。
+    content: AIと一緒に、あなたの意見を政策にしよう。<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>は、AIとチャットしながら政策に意見を出せる新しい仕組みです。気になるテーマに質問したり、自分の考えを提案としてまとめると、実際に「チームみらい」へ提出されます。提案にはURLが付き、どう検討されたかも追跡できます。
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -78,7 +78,7 @@ missions:
   - slug: share-manifest-sns
     title: マニフェストの感想をSNSでシェアしよう
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策</a>でマニフェストを読み、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。
+    content: <a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>でマニフェストを読み、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -350,15 +350,15 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: chat-idobata-ai
-    title: いどばた政策サイトでAIとチャットしよう
+    title: チームみらいマニフェストでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいでは、みんなで政治をもっと身近に、もっとおもしろくする取り組みを進めています！そのひとつ、<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">いどばた政策サイト</a>でAIとチャットしてみましょう！チャットに使った「いどばたのユーザー名」を入力してください。
+    content: チームみらいでは、みんなで政治をもっと身近に、もっとおもしろくする取り組みを進めています！そのひとつ、<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>でAIとチャットしてみましょう！チャットに使った「チームみらいマニフェストのユーザー名」を入力してください。
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
     is_hidden: false
-    artifact_label: いどばたのユーザー名
+    artifact_label: チームみらいマニフェストのユーザー名
     ogp_image_url: null
   - slug: quiz-teammirai-anno
     title: チームみらいクイズ（安野編）に挑戦しよう
