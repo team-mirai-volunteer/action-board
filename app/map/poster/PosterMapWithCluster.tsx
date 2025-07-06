@@ -480,7 +480,7 @@ export default function PosterMapWithCluster({
                   ? `<br><small>※この位置に${boardsAtLocation.length}件のマーカーがあります</small>`
                   : ""
               }`,
-              { permanent: false, direction: "top", interactive: false },
+              { permanent: false, direction: "top" },
             );
           }
 
