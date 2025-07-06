@@ -11,7 +11,6 @@ import {
   getPrefectureDefaultZoom,
 } from "@/lib/constants/poster-prefectures";
 import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
-import { getBoardsLatestEditor } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
@@ -78,8 +77,6 @@ export default function PosterMap({
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<L.Marker | L.CircleMarker | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
-  const [boardsLatestEditor, setBoardsLatestEditor] =
-    useState<Map<string, string | null>>();
 
   // Fetch current user and board info
   useEffect(() => {
@@ -93,25 +90,14 @@ export default function PosterMap({
         } = await supabase.auth.getUser();
 
         if (userError) {
-          console.error("ユーザー情報の取得に失敗しました:", userError);
           return;
         }
 
         if (isMounted) {
           setCurrentUserId(user?.id);
         }
-
-        if (boards.length > 0 && isMounted) {
-          const boardIds = boards.map((b) => b.id);
-
-          // Get latest editor info for all boards
-          const latestEditorInfo = await getBoardsLatestEditor(boardIds);
-          if (isMounted) {
-            setBoardsLatestEditor(latestEditorInfo);
-          }
-        }
       } catch (error) {
-        console.error("データの取得中にエラーが発生しました:", error);
+        // エラーは静かに処理
       }
     };
 
@@ -120,7 +106,7 @@ export default function PosterMap({
     return () => {
       isMounted = false;
     };
-  }, [boards]);
+  }, []);
 
   // Use filter hook
   const {
@@ -134,7 +120,6 @@ export default function PosterMap({
   } = usePosterBoardFilter({
     boards,
     currentUserId,
-    boardsWithLatestEditor: boardsLatestEditor,
   });
 
   useEffect(() => {
@@ -202,8 +187,8 @@ export default function PosterMap({
       (pos) => {
         setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
       },
-      (error) => {
-        console.warn("位置情報の取得に失敗しました:", error.message);
+      () => {
+        // 位置情報の取得に失敗した場合は静かに処理
       },
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
     );
