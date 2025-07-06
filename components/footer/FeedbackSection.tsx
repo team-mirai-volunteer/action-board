@@ -1,5 +1,5 @@
-import { FOOTER_CONFIG } from "@/config/footer";
 import Link from "next/link";
+import { FOOTER_CONFIG } from "./footer";
 
 export function FeedbackSection() {
   return (

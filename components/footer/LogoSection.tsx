@@ -1,5 +1,5 @@
-import { FOOTER_IMAGE_SIZES } from "@/lib/constants/footer";
 import Image from "next/image";
+import { FOOTER_IMAGE_SIZES } from "./footer";
 
 export function LogoSection() {
   return (
