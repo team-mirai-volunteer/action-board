@@ -11,7 +11,7 @@ interface PeriodToggleProps {
 }
 
 const periodOptions = [
-  { value: "daily" as const, label: "日次" },
+  { value: "daily" as const, label: "今日" },
   { value: "all" as const, label: "全期間" },
 ] as const;
 
@@ -27,11 +27,7 @@ export function PeriodToggle({ defaultPeriod = "daily" }: PeriodToggleProps) {
     (period: RankingPeriod) => {
       const params = new URLSearchParams(searchParams.toString());
 
-      if (period === "all") {
-        params.delete("period");
-      } else {
-        params.set("period", period);
-      }
+      params.set("period", period);
 
       const query = params.toString();
       router.push(`${pathname}${query ? `?${query}` : ""}`);

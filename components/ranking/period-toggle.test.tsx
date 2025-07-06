@@ -23,11 +23,11 @@ describe("PeriodToggle", () => {
     (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
   });
 
-  it("デフォルトで「日次」が選択されている", () => {
+  it("デフォルトで「今日」が選択されている", () => {
     render(<PeriodToggle />);
 
     const allButton = screen.getByRole("button", { name: "全期間" });
-    const dailyButton = screen.getByRole("button", { name: "日次" });
+    const dailyButton = screen.getByRole("button", { name: "今日" });
 
     expect(allButton).toBeInTheDocument();
     expect(dailyButton).toBeInTheDocument();
@@ -47,15 +47,15 @@ describe("PeriodToggle", () => {
 
     render(<PeriodToggle />);
 
-    const dailyButton = screen.getByRole("button", { name: "日次" });
+    const dailyButton = screen.getByRole("button", { name: "今日" });
     expect(dailyButton).toBeInTheDocument();
   });
 
-  it("日次ボタンをクリックするとURLパラメータが更新される", async () => {
+  it("今日ボタンをクリックするとURLパラメータが更新される", async () => {
     const user = userEvent.setup();
     render(<PeriodToggle />);
 
-    const dailyButton = screen.getByRole("button", { name: "日次" });
+    const dailyButton = screen.getByRole("button", { name: "今日" });
     await user.click(dailyButton);
 
     expect(mockPush).toHaveBeenCalledWith("/ranking?period=daily");
@@ -81,7 +81,7 @@ describe("PeriodToggle", () => {
 
     render(<PeriodToggle />);
 
-    const dailyButton = screen.getByRole("button", { name: "日次" });
+    const dailyButton = screen.getByRole("button", { name: "今日" });
     await user.click(dailyButton);
 
     expect(mockPush).toHaveBeenCalledWith(

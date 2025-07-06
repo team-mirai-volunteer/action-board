@@ -21,13 +21,12 @@ export default async function RankingMission({
   limit = 10,
   showDetailedInfo = false,
   isPostingMission,
-  period = "all",
 }: RankingTopProps) {
   if (!mission) {
     return null;
   }
 
-  const rankings = await getMissionRanking(mission.id, limit, period);
+  const rankings = await getMissionRanking(mission.id, limit);
 
   const rankingMap = new Map(rankings.map((item) => [item.user_id, item]));
 
@@ -52,8 +51,7 @@ export default async function RankingMission({
     return `${(rankingItem?.user_achievement_count ?? 0).toLocaleString()}回`;
   };
 
-  const periodLabel = period === "daily" ? "日次" : "";
-  const title = `🏅「${mission.title}」${periodLabel}トップ${limit}`;
+  const title = `🏅「${mission.title}」トップ${limit}`;
 
   return (
     <BaseRanking

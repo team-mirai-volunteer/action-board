@@ -25,7 +25,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     
     // ランキングの表示を確認
     await expect(signedInPage.getByRole('heading', { name: /アクションリーダー/ })).toBeVisible();
-    await expect(signedInPage.getByRole('heading', { name: /日次/ })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: /今日/ })).toBeVisible();
     await expect(signedInPage.getByRole('heading', { name: /全期間/ })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: /安野たかひろ 東京都 Lv.20 3,325pt/ })).toBeVisible();
     await expect(signedInPage.getByRole('link', { name: /佐藤太郎 東京都 Lv.10 900pt/ })).toBeVisible();

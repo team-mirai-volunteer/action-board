@@ -19,11 +19,11 @@ export default async function RankingTop({
 }: RankingTopProps) {
   const rankings = await getRanking(limit, period);
 
-  const periodLabel = period === "daily" ? "日次" : "";
+  const periodLabel = period === "daily" ? "今日の" : "全期間";
 
   return (
     <BaseRanking
-      title={title ?? `🏅${periodLabel}アクションリーダートップ${limit}`}
+      title={title ?? `🏅${periodLabel}トップ${limit}`}
       detailsHref="/ranking"
       showDetailedInfo={showDetailedInfo}
     >
