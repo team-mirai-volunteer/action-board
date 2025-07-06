@@ -40,7 +40,7 @@ const statusColors: Record<BoardStatus, string> = {
   not_yet: "#6B7280", // gray
   reserved: "#F59E0B", // yellow/orange
   done: "#10B981", // green
-  error_wrong_place: "#EF4444", // red
+  error_wrong_place: "#6B7280", // gray
   error_damaged: "#EF4444", // red
   error_wrong_poster: "#EF4444", // red
   other: "#8B5CF6", // purple
