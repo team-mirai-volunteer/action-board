@@ -497,3 +497,14 @@ missions:
     is_hidden: false
     artifact_label: あなたが作成した成果物のURL
     ogp_image_url: null
+  - slug: early-vote
+    title: 期日前投票をしよう！
+    icon_url: /img/mission_fallback.svg
+    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！
+    difficulty: 5
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: true
+    is_hidden: false
+    artifact_label: チームみらいに託す思い
+    ogp_image_url: null
