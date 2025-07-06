@@ -1,4 +1,5 @@
 import Activities from "@/components/activities";
+import { BadgeNotificationCheck } from "@/components/badge-notification-check";
 import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
 import Metrics from "@/components/metrics";
@@ -10,6 +11,7 @@ import RankingSection from "@/components/top/ranking-section";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
+import { checkBadgeNotifications } from "@/lib/services/badgeNotification";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
 import { createClient } from "@/lib/supabase/server";
@@ -33,8 +35,9 @@ export default async function Home({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // レベルアップ通知をチェック
+  // レベルアップ通知とバッジ通知をチェック
   let levelUpNotification = null;
+  let badgeNotifications = null;
 
   if (user) {
     const { data: privateUser } = await supabase
@@ -52,6 +55,12 @@ export default async function Home({
     if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
       levelUpNotification = levelUpCheck.levelUp;
     }
+
+    // バッジ通知をチェック
+    const badgeCheck = await checkBadgeNotifications(user.id);
+    if (badgeCheck.hasNewBadges && badgeCheck.newBadges) {
+      badgeNotifications = badgeCheck.newBadges;
+    }
   }
 
   //フューチャードミッションの存在確認
@@ -62,6 +71,11 @@ export default async function Home({
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />
+      )}
+
+      {/* バッジ通知 */}
+      {badgeNotifications && (
+        <BadgeNotificationCheck badgeData={badgeNotifications} />
       )}
 
       {/* ヒーローセクション */}
