@@ -123,9 +123,9 @@ VALUES
   ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', '2025-06-01T15:00:00Z'),
   ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 5, 'BONUS', NULL, '調整', '2025-05-20T12:00:00Z'),
   
-  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', '3d34d16c-9e36-5e1e-af79-e4cf85f5bf9a', 150, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T12:00:00Z'),
-  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '3d34d16c-9e36-5e1e-af79-e4cf85f5bf9a', 500, 'BONUS', NULL, '初期ボーナスXP', '2025-05-17T11:00:00Z'),
-  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', '3d34d16c-9e36-5e1e-af79-e4cf85f5bf9a', 20, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成（今日）', NOW());
+  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 150, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T12:00:00Z'),
+  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 500, 'BONUS', NULL, '初期ボーナスXP', '2025-05-17T11:00:00Z'),
+  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 20, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成（今日）', NOW());
   
 -- ミッション成果物のサンプルデータ
 --INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
