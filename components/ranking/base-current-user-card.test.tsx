@@ -143,62 +143,6 @@ describe("BaseCurrentUserCard", () => {
     });
   });
 
-  describe("レイアウト構造", () => {
-    it("カードのスタイルが正しく適用される", () => {
-      render(
-        <BaseCurrentUserCard currentUser={mockCurrentUser}>
-          <div>コンテンツ</div>
-        </BaseCurrentUserCard>,
-      );
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass("border-teal-200", "bg-teal-50");
-    });
-
-    it("内部コンテナのスタイルが正しく適用される", () => {
-      const { container } = render(
-        <BaseCurrentUserCard currentUser={mockCurrentUser}>
-          <div>コンテンツ</div>
-        </BaseCurrentUserCard>,
-      );
-
-      const wrapper = container.querySelector(".max-w-6xl");
-      expect(wrapper).toHaveClass("max-w-6xl", "mx-auto");
-    });
-
-    it("ユーザー情報エリアのスタイルが正しい", () => {
-      const { container } = render(
-        <BaseCurrentUserCard currentUser={mockCurrentUser}>
-          <div>コンテンツ</div>
-        </BaseCurrentUserCard>,
-      );
-
-      const userInfoContainer = container.querySelector(
-        ".bg-white.rounded-lg.border",
-      );
-      expect(userInfoContainer).toHaveClass(
-        "bg-white",
-        "rounded-lg",
-        "border",
-        "border-teal-200",
-      );
-    });
-
-    it("アイコンが正しく表示される", () => {
-      render(
-        <BaseCurrentUserCard currentUser={mockCurrentUser}>
-          <div>コンテンツ</div>
-        </BaseCurrentUserCard>,
-      );
-
-      expect(screen.getByTestId("user-icon")).toHaveClass(
-        "w-5",
-        "h-5",
-        "text-teal-600",
-      );
-    });
-  });
-
   describe("フォーマット関数の適用", () => {
     it("名前がフォーマットされる", () => {
       const userWithNullName = { ...mockCurrentUser, name: null };

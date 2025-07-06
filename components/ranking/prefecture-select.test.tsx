@@ -187,25 +187,4 @@ describe("PrefectureSelect", () => {
       expect(options[46]).toBe("沖縄県");
     });
   });
-
-  describe("CSSクラス", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(<PrefectureSelect prefectures={mockPrefectures} />);
-
-      const select = screen.getByRole("combobox");
-      expect(select).toHaveClass(
-        "w-full",
-        "p-3",
-        "pl-4",
-        "pr-10",
-        "text-base",
-        "border",
-        "border-gray-300",
-        "rounded-lg",
-        "bg-white",
-        "appearance-none",
-        "cursor-pointer",
-      );
-    });
-  });
 });

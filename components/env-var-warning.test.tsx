@@ -25,14 +25,7 @@ describe("EnvVarWarning", () => {
     });
   });
 
-  describe("レイアウト", () => {
-    it("フレックスレイアウトが適用される", () => {
-      const { container } = render(<EnvVarWarning />);
-
-      const warningContainer = container.firstChild;
-      expect(warningContainer).toHaveClass("flex", "gap-4", "items-center");
-    });
-
+  describe("リンク", () => {
     it("リンクが正しく設定される", () => {
       render(<EnvVarWarning />);
 

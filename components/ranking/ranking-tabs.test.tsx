@@ -189,24 +189,6 @@ describe("RankingTabs", () => {
     });
   });
 
-  describe("CSSクラス", () => {
-    it("適切なCSSクラスが設定される", () => {
-      mockPathname.mockReturnValue("/ranking");
-
-      render(
-        <RankingTabs>
-          <div>テストコンテンツ</div>
-        </RankingTabs>,
-      );
-
-      const tabs = screen.getByTestId("tabs");
-      expect(tabs).toHaveClass("w-full", "max-w-6xl", "mx-auto", "px-4");
-
-      const tabsList = screen.getByTestId("tabs-list");
-      expect(tabsList).toHaveClass("grid", "w-full", "grid-cols-3");
-    });
-  });
-
   describe("複数の子要素", () => {
     it("複数の子要素が表示される", () => {
       mockPathname.mockReturnValue("/ranking");

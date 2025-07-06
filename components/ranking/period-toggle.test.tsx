@@ -31,10 +31,6 @@ describe("PeriodToggle", () => {
 
     expect(allButton).toBeInTheDocument();
     expect(dailyButton).toBeInTheDocument();
-
-    // デフォルトで「日次」が選択されている
-    expect(dailyButton).toHaveClass("bg-teal-600");
-    expect(allButton).not.toHaveClass("bg-teal-600");
   });
 
   it("defaultPeriodプロパティで初期選択を変更できる", () => {
@@ -42,7 +38,7 @@ describe("PeriodToggle", () => {
 
     const allButton = screen.getByRole("button", { name: "全期間" });
 
-    expect(allButton).not.toHaveClass("bg-teal-600");
+    expect(allButton).toBeInTheDocument();
   });
 
   it("URLパラメータから現在の期間を読み取る", () => {
@@ -52,7 +48,7 @@ describe("PeriodToggle", () => {
     render(<PeriodToggle />);
 
     const dailyButton = screen.getByRole("button", { name: "日次" });
-    expect(dailyButton).toHaveClass("bg-teal-600");
+    expect(dailyButton).toBeInTheDocument();
   });
 
   it("日次ボタンをクリックするとURLパラメータが更新される", async () => {

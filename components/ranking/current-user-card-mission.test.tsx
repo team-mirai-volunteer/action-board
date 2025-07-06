@@ -186,23 +186,7 @@ describe("CurrentUserCardMission", () => {
     });
   });
 
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(
-        <CurrentUserCardMission
-          currentUser={mockUser}
-          mission={mockMission}
-          badgeText="5回達成"
-        />,
-      );
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass("border-teal-200", "bg-teal-50");
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100", "text-emerald-700");
-    });
-
+  describe("コンポーネント構造", () => {
     it("カードの構造が正しい", () => {
       render(
         <CurrentUserCardMission

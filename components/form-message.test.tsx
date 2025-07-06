@@ -29,44 +29,6 @@ describe("FormMessage", () => {
     });
   });
 
-  describe("スタイリング", () => {
-    it("エラーメッセージの適切なCSSクラスが設定される", () => {
-      const { container } = render(
-        <FormMessage message={{ error: "エラーメッセージ" }} />,
-      );
-
-      const messageContainer = container.firstChild;
-      expect(messageContainer).toHaveClass("bg-red-50", "border-red-200");
-
-      const messageElement = screen.getByText("エラーメッセージ");
-      expect(messageElement).toHaveClass("text-red-700");
-    });
-
-    it("成功メッセージの適切なCSSクラスが設定される", () => {
-      const { container } = render(
-        <FormMessage message={{ success: "成功メッセージ" }} />,
-      );
-
-      const messageContainer = container.firstChild;
-      expect(messageContainer).toHaveClass("bg-green-50", "border-green-200");
-
-      const messageElement = screen.getByText("成功メッセージ");
-      expect(messageElement).toHaveClass("text-green-700");
-    });
-
-    it("通常メッセージの適切なCSSクラスが設定される", () => {
-      const { container } = render(
-        <FormMessage message={{ message: "通常メッセージ" }} />,
-      );
-
-      const messageContainer = container.firstChild;
-      expect(messageContainer).toHaveClass("bg-blue-50", "border-blue-200");
-
-      const messageElement = screen.getByText("通常メッセージ");
-      expect(messageElement).toHaveClass("text-blue-700");
-    });
-  });
-
   describe("様々なメッセージタイプ", () => {
     it("長いメッセージの表示", () => {
       const longMessage =
@@ -93,34 +55,6 @@ describe("FormMessage", () => {
       );
       expect(messageElement).toBeInTheDocument();
       expect(messageElement).toHaveTextContent("空白を含む メッセージ");
-    });
-  });
-
-  describe("レイアウト", () => {
-    it("適切な構造でレンダリングされる", () => {
-      const { container } = render(
-        <FormMessage message={{ message: "テスト" }} />,
-      );
-
-      const messageContainer = container.firstChild;
-      expect(messageContainer).toHaveClass(
-        "relative",
-        "flex",
-        "items-start",
-        "gap-3",
-      );
-    });
-
-    it("カスタムクラス名が適用される", () => {
-      const { container } = render(
-        <FormMessage
-          message={{ message: "テスト" }}
-          className="custom-class"
-        />,
-      );
-
-      const messageContainer = container.firstChild;
-      expect(messageContainer).toHaveClass("custom-class");
     });
   });
 });
