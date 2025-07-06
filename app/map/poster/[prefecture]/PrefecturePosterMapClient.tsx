@@ -60,6 +60,7 @@ import {
   getPosterBoardStatsAction,
   getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
+import { maskUsername } from "@/lib/utils/ranking-utils";
 
 interface PrefecturePosterMapClientProps {
   userId?: string;
@@ -509,12 +510,17 @@ export default function PrefecturePosterMapClient({
                 <div className="space-y-2">
                   {history.map((item) => (
                     <div key={item.id} className="text-sm">
-                      <div className="text-muted-foreground">
-                        {statusConfig[item.previous_status as BoardStatus]
-                          ?.label || item.previous_status}
-                        →
-                        {statusConfig[item.new_status as BoardStatus]?.label ||
-                          item.new_status}
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {maskUsername(item.user?.name)}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {statusConfig[item.previous_status as BoardStatus]
+                            ?.label || item.previous_status}
+                          →
+                          {statusConfig[item.new_status as BoardStatus]
+                            ?.label || item.new_status}
+                        </span>
                       </div>
                       <div className="text-muted-foreground text-xs">
                         {new Date(item.created_at).toLocaleString("ja-JP")}
