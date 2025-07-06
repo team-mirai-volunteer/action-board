@@ -4,17 +4,20 @@ import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { LevelProgress } from "./level-progress";
 import UserAvatar from "./user-avatar";
+import { UserTopBadge } from "./user-badges/user-top-badge";
 
 interface LevelsProps {
   userId: string;
   hideProgress?: boolean;
   clickable?: boolean;
+  showBadge?: boolean;
 }
 
 export default async function Levels({
   userId,
   hideProgress = false,
   clickable = false,
+  showBadge = false,
 }: LevelsProps) {
   const profile = await getProfile(userId);
 
@@ -46,6 +49,11 @@ export default async function Levels({
           </div>
         </div>
       </div>
+      {showBadge && (
+        <div className="mt-3">
+          <UserTopBadge userId={userId} />
+        </div>
+      )}
       {!hideProgress && (
         <div className="mt-4 flex flex-col items-start">
           <LevelProgress userLevel={userLevel} />

@@ -971,6 +971,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_badges: {
+        Row: {
+          achieved_at: string;
+          badge_type: string;
+          created_at: string;
+          id: string;
+          is_notified: boolean;
+          rank: number;
+          sub_type: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          achieved_at?: string;
+          badge_type: string;
+          created_at?: string;
+          id?: string;
+          is_notified?: boolean;
+          rank: number;
+          sub_type?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          achieved_at?: string;
+          badge_type?: string;
+          created_at?: string;
+          id?: string;
+          is_notified?: boolean;
+          rank?: number;
+          sub_type?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_levels: {
         Row: {
           last_notified_level: number | null;
@@ -1326,7 +1362,7 @@ export type Database = {
         }[];
       };
       get_period_ranking: {
-        Args: { p_limit?: number; p_start_date?: string };
+        Args: { p_limit?: number; p_start_date?: string; p_end_date?: string };
         Returns: {
           user_id: string;
           address_prefecture: string;
