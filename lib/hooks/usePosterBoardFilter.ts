@@ -14,7 +14,7 @@ export interface PosterBoardFilterState {
 interface UsePosterBoardFilterProps {
   boards: PosterBoard[];
   currentUserId?: string;
-  boardsWithLatestEditor?: Map<string, string | null>; // boardId -> userId of latest editor
+  userEditedBoardIds?: Set<string>; // 事前計算されたユーザーが編集した掲示板IDのセット
 }
 
 const ALL_STATUSES: FilterStatus[] = [
@@ -35,7 +35,7 @@ const defaultFilterState: PosterBoardFilterState = {
 export function usePosterBoardFilter({
   boards,
   currentUserId,
-  boardsWithLatestEditor,
+  userEditedBoardIds,
 }: UsePosterBoardFilterProps) {
   const [filterState, setFilterState] =
     useState<PosterBoardFilterState>(defaultFilterState);
@@ -84,17 +84,20 @@ export function usePosterBoardFilter({
         return false;
       }
 
-      // If "show only mine" is enabled, filter by latest editor
-      if (filterState.showOnlyMine && currentUserId && boardsWithLatestEditor) {
-        const latestEditorId = boardsWithLatestEditor.get(board.id);
-        if (latestEditorId !== currentUserId) {
+      // If "show only mine" is enabled, filter by edited boards
+      if (filterState.showOnlyMine && currentUserId) {
+        if (!userEditedBoardIds || userEditedBoardIds.size === 0) {
+          return false;
+        }
+        // このボードをユーザーが編集したことがあるかチェック
+        if (!userEditedBoardIds.has(board.id)) {
           return false;
         }
       }
 
       return true;
     });
-  }, [boards, filterState, boardsWithLatestEditor, currentUserId]);
+  }, [boards, filterState, userEditedBoardIds, currentUserId]);
 
   const activeFilterCount = useMemo(() => {
     return filterState.statuses.size;
