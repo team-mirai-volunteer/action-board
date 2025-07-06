@@ -2,40 +2,47 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import Metrics from "./metrics";
 
-jest.mock("@/components/metric-card", () => ({
-  MetricCard: ({ title, value, unit, todayValue, todayUnit }: any) => (
-    <div data-testid="metric-card">
-      <h3>{title}</h3>
-      <div>
-        {value} {unit}
-      </div>
-      <div>
-        今日: {todayValue} {todayUnit}
-      </div>
-    </div>
-  ),
-}));
-
 describe("Metrics", () => {
   describe("基本的な表示", () => {
     it("メトリクスが正しくレンダリングされる", async () => {
       render(await Metrics());
 
-      expect(screen.getAllByTestId("metric-card")).toHaveLength(2);
+      expect(screen.getByText("チームみらいの活動状況")).toBeInTheDocument();
     });
 
     it("アクション達成数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(
-        screen.getByText("みんなで達成したアクション数"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("達成したアクション数")).toBeInTheDocument();
     });
 
     it("参加者数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("アクションボード参加者")).toBeInTheDocument();
+      expect(screen.getByText("アクションボード参加者数")).toBeInTheDocument();
+    });
+
+    it("サポーター数メトリクスが表示される", async () => {
+      render(await Metrics());
+
+      expect(
+        screen.getByText("チームみらい参加サポーター数"),
+      ).toBeInTheDocument();
+    });
+
+    it("寄付金額セクションが表示される", async () => {
+      render(await Metrics());
+
+      expect(screen.getByText("現在の寄付金額")).toBeInTheDocument();
+      expect(screen.getByText("83,011,000")).toBeInTheDocument();
+    });
+
+    it("更新日時が表示される", async () => {
+      render(await Metrics());
+
+      expect(
+        screen.getByText(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2} 更新/),
+      ).toBeInTheDocument();
     });
   });
 
@@ -60,8 +67,15 @@ describe("Metrics", () => {
     it("グリッドレイアウトが適用される", async () => {
       const { container } = render(await Metrics());
 
-      const gridContainer = container.querySelector(".grid");
+      const gridContainer = container.querySelector(".grid-cols-2");
       expect(gridContainer).toBeInTheDocument();
+    });
+
+    it("緑色のグラデーション背景が適用される", async () => {
+      const { container } = render(await Metrics());
+
+      const gradientContainer = container.querySelector(".bg-gradient-to-br");
+      expect(gradientContainer).toBeInTheDocument();
     });
   });
 });
