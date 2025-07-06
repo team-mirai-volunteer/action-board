@@ -8,7 +8,7 @@ export default async function Hero() {
 
   if (user) {
     try {
-      return <Levels userId={user.id} clickable={true} />;
+      return <Levels userId={user.id} clickable={true} showBadge={true} />;
     } catch (error) {
       console.error("Error fetching user levels:", error);
     }
