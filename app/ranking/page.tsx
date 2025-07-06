@@ -16,7 +16,7 @@ interface PageProps {
 export default async function RankingPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
-  const period = resolvedSearchParams.period || "all";
+  const period = resolvedSearchParams.period || "daily";
 
   // ユーザー情報取得
   const {
@@ -70,6 +70,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
+      <h2 className="text-2xl font-bold text-center mb-4">
+        アクションリーダー
+      </h2>
       <RankingTabs>
         {/* 期間選択トグル */}
         <section className="py-4 bg-white">

@@ -23,7 +23,6 @@ export default async function RankingPrefecturePage({
 }: PageProps) {
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
-  const period = resolvedSearchParams.period || "all";
 
   // ユーザー情報取得
   const {
@@ -57,21 +56,12 @@ export default async function RankingPrefecturePage({
 
   if (user) {
     // 現在のユーザーの都道府県別ランキングを探す
-    userRanking = await getUserPrefecturesRanking(
-      selectedPrefecture,
-      user.id,
-      period,
-    );
+    userRanking = await getUserPrefecturesRanking(selectedPrefecture, user.id);
   }
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
       <RankingTabs>
-        {/* 期間選択トグル */}
-        <section className="py-4 bg-white">
-          <PeriodToggle defaultPeriod={period} />
-        </section>
-
         {/* 都道府県選択 */}
         <section className="py-4 bg-white">
           <PrefectureSelect
@@ -92,11 +82,7 @@ export default async function RankingPrefecturePage({
 
         <section className="py-4 bg-white">
           {/* 都道府県別ランキング */}
-          <RankingPrefecture
-            limit={100}
-            prefecture={selectedPrefecture}
-            period={period}
-          />
+          <RankingPrefecture limit={100} prefecture={selectedPrefecture} />
         </section>
       </RankingTabs>
     </div>

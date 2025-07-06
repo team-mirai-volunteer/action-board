@@ -22,7 +22,6 @@ interface PageProps {
 export default async function RankingMissionPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
-  const period = resolvedSearchParams.period || "all";
 
   // ユーザー情報取得
   const {
@@ -73,11 +72,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
 
   if (user) {
     // 現在のユーザーのミッション別ランキングを探す
-    userRanking = await getUserMissionRanking(
-      selectedMission.id,
-      user.id,
-      period,
-    );
+    userRanking = await getUserMissionRanking(selectedMission.id, user.id);
   }
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
@@ -97,11 +92,6 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
       <RankingTabs>
-        {/* 期間選択トグル */}
-        <section className="py-4 bg-white">
-          <PeriodToggle defaultPeriod={period} />
-        </section>
-
         {/* ミッション選択 */}
         <section className="py-4 bg-white">
           <MissionSelect missions={missions} />
@@ -124,7 +114,6 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
             limit={100}
             mission={selectedMission}
             isPostingMission={isPostingMission}
-            period={period}
           />
         </section>
       </RankingTabs>
