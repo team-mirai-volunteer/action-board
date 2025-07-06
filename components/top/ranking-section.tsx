@@ -17,10 +17,10 @@ export default async function RankingSection() {
       </h2>
       <Carousel className="max-w-[100vw] px-4">
         <CarouselContent className="mb-4 lg:-ml-6">
-          <CarouselItem className="lg:basis-1/2 lg:pl-6">
+          <CarouselItem className="pl-0 lg:basis-1/2 lg:pl-6">
             <RankingTop limit={5} period="daily" title="今日のトップ5" />
           </CarouselItem>
-          <CarouselItem className="lg:basis-1/2 lg:pl-6">
+          <CarouselItem className="pl-0 lg:basis-1/2 lg:pl-6">
             <RankingTop limit={5} title="全期間トップ5" />
           </CarouselItem>
         </CarouselContent>
