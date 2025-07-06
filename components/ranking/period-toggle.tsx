@@ -15,7 +15,7 @@ const periodOptions = [
   { value: "all" as const, label: "全期間" },
 ] as const;
 
-export function PeriodToggle({ defaultPeriod = "all" }: PeriodToggleProps) {
+export function PeriodToggle({ defaultPeriod = "daily" }: PeriodToggleProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
