@@ -58,6 +58,7 @@ type StatusHistory =
 import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
+  getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
 
 interface PrefecturePosterMapClientProps {
@@ -108,7 +109,9 @@ export default function PrefecturePosterMapClient({
     ] as BoardStatus[],
     showOnlyMine: false,
   });
-  const [userEditedBoardIdsSet] = useState<Set<string>>(() => {
+  const [userEditedBoardIdsSet, setUserEditedBoardIdsSet] = useState<
+    Set<string>
+  >(() => {
     return new Set(userEditedBoardIds || []);
   });
 
@@ -153,6 +156,15 @@ export default function PrefecturePosterMapClient({
         prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
       );
       setStats(newStats);
+
+      // ユーザーがログインしている場合は、編集した掲示板IDも再取得
+      if (userId) {
+        const updatedUserEditedBoardIds = await getUserEditedBoardIdsAction(
+          prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
+          userId,
+        );
+        setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
+      }
     } catch (error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
     } finally {
