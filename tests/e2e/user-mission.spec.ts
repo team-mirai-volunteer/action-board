@@ -41,8 +41,16 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await expect(signedInPage.getByRole('heading', { name: /活動タイムライン/ })).toBeVisible();
 
     // 問い合わせフォームの表示を確認
-    await expect(signedInPage.getByRole('heading', { name: 'ご意見をお聞かせください' })).toBeVisible();
-    await expect(signedInPage.getByRole('link', { name: 'ご意見箱を開く' })).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: 'ご意見箱' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'ポスターマップへのご意見フォーム' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'アクションボードへのご意見フォーム' })).toBeVisible();
+
+    // フッターの表示を確認
+    await expect(signedInPage.getByRole('link', { name: '運営組織' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: '利用規約' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'プライバシーポリシー' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'ご意見箱' })).toBeVisible();
+
   });
 
   test('アカウントページ遷移が正常に動作する', async ({
