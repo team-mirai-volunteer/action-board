@@ -2,13 +2,16 @@ import { Badge } from "@/components/ui/badge";
 import {
   type UserBadge,
   getBadgeEmoji,
+  getBadgeRankingUrl,
   getBadgeTitle,
 } from "@/lib/types/badge";
+import Link from "next/link";
 
 interface BadgeDisplayProps {
   badge: UserBadge;
   showTitle?: boolean;
   className?: string;
+  clickable?: boolean;
 }
 
 export function getGradientClass(rank: number): string {
@@ -19,16 +22,32 @@ export function BadgeDisplay({
   badge,
   showTitle = true,
   className = "",
+  clickable = true,
 }: BadgeDisplayProps) {
   const emoji = getBadgeEmoji(badge.rank);
   const title = showTitle ? getBadgeTitle(badge) : null;
+  const url = getBadgeRankingUrl(badge);
 
-  return (
+  const badgeContent = (
     <Badge
-      className={`flex items-center gap-1 shadow-sm ${getGradientClass(badge.rank)} ${className}`}
+      className={`flex items-center gap-1 shadow-sm ${getGradientClass(badge.rank)} ${
+        clickable && url
+          ? "cursor-pointer hover:opacity-80 transition-opacity"
+          : ""
+      } ${className}`}
     >
       <span className="text-base">{emoji}</span>
       {title && <span className="font-medium">{title}</span>}
     </Badge>
   );
+
+  if (clickable && url) {
+    return (
+      <Link href={url} className="inline-block">
+        {badgeContent}
+      </Link>
+    );
+  }
+
+  return badgeContent;
 }
