@@ -37,7 +37,7 @@ export const footerConfig: FooterConfig = {
   feedback: {
     title: "ご意見をお聞かせください",
     description:
-      "チームみらいアクションボードをより良いサービスにするため、皆様のご意見・ご要望をお聞かせください。いただいたフィードバックは今後の改善に活用させていただきます。",
+      "チームみらいアクションボードをより良いサービスにするため、 皆様のご意見・ご要望をお聞かせください。 いただいたフィードバックは今後の改善に活用させていただきます。",
     buttonText: "ご意見箱を開く",
     url: "https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105",
   },
