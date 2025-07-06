@@ -469,16 +469,20 @@ export default function PosterMapWithCluster({
 
           const marker = L.marker([lat, lng], {
             icon: createMarkerIcon(board.status),
-          })
-            .bindTooltip(
+          }).on("click", () => onBoardClick(board));
+
+          const isHoverSupported = window.matchMedia("(hover: hover)").matches;
+          if (isHoverSupported) {
+            // スマホではツールチップを表示しない
+            marker.bindTooltip(
               `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}${
                 boardsAtLocation.length > 1
                   ? `<br><small>※この位置に${boardsAtLocation.length}件のマーカーがあります</small>`
                   : ""
               }`,
-              { permanent: false, direction: "top" },
-            )
-            .on("click", () => onBoardClick(board));
+              { permanent: false, direction: "top", interactive: false },
+            );
+          }
 
           // Store board data in marker for cluster icon calculation
           (marker as MarkerWithBoard).boardData = board;
