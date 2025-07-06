@@ -162,23 +162,23 @@ describe("RankingTop", () => {
   });
 
   describe("期間別ランキング表示", () => {
-    it("週間ランキングのタイトルが正しく表示される", async () => {
-      getRanking.mockResolvedValue(mockRankings);
-
-      render(await RankingTop({ limit: 10, period: "weekly" }));
-
-      expect(
-        screen.getByText("🏅週間アクションリーダートップ10"),
-      ).toBeInTheDocument();
-    });
-
-    it("日間ランキングのタイトルが正しく表示される", async () => {
+    it("日次ランキングのタイトルが正しく表示される", async () => {
       getRanking.mockResolvedValue(mockRankings);
 
       render(await RankingTop({ limit: 10, period: "daily" }));
 
       expect(
-        screen.getByText("🏅日間アクションリーダートップ10"),
+        screen.getByText("🏅日次アクションリーダートップ10"),
+      ).toBeInTheDocument();
+    });
+
+    it("全期間ランキングのタイトルが正しく表示される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      render(await RankingTop({ limit: 10, period: "all" }));
+
+      expect(
+        screen.getByText("🏅アクションリーダートップ10"),
       ).toBeInTheDocument();
     });
   });
@@ -203,9 +203,9 @@ describe("RankingTop", () => {
     it("期間パラメータが渡される", async () => {
       getRanking.mockResolvedValue(mockRankings);
 
-      await RankingTop({ period: "weekly" });
+      await RankingTop({ period: "daily" });
 
-      expect(getRanking).toHaveBeenCalledWith(10, "weekly");
+      expect(getRanking).toHaveBeenCalledWith(10, "daily");
     });
   });
 
@@ -241,8 +241,6 @@ describe("RankingTop", () => {
         "border-2",
         "border-gray-200",
         "rounded-2xl",
-        "shadow-lg",
-        "hover:shadow-xl",
         "transition-all",
         "duration-300",
         "p-8",

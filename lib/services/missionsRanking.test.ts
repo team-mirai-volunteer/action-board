@@ -120,26 +120,30 @@ describe("missionsRanking service", () => {
         });
       });
 
-      it("週間ランキングを取得する", async () => {
+      it("日次ランキングを取得する（日付確認）", async () => {
         mockSupabase.rpc.mockResolvedValue({
           data: [],
           error: null,
         });
 
-        await getMissionRanking(missionId, 10, "weekly");
+        await getMissionRanking(missionId, 10, "daily");
 
         const rpcCall = mockSupabase.rpc.mock.calls[0];
         expect(rpcCall[0]).toBe("get_period_mission_ranking");
+        expect(rpcCall[1]).toHaveProperty("p_start_date");
         expect(rpcCall[1].p_start_date).toBeTruthy();
 
-        // 日付が7日前であることを確認
         const startDate = new Date(rpcCall[1].p_start_date);
         const now = new Date();
-        const diffDays = Math.floor(
-          (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+        const todayMidnight = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
         );
-        expect(diffDays).toBeGreaterThanOrEqual(6);
-        expect(diffDays).toBeLessThanOrEqual(7);
+        expect(startDate.getTime()).toBe(todayMidnight.getTime());
       });
     });
 
