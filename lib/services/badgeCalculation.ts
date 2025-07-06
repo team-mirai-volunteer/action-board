@@ -196,7 +196,7 @@ export async function calculateMissionRankingBadges(): Promise<{
         "get_mission_ranking",
         {
           mission_id: mission.id,
-          limit_count: 10, // ミッションはTOP10
+          limit_count: 100,
         },
       );
 
