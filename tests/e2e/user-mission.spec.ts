@@ -170,9 +170,12 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
-    // ランキングページに遷移
+    // ランキングページに遷移（全期間ランキングを表示）
     await signedInPage.getByRole('link', { name: 'トップ100を見る' }).click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
+    
+    await signedInPage.goto('/ranking?period=all');
+    await expect(signedInPage).toHaveURL('/ranking?period=all', { timeout: 10000 });
 
     await expect(signedInPage.getByRole('heading', { name: 'アクションリーダー' })).toBeVisible();
     await expect(signedInPage.getByText('安野たかひろ')).toBeVisible();
@@ -193,6 +196,9 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     await signedInPage.getByText('全体').click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
+    
+    await signedInPage.goto('/ranking?period=all');
+    await expect(signedInPage).toHaveURL('/ranking?period=all', { timeout: 10000 });
     await expect(signedInPage.getByRole('heading', { name: 'アクションリーダー' })).toBeVisible();
   });
 });
