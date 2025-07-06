@@ -1,4 +1,8 @@
 import { CurrentUserCardPrefecture } from "@/components/ranking/current-user-card-prefecture";
+import {
+  PeriodToggle,
+  type RankingPeriod,
+} from "@/components/ranking/period-toggle";
 import { PrefectureSelect } from "@/components/ranking/prefecture-select";
 import RankingPrefecture from "@/components/ranking/ranking-prefecture";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
@@ -10,6 +14,7 @@ import { createClient } from "@/lib/supabase/server";
 interface PageProps {
   searchParams: Promise<{
     prefecture?: string;
+    period?: RankingPeriod;
   }>;
 }
 

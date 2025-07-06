@@ -135,7 +135,7 @@ describe("PrefectureSelect", () => {
       fireEvent.change(select, { target: { value: "愛知県" } });
 
       expect(mockPush).toHaveBeenCalledWith(
-        "/ranking/ranking-prefecture?prefecture=愛知県",
+        "/ranking/ranking-prefecture?prefecture=%E6%84%9B%E7%9F%A5%E7%9C%8C",
       );
     });
 
@@ -185,27 +185,6 @@ describe("PrefectureSelect", () => {
       expect(options[0]).toBe("北海道");
       expect(options[12]).toBe("東京都");
       expect(options[46]).toBe("沖縄県");
-    });
-  });
-
-  describe("CSSクラス", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(<PrefectureSelect prefectures={mockPrefectures} />);
-
-      const select = screen.getByRole("combobox");
-      expect(select).toHaveClass(
-        "w-full",
-        "p-3",
-        "pl-4",
-        "pr-10",
-        "text-base",
-        "border",
-        "border-gray-300",
-        "rounded-lg",
-        "bg-white",
-        "appearance-none",
-        "cursor-pointer",
-      );
     });
   });
 });

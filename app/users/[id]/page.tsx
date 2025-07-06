@@ -2,6 +2,7 @@ import Levels from "@/components/levels";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
+import { UserBadges } from "@/components/user-badges/user-badges-server";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
@@ -71,6 +72,13 @@ export default async function UserDetailPage({ params }: Props) {
           />
         )}
       </div>
+
+      {/* バッジセクション */}
+      <Card className="w-full p-4 mt-4">
+        <h3 className="text-lg font-bold mb-4">獲得バッジ</h3>
+        <UserBadges userId={user.id} />
+      </Card>
+
       {(count || 0) > 0 && (
         <Card className="w-full p-4 mt-4">
           <UserMissionAchievements

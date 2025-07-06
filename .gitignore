@@ -60,3 +60,6 @@ copilot-instructions.md
 raw_data/
 poster_data/temp/
 poster_data/*.log
+/supabase/archive/
+
+temp

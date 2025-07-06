@@ -12,14 +12,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CollapsibleInfo } from "@/components/ui/collapsible-info";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getAvatarUrl } from "@/lib/avatar";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
+import { calculateAge } from "@/lib/utils/utils";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { PrefectureSelect } from "./PrefectureSelect";
 import { updateProfile } from "./actions";
 
@@ -65,8 +80,64 @@ export default function ProfileForm({
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>(
     initialProfile?.address_prefecture || "",
   );
+
+  // 生年月日の状態を追加
+  const initialDate = initialProfile?.date_of_birth
+    ? new Date(initialProfile.date_of_birth)
+    : null;
+  const [selectedYear, setSelectedYear] = useState(
+    initialDate?.getFullYear() || 1990,
+  );
+  const [selectedMonth, setSelectedMonth] = useState(
+    (initialDate?.getMonth() || 0) + 1,
+  );
+  const [selectedDay, setSelectedDay] = useState(initialDate?.getDate() || 1);
+  const [ageError, setAgeError] = useState<string | null>(null);
+  const [isAgeValid, setIsAgeValid] = useState(true);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  // 年月日の選択肢を生成
+  const birthYearThreshold = new Date().getFullYear() - 18;
+  const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const days = Array.from(
+    { length: new Date(selectedYear, selectedMonth, 0).getDate() },
+    (_, i) => i + 1,
+  );
+
+  // 日付フォーマット関数
+  const formatDate = useCallback(
+    (year: number | null, month: number | null, day: number | null): string => {
+      if (!year || !month || !day) return "";
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      return `${year}-${pad(month)}-${pad(day)}`;
+    },
+    [],
+  );
+
+  const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
+
+  // 年齢チェック関数
+  const verifyAge = useCallback((birthdate: string): boolean => {
+    if (!birthdate) return false;
+
+    const age = calculateAge(birthdate);
+    if (age < 18) {
+      const yearsToWait = 18 - age;
+      const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
+      setAgeError(
+        `18歳以上の方のみご登録いただけます。${waitText}登録できますので、その日を楽しみにお待ちください！`,
+      );
+      setIsAgeValid(false);
+      return false;
+    }
+
+    setAgeError(null);
+    setIsAgeValid(true);
+    return true;
+  }, []);
 
   useEffect(() => {
     // フォーム送信成功時の処理
@@ -77,6 +148,19 @@ export default function ProfileForm({
       setQueryMessage(undefined);
     }
   }, [state?.success, isNew, router]);
+
+  // 生年月日が変更された際に年齢チェックを実行
+  useEffect(() => {
+    verifyAge(formattedDate);
+  }, [formattedDate, verifyAge]);
+
+  // 月を変更した際、日付が月の日数を超えていたら1日に変更する
+  useEffect(() => {
+    const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    if (selectedDay > daysInMonth) {
+      setSelectedDay(1);
+    }
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   // ファイル選択時のプレビュー処理
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,13 +275,97 @@ export default function ProfileForm({
           <div className="space-y-2">
             <Label htmlFor="date_of_birth">生年月日</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
-            <Input
-              type="date"
-              name="date_of_birth"
-              required
-              readOnly
-              value={initialProfile?.date_of_birth || ""}
-            />
+            {/* 生年月日が必要な理由の説明エリア（折りたたみ可能） */}
+            <CollapsibleInfo title="生年月日が必要な理由" variant="gray">
+              <p>
+                法律により、サポーター登録は満18歳以上の方に限定されているため、年齢確認が必要です。
+              </p>
+              <p>
+                プライバシーポリシーに従って厳重に管理され、他の目的には使用されません。
+              </p>
+            </CollapsibleInfo>
+            <fieldset
+              className="grid grid-cols-3 gap-2"
+              aria-labelledby="date_of_birth"
+            >
+              <legend className="sr-only">生年月日の選択</legend>
+              <div>
+                <Label htmlFor="date_of_birth_year" className="sr-only">
+                  年
+                </Label>
+                <Select
+                  name="year_select"
+                  value={selectedYear.toString()}
+                  onValueChange={(value) => setSelectedYear(Number(value))}
+                  required
+                  disabled={isPending}
+                >
+                  <SelectTrigger data-testid="year_select">
+                    <SelectValue placeholder="年" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}年
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="date_of_birth_month" className="sr-only">
+                  月
+                </Label>
+                <Select
+                  name="month_select"
+                  value={selectedMonth.toString()}
+                  onValueChange={(value) => setSelectedMonth(Number(value))}
+                  required
+                  disabled={isPending}
+                >
+                  <SelectTrigger data-testid="month_select">
+                    <SelectValue placeholder="月" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((month) => (
+                      <SelectItem key={month} value={month.toString()}>
+                        {month}月
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="date_of_birth_day" className="sr-only">
+                  日
+                </Label>
+                <Select
+                  name="day_select"
+                  value={selectedDay.toString()}
+                  onValueChange={(value) => setSelectedDay(Number(value))}
+                  required
+                  disabled={isPending}
+                >
+                  <SelectTrigger data-testid="day_select">
+                    <SelectValue placeholder="日" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {days.map((day) => (
+                      <SelectItem key={day} value={day.toString()}>
+                        {day}日
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </fieldset>
+            {ageError && (
+              <p className="text-primary text-sm font-medium mb-2">
+                {ageError}
+              </p>
+            )}
+            {/* 隠しフィールドでフォーマット済みの日付を送信 */}
+            <input type="hidden" name="date_of_birth" value={formattedDate} />
           </div>
 
           <div className="space-y-2">
@@ -214,6 +382,15 @@ export default function ProfileForm({
           <div className="space-y-2">
             <Label htmlFor="postcode">郵便番号(ハイフンなし半角7桁)</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
+            {/* 郵便番号が必要な理由の説明エリア（折りたたみ可能） */}
+            <CollapsibleInfo title="なぜ郵便番号が必要ですか？" variant="gray">
+              <p>
+                郵便番号は、ポスティングなど地域別のミッションを適切に届けるために必要です。
+              </p>
+              <p>
+                プライバシーポリシーに従って厳重に管理され、他の目的には使用されません。
+              </p>
+            </CollapsibleInfo>
             {selectedPrefecture === "海外" && (
               <p className="text-sm text-red-600">
                 海外在住の方は0000000を入力ください
@@ -285,7 +462,7 @@ export default function ProfileForm({
           )}
         </CardContent>
         <CardFooter>
-          <SubmitButton className="w-full" disabled={isPending}>
+          <SubmitButton className="w-full" disabled={isPending || !isAgeValid}>
             {isNew ? "登録する" : "更新する"}
           </SubmitButton>
         </CardFooter>

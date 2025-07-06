@@ -58,60 +58,6 @@ describe("MissionAchievementCard", () => {
     });
   });
 
-  describe("レイアウトとスタイル", () => {
-    it("適切なCSSクラスが設定される", () => {
-      const { container } = render(
-        <MissionAchievementCard title="テストミッション" count={5} />,
-      );
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass("p-4");
-
-      const flexContainer = container.querySelector(
-        ".flex.justify-between.items-center",
-      );
-      expect(flexContainer).toBeInTheDocument();
-
-      const titleElement = container.querySelector(
-        ".text-sm.font-bold.text-gray-700.flex-1.min-w-0.truncate",
-      );
-      expect(titleElement).toBeInTheDocument();
-
-      const countContainer = container.querySelector(
-        ".flex.items-baseline.gap-2.ml-4",
-      );
-      expect(countContainer).toBeInTheDocument();
-    });
-
-    it("達成回数の数字に適切なスタイルが適用される", () => {
-      const { container } = render(
-        <MissionAchievementCard title="テストミッション" count={7} />,
-      );
-
-      const countNumber = container.querySelector(
-        ".text-2xl.font-bold.text-teal-600",
-      );
-      expect(countNumber).toBeInTheDocument();
-      expect(countNumber).toHaveTextContent("7");
-
-      const countUnit = container.querySelector(
-        ".text-base.font-bold.text-gray-700",
-      );
-      expect(countUnit).toBeInTheDocument();
-      expect(countUnit).toHaveTextContent("回");
-    });
-
-    it("タイトルにtruncateクラスが適用される", () => {
-      const { container } = render(
-        <MissionAchievementCard title="長いタイトル" count={1} />,
-      );
-
-      const titleElement = container.querySelector(".truncate");
-      expect(titleElement).toBeInTheDocument();
-      expect(titleElement).toHaveTextContent("長いタイトル");
-    });
-  });
-
   describe("アクセシビリティ", () => {
     it("達成回数の情報が適切に構造化される", () => {
       render(

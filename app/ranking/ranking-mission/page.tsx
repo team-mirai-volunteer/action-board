@@ -1,5 +1,9 @@
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import { MissionSelect } from "@/components/ranking/mission-select";
+import {
+  PeriodToggle,
+  type RankingPeriod,
+} from "@/components/ranking/period-toggle";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import {
@@ -11,6 +15,7 @@ import { createClient } from "@/lib/supabase/server";
 interface PageProps {
   searchParams: Promise<{
     missionId?: string;
+    period?: RankingPeriod;
   }>;
 }
 

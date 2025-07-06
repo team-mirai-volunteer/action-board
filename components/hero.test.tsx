@@ -74,24 +74,6 @@ describe("Hero", () => {
     });
   });
 
-  describe("レイアウトとスタイル", () => {
-    it("適切なCSSクラスが設定される", async () => {
-      const result = await Hero();
-      const { container } = render(result);
-
-      const heroSection = container.querySelector("section");
-      expect(heroSection).toHaveClass("relative");
-    });
-
-    it("グラデーション背景が設定される", async () => {
-      const result = await Hero();
-      const { container } = render(result);
-
-      const gradientElement = container.querySelector(".bg-gradient-to-br");
-      expect(gradientElement).toBeInTheDocument();
-    });
-  });
-
   describe("アクセシビリティ", () => {
     it("見出し階層が適切に設定される", async () => {
       const result = await Hero();

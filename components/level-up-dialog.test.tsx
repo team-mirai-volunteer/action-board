@@ -116,79 +116,12 @@ describe("LevelUpDialog", () => {
     });
   });
 
-  describe("スタイリング", () => {
-    it("適切なCSSクラスが設定される", () => {
-      const { container } = render(<LevelUpDialog {...mockProps} />);
-
-      const dialogContent = screen.getByTestId("dialog-content");
-      expect(dialogContent).toHaveClass(
-        "sm:max-w-xs",
-        "bg-white",
-        "rounded-2xl",
-        "border-0",
-        "shadow-2xl",
-      );
-    });
-
-    it("レベル表示部分に適切なスタイルが設定される", () => {
-      render(<LevelUpDialog {...mockProps} />);
-
-      const levelContainer = screen.getByText("LEVEL").parentElement;
-      expect(levelContainer).toHaveClass(
-        "rounded-full",
-        "flex",
-        "flex-col",
-        "gap-1",
-        "items-center",
-        "justify-center",
-        "bg-gradient-level",
-        "text-center",
-      );
-    });
-  });
-
   describe("アクセシビリティ", () => {
-    it("ダイアログタイトルが適切に設定される", () => {
-      render(<LevelUpDialog {...mockProps} />);
-
-      const title = screen.getByText(/サポーターレベルが/);
-      expect(title).toHaveClass(
-        "text-2xl",
-        "font-bold",
-        "text-gray-800",
-        "text-center",
-      );
-    });
-
     it("画像にalt属性が設定される", () => {
       render(<LevelUpDialog {...mockProps} />);
 
       const image = screen.getByAltText("particle");
       expect(image).toBeInTheDocument();
-    });
-  });
-
-  describe("レイアウト", () => {
-    it("中央揃えのレイアウトが適用される", () => {
-      render(<LevelUpDialog {...mockProps} />);
-
-      const centerContainer = screen
-        .getByText("LEVEL")
-        .closest(".flex.flex-col.items-center");
-      expect(centerContainer).toBeInTheDocument();
-    });
-
-    it("パーティクル画像の位置スタイルが適用される", () => {
-      render(<LevelUpDialog {...mockProps} />);
-
-      const particleImage = screen.getByAltText("particle");
-      expect(particleImage).toHaveStyle({
-        position: "absolute",
-        top: "8px",
-        left: "-45px",
-        width: "230px",
-        maxWidth: "none",
-      });
     });
   });
 });

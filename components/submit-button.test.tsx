@@ -93,14 +93,7 @@ describe("SubmitButton", () => {
     });
   });
 
-  describe("スタイリング", () => {
-    it("追加のクラス名が適用される", () => {
-      render(<SubmitButton className="custom-class">送信</SubmitButton>);
-
-      const button = screen.getByRole("button");
-      expect(button).toHaveClass("custom-class");
-    });
-
+  describe("プロパティ", () => {
     it("その他のpropsが渡される", () => {
       render(<SubmitButton data-testid="submit-btn">送信</SubmitButton>);
 

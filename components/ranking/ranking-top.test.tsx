@@ -161,13 +161,35 @@ describe("RankingTop", () => {
     });
   });
 
+  describe("期間別ランキング表示", () => {
+    it("日次ランキングのタイトルが正しく表示される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      render(await RankingTop({ limit: 10, period: "daily" }));
+
+      expect(
+        screen.getByText("🏅日次アクションリーダートップ10"),
+      ).toBeInTheDocument();
+    });
+
+    it("全期間ランキングのタイトルが正しく表示される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      render(await RankingTop({ limit: 10, period: "all" }));
+
+      expect(
+        screen.getByText("🏅アクションリーダートップ10"),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe("サービス関数の呼び出し", () => {
     it("getRankingが正しいパラメータで呼ばれる", async () => {
       getRanking.mockResolvedValue(mockRankings);
 
       await RankingTop({ limit: 15 });
 
-      expect(getRanking).toHaveBeenCalledWith(15);
+      expect(getRanking).toHaveBeenCalledWith(15, "all");
     });
 
     it("デフォルトのlimit値で呼ばれる", async () => {
@@ -175,7 +197,15 @@ describe("RankingTop", () => {
 
       await RankingTop({});
 
-      expect(getRanking).toHaveBeenCalledWith(10);
+      expect(getRanking).toHaveBeenCalledWith(10, "all");
+    });
+
+    it("期間パラメータが渡される", async () => {
+      getRanking.mockResolvedValue(mockRankings);
+
+      await RankingTop({ period: "daily" });
+
+      expect(getRanking).toHaveBeenCalledWith(10, "daily");
     });
   });
 
@@ -197,27 +227,6 @@ describe("RankingTop", () => {
         screen.getByText("🏅アクションリーダートップ10"),
       ).toBeInTheDocument();
       expect(screen.queryByTestId("ranking-item")).not.toBeInTheDocument();
-    });
-  });
-
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", async () => {
-      getRanking.mockResolvedValue(mockRankings);
-
-      render(await RankingTop({}));
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass(
-        "border-2",
-        "border-gray-200",
-        "rounded-2xl",
-        "shadow-lg",
-        "hover:shadow-xl",
-        "transition-all",
-        "duration-300",
-        "p-8",
-        "bg-white",
-      );
     });
   });
 

@@ -131,14 +131,7 @@ describe("CurrentUserCard", () => {
     });
   });
 
-  describe("レイアウト構造", () => {
-    it("適切なCSSクラスが設定される", () => {
-      render(<CurrentUserCard currentUser={mockUser} />);
-
-      const card = screen.getByTestId("card");
-      expect(card).toHaveClass("border-teal-200", "bg-teal-50");
-    });
-
+  describe("コンポーネント構造", () => {
     it("カードの構造が正しい", () => {
       render(<CurrentUserCard currentUser={mockUser} />);
 

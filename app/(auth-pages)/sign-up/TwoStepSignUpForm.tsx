@@ -4,6 +4,8 @@ import { FormMessage, type Message } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CollapsibleInfo } from "@/components/ui/collapsible-info";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -61,8 +63,18 @@ function ConsentPhase({
       <Label htmlFor="date_of_birth">
         生年月日（満18歳以上である必要があります）
       </Label>
+
+      {/* 生年月日が必要な理由の説明エリア（折りたたみ可能） */}
+      <CollapsibleInfo title="なぜ生年月日が必要ですか？" variant="gray">
+        <p>
+          法律により、サポーター登録は満18歳以上の方に限定されているため、年齢確認が必要です。
+        </p>
+        <p>
+          プライバシーポリシーに従って厳重に管理され、他の目的には使用されません。また、公開されることもありません。
+        </p>
+      </CollapsibleInfo>
       <fieldset
-        className="grid grid-cols-3 gap-2"
+        className="grid grid-cols-3 gap-2 -mt-2"
         aria-labelledby="date_of_birth_year"
       >
         <legend className="sr-only">生年月日</legend>

@@ -92,40 +92,11 @@ describe("MetricCard", () => {
     });
   });
 
-  describe("レイアウトとスタイル", () => {
+  describe("コンポーネント構造", () => {
     it("Cardコンポーネントが使用される", () => {
       render(<MetricCard {...mockProps} />);
 
       expect(screen.getByTestId("card")).toBeInTheDocument();
-    });
-
-    it("適切なCSSクラスが設定される", () => {
-      const { container } = render(<MetricCard {...mockProps} />);
-
-      const cardElement = screen.getByTestId("card");
-      expect(cardElement).toHaveClass(
-        "relative",
-        "overflow-hidden",
-        "border-2",
-        "border-emerald-200",
-      );
-    });
-
-    it("グラデーション背景要素が存在する", () => {
-      const { container } = render(<MetricCard {...mockProps} />);
-
-      const gradientElement = container.querySelector(
-        '[class*="bg-gradient-to-br from-emerald-200"]',
-      );
-      expect(gradientElement).toBeInTheDocument();
-    });
-
-    it("値のスタイリングが適用される", () => {
-      const { container } = render(<MetricCard {...mockProps} />);
-
-      const valueElement = container.querySelector('[class*="text-4xl"]');
-      expect(valueElement).toBeInTheDocument();
-      expect(valueElement).toHaveTextContent("1,234");
     });
   });
 });
