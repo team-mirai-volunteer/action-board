@@ -446,6 +446,11 @@ const lineAuthSchema = z.object({
 });
 
 // LINE認証処理のServer Action
+export async function getReferralUrlAction(userId: string): Promise<string> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  return `${baseUrl}?ref=${userId}`;
+}
+
 export async function handleLineAuthAction(
   code: string,
   dateOfBirth?: string,
