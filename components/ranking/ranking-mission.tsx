@@ -53,7 +53,7 @@ export default async function RankingMission({
   };
 
   const periodLabel =
-    period === "weekly" ? "週間" : period === "daily" ? "日間" : "";
+    period === "weekly" ? "週間" : period === "daily" ? "日次" : "";
   const title = `🏅「${mission.title}」${periodLabel}トップ${limit}`;
 
   return (

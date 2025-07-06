@@ -24,7 +24,7 @@ export default async function RankingPrefecture({
   const rankings = await getPrefecturesRanking(prefecture, limit, period);
 
   const periodLabel =
-    period === "weekly" ? "週間" : period === "daily" ? "日間" : "";
+    period === "weekly" ? "週間" : period === "daily" ? "日次" : "";
   const title = `🏅${prefecture}${periodLabel}トップ${limit}`;
 
   return (

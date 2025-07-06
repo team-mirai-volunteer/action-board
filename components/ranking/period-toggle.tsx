@@ -4,16 +4,15 @@ import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
-export type RankingPeriod = "all" | "weekly" | "daily";
+export type RankingPeriod = "all" | "daily";
 
 interface PeriodToggleProps {
   defaultPeriod?: RankingPeriod;
 }
 
 const periodOptions = [
+  { value: "daily" as const, label: "日次" },
   { value: "all" as const, label: "全期間" },
-  { value: "weekly" as const, label: "週間" },
-  { value: "daily" as const, label: "日間" },
 ] as const;
 
 export function PeriodToggle({ defaultPeriod = "all" }: PeriodToggleProps) {

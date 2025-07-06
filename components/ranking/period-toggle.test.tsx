@@ -28,7 +28,7 @@ describe("PeriodToggle", () => {
 
     const allButton = screen.getByRole("button", { name: "全期間" });
     const weeklyButton = screen.getByRole("button", { name: "週間" });
-    const dailyButton = screen.getByRole("button", { name: "日間" });
+    const dailyButton = screen.getByRole("button", { name: "日次" });
 
     expect(allButton).toBeInTheDocument();
     expect(weeklyButton).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe("PeriodToggle", () => {
 
     render(<PeriodToggle />);
 
-    const dailyButton = screen.getByRole("button", { name: "日間" });
+    const dailyButton = screen.getByRole("button", { name: "日次" });
     expect(dailyButton).toHaveClass("bg-teal-600");
   });
 
@@ -74,7 +74,7 @@ describe("PeriodToggle", () => {
     const user = userEvent.setup();
     render(<PeriodToggle />);
 
-    const dailyButton = screen.getByRole("button", { name: "日間" });
+    const dailyButton = screen.getByRole("button", { name: "日次" });
     await user.click(dailyButton);
 
     expect(mockPush).toHaveBeenCalledWith("/ranking?period=daily");

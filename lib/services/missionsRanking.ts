@@ -23,10 +23,15 @@ export async function getMissionRanking(
 
     switch (period) {
       case "daily":
-        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
-        break;
-      case "weekly":
-        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        // 本日の0時0分を基準にする
+        dateFilter = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
+        );
         break;
       default:
         dateFilter = null;
@@ -110,10 +115,15 @@ export async function getUserMissionRanking(
 
     switch (period) {
       case "daily":
-        dateFilter = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
-        break;
-      case "weekly":
-        dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7日前
+        // 本日の0時0分を基準にする
+        dateFilter = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
+        );
         break;
       default:
         dateFilter = null;
