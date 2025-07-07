@@ -58,11 +58,16 @@ export default async function Metrics() {
   const supporterCount = supporterData?.totalCount ?? 75982;
   const supporterIncrease = supporterData?.last24hCount ?? 1710;
   const donationAmount = donationData
-    ? Math.round(donationData.totalAmount / 1000)
-    : 3043;
+    ? donationData.totalAmount / 10000
+    : 304.3;
   const donationIncrease = donationData
-    ? Math.round(donationData.last24hAmount / 1000)
-    : 85;
+    ? donationData.last24hAmount / 10000
+    : 8.5;
+
+  const formatAmount = (amount: number) => {
+    const formatted = amount.toFixed(1);
+    return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+  };
 
   // count achievements
   const { count: achievementCount } = await supabase
@@ -170,14 +175,14 @@ export default async function Metrics() {
               </div>
             </div>
             <p className="text-2xl font-black text-black mb-1">
-              {donationAmount.toLocaleString()}
-              <span className="text-lg">千円</span>
+              {formatAmount(donationAmount)}
+              <span className="text-lg">万円</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +{donationIncrease.toLocaleString()}
-                <span className="text-xs">千円</span>
+                +{formatAmount(donationIncrease)}
+                <span className="text-xs">万円</span>
               </span>
             </p>
           </div>
