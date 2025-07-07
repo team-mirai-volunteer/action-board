@@ -226,7 +226,7 @@ export default async function Metrics() {
           <p className="text-xs text-black">
             {supporterData?.updatedAt
               ? formatUpdateTime(supporterData.updatedAt)
-              : "2025.07.03 02:20"}{" "}
+              : process.env.FALLBACK_UPDATE_DATE || "2025.07.03 02:20"}{" "}
             更新
           </p>
         </div>
@@ -261,13 +261,20 @@ export default async function Metrics() {
               達成したアクション数
             </p>
             <p className="text-2xl font-black text-black mb-1">
-              {achievementCount?.toLocaleString() || "18,605"}
+              {achievementCount?.toLocaleString() ||
+                (
+                  Number(process.env.FALLBACK_ACHIEVEMENT_COUNT) || 0
+                ).toLocaleString()}
               <span className="text-lg">件</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +{todayAchievementCount?.toLocaleString() || "245"}
+                +
+                {todayAchievementCount?.toLocaleString() ||
+                  (
+                    Number(process.env.FALLBACK_TODAY_ACHIEVEMENT_COUNT) || 0
+                  ).toLocaleString()}
                 <span className="text-xs">件</span>
               </span>
             </p>
