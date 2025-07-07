@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/server";
+import { TooltipButton } from "./tooltip-button";
 
 interface SupporterData {
   totalCount: number;
@@ -55,6 +56,7 @@ async function fetchSupporterData(): Promise<SupporterData | null> {
       "https://gist.github.com/nishio/1cba2c9707f6eb06d683fbe21dbbc5ae/raw/latest_supporter_data.json",
       {
         next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(10000),
         headers: {
           Accept: "application/json",
         },
@@ -65,6 +67,12 @@ async function fetchSupporterData(): Promise<SupporterData | null> {
       console.error(
         `Failed to fetch supporter data: ${response.status} ${response.statusText}`,
       );
+      return null;
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Invalid content type received");
       return null;
     }
 
@@ -82,6 +90,7 @@ async function fetchDonationData(): Promise<DonationData | null> {
       "https://gist.githubusercontent.com/nishio/f45275a47e42bbb76f7efef750bed37a/raw/latest_stripe_data.json",
       {
         next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(10000),
         headers: {
           Accept: "application/json",
         },
@@ -92,6 +101,12 @@ async function fetchDonationData(): Promise<DonationData | null> {
       console.error(
         `Failed to fetch donation data: ${response.status} ${response.statusText}`,
       );
+      return null;
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Invalid content type received");
       return null;
     }
 
@@ -113,20 +128,20 @@ export default async function Metrics() {
 
   const supporterCount =
     supporterData?.totalCount ??
-    (Number(process.env.FALLBACK_SUPPORTER_COUNT) || 75982);
+    (Number(process.env.FALLBACK_SUPPORTER_COUNT) || 0);
   const supporterIncrease =
     supporterData?.last24hCount ??
-    (Number(process.env.FALLBACK_SUPPORTER_INCREASE) || 1710);
+    (Number(process.env.FALLBACK_SUPPORTER_INCREASE) || 0);
   const donationAmount = donationData
     ? donationData.totalAmount / 10000
     : Number(process.env.FALLBACK_DONATION_AMOUNT)
       ? Number(process.env.FALLBACK_DONATION_AMOUNT) / 10000
-      : null;
+      : 0;
   const donationIncrease = donationData
     ? donationData.last24hAmount / 10000
     : Number(process.env.FALLBACK_DONATION_INCREASE)
       ? Number(process.env.FALLBACK_DONATION_INCREASE) / 10000
-      : null;
+      : 0;
 
   const formatAmount = (amount: number) => {
     const oku = Math.floor(amount / 10000);
@@ -231,48 +246,39 @@ export default async function Metrics() {
           <div className="flex-1 text-center flex flex-col justify-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <p className="text-xs font-bold text-black">現在の寄付金額</p>
-              <div className="group relative">
-                <button
-                  type="button"
-                  className="text-gray-400 hover:text-gray-600"
-                  aria-label="寄付金額の詳細情報"
-                  aria-describedby="donation-tooltip"
+              <TooltipButton
+                ariaLabel="寄付金額の詳細情報"
+                tooltipId="donation-tooltip"
+                tooltip={
+                  <>
+                    政治団体「チームみらい」への寄付と、
+                    <br />
+                    安野及び各公認候補予定者の政治団体への寄付の合計金額
+                  </>
+                }
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <title>寄付金額の詳細情報</title>
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  id="donation-tooltip"
-                  className="invisible group-hover:visible absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10"
-                >
-                  政治団体「チームみらい」への寄付と、
-                  <br />
-                  安野及び各公認候補予定者の政治団体への寄付の合計金額
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
-                </div>
-              </div>
+                  <title>寄付金額の詳細情報</title>
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </TooltipButton>
             </div>
             <p className="text-2xl font-black text-black mb-1">
-              {donationAmount !== null ? formatAmount(donationAmount) : "-"}
+              {formatAmount(donationAmount)}
               <span className="text-lg">万円</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +
-                {donationIncrease !== null
-                  ? formatAmount(donationIncrease)
-                  : "-"}
+                +{formatAmount(donationIncrease)}
                 <span className="text-xs">万円</span>
               </span>
             </p>
