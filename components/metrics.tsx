@@ -65,8 +65,21 @@ export default async function Metrics() {
     : 8.5;
 
   const formatAmount = (amount: number) => {
-    const formatted = amount.toFixed(1);
-    return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+    const oku = Math.floor(amount / 10000);
+    const man = amount % 10000;
+
+    if (oku === 0) {
+      const formatted = man.toFixed(1);
+      return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+    }
+    if (man === 0) {
+      return `${oku}億`;
+    }
+    const manFormatted = man.toFixed(1);
+    const manDisplay = manFormatted.endsWith(".0")
+      ? manFormatted.slice(0, -2)
+      : manFormatted;
+    return `${oku}億${manDisplay}`;
   };
 
   // count achievements
