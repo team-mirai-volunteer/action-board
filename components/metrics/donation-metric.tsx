@@ -1,6 +1,6 @@
 import type { DonationData } from "@/lib/types/metrics";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
-import { TooltipButton } from "../tooltip-button";
+import { TooltipButton } from "./TooltipButton";
 
 interface DonationMetricProps {
   data: DonationData | null;
