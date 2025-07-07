@@ -52,12 +52,12 @@ export default async function Metrics() {
             </div>
             <Separator orientation="vertical" className="mx-4 h-full" />
             <div className="flex-1 text-center flex flex-col justify-center">
-              <p className="text-sm text-black mb-2">サポーター数</p>
+              <p className="text-sm text-black mb-2">現在の寄付金額</p>
               <p className="text-2xl font-black text-black mb-1">
-                3,043<span className="text-lg">人</span>
+                75,982<span className="text-lg">千円</span>
               </p>
               <p className="text-xs text-black">
-                目標 10,000<span className="text-xs">人</span>
+                目標 10,000<span className="text-xs">千円</span>
               </p>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default async function Metrics() {
           <div className="flex justify-end">
             <div className="bg-gray-100 p-4 text-center w-1/2">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <p className="text-sm text-black">現在の寄付金額</p>
+                <p className="text-sm text-black">サポーター数</p>
                 <div className="group relative">
                   <button
                     type="button"
@@ -94,7 +94,7 @@ export default async function Metrics() {
                 </div>
               </div>
               <p className="text-3xl font-bold text-black mb-1">
-                75,982<span className="text-xl">千円</span>
+                3,043<span className="text-xl">人</span>
               </p>
               <p className="text-sm text-black">
                 前日増加分{" "}
