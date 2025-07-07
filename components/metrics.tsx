@@ -1,8 +1,68 @@
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/server";
 
+interface SupporterData {
+  totalCount: number;
+  last24hCount: number;
+  updatedAt: string;
+}
+
+interface DonationData {
+  totalAmount: number;
+  last24hAmount: number;
+  totalCount: number;
+  last24hCount: number;
+  updatedAt: string;
+}
+
+async function fetchSupporterData(): Promise<SupporterData | null> {
+  try {
+    const response = await fetch(
+      "https://gist.github.com/nishio/58bc7d92b15dfdfa4c7ec4bf823a70d5/raw/latest_supporter_data.json",
+    );
+    if (!response.ok) {
+      console.error("Failed to fetch supporter data:", response.status);
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching supporter data:", error);
+    return null;
+  }
+}
+
+async function fetchDonationData(): Promise<DonationData | null> {
+  try {
+    const response = await fetch(
+      "https://gist.githubusercontent.com/nishio/f45275a47e42bbb76f7efef750bed37a/raw/latest_stripe_data.json",
+    );
+    if (!response.ok) {
+      console.error("Failed to fetch donation data:", response.status);
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching donation data:", error);
+    return null;
+  }
+}
+
 export default async function Metrics() {
   const supabase = await createClient();
+
+  const [supporterData, donationData] = await Promise.all([
+    fetchSupporterData(),
+    fetchDonationData(),
+  ]);
+
+  const supporterCount = supporterData?.totalCount ?? 75982;
+  const supporterIncrease = supporterData?.last24hCount ?? 1710;
+  const donationAmount = donationData
+    ? Math.round(donationData.totalAmount / 1000)
+    : 3043;
+  const donationIncrease = donationData
+    ? Math.round(donationData.last24hAmount / 1000)
+    : 85;
 
   // count achievements
   const { count: achievementCount } = await supabase
@@ -50,12 +110,14 @@ export default async function Metrics() {
               </p>
             </div>
             <p className="text-3xl font-bold text-teal-700 mb-1">
-              75,982<span className="text-xl">人</span>
+              {supporterCount.toLocaleString()}
+              <span className="text-xl">人</span>
             </p>
             <p className="text-sm text-black">
               一日で{" "}
               <span className="font-bold text-teal-700">
-                +1,710<span className="text-xs">人</span>
+                +{supporterIncrease.toLocaleString()}
+                <span className="text-xs">人</span>
               </span>
             </p>
           </div>
@@ -108,12 +170,14 @@ export default async function Metrics() {
               </div>
             </div>
             <p className="text-2xl font-black text-black mb-1">
-              3,043<span className="text-lg">千円</span>
+              {donationAmount.toLocaleString()}
+              <span className="text-lg">千円</span>
             </p>
             <p className="text-xs text-black">
               一日で{" "}
               <span className="font-bold text-teal-700">
-                +85<span className="text-xs">千円</span>
+                +{donationIncrease.toLocaleString()}
+                <span className="text-xs">千円</span>
               </span>
             </p>
           </div>
