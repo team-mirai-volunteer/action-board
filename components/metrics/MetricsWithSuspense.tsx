@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@/components/ui/tooltip";
 import React, { Suspense } from "react";
 import { MetricsErrorBoundary } from "./MetricsErrorBoundary";
 import Metrics from "./index";
@@ -44,9 +45,11 @@ function MetricsSkeleton() {
 export default function MetricsWithSuspense() {
   return (
     <MetricsErrorBoundary>
-      <Suspense fallback={<MetricsSkeleton />}>
-        <Metrics />
-      </Suspense>
+      <TooltipProvider>
+        <Suspense fallback={<MetricsSkeleton />}>
+          <Metrics />
+        </Suspense>
+      </TooltipProvider>
     </MetricsErrorBoundary>
   );
 }
