@@ -52,7 +52,7 @@ const formatUpdateTime = (timestamp: string) => {
 async function fetchSupporterData(): Promise<SupporterData | null> {
   try {
     const response = await fetch(
-      "https://gist.github.com/nishio/58bc7d92b15dfdfa4c7ec4bf823a70d5/raw/latest_supporter_data.json",
+      "https://gist.github.com/nishio/1cba2c9707f6eb06d683fbe21dbbc5ae/raw/latest_supporter_data.json",
       {
         next: { revalidate: 3600 },
         headers: {
