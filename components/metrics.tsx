@@ -57,12 +57,10 @@ export default async function Metrics() {
 
   const supporterCount = supporterData?.totalCount ?? 75982;
   const supporterIncrease = supporterData?.last24hCount ?? 1710;
-  const donationAmount = donationData
-    ? donationData.totalAmount / 10000
-    : 304.3;
+  const donationAmount = donationData ? donationData.totalAmount / 10000 : null;
   const donationIncrease = donationData
     ? donationData.last24hAmount / 10000
-    : 8.5;
+    : null;
 
   const formatAmount = (amount: number) => {
     const oku = Math.floor(amount / 10000);
@@ -188,13 +186,16 @@ export default async function Metrics() {
               </div>
             </div>
             <p className="text-2xl font-black text-black mb-1">
-              {formatAmount(donationAmount)}
+              {donationAmount !== null ? formatAmount(donationAmount) : "-"}
               <span className="text-lg">万円</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +{formatAmount(donationIncrease)}
+                +
+                {donationIncrease !== null
+                  ? formatAmount(donationIncrease)
+                  : "-"}
                 <span className="text-xs">万円</span>
               </span>
             </p>
