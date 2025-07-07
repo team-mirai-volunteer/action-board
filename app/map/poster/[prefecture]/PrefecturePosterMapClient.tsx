@@ -448,7 +448,8 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.number}の状況を教えてください
+              {selectedBoard?.number || selectedBoard?.name || "この掲示板"}
+              の状況を教えてください
             </DialogDescription>
           </DialogHeader>
           {selectedBoard && (
