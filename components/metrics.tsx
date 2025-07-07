@@ -83,7 +83,10 @@ async function fetchSupporterData(): Promise<SupporterData | null> {
     }
 
     const contentType = response.headers.get("content-type");
-    if (!contentType?.includes("application/json")) {
+    if (
+      !contentType?.includes("application/json") &&
+      !contentType?.includes("text/plain")
+    ) {
       console.error("Invalid content-type:", contentType);
       return null;
     }
@@ -125,7 +128,10 @@ async function fetchDonationData(): Promise<DonationData | null> {
     }
 
     const contentType = response.headers.get("content-type");
-    if (!contentType?.includes("application/json")) {
+    if (
+      !contentType?.includes("application/json") &&
+      !contentType?.includes("text/plain")
+    ) {
       console.error("Invalid content-type:", contentType);
       return null;
     }
