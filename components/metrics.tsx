@@ -179,16 +179,19 @@ export default async function Metrics() {
 
     if (oku === 0) {
       const formatted = man.toFixed(1);
-      return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+      const display = formatted.endsWith(".0")
+        ? formatted.slice(0, -2)
+        : formatted;
+      return `${display}万円`;
     }
     if (man === 0) {
-      return `${oku}億`;
+      return `${oku}億円`;
     }
     const manFormatted = man.toFixed(1);
     const manDisplay = manFormatted.endsWith(".0")
       ? manFormatted.slice(0, -2)
       : manFormatted;
-    return `${oku}億${manDisplay}`;
+    return `${oku}億${manDisplay}万円`;
   };
 
   // count achievements
@@ -310,13 +313,11 @@ export default async function Metrics() {
             </div>
             <p className="text-2xl font-black text-black mb-1">
               {formatAmount(donationAmount)}
-              <span className="text-lg">万円</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
                 +{formatAmount(donationIncrease)}
-                <span className="text-xs">万円</span>
               </span>
             </p>
           </div>
