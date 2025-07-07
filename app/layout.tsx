@@ -5,6 +5,7 @@ import Footer from "./footer";
 import "./globals.css";
 import { ReferralCodeHandlerWrapper } from "@/components/ReferralCodeHandlerWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -46,22 +47,24 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          <main className="md:container md:mx-auto flex flex-col items-center">
-            <Suspense>
-              <ReferralCodeHandlerWrapper />
-            </Suspense>
-            {children}
-          </main>
-          <Footer />
-          <Toaster />
-        </ThemeProvider>
+        <TooltipProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <main className="md:container md:mx-auto flex flex-col items-center">
+              <Suspense>
+                <ReferralCodeHandlerWrapper />
+              </Suspense>
+              {children}
+            </main>
+            <Footer />
+            <Toaster />
+          </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

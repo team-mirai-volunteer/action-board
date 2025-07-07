@@ -7,7 +7,6 @@ import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 
 export { MetricsErrorBoundary } from "./MetricsErrorBoundary";
-export { TooltipButton } from "./TooltipButton";
 export { default as MetricsWithSuspense } from "./MetricsWithSuspense";
 
 /**
