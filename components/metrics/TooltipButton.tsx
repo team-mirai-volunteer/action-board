@@ -39,7 +39,7 @@ export function TooltipButton({
       </button>
       <div
         id={tooltipId}
-        className={`absolute bottom-full mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10 left-1/2 transform -translate-x-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 max-sm:right-0 max-sm:transform-none ${
+        className={`absolute bottom-full mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg z-10 left-1/2 transform -translate-x-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:whitespace-nowrap max-sm:right-0 max-sm:transform-none max-sm:whitespace-normal max-sm:max-w-xs ${
           tooltipVisible ? "visible" : "invisible"
         }`}
       >
