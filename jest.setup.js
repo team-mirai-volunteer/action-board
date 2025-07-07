@@ -329,5 +329,13 @@ global.fetch = jest.fn(() =>
         last24hCount: 1710,
         updatedAt: "2025-07-03T02:20:00Z",
       }),
+    headers: {
+      get: jest.fn((name) => {
+        if (name === "content-type") {
+          return "application/json";
+        }
+        return null;
+      }),
+    },
   }),
 );

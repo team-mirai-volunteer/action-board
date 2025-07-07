@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import Metrics from "./metrics";
 
@@ -30,9 +30,13 @@ describe("Metrics", () => {
     it("参加者数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(
-        screen.getByText(/チームみらい.+サポーター数/),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText(/チームみらい.*サポーター数/),
+        ).toBeInTheDocument();
+        expect(screen.getByText("75,982")).toBeInTheDocument();
+        expect(screen.getByText("人")).toBeInTheDocument();
+      });
     });
   });
 

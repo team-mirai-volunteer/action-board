@@ -15,28 +15,36 @@ interface DonationData {
 }
 
 function validateSupporterData(data: unknown): data is SupporterData {
+  if (typeof data !== "object" || data === null) return false;
+
+  const record = data as Record<string, unknown>;
   return (
-    typeof data === "object" &&
-    data !== null &&
-    "totalCount" in data &&
-    "last24hCount" in data &&
-    "updatedAt" in data &&
-    typeof (data as Record<string, unknown>).totalCount === "number" &&
-    typeof (data as Record<string, unknown>).last24hCount === "number" &&
-    typeof (data as Record<string, unknown>).updatedAt === "string"
+    "totalCount" in record &&
+    "last24hCount" in record &&
+    "updatedAt" in record &&
+    typeof record.totalCount === "number" &&
+    typeof record.last24hCount === "number" &&
+    typeof record.updatedAt === "string" &&
+    record.totalCount >= 0 &&
+    record.last24hCount >= 0 &&
+    !Number.isNaN(Date.parse(record.updatedAt))
   );
 }
 
 function validateDonationData(data: unknown): data is DonationData {
+  if (typeof data !== "object" || data === null) return false;
+
+  const record = data as Record<string, unknown>;
   return (
-    typeof data === "object" &&
-    data !== null &&
-    "totalAmount" in data &&
-    "last24hAmount" in data &&
-    "updatedAt" in data &&
-    typeof (data as Record<string, unknown>).totalAmount === "number" &&
-    typeof (data as Record<string, unknown>).last24hAmount === "number" &&
-    typeof (data as Record<string, unknown>).updatedAt === "string"
+    "totalAmount" in record &&
+    "last24hAmount" in record &&
+    "updatedAt" in record &&
+    typeof record.totalAmount === "number" &&
+    typeof record.last24hAmount === "number" &&
+    typeof record.updatedAt === "string" &&
+    record.totalAmount >= 0 &&
+    record.last24hAmount >= 0 &&
+    !Number.isNaN(Date.parse(record.updatedAt))
   );
 }
 
@@ -52,68 +60,84 @@ const formatUpdateTime = (timestamp: string) => {
 
 async function fetchSupporterData(): Promise<SupporterData | null> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     const response = await fetch(
       "https://gist.github.com/nishio/1cba2c9707f6eb06d683fbe21dbbc5ae/raw/latest_supporter_data.json",
       {
+        signal: controller.signal,
         next: { revalidate: 3600 },
-        signal: AbortSignal.timeout(10000),
         headers: {
           Accept: "application/json",
+          "User-Agent": "Action-Board/1.0",
         },
       },
     );
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      console.error(
-        `Failed to fetch supporter data: ${response.status} ${response.statusText}`,
-      );
+      console.error(`API Error: ${response.status} ${response.statusText}`);
       return null;
     }
 
     const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      console.error("Invalid content type received");
+    if (!contentType?.includes("application/json")) {
+      console.error("Invalid content-type:", contentType);
       return null;
     }
 
     const data = await response.json();
     return validateSupporterData(data) ? data : null;
   } catch (error) {
-    console.error("Error fetching supporter data:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("Request timeout");
+    } else {
+      console.error("Fetch error:", error);
+    }
     return null;
   }
 }
 
 async function fetchDonationData(): Promise<DonationData | null> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     const response = await fetch(
       "https://gist.githubusercontent.com/nishio/f45275a47e42bbb76f7efef750bed37a/raw/latest_stripe_data.json",
       {
+        signal: controller.signal,
         next: { revalidate: 3600 },
-        signal: AbortSignal.timeout(10000),
         headers: {
           Accept: "application/json",
+          "User-Agent": "Action-Board/1.0",
         },
       },
     );
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      console.error(
-        `Failed to fetch donation data: ${response.status} ${response.statusText}`,
-      );
+      console.error(`API Error: ${response.status} ${response.statusText}`);
       return null;
     }
 
     const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      console.error("Invalid content type received");
+    if (!contentType?.includes("application/json")) {
+      console.error("Invalid content-type:", contentType);
       return null;
     }
 
     const data = await response.json();
     return validateDonationData(data) ? data : null;
   } catch (error) {
-    console.error("Error fetching donation data:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("Request timeout");
+    } else {
+      console.error("Fetch error:", error);
+    }
     return null;
   }
 }
