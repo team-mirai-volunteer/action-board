@@ -2,17 +2,13 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import Metrics from "./metrics";
 
-jest.mock("@/components/metric-card", () => ({
-  MetricCard: ({ title, value, unit, todayValue, todayUnit }: any) => (
-    <div data-testid="metric-card">
-      <h3>{title}</h3>
-      <div>
-        {value} {unit}
-      </div>
-      <div>
-        今日: {todayValue} {todayUnit}
-      </div>
-    </div>
+jest.mock("@/components/ui/separator", () => ({
+  Separator: ({ orientation, className }: any) => (
+    <div
+      data-testid="separator"
+      data-orientation={orientation}
+      className={className}
+    />
   ),
 }));
 
@@ -21,15 +17,14 @@ describe("Metrics", () => {
     it("メトリクスが正しくレンダリングされる", async () => {
       render(await Metrics());
 
-      expect(screen.getAllByTestId("metric-card")).toHaveLength(2);
+      expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
+      expect(screen.getByText("現在の寄付金額")).toBeInTheDocument();
     });
 
     it("アクション達成数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(
-        screen.getByText("みんなで達成したアクション数"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("達成したアクション数")).toBeInTheDocument();
     });
 
     it("参加者数メトリクスが表示される", async () => {
@@ -57,11 +52,10 @@ describe("Metrics", () => {
   });
 
   describe("レイアウト", () => {
-    it("グリッドレイアウトが適用される", async () => {
-      const { container } = render(await Metrics());
+    it("Separatorコンポーネントが表示される", async () => {
+      render(await Metrics());
 
-      const gridContainer = container.querySelector(".grid");
-      expect(gridContainer).toBeInTheDocument();
+      expect(screen.getByTestId("separator")).toBeInTheDocument();
     });
   });
 });
