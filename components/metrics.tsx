@@ -40,11 +40,16 @@ export default async function Metrics() {
         </div>
 
         <div className="mb-6">
-          <div className="bg-gray-100 p-4 text-center">
+          <div
+            className="p-4 text-center"
+            style={{ backgroundColor: "#F9F9F9" }}
+          >
             <div className="flex items-center justify-center gap-2 mb-2">
-              <p className="text-sm text-black">チームみらい　サポーター数</p>
+              <p className="text-xs font-bold text-black">
+                チームみらい　サポーター数
+              </p>
             </div>
-            <p className="text-3xl font-bold text-black mb-1">
+            <p className="text-3xl font-bold text-green-600 mb-1">
               75,982<span className="text-xl">人</span>
             </p>
             <p className="text-sm text-black">
@@ -58,7 +63,9 @@ export default async function Metrics() {
 
         <div className="flex items-stretch">
           <div className="flex-1 text-center flex flex-col justify-center">
-            <p className="text-sm text-black mb-2">達成したアクション数</p>
+            <p className="text-xs font-bold text-black mb-2">
+              達成したアクション数
+            </p>
             <p className="text-2xl font-black text-black mb-1">
               18,605<span className="text-lg">件</span>
             </p>
@@ -72,7 +79,7 @@ export default async function Metrics() {
           <Separator orientation="vertical" className="mx-4 h-full" />
           <div className="flex-1 text-center flex flex-col justify-center">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <p className="text-sm text-black">現在の寄付金額</p>
+              <p className="text-xs font-bold text-black">現在の寄付金額</p>
               <div className="group relative">
                 <button
                   type="button"
