@@ -63,7 +63,10 @@ export default async function Metrics() {
               18,605<span className="text-lg">件</span>
             </p>
             <p className="text-xs text-black">
-              目標 20,000<span className="text-xs">件</span>
+              前日増加分{" "}
+              <span className="font-bold text-teal-700">
+                +245<span className="text-xs">件</span>
+              </span>
             </p>
           </div>
           <Separator orientation="vertical" className="mx-4 h-full" />
@@ -101,7 +104,10 @@ export default async function Metrics() {
               3,043<span className="text-lg">千円</span>
             </p>
             <p className="text-xs text-black">
-              目標 10,000<span className="text-xs">千円</span>
+              前日増加分{" "}
+              <span className="font-bold text-teal-700">
+                +85<span className="text-xs">千円</span>
+              </span>
             </p>
           </div>
         </div>
