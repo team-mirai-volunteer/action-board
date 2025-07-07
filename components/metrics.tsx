@@ -49,7 +49,7 @@ export default async function Metrics() {
                 チームみらい　サポーター数
               </p>
             </div>
-            <p className="text-3xl font-bold text-green-600 mb-1">
+            <p className="text-3xl font-bold text-teal-700 mb-1">
               75,982<span className="text-xl">人</span>
             </p>
             <p className="text-sm text-black">
