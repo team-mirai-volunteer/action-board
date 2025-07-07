@@ -18,8 +18,8 @@ export function AchievementMetric({
   fallbackTotal = 0,
   fallbackToday = 0,
 }: AchievementMetricProps) {
-  const achievementCount = data.totalCount || fallbackTotal;
-  const todayAchievementCount = data.todayCount || fallbackToday;
+  const achievementCount = data.totalCount ?? fallbackTotal;
+  const todayAchievementCount = data.todayCount ?? fallbackToday;
 
   return (
     <div className="flex-1 text-center flex flex-col justify-center">

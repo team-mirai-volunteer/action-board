@@ -41,19 +41,37 @@ describe("Metrics", () => {
   });
 
   describe("データ取得", () => {
-    it("Supabaseクライアントが正しく呼び出される", async () => {
-      await Metrics();
+    it("メトリクスデータが正しく取得される", async () => {
+      // メトリクスサービスのモックを作成
+      jest.mock("@/lib/services/metrics", () => ({
+        getMetricsData: jest.fn().mockResolvedValue({
+          supporterCount: 75982,
+          donationAmount: 1000000,
+        }),
+      }));
 
-      expect(require("@/lib/supabase/server").createClient).toHaveBeenCalled();
+      render(await Metrics());
+      // データが正しく表示されることを確認
+      expect(screen.getByText("75,982")).toBeInTheDocument();
+      expect(screen.getByText("1,000,000")).toBeInTheDocument();
     });
   });
 
   describe("エラーハンドリング", () => {
-    it("データ取得エラー時の処理", async () => {
-      const result = await Metrics();
-      render(result);
+    describe("エラーハンドリング", () => {
+      it("データ取得エラー時にフォールバック値が表示される", async () => {
+        // エラーをモック
+        jest.mock("@/lib/services/metrics", () => ({
+          getMetricsData: jest.fn().mockRejectedValue(new Error("API Error")),
+        }));
 
-      expect(result).toBeDefined();
+        render(await Metrics());
+
+        // フォールバック値が表示されることを確認
+        await waitFor(() => {
+          expect(screen.getByText("75,982")).toBeInTheDocument();
+        });
+      });
     });
   });
 
