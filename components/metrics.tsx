@@ -57,12 +57,28 @@ export default async function Metrics() {
 
   const supporterCount = supporterData?.totalCount ?? 75982;
   const supporterIncrease = supporterData?.last24hCount ?? 1710;
-  const donationAmount = donationData
-    ? Math.round(donationData.totalAmount / 1000)
-    : 3043;
+  const donationAmount = donationData ? donationData.totalAmount / 10000 : null;
   const donationIncrease = donationData
-    ? Math.round(donationData.last24hAmount / 1000)
-    : 85;
+    ? donationData.last24hAmount / 10000
+    : null;
+
+  const formatAmount = (amount: number) => {
+    const oku = Math.floor(amount / 10000);
+    const man = amount % 10000;
+
+    if (oku === 0) {
+      const formatted = man.toFixed(1);
+      return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+    }
+    if (man === 0) {
+      return `${oku}億`;
+    }
+    const manFormatted = man.toFixed(1);
+    const manDisplay = manFormatted.endsWith(".0")
+      ? manFormatted.slice(0, -2)
+      : manFormatted;
+    return `${oku}億${manDisplay}`;
+  };
 
   // count achievements
   const { count: achievementCount } = await supabase
@@ -170,14 +186,17 @@ export default async function Metrics() {
               </div>
             </div>
             <p className="text-2xl font-black text-black mb-1">
-              {donationAmount.toLocaleString()}
-              <span className="text-lg">千円</span>
+              {donationAmount !== null ? formatAmount(donationAmount) : "-"}
+              <span className="text-lg">万円</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +{donationIncrease.toLocaleString()}
-                <span className="text-xs">千円</span>
+                +
+                {donationIncrease !== null
+                  ? formatAmount(donationIncrease)
+                  : "-"}
+                <span className="text-xs">万円</span>
               </span>
             </p>
           </div>
