@@ -117,7 +117,7 @@ export default async function Metrics() {
               1日で{" "}
               <span className="font-bold text-teal-700">
                 +{supporterIncrease.toLocaleString()}
-                <span className="text-xs">人増えました</span>
+                <span className="text-xs">人増えました！</span>
               </span>
             </p>
           </div>
@@ -134,7 +134,7 @@ export default async function Metrics() {
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +245<span className="text-xs">件増えました</span>
+                +245<span className="text-xs">件</span>
               </span>
             </p>
           </div>
@@ -177,7 +177,7 @@ export default async function Metrics() {
               1日で{" "}
               <span className="font-bold text-teal-700">
                 +{donationIncrease.toLocaleString()}
-                <span className="text-xs">千円増えました</span>
+                <span className="text-xs">千円</span>
               </span>
             </p>
           </div>
