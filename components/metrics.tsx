@@ -114,10 +114,10 @@ export default async function Metrics() {
               <span className="text-xl">人</span>
             </p>
             <p className="text-sm text-black">
-              一日で{" "}
+              1日で{" "}
               <span className="font-bold text-teal-700">
                 +{supporterIncrease.toLocaleString()}
-                <span className="text-xs">人</span>
+                <span className="text-xs">人増えました</span>
               </span>
             </p>
           </div>
@@ -132,9 +132,9 @@ export default async function Metrics() {
               18,605<span className="text-lg">件</span>
             </p>
             <p className="text-xs text-black">
-              一日で{" "}
+              1日で{" "}
               <span className="font-bold text-teal-700">
-                +245<span className="text-xs">件</span>
+                +245<span className="text-xs">件増えました</span>
               </span>
             </p>
           </div>
@@ -174,10 +174,10 @@ export default async function Metrics() {
               <span className="text-lg">千円</span>
             </p>
             <p className="text-xs text-black">
-              一日で{" "}
+              1日で{" "}
               <span className="font-bold text-teal-700">
                 +{donationIncrease.toLocaleString()}
-                <span className="text-xs">千円</span>
+                <span className="text-xs">千円増えました</span>
               </span>
             </p>
           </div>
