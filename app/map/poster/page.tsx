@@ -1,3 +1,7 @@
+import {
+  getPosterBoardTotals,
+  getPosterBoards,
+} from "@/lib/services/poster-boards";
 import type { Metadata } from "next";
 import PosterMapPageClientOptimized from "./PosterMapPageClientOptimized";
 
@@ -7,5 +11,16 @@ export const metadata: Metadata = {
 };
 
 export default async function PosterMapPage() {
-  return <PosterMapPageClientOptimized />;
+  // サーバーサイドでデータを取得
+  const [boards, totals] = await Promise.all([
+    getPosterBoards(),
+    getPosterBoardTotals(),
+  ]);
+
+  return (
+    <PosterMapPageClientOptimized
+      initialBoards={boards}
+      initialTotals={totals}
+    />
+  );
 }

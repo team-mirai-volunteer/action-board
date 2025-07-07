@@ -628,6 +628,39 @@ export type Database = {
           },
         ];
       };
+      poster_board_totals: {
+        Row: {
+          city: string | null;
+          created_at: string | null;
+          id: string;
+          note: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          source: string | null;
+          total_count: number;
+          updated_at: string | null;
+        };
+        Insert: {
+          city?: string | null;
+          created_at?: string | null;
+          id?: string;
+          note?: string | null;
+          prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+          source?: string | null;
+          total_count: number;
+          updated_at?: string | null;
+        };
+        Update: {
+          city?: string | null;
+          created_at?: string | null;
+          id?: string;
+          note?: string | null;
+          prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
+          source?: string | null;
+          total_count?: number;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       poster_boards: {
         Row: {
           address: string | null;
