@@ -1,5 +1,29 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+
+jest.mock("@/lib/services/metrics", () => ({
+  fetchAllMetricsData: jest.fn().mockResolvedValue({
+    supporter: {
+      totalCount: 75982,
+      last24hCount: 1710,
+      updatedAt: "2025-07-03T02:20:00Z",
+    },
+    donation: {
+      totalAmount: 1000000,
+      last24hAmount: 25000,
+      updatedAt: "2025-07-03T02:20:00Z",
+    },
+    achievement: {
+      totalCount: 18605,
+      todayCount: 245,
+    },
+    registration: {
+      totalCount: 1000,
+      todayCount: 50,
+    },
+  }),
+}));
+
 import Metrics from "./index";
 
 jest.mock("@/components/ui/separator", () => ({
@@ -42,18 +66,10 @@ describe("Metrics", () => {
 
   describe("データ取得", () => {
     it("メトリクスデータが正しく取得される", async () => {
-      // メトリクスサービスのモックを作成
-      jest.mock("@/lib/services/metrics", () => ({
-        getMetricsData: jest.fn().mockResolvedValue({
-          supporterCount: 75982,
-          donationAmount: 1000000,
-        }),
-      }));
-
       render(await Metrics());
       // データが正しく表示されることを確認
       expect(screen.getByText("75,982")).toBeInTheDocument();
-      expect(screen.getByText("1,000,000")).toBeInTheDocument();
+      expect(screen.getByText("100万円")).toBeInTheDocument();
     });
   });
 
