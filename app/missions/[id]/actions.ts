@@ -127,12 +127,6 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
 // POSTERタイプ用スキーマ
 const posterArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.POSTER.key),
-  posterCount: z.coerce
-    .number()
-    .min(1, { message: "ポスター枚数は1枚以上で入力してください" })
-    .max(MAX_POSTER_COUNT, {
-      message: `ポスター枚数は${MAX_POSTER_COUNT}枚以下で入力してください`,
-    }),
   prefecture: z
     .string()
     .min(1, { message: "都道府県を選択してください" })
@@ -241,7 +235,6 @@ export const achieveMissionAction = async (formData: FormData) => {
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
   // ポスター用データの取得
-  const posterCount = formData.get("posterCount")?.toString();
   const prefecture = formData.get("prefecture")?.toString();
   const city = formData.get("city")?.toString();
   const boardNumber = formData.get("boardNumber")?.toString();
@@ -265,7 +258,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     accuracy,
     altitude,
     postingCount,
-    posterCount,
     locationText,
     prefecture,
     city,
@@ -503,7 +495,7 @@ export const achieveMissionAction = async (formData: FormData) => {
           ? ` - 状況: ${validatedData.boardNote}`
           : "";
 
-        artifactPayload.text_content = `${validatedData.posterCount}枚を${locationInfo}${nameInfo}に貼付${statusInfo}`;
+        artifactPayload.text_content = `${locationInfo}${nameInfo}に貼付${statusInfo}`;
         // CHECK制約: text_content必須、他はnull
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
@@ -668,7 +660,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       const posterActivityPayload = {
         user_id: authUser.id,
         mission_artifact_id: newArtifact.id,
-        poster_count: validatedData.posterCount,
+        poster_count: MAX_POSTER_COUNT,
         prefecture:
           validatedData.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
         city: validatedData.city,
@@ -699,7 +691,7 @@ export const achieveMissionAction = async (formData: FormData) => {
 
       // ポスター用のポイント計算とXP付与
       const pointsPerUnit = POSTER_POINTS_PER_UNIT;
-      const totalPoints = validatedData.posterCount * pointsPerUnit;
+      const totalPoints = MAX_POSTER_COUNT * pointsPerUnit;
 
       // 通常のXP（ミッション難易度ベース）に加えて、ポスターボーナスXPを付与
       const bonusXpResult = await grantXp(
@@ -707,7 +699,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         totalPoints,
         "BONUS",
         achievement.id,
-        `ポスターボーナス（${validatedData.posterCount}枚×${pointsPerUnit}ポイント）`,
+        `ポスターボーナス（${MAX_POSTER_COUNT}枚×${pointsPerUnit}ポイント）`,
       );
 
       if (!bonusXpResult.success) {
