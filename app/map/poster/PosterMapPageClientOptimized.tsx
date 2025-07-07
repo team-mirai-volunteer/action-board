@@ -1,8 +1,10 @@
 "use client";
 
+import { AnnouncementBanner } from "@/components/announcements/AnnouncementBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { POSTER_PREFECTURE_MAP } from "@/lib/constants/poster-prefectures";
+import { getActiveAnnouncements } from "@/lib/services/announcements";
 import { getPosterBoardStats } from "@/lib/services/poster-boards-stats";
 import type { Database } from "@/lib/types/supabase";
 import { ChevronRight, MapPin } from "lucide-react";
@@ -12,9 +14,11 @@ import { toast } from "sonner";
 import { statusConfig } from "./statusConfig";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
+type Announcement = Database["public"]["Tables"]["announcements"]["Row"];
 
 export default function PosterMapPageClientOptimized() {
   const [loading, setLoading] = useState(true);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [boardStats, setBoardStats] = useState<
     Record<string, Record<BoardStatus, number>>
   >({});
@@ -30,13 +34,22 @@ export default function PosterMapPageClientOptimized() {
 
   const loadStats = async () => {
     try {
-      const { stats, total, completed } = await getPosterBoardStats();
+      const [statsResult, announcementsResult] = await Promise.all([
+        getPosterBoardStats(),
+        getActiveAnnouncements(),
+      ]);
+
+      const { stats, total, completed } = statsResult;
       setBoardStats(stats);
 
       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
       setTotalStats({ total, completed, percentage });
+
+      if (announcementsResult.success && announcementsResult.announcements) {
+        setAnnouncements(announcementsResult.announcements);
+      }
     } catch (error) {
-      toast.error("統計情報の読み込みに失敗しました");
+      toast.error("データの読み込みに失敗しました");
     } finally {
       setLoading(false);
     }
@@ -61,6 +74,11 @@ export default function PosterMapPageClientOptimized() {
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
+      {/* Announcements */}
+      {announcements.length > 0 && (
+        <AnnouncementBanner announcements={announcements} />
+      )}
+
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">ポスター掲示板マップ</h1>

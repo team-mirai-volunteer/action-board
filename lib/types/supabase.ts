@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       achievements: {
@@ -76,6 +51,42 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      announcements: {
+        Row: {
+          content: string;
+          created_at: string | null;
+          end_date: string | null;
+          id: string;
+          is_active: boolean;
+          start_date: string | null;
+          title: string;
+          type: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          content: string;
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean;
+          start_date?: string | null;
+          title: string;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          content?: string;
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean;
+          start_date?: string | null;
+          title?: string;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
       };
       daily_action_summary: {
         Row: {
@@ -1646,9 +1657,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       poster_board_status: [
