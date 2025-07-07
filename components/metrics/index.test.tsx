@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import Metrics from "./metrics";
+import Metrics from "./index";
 
 jest.mock("@/components/ui/separator", () => ({
   Separator: ({ orientation, className }: any) => (
