@@ -30,7 +30,9 @@ describe("Metrics", () => {
     it("参加者数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("アクションボード参加者")).toBeInTheDocument();
+      expect(
+        screen.getByText(/チームみらい.+サポーター数/),
+      ).toBeInTheDocument();
     });
   });
 

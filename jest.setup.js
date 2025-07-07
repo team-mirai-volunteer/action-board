@@ -319,3 +319,15 @@ jest.mock("@radix-ui/react-dialog", () => {
 
   return mockComponents;
 });
+
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        totalCount: 75982,
+        last24hCount: 1710,
+        updatedAt: "2025-07-03T02:20:00Z",
+      }),
+  }),
+);

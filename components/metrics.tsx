@@ -10,21 +10,66 @@ interface SupporterData {
 interface DonationData {
   totalAmount: number;
   last24hAmount: number;
-  totalCount: number;
-  last24hCount: number;
   updatedAt: string;
 }
+
+function validateSupporterData(data: unknown): data is SupporterData {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "totalCount" in data &&
+    "last24hCount" in data &&
+    "updatedAt" in data &&
+    typeof (data as Record<string, unknown>).totalCount === "number" &&
+    typeof (data as Record<string, unknown>).last24hCount === "number" &&
+    typeof (data as Record<string, unknown>).updatedAt === "string"
+  );
+}
+
+function validateDonationData(data: unknown): data is DonationData {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "totalAmount" in data &&
+    "last24hAmount" in data &&
+    "updatedAt" in data &&
+    typeof (data as Record<string, unknown>).totalAmount === "number" &&
+    typeof (data as Record<string, unknown>).last24hAmount === "number" &&
+    typeof (data as Record<string, unknown>).updatedAt === "string"
+  );
+}
+
+const formatUpdateTime = (timestamp: string) => {
+  return new Date(timestamp).toLocaleString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 async function fetchSupporterData(): Promise<SupporterData | null> {
   try {
     const response = await fetch(
       "https://gist.github.com/nishio/58bc7d92b15dfdfa4c7ec4bf823a70d5/raw/latest_supporter_data.json",
+      {
+        next: { revalidate: 3600 },
+        headers: {
+          Accept: "application/json",
+        },
+      },
     );
+
     if (!response.ok) {
-      console.error("Failed to fetch supporter data:", response.status);
+      console.error(
+        `Failed to fetch supporter data: ${response.status} ${response.statusText}`,
+      );
       return null;
     }
-    return await response.json();
+
+    const data = await response.json();
+    return validateSupporterData(data) ? data : null;
   } catch (error) {
     console.error("Error fetching supporter data:", error);
     return null;
@@ -35,12 +80,23 @@ async function fetchDonationData(): Promise<DonationData | null> {
   try {
     const response = await fetch(
       "https://gist.githubusercontent.com/nishio/f45275a47e42bbb76f7efef750bed37a/raw/latest_stripe_data.json",
+      {
+        next: { revalidate: 3600 },
+        headers: {
+          Accept: "application/json",
+        },
+      },
     );
+
     if (!response.ok) {
-      console.error("Failed to fetch donation data:", response.status);
+      console.error(
+        `Failed to fetch donation data: ${response.status} ${response.statusText}`,
+      );
       return null;
     }
-    return await response.json();
+
+    const data = await response.json();
+    return validateDonationData(data) ? data : null;
   } catch (error) {
     console.error("Error fetching donation data:", error);
     return null;
@@ -55,12 +111,22 @@ export default async function Metrics() {
     fetchDonationData(),
   ]);
 
-  const supporterCount = supporterData?.totalCount ?? 75982;
-  const supporterIncrease = supporterData?.last24hCount ?? 1710;
-  const donationAmount = donationData ? donationData.totalAmount / 10000 : null;
+  const supporterCount =
+    supporterData?.totalCount ??
+    (Number(process.env.FALLBACK_SUPPORTER_COUNT) || 75982);
+  const supporterIncrease =
+    supporterData?.last24hCount ??
+    (Number(process.env.FALLBACK_SUPPORTER_INCREASE) || 1710);
+  const donationAmount = donationData
+    ? donationData.totalAmount / 10000
+    : Number(process.env.FALLBACK_DONATION_AMOUNT)
+      ? Number(process.env.FALLBACK_DONATION_AMOUNT) / 10000
+      : null;
   const donationIncrease = donationData
     ? donationData.last24hAmount / 10000
-    : null;
+    : Number(process.env.FALLBACK_DONATION_INCREASE)
+      ? Number(process.env.FALLBACK_DONATION_INCREASE) / 10000
+      : null;
 
   const formatAmount = (amount: number) => {
     const oku = Math.floor(amount / 10000);
@@ -112,7 +178,12 @@ export default async function Metrics() {
           <h2 className="text-xl font-bold text-black mb-1">
             チームみらいの活動状況🚀
           </h2>
-          <p className="text-xs text-black">2025.07.03 02:20 更新</p>
+          <p className="text-xs text-black">
+            {supporterData?.updatedAt
+              ? formatUpdateTime(supporterData.updatedAt)
+              : "2025.07.03 02:20"}{" "}
+            更新
+          </p>
         </div>
 
         <div className="mb-6">
@@ -145,12 +216,14 @@ export default async function Metrics() {
               達成したアクション数
             </p>
             <p className="text-2xl font-black text-black mb-1">
-              18,605<span className="text-lg">件</span>
+              {achievementCount?.toLocaleString() || "18,605"}
+              <span className="text-lg">件</span>
             </p>
             <p className="text-xs text-black">
               1日で{" "}
               <span className="font-bold text-teal-700">
-                +245<span className="text-xs">件</span>
+                +{todayAchievementCount?.toLocaleString() || "245"}
+                <span className="text-xs">件</span>
               </span>
             </p>
           </div>
@@ -162,12 +235,13 @@ export default async function Metrics() {
                 <button
                   type="button"
                   className="text-gray-400 hover:text-gray-600"
+                  aria-label="寄付金額の詳細情報"
+                  aria-describedby="donation-tooltip"
                 >
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 20 20"
-                    aria-label="寄付金額の詳細情報"
                   >
                     <title>寄付金額の詳細情報</title>
                     <path
@@ -177,7 +251,10 @@ export default async function Metrics() {
                     />
                   </svg>
                 </button>
-                <div className="invisible group-hover:visible absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10">
+                <div
+                  id="donation-tooltip"
+                  className="invisible group-hover:visible absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10"
+                >
                   政治団体「チームみらい」への寄付と、
                   <br />
                   安野及び各公認候補予定者の政治団体への寄付の合計金額
