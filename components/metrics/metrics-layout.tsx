@@ -19,7 +19,7 @@ export function MetricsLayout({
 }: MetricsLayoutProps) {
   return (
     <section className="bg-gradient-hero flex justify-center py-6 px-4">
-      <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
+      <div className="w-full max-w-md bg-white rounded-md shadow-custom p-6">
         {/* ヘッダー部分：タイトルと最終更新日時 */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-bold text-black mb-1">{title}</h2>
