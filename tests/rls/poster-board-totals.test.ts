@@ -41,7 +41,7 @@ describe("poster_board_totals テーブルのRLSテスト", () => {
   });
 
   describe("SELECT操作", () => {
-    it("匿名ユーザーは総数データを閲覧できない", async () => {
+    it("匿名ユーザーは総数データを閲覧できる", async () => {
       const anonClient = getAnonClient();
       const { data, error } = await anonClient
         .from("poster_board_totals")
@@ -49,9 +49,11 @@ describe("poster_board_totals テーブルのRLSテスト", () => {
         .eq("id", testTotalId)
         .single();
 
-      expect(error).toBeDefined();
-      expect(error?.code).toBe("PGRST116");
-      expect(data).toBeNull();
+      expect(error).toBeNull();
+      expect(data).toBeDefined();
+      expect(data?.id).toBe(testTotalId);
+      expect(data?.prefecture).toBe("埼玉県");
+      expect(data?.total_count).toBe(5000);
     });
 
     it("認証済みユーザーは総数データを閲覧できる", async () => {
