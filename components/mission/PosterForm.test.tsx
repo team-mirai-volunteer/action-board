@@ -49,7 +49,6 @@ describe("PosterForm", () => {
     render(<PosterForm disabled={false} />);
 
     // 必須フィールドの確認
-    expect(screen.getByLabelText(/ポスター枚数/)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Select Prefecture/i }),
     ).toBeInTheDocument(); // Selectボタンの存在確認
@@ -57,7 +56,7 @@ describe("PosterForm", () => {
     expect(screen.getByLabelText(/番号/)).toBeInTheDocument();
 
     // 必須マークの確認
-    expect(screen.getAllByText("*")).toHaveLength(4);
+    expect(screen.getAllByText("*")).toHaveLength(3);
   });
 
   it("renders all optional fields", () => {
@@ -75,9 +74,6 @@ describe("PosterForm", () => {
     render(<PosterForm disabled={true} />);
 
     // すべての入力フィールドが無効化されていることを確認
-    expect(
-      screen.getByRole("spinbutton", { name: /ポスター枚数/ }),
-    ).toBeDisabled();
     expect(screen.getByTestId("select")).toHaveAttribute(
       "data-disabled",
       "true",
@@ -95,9 +91,6 @@ describe("PosterForm", () => {
     render(<PosterForm disabled={false} />);
 
     // すべての入力フィールドが有効化されていることを確認
-    expect(
-      screen.getByRole("spinbutton", { name: /ポスター枚数/ }),
-    ).not.toBeDisabled();
     expect(screen.getByTestId("select")).toHaveAttribute(
       "data-disabled",
       "false",
@@ -111,19 +104,6 @@ describe("PosterForm", () => {
     expect(screen.getByRole("textbox", { name: /住所/ })).not.toBeDisabled();
     expect(screen.getByRole("spinbutton", { name: /緯度/ })).not.toBeDisabled();
     expect(screen.getByRole("spinbutton", { name: /経度/ })).not.toBeDisabled();
-  });
-
-  it("has correct input attributes for poster count", () => {
-    render(<PosterForm disabled={false} />);
-
-    const posterCountInput = screen.getByRole("spinbutton", {
-      name: /ポスター枚数/,
-    });
-    expect(posterCountInput).toHaveAttribute("type", "number");
-    expect(posterCountInput).toHaveAttribute("name", "posterCount");
-    expect(posterCountInput).toHaveAttribute("min", "1");
-    expect(posterCountInput).toHaveAttribute("max", "10000"); // MAX_POSTER_COUNT
-    expect(posterCountInput).toBeRequired();
   });
 
   it("has correct input attributes for city field", () => {
@@ -196,9 +176,6 @@ describe("PosterForm", () => {
 
     // ヘルプテキストの確認
     expect(
-      screen.getByText(/貼り付けた枚数を入力してください/),
-    ).toBeInTheDocument();
-    expect(
       screen.getByText(/市町村名と区名を入力してください/),
     ).toBeInTheDocument();
     expect(screen.getByText(/番号を入力してください/)).toBeInTheDocument();
@@ -222,7 +199,6 @@ describe("PosterForm", () => {
     render(<PosterForm disabled={false} />);
 
     // プレースホルダーテキストの確認
-    expect(screen.getByPlaceholderText("例：10")).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("例：渋谷区、名古屋市中区"),
     ).toBeInTheDocument();
@@ -279,9 +255,6 @@ describe("PosterForm", () => {
 
     // 各フィールドがラベルと一緒にレンダリングされていることを確認
     expect(
-      screen.getByRole("spinbutton", { name: /ポスター枚数/ }),
-    ).toBeInTheDocument();
-    expect(
       screen.getByRole("textbox", { name: /市町村＋区/ }),
     ).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: /番号/ })).toBeInTheDocument();
@@ -291,10 +264,6 @@ describe("PosterForm", () => {
     render(<PosterForm disabled={false} />);
 
     // アクセシビリティ属性の確認
-    const posterCountInput = screen.getByRole("spinbutton", {
-      name: /ポスター枚数/,
-    });
-    expect(posterCountInput).toHaveAttribute("id", "posterCount");
 
     const cityInput = screen.getByRole("textbox", { name: /市町村＋区/ });
     expect(cityInput).toHaveAttribute("id", "city");

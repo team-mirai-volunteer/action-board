@@ -1,9 +1,11 @@
 import { getPosterBoardStatsAction } from "@/lib/actions/poster-boards";
 import { createClient } from "@/lib/supabase/client";
+import type {
+  BoardStatus,
+  PosterBoard,
+  PosterBoardTotal,
+} from "@/lib/types/poster-boards";
 import type { Database } from "@/lib/types/supabase";
-
-type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
 // 最小限のデータのみ取得（マップ表示用）
 export async function getPosterBoardsMinimal(prefecture?: string) {
@@ -235,4 +237,45 @@ export async function getPosterBoardStats(prefecture: string): Promise<{
   return getPosterBoardStatsAction(
     prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
   );
+}
+
+// 選挙管理委員会から提供された掲示板総数を取得
+export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_board_totals")
+    .select("*")
+    .order("prefecture", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching poster board totals:", error);
+    throw error;
+  }
+
+  return data || [];
+}
+
+// 特定の都道府県の掲示板総数を取得
+export async function getPosterBoardTotalByPrefecture(
+  prefecture: string,
+): Promise<PosterBoardTotal | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_board_totals")
+    .select("*")
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .is("city", null) // 都道府県レベルのデータのみ
+    .single();
+
+  if (error) {
+    console.error("Error fetching poster board total for prefecture:", error);
+    return null;
+  }
+
+  return data;
 }

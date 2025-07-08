@@ -3,7 +3,10 @@ import {
   POSTER_PREFECTURE_MAP,
   type PosterPrefectureKey,
 } from "@/lib/constants/poster-prefectures";
-import { getPosterBoardStats } from "@/lib/services/poster-boards";
+import {
+  getPosterBoardStats,
+  getPosterBoardTotalByPrefecture,
+} from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -53,6 +56,9 @@ export default async function PrefecturePosterMapPage({
     prefectureNameJp as Parameters<typeof getPosterBoardStats>[0],
   );
 
+  // 選管データから実際の掲示板総数を取得
+  const boardTotal = await getPosterBoardTotalByPrefecture(prefectureNameJp);
+
   // ユーザーが最後に編集した掲示板IDを取得
   let userEditedBoardIds: string[] = [];
   if (user?.id) {
@@ -69,6 +75,7 @@ export default async function PrefecturePosterMapPage({
       prefectureName={prefectureNameJp}
       center={center}
       initialStats={stats}
+      boardTotal={boardTotal}
       userEditedBoardIds={userEditedBoardIds}
     />
   );

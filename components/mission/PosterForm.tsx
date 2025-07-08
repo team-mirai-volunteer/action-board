@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { MAX_POSTER_COUNT, POSTER_POINTS_PER_UNIT } from "@/lib/constants";
 import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -44,25 +43,6 @@ export function PosterForm({ disabled }: PosterFormProps) {
         <Separator className="my-4" />
         <p>
           ポスターマップ上にデータが見つからないなど、マップで報告できない場合は以下のフォームに入力してください。
-        </p>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="posterCount">
-          ポスター枚数 <span className="text-red-500">*</span>
-        </Label>
-        <Input
-          type="number"
-          name="posterCount"
-          id="posterCount"
-          min="1"
-          max={MAX_POSTER_COUNT}
-          required
-          disabled={disabled}
-          placeholder="例：10"
-        />
-        <p className="text-xs text-gray-500">
-          貼り付けた枚数を入力してください（1枚＝{POSTER_POINTS_PER_UNIT}
-          ポイント）
         </p>
       </div>
 
