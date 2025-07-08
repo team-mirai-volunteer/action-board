@@ -29,7 +29,7 @@ export default async function Levels({
 
   const cardContent = (
     <div
-      className={`w-full max-w-md flex flex-col items-stretch bg-white rounded-md p-6 ${clickable ? "hover:bg-gray-50 transition-colors" : ""}`}
+      className={`w-full flex flex-col items-stretch bg-white rounded-md p-6 ${clickable ? "hover:bg-gray-50 transition-colors max-w-xl" : "max-w-md"}`}
     >
       <div className="flex items-center">
         <UserAvatar userProfile={profile} size="lg" />
@@ -68,7 +68,7 @@ export default async function Levels({
         <Link
           href={`/users/${userId}`}
           aria-label={`${profile.name}さんのプロフィールへ`}
-          className="w-full max-w-md"
+          className="w-full max-w-xl"
         >
           {cardContent}
         </Link>
