@@ -122,8 +122,8 @@ availableSecrets:
       env: SUPABASE_ACCESS_TOKEN
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-db-password/versions/latest'
       env: SUPABASE_DB_PASSWORD
-    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-service-role-key/versions/latest'
-      env: SUPABASE_SERVICE_ROLE_KEY
+    # - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-service-role-key/versions/latest'
+    #   env: SUPABASE_SERVICE_ROLE_KEY
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-smtp-password/versions/latest'
       env: SMTP_PASS
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-bq-user-password/versions/latest'
