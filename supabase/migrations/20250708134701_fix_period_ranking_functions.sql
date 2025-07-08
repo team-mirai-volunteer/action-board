@@ -1,6 +1,11 @@
--- 期間別ランキング取得関数の追加
+-- 期間別ランキング取得関数の修正マイグレーション
+-- 修正内容: public_user_profiles テーブルとのJOIN条件を pup.user_id から pup.id に変更
 
--- 期間別の総合ランキングを取得する関数
+-- 既存の関数を削除
+DROP FUNCTION IF EXISTS get_period_ranking(INTEGER, TIMESTAMPTZ);
+DROP FUNCTION IF EXISTS get_user_period_ranking(UUID, TIMESTAMPTZ);
+
+-- 期間別の総合ランキングを取得する関数（修正版）
 CREATE OR REPLACE FUNCTION get_period_ranking(
     p_limit INTEGER DEFAULT 10,
     p_start_date TIMESTAMPTZ DEFAULT NULL
@@ -53,7 +58,7 @@ BEGIN
                 ul.updated_at,
                 px.period_xp_total AS xp
             FROM period_xp px
-            JOIN public_user_profiles pup ON pup.user_id = px.user_id
+            JOIN public_user_profiles pup ON pup.id = px.user_id
             JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )
@@ -72,7 +77,7 @@ BEGIN
 END;
 $$;
 
--- 特定ユーザーの期間別ランキング情報を取得する関数
+-- 特定ユーザーの期間別ランキング情報を取得する関数（修正版）
 CREATE OR REPLACE FUNCTION get_user_period_ranking(
     target_user_id UUID,
     start_date TIMESTAMPTZ DEFAULT NULL
@@ -124,7 +129,7 @@ BEGIN
                 ul.updated_at,
                 px.period_xp_total AS xp
             FROM period_xp px
-            JOIN public_user_profiles pup ON pup.user_id = px.user_id
+            JOIN public_user_profiles pup ON pup.id = px.user_id
             JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )

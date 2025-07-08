@@ -1,6 +1,11 @@
--- 期間別都道府県ランキング取得関数の追加
+-- 期間別都道府県ランキング取得関数の修正マイグレーション
+-- 修正内容: get_user_period_prefecture_ranking 関数に level フィールドを追加
 
--- 期間別の都道府県ランキングを取得する関数
+-- 既存の関数を削除
+DROP FUNCTION IF EXISTS get_period_prefecture_ranking(TEXT, INTEGER, TIMESTAMPTZ);
+DROP FUNCTION IF EXISTS get_user_period_prefecture_ranking(TEXT, UUID, TIMESTAMPTZ);
+
+-- 期間別の都道府県ランキングを取得する関数（修正版）
 CREATE OR REPLACE FUNCTION get_period_prefecture_ranking(
     p_prefecture TEXT,
     p_limit INTEGER DEFAULT 10,
@@ -60,7 +65,7 @@ BEGIN
 END;
 $$;
 
--- 特定ユーザーの期間別都道府県ランキング情報を取得する関数
+-- 特定ユーザーの期間別都道府県ランキング情報を取得する関数（修正版）
 CREATE OR REPLACE FUNCTION get_user_period_prefecture_ranking(
     p_prefecture TEXT,
     p_user_id UUID,
@@ -69,6 +74,7 @@ CREATE OR REPLACE FUNCTION get_user_period_prefecture_ranking(
 RETURNS TABLE (
     user_id UUID,
     name TEXT,
+    level INTEGER,
     rank BIGINT,
     xp BIGINT
 )
@@ -82,9 +88,11 @@ BEGIN
         SELECT 
             upr.user_id::UUID,
             upr.user_name::TEXT AS name,
+            ul.level::INTEGER,
             upr.rank::BIGINT,
             upr.xp::BIGINT
-        FROM get_user_prefecture_ranking(p_prefecture, p_user_id) upr;
+        FROM get_user_prefecture_ranking(p_prefecture, p_user_id) upr
+        JOIN user_levels ul ON ul.user_id = upr.user_id;
     ELSE
         -- 期間指定がある場合
         RETURN QUERY
@@ -102,15 +110,18 @@ BEGIN
             SELECT 
                 px.user_id,
                 pup.name,
+                ul.level,
                 ROW_NUMBER() OVER (ORDER BY px.period_xp_total DESC) AS rank,
                 px.period_xp_total AS xp
             FROM period_xp px
             JOIN public_user_profiles pup ON pup.id = px.user_id
+            JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )
         SELECT 
             aru.user_id::UUID,
             aru.name::TEXT,
+            aru.level::INTEGER,
             aru.rank::BIGINT,
             aru.xp::BIGINT
         FROM all_ranked_users aru
