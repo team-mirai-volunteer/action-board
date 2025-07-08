@@ -53,10 +53,7 @@ export function DonationMetric({
               </svg>
             </button>
           </TooltipTrigger>
-          <TooltipContent
-            side="top"
-            className="bg-gray-800 text-white text-xs max-w-xs"
-          >
+          <TooltipContent>
             政治団体「チームみらい」への寄付と、
             <br />
             安野及び各公認候補予定者の政治団体への寄付の合計金額
