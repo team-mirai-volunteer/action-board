@@ -117,6 +117,10 @@
       rgba(0, 0, 0, 0.03);
   }
 
+  .shadow-custom {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
   .mission-content a {
     @apply text-primary underline transition-colors duration-200;
   }
