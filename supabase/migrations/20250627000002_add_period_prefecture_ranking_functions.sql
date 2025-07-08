@@ -69,6 +69,7 @@ CREATE OR REPLACE FUNCTION get_user_period_prefecture_ranking(
 RETURNS TABLE (
     user_id UUID,
     name TEXT,
+    level INTEGER,
     rank BIGINT,
     xp BIGINT
 )
@@ -82,9 +83,11 @@ BEGIN
         SELECT 
             upr.user_id::UUID,
             upr.user_name::TEXT AS name,
+            ul.level::INTEGER,
             upr.rank::BIGINT,
             upr.xp::BIGINT
-        FROM get_user_prefecture_ranking(p_prefecture, p_user_id) upr;
+        FROM get_user_prefecture_ranking(p_prefecture, p_user_id) upr
+        JOIN user_levels ul ON ul.user_id = upr.user_id;
     ELSE
         -- 期間指定がある場合
         RETURN QUERY
@@ -102,15 +105,18 @@ BEGIN
             SELECT 
                 px.user_id,
                 pup.name,
+                ul.level,
                 ROW_NUMBER() OVER (ORDER BY px.period_xp_total DESC) AS rank,
                 px.period_xp_total AS xp
             FROM period_xp px
             JOIN public_user_profiles pup ON pup.id = px.user_id
+            JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )
         SELECT 
             aru.user_id::UUID,
             aru.name::TEXT,
+            aru.level::INTEGER,
             aru.rank::BIGINT,
             aru.xp::BIGINT
         FROM all_ranked_users aru

@@ -53,7 +53,7 @@ BEGIN
                 ul.updated_at,
                 px.period_xp_total AS xp
             FROM period_xp px
-            JOIN public_user_profiles pup ON pup.user_id = px.user_id
+            JOIN public_user_profiles pup ON pup.id = px.user_id
             JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )
@@ -124,7 +124,7 @@ BEGIN
                 ul.updated_at,
                 px.period_xp_total AS xp
             FROM period_xp px
-            JOIN public_user_profiles pup ON pup.user_id = px.user_id
+            JOIN public_user_profiles pup ON pup.id = px.user_id
             JOIN user_levels ul ON ul.user_id = px.user_id
             WHERE px.period_xp_total > 0
         )
