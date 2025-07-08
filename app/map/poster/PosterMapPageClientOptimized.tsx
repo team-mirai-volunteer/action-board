@@ -3,11 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { POSTER_PREFECTURE_MAP } from "@/lib/constants/poster-prefectures";
-import type {
-  BoardStatus,
-  PosterBoard,
-  PosterBoardTotal,
-} from "@/lib/types/poster-boards";
+import type { BoardStatus, PosterBoardTotal } from "@/lib/types/poster-boards";
 import {
   calculateProgressRate,
   getCompletedCount,
@@ -19,12 +15,15 @@ import { useMemo } from "react";
 import { statusConfig } from "./statusConfig";
 
 interface Props {
-  initialBoards: PosterBoard[];
+  initialSummary: Record<
+    string,
+    { total: number; statuses: Record<BoardStatus, number> }
+  >;
   initialTotals: PosterBoardTotal[];
 }
 
 export default function PosterMapPageClientOptimized({
-  initialBoards,
+  initialSummary,
   initialTotals,
 }: Props) {
   // 都道府県別の選管データをマップに変換
@@ -39,25 +38,14 @@ export default function PosterMapPageClientOptimized({
     return map;
   }, [initialTotals]);
 
-  // 都道府県別の統計を計算
+  // 都道府県別の統計を使用
   const boardStats = useMemo(() => {
     const stats: Record<string, Record<BoardStatus, number>> = {};
-    for (const board of initialBoards) {
-      if (!stats[board.prefecture]) {
-        stats[board.prefecture] = {
-          not_yet: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        };
-      }
-      stats[board.prefecture][board.status]++;
+    for (const [prefecture, data] of Object.entries(initialSummary)) {
+      stats[prefecture] = data.statuses;
     }
     return stats;
-  }, [initialBoards]);
+  }, [initialSummary]);
 
   // 全体の統計を計算（登録済み掲示板数基準）
   const totalStats = useMemo(() => {
@@ -67,11 +55,14 @@ export default function PosterMapPageClientOptimized({
       0,
     );
 
-    // 実際に完了した数をカウント
-    const completed = initialBoards.filter((b) => b.status === "done").length;
+    // 全都道府県の統計を集計
+    let registeredTotal = 0;
+    let completed = 0;
 
-    // DBに登録されている総数
-    const registeredTotal = initialBoards.length;
+    for (const data of Object.values(initialSummary)) {
+      registeredTotal += data.total;
+      completed += data.statuses.done || 0;
+    }
 
     // 進捗率は登録済み掲示板数を基準に計算
     const percentage =
@@ -83,11 +74,11 @@ export default function PosterMapPageClientOptimized({
       completed,
       percentage,
     };
-  }, [initialBoards, totalsByPrefecture]);
+  }, [initialSummary, totalsByPrefecture]);
 
   // 都道府県別の完了率を計算（登録済み掲示板数基準）
   const getCompletionRate = (
-    prefecture: string,
+    _prefecture: string,
     stats: Record<BoardStatus, number>,
   ) => {
     const registeredTotal = getRegisteredCount(stats);
