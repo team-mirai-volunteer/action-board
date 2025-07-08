@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import React, { Suspense } from "react";
 import { MetricsErrorBoundary } from "./MetricsErrorBoundary";
 import Metrics from "./index";
@@ -15,24 +16,22 @@ function MetricsSkeleton() {
             <p className="text-xs text-black">読み込み中...</p>
           </output>
         </div>
-        <div className="animate-pulse">
-          <div className="mb-6">
-            <div className="p-4 text-center bg-gray-100 rounded">
-              <div className="h-4 bg-gray-300 rounded mb-2" />
-              <div className="h-8 bg-gray-300 rounded mb-1" />
-              <div className="h-4 bg-gray-300 rounded" />
-            </div>
+        <div className="space-y-6">
+          <div className="p-4 text-center bg-gray-50 rounded">
+            <Skeleton className="h-4 w-24 mx-auto mb-2" />
+            <Skeleton className="h-8 w-32 mx-auto mb-1" />
+            <Skeleton className="h-4 w-20 mx-auto" />
           </div>
           <div className="flex items-stretch gap-4">
             <div className="flex-1 text-center">
-              <div className="h-4 bg-gray-300 rounded mb-2" />
-              <div className="h-6 bg-gray-300 rounded mb-1" />
-              <div className="h-4 bg-gray-300 rounded" />
+              <Skeleton className="h-4 w-20 mx-auto mb-2" />
+              <Skeleton className="h-6 w-16 mx-auto mb-1" />
+              <Skeleton className="h-4 w-12 mx-auto" />
             </div>
             <div className="flex-1 text-center">
-              <div className="h-4 bg-gray-300 rounded mb-2" />
-              <div className="h-6 bg-gray-300 rounded mb-1" />
-              <div className="h-4 bg-gray-300 rounded" />
+              <Skeleton className="h-4 w-20 mx-auto mb-2" />
+              <Skeleton className="h-6 w-16 mx-auto mb-1" />
+              <Skeleton className="h-4 w-12 mx-auto" />
             </div>
           </div>
         </div>
