@@ -262,14 +262,34 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
 > {
   const supabase = createClient();
 
-  // 都道府県別にグループ化してカウントを取得
-  const { data, error } = await supabase
-    .from("poster_boards")
-    .select("prefecture, status");
+  // ページネーションで全データを取得
+  const allData: { prefecture: string; status: string }[] = [];
+  let page = 0;
+  const pageSize = 5000; // 5000件ずつ取得
 
-  if (error) {
-    console.error("Error fetching poster board summary:", error);
-    throw error;
+  while (true) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("prefecture, status")
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+      .order("id", { ascending: true }); // 一貫した順序を保証
+
+    if (error) {
+      console.error("Error fetching poster board summary:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      break;
+    }
+
+    allData.push(...data);
+
+    if (data.length < pageSize) {
+      break;
+    }
+
+    page++;
   }
 
   // データを集計
@@ -278,27 +298,30 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
     { total: number; statuses: Record<BoardStatus, number> }
   > = {};
 
-  if (data) {
-    for (const board of data) {
-      const prefecture = board.prefecture;
+  for (const board of allData) {
+    const prefecture = board.prefecture;
 
-      if (!summary[prefecture]) {
-        summary[prefecture] = {
-          total: 0,
-          statuses: {
-            not_yet: 0,
-            reserved: 0,
-            done: 0,
-            error_wrong_place: 0,
-            error_damaged: 0,
-            error_wrong_poster: 0,
-            other: 0,
-          },
-        };
-      }
+    if (!summary[prefecture]) {
+      summary[prefecture] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
 
-      summary[prefecture].total += 1;
-      summary[prefecture].statuses[board.status as BoardStatus] += 1;
+    summary[prefecture].total += 1;
+
+    // 型安全性を向上
+    const status = board.status as BoardStatus;
+    if (summary[prefecture].statuses[status] !== undefined) {
+      summary[prefecture].statuses[status] += 1;
     }
   }
 
