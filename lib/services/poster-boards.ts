@@ -256,50 +256,50 @@ export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
   return data || [];
 }
 
-// 都道府県別の統計情報のみを取得（軽量版）
+// 都道府県別の統計情報のみを取得（集計済みデータ）
 export async function getPosterBoardSummaryByPrefecture(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
   const supabase = createClient();
 
-  // 都道府県別にグループ化してカウントを取得
-  const { data, error } = await supabase
-    .from("poster_boards")
-    .select("prefecture, status");
+  // RPC関数を使用してデータベース側で集計
+  const { data: aggregatedData, error: rpcError } = await supabase.rpc(
+    "get_poster_board_stats",
+  );
 
-  if (error) {
-    console.error("Error fetching poster board summary:", error);
-    throw error;
+  if (rpcError) {
+    console.error("Error calling RPC function:", rpcError);
+    throw rpcError;
   }
 
-  // データを集計
+  if (!aggregatedData) {
+    return {};
+  }
+
+  // RPC関数から返されたデータを整形
   const summary: Record<
     string,
     { total: number; statuses: Record<BoardStatus, number> }
   > = {};
 
-  if (data) {
-    for (const board of data) {
-      const prefecture = board.prefecture;
-
-      if (!summary[prefecture]) {
-        summary[prefecture] = {
-          total: 0,
-          statuses: {
-            not_yet: 0,
-            reserved: 0,
-            done: 0,
-            error_wrong_place: 0,
-            error_damaged: 0,
-            error_wrong_poster: 0,
-            other: 0,
-          },
-        };
-      }
-
-      summary[prefecture].total += 1;
-      summary[prefecture].statuses[board.status as BoardStatus] += 1;
+  for (const row of aggregatedData) {
+    const prefecture = row.prefecture;
+    if (!summary[prefecture]) {
+      summary[prefecture] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
     }
+    summary[prefecture].statuses[row.status] = row.count;
+    summary[prefecture].total += row.count;
   }
 
   return summary;
