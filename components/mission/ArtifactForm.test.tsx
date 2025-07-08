@@ -149,7 +149,11 @@ describe("ArtifactForm", () => {
       />,
     );
 
-    expect(screen.getByText("ポスター枚数")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "ポスターマップ上にデータが見つからないなど、マップで報告できない場合は以下のフォームに入力してください。",
+      ),
+    ).toBeInTheDocument();
     // 詳細はPosterForm.test.tsxで確認
   });
 
