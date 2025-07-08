@@ -36,13 +36,22 @@ export function DonationMetric({
     setIsMobile(checkIsMobile());
   }, []);
 
+  const YEN_TO_MAN_DIVISOR = 10000;
+
+  const safeDivision = (value: unknown): number => {
+    if (typeof value !== "number" || Number.isNaN(value) || value < 0) {
+      return 0;
+    }
+    return value / YEN_TO_MAN_DIVISOR;
+  };
+
   const donationAmount = data
-    ? data.totalAmount / 10000 // 円を万円に変換
-    : fallbackAmount / 10000;
+    ? safeDivision(data.totalAmount)
+    : safeDivision(fallbackAmount);
 
   const donationIncrease = data
-    ? data.last24hAmount / 10000 // 円を万円に変換
-    : fallbackIncrease / 10000;
+    ? safeDivision(data.last24hAmount)
+    : safeDivision(fallbackIncrease);
 
   const handlePopoverClick = () => {
     if (isMobile) {
