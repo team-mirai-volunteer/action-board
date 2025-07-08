@@ -26,14 +26,15 @@ export default async function RankingPage({ searchParams }: PageProps) {
   let userRanking = null;
 
   if (user) {
-    // 全期間の場合は既存のビューを使用
-    const { data } = await supabase
-      .from("user_ranking_view")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-    userRanking = data;
-    if (period === "daily") {
+    if (period === "all") {
+      // 全期間の場合は既存のビューを使用
+      const { data } = await supabase
+        .from("user_ranking_view")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+      userRanking = data;
+    } else {
       // 期間別の場合は関数を使用
       const now = new Date();
       let dateFilter: Date | null = null;
