@@ -58,21 +58,35 @@ export default function PosterMapPageClientOptimized({
     // 全都道府県の統計を集計
     let registeredTotal = 0;
     let completed = 0;
+    const allStatuses: Record<BoardStatus, number> = {
+      not_yet: 0,
+      reserved: 0,
+      done: 0,
+      error_wrong_place: 0,
+      error_damaged: 0,
+      error_wrong_poster: 0,
+      other: 0,
+    };
 
     for (const data of Object.values(initialSummary)) {
       registeredTotal += data.total;
       completed += data.statuses.done || 0;
+
+      // 各ステータスの数を集計
+      for (const [status, count] of Object.entries(data.statuses)) {
+        allStatuses[status as BoardStatus] += count;
+      }
     }
 
     // 進捗率は登録済み掲示板数を基準に計算
-    const percentage =
-      registeredTotal > 0 ? Math.round((completed / registeredTotal) * 100) : 0;
+    const percentage = calculateProgressRate(completed, registeredTotal);
 
     return {
       actualTotal, // 選管データの総数
       registeredTotal, // DB登録数
       completed,
       percentage,
+      statuses: allStatuses, // 各ステータスの合計
     };
   }, [initialSummary, totalsByPrefecture]);
 
@@ -137,6 +151,24 @@ export default function PosterMapPageClientOptimized({
                 className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
                 style={{ width: `${totalStats.percentage}%` }}
               />
+            </div>
+          </div>
+          {/* ステータス詳細 */}
+          <div className="mt-4 pt-4 border-t">
+            <div className="text-sm font-medium mb-2">ステータス内訳</div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(totalStats.statuses).map(([status, count]) => {
+                if (count === 0) return null;
+                const config = statusConfig[status as BoardStatus];
+                return (
+                  <div key={status} className="flex items-center gap-1">
+                    <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                    <span className="text-xs text-muted-foreground">
+                      {config.label}: {count.toLocaleString()}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </CardContent>
