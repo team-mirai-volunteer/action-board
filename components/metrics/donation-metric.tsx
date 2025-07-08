@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import type { DonationData } from "@/lib/types/metrics";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
@@ -44,7 +44,7 @@ export function DonationMetric({
     ? data.last24hAmount / 10000 // 円を万円に変換
     : fallbackIncrease / 10000;
 
-  const handleTooltipClick = () => {
+  const handlePopoverClick = () => {
     if (isMobile) {
       setIsTooltipOpen(!isTooltipOpen);
     }
@@ -55,13 +55,13 @@ export function DonationMetric({
       <div className="flex items-center justify-center gap-2 mb-2">
         <p className="text-xs font-bold text-black">現在の寄付金額</p>
         {/* 寄付金額の詳細説明ツールチップ */}
-        <Tooltip open={isMobile ? isTooltipOpen : undefined}>
-          <TooltipTrigger asChild>
+        <Popover open={isMobile ? isTooltipOpen : undefined}>
+          <PopoverTrigger asChild>
             <button
               type="button"
               className="text-gray-400 hover:text-gray-600"
               aria-label="寄付金額の詳細情報"
-              onClick={handleTooltipClick}
+              onClick={handlePopoverClick}
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <title>寄付金額の詳細情報</title>
@@ -72,13 +72,13 @@ export function DonationMetric({
                 />
               </svg>
             </button>
-          </TooltipTrigger>
-          <TooltipContent>
+          </PopoverTrigger>
+          <PopoverContent>
             政治団体「チームみらい」への寄付と、
             <br />
             安野及び各公認候補予定者の政治団体への寄付の合計金額
-          </TooltipContent>
-        </Tooltip>
+          </PopoverContent>
+        </Popover>
       </div>
       {/* 総寄付金額（外部APIから取得、失敗時は環境変数フォールバック） */}
       <p className="text-2xl font-black text-black mb-1">
