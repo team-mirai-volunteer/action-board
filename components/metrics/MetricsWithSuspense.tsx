@@ -45,7 +45,7 @@ function MetricsSkeleton() {
 export default function MetricsWithSuspense() {
   return (
     <MetricsErrorBoundary>
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0}>
         <Suspense fallback={<MetricsSkeleton />}>
           <Metrics />
         </Suspense>

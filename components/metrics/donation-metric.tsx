@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Tooltip,
   TooltipContent,
@@ -5,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { DonationData } from "@/lib/types/metrics";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
+import { useEffect, useState } from "react";
 
 interface DonationMetricProps {
   data: DonationData | null;
@@ -23,6 +26,16 @@ export function DonationMetric({
   fallbackAmount = 0,
   fallbackIncrease = 0,
 }: DonationMetricProps) {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    };
+    setIsMobile(checkIsMobile());
+  }, []);
+
   const donationAmount = data
     ? data.totalAmount / 10000 // 円を万円に変換
     : fallbackAmount / 10000;
@@ -31,17 +44,24 @@ export function DonationMetric({
     ? data.last24hAmount / 10000 // 円を万円に変換
     : fallbackIncrease / 10000;
 
+  const handleTooltipClick = () => {
+    if (isMobile) {
+      setIsTooltipOpen(!isTooltipOpen);
+    }
+  };
+
   return (
     <div className="flex-1 text-center flex flex-col justify-center">
       <div className="flex items-center justify-center gap-2 mb-2">
         <p className="text-xs font-bold text-black">現在の寄付金額</p>
         {/* 寄付金額の詳細説明ツールチップ */}
-        <Tooltip>
+        <Tooltip open={isMobile ? isTooltipOpen : undefined}>
           <TooltipTrigger asChild>
             <button
               type="button"
               className="text-gray-400 hover:text-gray-600"
               aria-label="寄付金額の詳細情報"
+              onClick={handleTooltipClick}
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <title>寄付金額の詳細情報</title>
