@@ -62,7 +62,7 @@ export function DonationMetric({
   return (
     <div className="flex-1 text-center flex flex-col justify-center">
       <div className="flex items-center justify-center gap-2 mb-2">
-        <p className="text-xs font-bold text-black">現在の寄付金額</p>
+        <p className="text-sm font-bold text-black">現在の寄付金額</p>
         {/* 寄付金額の詳細説明ツールチップ */}
         <Popover open={isMobile ? isTooltipOpen : undefined}>
           <PopoverTrigger asChild>
