@@ -149,7 +149,13 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await signedInPage.getByRole('button', { name: 'Close' }).click();
     await expect(signedInPage.locator('section').getByText('テストユーザーLV.2東京都次のレベルまで45ポイント')).toBeVisible({ timeout: 10000 });
 
+    await signedInPage.goto('/ranking');
+    await signedInPage.getByRole('button', { name: '全期間' }).click();
+    await expect(signedInPage.getByText('あなたのランク')).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: 'テストユーザー 東京都 Lv.2 50pt' })).toBeVisible({ timeout: 10000 });
+
     // ミッション取消後のポイントの変動を確認
+    await signedInPage.goto('/');
     await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
@@ -175,21 +181,24 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });
 
     await expect(signedInPage.getByRole('heading', { name: 'アクションリーダー' })).toBeVisible();
-    await expect(signedInPage.getByText('安野たかひろ')).toBeVisible();
-    await expect(signedInPage.getByText('佐藤太郎')).toBeVisible();
-    await expect(signedInPage.getByText('渡辺雄一')).toBeVisible();
+    await expect(signedInPage.getByRole('heading', { name: '今日のトップ100' })).toBeVisible();
+    // TODO: Dailyランキングに表示されるseedデータを投入する必要あり //
+
+    await signedInPage.getByRole('button', { name: '全期間' }).click();
+    await expect(signedInPage.getByRole('heading', { name: '全期間トップ100' })).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: /安野たかひろ 東京都 Lv.20 3,325pt/ })).toBeVisible();
 
     await signedInPage.getByText('都道府県別').click();
     await expect(signedInPage).toHaveURL('/ranking/ranking-prefecture', { timeout: 10000 });
     await expect(signedInPage.getByText('都道府県を選択')).toBeVisible();
     await expect(signedInPage.getByRole('heading', { name: '東京都トップ' })).toBeVisible();
-    await expect(signedInPage.getByText('安野たかひろ')).toBeVisible();
-    await expect(signedInPage.getByText('佐藤太郎')).toBeVisible();
+    await expect(signedInPage.getByRole('link', { name: /安野たかひろ 東京都 Lv.20 3,325pt/ })).toBeVisible();
 
     await signedInPage.getByText('ミッション別').click();
     await expect(signedInPage).toHaveURL('/ranking/ranking-mission', { timeout: 10000 });
     await expect(signedInPage.getByText('ミッションを選択')).toBeVisible();
     await expect(signedInPage.getByRole('heading', { name: '「(seed) ゴミ拾いをしよう (成果物不要)」トップ100' })).toBeVisible();
+    // TODO: ミッションランキングに表示されるseedデータを投入する必要あり //
 
     await signedInPage.getByText('全体').click();
     await expect(signedInPage).toHaveURL('/ranking', { timeout: 10000 });

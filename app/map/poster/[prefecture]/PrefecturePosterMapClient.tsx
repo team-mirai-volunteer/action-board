@@ -29,7 +29,17 @@ import {
   updateBoardStatus,
 } from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/lib/types/supabase";
+import type {
+  BoardStats,
+  BoardStatus,
+  PosterBoard,
+  PosterBoardTotal,
+  StatusHistory,
+} from "@/lib/types/poster-boards";
+import {
+  calculateProgressRate,
+  getCompletedCount,
+} from "@/lib/utils/poster-progress";
 import { ArrowLeft, HelpCircle, History } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -48,13 +58,6 @@ const PosterMap = dynamic(() => import("../PosterMapWithCluster"), {
   ),
 });
 
-type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
-type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type StatusHistory =
-  Database["public"]["Tables"]["poster_board_status_history"]["Row"] & {
-    user?: { id: string; name: string; address_prefecture: string } | null;
-  };
-
 import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
@@ -66,10 +69,8 @@ interface PrefecturePosterMapClientProps {
   prefecture: string;
   prefectureName: string;
   center: [number, number];
-  initialStats?: {
-    totalCount: number;
-    statusCounts: Record<BoardStatus, number>;
-  };
+  initialStats?: BoardStats;
+  boardTotal?: PosterBoardTotal | null;
   userEditedBoardIds?: string[];
 }
 
@@ -79,6 +80,7 @@ export default function PrefecturePosterMapClient({
   prefectureName,
   center,
   initialStats,
+  boardTotal,
   userEditedBoardIds,
 }: PrefecturePosterMapClientProps) {
   const router = useRouter();
@@ -346,10 +348,11 @@ export default function PrefecturePosterMapClient({
     error_wrong_poster: 0,
     other: 0,
   };
-  const totalCount = stats?.totalCount || 0;
-  const completedCount = statusCounts.done || 0;
-  const completionRate =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const registeredCount = stats?.totalCount || 0;
+  const actualTotalCount = boardTotal?.total_count || 0;
+  const totalCount = actualTotalCount > 0 ? actualTotalCount : registeredCount;
+  const completedCount = getCompletedCount(statusCounts);
+  const completionRate = calculateProgressRate(completedCount, registeredCount);
 
   return (
     <div className="container mx-auto max-w-7xl space-y-3 p-3">
@@ -404,6 +407,11 @@ export default function PrefecturePosterMapClient({
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold">{totalCount}</span>
               <span className="text-xs text-muted-foreground">総数</span>
+              {actualTotalCount > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  (登録: {registeredCount})
+                </span>
+              )}
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-green-600">
