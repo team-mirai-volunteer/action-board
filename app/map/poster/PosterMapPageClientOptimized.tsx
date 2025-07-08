@@ -74,8 +74,7 @@ export default function PosterMapPageClientOptimized({
     const registeredTotal = initialBoards.length;
 
     // 進捗率は登録済み掲示板数を基準に計算
-    const percentage =
-      registeredTotal > 0 ? Math.round((completed / registeredTotal) * 100) : 0;
+    const percentage = calculateProgressRate(completed, registeredTotal);
 
     return {
       actualTotal, // 選管データの総数
