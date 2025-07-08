@@ -2,7 +2,7 @@ import Activities from "@/components/activities";
 import { BadgeNotificationCheck } from "@/components/badge-notification-check";
 import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
-import Metrics from "@/components/metrics";
+import MetricsWithSuspense from "@/components/metrics/MetricsWithSuspense";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import Missions from "@/components/mission/missions";
@@ -84,9 +84,7 @@ export default async function Home({
       </section>
 
       {/* メトリクスセクション */}
-      <section className="py-12 md:py-16 bg-white">
-        <Metrics />
-      </section>
+      <MetricsWithSuspense />
 
       {/* ランキングセクション */}
       <section className="py-12 md:py-16 bg-white">

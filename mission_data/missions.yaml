@@ -87,15 +87,18 @@ missions:
     artifact_label: シェアした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
   - slug: youtube-clip
-    title: YouTube動画を切り抜こう
+    title: 動画を切り抜いてショート動画を作ろう
     icon_url: /img/mission_fallback.svg
-    content: 推し候補の魅力を、もっと多くの人に届けよう。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTube動画</a>や、チームみらいの候補者が出演している動画から、心に響いたワンシーンを切り抜いてショート動画にしてみよう。<br />SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-    difficulty: 3
+    content: |-
+      ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
+      SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
+      <a href="https://team-mirai.notion.site/206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a>
+    difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
-    artifact_label: YouTubeショートのURL
+    artifact_label: ショート動画のURL（Youtube, TikTokなど）
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//6_clip_youtube_video.png
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう

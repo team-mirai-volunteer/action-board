@@ -16,12 +16,9 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     // 活動状況の表示を確認
     await expect(signedInPage.getByRole('heading', { name: /チームみらいの活動状況/ })).toBeVisible();
-    await expect(signedInPage.getByText('みんなで達成したアクション数')).toBeVisible();
-    await expect(signedInPage.getByText('0件', { exact: true })).toBeVisible();
-    await expect(signedInPage.getByText('1日で 0件')).toBeVisible();
-    await expect(signedInPage.getByText('アクションボード参加者')).toBeVisible();
-    await expect(signedInPage.getByText('0件', { exact: true })).toBeVisible();
-    await expect(signedInPage.getByText('1日で 0件')).toBeVisible();
+    await expect(signedInPage.getByText('チームみらい サポーター数')).toBeVisible();
+    await expect(signedInPage.getByText('達成したアクション数')).toBeVisible();
+    await expect(signedInPage.getByText('現在の寄付金額', { exact: true })).toBeVisible();
     
     // ランキングの表示を確認
     await expect(signedInPage.getByRole('heading', { name: /アクションリーダー/ })).toBeVisible();
