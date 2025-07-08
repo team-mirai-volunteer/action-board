@@ -178,7 +178,7 @@ describe("prefecturesRanking service", () => {
       it("特定ユーザーのランキング情報を取得する", async () => {
         const mockRankingData = {
           user_id: userId,
-          name: "テストユーザー",
+          user_name: "テストユーザー",
           address_prefecture: "東京都",
           rank: 5,
           level: 7,
@@ -194,11 +194,10 @@ describe("prefecturesRanking service", () => {
         const result = await getUserPrefecturesRanking(prefecture, userId);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_user_period_prefecture_ranking",
+          "get_user_prefecture_ranking",
           expect.objectContaining({
-            p_prefecture: prefecture,
-            p_user_id: userId,
-            p_start_date: expect.any(String),
+            prefecture: prefecture,
+            target_user_id: userId,
           }),
         );
         expect(result).toMatchObject({
