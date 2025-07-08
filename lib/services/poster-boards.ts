@@ -256,12 +256,54 @@ export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
   return data || [];
 }
 
-// 都道府県別の統計情報のみを取得（軽量版）
+// 都道府県別の統計情報のみを取得（集計済みデータ）
 export async function getPosterBoardSummaryByPrefecture(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
   const supabase = createClient();
 
+  try {
+    // RPC関数を使用してデータベース側で集計
+    const { data: aggregatedData, error: rpcError } = await supabase.rpc(
+      "get_poster_board_stats",
+    );
+
+    if (!rpcError && aggregatedData) {
+      // RPC関数から返されたデータを整形
+      const summary: Record<
+        string,
+        { total: number; statuses: Record<BoardStatus, number> }
+      > = {};
+
+      for (const row of aggregatedData) {
+        const prefecture = row.prefecture;
+        if (!summary[prefecture]) {
+          summary[prefecture] = {
+            total: 0,
+            statuses: {
+              not_yet: 0,
+              reserved: 0,
+              done: 0,
+              error_wrong_place: 0,
+              error_damaged: 0,
+              error_wrong_poster: 0,
+              other: 0,
+            },
+          };
+        }
+        summary[prefecture].statuses[row.status] = row.count;
+        summary[prefecture].total += row.count;
+      }
+
+      return summary;
+    }
+  } catch (error) {
+    console.log(
+      "RPC function not available, falling back to client-side aggregation",
+    );
+  }
+
+  // フォールバック: RPC関数が利用できない場合は従来の方法で取得
   // ページネーションで全データを取得
   const allData: { prefecture: string; status: string }[] = [];
   let page = 0;
