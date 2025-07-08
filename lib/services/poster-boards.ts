@@ -256,20 +256,82 @@ export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
   return data || [];
 }
 
-// 都道府県別の統計情報のみを取得（軽量版）
+// 都道府県別の統計情報のみを取得（集計済みデータ）
 export async function getPosterBoardSummaryByPrefecture(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
   const supabase = createClient();
 
-  // 都道府県別にグループ化してカウントを取得
-  const { data, error } = await supabase
-    .from("poster_boards")
-    .select("prefecture, status");
+  try {
+    // RPC関数を使用してデータベース側で集計
+    const { data: aggregatedData, error: rpcError } = await supabase.rpc(
+      "get_poster_board_stats",
+    );
 
-  if (error) {
-    console.error("Error fetching poster board summary:", error);
-    throw error;
+    if (!rpcError && aggregatedData) {
+      // RPC関数から返されたデータを整形
+      const summary: Record<
+        string,
+        { total: number; statuses: Record<BoardStatus, number> }
+      > = {};
+
+      for (const row of aggregatedData) {
+        const prefecture = row.prefecture;
+        if (!summary[prefecture]) {
+          summary[prefecture] = {
+            total: 0,
+            statuses: {
+              not_yet: 0,
+              reserved: 0,
+              done: 0,
+              error_wrong_place: 0,
+              error_damaged: 0,
+              error_wrong_poster: 0,
+              other: 0,
+            },
+          };
+        }
+        summary[prefecture].statuses[row.status] = row.count;
+        summary[prefecture].total += row.count;
+      }
+
+      return summary;
+    }
+  } catch (error) {
+    console.log(
+      "RPC function not available, falling back to client-side aggregation",
+    );
+  }
+
+  // フォールバック: RPC関数が利用できない場合は従来の方法で取得
+  // ページネーションで全データを取得
+  const allData: { prefecture: string; status: string }[] = [];
+  let page = 0;
+  const pageSize = 5000; // 5000件ずつ取得
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("prefecture, status")
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+      .order("id", { ascending: true }); // 一貫した順序を保証
+
+    if (error) {
+      console.error("Error fetching poster board summary:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      break;
+    }
+
+    allData.push(...data);
+
+    if (data.length < pageSize) {
+      break;
+    }
+
+    page++;
   }
 
   // データを集計
@@ -278,27 +340,30 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
     { total: number; statuses: Record<BoardStatus, number> }
   > = {};
 
-  if (data) {
-    for (const board of data) {
-      const prefecture = board.prefecture;
+  for (const board of allData) {
+    const prefecture = board.prefecture;
 
-      if (!summary[prefecture]) {
-        summary[prefecture] = {
-          total: 0,
-          statuses: {
-            not_yet: 0,
-            reserved: 0,
-            done: 0,
-            error_wrong_place: 0,
-            error_damaged: 0,
-            error_wrong_poster: 0,
-            other: 0,
-          },
-        };
-      }
+    if (!summary[prefecture]) {
+      summary[prefecture] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
 
-      summary[prefecture].total += 1;
-      summary[prefecture].statuses[board.status as BoardStatus] += 1;
+    summary[prefecture].total += 1;
+
+    // 型安全性を向上
+    const status = board.status as BoardStatus;
+    if (summary[prefecture].statuses[status] !== undefined) {
+      summary[prefecture].statuses[status] += 1;
     }
   }
 
