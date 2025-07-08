@@ -320,22 +320,53 @@ jest.mock("@radix-ui/react-dialog", () => {
   return mockComponents;
 });
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () =>
-      Promise.resolve({
+jest.mock("@/lib/services/metrics", () => ({
+  fetchSupporterData: jest.fn(() =>
+    Promise.resolve({
+      totalCount: 75982,
+      last24hCount: 1710,
+      updatedAt: "2025-07-03T02:20:00Z",
+    }),
+  ),
+  fetchDonationData: jest.fn(() =>
+    Promise.resolve({
+      totalAmount: 100000000,
+      last24hAmount: 500000,
+      updatedAt: "2025-07-03T02:20:00Z",
+    }),
+  ),
+  fetchAchievementData: jest.fn(() =>
+    Promise.resolve({
+      totalCount: 1234,
+      todayCount: 56,
+    }),
+  ),
+  fetchRegistrationData: jest.fn(() =>
+    Promise.resolve({
+      totalCount: 567,
+      todayCount: 12,
+    }),
+  ),
+  fetchAllMetricsData: jest.fn(() =>
+    Promise.resolve({
+      supporter: {
         totalCount: 75982,
         last24hCount: 1710,
         updatedAt: "2025-07-03T02:20:00Z",
-      }),
-    headers: {
-      get: jest.fn((name) => {
-        if (name === "content-type") {
-          return "application/json";
-        }
-        return null;
-      }),
-    },
-  }),
-);
+      },
+      donation: {
+        totalAmount: 100000000,
+        last24hAmount: 500000,
+        updatedAt: "2025-07-03T02:20:00Z",
+      },
+      achievement: {
+        totalCount: 1234,
+        todayCount: 56,
+      },
+      registration: {
+        totalCount: 567,
+        todayCount: 12,
+      },
+    }),
+  ),
+}));
