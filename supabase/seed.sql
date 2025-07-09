@@ -256,6 +256,7 @@ ON CONFLICT DO NOTHING;
 
 
 
+/*
 INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
   ('a3ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T16:00:00Z'), -- JST 01:00
   ('b3ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', '4446205f-933f-4a86-83af-dbf6bb6cde92', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T20:00:00Z'), -- JST 05:00
@@ -275,3 +276,4 @@ INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, cre
   ('f4ea2e6e-9ccf-4d2d-a3b4-f34d1a612472', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'e3ea2e6e-9ccf-4d2d-a3b4-f34d1a612465', '2025-07-08T16:00:00Z'),
   ('a5ea2e6e-9ccf-4d2d-a3b4-f34d1a612473', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', 'f3ea2e6e-9ccf-4d2d-a3b4-f34d1a612466', '2025-06-01T15:00:00Z'),
   ('b5ea2e6e-9ccf-4d2d-a3b4-f34d1a612474', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'a4ea2e6e-9ccf-4d2d-a3b4-f34d1a612467', '2025-06-02T15:00:00Z');
+*/
