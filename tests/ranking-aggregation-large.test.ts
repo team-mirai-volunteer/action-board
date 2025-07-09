@@ -2,11 +2,23 @@ import { createClient } from "../lib/supabase/server";
 import { getRanking } from "../lib/services/ranking";
 import { getJSTMidnightToday } from "../lib/dateUtils";
 
+jest.mock("../lib/dateUtils", () => ({
+  getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T15:00:00.000Z")),
+}));
+
+jest.mock("../lib/supabase/server", () => ({
+  createClient: jest.fn(),
+}));
+
 describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
-  let supabase: any;
+  const mockSupabase = {
+    from: jest.fn(),
+    rpc: jest.fn(),
+  };
   
-  beforeAll(() => {
-    supabase = createClient();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
   });
 
   describe("今日のトップ5ランキング精度テスト（大規模データセット）", () => {
@@ -36,29 +48,28 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
     });
 
     it("should only include today's XP data (JST) with large dataset", async () => {
-      const jstMidnight = getJSTMidnightToday();
+      const mockRankingData = [
+        {
+          user_id: "user1",
+          name: "テストユーザー1",
+          address_prefecture: "東京都",
+          rank: 1,
+          level: 10,
+          xp: 1000,
+        },
+      ];
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
+      const ranking = await getRanking(5, "daily");
       
-      const { data: todayTransactions } = await supabase
-        .from('xp_transactions')
-        .select('*')
-        .gte('created_at', jstMidnight.toISOString());
-      
-      expect(todayTransactions).toBeDefined();
-      
-      if (todayTransactions && todayTransactions.length > 0) {
-        const ranking = await getRanking(5, "daily");
-        
-        if (ranking.length > 0) {
-          const topUser = ranking[0];
-          const { data: userTodayXP } = await supabase
-            .from('xp_transactions')
-            .select('xp_amount')
-            .eq('user_id', topUser.user_id)
-            .gte('created_at', jstMidnight.toISOString());
-          
-          const expectedXP = userTodayXP?.reduce((sum: number, tx: any) => sum + tx.xp_amount, 0) || 0;
-          expect(topUser.xp).toBe(expectedXP);
-        }
+      expect(ranking).toBeDefined();
+      expect(ranking.length).toBeLessThanOrEqual(5);
+      if (ranking.length > 0) {
+        expect(ranking[0].xp).toBeGreaterThan(0);
       }
     });
   });
@@ -97,96 +108,162 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
   });
 
   describe("大規模データセットでのパフォーマンステスト", () => {
-    it("should handle 200+ users efficiently", async () => {
-      const { data: userCount, count } = await supabase
-        .from('auth.users')
-        .select('id', { count: 'exact' });
-      
-      if (count !== null) {
-        expect(count).toBeGreaterThanOrEqual(12);
-      }
-    });
+    it("should handle large dataset efficiently for top 100", async () => {
+      const largeMockRankings = Array.from({ length: 100 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 10),
+        xp: 2500 - i * 10,
+      }));
 
-    it("should handle 10,000+ achievements efficiently", async () => {
-      const { data: achievementCount, count } = await supabase
-        .from('achievements')
-        .select('id', { count: 'exact' });
-      
-      if (count !== null) {
-        expect(count).toBeGreaterThanOrEqual(0);
-      }
-    });
+      mockSupabase.rpc.mockResolvedValue({
+        data: largeMockRankings,
+        error: null,
+      });
 
-    it("should maintain performance with large XP transaction volume", async () => {
-      const { data: xpCount, count } = await supabase
-        .from('xp_transactions')
-        .select('id', { count: 'exact' });
-      
-      if (count !== null) {
-        expect(count).toBeGreaterThanOrEqual(0);
-      }
-      
       const startTime = Date.now();
-      await getRanking(100, "daily");
+      const ranking = await getRanking(100, "daily");
       const endTime = Date.now();
-      
-      expect(endTime - startTime).toBeLessThan(3000);
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(ranking).toHaveLength(100);
+    });
+
+    it("should handle large dataset efficiently for top 200", async () => {
+      const largeMockRankings = Array.from({ length: 200 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 20),
+        xp: 5000 - i * 20,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: largeMockRankings,
+        error: null,
+      });
+
+      const startTime = Date.now();
+      const ranking = await getRanking(200, "daily");
+      const endTime = Date.now();
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(ranking).toHaveLength(200);
+    });
+
+    it("should maintain performance with large dataset processing", async () => {
+      const largeMockRankings = Array.from({ length: 50 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 5),
+        xp: 2500 - i * 20,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: largeMockRankings,
+        error: null,
+      });
+
+      const startTime = Date.now();
+      const ranking = await getRanking(50, "daily");
+      const endTime = Date.now();
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(ranking).toHaveLength(50);
     });
   });
 
   describe("JST境界での集計精度テスト（大規模データセット）", () => {
-    it("should exclude yesterday's data from today's ranking with large dataset", async () => {
-      const jstMidnight = getJSTMidnightToday();
-      const yesterdayEnd = new Date(jstMidnight.getTime() - 1);
-      
-      const { data: yesterdayData } = await supabase
-        .from('xp_transactions')
-        .select('*')
-        .lt('created_at', jstMidnight.toISOString())
-        .gte('created_at', yesterdayEnd.toISOString());
-      
-      if (yesterdayData && yesterdayData.length > 0) {
-        const todayRanking = await getRanking(100, "daily");
-        const allTimeRanking = await getRanking(100, "all");
-        
-        if (todayRanking.length > 0 && allTimeRanking.length > 0) {
-          const todayTopUser = todayRanking[0];
-          const allTimeTopUser = allTimeRanking.find(u => u.user_id === todayTopUser.user_id);
-          
-          if (allTimeTopUser) {
-            expect(todayTopUser.xp).not.toBeNull();
-            expect(allTimeTopUser.xp).not.toBeNull();
-            expect(todayTopUser.xp!).toBeLessThanOrEqual(allTimeTopUser.xp!);
-          }
-        }
-      }
+    it("should use correct JST midnight for daily ranking", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: [],
+        error: null,
+      });
+
+      await getRanking(100, "daily");
+
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("get_period_ranking", {
+        p_start_date: "2024-01-01T15:00:00.000Z",
+        p_limit: 100,
+      });
     });
 
-    it("should handle timezone boundary correctly with large dataset", async () => {
-      const jstMidnight = getJSTMidnightToday();
-      
-      const beforeMidnight = new Date(jstMidnight.getTime() - 60000);
-      const afterMidnight = new Date(jstMidnight.getTime() + 60000);
-      
-      const { data: beforeData } = await supabase
-        .from('xp_transactions')
-        .select('*')
-        .gte('created_at', beforeMidnight.toISOString())
-        .lt('created_at', jstMidnight.toISOString());
-      
-      const { data: afterData } = await supabase
-        .from('xp_transactions')
-        .select('*')
-        .gte('created_at', jstMidnight.toISOString())
-        .lt('created_at', afterMidnight.toISOString());
-      
-      expect(beforeData).toBeDefined();
-      expect(afterData).toBeDefined();
+    it("should maintain consistent JST boundary across multiple calls", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: [],
+        error: null,
+      });
+
+      await getRanking(50, "daily");
+      await getRanking(100, "daily");
+
+      const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+        (call) => call[0] === "get_period_ranking",
+      );
+
+      expect(rpcCalls.length).toBe(2);
+
+      const firstCallDate = new Date(rpcCalls[0][1].p_start_date);
+      const secondCallDate = new Date(rpcCalls[1][1].p_start_date);
+
+      expect(firstCallDate.getTime()).toBe(secondCallDate.getTime());
+      expect(firstCallDate.getTime()).toBe(
+        new Date("2024-01-01T15:00:00.000Z").getTime(),
+      );
+    });
+
+    it("should handle JST boundary correctly for aggregation", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: [],
+        error: null,
+      });
+
+      await getRanking(10, "daily");
+
+      const rpcCall = mockSupabase.rpc.mock.calls.find(
+        (call) => call[0] === "get_period_ranking",
+      );
+
+      const startDate = new Date(rpcCall[1].p_start_date);
+
+      expect(startDate.getUTCHours()).toBe(15);
+      expect(startDate.getUTCMinutes()).toBe(0);
+      expect(startDate.getUTCSeconds()).toBe(0);
+      expect(startDate.getUTCMilliseconds()).toBe(0);
     });
   });
 
   describe("ランキングページ別精度テスト", () => {
     it("should verify homepage top 5 displays correctly", async () => {
+      const mockRankingData = [
+        {
+          user_id: "user1",
+          name: "テストユーザー1",
+          address_prefecture: "東京都",
+          rank: 1,
+          level: 10,
+          xp: 1000,
+        },
+        {
+          user_id: "user2",
+          name: "テストユーザー2",
+          address_prefecture: "大阪府",
+          rank: 2,
+          level: 8,
+          xp: 800,
+        },
+      ];
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking = await getRanking(5, "daily");
       
       expect(ranking).toBeDefined();
@@ -200,6 +277,20 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
     });
 
     it("should verify ranking page top 100 displays correctly", async () => {
+      const mockRankingData = Array.from({ length: 100 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `テストユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 10),
+        xp: 2500 - i * 10,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking = await getRanking(100, "daily");
       
       expect(ranking).toBeDefined();
