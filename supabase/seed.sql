@@ -257,23 +257,55 @@ ON CONFLICT DO NOTHING;
 
 
 /*
+-- 
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
+VALUES
+  ('00000000-0000-0000-0000-000000000000', '01234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user001@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '11234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user002@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '21234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user003@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '31234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user004@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '41234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user005@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '51234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user006@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '61234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user007@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '71234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user008@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '81234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user009@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '91234567-89ab-cdef-0123-456789abcdef', 'authenticated', 'authenticated', 'user010@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
+
+INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
+VALUES
+  ('01234567-89ab-cdef-0123-456789abcdef', '田中太郎001', '東京都', '1990-01-01', 'tanaka001', '1000001'),
+  ('11234567-89ab-cdef-0123-456789abcdef', '佐藤花子002', '大阪府', '1991-02-02', 'sato002', '5300001'),
+  ('21234567-89ab-cdef-0123-456789abcdef', '鈴木次郎003', '神奈川県', '1992-03-03', 'suzuki003', '2200001'),
+  ('31234567-89ab-cdef-0123-456789abcdef', '高橋美咲004', '愛知県', '1993-04-04', 'takahashi004', '4600001'),
+  ('41234567-89ab-cdef-0123-456789abcdef', '伊藤健一005', '福岡県', '1994-05-05', 'ito005', '8100001'),
+  ('51234567-89ab-cdef-0123-456789abcdef', '山田愛子006', '北海道', '1995-06-06', 'yamada006', '0600001'),
+  ('61234567-89ab-cdef-0123-456789abcdef', '中村直人007', '京都府', '1996-07-07', 'nakamura007', '6020001'),
+  ('71234567-89ab-cdef-0123-456789abcdef', '小林さくら008', '宮城県', '1997-08-08', 'kobayashi008', '9800001'),
+  ('81234567-89ab-cdef-0123-456789abcdef', '加藤雄一009', '広島県', '1998-09-09', 'kato009', '7300001'),
+  ('91234567-89ab-cdef-0123-456789abcdef', '渡辺みゆき010', '静岡県', '1999-10-10', 'watanabe010', '4200001');
+
 INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
-  ('a3ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T16:00:00Z'), -- JST 01:00
-  ('b3ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', '4446205f-933f-4a86-83af-dbf6bb6cde92', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T20:00:00Z'), -- JST 05:00
-  ('c3ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-10T10:00:00Z'), -- JST 19:00
-  
-  ('d3ea2e6e-9ccf-4d2d-a3b4-f34d1a612464', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T14:59:59Z'), -- JST 23:59:59（前日）
-  ('e3ea2e6e-9ccf-4d2d-a3b4-f34d1a612465', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-08T16:00:00Z'), -- JST 01:00（前日）
-  
-  ('f3ea2e6e-9ccf-4d2d-a3b4-f34d1a612466', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-01T15:00:00Z'),
-  ('a4ea2e6e-9ccf-4d2d-a3b4-f34d1a612467', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-02T15:00:00Z');
+  ('a0000001-0000-0000-0000-000000000001', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '01234567-89ab-cdef-0123-456789abcdef', '2025-07-09T15:30:00Z'),
+  ('a0000002-0000-0000-0000-000000000002', '4446205f-933f-4a86-83af-dbf6bb6cde92', '11234567-89ab-cdef-0123-456789abcdef', '2025-07-09T16:45:00Z'),
+  ('a0000003-0000-0000-0000-000000000003', 'e5348472-d054-4ef4-81af-772c6323b669', '21234567-89ab-cdef-0123-456789abcdef', '2025-07-09T18:20:00Z'),
+  ('a0000004-0000-0000-0000-000000000004', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '31234567-89ab-cdef-0123-456789abcdef', '2025-07-09T19:15:00Z'),
+  ('a0000005-0000-0000-0000-000000000005', '4446205f-933f-4a86-83af-dbf6bb6cde92', '41234567-89ab-cdef-0123-456789abcdef', '2025-07-09T20:30:00Z');
+
+INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
+  ('b0000001-0000-0000-0000-000000000001', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '01234567-89ab-cdef-0123-456789abcdef', '2025-07-08T15:30:00Z'),
+  ('b0000002-0000-0000-0000-000000000002', '4446205f-933f-4a86-83af-dbf6bb6cde92', '11234567-89ab-cdef-0123-456789abcdef', '2025-07-08T16:45:00Z'),
+  ('b0000003-0000-0000-0000-000000000003', 'e5348472-d054-4ef4-81af-772c6323b669', '21234567-89ab-cdef-0123-456789abcdef', '2025-07-08T18:20:00Z');
+
+INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
+  ('c0000001-0000-0000-0000-000000000001', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '01234567-89ab-cdef-0123-456789abcdef', '2025-07-07T15:30:00Z'),
+  ('c0000002-0000-0000-0000-000000000002', '4446205f-933f-4a86-83af-dbf6bb6cde92', '11234567-89ab-cdef-0123-456789abcdef', '2025-07-07T16:45:00Z');
 
 INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, created_at) VALUES
-  ('b4ea2e6e-9ccf-4d2d-a3b4-f34d1a612468', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', 'a3ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2025-07-09T16:00:00Z'),
-  ('c4ea2e6e-9ccf-4d2d-a3b4-f34d1a612469', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', 'b3ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', '2025-07-09T20:00:00Z'),
-  ('d4ea2e6e-9ccf-4d2d-a3b4-f34d1a612470', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 75, 'MISSION_COMPLETION', 'c3ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', '2025-07-10T10:00:00Z'),
-  ('e4ea2e6e-9ccf-4d2d-a3b4-f34d1a612471', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', 'd3ea2e6e-9ccf-4d2d-a3b4-f34d1a612464', '2025-07-09T14:59:59Z'),
-  ('f4ea2e6e-9ccf-4d2d-a3b4-f34d1a612472', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'e3ea2e6e-9ccf-4d2d-a3b4-f34d1a612465', '2025-07-08T16:00:00Z'),
-  ('a5ea2e6e-9ccf-4d2d-a3b4-f34d1a612473', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', 'f3ea2e6e-9ccf-4d2d-a3b4-f34d1a612466', '2025-06-01T15:00:00Z'),
-  ('b5ea2e6e-9ccf-4d2d-a3b4-f34d1a612474', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'a4ea2e6e-9ccf-4d2d-a3b4-f34d1a612467', '2025-06-02T15:00:00Z');
+  ('x0000001-0000-0000-0000-000000000001', '01234567-89ab-cdef-0123-456789abcdef', 50, 'MISSION_COMPLETION', 'a0000001-0000-0000-0000-000000000001', '2025-07-09T15:30:00Z'),
+  ('x0000002-0000-0000-0000-000000000002', '11234567-89ab-cdef-0123-456789abcdef', 100, 'MISSION_COMPLETION', 'a0000002-0000-0000-0000-000000000002', '2025-07-09T16:45:00Z'),
+  ('x0000003-0000-0000-0000-000000000003', '21234567-89ab-cdef-0123-456789abcdef', 75, 'MISSION_COMPLETION', 'a0000003-0000-0000-0000-000000000003', '2025-07-09T18:20:00Z'),
+  ('x0000004-0000-0000-0000-000000000004', '31234567-89ab-cdef-0123-456789abcdef', 50, 'MISSION_COMPLETION', 'a0000004-0000-0000-0000-000000000004', '2025-07-09T19:15:00Z'),
+  ('x0000005-0000-0000-0000-000000000005', '41234567-89ab-cdef-0123-456789abcdef', 100, 'MISSION_COMPLETION', 'a0000005-0000-0000-0000-000000000005', '2025-07-09T20:30:00Z');
+
 */

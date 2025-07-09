@@ -226,4 +226,82 @@ describe("RankingTop", () => {
       expect(screen.getByTestId("link")).toBeInTheDocument();
     });
   });
+
+  describe("大規模データセット対応テスト", () => {
+    it("should handle large dataset efficiently for top 5", async () => {
+      const largeMockRankings = Array.from({ length: 5 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - i,
+        xp: 2500 - i * 100,
+      }));
+
+      getRanking.mockResolvedValue(largeMockRankings);
+
+      const startTime = Date.now();
+      render(await RankingTop({ limit: 5, period: "daily" }));
+      const endTime = Date.now();
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(screen.getByText("🏅今日のトップ5")).toBeInTheDocument();
+
+      const rankingItems = screen.getAllByTestId("ranking-item");
+      expect(rankingItems).toHaveLength(5);
+    });
+
+    it("should handle large dataset efficiently for top 100", async () => {
+      const largeMockRankings = Array.from({ length: 100 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 10),
+        xp: 2500 - i * 10,
+      }));
+
+      getRanking.mockResolvedValue(largeMockRankings);
+
+      const startTime = Date.now();
+      render(await RankingTop({ limit: 100, period: "daily" }));
+      const endTime = Date.now();
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(screen.getByText("🏅今日のトップ100")).toBeInTheDocument();
+
+      const rankingItems = screen.getAllByTestId("ranking-item");
+      expect(rankingItems).toHaveLength(100);
+    });
+
+    it("should maintain performance with large dataset and detailed info", async () => {
+      const largeMockRankings = Array.from({ length: 50 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `ユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 5),
+        xp: 2500 - i * 20,
+      }));
+
+      getRanking.mockResolvedValue(largeMockRankings);
+
+      const startTime = Date.now();
+      render(
+        await RankingTop({
+          limit: 50,
+          showDetailedInfo: true,
+          period: "daily",
+        }),
+      );
+      const endTime = Date.now();
+
+      expect(endTime - startTime).toBeLessThan(1000);
+      expect(screen.getByText("🏅今日のトップ50")).toBeInTheDocument();
+      expect(screen.getByTestId("link")).toBeInTheDocument();
+
+      const rankingItems = screen.getAllByTestId("ranking-item");
+      expect(rankingItems).toHaveLength(50);
+    });
+  });
 });
