@@ -64,3 +64,6 @@ poster_data/processed-files.json
 /supabase/archive/
 
 temp
+
+# csv export
+users-prefecture-export.csv
