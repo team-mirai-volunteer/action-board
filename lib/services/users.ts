@@ -2,7 +2,10 @@ import "server-only";
 import { cache } from "react";
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { Tables } from "@/lib/types/supabase";
+import type { Database } from "@/lib/types/supabase";
+
+type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
 
 export const getUser = cache(async () => {
   const supabase = await createClient();
@@ -93,63 +96,24 @@ export async function deleteAccount(): Promise<void> {
 
   const userId = authUser.user.id;
 
-  // 1. ユーザーに関連するデータを削除（Service Role Keyを使用してRLSを回避）
-  const deletionResults = [];
+  try {
+    // トランザクション開始 - Service Role Clientを使用してRLSを回避
+    const { error: transactionError } = await supabaseServiceClient.rpc(
+      "delete_user_account",
+      { target_user_id: userId },
+    );
 
-  // achievements テーブルの削除（RLS許可済み）
-  const { error: achievementsError } = await supabaseClient
-    .from("achievements")
-    .delete()
-    .eq("user_id", userId);
-  deletionResults.push({ table: "achievements", error: achievementsError });
+    if (transactionError) {
+      console.error("退会処理でエラーが発生しました:", transactionError);
+      throw new Error(`退会処理に失敗しました: ${transactionError.message}`);
+    }
 
-  // xp_transactions テーブルの削除（Service Role必要）
-  const { error: xpError } = await supabaseServiceClient
-    .from("xp_transactions")
-    .delete()
-    .eq("user_id", userId);
-  deletionResults.push({ table: "xp_transactions", error: xpError });
-
-  // user_levels テーブルの削除（Service Role必要）
-  const { error: levelsError } = await supabaseServiceClient
-    .from("user_levels")
-    .delete()
-    .eq("user_id", userId);
-  deletionResults.push({ table: "user_levels", error: levelsError });
-
-  // public_user_profiles テーブルの削除（Service Role必要）
-  const { error: publicProfileError } = await supabaseServiceClient
-    .from("public_user_profiles")
-    .delete()
-    .eq("id", userId);
-  deletionResults.push({
-    table: "public_user_profiles",
-    error: publicProfileError,
-  });
-
-  // private_users テーブルの削除（Service Role必要）
-  const { error: privateUserError } = await supabaseServiceClient
-    .from("private_users")
-    .delete()
-    .eq("id", userId);
-  deletionResults.push({ table: "private_users", error: privateUserError });
-
-  // user_referral テーブルの削除（紹介コード情報）
-  const { error: referralError } = await supabaseServiceClient
-    .from("user_referral")
-    .delete()
-    .eq("user_id", userId);
-  deletionResults.push({ table: "user_referral", error: referralError });
-
-  // 削除結果をログ出力
-  console.log("退会処理の削除結果:", deletionResults);
-
-  // エラーがあった場合の処理
-  const errors = deletionResults.filter((result) => result.error);
-  if (errors.length > 0) {
-    console.error("一部のデータ削除に失敗しました:", errors);
+    console.log("退会処理が正常に完了しました:", userId);
+  } catch (error) {
+    console.error("退会処理でエラーが発生しました:", error);
+    throw error;
   }
 
-  // 2. サインアウト（データベース上のデータは削除済み）
+  // サインアウト（データベース上のデータは削除済み）
   await supabaseClient.auth.signOut();
 }

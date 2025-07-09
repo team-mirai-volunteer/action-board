@@ -1333,6 +1333,10 @@ export type Database = {
       };
     };
     Functions: {
+      delete_user_account: {
+        Args: { target_user_id: string };
+        Returns: undefined;
+      };
       get_mission_links: {
         Args: { p_mission_id: string };
         Returns: {
@@ -1511,6 +1515,7 @@ export type Database = {
         Returns: {
           user_id: string;
           name: string;
+          level: number;
           rank: number;
           xp: number;
         }[];
