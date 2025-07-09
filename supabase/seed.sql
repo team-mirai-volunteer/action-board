@@ -34,29 +34,29 @@ VALUES
 INSERT INTO user_levels (user_id, xp, level, updated_at)
 VALUES
   -- 1位: 安野たかひろ（レベル20）
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 3325, 20, '2025-06-04T10:00:00Z'),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 3325, 20, now() - interval '2 days'),
   -- 2位: 佐藤太郎（レベル10）
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 900, 10, '2025-06-04T09:30:00Z'),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 900, 10, now() - interval '2 days'),
   -- 3位: 鈴木美咲（レベル9）
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 740, 9, '2025-06-04T09:00:00Z'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 740, 9, now() - interval '2 days'),
   -- 4位: 高橋健一（レベル8）
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 595, 8, '2025-06-04T08:30:00Z'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 595, 8, now() - interval '2 days'),
   -- 5位: 伊藤愛子（レベル7）
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 465, 7, '2025-06-04T08:00:00Z'),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 465, 7, now() - interval '2 days'),
   -- 6位: 山田次郎（レベル6）
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 350, 6, '2025-06-04T07:30:00Z'),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 350, 6, now() - interval '2 days'),
   -- 7位: 中村さくら（レベル5）
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 250, 5, '2025-06-04T07:00:00Z'),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 250, 5, now() - interval '2 days'),
   -- 8位: 小林直人（レベル4）
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 165, 4, '2025-06-04T06:30:00Z'),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 165, 4, now() - interval '2 days'),
   -- 9位: 田中花子（レベル3）
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 95, 3, '2025-06-04T06:00:00Z'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 95, 3, now() - interval '2 days'),
   -- 10位: 加藤みゆき（レベル2）
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 40, 2, '2025-06-04T05:30:00Z'),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 40, 2, now() - interval '2 days'),
   -- 11位: 渡辺雄一（レベル1）
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T05:00:00Z'),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 15, 1, now() - interval '2 days'),
   -- 12位: 松本かな（レベル1、新規参加者）
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T04:30:00Z');
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 8, 1, now() - interval '2 days');
 
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count, slug)
@@ -79,77 +79,77 @@ VALUES
 INSERT INTO achievements (id, mission_id, user_id, created_at)
 VALUES
   -- 安野たかひろの達成（トップユーザーらしく多数達成）
-  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-01T10:00:00Z'),
-  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-02T14:30:00Z'),
-  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-03T16:45:00Z'),
+  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '8 days'),
+  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '7 days'),
+  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '6 days'),
   
   -- 田中花子の達成
-  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '2025-06-01T15:00:00Z'),
+  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() - interval '8 days'),
   
   -- 佐藤太郎の達成（2位らしく積極的）
-  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-01T11:00:00Z'),
-  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-02T13:00:00Z'),
+  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '8 days'),
+  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '7 days'),
   
   -- 鈴木美咲の達成
-  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-06-01T12:00:00Z'),
-  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-06-02T17:00:00Z'),
+  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '7 days'),
   
   -- 高橋健一の達成
-  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', '2025-06-01T16:00:00Z'),
+  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
   
   -- 山田次郎の達成
-  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', '2025-06-02T09:00:00Z'),
+  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() - interval '7 days'),
   
   -- 小林直人の達成
-  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', '2025-06-01T18:00:00Z'),
+  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
   
   ('b7ea2e6e-9ccf-4d2d-a3b4-f34d1a612449', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() - interval '9 hours 1 minute'),
   ('c7ea2e6e-9ccf-4d2d-a3b4-f34d1a612450', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 hours 59 minute'),
   ('d7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours'),
 
-  ('e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T16:30:00Z'),
-  ('f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '2246205f-933f-4a86-83af-dbf6bb6cde90', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T18:45:00Z'),
-  ('a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-07-09T21:15:00Z'),
-  ('b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', '2025-07-09T23:45:00Z'),
-  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T02:00:00Z'),
-  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T05:30:00Z'),
-  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T08:00:00Z'),
-  ('f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T12:00:00Z'),
-  ('a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', '3346205f-933f-4a86-83af-dbf6bb6cde91', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '2025-07-10T14:30:00Z'),
-  ('b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T16:00:00Z'),
-  ('c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T18:30:00Z'),
-  ('d2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T20:00:00Z');
+  ('e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '2 hours'),
+  ('f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '2246205f-933f-4a86-83af-dbf6bb6cde90', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '1 hour'),
+  ('a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() + interval '30 minutes'),
+  ('b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() + interval '1 hour'),
+  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', now() + interval '2 hours'),
+  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours'),
+  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', now() + interval '4 hours'),
+  ('f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() + interval '5 hours'),
+  ('a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', '3346205f-933f-4a86-83af-dbf6bb6cde91', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() + interval '6 hours'),
+  ('b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() + interval '7 hours'),
+  ('c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() + interval '8 hours'),
+  ('d2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '9 hours');
 
 -- XPトランザクション履歴（ミッション達成に対応）
 INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at)
 VALUES
   -- 安野たかひろのXP履歴（合計3325 XP）
-  ('11ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T10:00:00Z'),
-  ('22ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', '27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', 'ミッション「活動ブログを書こう」達成', '2025-06-02T14:30:00Z'),
-  ('33ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 200, 'MISSION_COMPLETION', '37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', 'ミッション「今日のベストショット」達成', '2025-06-03T16:45:00Z'),
-  ('44ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 2975, 'BONUS', NULL, '初期ボーナスXP', '2025-05-15T09:00:00Z'),
+  ('11ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', now() - interval '8 days'),
+  ('22ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', '27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', 'ミッション「活動ブログを書こう」達成', now() - interval '7 days'),
+  ('33ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 200, 'MISSION_COMPLETION', '37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', 'ミッション「今日のベストショット」達成', now() - interval '6 days'),
+  ('44ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 2975, 'BONUS', NULL, '初期ボーナスXP', now() - interval '30 days'),
   
   -- 佐藤太郎のXP履歴（合計900 XP）
-  ('55ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T11:00:00Z'),
-  ('66ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'ミッション「Xのニックネーム」達成', '2025-06-02T13:00:00Z'),
-  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 800, 'BONUS', NULL, '初期ボーナスXP', '2025-05-16T10:00:00Z'),
+  ('55ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'ミッション「ゴミ拾いをしよう」達成', now() - interval '8 days'),
+  ('66ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'ミッション「Xのニックネーム」達成', now() - interval '7 days'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 800, 'BONUS', NULL, '初期ボーナスXP', now() - interval '29 days'),
   
   -- 田中花子のXP履歴（合計95 XP）
-  ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', '2025-06-01T15:00:00Z'),
-  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 5, 'BONUS', NULL, '調整', '2025-05-20T12:00:00Z'),
+  ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', now() - interval '8 days'),
+  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', -5, 'BONUS', NULL, '調整', now() - interval '25 days'),
 
-  ('d1000001-0000-0000-0000-000000000001', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 185, 'MISSION_COMPLETION', 'e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'ミッション達成', '2025-07-09T16:30:00Z'),
-  ('d1000002-0000-0000-0000-000000000002', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 142, 'MISSION_COMPLETION', 'f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', 'ミッション達成', '2025-07-09T18:45:00Z'),
-  ('d1000003-0000-0000-0000-000000000003', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 98, 'MISSION_COMPLETION', 'a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'ミッション達成', '2025-07-09T21:15:00Z'),
-  ('d1000004-0000-0000-0000-000000000004', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 76, 'MISSION_COMPLETION', 'b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'ミッション達成', '2025-07-09T23:45:00Z'),
-  ('d1000005-0000-0000-0000-000000000005', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 63, 'MISSION_COMPLETION', 'c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', 'ミッション達成', '2025-07-10T02:00:00Z'),
-  ('d1000006-0000-0000-0000-000000000006', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 51, 'MISSION_COMPLETION', 'd1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', 'ミッション達成', '2025-07-10T05:30:00Z'),
-  ('d1000007-0000-0000-0000-000000000007', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 44, 'MISSION_COMPLETION', 'e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'ミッション達成', '2025-07-10T08:00:00Z'),
-  ('d1000008-0000-0000-0000-000000000008', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 37, 'MISSION_COMPLETION', 'f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'ミッション達成', '2025-07-10T12:00:00Z'),
-  ('d1000009-0000-0000-0000-000000000009', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 29, 'MISSION_COMPLETION', 'a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', 'ミッション達成', '2025-07-10T14:30:00Z'),
-  ('d1000010-0000-0000-0000-000000000010', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 22, 'MISSION_COMPLETION', 'b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'ミッション達成', '2025-07-10T16:00:00Z'),
-  ('d1000011-0000-0000-0000-000000000011', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 15, 'MISSION_COMPLETION', 'c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'ミッション達成', '2025-07-10T18:30:00Z'),
-  ('d1000012-0000-0000-0000-000000000012', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 8, 'MISSION_COMPLETION', 'd2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'ミッション達成', '2025-07-10T20:00:00Z');
+  ('d1000001-0000-0000-0000-000000000001', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 185, 'MISSION_COMPLETION', 'e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'ミッション達成', now() - interval '2 hours'),
+  ('d1000002-0000-0000-0000-000000000002', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 142, 'MISSION_COMPLETION', 'f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', 'ミッション達成', now() - interval '1 hour'),
+  ('d1000003-0000-0000-0000-000000000003', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 98, 'MISSION_COMPLETION', 'a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'ミッション達成', now() + interval '30 minutes'),
+  ('d1000004-0000-0000-0000-000000000004', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 76, 'MISSION_COMPLETION', 'b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'ミッション達成', now() + interval '1 hour'),
+  ('d1000005-0000-0000-0000-000000000005', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 63, 'MISSION_COMPLETION', 'c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', 'ミッション達成', now() + interval '2 hours'),
+  ('d1000006-0000-0000-0000-000000000006', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 51, 'MISSION_COMPLETION', 'd1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', 'ミッション達成', now() + interval '3 hours'),
+  ('d1000007-0000-0000-0000-000000000007', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 44, 'MISSION_COMPLETION', 'e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'ミッション達成', now() + interval '4 hours'),
+  ('d1000008-0000-0000-0000-000000000008', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 37, 'MISSION_COMPLETION', 'f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'ミッション達成', now() + interval '5 hours'),
+  ('d1000009-0000-0000-0000-000000000009', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 29, 'MISSION_COMPLETION', 'a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', 'ミッション達成', now() + interval '6 hours'),
+  ('d1000010-0000-0000-0000-000000000010', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 22, 'MISSION_COMPLETION', 'b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'ミッション達成', now() + interval '7 hours'),
+  ('d1000011-0000-0000-0000-000000000011', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 15, 'MISSION_COMPLETION', 'c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'ミッション達成', now() + interval '8 hours'),
+  ('d1000012-0000-0000-0000-000000000012', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 8, 'MISSION_COMPLETION', 'd2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'ミッション達成', now() + interval '9 hours');
   
 -- ミッション成果物のサンプルデータ
 INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
