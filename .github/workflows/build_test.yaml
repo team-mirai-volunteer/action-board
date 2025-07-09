@@ -1,13 +1,13 @@
 name: Build & Test E2E/RLS
 on:
   pull_request:
-  permissions:
-    contents: read
-    pages: write
-    id-token: write
-  concurrency:
-    group: 'pages'
-    cancel-in-progress: false
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -114,15 +114,15 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-# deploy:
-#   needs: build
-#   environment:
-#     name: github-pages
-#     url: ${{ steps.deployment.outputs.page_url }}
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Deploy to GitHub Pages
-#       id: deployment
-#       uses: actions/deploy-pages@v2
-#       with:
-#         artifact_name: coverage
+deploy:
+  needs: build
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  runs-on: ubuntu-latest
+  steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+      with:
+        artifact_name: coverage
