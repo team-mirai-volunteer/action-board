@@ -51,3 +51,7 @@ categories:
     title: 作って応援しよう
     sort_no: 1300
     category_kbn: DEFAULT
+  - slug: vote-in-various-ways
+    title: 投票しよう
+    sort_no: 1400
+    category_kbn: DEFAULT
