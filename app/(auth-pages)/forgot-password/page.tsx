@@ -6,38 +6,28 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 
 export default async function ForgotPassword(props: {
-  searchParams: Promise<Message>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
 
-  // HTMLタグが含まれている場合はhtmlフラグを追加
-  const messageWithHtml =
-    searchParams &&
-    ("success" in searchParams ||
-      "error" in searchParams ||
-      "message" in searchParams)
-      ? (() => {
-          if (
-            "success" in searchParams &&
-            searchParams.success?.includes("<a href=")
-          ) {
-            return { ...searchParams, html: true };
-          }
-          if (
-            "error" in searchParams &&
-            searchParams.error?.includes("<a href=")
-          ) {
-            return { ...searchParams, html: true };
-          }
-          if (
-            "message" in searchParams &&
-            searchParams.message?.includes("<a href=")
-          ) {
-            return { ...searchParams, html: true };
-          }
-          return searchParams;
-        })()
-      : searchParams;
+  // Type-based message handling
+  const getMessage = () => {
+    if (searchParams?.success === "password-reset-success") {
+      return { type: "password-reset-success" as const };
+    }
+    if (searchParams?.error && typeof searchParams.error === "string") {
+      return { error: searchParams.error };
+    }
+    if (searchParams?.success && typeof searchParams.success === "string") {
+      return { success: searchParams.success };
+    }
+    if (searchParams?.message && typeof searchParams.message === "string") {
+      return { message: searchParams.message };
+    }
+    return null;
+  };
+
+  const message = getMessage();
   return (
     <>
       <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-72 max-w-72 mx-auto">
@@ -56,7 +46,7 @@ export default async function ForgotPassword(props: {
           <SubmitButton formAction={forgotPasswordAction}>
             パスワードリセットメールを送信
           </SubmitButton>
-          <FormMessage message={messageWithHtml} />
+          {message && <FormMessage message={message} />}
         </div>
       </form>
     </>

@@ -1,20 +1,123 @@
 import clsx from "clsx";
 import { CheckCircle, Info, XCircle } from "lucide-react";
 
+export type MessageType =
+  | "success"
+  | "error"
+  | "message"
+  | "signup-success"
+  | "password-reset-success"
+  | "login-error";
+
 export type Message =
   | { success: string; html?: boolean }
   | { error: string; html?: boolean }
-  | { message: string; html?: boolean };
+  | { message: string; html?: boolean }
+  | { type: MessageType };
+
+const getMessageContent = (type: MessageType) => {
+  const faqLink = (
+    <a
+      href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-teal-600 hover:text-teal-700 underline"
+    >
+      よくあるご質問 ↗
+    </a>
+  );
+
+  switch (type) {
+    case "signup-success":
+      return (
+        <div>
+          ご登録頂きありがとうございます！
+          <br />
+          認証メールをお送りしました。
+          <br />
+          メールに記載のURLをクリックして、アカウントを有効化してください。
+          <br />
+          なお、迷惑メールフォルダに振り分けられている場合がありますので、そちらもあわせてご確認ください。
+          <br />
+          <br />
+          会員登録でお困りの方は{faqLink}をご確認ください。
+        </div>
+      );
+    case "password-reset-success":
+      return (
+        <div>
+          パスワードリセット用のリンクをメールでお送りしました。
+          <br />
+          <br />
+          パスワードリセットでお困りの方は{faqLink}をご確認ください。
+        </div>
+      );
+    case "login-error":
+      return (
+        <div>
+          メールアドレスまたはパスワードが間違っています
+          <br />
+          <br />
+          ログインでお困りの方は{faqLink}をご確認ください。
+        </div>
+      );
+    default:
+      return null;
+  }
+};
 
 export function FormMessage({
   className,
   message,
 }: { className?: string; message: Message }) {
-  if (
-    !message ||
-    !("success" in message || "error" in message || "message" in message)
-  )
+  if (!message) return null;
+
+  // Type-based message handling
+  if ("type" in message) {
+    const content = getMessageContent(message.type);
+    if (!content) return null;
+
+    const isError = message.type === "login-error";
+    const isSuccess =
+      message.type === "signup-success" ||
+      message.type === "password-reset-success";
+
+    return (
+      <div
+        className={clsx(
+          "relative flex items-start gap-3 w-full max-w-md mx-auto p-4 rounded-xl",
+          "border text-card-foreground shadow-soft-lg",
+          "sm:max-w-lg",
+          {
+            "bg-green-50 border-green-200": isSuccess,
+            "bg-red-50 border-red-200": isError,
+            "bg-blue-50 border-blue-200": !isSuccess && !isError,
+          },
+          className,
+        )}
+      >
+        <div className="flex-1">
+          <div
+            className={clsx(
+              "text-sm whitespace-pre-wrap leading-relaxed space-y-1",
+              {
+                "text-green-700": isSuccess,
+                "text-red-700": isError,
+                "text-blue-700": !isSuccess && !isError,
+              },
+            )}
+          >
+            {content}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Legacy string-based message handling
+  if (!("success" in message || "error" in message || "message" in message)) {
     return null;
+  }
 
   return (
     <div

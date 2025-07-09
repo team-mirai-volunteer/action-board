@@ -63,7 +63,11 @@ export default function SignInForm({ returnUrl }: SignInFormProps) {
       <form action={formAction} className="flex flex-col gap-2 [&>input]:mb-3">
         {state?.error && (
           <FormMessage
-            message={{ error: state.error, html: true }}
+            message={
+              state.error === "login-error"
+                ? { type: "login-error" }
+                : { error: state.error }
+            }
             className="mb-4"
           />
         )}

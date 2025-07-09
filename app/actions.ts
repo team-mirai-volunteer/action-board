@@ -219,16 +219,14 @@ export const signInActionWithState = async (
   });
   if (!validatedFields.success) {
     return {
-      error:
-        'メールアドレスまたはパスワードが間違っています\n\nログインでお困りの方は<a href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f" target="_blank" rel="noopener noreferrer" style="color: #0d9488; text-decoration: underline;">よくあるご質問 ↗</a>をご確認ください。',
+      error: "login-error",
       formData: currentFormData,
     };
   }
 
   if (!email || !password) {
     return {
-      error:
-        'メールアドレスまたはパスワードが間違っています\n\nログインでお困りの方は<a href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f" target="_blank" rel="noopener noreferrer" style="color: #0d9488; text-decoration: underline;">よくあるご質問 ↗</a>をご確認ください。',
+      error: "login-error",
       formData: currentFormData,
     };
   }
@@ -242,8 +240,7 @@ export const signInActionWithState = async (
 
   if (error) {
     return {
-      error:
-        'メールアドレスまたはパスワードが間違っています\n\nログインでお困りの方は<a href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f" target="_blank" rel="noopener noreferrer" style="color: #0d9488; text-decoration: underline;">よくあるご質問 ↗</a>をご確認ください。',
+      error: "login-error",
       formData: currentFormData,
     };
   }
@@ -327,7 +324,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     "/forgot-password",
-    'パスワードリセット用のリンクをメールでお送りしました。\n\nパスワードリセットでお困りの方は<a href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f" target="_blank" rel="noopener noreferrer" style="color: #0d9488; text-decoration: underline;">よくあるご質問 ↗</a>をご確認ください。',
+    "password-reset-success",
   );
 };
 
