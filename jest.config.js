@@ -31,7 +31,7 @@ const config = {
     "<rootDir>/lib/constants.ts",
   ],
   coverageProvider: "v8",
-  reporters: ["default", "jest-junit"],
+  reporters: ["default", "jest-junit", "jest-coverage-comment"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
