@@ -10,6 +10,7 @@ describe("Activities", () => {
       expect(screen.getByText("⏰ 活動タイムライン")).toBeInTheDocument();
     });
 
+    // test
     it("説明文が表示される", async () => {
       render(await Activities());
 
