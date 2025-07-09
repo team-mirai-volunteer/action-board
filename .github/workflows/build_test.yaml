@@ -81,6 +81,11 @@ jobs:
           path: jest-report/
           retention-days: 30
 
+      - name: Jest Coverage Comment
+        uses: MishaKav/jest-coverage-comment@v1.0.23
+        with:
+         coverage-summary-path: ./coverage/coverage-summary.json
+
       - name: Upload Playwright test results
         if: always()
         uses: actions/upload-artifact@v4
