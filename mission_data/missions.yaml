@@ -158,7 +158,7 @@ missions:
   - slug: threads-like
     title: Threads でチームみらい投稿に♡をつけよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらい関連のThreads投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.threads.net/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    content: チームみらい関連のThreads投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.threads.com/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
