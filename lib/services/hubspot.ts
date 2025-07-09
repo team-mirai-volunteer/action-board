@@ -6,6 +6,7 @@
 export interface HubSpotContactData {
   email: string;
   firstname?: string;
+  state?: string;
 }
 
 export interface HubSpotContact {
@@ -13,6 +14,7 @@ export interface HubSpotContact {
   properties: {
     email: string;
     firstname?: string;
+    state?: string;
   };
 }
 
@@ -97,6 +99,10 @@ async function createHubSpotContact(
     firstname: contactData.email, // firstnameにもemailを設定
   };
 
+  if (contactData.state) {
+    properties.state = contactData.state;
+  }
+
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -148,6 +154,10 @@ async function updateHubSpotContact(
   const properties: Record<string, string> = {
     firstname: contactData.email, // firstnameにemailを設定
   };
+
+  if (contactData.state) {
+    properties.state = contactData.state;
+  }
 
   const response = await fetch(url, {
     method: "PATCH",
@@ -203,7 +213,7 @@ async function findAndUpdateExistingContact(
           ],
         },
       ],
-      properties: ["email", "firstname"],
+      properties: ["email", "firstname", "state"],
     }),
   });
 
