@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -32,20 +31,21 @@ export function DeleteAccountModal({
     if (confirmText !== "退会する" || isDeleting) return;
 
     setIsDeleting(true);
-    try {
-      toast.success("退会処理を開始しています...");
-      await deleteAccountAction();
-      // リダイレクトが成功した場合、この行は実行されない
-    } catch (error) {
-      // NEXT_REDIRECT エラーは正常な動作なので、それ以外のエラーのみトースト表示
-      if (error instanceof Error && !error.message.includes("NEXT_REDIRECT")) {
-        console.error("退会処理でエラーが発生しました:", error);
-        toast.error("退会処理でエラーが発生しました。もう一度お試しください。");
+
+    // トースト通知で処理状況を表示
+    toast.promise(deleteAccountAction(), {
+      loading: "退会処理中です...",
+      success: "退会処理が完了しました",
+      error: (err) => {
+        // NEXT_REDIRECT エラーは正常な動作なので、成功として扱う
+        if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+          return "退会処理が完了しました";
+        }
         setIsDeleting(false);
         onClose();
-      }
-      // NEXT_REDIRECT の場合は何もしない（リダイレクトが実行される）
-    }
+        return "退会処理でエラーが発生しました。もう一度お試しください。";
+      },
+    });
   };
 
   const handleClose = () => {
