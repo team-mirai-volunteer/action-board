@@ -285,6 +285,7 @@ export async function updateProfile(
       {
         email: user.email || "",
         firstname: user.email || "", // firstnameにもemailを設定
+        state: validatedData.address_prefecture,
       },
       hubspot_contact_id,
     );

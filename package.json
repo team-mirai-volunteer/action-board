@@ -27,7 +27,8 @@
     "poster:auto-load:log": "./poster_data/auto-load-with-log.sh && npm run poster:mask-names",
     "poster:clear": "./poster_data/clear.sh",
     "poster:mask-names": "tsx poster_data/mask-names.ts",
-    "calculate-badges": "tsx scripts/calculate-badges.ts"
+    "calculate-badges": "tsx scripts/calculate-badges.ts",
+    "export-users-prefecture": "tsx scripts/export-users-prefecture.ts"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
