@@ -192,5 +192,69 @@ describe("ranking service", () => {
         );
       });
     });
+
+    describe("JST境界での集計精度テスト", () => {
+      it("should use consistent JST midnight across multiple calls", async () => {
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getRanking(10, "daily");
+        await getRanking(20, "daily");
+
+        const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+          (call) => call[0] === "get_period_ranking",
+        );
+
+        expect(rpcCalls.length).toBe(2);
+
+        const firstCallDate = new Date(rpcCalls[0][1].p_start_date);
+        const secondCallDate = new Date(rpcCalls[1][1].p_start_date);
+
+        expect(firstCallDate.getTime()).toBe(secondCallDate.getTime());
+        expect(firstCallDate.getTime()).toBe(
+          new Date("2024-01-01T15:00:00.000Z").getTime(),
+        );
+      });
+
+      it("should handle JST boundary correctly for aggregation", async () => {
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getRanking(10, "daily");
+
+        const rpcCall = mockSupabase.rpc.mock.calls.find(
+          (call) => call[0] === "get_period_ranking",
+        );
+
+        const startDate = new Date(rpcCall[1].p_start_date);
+
+        expect(startDate.getUTCHours()).toBe(15);
+        expect(startDate.getUTCMinutes()).toBe(0);
+        expect(startDate.getUTCSeconds()).toBe(0);
+        expect(startDate.getUTCMilliseconds()).toBe(0);
+      });
+
+      it("should ensure aggregation boundary consistency", async () => {
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getRanking(5, "daily");
+
+        const rpcCall = mockSupabase.rpc.mock.calls.find(
+          (call) => call[0] === "get_period_ranking",
+        );
+
+        expect(rpcCall[1]).toEqual({
+          p_start_date: "2024-01-01T15:00:00.000Z",
+          p_limit: 5,
+        });
+      });
+    });
   });
 });

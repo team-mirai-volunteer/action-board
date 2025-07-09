@@ -296,5 +296,104 @@ describe("prefecturesRanking service", () => {
         "ユーザーの都道府県ランキングデータの取得に失敗しました: Database error",
       );
     });
+
+    describe("JST境界での都道府県集計精度テスト", () => {
+      it("should maintain consistent JST midnight for prefecture aggregation", async () => {
+        const prefecture = "大阪府";
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getPrefecturesRanking(prefecture, 10, "daily");
+        await getPrefecturesRanking(prefecture, 20, "daily");
+
+        const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+          (call) => call[0] === "get_period_prefecture_ranking",
+        );
+
+        expect(rpcCalls.length).toBe(2);
+
+        const firstCallDate = new Date(rpcCalls[0][1].p_start_date);
+        const secondCallDate = new Date(rpcCalls[1][1].p_start_date);
+
+        expect(firstCallDate.getTime()).toBe(secondCallDate.getTime());
+        expect(firstCallDate.getTime()).toBe(
+          new Date("2024-01-01T15:00:00.000Z").getTime(),
+        );
+      });
+
+      it("should use correct JST boundary for prefecture ranking aggregation", async () => {
+        const prefecture = "神奈川県";
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getPrefecturesRanking(prefecture, 15, "daily");
+
+        const rpcCall = mockSupabase.rpc.mock.calls.find(
+          (call) => call[0] === "get_period_prefecture_ranking",
+        );
+
+        const startDate = new Date(rpcCall[1].p_start_date);
+
+        expect(startDate.getUTCHours()).toBe(15);
+        expect(startDate.getUTCMinutes()).toBe(0);
+        expect(startDate.getUTCSeconds()).toBe(0);
+
+        expect(rpcCall[1].p_prefecture).toBe(prefecture);
+        expect(rpcCall[1].p_limit).toBe(15);
+      });
+
+      it("should handle different prefectures with same JST boundary", async () => {
+        const prefectures = ["北海道", "沖縄県", "愛知県"];
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        for (const prefecture of prefectures) {
+          await getPrefecturesRanking(prefecture, 10, "daily");
+        }
+
+        const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+          (call) => call[0] === "get_period_prefecture_ranking",
+        );
+
+        expect(rpcCalls.length).toBe(3);
+
+        const expectedJSTMidnight = new Date("2024-01-01T15:00:00.000Z");
+        rpcCalls.forEach((call, index) => {
+          const startDate = new Date(call[1].p_start_date);
+          expect(startDate.getTime()).toBe(expectedJSTMidnight.getTime());
+          expect(call[1].p_prefecture).toBe(prefectures[index]);
+        });
+      });
+
+      it("should ensure prefecture aggregation boundary consistency", async () => {
+        const prefecture = "福岡県";
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getPrefecturesRanking(prefecture, 25, "daily");
+
+        const rpcCall = mockSupabase.rpc.mock.calls.find(
+          (call) => call[0] === "get_period_prefecture_ranking",
+        );
+
+        expect(rpcCall[1]).toEqual({
+          p_prefecture: prefecture,
+          p_limit: 25,
+          p_start_date: "2024-01-01T15:00:00.000Z",
+        });
+      });
+    });
   });
 });

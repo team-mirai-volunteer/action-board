@@ -268,5 +268,82 @@ describe("missionsRanking service", () => {
         "ユーザーのミッションランキングデータの取得に失敗しました: Database error",
       );
     });
+
+    describe("JST境界でのミッション集計精度テスト", () => {
+      it("should maintain consistent JST midnight for mission aggregation", async () => {
+        const missionId = "mission-123";
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getMissionRanking(missionId, 10, "daily");
+        await getMissionRanking(missionId, 5, "daily");
+
+        const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+          (call) => call[0] === "get_period_mission_ranking",
+        );
+
+        expect(rpcCalls.length).toBe(2);
+
+        const firstCallDate = new Date(rpcCalls[0][1].p_start_date);
+        const secondCallDate = new Date(rpcCalls[1][1].p_start_date);
+
+        expect(firstCallDate.getTime()).toBe(secondCallDate.getTime());
+        expect(firstCallDate.getTime()).toBe(
+          new Date("2024-01-01T15:00:00.000Z").getTime(),
+        );
+      });
+
+      it("should use correct JST boundary for mission achievement aggregation", async () => {
+        const missionId = "mission-456";
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        await getMissionRanking(missionId, 10, "daily");
+
+        const rpcCall = mockSupabase.rpc.mock.calls.find(
+          (call) => call[0] === "get_period_mission_ranking",
+        );
+
+        const startDate = new Date(rpcCall[1].p_start_date);
+
+        expect(startDate.getUTCHours()).toBe(15);
+        expect(startDate.getUTCMinutes()).toBe(0);
+        expect(startDate.getUTCSeconds()).toBe(0);
+
+        expect(rpcCall[1].p_mission_id).toBe(missionId);
+      });
+
+      it("should handle different missions with same JST boundary", async () => {
+        const missions = ["mission-a", "mission-b", "mission-c"];
+
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
+        });
+
+        for (const missionId of missions) {
+          await getMissionRanking(missionId, 10, "daily");
+        }
+
+        const rpcCalls = mockSupabase.rpc.mock.calls.filter(
+          (call) => call[0] === "get_period_mission_ranking",
+        );
+
+        expect(rpcCalls.length).toBe(3);
+
+        const expectedJSTMidnight = new Date("2024-01-01T15:00:00.000Z");
+        rpcCalls.forEach((call, index) => {
+          const startDate = new Date(call[1].p_start_date);
+          expect(startDate.getTime()).toBe(expectedJSTMidnight.getTime());
+          expect(call[1].p_mission_id).toBe(missions[index]);
+        });
+      });
+    });
   });
 });
