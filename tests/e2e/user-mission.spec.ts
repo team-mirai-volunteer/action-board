@@ -107,8 +107,8 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await signedInPage.getByRole('link').filter({ hasText: '佐藤太郎' }).click();
     await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, { timeout: 10000 });
 
-    // 任意のユーザーページの表示内容を確認
-    await expect(signedInPage.getByText('佐藤太郎')).toBeVisible();
+    // 任意のユーザーページの表示内容を確認（プロフィールヘッダーの名前を確認）
+    await expect(signedInPage.locator('.text-lg.font-bold.leading-none').filter({ hasText: '佐藤太郎' })).toBeVisible();
     await expect(signedInPage.getByText('Lv.10')).toBeVisible();
     await expect(signedInPage.getByText('東京都')).toBeVisible();
     await expect(signedInPage.getByText('活動タイムライン')).toBeVisible();
