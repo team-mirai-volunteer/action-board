@@ -1,6 +1,13 @@
 name: Build & Test E2E/RLS
 on:
   pull_request:
+  permissions:
+    contents: read
+    pages: write
+    id-token: write
+  concurrency:
+    group: 'pages'
+    cancel-in-progress: false
 
 jobs:
   test:
@@ -85,6 +92,17 @@ jobs:
         uses: MishaKav/jest-coverage-comment@v1.0.23
         with:
          coverage-summary-path: ./coverage/coverage-summary.json
+      - name: Create Coverage Badges
+        uses: jaywcjlove/coverage-badges-cli@main
+        with:
+          style: flat
+          source: coverage/coverage-summary.json
+          output: coverage/badges.svg
+      - name: Upload test coverage artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          name: coverage
+          path: ./coverage
 
       - name: Upload Playwright test results
         if: always()
@@ -93,3 +111,16 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+deploy:
+  needs: build
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  runs-on: ubuntu-latest
+  steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+      with:
+        artifact_name: coverage
