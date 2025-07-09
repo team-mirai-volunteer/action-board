@@ -144,6 +144,39 @@ missions:
     is_hidden: false
     artifact_label: あなたのnoteアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//1_follow_note.png
+  - slug: follow-anno-threads
+    title: 安野たかひろスタッフのThreadsをフォローしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.threads.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">安野たかひろスタッフのThreads</a>をフォローして、チームみらいの最新情報をチェック！街頭演説のお知らせや、日々の活動レポートなど、リアルタイムな情報をお届けしています。
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのThreadsアカウント名
+    ogp_image_url: null
+  - slug: threads-like
+    title: Threads でチームみらい投稿に♡をつけよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらい関連のThreads投稿を見つけて「いいね」で応援しましょう！<br><br><a href="https://www.threads.net/search?q=%23チームみらい" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 一番応援したい投稿のURL
+    ogp_image_url: null
+  - slug: threads-post
+    title: Threads でチームみらいに関する投稿をしよう
+    icon_url: /img/mission_fallback.svg
+    content: チームみらいの活動について、あなたの声をThreadsで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！
+    difficulty: 2
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 投稿したポストのURL
+    ogp_image_url: null
   - slug: join-prefecture-openchat
     title: 都道府県別LINEオープンチャットに入ろう
     icon_url: /img/mission_fallback.svg
