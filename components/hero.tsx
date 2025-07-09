@@ -1,4 +1,5 @@
 import { getUser } from "@/lib/services/users";
+import Image from "next/image";
 import Link from "next/link";
 import Levels from "./levels";
 import { Button } from "./ui/button";
@@ -15,33 +16,38 @@ export default async function Hero() {
   }
 
   return (
-    <section className="relative bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 overflow-hidden">
-      {/* 背景グラデーションオーバーレイ */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-100/50 via-transparent to-teal-100/40" />
-
-      {/* 放射状グラデーション */}
-      <div className="absolute inset-0 bg-gradient-radial from-emerald-200/30 via-transparent to-transparent" />
-
-      {/* パターン背景 */}
-      <div className="absolute inset-0 opacity-5">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310B981' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+    <section className="relative w-full h-[640px] bg-[#BCECD3] overflow-hidden">
+      <div className="absolute inset-0 w-full h-full flex justify-center items-end">
+        <div className="relative w-[1080px] min-w-[1080px] h-[560px]">
+          <Image
+            src="/img/hero-background.svg"
+            alt="街並みと雲のイラスト"
+            fill
+            className="object-contain object-bottom"
+            priority
+          />
+        </div>
       </div>
 
-      <div className="relative px-4 py-16 md:py-24">
+      {/* メインコンテンツ */}
+      <div className="relative z-10 px-4 pt-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-4 leading-tight">
-            チームみらい
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700">
-              アクションボード
-            </span>
+          {/* ロゴ画像 */}
+          <div className="flex justify-center mb-8">
+            <Image
+              src="/img/logo.png"
+              alt="チームみらい"
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="h-[120px] w-auto min-w-[143px]"
+            />
+          </div>
+
+          <h1 className="text-4xl md:text-4xl font-bold text-gray-800 mb-4">
+            アクションボード
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 mb-8 font-medium">
+          <p className="text-base text-xs text-[#0f8472] font-bold mb-8 px-4">
             テクノロジーで政治をかえる。あなたと一緒に未来をつくる。
           </p>
 
@@ -50,13 +56,25 @@ export default async function Hero() {
               <Link href="/sign-up">
                 <Button
                   size="lg"
-                  className="min-w-72 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:via-teal-700 hover:to-emerald-800 text-white font-bold py-6 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                  className="bg-[#FA5A77] hover:bg-[#E0425E] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-base whitespace-nowrap min-w-fit"
                 >
-                  <span className="text-lg">🚀 チームみらいで手を動かす</span>
+                  サポーター登録する →
                 </Button>
               </Link>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 w-full flex justify-center z-10">
+        <div className="relative w-full max-w-[1080px] h-[224px]">
+          <Image
+            src="/img/hero-people.svg"
+            alt="チームみらいの仲間たち"
+            fill
+            className="object-contain object-bottom"
+            priority
+          />
         </div>
       </div>
     </section>

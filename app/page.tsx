@@ -67,7 +67,7 @@ export default async function Home({
   const showFeatured = await hasFeaturedMissions();
 
   return (
-    <div className="flex flex-col min-h-screen py-4">
+    <div className="flex flex-col min-h-screen">
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />
@@ -78,27 +78,30 @@ export default async function Home({
         <BadgeNotificationCheck badgeData={badgeNotifications} />
       )}
 
-      {/* ヒーローセクション */}
+      {/* ヒーローセクション - フルワイド */}
       <section>
         <Hero />
       </section>
 
-      {/* メトリクスセクション */}
-      <MetricsWithSuspense />
+      {/* 以下のセクションはコンテナ内に配置 */}
+      <div className="w-full md:container md:mx-auto py-4">
+        {/* メトリクスセクション */}
+        <MetricsWithSuspense />
 
-      {/* ランキングセクション */}
-      <section className="py-12 md:py-16 bg-white">
-        <RankingSection />
-      </section>
-
-      {/* フューチャードミッションセクション */}
-      {showFeatured && (
+        {/* ランキングセクション */}
         <section className="py-12 md:py-16 bg-white">
-          <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
+          <RankingSection />
         </section>
-      )}
 
-      {/* ミッションセクション */}
+        {/* フューチャードミッションセクション */}
+        {showFeatured && (
+          <section className="py-12 md:py-16 bg-white">
+            <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
+          </section>
+        )}
+
+        {/* ミッションセクション */}
+      </div>
       <section className="py-12 md:py-16 bg-white">
         <MissionsByCategory
           userId={user?.id}
