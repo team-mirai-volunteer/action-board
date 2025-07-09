@@ -128,7 +128,7 @@ export default function PrefecturePosterMapClient({
         const { data: mission } = await supabase
           .from("missions")
           .select("id")
-          .eq("slug", "put-up-poster-on-boardd")
+          .eq("slug", "put-up-poster-on-board")
           .single();
         setPutUpPosterMissionId(mission?.id ?? null);
       } catch (error) {
