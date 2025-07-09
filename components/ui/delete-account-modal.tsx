@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -32,13 +33,14 @@ export function DeleteAccountModal({
 
     setIsDeleting(true);
     try {
+      toast.success("退会処理を開始しています...");
       await deleteAccountAction();
       // リダイレクトが成功した場合、この行は実行されない
     } catch (error) {
-      // NEXT_REDIRECT エラーは正常な動作なので、それ以外のエラーのみアラート表示
+      // NEXT_REDIRECT エラーは正常な動作なので、それ以外のエラーのみトースト表示
       if (error instanceof Error && !error.message.includes("NEXT_REDIRECT")) {
         console.error("退会処理でエラーが発生しました:", error);
-        alert("退会処理でエラーが発生しました。もう一度お試しください。");
+        toast.error("退会処理でエラーが発生しました。もう一度お試しください。");
         setIsDeleting(false);
         onClose();
       }
