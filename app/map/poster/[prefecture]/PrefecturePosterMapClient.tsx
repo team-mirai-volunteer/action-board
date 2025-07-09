@@ -63,6 +63,7 @@ import {
   getPosterBoardStatsAction,
   getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
+import { captureException } from "@sentry/nextjs";
 
 interface PrefecturePosterMapClientProps {
   userId?: string;
@@ -330,8 +331,8 @@ export default function PrefecturePosterMapClient({
 
           if (!hasCompleted) {
             // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
-            completePosterBoardMission(selectedBoard).catch(() => {
-              // エラーは無視して、ステータス更新自体は成功として扱う
+            completePosterBoardMission(selectedBoard).catch((error) => {
+              captureException(error);
             });
           }
         }
