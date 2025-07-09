@@ -39,9 +39,9 @@
 
    - Hyper-Vの有効化
       1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
-      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になっていない場合があるので、以下で確認
-      1. PowerShell(管理者権限)でHyper-vが有効になっているか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
-      1. Offになっている場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-Vが有効になっていない場合があるので、以下で確認
+      1. PowerShell(管理者権限)でHyper-Vが有効になっているか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      1. Offになっている場合、Hyper-VをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
       1. Autoに変更したあとPCの再起動が必要です
 
 #### インストール
@@ -111,7 +111,7 @@
    supabase db reset
    ```
 
-  supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。
+  supabase/migrations配下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みます。
 
 5. 必要なパッケージをインストール:
 
