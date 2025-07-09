@@ -1,7 +1,7 @@
 name: Build & Test E2E/RLS
 on:
-  push:
-    branches: [test/coverage-budge]
+  pull_request:
+    branches: [develop]
 permissions:
   contents: read
   pages: write
