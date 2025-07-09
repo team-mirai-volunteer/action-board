@@ -123,13 +123,18 @@ export default function PrefecturePosterMapClient({
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
     const fetchMissionId = async () => {
-      const supabase = createClient();
-      const { data: mission } = await supabase
-        .from("missions")
-        .select("id")
-        .eq("slug", "put-up-poster-on-board")
-        .single();
-      setPutUpPosterMissionId(mission?.id ?? null);
+      try {
+        const supabase = createClient();
+        const { data: mission } = await supabase
+          .from("missions")
+          .select("id")
+          .eq("slug", "put-up-poster-on-boardd")
+          .single();
+        setPutUpPosterMissionId(mission?.id ?? null);
+      } catch (error) {
+        console.error("ミッションIDの取得に失敗しました:", error);
+        setPutUpPosterMissionId(null);
+      }
     };
     fetchMissionId();
   }, []);
