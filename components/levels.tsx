@@ -13,7 +13,6 @@ interface LevelsProps {
   showBadge?: boolean;
 }
 
-// test
 export default async function Levels({
   userId,
   hideProgress = false,
