@@ -110,7 +110,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     // 任意のユーザーページの表示内容を確認
     await expect(signedInPage.getByText('佐藤太郎').first()).toBeVisible();
     await expect(signedInPage.getByText('Lv.10')).toBeVisible();
-    await expect(signedInPage.getByText('東京都')).toBeVisible();
+    await expect(signedInPage.getByText('東京都').first()).toBeVisible();
     await expect(signedInPage.getByText('活動タイムライン')).toBeVisible();
   });
 
