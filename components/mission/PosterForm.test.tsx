@@ -123,7 +123,7 @@ describe("PosterForm", () => {
     expect(boardNumberInput).toHaveAttribute("type", "text");
     expect(boardNumberInput).toHaveAttribute("name", "boardNumber");
     expect(boardNumberInput).toHaveAttribute("maxLength", "20");
-    expect(boardNumberInput).toHaveAttribute("pattern", "^(\\d+|\\d+-\\d+)$");
+    expect(boardNumberInput).toHaveAttribute("pattern", "^(\\d+(-\\d){0,2})$");
     expect(boardNumberInput).toBeRequired();
   });
 
@@ -203,7 +203,7 @@ describe("PosterForm", () => {
       screen.getByPlaceholderText("例：渋谷区、名古屋市中区"),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("例：10-1、27-2、00"),
+      screen.getByPlaceholderText("例：10-1、27-2-1、00"),
     ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("例：東小学校前、駅前商店街"),
