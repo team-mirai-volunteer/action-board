@@ -4,6 +4,10 @@ import {
   getUserPrefecturesRanking,
 } from "./prefecturesRanking";
 
+jest.mock("@/lib/dateUtils", () => ({
+  getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T15:00:00.000Z")), // UTC 15:00 = JST 00:00
+}));
+
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),
@@ -135,16 +139,8 @@ describe("prefecturesRanking service", () => {
         expect(rpcCall[0]).toBe("get_period_prefecture_ranking");
 
         const startDate = new Date(rpcCall[1].p_start_date);
-        const now = new Date();
-        const todayMidnight = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
-        expect(startDate.getTime()).toBe(todayMidnight.getTime());
+        const expectedJSTMidnight = new Date("2024-01-01T15:00:00.000Z");
+        expect(startDate.getTime()).toBe(expectedJSTMidnight.getTime());
       });
     });
 
