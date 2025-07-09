@@ -116,6 +116,23 @@ export default function PrefecturePosterMapClient({
   >(() => {
     return new Set(userEditedBoardIds || []);
   });
+  const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
+    string | null
+  >(null);
+
+  // ポスター貼りミッションのミッションIDを取得
+  useEffect(() => {
+    const fetchMissionId = async () => {
+      const supabase = createClient();
+      const { data: mission } = await supabase
+        .from("missions")
+        .select("id")
+        .eq("slug", "put-up-poster-on-board")
+        .single();
+      setPutUpPosterMissionId(mission?.id ?? null);
+    };
+    fetchMissionId();
+  }, []);
 
   useEffect(() => {
     // 初回ロード時に全データをロード
@@ -448,6 +465,32 @@ export default function PrefecturePosterMapClient({
             })}
           </div>
         </div>
+      </div>
+
+      {/* ミッション「選挙区ポスターを貼ろう」への誘導 */}
+      <div className="max-w-xl mx-auto mt-4 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-gray-800 text-sm">
+        <p>
+          「ポスターマップ上に掲示板が見当たらない」「ポスターを貼ったがポイントに反映されなかった」などの問題がある場合は、下記のミッションにて報告をお願いいたします👇
+        </p>
+        <p className="mt-2">
+          {putUpPosterMissionId ? (
+            <a
+              href={`/missions/${putUpPosterMissionId}`}
+              className="text-blue-700 underline font-bold"
+            >
+              🔗 ミッション「選挙区ポスターを貼ろう」
+            </a>
+          ) : (
+            <span
+              className="text-gray-400 font-bold cursor-not-allowed"
+              title="ミッションページが見つかりません"
+            >
+              🔗
+              ミッションページが見つかりません。ご意見箱からご報告いただけると幸いです🙇
+            </span>
+          )}
+        </p>
+        <p className="mt-2">ご協力ありがとうございます！</p>
       </div>
 
       {/* Update Dialog */}
