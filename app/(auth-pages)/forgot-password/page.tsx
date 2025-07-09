@@ -9,6 +9,35 @@ export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
+
+  // HTMLタグが含まれている場合はhtmlフラグを追加
+  const messageWithHtml =
+    searchParams &&
+    ("success" in searchParams ||
+      "error" in searchParams ||
+      "message" in searchParams)
+      ? (() => {
+          if (
+            "success" in searchParams &&
+            searchParams.success?.includes("<a href=")
+          ) {
+            return { ...searchParams, html: true };
+          }
+          if (
+            "error" in searchParams &&
+            searchParams.error?.includes("<a href=")
+          ) {
+            return { ...searchParams, html: true };
+          }
+          if (
+            "message" in searchParams &&
+            searchParams.message?.includes("<a href=")
+          ) {
+            return { ...searchParams, html: true };
+          }
+          return searchParams;
+        })()
+      : searchParams;
   return (
     <>
       <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-72 max-w-72 mx-auto">
@@ -27,7 +56,7 @@ export default async function ForgotPassword(props: {
           <SubmitButton formAction={forgotPasswordAction}>
             パスワードリセットメールを送信
           </SubmitButton>
-          <FormMessage message={searchParams} />
+          <FormMessage message={messageWithHtml} />
         </div>
       </form>
     </>

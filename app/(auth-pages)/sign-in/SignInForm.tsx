@@ -62,7 +62,10 @@ export default function SignInForm({ returnUrl }: SignInFormProps) {
       {/* Email + Passwordログインフォーム */}
       <form action={formAction} className="flex flex-col gap-2 [&>input]:mb-3">
         {state?.error && (
-          <FormMessage message={{ error: state.error }} className="mb-4" />
+          <FormMessage
+            message={{ error: state.error, html: true }}
+            className="mb-4"
+          />
         )}
         {returnUrl && (
           <input type="hidden" name="returnUrl" value={returnUrl} />

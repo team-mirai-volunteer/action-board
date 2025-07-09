@@ -2,9 +2,9 @@ import clsx from "clsx";
 import { CheckCircle, Info, XCircle } from "lucide-react";
 
 export type Message =
-  | { success: string }
-  | { error: string }
-  | { message: string };
+  | { success: string; html?: boolean }
+  | { error: string; html?: boolean }
+  | { message: string; html?: boolean };
 
 export function FormMessage({
   className,
@@ -19,8 +19,9 @@ export function FormMessage({
   return (
     <div
       className={clsx(
-        "relative flex items-start gap-3 w-full max-w-md p-4 rounded-xl",
+        "relative flex items-start gap-3 w-full max-w-md mx-auto p-4 rounded-xl",
         "border text-card-foreground shadow-soft-lg",
+        "sm:max-w-lg", // スマホよりも大きい画面では少し広く
         {
           "bg-green-50 border-green-200": "success" in message,
           "bg-red-50 border-red-200": "error" in message,
@@ -31,22 +32,46 @@ export function FormMessage({
     >
       {"success" in message && (
         <div className="flex-1">
-          <div className="text-sm text-green-700 whitespace-pre-wrap leading-relaxed">
-            {message.success}
+          <div className="text-sm text-green-700 whitespace-pre-wrap leading-relaxed space-y-1">
+            {message.html ? (
+              <div
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
+                dangerouslySetInnerHTML={{ __html: message.success }}
+                className="[&_a]:inline-block [&_a]:break-words"
+              />
+            ) : (
+              message.success
+            )}
           </div>
         </div>
       )}
       {"error" in message && (
         <div className="flex-1">
-          <div className="text-sm text-red-700 whitespace-pre-wrap leading-relaxed">
-            {message.error}
+          <div className="text-sm text-red-700 whitespace-pre-wrap leading-relaxed space-y-1">
+            {message.html ? (
+              <div
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
+                dangerouslySetInnerHTML={{ __html: message.error }}
+                className="[&_a]:inline-block [&_a]:break-words"
+              />
+            ) : (
+              message.error
+            )}
           </div>
         </div>
       )}
       {"message" in message && (
         <div className="flex-1">
-          <div className="text-sm text-blue-700 whitespace-pre-wrap leading-relaxed">
-            {message.message}
+          <div className="text-sm text-blue-700 whitespace-pre-wrap leading-relaxed space-y-1">
+            {message.html ? (
+              <div
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
+                dangerouslySetInnerHTML={{ __html: message.message }}
+                className="[&_a]:inline-block [&_a]:break-words"
+              />
+            ) : (
+              message.message
+            )}
           </div>
         </div>
       )}
