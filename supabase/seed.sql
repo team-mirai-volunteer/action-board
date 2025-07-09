@@ -257,6 +257,7 @@ ON CONFLICT DO NOTHING;
 
 
 /*
+
 INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
   ('today-achievement-1', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T16:00:00Z'), -- JST 01:00
   ('today-achievement-2', '4446205f-933f-4a86-83af-dbf6bb6cde92', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2025-07-09T20:00:00Z'), -- JST 05:00
@@ -276,5 +277,6 @@ INSERT INTO xp_transactions (id, user_id, amount, source_type, source_id, create
   ('yesterday-xp-2', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION', 'yesterday-achievement-2', '2025-07-08T16:00:00Z'),
   ('historical-xp-1', '2246205f-933f-4a86-83af-dbf6bb6cde90', 50, 'MISSION', 'historical-achievement-1', '2025-06-01T15:00:00Z'),
   ('historical-xp-2', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION', 'historical-achievement-2', '2025-06-02T15:00:00Z');
+
 
 */
