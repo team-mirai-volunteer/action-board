@@ -61,21 +61,23 @@ export function DeleteAccountModal({
             <AlertTriangle className="h-5 w-5" />
             アカウントの削除
           </DialogTitle>
-          <DialogDescription className="text-left space-y-2">
-            <p className="font-medium text-red-600">
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="text-left space-y-2">
+            <p className="font-medium text-red-600 text-sm">
               この操作は元に戻すことができません。
             </p>
-            <p>アカウントを削除すると、以下のデータが完全に削除されます：</p>
-            <ul className="list-disc list-inside space-y-1 text-sm">
+            <p className="text-sm">
+              アカウントを削除すると、以下のデータが完全に削除されます：
+            </p>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li>プロフィール情報</li>
               <li>ミッション達成記録</li>
               <li>経験値とレベル情報</li>
               <li>バッジ情報</li>
               <li>その他のアカウントに関連するすべてのデータ</li>
             </ul>
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
+          </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-text">
               続行するには「退会する」と入力してください
