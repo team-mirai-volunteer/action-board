@@ -79,46 +79,45 @@ VALUES
 INSERT INTO achievements (id, mission_id, user_id, created_at)
 VALUES
   -- 安野たかひろの達成（トップユーザーらしく多数達成）
-  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '8 days'),
-  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '7 days'),
-  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '6 days'),
-  
-  -- 田中花子の達成
-  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() - interval '8 days'),
+  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '2 hours'),
+  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '1 day' + interval '2 hours'),
+  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() + interval '3 hours'),
+  ('e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() + interval '5 hours'),
   
   -- 佐藤太郎の達成（2位らしく積極的）
-  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '8 days'),
-  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '7 days'),
+  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '1 day' + interval '4 hours'),
+  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() + interval '8 hours'),
+  ('f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '2246205f-933f-4a86-83af-dbf6bb6cde90', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '2 days' + interval '6 hours'),
+  
+  -- 田中花子の達成
+  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() - interval '1 day' + interval '6 hours'),
+  ('a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', '3346205f-933f-4a86-83af-dbf6bb6cde91', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() + interval '12 hours'),
   
   -- 鈴木美咲の達成
-  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
-  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '7 days'),
+  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '1 day' + interval '8 hours'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() + interval '15 hours'),
+  ('a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() - interval '2 days' + interval '8 hours'),
   
   -- 高橋健一の達成
-  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
+  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() - interval '1 day' + interval '10 hours'),
+  ('b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() + interval '18 hours'),
   
   -- 山田次郎の達成
-  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() - interval '7 days'),
+  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() - interval '2 days' + interval '10 hours'),
+  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() + interval '21 hours'),
   
   -- 小林直人の達成
-  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 days'),
+  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() - interval '1 day' + interval '12 hours'),
+  ('f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() - interval '2 days' + interval '12 hours'),
   
-  ('b7ea2e6e-9ccf-4d2d-a3b4-f34d1a612449', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() - interval '9 hours 1 minute'),
-  ('c7ea2e6e-9ccf-4d2d-a3b4-f34d1a612450', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 hours 59 minute'),
-  ('d7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours'),
-
-  ('e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', now() - interval '2 hours'),
-  ('f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '2246205f-933f-4a86-83af-dbf6bb6cde90', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', now() - interval '1 hour'),
-  ('a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', now() + interval '30 minutes'),
-  ('b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', now() + interval '1 hour'),
-  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', now() + interval '2 hours'),
-  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours'),
-  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', now() + interval '4 hours'),
-  ('f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', now() + interval '5 hours'),
-  ('a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', '3346205f-933f-4a86-83af-dbf6bb6cde91', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', now() + interval '6 hours'),
-  ('b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() + interval '7 hours'),
-  ('c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() + interval '8 hours'),
-  ('d2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '9 hours');
+  ('b7ea2e6e-9ccf-4d2d-a3b4-f34d1a612449', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() + interval '6 hours'),
+  ('b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() - interval '1 day' + interval '14 hours'),
+  
+  ('c7ea2e6e-9ccf-4d2d-a3b4-f34d1a612450', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() + interval '9 hours'),
+  ('c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() - interval '2 days' + interval '14 hours'),
+  
+  ('d7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '12 hours'),
+  ('d2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() - interval '1 day' + interval '16 hours');
 
 -- XPトランザクション履歴（ミッション達成に対応）
 INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at)
@@ -136,20 +135,43 @@ VALUES
   
   -- 田中花子のXP履歴（合計95 XP）
   ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', now() - interval '8 days'),
-  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', -5, 'BONUS', NULL, '調整', now() - interval '25 days'),
+  ('d1000009-0000-0000-0000-000000000009', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 29, 'MISSION_COMPLETION', 'a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', 'ミッション達成', now() + interval '12 hours'),
+  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', -34, 'BONUS', NULL, '調整', now() - interval '25 days'),
 
-  ('d1000001-0000-0000-0000-000000000001', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 185, 'MISSION_COMPLETION', 'e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'ミッション達成', now() - interval '2 hours'),
-  ('d1000002-0000-0000-0000-000000000002', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 142, 'MISSION_COMPLETION', 'f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', 'ミッション達成', now() - interval '1 hour'),
-  ('d1000003-0000-0000-0000-000000000003', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 98, 'MISSION_COMPLETION', 'a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'ミッション達成', now() + interval '30 minutes'),
-  ('d1000004-0000-0000-0000-000000000004', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 76, 'MISSION_COMPLETION', 'b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'ミッション達成', now() + interval '1 hour'),
+  ('aaea2e6e-9ccf-4d2d-a3b4-f34d1a612444', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', '67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'ミッション「ゴミ拾いをしよう」達成', now() - interval '1 day' + interval '8 hours'),
+  ('bbea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 200, 'MISSION_COMPLETION', '77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'ミッション「今日のベストショット」達成', now() + interval '15 hours'),
+  ('d1000003-0000-0000-0000-000000000003', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 98, 'MISSION_COMPLETION', 'a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'ミッション達成', now() - interval '2 days' + interval '6 hours'),
+  ('ccea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 392, 'BONUS', NULL, '初期ボーナスXP', now() - interval '28 days'),
+  
+  ('ddea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', '87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'ミッション「Xのニックネーム」達成', now() - interval '1 day' + interval '10 hours'),
+  ('d1000004-0000-0000-0000-000000000004', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 76, 'MISSION_COMPLETION', 'b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'ミッション達成', now() + interval '18 hours'),
+  ('eeea2e6e-9ccf-4d2d-a3b4-f34d1a612448', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 469, 'BONUS', NULL, '初期ボーナスXP', now() - interval '27 days'),
+  
   ('d1000005-0000-0000-0000-000000000005', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 63, 'MISSION_COMPLETION', 'c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', 'ミッション達成', now() + interval '2 hours'),
-  ('d1000006-0000-0000-0000-000000000006', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 51, 'MISSION_COMPLETION', 'd1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', 'ミッション達成', now() + interval '3 hours'),
+  ('ffea2e6e-9ccf-4d2d-a3b4-f34d1a612449', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 402, 'BONUS', NULL, '初期ボーナスXP', now() - interval '26 days'),
+  
+  ('aaeb2e6e-9ccf-4d2d-a3b4-f34d1a612450', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', '97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'ミッション「ゴミ拾いをしよう」達成', now() - interval '2 days' + interval '8 hours'),
+  ('d1000006-0000-0000-0000-000000000006', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 51, 'MISSION_COMPLETION', 'd1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', 'ミッション達成', now() + interval '21 hours'),
+  ('bbeb2e6e-9ccf-4d2d-a3b4-f34d1a612451', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 249, 'BONUS', NULL, '初期ボーナスXP', now() - interval '25 days'),
+  
   ('d1000007-0000-0000-0000-000000000007', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 44, 'MISSION_COMPLETION', 'e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'ミッション達成', now() + interval '4 hours'),
-  ('d1000008-0000-0000-0000-000000000008', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 37, 'MISSION_COMPLETION', 'f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'ミッション達成', now() + interval '5 hours'),
-  ('d1000009-0000-0000-0000-000000000009', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 29, 'MISSION_COMPLETION', 'a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', 'ミッション達成', now() + interval '6 hours'),
-  ('d1000010-0000-0000-0000-000000000010', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 22, 'MISSION_COMPLETION', 'b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'ミッション達成', now() + interval '7 hours'),
-  ('d1000011-0000-0000-0000-000000000011', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 15, 'MISSION_COMPLETION', 'c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'ミッション達成', now() + interval '8 hours'),
-  ('d1000012-0000-0000-0000-000000000012', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 8, 'MISSION_COMPLETION', 'd2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'ミッション達成', now() + interval '9 hours');
+  ('cceb2e6e-9ccf-4d2d-a3b4-f34d1a612452', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 206, 'BONUS', NULL, '初期ボーナスXP', now() - interval '24 days'),
+  
+  ('ddeb2e6e-9ccf-4d2d-a3b4-f34d1a612453', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', 'a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'ミッション「Xのニックネーム」達成', now() - interval '1 day' + interval '12 hours'),
+  ('d1000008-0000-0000-0000-000000000008', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 37, 'MISSION_COMPLETION', 'f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'ミッション達成', now() - interval '2 days' + interval '10 hours'),
+  ('eeeb2e6e-9ccf-4d2d-a3b4-f34d1a612454', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 78, 'BONUS', NULL, '初期ボーナスXP', now() - interval '23 days'),
+  
+  ('ffeb2e6e-9ccf-4d2d-a3b4-f34d1a612455', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', 'b7ea2e6e-9ccf-4d2d-a3b4-f34d1a612449', 'ミッション「ゴミ拾いをしよう」達成', now() + interval '6 hours'),
+  ('d1000010-0000-0000-0000-000000000010', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 22, 'MISSION_COMPLETION', 'b2ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'ミッション達成', now() - interval '1 day' + interval '14 hours'),
+  ('aaec2e6e-9ccf-4d2d-a3b4-f34d1a612456', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', -32, 'BONUS', NULL, '調整', now() - interval '22 days'),
+  
+  ('bbec2e6e-9ccf-4d2d-a3b4-f34d1a612457', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 100, 'MISSION_COMPLETION', 'c7ea2e6e-9ccf-4d2d-a3b4-f34d1a612450', 'ミッション「活動ブログを書こう」達成', now() + interval '9 hours'),
+  ('d1000011-0000-0000-0000-000000000011', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 15, 'MISSION_COMPLETION', 'c2ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', 'ミッション達成', now() - interval '2 days' + interval '12 hours'),
+  ('ccec2e6e-9ccf-4d2d-a3b4-f34d1a612458', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', -100, 'BONUS', NULL, '調整', now() - interval '21 days'),
+  
+  ('ddec2e6e-9ccf-4d2d-a3b4-f34d1a612459', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', 'd7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'ミッション「Xのニックネーム」達成', now() + interval '12 hours'),
+  ('d1000012-0000-0000-0000-000000000012', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 8, 'MISSION_COMPLETION', 'd2ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'ミッション達成', now() - interval '1 day' + interval '16 hours'),
+  ('eeec2e6e-9ccf-4d2d-a3b4-f34d1a612460', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', -50, 'BONUS', NULL, '調整', now() - interval '20 days');
   
 -- ミッション成果物のサンプルデータ
 INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
