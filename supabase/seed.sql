@@ -105,7 +105,17 @@ VALUES
   
   ('b7ea2e6e-9ccf-4d2d-a3b4-f34d1a612449', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', now() - interval '9 hours 1 minute'),
   ('c7ea2e6e-9ccf-4d2d-a3b4-f34d1a612450', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', now() - interval '8 hours 59 minute'),
-  ('d7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours');
+  ('d7ea2e6e-9ccf-4d2d-a3b4-f34d1a612451', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', now() + interval '3 hours'),
+  
+  ('e7ea2e6e-9ccf-4d2d-a3b4-f34d1a612452', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T16:00:00Z'), -- JST 01:00
+  ('f7ea2e6e-9ccf-4d2d-a3b4-f34d1a612453', '2246205f-933f-4a86-83af-dbf6bb6cde90', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T18:30:00Z'), -- JST 03:30
+  ('a1ea2e6e-9ccf-4d2d-a3b4-f34d1a612454', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-07-09T21:15:00Z'), -- JST 06:15
+  ('b1ea2e6e-9ccf-4d2d-a3b4-f34d1a612455', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', '2025-07-09T23:45:00Z'), -- JST 08:45
+  ('c1ea2e6e-9ccf-4d2d-a3b4-f34d1a612456', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T02:00:00Z'), -- JST 11:00
+  ('d1ea2e6e-9ccf-4d2d-a3b4-f34d1a612457', '2246205f-933f-4a86-83af-dbf6bb6cde90', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T05:30:00Z'), -- JST 14:30
+  ('e1ea2e6e-9ccf-4d2d-a3b4-f34d1a612458', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T08:00:00Z'), -- JST 17:00
+  ('f1ea2e6e-9ccf-4d2d-a3b4-f34d1a612459', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T12:00:00Z'), -- JST 21:00
+  ('a2ea2e6e-9ccf-4d2d-a3b4-f34d1a612460', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', '2025-07-10T14:30:00Z'); -- JST 23:30
 
 -- XPトランザクション履歴（ミッション達成に対応）
 INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at)
