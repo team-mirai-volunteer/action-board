@@ -352,6 +352,17 @@ missions:
     is_featured: true
     is_hidden: false
     ogp_image_url: null
+  - slug: put-up-proportional-representation-poster
+    title: 比例代表ポスターを貼ろう
+    icon_url: /img/mission_fallback.svg
+    content: 自宅や許可をもらった私有地に比例代表ポスターを貼ろう！<br><br>ポスターの受け取りを希望する方は<a href="https://docs.google.com/forms/d/e/1FAIpQLScyROTOuZUrFTOfeIS_4qbzf_Wa2M5IP-bFCklz81d0yQF5AA/viewform" target="_blank">こちらのフォーム</a>からお申し込みください。
+    difficulty: 4
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: ポスターを貼った場所の郵便番号
+    ogp_image_url: null
   - slug: chat-idobata-ai
     title: チームみらいマニフェストでAIとチャットしよう
     icon_url: /img/mission_fallback.svg
