@@ -94,7 +94,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     // 自身のユーザーページの表示内容を確認
     await expect(signedInPage.getByText('テストユーザー')).toBeVisible();
     await expect(signedInPage.getByText('Lv.1')).toBeVisible();
-    await expect(signedInPage.getByText('東京都')).toBeVisible();
+    await expect(signedInPage.locator('.flex.ml-4.text-sm.items-center').filter({ hasText: '東京都' })).toBeVisible();
     await expect(signedInPage.getByText('活動タイムライン')).toBeVisible();
   });
 
