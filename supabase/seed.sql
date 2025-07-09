@@ -256,27 +256,22 @@ ON CONFLICT DO NOTHING;
 
 
 
-/*
-
 INSERT INTO achievements (id, mission_id, user_id, created_at) VALUES
-  ('today-achievement-1', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T16:00:00Z'), -- JST 01:00
-  ('today-achievement-2', '4446205f-933f-4a86-83af-dbf6bb6cde92', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2025-07-09T20:00:00Z'), -- JST 05:00
-  ('today-achievement-3', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-10T10:00:00Z'), -- JST 19:00
+  ('a3ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-09T16:00:00Z'), -- JST 01:00
+  ('b3ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', '4446205f-933f-4a86-83af-dbf6bb6cde92', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T20:00:00Z'), -- JST 05:00
+  ('c3ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-10T10:00:00Z'), -- JST 19:00
   
-  ('yesterday-achievement-1', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2025-07-09T14:59:59Z'), -- JST 23:59:59（前日）
-  ('yesterday-achievement-2', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-08T16:00:00Z'), -- JST 01:00（前日）
+  ('d3ea2e6e-9ccf-4d2d-a3b4-f34d1a612464', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-09T14:59:59Z'), -- JST 23:59:59（前日）
+  ('e3ea2e6e-9ccf-4d2d-a3b4-f34d1a612465', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-08T16:00:00Z'), -- JST 01:00（前日）
   
-  ('historical-achievement-1', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2025-06-01T15:00:00Z'),
-  ('historical-achievement-2', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-02T15:00:00Z');
+  ('f3ea2e6e-9ccf-4d2d-a3b4-f34d1a612466', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-01T15:00:00Z'),
+  ('a4ea2e6e-9ccf-4d2d-a3b4-f34d1a612467', '4446205f-933f-4a86-83af-dbf6bb6cde92', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-02T15:00:00Z');
 
-INSERT INTO xp_transactions (id, user_id, amount, source_type, source_id, created_at) VALUES
-  ('today-xp-1', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION', 'today-achievement-1', '2025-07-09T16:00:00Z'),
-  ('today-xp-2', '2246205f-933f-4a86-83af-dbf6bb6cde90', 100, 'MISSION', 'today-achievement-2', '2025-07-09T20:00:00Z'),
-  ('today-xp-3', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 75, 'MISSION', 'today-achievement-3', '2025-07-10T10:00:00Z'),
-  ('yesterday-xp-1', '2246205f-933f-4a86-83af-dbf6bb6cde90', 50, 'MISSION', 'yesterday-achievement-1', '2025-07-09T14:59:59Z'),
-  ('yesterday-xp-2', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION', 'yesterday-achievement-2', '2025-07-08T16:00:00Z'),
-  ('historical-xp-1', '2246205f-933f-4a86-83af-dbf6bb6cde90', 50, 'MISSION', 'historical-achievement-1', '2025-06-01T15:00:00Z'),
-  ('historical-xp-2', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION', 'historical-achievement-2', '2025-06-02T15:00:00Z');
-
-
-*/
+INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, created_at) VALUES
+  ('b4ea2e6e-9ccf-4d2d-a3b4-f34d1a612468', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', 'a3ea2e6e-9ccf-4d2d-a3b4-f34d1a612461', '2025-07-09T16:00:00Z'),
+  ('c4ea2e6e-9ccf-4d2d-a3b4-f34d1a612469', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', 'b3ea2e6e-9ccf-4d2d-a3b4-f34d1a612462', '2025-07-09T20:00:00Z'),
+  ('d4ea2e6e-9ccf-4d2d-a3b4-f34d1a612470', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 75, 'MISSION_COMPLETION', 'c3ea2e6e-9ccf-4d2d-a3b4-f34d1a612463', '2025-07-10T10:00:00Z'),
+  ('e4ea2e6e-9ccf-4d2d-a3b4-f34d1a612471', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', 'd3ea2e6e-9ccf-4d2d-a3b4-f34d1a612464', '2025-07-09T14:59:59Z'),
+  ('f4ea2e6e-9ccf-4d2d-a3b4-f34d1a612472', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'e3ea2e6e-9ccf-4d2d-a3b4-f34d1a612465', '2025-07-08T16:00:00Z'),
+  ('a5ea2e6e-9ccf-4d2d-a3b4-f34d1a612473', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', 'f3ea2e6e-9ccf-4d2d-a3b4-f34d1a612466', '2025-06-01T15:00:00Z'),
+  ('b5ea2e6e-9ccf-4d2d-a3b4-f34d1a612474', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 100, 'MISSION_COMPLETION', 'a4ea2e6e-9ccf-4d2d-a3b4-f34d1a612467', '2025-06-02T15:00:00Z');
