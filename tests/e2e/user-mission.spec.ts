@@ -104,7 +104,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await assertAuthState(signedInPage, true);
 
     // 任意のユーザーページに遷移（ランキングから佐藤太郎のページへ）
-    await signedInPage.getByRole('link').filter({ hasText: '佐藤太郎' }).click();
+    await signedInPage.getByRole('link').filter({ hasText: '佐藤太郎' }).first().click();
     await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, { timeout: 10000 });
 
     // 任意のユーザーページの表示内容を確認
