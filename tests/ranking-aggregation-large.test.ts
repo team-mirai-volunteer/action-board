@@ -23,6 +23,30 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
 
   describe("今日のトップ5ランキング精度テスト（大規模データセット）", () => {
     it("should return exactly 5 users for homepage top 5 with large dataset", async () => {
+      const mockRankingData = [
+        {
+          user_id: "user1",
+          name: "テストユーザー1",
+          address_prefecture: "東京都",
+          rank: 1,
+          level: 10,
+          xp: 1000,
+        },
+        {
+          user_id: "user2",
+          name: "テストユーザー2",
+          address_prefecture: "大阪府",
+          rank: 2,
+          level: 8,
+          xp: 800,
+        },
+      ];
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking = await getRanking(5, "daily");
       
       expect(ranking).toBeDefined();
@@ -38,6 +62,38 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
     });
 
     it("should return users sorted by XP in descending order with large dataset", async () => {
+      const mockRankingData = [
+        {
+          user_id: "user1",
+          name: "テストユーザー1",
+          address_prefecture: "東京都",
+          rank: 1,
+          level: 10,
+          xp: 1000,
+        },
+        {
+          user_id: "user2",
+          name: "テストユーザー2",
+          address_prefecture: "大阪府",
+          rank: 2,
+          level: 8,
+          xp: 800,
+        },
+        {
+          user_id: "user3",
+          name: "テストユーザー3",
+          address_prefecture: "愛知県",
+          rank: 3,
+          level: 6,
+          xp: 600,
+        },
+      ];
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking = await getRanking(5, "daily");
       
       for (let i = 0; i < ranking.length - 1; i++) {
@@ -76,6 +132,20 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
 
   describe("今日のトップ100ランキング精度テスト（大規模データセット）", () => {
     it("should return up to 100 users for ranking page with large dataset", async () => {
+      const mockRankingData = Array.from({ length: 50 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `テストユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 10),
+        xp: 2500 - i * 10,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking = await getRanking(100, "daily");
       
       expect(ranking).toBeDefined();
@@ -84,6 +154,20 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
     });
 
     it("should maintain consistent ordering across multiple calls with large dataset", async () => {
+      const mockRankingData = Array.from({ length: 10 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `テストユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - i,
+        xp: 2500 - i * 100,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const ranking1 = await getRanking(100, "daily");
       const ranking2 = await getRanking(100, "daily");
       
@@ -96,6 +180,20 @@ describe("Large Dataset Ranking Aggregation Accuracy Tests", () => {
     });
 
     it("should handle large dataset performance efficiently", async () => {
+      const mockRankingData = Array.from({ length: 20 }, (_, i) => ({
+        user_id: `user-${i}`,
+        name: `テストユーザー${i}`,
+        address_prefecture: "東京都",
+        rank: i + 1,
+        level: 25 - Math.floor(i / 5),
+        xp: 2500 - i * 50,
+      }));
+
+      mockSupabase.rpc.mockResolvedValue({
+        data: mockRankingData,
+        error: null,
+      });
+
       const startTime = Date.now();
       const ranking = await getRanking(100, "daily");
       const endTime = Date.now();
