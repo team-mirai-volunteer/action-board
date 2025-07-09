@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getRanking } from "./ranking";
 
+jest.mock("@/lib/dateUtils", () => ({
+  getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T15:00:00.000Z")), // UTC 15:00 = JST 00:00
+}));
+
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),

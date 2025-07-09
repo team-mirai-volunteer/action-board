@@ -1,6 +1,7 @@
 "server-only";
 
 import { PREFECTURES } from "@/lib/address";
+import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createServiceClient } from "@/lib/supabase/server";
 import { updateBadge } from "./badges";
 
@@ -62,15 +63,7 @@ export async function calculateDailyRankingBadges(): Promise<{
 
   try {
     // 日本時間（JST）で前日の0時と当日の0時を取得
-    const now = new Date();
-
-    // 日本時間の今日の0時を取得（UTC 15:00 = JST 00:00）
-    const todayJST = new Date(now);
-    todayJST.setUTCHours(15, 0, 0, 0);
-    if (todayJST > now) {
-      // まだ日本時間の0時になっていない場合は前日にする
-      todayJST.setUTCDate(todayJST.getUTCDate() - 1);
-    }
+    const todayJST = getJSTMidnightToday();
 
     // 日本時間の昨日の0時を取得
     const yesterdayJST = new Date(todayJST);

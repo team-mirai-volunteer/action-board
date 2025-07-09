@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
+import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 
 export interface UserRanking {
@@ -26,15 +27,7 @@ export async function getRanking(
 
     switch (period) {
       case "daily":
-        // 本日の0時0分を基準にする
-        dateFilter = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
+        dateFilter = getJSTMidnightToday();
         break;
       default:
         dateFilter = null;
