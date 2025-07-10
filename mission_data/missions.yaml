@@ -296,6 +296,17 @@ missions:
     is_hidden: false
     artifact_label: あなたが視聴したYouTube動画のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//20_youtube_view.png
+  - slug: youtube-like
+    title: YouTubeでチームみらい動画に👍をつけよう
+    icon_url: /img/mission_fallback.svg
+    content:  チームみらい関連のYouTube動画を見つけて「高評価」で応援しよう！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたが高評価したYouTube動画のURL
+    ogp_image_url: null
   - slug: x-post
     title: Xでチームみらいに関する投稿をしよう
     icon_url: /img/mission_fallback.svg
