@@ -25,7 +25,7 @@ export default function TermsOfService() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             本サービスの利用は、以下の条件をすべて満たす方に限られます。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-black mb-3">
+          <ul className="list-disc pl-6 space-y-2 text-sm-custom text-black mb-3">
             <li>満18歳以上であること</li>
             <li>本規約に同意し、遵守する意思を有すること</li>
             <li>法令および公序良俗に反しない行動を取ることができること</li>
@@ -76,7 +76,7 @@ export default function TermsOfService() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             ユーザーは、以下の行為を行ってはなりません。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-black">
+          <ul className="list-disc pl-6 space-y-2 text-sm-custom text-black">
             <li>法令または公序良俗に反する行為</li>
             <li>政治活動及び選挙運動に関して法令により禁止されている行為</li>
             <li>他人になりすます行為</li>
