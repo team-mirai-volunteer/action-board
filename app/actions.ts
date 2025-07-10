@@ -219,14 +219,14 @@ export const signInActionWithState = async (
   });
   if (!validatedFields.success) {
     return {
-      error: "メールアドレスまたはパスワードが間違っています",
+      error: "login-error",
       formData: currentFormData,
     };
   }
 
   if (!email || !password) {
     return {
-      error: "メールアドレスまたはパスワードが間違っています",
+      error: "login-error",
       formData: currentFormData,
     };
   }
@@ -240,7 +240,7 @@ export const signInActionWithState = async (
 
   if (error) {
     return {
-      error: "メールアドレスまたはパスワードが間違っています",
+      error: "login-error",
       formData: currentFormData,
     };
   }
@@ -324,7 +324,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     "/forgot-password",
-    "パスワードリセット用のリンクをメールでお送りしました。",
+    "password-reset-success",
   );
 };
 

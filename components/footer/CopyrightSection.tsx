@@ -38,6 +38,15 @@ export function CopyrightSection() {
             >
               ご意見箱
             </Link>
+            <span>|</span>
+            <Link
+              href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f"
+              className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              よくあるご質問
+            </Link>
           </div>
         </div>
         <p className="text-sm text-muted-foreground text-center mt-4">
