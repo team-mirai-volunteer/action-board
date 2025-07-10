@@ -45,7 +45,9 @@ export default async function AuthButton() {
               <Link href="/map/poster">ポスター掲示板マップ</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="https://team-mir.ai/">チームみらい公式</Link>
+              <Link href="https://team-mir.ai/" rel="noopener noreferrer">
+                チームみらい公式
+              </Link>
             </DropdownMenuItem>
             {/*
             <DropdownMenuItem asChild>
