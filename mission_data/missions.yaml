@@ -99,7 +99,7 @@ missions:
     is_featured: true
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//6_clip_youtube_video.png
+    ogp_image_url: null
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
     icon_url: /img/mission_fallback.svg
