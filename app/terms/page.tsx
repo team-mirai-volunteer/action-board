@@ -25,7 +25,7 @@ export default function TermsOfService() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             本サービスの利用は、以下の条件をすべて満たす方に限られます。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-3">
+          <ul className="list-disc pl-6 space-y-2 text-black mb-3">
             <li>満18歳以上であること</li>
             <li>本規約に同意し、遵守する意思を有すること</li>
             <li>法令および公序良俗に反しない行動を取ることができること</li>
@@ -76,7 +76,7 @@ export default function TermsOfService() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             ユーザーは、以下の行為を行ってはなりません。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700">
+          <ul className="list-disc pl-6 space-y-2 text-black">
             <li>法令または公序良俗に反する行為</li>
             <li>政治活動及び選挙運動に関して法令により禁止されている行為</li>
             <li>他人になりすます行為</li>
@@ -149,7 +149,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             10. 規約の変更
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -158,7 +158,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             11. 準拠法および管轄裁判所
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">

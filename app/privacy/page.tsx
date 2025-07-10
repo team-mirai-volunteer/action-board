@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             当団体は、本サービスの利用にあたり、ユーザーから以下の情報を取得する場合があります。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700">
+          <ul className="list-disc pl-6 space-y-2 text-black">
             <li>ニックネーム</li>
             <li>生年月日</li>
             <li>郵便番号</li>
@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             取得した個人情報は、以下の目的に限り利用いたします。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700">
+          <ul className="list-disc pl-6 space-y-2 text-black">
             <li>本サービスの提供・運営のため</li>
             <li>ユーザー認証およびログイン管理のため</li>
             <li>ポイント集計・ランキング機能提供のため</li>
@@ -79,7 +79,7 @@ export default function PrivacyPolicy() {
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
             当団体は、以下の場合を除き、ユーザーの個人情報を第三者に提供することはありません。
           </p>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700">
+          <ul className="list-disc pl-6 space-y-2 text-black">
             <li>ユーザー本人の同意がある場合</li>
             <li>法令に基づく場合</li>
             <li>人の生命・身体・財産の保護に緊急の必要がある場合</li>
