@@ -10,7 +10,7 @@ export default function TermsOfService() {
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             1. サービスの目的と性質
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -19,7 +19,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             2. 利用資格
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
@@ -36,7 +36,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             3. ユーザー登録とアカウント管理
           </h2>
           <div className="space-y-3 text-sm-custom font-normal text-black text-justify">
@@ -53,7 +53,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             4. ポイントおよびランキング制度
           </h2>
           <div className="space-y-3 text-sm-custom font-normal text-black text-justify">
@@ -70,7 +70,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             5. 禁止事項
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
@@ -91,7 +91,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             6. 知的財産権とオープンソースの取り扱い
           </h2>
           <div className="space-y-3 text-sm-custom font-normal text-black text-justify">
@@ -117,7 +117,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             7. ミッション成果物の取り扱い
           </h2>
           <div className="space-y-3 text-sm-custom font-normal text-black text-justify">
@@ -131,7 +131,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             8. サービスの変更・中断・終了
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -140,7 +140,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-blue-500 pb-2">
+          <h2 className="text-lg-custom font-bold text-black mb-4">
             9. 免責事項
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
