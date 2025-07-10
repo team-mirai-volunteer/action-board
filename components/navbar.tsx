@@ -65,6 +65,9 @@ export default async function Navbar() {
                     <DropdownMenuItem asChild>
                       <Link href="/map/poster">ポスター掲示板マップ</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="https://team-mir.ai/">チームみらい公式</Link>
+                    </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
