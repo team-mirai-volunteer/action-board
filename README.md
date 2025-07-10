@@ -111,7 +111,7 @@
    supabase db reset
    ```
 
-  supabase/migrations配下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みます。
+  `supabase/migrations`配下にあるマイグレーションを実行し、`supabase/seed.sql`にあるシードデータをローカルデータベースに流し込みます。
 
 5. 必要なパッケージをインストール:
 
@@ -119,13 +119,30 @@
    npm install
    ```
 
-6. Next.js のローカル開発サーバーを起動:
+6. `.env` ファイルの作成
+
+   ```bash
+   cp .env.local .env
+   ```
+
+   `.env.local` ファイルをコピーして `.env` を作成します。
+
+7. ミッションデータの同期:
+
+   ```bash
+   npm run mission:sync
+   ```
+
+   `mission_data/README.md`を参照ください。
+
+8. Next.js のローカル開発サーバーを起動:
 
    ```bash
    npm run dev
    ```
 
    サービスは [localhost:3000](http://localhost:3000/) でアクセス可能になります。
+   `supabase/seed.sql`のシードデータに含まれるユーザー情報を使用してログインしてください。
 
 ## サービスの停止方法
 
