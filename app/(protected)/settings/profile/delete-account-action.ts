@@ -11,6 +11,6 @@ export async function deleteAccountAction() {
     throw new Error("退会処理でエラーが発生しました。もう一度お試しください。");
   }
 
-  // 削除処理が成功した場合のみリダイレクト
+  // 退会処理が成功した場合のみリダイレクト
   redirect("/sign-in");
 }

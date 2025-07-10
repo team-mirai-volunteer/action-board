@@ -481,12 +481,12 @@ export default function ProfileForm({
             {!isNew && (
               <Button
                 type="button"
-                variant="outline"
-                className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                variant="destructive"
+                className="w-full"
                 onClick={() => setIsDeleteModalOpen(true)}
                 disabled={isPending}
               >
-                アカウントを削除
+                退会する
               </Button>
             )}
           </CardFooter>

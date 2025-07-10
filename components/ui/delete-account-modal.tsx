@@ -59,7 +59,7 @@ export function DeleteAccountModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
-            アカウントの削除
+            退会
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -68,7 +68,7 @@ export function DeleteAccountModal({
               この操作は元に戻すことができません。
             </p>
             <p className="text-sm">
-              アカウントを削除すると、以下のデータが完全に削除されます：
+              退会すると、以下のデータが完全に削除されます：
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li>プロフィール情報</li>
@@ -100,7 +100,7 @@ export function DeleteAccountModal({
             onClick={handleDelete}
             disabled={confirmText !== "退会する" || isDeleting}
           >
-            {isDeleting ? "削除中..." : "アカウントを削除"}
+            {isDeleting ? "退会処理中..." : "退会"}
           </Button>
         </DialogFooter>
       </DialogContent>
