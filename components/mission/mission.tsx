@@ -85,7 +85,11 @@ export default function Mission({
             <span className="text-sm font-medium text-gray-700">難易度：</span>
             <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
             <span className="text-sm font-medium ml-1.5 text-gray-700">
-              獲得ポイント：{calculateMissionXp(mission.difficulty)}
+              獲得ポイント：
+              {mission.required_artifact_type === "POSTER" ||
+              mission.required_artifact_type === "POSTING"
+                ? "-"
+                : calculateMissionXp(mission.difficulty)}
             </span>
           </div>
         </div>
@@ -96,13 +100,17 @@ export default function Mission({
               className={clsx(
                 "w-full rounded-full py-6 text-base font-bold text-white",
                 hasReachedMaxAchievements
-                  ? "bg-yellow-300 hover:bg-yellow-300/90 text-primary"
-                  : "bg-primary hover:bg-primary/90",
+                  ? "bg-yellow-300 hover:bg-yellow-300/90 text-black"
+                  : userAchievementCount === 0
+                    ? "bg-primary hover:bg-primary/90"
+                    : "bg-yellow-300 hover:bg-yellow-300/90 text-black",
               )}
             >
               {hasReachedMaxAchievements
                 ? "ミッションクリア🎉"
-                : "今すぐチャレンジ🔥"}
+                : userAchievementCount === 0
+                  ? "今すぐチャレンジ🔥"
+                  : "もう一回チャレンジ🔥"}
             </Button>
           </motion.div>
         </Link>
