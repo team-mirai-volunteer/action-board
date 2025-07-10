@@ -47,6 +47,10 @@ categories:
     title: noteで応援しよう
     sort_no: 1200
     category_kbn: DEFAULT
+  - slug: support-on-threads
+    title: Threadsで応援しよう
+    sort_no: 1250
+    category_kbn: DEFAULT
   - slug: create-and-support
     title: 作って応援しよう
     sort_no: 1300
