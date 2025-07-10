@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             1. 個人情報の定義
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             2. 取得する情報
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
@@ -42,7 +42,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             3. 利用目的
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             4. Cookie等の利用
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             5. 第三者提供
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify mb-3">
@@ -91,7 +91,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             6. ミッション成果物の取り扱い
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -100,7 +100,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             7. 個人情報の保管期間
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -109,7 +109,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             8. 安全管理措置
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
@@ -118,7 +118,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg-custom font-bold text-black mb-4">
+          <h2 className="text-lg-custom font-bold text-black mb-4 border-b-2 border-tm-teal pb-2">
             9. 開示・訂正・削除等の請求
           </h2>
           <p className="text-sm-custom font-normal text-black text-justify">
