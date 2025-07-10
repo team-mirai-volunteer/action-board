@@ -70,7 +70,7 @@ export default async function Navbar() {
                         href="https://team-mir.ai/"
                         rel="noopener noreferrer"
                       >
-                        チームみらい公式
+                        チームみらい 公式サイト
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
