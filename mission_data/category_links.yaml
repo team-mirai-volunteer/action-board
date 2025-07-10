@@ -13,6 +13,8 @@ category_links:
         sort_no: 400
       - mission_slug: follow-note
         sort_no: 500
+      - mission_slug: follow-anno-threads
+        sort_no: 550
   - category_slug: learn-about-teammirai
     missions:
       - mission_slug: link-official-site
@@ -49,6 +51,8 @@ category_links:
         sort_no: 100
       - mission_slug: tiktok-like
         sort_no: 150
+      - mission_slug: threads-like
+        sort_no: 175
       - mission_slug: note-like
         sort_no: 200
       - mission_slug: instagram-like
@@ -167,3 +171,11 @@ category_links:
         sort_no: 100
       - mission_slug: tiktok-like
         sort_no: 200
+  - category_slug: support-on-threads
+    missions:
+      - mission_slug: follow-anno-threads
+        sort_no: 100
+      - mission_slug: threads-like
+        sort_no: 200
+      - mission_slug: threads-post
+        sort_no: 300
