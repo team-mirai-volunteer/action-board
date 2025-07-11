@@ -78,12 +78,11 @@ export default async function Home({
         <BadgeNotificationCheck badgeData={badgeNotifications} />
       )}
 
-      {/* ヒーローセクション - フルワイド */}
+      {/* ヒーローセクション */}
       <section>
         <Hero />
       </section>
 
-      {/* 以下のセクションはコンテナ内に配置 */}
       <div className="w-full md:container md:mx-auto py-4">
         {/* メトリクスセクション */}
         <MetricsWithSuspense />
