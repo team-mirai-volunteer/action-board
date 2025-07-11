@@ -161,7 +161,7 @@ export async function updateBoardStatus(
       new_status: newStatus,
       user_id: user.id,
       previous_status: currentBoard.status,
-      note: note || undefined,
+      note: note || null,
     },
   );
 

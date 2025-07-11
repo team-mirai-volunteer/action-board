@@ -1579,7 +1579,7 @@ export type Database = {
           new_status: Database["public"]["Enums"]["poster_board_status"];
           user_id: string;
           previous_status: Database["public"]["Enums"]["poster_board_status"];
-          note?: string;
+          note?: string | null;
         };
         Returns: Json;
       };
