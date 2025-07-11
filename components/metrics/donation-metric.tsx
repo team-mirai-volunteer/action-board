@@ -100,6 +100,17 @@ export function DonationMetric({
           +{formatAmount(donationIncrease)}
         </span>
       </p>
+      {/* ここでリンクを追加 */}
+      <p className="mt-2 text-xs whitespace-nowrap">
+        <a
+          href="https://team-mir.ai/support/donation"
+          className="text-blue-600 underline hover:text-blue-800"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ご支援はこちらから
+        </a>
+      </p>
     </div>
   );
 }
