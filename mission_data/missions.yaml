@@ -97,9 +97,10 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: true
+    featured_importance: 80
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//6_clip_youtube_video.png
+    ogp_image_url: null
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
     icon_url: /img/mission_fallback.svg
@@ -207,6 +208,7 @@ missions:
     required_artifact_type: REFERRAL
     max_achievement_count: null
     is_featured: true
+    featured_importance: 60
     is_hidden: false
     artifact_label: null
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//12_referral.png
@@ -239,7 +241,7 @@ missions:
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
@@ -327,7 +329,7 @@ missions:
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
@@ -394,6 +396,7 @@ missions:
     required_artifact_type: POSTER
     max_achievement_count: null
     is_featured: true
+    featured_importance: 90
     is_hidden: false
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
@@ -559,6 +562,18 @@ missions:
     title: 期日前投票をしよう！
     icon_url: /img/mission_fallback.svg
     content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！
+    difficulty: 5
+    required_artifact_type: NONE
+    max_achievement_count: 1
+    is_featured: true
+    featured_importance: 100
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
+  - slug: absent-vote
+    title: 不在者投票をしよう！
+    icon_url: /img/mission_fallback.svg
+    content: 不在者投票:旅行中でも、病院からでも大丈夫！「不在者投票」は、遠方への出張や入院などで投票所に行けない人のために用意された制度です。<br>申請さえ済ませれば郵送や滞在先の投票所からでも大切な一票を確実に行使できます。<br>移動が難しくても、あなたの想いはしっかり届く――さぁ、みんなで投票率アップを目指そう！
     difficulty: 5
     required_artifact_type: NONE
     max_achievement_count: 1

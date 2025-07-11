@@ -175,12 +175,8 @@ category_links:
         sort_no: 100
       - mission_slug: tiktok-like
         sort_no: 200
-  - category_slug: vote-in-various-ways
-    missions:
-      - mission_slug: early-vote
-        sort_no: 100
-      - mission_slug: overseas-vote
-        sort_no: 200
+      - mission_slug: youtube-clip
+        sort_no: 300
   - category_slug: support-on-threads
     missions:
       - mission_slug: follow-anno-threads
@@ -189,3 +185,9 @@ category_links:
         sort_no: 200
       - mission_slug: threads-post
         sort_no: 300
+  - category_slug: vote-in-various-ways
+    missions:
+      - mission_slug: early-vote
+        sort_no: 100
+      - mission_slug: overseas-vote
+        sort_no: 200

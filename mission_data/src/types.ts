@@ -14,6 +14,7 @@ export interface Mission {
   required_artifact_type: string;
   max_achievement_count: number | null;
   is_featured: boolean;
+  featured_importance?: number | null;
   is_hidden: boolean;
   artifact_label?: string | null;
   ogp_image_url?: string | null;

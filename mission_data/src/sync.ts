@@ -107,6 +107,7 @@ async function syncMissions(missions: Mission[], dryRun: boolean) {
         required_artifact_type: mission.required_artifact_type,
         max_achievement_count: mission.max_achievement_count,
         is_featured: mission.is_featured,
+        featured_importance: mission.featured_importance,
         is_hidden: mission.is_hidden,
         artifact_label: mission.artifact_label,
         ogp_image_url: mission.ogp_image_url,
