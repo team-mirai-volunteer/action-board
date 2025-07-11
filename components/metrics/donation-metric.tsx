@@ -104,7 +104,7 @@ export function DonationMetric({
       <p className="mt-2 text-xs whitespace-nowrap">
         <a
           href="https://team-mir.ai/support/donation"
-          className="text-blue-600 underline hover:text-blue-800"
+          className="text-teal-600 underline hover:text-teal-700"
           target="_blank"
           rel="noopener noreferrer"
         >
