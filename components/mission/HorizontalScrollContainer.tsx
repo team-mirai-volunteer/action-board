@@ -1,9 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils/utils";
+import AutoScroll from "embla-carousel-auto-scroll";
+import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface HorizontalScrollContainerProps {
   children: React.ReactNode;
@@ -16,22 +18,32 @@ export function HorizontalScrollContainer({
   className,
   scrollDistance = 316,
 }: HorizontalScrollContainerProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [initialScrollLeft, setInitialScrollLeft] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      align: "start",
+      containScroll: "trimSnaps",
+      dragFree: true,
+    },
+    [
+      AutoScroll({
+        startDelay: 3000,
+        speed: 1,
+        stopOnInteraction: true,
+        stopOnMouseEnter: true,
+        stopOnFocusIn: true,
+      }),
+    ],
+  );
 
   const updateScrollButtons = useCallback(() => {
-    if (!scrollRef.current) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 0);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-  }, []);
+    if (!emblaApi) return;
+    setCanScrollLeft(emblaApi.canScrollPrev());
+    setCanScrollRight(emblaApi.canScrollNext());
+  }, [emblaApi]);
 
   useEffect(() => {
     const checkDesktop = () => {
@@ -47,95 +59,27 @@ export function HorizontalScrollContainer({
   }, []);
 
   useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement) return;
+    if (!emblaApi) return;
 
-    const handleUpdate = () => {
-      setTimeout(updateScrollButtons, 0);
-    };
-
-    handleUpdate();
-    scrollElement.addEventListener("scroll", updateScrollButtons);
-
-    const resizeObserver = new ResizeObserver(handleUpdate);
-    resizeObserver.observe(scrollElement);
+    updateScrollButtons();
+    emblaApi.on("reInit", updateScrollButtons);
+    emblaApi.on("select", updateScrollButtons);
 
     return () => {
-      scrollElement.removeEventListener("scroll", updateScrollButtons);
-      resizeObserver.disconnect();
+      emblaApi.off("reInit", updateScrollButtons);
+      emblaApi.off("select", updateScrollButtons);
     };
-  }, [updateScrollButtons]);
+  }, [emblaApi, updateScrollButtons]);
 
-  const scrollLeftButton = () => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({
-      left: -scrollDistance,
-      behavior: "smooth",
-    });
-  };
+  const scrollLeftButton = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollPrev();
+  }, [emblaApi]);
 
-  const scrollRight = () => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({
-      left: scrollDistance,
-      behavior: "smooth",
-    });
-  };
-
-  const handleDragStart = useCallback(
-    (clientX: number) => {
-      if (!scrollRef.current || !isDesktop) return;
-
-      setIsDragging(true);
-      setStartX(clientX);
-      setInitialScrollLeft(scrollRef.current.scrollLeft);
-    },
-    [isDesktop],
-  );
-
-  const handleDragMove = useCallback(
-    (clientX: number) => {
-      if (!isDragging || !scrollRef.current || !isDesktop) return;
-
-      const deltaX = clientX - startX;
-      const newScrollLeft = initialScrollLeft - deltaX;
-
-      scrollRef.current.scrollLeft = newScrollLeft;
-    },
-    [isDragging, startX, initialScrollLeft, isDesktop],
-  );
-
-  const handleDragEnd = useCallback(() => {
-    if (!isDragging || !isDesktop) return;
-    setIsDragging(false);
-  }, [isDragging, isDesktop]);
-
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isDesktop) return;
-      e.preventDefault();
-      handleDragStart(e.clientX);
-    },
-    [handleDragStart, isDesktop],
-  );
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isDesktop) return;
-      handleDragMove(e.clientX);
-    },
-    [handleDragMove, isDesktop],
-  );
-
-  const handleMouseUp = useCallback(() => {
-    if (!isDesktop) return;
-    handleDragEnd();
-  }, [handleDragEnd, isDesktop]);
-
-  const handleMouseLeave = useCallback(() => {
-    if (!isDesktop) return;
-    handleDragEnd();
-  }, [handleDragEnd, isDesktop]);
+  const scrollRight = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollNext();
+  }, [emblaApi]);
 
   return (
     <div className="relative">
@@ -155,27 +99,8 @@ export function HorizontalScrollContainer({
         </button>
       )}
 
-      <div
-        ref={scrollRef}
-        className={cn(
-          "w-full overflow-x-auto custom-scrollbar",
-          isDesktop && isDragging
-            ? "cursor-grabbing"
-            : isDesktop
-              ? "cursor-grab"
-              : "",
-          className,
-        )}
-        style={{
-          scrollbarWidth: "none",
-          userSelect: isDesktop && isDragging ? "none" : "auto",
-        }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-      >
-        {children}
+      <div ref={emblaRef} className={cn("w-full overflow-hidden", className)}>
+        <div className="flex">{children}</div>
       </div>
 
       {isDesktop && canScrollRight && (
