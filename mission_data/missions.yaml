@@ -78,7 +78,7 @@ missions:
   - slug: share-manifest-sns
     title: マニフェストの感想をSNSでシェアしよう
     icon_url: /img/mission_fallback.svg
-    content: <a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>の内容を確認し、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。<br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
+    content: <a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいマニフェスト</a>の内容を確認し、気になった政策や共感した提案について、あなたの言葉でSNSに感想を発信してみよう。難しく考えなくてOK。「ここがいいな」「もっとこうしてほしい」など、素直な声が広がることで、政治はもっと身近になります。<br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -92,7 +92,7 @@ missions:
     content: |-
       ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
       SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-      <a href="https://team-mirai.notion.site/206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023安野たかひろ &#x0023チームみらい をコピーする</a>
+      <a href="https://team-mirai.notion.site/206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023安野たかひろ &#x0023チームみらい をコピーする</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
@@ -170,7 +170,7 @@ missions:
   - slug: threads-post
     title: Threads でチームみらいに関する投稿をしよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの活動について、あなたの声をThreadsで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！<br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
+    content: チームみらいの活動について、あなたの声をThreadsで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！<br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -312,7 +312,7 @@ missions:
   - slug: x-post
     title: Xでチームみらいに関する投稿をしよう
     icon_url: /img/mission_fallback.svg
-    content: チームみらいの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！<br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
+    content: チームみらいの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！<br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('#チームみらい &#x0023みらいを選ぼう');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023チームみらい &#x0023みらいを選ぼう をコピーする</a>
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
