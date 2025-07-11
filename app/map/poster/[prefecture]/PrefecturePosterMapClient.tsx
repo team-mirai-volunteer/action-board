@@ -291,15 +291,50 @@ export default function PrefecturePosterMapClient({
     board: PosterBoard,
   ): Promise<void> => {
     const supabase = createClient();
-    const { data: mission } = await supabase
+    const { data: mission, error: missionError } = await supabase
       .from("missions")
       .select("id")
       .eq("slug", "put-up-poster-on-board")
       .single();
 
-    if (!mission) {
-      // ミッションが見つからない場合は静かに終了
-      return;
+    if (!mission || missionError) {
+      const errorDetails = {
+        boardId: board.id,
+        boardName: board.name,
+        prefecture: board.prefecture,
+        city: board.city,
+        missionSlug: "put-up-poster-on-board",
+        error: missionError?.message || "Mission not found",
+        errorCode: missionError?.code,
+        errorDetails: missionError?.details,
+        timestamp: new Date().toISOString(),
+      };
+
+      console.error(
+        "ポスター掲示板ミッション取得に失敗しました:",
+        errorDetails,
+      );
+
+      if (typeof window !== "undefined" && window.Sentry) {
+        window.Sentry.captureException(
+          new Error(
+            `Mission lookup failed: ${missionError?.message || "Mission not found"}`,
+          ),
+          {
+            tags: {
+              component: "PrefecturePosterMapClient",
+              action: "completePosterBoardMission_missionLookup",
+              prefecture: board.prefecture,
+              errorType: "mission_lookup_failure",
+            },
+            extra: errorDetails,
+          },
+        );
+      }
+
+      throw new Error(
+        `ミッション取得に失敗: ${missionError?.message || "Mission not found"}`,
+      );
     }
 
     const formData = new FormData();
