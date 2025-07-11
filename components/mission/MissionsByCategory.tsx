@@ -151,55 +151,53 @@ export default async function MissionsByCategory({
 
               {/* 横スクロール領域 */}
               <HorizontalScrollContainer>
-                <div className="flex w-fit gap-4 px-4 pb-2">
-                  {missionsInCategory
-                    .filter(
-                      (m) =>
-                        m.mission_id &&
-                        (showAchievedMissions ||
-                          !achievedMissionIds.includes(m.mission_id)),
-                    )
-                    .map((m) => {
-                      // filterでmission_idがnullでないことを確認済み
-                      // mission_idが存在することが保証されているので、安全にアクセス
-                      const missionId = m.mission_id as string;
+                {missionsInCategory
+                  .filter(
+                    (m) =>
+                      m.mission_id &&
+                      (showAchievedMissions ||
+                        !achievedMissionIds.includes(m.mission_id)),
+                  )
+                  .map((m) => {
+                    // filterでmission_idがnullでないことを確認済み
+                    // mission_idが存在することが保証されているので、安全にアクセス
+                    const missionId = m.mission_id as string;
 
-                      const missionForComponent = {
-                        id: missionId,
-                        title: m.title || "",
-                        icon_url: m.icon_url,
-                        difficulty: m.difficulty || 1,
-                        content: m.content || "",
-                        created_at: m.created_at || new Date().toISOString(),
-                        artifact_label: m.artifact_label,
-                        max_achievement_count: m.max_achievement_count,
-                        event_date: m.event_date,
-                        is_featured: m.is_featured || false,
-                        updated_at: m.updated_at || new Date().toISOString(),
-                        is_hidden: m.is_hidden || false,
-                        ogp_image_url: m.ogp_image_url,
-                        required_artifact_type: m.required_artifact_type || "",
-                      };
+                    const missionForComponent = {
+                      id: missionId,
+                      title: m.title || "",
+                      icon_url: m.icon_url,
+                      difficulty: m.difficulty || 1,
+                      content: m.content || "",
+                      created_at: m.created_at || new Date().toISOString(),
+                      artifact_label: m.artifact_label,
+                      max_achievement_count: m.max_achievement_count,
+                      event_date: m.event_date,
+                      is_featured: m.is_featured || false,
+                      updated_at: m.updated_at || new Date().toISOString(),
+                      is_hidden: m.is_hidden || false,
+                      ogp_image_url: m.ogp_image_url,
+                      required_artifact_type: m.required_artifact_type || "",
+                    };
 
-                      return (
-                        <div
-                          key={missionId}
-                          className="flex-shrink-0 w-[300px]"
-                        >
-                          <Mission
-                            mission={missionForComponent}
-                            achieved={achievedMissionIds.includes(missionId)}
-                            achievementsCount={
-                              achievementCountMap.get(missionId) ?? 0
-                            }
-                            userAchievementCount={
-                              userAchievementCountMap.get(missionId) ?? 0
-                            }
-                          />
-                        </div>
-                      );
-                    })}
-                </div>
+                    return (
+                      <div
+                        key={missionId}
+                        className="flex-shrink-0 w-[300px] px-2"
+                      >
+                        <Mission
+                          mission={missionForComponent}
+                          achieved={achievedMissionIds.includes(missionId)}
+                          achievementsCount={
+                            achievementCountMap.get(missionId) ?? 0
+                          }
+                          userAchievementCount={
+                            userAchievementCountMap.get(missionId) ?? 0
+                          }
+                        />
+                      </div>
+                    );
+                  })}
               </HorizontalScrollContainer>
 
               {/* スクロール余白を示すグラデーション */}
