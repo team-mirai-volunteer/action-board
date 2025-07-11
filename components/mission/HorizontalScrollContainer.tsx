@@ -33,9 +33,9 @@ export function HorizontalScrollContainer({
         speed: 2,
         startDelay: 1000,
         direction: "forward",
-        stopOnInteraction: true,
+        stopOnInteraction: false,
         stopOnMouseEnter: false,
-        stopOnFocusIn: true,
+        stopOnFocusIn: false,
       }),
     ],
   );
