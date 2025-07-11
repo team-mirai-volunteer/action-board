@@ -24,14 +24,15 @@ function maskNamesInCsv(filePath: string): void {
     return;
   }
 
-  // Mask names containing '様' or '宅'
+  // Mask names containing personal name
   let modified = false;
   for (const record of records) {
-    if (
-      record.name &&
-      (record.name.includes("様") || record.name.includes("宅"))
-    ) {
+    if (record.name && hasPersonalName(record.name)) {
       record.name = "masked";
+      modified = true;
+    }
+    if (record.address && hasPersonalName(record.address)) {
+      record.address = "masked";
       modified = true;
     }
   }
@@ -47,6 +48,16 @@ function maskNamesInCsv(filePath: string): void {
   } else {
     console.log(`No names to mask in: ${filePath}`);
   }
+}
+
+function hasPersonalName(str: string): boolean {
+  if (str.includes("様")) {
+    return true;
+  }
+  if (str.includes("宅") && !str.includes("住宅")) {
+    return true;
+  }
+  return false;
 }
 
 async function main(): Promise<void> {
