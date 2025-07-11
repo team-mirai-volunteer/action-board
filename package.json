@@ -58,6 +58,7 @@
     "date-fns-tz": "^3.2.0",
     "embla-carousel-react": "^8.6.0",
     "form-data": "^4.0.3",
+    "framer-motion": "^12.22.0",
     "js-yaml": "^4.1.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",

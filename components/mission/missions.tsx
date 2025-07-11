@@ -61,15 +61,17 @@ export default async function Missions({
     ]),
   );
 
-  let query = supabase
-    .from("missions")
-    .select()
-    .eq("is_hidden", false) // 非表示のミッションを除外
-    .order("difficulty", { ascending: true })
-    .order("created_at", { ascending: false });
+  let query = supabase.from("missions").select().eq("is_hidden", false); // 非表示のミッションを除外
   if (filterFeatured) {
-    query = query.eq("is_featured", true);
+    query = query
+      .eq("is_featured", true)
+      // 重要度降順に並べる
+      .order("featured_importance", { ascending: false, nullsFirst: false });
   }
+  // 重要度が null のミッションを難易度降順→作成日降順に並べる
+  query = query
+    .order("difficulty", { ascending: false })
+    .order("created_at", { ascending: false });
 
   if (!showAchievedMissions) {
     query = query.not("id", "in", `("${achievedMissionIds.join('","')}")`);

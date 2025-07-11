@@ -175,6 +175,8 @@ category_links:
         sort_no: 100
       - mission_slug: tiktok-like
         sort_no: 200
+      - mission_slug: youtube-clip
+        sort_no: 300
   - category_slug: support-on-threads
     missions:
       - mission_slug: follow-anno-threads
