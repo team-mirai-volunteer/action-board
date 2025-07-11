@@ -189,5 +189,7 @@ category_links:
     missions:
       - mission_slug: early-vote
         sort_no: 100
-      - mission_slug: overseas-vote
+      - mission_slug: absent-vote
         sort_no: 200
+      - mission_slug: overseas-vote
+        sort_no: 300
