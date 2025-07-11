@@ -5,6 +5,7 @@ import {
   type RankingPeriod,
 } from "@/components/ranking/period-toggle";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
+import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
@@ -36,18 +37,10 @@ export default async function RankingPage({ searchParams }: PageProps) {
       userRanking = data;
     } else {
       // 期間別の場合は関数を使用
-      const now = new Date();
       let dateFilter: Date | null = null;
       if (period === "daily") {
-        // 本日の0時0分を基準にする
-        dateFilter = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
+        // 日本時間の今日の0時0分を基準にする
+        dateFilter = getJSTMidnightToday();
       }
 
       const { data } = await supabase.rpc("get_user_period_ranking", {
