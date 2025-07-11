@@ -24,7 +24,6 @@ export default function Footer() {
                 alt="街並みと雲のイラスト"
                 fill
                 className="object-contain object-bottom"
-                priority
               />
             </div>
           </div>
@@ -36,7 +35,6 @@ export default function Footer() {
                 alt="チームみらいの仲間たち"
                 fill
                 className="object-contain object-bottom"
-                priority
               />
             </div>
           </div>

@@ -37,10 +37,10 @@ export default async function Hero() {
             <Image
               src="/img/logo.png"
               alt="チームみらい"
-              width={0}
-              height={0}
+              width={143}
+              height={120}
               sizes="100vw"
-              className="h-[120px] w-auto min-w-[143px]"
+              className="h-[120px] w-auto"
             />
           </div>
 
