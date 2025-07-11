@@ -49,7 +49,7 @@ export default async function Metrics() {
       />
 
       {/* 下段：アクション数と寄付金額を左右に分割表示 */}
-      <div className="flex items-stretch">
+      <div className="flex items-start">
         {/* 左側：アクション達成数 */}
         <AchievementMetric
           data={metricsData.achievement}
