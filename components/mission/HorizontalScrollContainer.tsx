@@ -7,7 +7,7 @@ import useEmblaCarousel, {
 } from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface HorizontalScrollContainerProps {
   children: React.ReactNode;
@@ -43,6 +43,8 @@ export function HorizontalScrollContainer({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const updateScrollButtons = useCallback(() => {
     if (!emblaApi) return;
@@ -86,6 +88,37 @@ export function HorizontalScrollContainer({
     };
   }, [emblaApi, updateScrollButtons]);
 
+  useEffect(() => {
+    if (!containerRef.current || !emblaApi) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        const wasVisible = isVisible;
+        const nowVisible = entry.isIntersecting;
+
+        setIsVisible(nowVisible);
+
+        if (!wasVisible && nowVisible) {
+          const autoScrollPlugin = emblaApi.plugins().autoScroll;
+          if (autoScrollPlugin && !autoScrollPlugin.isPlaying()) {
+            autoScrollPlugin.play();
+          }
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "50px",
+      },
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [emblaApi, isVisible]);
+
   return (
     <div className="relative">
       {isDesktop && canScrollLeft && (
@@ -104,7 +137,13 @@ export function HorizontalScrollContainer({
         </button>
       )}
 
-      <div ref={emblaRef} className={cn("w-full overflow-hidden", className)}>
+      <div
+        ref={(node) => {
+          emblaRef(node);
+          containerRef.current = node;
+        }}
+        className={cn("w-full overflow-hidden", className)}
+      >
         <div className="flex">{children}</div>
       </div>
 
