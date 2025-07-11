@@ -22,7 +22,7 @@ BEGIN
     
     -- 更新対象が存在しなかった場合のエラー
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Poster board not found: %', board_id;
+        RAISE EXCEPTION 'ポスター掲示板が見つかりません: %', board_id;
     END IF;
     
     -- 2. ステータス履歴を作成
@@ -47,7 +47,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         -- エラーが発生した場合は自動的にロールバック
-        RAISE EXCEPTION 'Failed to update board status: %', SQLERRM;
+        RAISE EXCEPTION 'ボードステータスの更新に失敗しました: %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
