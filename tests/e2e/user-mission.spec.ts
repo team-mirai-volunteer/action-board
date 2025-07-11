@@ -120,7 +120,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await assertAuthState(signedInPage, true);
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
-    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
+    await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     // ミッションページの表示内容を確認
@@ -153,7 +153,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     // ミッション取消後のポイントの変動を確認
     await signedInPage.goto('/');
-    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
+    await signedInPage.getByRole('button', { name: 'もう一回チャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     await expect(signedInPage.getByText('あなたの達成履歴')).toBeVisible({ timeout: 10000 });
