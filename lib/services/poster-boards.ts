@@ -132,6 +132,15 @@ export async function updateBoardStatus(
 ) {
   const supabase = createClient();
 
+  // Get current user first - required for history tracking
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User must be authenticated to update board status");
+  }
+
   // Get current board status
   const { data: currentBoard, error: fetchError } = await supabase
     .from("poster_boards")
@@ -144,43 +153,24 @@ export async function updateBoardStatus(
     throw fetchError;
   }
 
-  // Update board status
-  const { error: updateError } = await supabase
-    .from("poster_boards")
-    .update({ status: newStatus })
-    .eq("id", boardId);
-
-  if (updateError) {
-    console.error("Error updating board status:", updateError);
-    throw updateError;
-  }
-
-  // Get current user - required for history tracking
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("User must be authenticated to update board status");
-  }
-
-  // Insert history record
-  const { error: historyError } = await supabase
-    .from("poster_board_status_history")
-    .insert({
+  // Supabase の rpc 関数を使用してトランザクション処理を実行
+  const { data: result, error: rpcError } = await supabase.rpc(
+    "update_board_status_with_history",
+    {
       board_id: boardId,
+      new_status: newStatus,
       user_id: user.id,
       previous_status: currentBoard.status,
-      new_status: newStatus,
-      note: note || null,
-    });
+      note: note || undefined,
+    },
+  );
 
-  if (historyError) {
-    console.error("Error inserting status history:", historyError);
-    throw historyError;
+  if (rpcError) {
+    console.error("Error in update_board_status_with_history:", rpcError);
+    throw rpcError;
   }
 
-  return { success: true };
+  return { success: true, result };
 }
 
 // Get unique prefectures that have poster boards

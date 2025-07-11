@@ -447,6 +447,7 @@ export type Database = {
           created_at: string;
           difficulty: number;
           event_date: string | null;
+          featured_importance: number | null;
           icon_url: string | null;
           id: string;
           is_featured: boolean;
@@ -464,6 +465,7 @@ export type Database = {
           created_at?: string;
           difficulty: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id: string;
           is_featured?: boolean;
@@ -481,6 +483,7 @@ export type Database = {
           created_at?: string;
           difficulty?: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id?: string;
           is_featured?: boolean;
@@ -1569,6 +1572,16 @@ export type Database = {
           xp: number;
           updated_at: string;
         }[];
+      };
+      update_board_status_with_history: {
+        Args: {
+          board_id: string;
+          new_status: Database["public"]["Enums"]["poster_board_status"];
+          user_id: string;
+          previous_status: Database["public"]["Enums"]["poster_board_status"];
+          note?: string;
+        };
+        Returns: Json;
       };
     };
     Enums: {
