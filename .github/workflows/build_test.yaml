@@ -65,6 +65,13 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
+      - name: Wait for database seeding
+        run: |
+          echo "Waiting for database seeding to complete..."
+          sleep 10
+          supabase db reset
+          sleep 5
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 

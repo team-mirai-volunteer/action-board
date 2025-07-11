@@ -120,11 +120,26 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await assertAuthState(signedInPage, true);
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
+    console.log('Authentication state before mission navigation:', await signedInPage.evaluate(() => window.localStorage.getItem('supabase.auth.token')));
     await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 15000 });
+    console.log('Mission page URL:', signedInPage.url());
 
     // ミッションページの表示内容を確認
-    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible({ timeout: 15000 });
+    console.log('Current URL:', signedInPage.url());
+    console.log('Page content:', await signedInPage.content());
+    try {
+      await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible({ timeout: 15000 });
+    } catch (error) {
+      console.log('Mission title not found, checking for fallback content...');
+      const pageText = await signedInPage.textContent('body');
+      console.log('Page body text:', pageText);
+      const hasLoginPrompt = await signedInPage.getByText('ログインしてミッションを達成しよう').isVisible();
+      const hasMissionNotFound = await signedInPage.getByText('ミッションが見つかりません。').isVisible();
+      console.log('Has login prompt:', hasLoginPrompt);
+      console.log('Has mission not found:', hasMissionNotFound);
+      throw error;
+    }
     await expect(signedInPage.getByText('近所のゴミを拾ってみよう！清掃活動の報告は任意です。')).toBeVisible();
     await expect(signedInPage.getByText('実行したら記録しよう！')).toBeVisible();
     await expect(signedInPage.getByRole('button', { name: 'ミッション完了を記録する' })).toBeVisible();
