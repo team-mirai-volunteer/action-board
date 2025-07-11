@@ -124,7 +124,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     // ミッションページの表示内容を確認
-    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible();
+    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.getByText('近所のゴミを拾ってみよう！清掃活動の報告は任意です。')).toBeVisible();
     await expect(signedInPage.getByText('実行したら記録しよう！')).toBeVisible();
     await expect(signedInPage.getByRole('button', { name: 'ミッション完了を記録する' })).toBeVisible();
