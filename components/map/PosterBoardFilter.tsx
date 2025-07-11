@@ -17,6 +17,7 @@ interface PosterBoardFilterProps {
   filterState: PosterBoardFilterState;
   onToggleStatus: (status: FilterStatus) => void;
   onToggleShowOnlyMine: () => void;
+  onToggleHideCurrentLocation: () => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
   activeFilterCount: number;
@@ -57,6 +58,7 @@ export function PosterBoardFilter({
   filterState,
   onToggleStatus,
   onToggleShowOnlyMine,
+  onToggleHideCurrentLocation,
   onSelectAll,
   onDeselectAll,
   activeFilterCount,
@@ -140,6 +142,23 @@ export function PosterBoardFilter({
                 className="cursor-pointer text-xs font-medium text-blue-600 select-none"
               >
                 自分が更新したもののみ
+              </Label>
+            </div>
+          </div>
+
+          {/* 現在地を消す */}
+          <div className="border-b border-gray-200 pb-3 mb-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="hide-current-location"
+                checked={filterState.hideCurrentLocation}
+                onCheckedChange={onToggleHideCurrentLocation}
+              />
+              <Label
+                htmlFor="hide-current-location"
+                className="cursor-pointer text-xs font-medium text-blue-600 select-none"
+              >
+                現在地を消す
               </Label>
             </div>
           </div>
