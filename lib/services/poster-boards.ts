@@ -158,9 +158,9 @@ export async function updateBoardStatus(
     "update_board_status_with_history",
     {
       board_id: boardId,
-      new_status: newStatus,
       user_id: user.id,
       previous_status: currentBoard.status,
+      new_status: newStatus,
       note: note || null,
     },
   );
