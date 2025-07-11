@@ -54,6 +54,6 @@ export async function recordSignupActivity(
   await recordUserActivity(
     userId,
     "signup",
-    `${userName}さんが仲間入れしました！`,
+    `${userName}さんが仲間入りしました！`,
   );
 }
