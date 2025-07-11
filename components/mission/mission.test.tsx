@@ -193,7 +193,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("今すぐチャレンジ🔥")).toBeInTheDocument();
+    expect(screen.getByText("もう一回チャレンジ🔥")).toBeInTheDocument();
   });
 
   it("アイコンURLがnullの場合はフォールバック画像を使用", () => {
