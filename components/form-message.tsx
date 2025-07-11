@@ -1,3 +1,4 @@
+import { EXTERNAL_LINKS } from "@/lib/constants";
 import clsx from "clsx";
 import { CheckCircle, Info, XCircle } from "lucide-react";
 
@@ -18,7 +19,7 @@ export type Message =
 const getMessageContent = (type: MessageType) => {
   const faqLink = (
     <a
-      href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f"
+      href={EXTERNAL_LINKS.FAQ}
       target="_blank"
       rel="noopener noreferrer"
       className="text-teal-600 hover:text-teal-700 underline"

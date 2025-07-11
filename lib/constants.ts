@@ -20,3 +20,9 @@ export const MAX_POSTER_COUNT = 1;
 
 // ポスターマップの最大ズーム値
 export const MAX_ZOOM = 18;
+
+// 外部リンクURL
+export const EXTERNAL_LINKS = {
+  // よくあるご質問(FAQ)
+  FAQ: "https://www.notion.so/team-mirai/228f6f56bae18037957dd5f108d00e2f",
+} as const;
