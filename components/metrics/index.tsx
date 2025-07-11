@@ -41,15 +41,8 @@ export default async function Metrics() {
 
   return (
     <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
-      {/* サポーター数表示エリア（メインハイライト） */}
-      <SupporterMetric
-        data={metricsData.supporter}
-        fallbackCount={fallbackSupporterCount}
-        fallbackIncrease={fallbackSupporterIncrease}
-      />
-
-      {/* 下段：アクション数と寄付金額を左右に分割表示 */}
-      <div className="flex items-stretch">
+      {/* 上段：アクション数とサポーター数を左右に分割表示 */}
+      <div className="flex items-stretch mb-6">
         {/* 左側：アクション達成数 */}
         <AchievementMetric
           data={metricsData.achievement}
@@ -60,13 +53,20 @@ export default async function Metrics() {
         {/* 中央：縦線セパレーター */}
         <Separator orientation="vertical" className="mx-4 h-full" />
 
-        {/* 右側：寄付金額 */}
-        <DonationMetric
-          data={metricsData.donation}
-          fallbackAmount={fallbackDonationAmount}
-          fallbackIncrease={fallbackDonationIncrease}
+        {/* 右側：サポーター数 */}
+        <SupporterMetric
+          data={metricsData.supporter}
+          fallbackCount={fallbackSupporterCount}
+          fallbackIncrease={fallbackSupporterIncrease}
         />
       </div>
+
+      {/* 寄付金額表示エリア（下段） */}
+      <DonationMetric
+        data={metricsData.donation}
+        fallbackAmount={fallbackDonationAmount}
+        fallbackIncrease={fallbackDonationIncrease}
+      />
     </MetricsLayout>
   );
 }
