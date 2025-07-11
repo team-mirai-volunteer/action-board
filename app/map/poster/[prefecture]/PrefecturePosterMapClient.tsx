@@ -346,8 +346,39 @@ export default function PrefecturePosterMapClient({
 
           if (!hasCompleted) {
             // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
-            completePosterBoardMission(selectedBoard).catch(() => {
-              // エラーは無視して、ステータス更新自体は成功として扱う
+            completePosterBoardMission(selectedBoard).catch((error) => {
+              console.error("ポスター掲示板ミッション達成処理に失敗しました:", {
+                boardId: selectedBoard.id,
+                boardName: selectedBoard.name,
+                prefecture: selectedBoard.prefecture,
+                city: selectedBoard.city,
+                userId: user.id,
+                error: error.message || error,
+                stack: error.stack,
+                timestamp: new Date().toISOString(),
+              });
+
+              if (typeof window !== "undefined" && window.Sentry) {
+                window.Sentry.captureException(error, {
+                  tags: {
+                    component: "PrefecturePosterMapClient",
+                    action: "completePosterBoardMission",
+                    prefecture: selectedBoard.prefecture,
+                  },
+                  extra: {
+                    boardId: selectedBoard.id,
+                    boardName: selectedBoard.name,
+                    city: selectedBoard.city,
+                    userId: user.id,
+                    updateNote: updateNote,
+                  },
+                });
+              }
+
+              toast.error(
+                "ポスター貼り完了の記録に失敗しました。手動でミッション「選挙区ポスターを貼ろう」から達成報告をお試しください。",
+                { duration: 8000 },
+              );
             });
           }
         }
