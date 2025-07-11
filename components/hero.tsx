@@ -47,7 +47,7 @@ export default async function Hero() {
           <h1 className="text-4xl md:text-4xl font-bold text-gray-800 mb-4">
             アクションボード
           </h1>
-          <p className="text-base text-xs text-[#0f8472] font-bold mb-8 px-3">
+          <p className="text-xs text-[#0f8472] font-bold mb-8 px-3">
             テクノロジーで政治をかえる。あなたと一緒に未来をつくる。
           </p>
 
