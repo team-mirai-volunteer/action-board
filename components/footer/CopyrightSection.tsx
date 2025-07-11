@@ -1,3 +1,4 @@
+import { EXTERNAL_LINKS } from "@/lib/constants";
 import Link from "next/link";
 import { FOOTER_CONFIG } from "./footer";
 
@@ -40,7 +41,7 @@ export function CopyrightSection() {
             </Link>
             <span>|</span>
             <Link
-              href="https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f"
+              href={EXTERNAL_LINKS.FAQ}
               className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
               target="_blank"
               rel="noopener noreferrer"
