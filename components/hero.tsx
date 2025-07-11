@@ -16,7 +16,7 @@ export default async function Hero() {
   }
 
   return (
-    <section className="relative w-full h-[640px] bg-[#BCECD3] overflow-hidden">
+    <section className="relative w-full h-[640px] bg-gradient-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
       <div className="absolute inset-0 w-full h-full flex justify-center items-end">
         <div className="relative w-[1080px] min-w-[1080px] h-[560px]">
           <Image
@@ -47,7 +47,7 @@ export default async function Hero() {
           <h1 className="text-4xl md:text-4xl font-bold text-gray-800 mb-4">
             アクションボード
           </h1>
-          <p className="text-base text-xs text-[#0f8472] font-bold mb-8 px-4">
+          <p className="text-base text-xs text-[#0f8472] font-bold mb-8 px-3">
             テクノロジーで政治をかえる。あなたと一緒に未来をつくる。
           </p>
 
