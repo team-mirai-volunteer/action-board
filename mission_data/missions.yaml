@@ -566,3 +566,14 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
+  - slug: absent-vote
+    title: 不在者投票をしよう！
+    icon_url: /img/mission_fallback.svg
+    content: 不在者投票:旅行中でも、病院からでも大丈夫！「不在者投票」は、遠方への出張や入院などで投票所に行けない人のために用意された制度です。<br>申請さえ済ませれば郵送や滞在先の投票所からでも大切な一票を確実に行使できます。<br>移動が難しくても、あなたの想いはしっかり届く――さぁ、みんなで投票率アップを目指そう！
+    difficulty: 5
+    required_artifact_type: NONE
+    max_achievement_count: 1
+    is_featured: true
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
