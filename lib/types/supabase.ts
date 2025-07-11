@@ -244,13 +244,6 @@ export type Database = {
             referencedRelation: "achievements";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "mission_artifacts_achievement_id_fkey";
-            columns: ["achievement_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["id"];
-          },
         ];
       };
       mission_category: {
@@ -1004,6 +997,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_activities: {
+        Row: {
+          activity_title: string;
+          activity_type: string;
+          created_at: string;
+          id: string;
+          user_id: string | null;
+        };
+        Insert: {
+          activity_title: string;
+          activity_type: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          activity_title?: string;
+          activity_type?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_activities_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "public_user_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       user_badges: {
         Row: {
           achieved_at: string;
@@ -1161,6 +1186,7 @@ export type Database = {
     Views: {
       activity_timeline_view: {
         Row: {
+          activity_type: string | null;
           address_prefecture: string | null;
           avatar_url: string | null;
           created_at: string | null;
@@ -1511,6 +1537,7 @@ export type Database = {
         Returns: {
           user_id: string;
           name: string;
+          level: number;
           rank: number;
           xp: number;
         }[];
