@@ -23,7 +23,7 @@ export function AchievementMetric({
 
   return (
     <div className="flex-1 text-center flex flex-col justify-center">
-      <p className="text-sm font-bold text-black mb-2">達成したアクション数</p>
+      <p className="text-sm font-bold text-black mb-2">達成済アクション数</p>
       {/* 総アクション数（Supabaseから取得、失敗時は環境変数フォールバック） */}
       <p className="text-2xl font-black text-black mb-1">
         {formatNumber(achievementCount)}
