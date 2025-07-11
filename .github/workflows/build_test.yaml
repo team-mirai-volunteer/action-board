@@ -69,7 +69,7 @@ jobs:
         run: |
           echo "Waiting for database seeding to complete..."
           sleep 10
-          supabase db reset
+          echo "Database seeding wait completed."
           sleep 5
 
       - name: Install Playwright browsers
