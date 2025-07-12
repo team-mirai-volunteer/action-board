@@ -24,7 +24,7 @@ export function AchievementMetric({
   return (
     <div className="flex items-center justify-between py-6">
       <div>
-        <p className="text-base font-bold text-black">達成アクションの数</p>
+        <p className="text-base text-black">達成アクションの数</p>
       </div>
       <div className="text-right">
         {/* 総アクション数（Supabaseから取得、失敗時は環境変数フォールバック） */}

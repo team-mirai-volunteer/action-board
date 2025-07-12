@@ -24,7 +24,7 @@ export function SupporterMetric({
   return (
     <div className="flex items-center justify-between py-6">
       <div>
-        <p className="text-base font-bold text-black">サポーター数</p>
+        <p className="text-base text-black">サポーター数</p>
       </div>
       <div className="text-right">
         {/* 総サポーター数（大きく表示） */}
