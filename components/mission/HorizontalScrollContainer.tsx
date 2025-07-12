@@ -27,6 +27,7 @@ export function HorizontalScrollContainer({
       align: "start",
       containScroll: "trimSnaps",
       dragFree: true,
+      loop: true,
     },
     [
       AutoScroll({
