@@ -261,6 +261,7 @@ export default function PosterMap({
   }, [isFullscreen]);
 
   // フルスクリーン時に地図サイズを更新
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mapRefは安定した参照のため依存配列に含める必要なし
   useEffect(() => {
     if (mapRef.current) {
       // 少し遅延を入れてから地図サイズを更新
@@ -269,7 +270,7 @@ export default function PosterMap({
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  });
+  }, [isFullscreen]);
 
   return (
     <div
