@@ -240,16 +240,16 @@ INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address,
 ('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO public.mission_category (id, name, slug, created_at, updated_at) VALUES
-(1, 'チームみらいをフォローしよう', 'team-mirai-follow', NOW(), NOW()),
-(2, '重要ミッション', 'important-missions', NOW(), NOW()),
-(3, '環境保護', 'environment', NOW(), NOW())
+INSERT INTO public.mission_category (id, category_title, slug, created_at, updated_at) VALUES
+('e9b4504d-3281-8337-22d4-9c9f2faab54c', 'チームみらいをフォローしよう', 'team-mirai-follow', NOW(), NOW()),
+('7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', '重要ミッション', 'important-missions', NOW(), NOW()),
+('a1e44661-c95a-8541-8fc4-55b942cce3a3', '環境保護', 'environment', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.mission_category_link (mission_id, category_id, created_at, updated_at) VALUES
-('e2898d7e-903f-4f9a-8b1b-93f783c9afac', 1, NOW(), NOW()),
-('2246205f-933f-4a86-83af-dbf6bb6cde90', 1, NOW(), NOW()),
-('3346205f-933f-4a86-83af-dbf6bb6cde91', 1, NOW(), NOW()),
-('e2898d7e-903f-4f9a-8b1b-93f783c9afac', 2, NOW(), NOW()),
-('3346205f-933f-4a86-83af-dbf6bb6cde91', 3, NOW(), NOW())
+('e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'e9b4504d-3281-8337-22d4-9c9f2faab54c', NOW(), NOW()),
+('2246205f-933f-4a86-83af-dbf6bb6cde90', 'e9b4504d-3281-8337-22d4-9c9f2faab54c', NOW(), NOW()),
+('3346205f-933f-4a86-83af-dbf6bb6cde91', 'e9b4504d-3281-8337-22d4-9c9f2faab54c', NOW(), NOW()),
+('e2898d7e-903f-4f9a-8b1b-93f783c9afac', '7530768f-e78b-1ecd-9fdd-96c0a42a5f4d', NOW(), NOW()),
+('3346205f-933f-4a86-83af-dbf6bb6cde91', 'a1e44661-c95a-8541-8fc4-55b942cce3a3', NOW(), NOW())
 ON CONFLICT (mission_id, category_id) DO NOTHING;
