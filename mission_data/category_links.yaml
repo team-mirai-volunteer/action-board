@@ -153,6 +153,12 @@ category_links:
         sort_no: 300
       - mission_slug: youtube-clip
         sort_no: 400
+      - mission_slug: youtube-comment
+        sort_no: 500
+      - mission_slug: youtube-live-comment
+        sort_no: 600
+      - mission_slug: youtube-comment-reaction
+        sort_no: 700
   - category_slug: support-on-note
     missions:
       - mission_slug: follow-note
@@ -177,6 +183,10 @@ category_links:
         sort_no: 200
       - mission_slug: youtube-clip
         sort_no: 300
+      - mission_slug: tiktok-comment
+        sort_no: 400
+      - mission_slug: tiktok-comment-reaction
+        sort_no: 500
   - category_slug: support-on-threads
     missions:
       - mission_slug: follow-anno-threads
