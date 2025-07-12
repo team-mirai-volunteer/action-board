@@ -30,40 +30,63 @@ COMMIT;
 DO $$
 DECLARE
     password TEXT;
+    vault_exists BOOLEAN := FALSE;
 BEGIN
-    -- Get password from Supabase Vault
-    SELECT decrypted_secret INTO password
-    FROM vault.decrypted_secrets
-    WHERE name = 'bq_user_password';
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_schema = 'vault' AND table_name = 'decrypted_secrets'
+    ) INTO vault_exists;
     
-    -- Validate password exists
-    IF password IS NULL OR password = '' THEN
-        RAISE EXCEPTION 'Secret "bq_user_password" not found in Supabase Vault.';
+    IF vault_exists THEN
+        -- Get password from Supabase Vault
+        SELECT decrypted_secret INTO password
+        FROM vault.decrypted_secrets
+        WHERE name = 'bq_user_password';
+        
+        -- Validate password exists
+        IF password IS NULL OR password = '' THEN
+            RAISE NOTICE 'Secret "bq_user_password" not found in Supabase Vault. Skipping BigQuery user creation.';
+            RETURN;
+        END IF;
+        
+        -- Create user with the password
+        EXECUTE format('CREATE USER bq_user WITH ENCRYPTED PASSWORD %L', password);
+    ELSE
+        RAISE NOTICE 'Vault not available (CI/local environment). Skipping BigQuery user creation.';
+        RETURN;
     END IF;
-    
-    -- Create user with the password
-    EXECUTE format('CREATE USER bq_user WITH ENCRYPTED PASSWORD %L', password);
 EXCEPTION
     WHEN duplicate_object THEN
         -- If user already exists, just update the password
-        EXECUTE format('ALTER USER bq_user WITH ENCRYPTED PASSWORD %L', password);
+        IF vault_exists AND password IS NOT NULL THEN
+            EXECUTE format('ALTER USER bq_user WITH ENCRYPTED PASSWORD %L', password);
+        END IF;
 END $$;
 
--- 4. Grant replication privilege
-ALTER ROLE bq_user WITH REPLICATION;
-
--- 5. Grant SELECT privileges on all tables in public schema
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO bq_user;
-
--- 6. Grant USAGE on public schema
-GRANT USAGE ON SCHEMA public TO bq_user;
-
--- 7. Set default privileges for future tables
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT SELECT ON TABLES TO bq_user;
-
--- 8. Allow user to bypass RLS (Row Level Security)
-ALTER USER bq_user BYPASSRLS;
+-- 4. Grant replication privilege (only if user exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'bq_user') THEN
+        ALTER ROLE bq_user WITH REPLICATION;
+        
+        -- 5. Grant SELECT privileges on all tables in public schema
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO bq_user;
+        
+        -- 6. Grant USAGE on public schema
+        GRANT USAGE ON SCHEMA public TO bq_user;
+        
+        -- 7. Set default privileges for future tables
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+        GRANT SELECT ON TABLES TO bq_user;
+        
+        -- 8. Allow user to bypass RLS (Row Level Security)
+        ALTER USER bq_user BYPASSRLS;
+        
+        RAISE NOTICE 'BigQuery user privileges configured successfully.';
+    ELSE
+        RAISE NOTICE 'BigQuery user does not exist. Skipping privilege configuration.';
+    END IF;
+END $$;
 
 -- Verification queries (commented out - run manually to verify):
 /*
