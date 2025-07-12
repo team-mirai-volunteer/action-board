@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -26,26 +27,24 @@ export function DeleteAccountModal({
 }: DeleteAccountModalProps) {
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   const handleDelete = async () => {
     if (confirmText !== "退会する" || isDeleting) return;
 
     setIsDeleting(true);
 
-    // トースト通知で処理状況を表示
-    toast.promise(deleteAccountAction(), {
-      loading: "退会処理中です...",
-      success: "退会処理が完了しました",
-      error: (err) => {
-        // NEXT_REDIRECT エラーは正常な動作なので、成功として扱う
-        if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
-          return "退会処理が完了しました";
-        }
-        setIsDeleting(false);
-        onClose();
-        return "退会処理でエラーが発生しました。もう一度お試しください。";
-      },
-    });
+    try {
+      const result = await deleteAccountAction();
+
+      if (result?.success) {
+        toast.success("退会処理が完了しました");
+      }
+    } catch (err) {
+      setIsDeleting(false);
+      onClose();
+      toast.error("退会処理でエラーが発生しました。もう一度お試しください。");
+    }
   };
 
   const handleClose = () => {
