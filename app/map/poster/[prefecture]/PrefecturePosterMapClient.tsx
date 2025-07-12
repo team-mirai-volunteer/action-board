@@ -10,6 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -40,7 +46,7 @@ import {
   calculateProgressRate,
   getCompletedCount,
 } from "@/lib/utils/poster-progress";
-import { ArrowLeft, HelpCircle, History } from "lucide-react";
+import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -128,7 +134,7 @@ export default function PrefecturePosterMapClient({
         const { data: mission } = await supabase
           .from("missions")
           .select("id")
-          .eq("slug", "put-up-poster-on-boardd")
+          .eq("slug", "put-up-poster-on-board")
           .single();
         setPutUpPosterMissionId(mission?.id ?? null);
       } catch (error) {
@@ -168,6 +174,16 @@ export default function PrefecturePosterMapClient({
       }
     }
   }, [userId, boards, prefecture]);
+
+  // 住所をクリップボードにコピー
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("住所をコピーしました");
+    } catch (error) {
+      toast.error("コピーに失敗しました");
+    }
+  };
 
   const loadBoards = async () => {
     try {
@@ -504,17 +520,94 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.name ||
-                selectedBoard?.address ||
-                selectedBoard?.number}
-              の状況を教えてください
+              <div className="flex items-center gap-2">
+                <span>
+                  {selectedBoard?.name ||
+                    selectedBoard?.address ||
+                    selectedBoard?.number}
+                  の状況を教えてください
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0"
+                  onClick={() => {
+                    const text =
+                      selectedBoard?.name ||
+                      selectedBoard?.address ||
+                      selectedBoard?.number;
+                    if (text) copyToClipboard(text);
+                  }}
+                  title="名前/住所をコピー"
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
             </DialogDescription>
           </DialogHeader>
           {selectedBoard && (
             <div className="mb-4 text-sm text-muted-foreground">
-              <div>
-                {selectedBoard.city} {selectedBoard.address} (
-                {selectedBoard.number})
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span>
+                    {selectedBoard.city} {selectedBoard.address} (
+                    {selectedBoard.number})
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                    onClick={() => {
+                      const address = `${selectedBoard.city} ${selectedBoard.address}`;
+                      copyToClipboard(address);
+                    }}
+                    title="住所をコピー"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 px-2">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      地図で開く
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={
+                          selectedBoard.lat && selectedBoard.long
+                            ? `https://www.google.com/maps?q=${selectedBoard.lat},${selectedBoard.long}`
+                            : `https://www.google.com/maps/search/${encodeURIComponent(
+                                `${selectedBoard.city}${selectedBoard.address}`,
+                              )}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center w-full"
+                      >
+                        Google Maps
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={
+                          selectedBoard.lat && selectedBoard.long
+                            ? `maps://maps.apple.com/?q=${selectedBoard.lat},${selectedBoard.long}`
+                            : `maps://maps.apple.com/?q=${encodeURIComponent(
+                                `${selectedBoard.city}${selectedBoard.address}`,
+                              )}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center w-full"
+                      >
+                        Apple Maps
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           )}

@@ -123,6 +123,7 @@ jest.mock("lucide-react", () => ({
 
 const mockMission: Tables<"missions"> = {
   id: "test-mission-1",
+  slug: "test-mission-1",
   title: "テストミッション",
   content: "テストミッションの内容",
   difficulty: 1,
@@ -151,7 +152,7 @@ describe("Mission", () => {
 
     expect(screen.getByText("テストミッション")).toBeInTheDocument();
     expect(screen.getByText("みんなで10回達成")).toBeInTheDocument();
-    expect(screen.getByText("詳細を見る →")).toBeInTheDocument();
+    expect(screen.getByText("今すぐチャレンジ🔥")).toBeInTheDocument();
   });
 
   it("イベント日付が正しく表示される", () => {
@@ -177,7 +178,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("達成内容を見る →")).toBeInTheDocument();
+    expect(screen.getByText("ミッションクリア🎉")).toBeInTheDocument();
   });
 
   it("最大達成回数が設定されていない場合は制限なし", () => {
@@ -192,7 +193,7 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("詳細を見る →")).toBeInTheDocument();
+    expect(screen.getByText("もう一回チャレンジ🔥")).toBeInTheDocument();
   });
 
   it("アイコンURLがnullの場合はフォールバック画像を使用", () => {

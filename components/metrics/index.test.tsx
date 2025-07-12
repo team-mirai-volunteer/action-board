@@ -48,7 +48,7 @@ describe("Metrics", () => {
     it("アクション達成数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("達成したアクション数")).toBeInTheDocument();
+      expect(screen.getByText("達成済アクション数")).toBeInTheDocument();
     });
 
     it("参加者数メトリクスが表示される", async () => {

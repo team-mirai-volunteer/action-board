@@ -555,13 +555,13 @@ quiz_questions:
   - id: "5120766c-51c2-49e8-9693-12ae94234f9e"
     category_slug: "electionlaw"
     mission_slug: "quiz-electionlaw-electionday"
-    question: "投票日当日に過去の応援ツイートをリツイートすることは？"
+    question: "投票日当日に過去の応援ポストをリポストすることは？"
     option1: "投票日当日の選挙運動として禁止される"
     option2: "過去投稿の再共有なので問題ない"
     option3: "ハッシュタグを外せば合法"
     option4: "深夜0時〜6時ならOK"
     correct_answer: 1
-    explanation: "投票日当日は SNS 上でも一切の選挙運動が禁止されるためリツイートもNG。"
+    explanation: "投票日当日は SNS 上でも一切の選挙運動が禁止されるためリポストもNG。"
     question_order: 2
     is_active: true
 

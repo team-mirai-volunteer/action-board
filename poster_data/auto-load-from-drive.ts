@@ -82,10 +82,21 @@ function hasFileChanged(
   }
 }
 
-// Get all normalized CSV files in a directory tree
+// File type definitions
+type FileType = "normalized" | "append";
+
+interface CsvFiles {
+  normalized: string[];
+  append: string[];
+}
+
+// Get all CSV files in a directory tree by type
 // Now works directly with Google Drive (expect latency)
-function findNormalizedCsvFiles(dir: string): string[] {
-  const files: string[] = [];
+function findCsvFiles(dir: string): CsvFiles {
+  const files: CsvFiles = {
+    normalized: [],
+    append: [],
+  };
 
   function walk(currentDir: string, depth = 0) {
     // Only go 2 levels deep (prefecture/city)
@@ -110,12 +121,13 @@ function findNormalizedCsvFiles(dir: string): string[] {
 
         if (stat.isDirectory()) {
           walk(fullPath, depth + 1);
-        } else if (
-          stat.isFile() &&
-          entry.endsWith("_normalized.csv") &&
-          depth === 2 // Only get files at city level
-        ) {
-          files.push(fullPath);
+        } else if (stat.isFile() && depth === 2) {
+          // Only get files at city level
+          if (entry.endsWith("_normalized.csv")) {
+            files.normalized.push(fullPath);
+          } else if (entry.endsWith("append.csv")) {
+            files.append.push(fullPath);
+          }
         }
       }
     } catch (error) {
@@ -127,18 +139,21 @@ function findNormalizedCsvFiles(dir: string): string[] {
   return files;
 }
 
+interface LocationGroup {
+  prefecture: string;
+  city: string;
+  files: CsvFiles;
+}
+
 // Group files by prefecture/city
 function groupFilesByLocation(
-  files: string[],
+  csvFiles: CsvFiles,
   sourceDir: string,
-): Map<string, { prefecture: string; city: string; files: string[] }> {
-  const groups = new Map<
-    string,
-    { prefecture: string; city: string; files: string[] }
-  >();
+): Map<string, LocationGroup> {
+  const groups = new Map<string, LocationGroup>();
 
-  for (const file of files) {
-    // Get relative path from source directory
+  // Helper to add file to group
+  const addFileToGroup = (file: string, fileType: FileType) => {
     const relativePath = file.substring(sourceDir.length + 1);
     const parts = relativePath.split("/");
 
@@ -148,29 +163,42 @@ function groupFilesByLocation(
       const key = `${prefecture}/${city}`;
 
       if (!groups.has(key)) {
-        groups.set(key, { prefecture, city, files: [] });
+        groups.set(key, {
+          prefecture,
+          city,
+          files: { normalized: [], append: [] },
+        });
       }
       const group = groups.get(key);
       if (group) {
-        group.files.push(file);
+        group.files[fileType].push(file);
       }
     }
+  };
+
+  // Process normalized files
+  for (const file of csvFiles.normalized) {
+    addFileToGroup(file, "normalized");
+  }
+
+  // Process append files
+  for (const file of csvFiles.append) {
+    addFileToGroup(file, "append");
   }
 
   return groups;
 }
 
-// Select file from multiple options (automatically selects shortest)
-async function selectFile(
-  files: string[],
-  prefecture: string,
-  city: string,
-): Promise<string | null> {
-  if (files.length === 0) return null;
-  if (files.length === 1) return files[0];
+// Selection strategies for different file types
+interface SelectionResult {
+  file: string;
+  reason: string;
+}
 
-  let selectedFile: string;
-  let selectionReason: string;
+// Select normalized file based on priority or shortest name
+function selectNormalizedFile(files: string[]): SelectionResult | null {
+  if (files.length === 0) return null;
+  if (files.length === 1) return { file: files[0], reason: "only file" };
 
   // Check for priority files first
   const priorityFile = files.find((file) =>
@@ -178,18 +206,56 @@ async function selectFile(
   );
 
   if (priorityFile) {
-    selectedFile = priorityFile;
-    selectionReason = "priority file";
-  } else {
-    // Sort by filename length (shortest first)
-    const sortedFiles = [...files].sort(
-      (a, b) => basename(a).length - basename(b).length,
-    );
-    selectedFile = sortedFiles[0];
-    selectionReason = "shortest filename";
+    return { file: priorityFile, reason: "priority file" };
   }
 
-  // Log the choice
+  // Sort by filename length (shortest first)
+  const sortedFiles = [...files].sort(
+    (a, b) => basename(a).length - basename(b).length,
+  );
+
+  return { file: sortedFiles[0], reason: "shortest filename" };
+}
+
+// Select append files - returns all of them
+function selectAppendFiles(files: string[]): string[] {
+  // For append files, we want to load all of them
+  return files;
+}
+
+// Generic file selection with logging
+async function selectCsvFiles(
+  fileType: FileType,
+  files: string[],
+  prefecture: string,
+  city: string,
+): Promise<{ selected: string | null; all: string[] }> {
+  if (fileType === "append") {
+    // For append files, return all
+    return { selected: null, all: selectAppendFiles(files) };
+  }
+
+  // For normalized files, use selection strategy
+  const selection = selectNormalizedFile(files);
+  if (!selection) {
+    return { selected: null, all: [] };
+  }
+
+  // Log the choice for normalized files with multiple options
+  if (files.length > 1) {
+    await logFileSelection(files, selection, prefecture, city);
+  }
+
+  return { selected: selection.file, all: [selection.file] };
+}
+
+// Log file selection to choice.md
+async function logFileSelection(
+  files: string[],
+  selection: SelectionResult,
+  prefecture: string,
+  city: string,
+): Promise<void> {
   let logEntry = `\n--- ${prefecture}/${city}\n`;
 
   // Sort files for display (by name for consistency)
@@ -204,7 +270,7 @@ async function selectFile(
     logEntry += `${index + 1}. ${filename} (${formatBytes(size)})${isPriority}\n`;
   });
 
-  logEntry += `-> choose ${basename(selectedFile)} (${selectionReason})\n`;
+  logEntry += `-> choose ${basename(selection.file)} (${selection.reason})\n`;
 
   // Append to log file
   await appendFile(CHOICE_LOG_FILE, logEntry);
@@ -222,10 +288,33 @@ async function selectFile(
     );
   });
   console.log(
-    `📝 Automatically selecting: ${basename(selectedFile)} (${selectionReason})`,
+    `📝 Automatically selecting: ${basename(selection.file)} (${selection.reason})`,
   );
+}
 
-  return selectedFile;
+// Log append files
+async function logAppendFiles(
+  files: string[],
+  prefecture: string,
+  city: string,
+): Promise<void> {
+  if (files.length === 0) return;
+
+  let logEntry = "\n📎 Append files to be loaded:\n";
+  for (const file of files) {
+    const filename = basename(file);
+    const size = statSync(file).size;
+    logEntry += `  + ${filename} (${formatBytes(size)})\n`;
+  }
+
+  await appendFile(CHOICE_LOG_FILE, logEntry);
+
+  console.log(`\n📎 Also loading ${files.length} append file(s):`);
+  for (const file of files) {
+    const filename = basename(file);
+    const size = statSync(file).size;
+    console.log(`  + ${filename} (${formatBytes(size)})`);
+  }
 }
 
 // Format bytes to human readable
@@ -235,26 +324,33 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-// Process a single CSV file with optional validation
-async function processFile(
-  csvFile: string,
+// Process multiple CSV files with optional validation
+async function processFiles(
+  files: string[],
   validateAll: boolean,
 ): Promise<boolean> {
+  if (files.length === 0) return true;
+
   try {
     // Clear temp directory
     await rm(TEMP_DIR, { recursive: true, force: true });
     await ensureDir(TEMP_DIR);
 
-    // Copy file to temp
-    const tempFile = join(TEMP_DIR, basename(csvFile));
-    console.log(
-      "📋 Copying from Google Drive to temp... (this may take a moment)",
-    );
-    await copyFile(csvFile, tempFile);
+    // Process each file
+    for (const csvFile of files) {
+      const tempFile = join(TEMP_DIR, basename(csvFile));
+      const isAppend = basename(csvFile).endsWith("append.csv");
 
-    // Run load command with specific file to process it
-    console.log(`\n📥 Processing ${basename(csvFile)}...`);
-    execSync(`npm run poster:load-csv "${tempFile}"`, { stdio: "inherit" });
+      console.log(
+        `\n📋 Copying ${isAppend ? "append" : "main"} file from Google Drive to temp...`,
+      );
+      await copyFile(csvFile, tempFile);
+
+      console.log(
+        `\n${isAppend ? "📎" : "📥"} Processing ${basename(csvFile)}...`,
+      );
+      execSync(`npm run poster:load-csv "${tempFile}"`, { stdio: "inherit" });
+    }
 
     if (validateAll) {
       // Validate ALL files by running load-csv without arguments
@@ -272,22 +368,28 @@ async function processFile(
   }
 }
 
-// Copy file to destination
-async function moveToDestination(
-  csvFile: string,
+// Copy files to destination
+async function moveFilesToDestination(
+  files: string[],
   prefecture: string,
   success: boolean,
 ) {
+  if (files.length === 0) return;
+
   const destBase = success ? SUCCESS_DATA_DIR : BROKEN_DATA_DIR;
   const destDir = join(destBase, prefecture);
   await ensureDir(destDir);
 
-  const destFile = join(destDir, basename(csvFile));
-  console.log(
-    `📋 Copying from Google Drive to ${destBase}... (this may take a moment)`,
-  );
-  await copyFile(csvFile, destFile);
-  console.log(`📁 Copied to ${destFile}`);
+  for (const csvFile of files) {
+    const destFile = join(destDir, basename(csvFile));
+    const isAppend = basename(csvFile).endsWith("append.csv");
+
+    console.log(
+      `📋 Copying ${isAppend ? "append" : "main"} file from Google Drive to ${destBase}...`,
+    );
+    await copyFile(csvFile, destFile);
+    console.log(`📁 Copied to ${destFile}`);
+  }
 }
 
 // Main function
@@ -338,10 +440,11 @@ async function main() {
     "⏳ Note: Google Drive operations may be slow (~10s per directory)\n",
   );
 
-  // Find all normalized CSV files directly from Google Drive
-  console.log("🔍 Searching for normalized CSV files in Google Drive...");
-  const csvFiles = findNormalizedCsvFiles(sourcePath);
-  console.log(`\n✅ Found ${csvFiles.length} normalized CSV files\n`);
+  // Find all CSV files directly from Google Drive
+  console.log("🔍 Searching for CSV files in Google Drive...");
+  const csvFiles = findCsvFiles(sourcePath);
+  console.log(`\n✅ Found ${csvFiles.normalized.length} normalized CSV files`);
+  console.log(`📎 Found ${csvFiles.append.length} append CSV files\n`);
 
   // Group by location
   const locationGroups = groupFilesByLocation(csvFiles, sourcePath);
@@ -355,37 +458,58 @@ async function main() {
     console.log(`\n📍 Processing ${location}`);
     console.log("=".repeat(40));
 
-    // Select file if multiple
-    const selectedFile = await selectFile(
-      group.files,
+    // Select normalized files
+    const normalizedResult = await selectCsvFiles(
+      "normalized",
+      group.files.normalized,
       group.prefecture,
       group.city,
     );
-    if (!selectedFile) {
-      console.log("⚠️  No file selected, skipping");
+
+    if (!normalizedResult.selected) {
+      console.log("⚠️  No normalized file selected, skipping location");
       continue;
     }
 
-    // Check if file has changed
-    if (!hasFileChanged(selectedFile, processedFiles)) {
-      console.log(`⏭️  File hasn't changed since last run`);
+    // Get all append files for this location
+    const appendResult = await selectCsvFiles(
+      "append",
+      group.files.append,
+      group.prefecture,
+      group.city,
+    );
+
+    // Log append files if any
+    await logAppendFiles(appendResult.all, group.prefecture, group.city);
+
+    // Combine all files to process
+    const allFiles = [...normalizedResult.all, ...appendResult.all];
+
+    // Check if any file has changed
+    const hasChanged = allFiles.some((file) =>
+      hasFileChanged(file, processedFiles),
+    );
+    if (!hasChanged) {
+      console.log(`⏭️  Files haven't changed since last run`);
       unchangedCount++;
       // continue; // DISABLED FOR NOW - process all files
     }
 
-    // Process this file with optional validation
-    const success = await processFile(selectedFile, validateAll);
+    // Process all files with optional validation
+    const success = await processFiles(allFiles, validateAll);
 
     // Move to appropriate destination
-    await moveToDestination(selectedFile, group.prefecture, success);
+    await moveFilesToDestination(allFiles, group.prefecture, success);
 
     // Update processed files record
     if (success) {
-      const stat = statSync(selectedFile);
-      processedFiles[selectedFile] = {
-        mtime: stat.mtime.getTime(),
-        size: stat.size,
-      };
+      for (const file of allFiles) {
+        const stat = statSync(file);
+        processedFiles[file] = {
+          mtime: stat.mtime.getTime(),
+          size: stat.size,
+        };
+      }
       successCount++;
     } else {
       failCount++;

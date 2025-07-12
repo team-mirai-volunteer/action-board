@@ -1,3 +1,4 @@
+import { EXTERNAL_LINKS } from "@/lib/constants";
 import Link from "next/link";
 import { FOOTER_CONFIG } from "./footer";
 
@@ -37,6 +38,15 @@ export function CopyrightSection() {
               rel="noopener noreferrer"
             >
               ご意見箱
+            </Link>
+            <span>|</span>
+            <Link
+              href={EXTERNAL_LINKS.FAQ}
+              className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              よくあるご質問
             </Link>
           </div>
         </div>
