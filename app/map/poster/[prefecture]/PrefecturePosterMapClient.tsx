@@ -69,9 +69,23 @@ import {
   getPosterBoardStatsAction,
   getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
-import { map } from "leaflet";
 
 type MapAppType = "Google Maps" | "Gpple Maps";
+type DisplayType = "address" | "coordinates" | "name";
+
+// 表示タイプに応じて日本語テキストを生成
+const getDisplayTypeText = (displayType: DisplayType) => {
+  switch (displayType) {
+    case "address":
+      return "住所";
+    case "coordinates":
+      return "座標";
+    case "name":
+      return "名称";
+    default:
+      return "情報";
+  }
+};
 
 interface PrefecturePosterMapClientProps {
   userId?: string;
@@ -88,7 +102,7 @@ function generateMapUrl(
   lat: number,
   long: number,
   address: string,
-  useCoords: boolean
+  useCoords: boolean,
 ) {
   if (app === "Google Maps") {
     return useCoords
@@ -99,6 +113,106 @@ function generateMapUrl(
       ? `maps://maps.apple.com/?q=${lat},${long}`
       : `maps://maps.apple.com/?q=${encodeURIComponent(address)}`;
   }
+}
+
+function LocationInfo({
+  selectedBoard,
+  displayType,
+  preferredMapApp,
+  saveMapAppPreference,
+  copyToClipboard,
+}: {
+  selectedBoard: PosterBoard;
+  displayType: DisplayType;
+  preferredMapApp: MapAppType | null;
+  saveMapAppPreference: (app: MapAppType) => void;
+  copyToClipboard: (displayType: DisplayType, text: string) => Promise<void>;
+}) {
+  // 表示タイプに応じてテキストを生成
+  const getDisplayText = () => {
+    switch (displayType) {
+      case "address":
+        return `${selectedBoard.city} ${selectedBoard.address} (${selectedBoard.number})`;
+      case "coordinates":
+        return `${selectedBoard.lat}, ${selectedBoard.long}`;
+      case "name":
+        return selectedBoard.name || "名称なし";
+      default:
+        return "";
+    }
+  };
+
+  // 地図URL生成時のuseCoords判定
+  const shouldUseCoords = displayType === "coordinates";
+
+  return (
+    <div className="mb-4 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span>{getDisplayText()}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={() => copyToClipboard(displayType, getDisplayText())}
+            title={`${getDisplayTypeText(displayType)}をコピー`}
+          >
+            <Copy className="h-3 w-3" />
+          </Button>
+        </div>
+
+        {preferredMapApp ? (
+          <Button variant="ghost" size="sm" className="h-8 px-2">
+            <a
+              href={generateMapUrl(
+                preferredMapApp,
+                selectedBoard.lat,
+                selectedBoard.long,
+                getDisplayText(),
+                shouldUseCoords,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center w-full"
+            >
+              <MapPin className="h-4 w-4 mr-1" />
+              {`${getDisplayTypeText(displayType)}で開く`}
+            </a>
+          </Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 px-2">
+                <MapPin className="h-4 w-4 mr-1" />
+                {`${getDisplayTypeText(displayType)}で開く`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {["Google Maps", "Apple Maps"].map((app) => (
+                <DropdownMenuItem asChild key={app}>
+                  <a
+                    href={generateMapUrl(
+                      app as MapAppType,
+                      selectedBoard.lat,
+                      selectedBoard.long,
+                      getDisplayText(),
+                      shouldUseCoords,
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center w-full"
+                    onClick={() => saveMapAppPreference(app as MapAppType)}
+                  >
+                    {app}
+                  </a>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function PrefecturePosterMapClient({
@@ -148,7 +262,7 @@ export default function PrefecturePosterMapClient({
   >(null);
 
   const [preferredMapApp, setPreferredMapApp] = useState<MapAppType | null>(
-    null
+    null,
   );
   // 地図アプリの選択をlocalStorageから読み込み
   useEffect(() => {
@@ -220,10 +334,10 @@ export default function PrefecturePosterMapClient({
   }, [userId, boards, prefecture]);
 
   // 住所をクリップボードにコピー
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (displayType: DisplayType, text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("住所をコピーしました");
+      toast.success(`${getDisplayTypeText(displayType)}をコピーしました`);
     } catch (error) {
       toast.error("コピーに失敗しました");
     }
@@ -237,7 +351,7 @@ export default function PrefecturePosterMapClient({
 
       // 統計情報も更新
       const newStats = await getPosterBoardStatsAction(
-        prefecture as Parameters<typeof getPosterBoardStatsAction>[0]
+        prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
       );
       setStats(newStats);
 
@@ -245,7 +359,7 @@ export default function PrefecturePosterMapClient({
       if (userId) {
         const updatedUserEditedBoardIds = await getUserEditedBoardIdsAction(
           prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
-          userId
+          userId,
         );
         setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
       }
@@ -298,7 +412,7 @@ export default function PrefecturePosterMapClient({
   // 掲示板でミッション達成済みかチェック
   const checkBoardMissionCompleted = async (
     boardId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> => {
     const supabase = createClient();
 
@@ -313,7 +427,8 @@ export default function PrefecturePosterMapClient({
 
     // この掲示板で既にミッション達成しているかチェック
     const { data: activities } = await supabase
-      .from("poster_activities").select(
+      .from("poster_activities")
+      .select(
         `
         id,
         mission_artifacts!inner(
@@ -322,7 +437,7 @@ export default function PrefecturePosterMapClient({
             user_id
           )
         )
-      `
+      `,
       )
       .eq("board_id", boardId)
       .eq("mission_artifacts.achievements.user_id", userId)
@@ -333,7 +448,7 @@ export default function PrefecturePosterMapClient({
 
   // ミッション達成処理
   const completePosterBoardMission = async (
-    board: PosterBoard
+    board: PosterBoard,
   ): Promise<void> => {
     const supabase = createClient();
     const { data: mission } = await supabase
@@ -386,7 +501,7 @@ export default function PrefecturePosterMapClient({
           // この掲示板で既にミッション達成済みかチェック
           const hasCompleted = await checkBoardMissionCompleted(
             selectedBoard.id,
-            user.id
+            user.id,
           );
 
           if (!hasCompleted) {
@@ -571,110 +686,40 @@ export default function PrefecturePosterMapClient({
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm text-muted-foreground">
-              {selectedBoard?.name ||
-                selectedBoard?.address ||
-                selectedBoard?.number}
-            </span>
+          {selectedBoard && (
+            <>
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="name"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+              />
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="address"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+              />
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="coordinates"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+              />
+            </>
+          )}
+          <div className="flex justify-end">
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 w-6 p-0"
-              onClick={() => {
-                const text =
-                  selectedBoard?.name ||
-                  selectedBoard?.address ||
-                  selectedBoard?.number;
-                if (text) copyToClipboard(text);
-              }}
-              title="名前/住所をコピー"
-            >
-              <Copy className="h-3 w-3" />
-            </Button>
-          </div>
-          {selectedBoard && (
-            <div className="mb-4 text-sm text-muted-foreground">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span>
-                    {selectedBoard.lat}, {selectedBoard.long}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0"
-                    onClick={() =>
-                      copyToClipboard(
-                        `${selectedBoard.lat}, ${selectedBoard.long}`
-                      )
-                    }
-                    title="座標をコピー"
-                  >
-                    <Copy className="h-3 w-3" />
-                  </Button>
-                </div>
-                {preferredMapApp ? (
-                  <Button variant="ghost" size="sm" className="h-8 px-2">
-                    <a
-                      href={generateMapUrl(
-                        preferredMapApp as MapAppType,
-                        selectedBoard.lat || 0,
-                        selectedBoard.long || 0,
-                        selectedBoard.address || "",
-                        true
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center w-full"
-                    >
-                      <MapPin className="h-4 w-4 mr-1" />
-                      座標で開く
-                    </a>
-                  </Button>
-                ) : (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 px-2">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        座標で開く
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {["Google Maps", "Apple Maps"].map((app) => (
-                        <DropdownMenuItem asChild key={app}>
-                          <a
-                            href={generateMapUrl(
-                              app as MapAppType,
-                              selectedBoard.lat || 0,
-                              selectedBoard.long || 0,
-                              selectedBoard.address || "",
-                              true
-                            )}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center w-full"
-                            onClick={() =>
-                              saveMapAppPreference(app as MapAppType)
-                            }
-                          >
-                            {app}
-                          </a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            </div>
-          )}
-          <div className="flex justify-end">
-            <button
               onClick={resetMapAppPreference}
               className="text-xs text-muted-foreground hover:text-foreground cursor-pointer underline"
             >
               デフォルトのマップアプリをリセット
-            </button>
+            </Button>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -816,7 +861,7 @@ export default function PrefecturePosterMapClient({
                 ] as PosterPrefectureKey;
                 const returnUrl = `/map/poster/${prefectureKey}`;
                 router.push(
-                  `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`
+                  `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
                 );
               }}
             >
