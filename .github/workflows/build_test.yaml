@@ -65,15 +65,30 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
-      - name: Wait for database seeding
+      - name: Wait for database seeding and verify setup
         run: |
           echo "Waiting for database seeding to complete..."
-          sleep 10
-          echo "Database seeding wait completed."
-          sleep 5
+          sleep 15
+          echo "Verifying Supabase is ready..."
+          npx supabase status
+          echo "Checking database tables..."
+          npx supabase db reset --debug
+          echo "Verifying mission data exists..."
+          npx supabase db dump --data-only --table=missions
+          npx supabase db dump --data-only --table=mission_category
+          npx supabase db dump --data-only --table=mission_category_link
+          echo "Database verification completed."
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
+
+      - name: Setup test environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> .env.local
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" >> .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> .env.local
+          echo "NEXT_PUBLIC_APP_ORIGIN=http://localhost:3000" >> .env.local
+          cat .env.local
 
       - name: Run CI Tests
         run: npm run test:ci
