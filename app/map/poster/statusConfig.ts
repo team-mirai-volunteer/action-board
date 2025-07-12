@@ -12,7 +12,7 @@ export const statusConfig: Record<
   error_wrong_place: {
     label: "エラー（ポスター掲示板マップと実際の場所・番号が違う）",
     shortLabel: "場所違い",
-    color: "bg-red-500",
+    color: "bg-gray-500",
   },
   error_damaged: {
     label: "エラー（損傷・破損）",
