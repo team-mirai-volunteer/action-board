@@ -13,6 +13,7 @@ import {
 import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
+import { Expand, Minimize } from "lucide-react";
 
 // Fix Leaflet default marker icon issue with Next.js
 // biome-ignore lint/performance/noDelete: Required for Leaflet icon fix
@@ -77,6 +78,7 @@ export default function PosterMap({
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<L.Marker | L.CircleMarker | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Fetch current user and board info
   useEffect(() => {
@@ -231,8 +233,52 @@ export default function PosterMap({
     }
   };
 
+  // フルスクリーンモードの切り替え
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  // ESCキーでフルスクリーン解除
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+
+    if (isFullscreen) {
+      document.addEventListener("keydown", handleEscape);
+      // フルスクリーン時はbodyのスクロールを無効化
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isFullscreen]);
+
+  // フルスクリーン時に地図サイズを更新
+  useEffect(() => {
+    if (mapRef.current) {
+      // 少し遅延を入れてから地図サイズを更新
+      const timeoutId = setTimeout(() => {
+        mapRef.current?.invalidateSize();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  });
+
   return (
-    <div className="relative h-[600px] w-full z-0">
+    <div
+      className={
+        isFullscreen
+          ? "fixed inset-0 z-50 h-screen w-screen bg-white"
+          : "relative h-[600px] w-full z-0"
+      }
+    >
       <div id="poster-map" className="h-full w-full" />
       <PosterBoardFilter
         filterState={filterState}
@@ -242,6 +288,36 @@ export default function PosterMap({
         onDeselectAll={deselectAll}
         activeFilterCount={activeFilterCount}
       />
+
+      {/* フルスクリーンボタン */}
+      {!isFullscreen && (
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          style={{ zIndex: 1000 }}
+          aria-label="フルスクリーン表示"
+          title="フルスクリーン表示"
+        >
+          <Expand size={20} />
+        </button>
+      )}
+
+      {/* フルスクリーン解除ボタン */}
+      {isFullscreen && (
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          style={{ zIndex: 1000 }}
+          aria-label="フルスクリーン解除"
+          title="フルスクリーン解除 (ESC)"
+        >
+          <Minimize size={20} />
+        </button>
+      )}
+
+      {/* 現在地ボタン */}
       <button
         type="button"
         onClick={handleLocate}
