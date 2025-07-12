@@ -1,6 +1,7 @@
 import type { Message } from "@/components/form-message";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { AccountDeletionSection } from "./AccountDeletionSection";
 import ProfileForm from "./ProfileForm";
 
 type ProfileSettingsPageSearchParams = {
@@ -55,6 +56,7 @@ export default async function ProfileSettingsPage({
         }}
         initialPrivateUser={privateUser}
       />
+      {!isNew && <AccountDeletionSection />}
     </div>
   );
 }
