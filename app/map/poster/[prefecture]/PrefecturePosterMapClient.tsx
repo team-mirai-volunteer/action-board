@@ -105,7 +105,7 @@ export default function PrefecturePosterMapClient({
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [stats, setStats] = useState(initialStats);
-  const [filters, setFilters] = useState({
+  const [_filters, _setFilters] = useState({
     selectedStatuses: [
       "not_yet",
       "reserved",
@@ -431,7 +431,7 @@ export default function PrefecturePosterMapClient({
           prefectureKey={
             JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
           }
-          onFilterChange={setFilters}
+          onFilterChange={_setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
         />
@@ -520,31 +520,34 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              <div className="flex items-center gap-2">
-                <span>
-                  {selectedBoard?.name ||
-                    selectedBoard?.address ||
-                    selectedBoard?.number}
-                  の状況を教えてください
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0"
-                  onClick={() => {
-                    const text =
-                      selectedBoard?.name ||
-                      selectedBoard?.address ||
-                      selectedBoard?.number;
-                    if (text) copyToClipboard(text);
-                  }}
-                  title="名前/住所をコピー"
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
+              {selectedBoard?.name ||
+                selectedBoard?.address ||
+                selectedBoard?.number}
+              の状況を教えてください
             </DialogDescription>
           </DialogHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm text-muted-foreground">
+              {selectedBoard?.name ||
+                selectedBoard?.address ||
+                selectedBoard?.number}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
+              onClick={() => {
+                const text =
+                  selectedBoard?.name ||
+                  selectedBoard?.address ||
+                  selectedBoard?.number;
+                if (text) copyToClipboard(text);
+              }}
+              title="名前/住所をコピー"
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
           {selectedBoard && (
             <div className="mb-4 text-sm text-muted-foreground">
               <div className="flex items-center justify-between">
@@ -616,7 +619,9 @@ export default function PrefecturePosterMapClient({
               <Label htmlFor="status">ポスターの状況</Label>
               <Select
                 value={updateStatus}
-                onValueChange={(value) => setUpdateStatus(value as BoardStatus)}
+                onValueChange={(value: string) =>
+                  setUpdateStatus(value as BoardStatus)
+                }
               >
                 <SelectTrigger id="status">
                   <SelectValue />
