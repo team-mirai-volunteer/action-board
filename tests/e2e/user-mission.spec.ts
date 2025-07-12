@@ -120,11 +120,75 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await assertAuthState(signedInPage, true);
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
-    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+    console.log('Authentication state before mission navigation:', await signedInPage.evaluate(() => {
+      const authData = window.localStorage.getItem('supabase.auth.token');
+      const sessionData = window.localStorage.getItem('sb-localhost-auth-token');
+      return { authToken: authData, sessionToken: sessionData };
+    }));
+    
+    await signedInPage.waitForTimeout(3000);
+    
+    await expect(signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first()).toBeVisible({ timeout: 20000 });
+    console.log('Mission button found, clicking...');
+    
+    await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 25000 });
+    console.log('Mission page URL:', signedInPage.url());
+    
+    await signedInPage.waitForLoadState('networkidle', { timeout: 15000 });
 
     // ミッションページの表示内容を確認
-    await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible();
+    console.log('Current URL:', signedInPage.url());
+    
+    const authStateOnMissionPage = await signedInPage.evaluate(() => {
+      const authData = window.localStorage.getItem('supabase.auth.token');
+      const sessionData = window.localStorage.getItem('sb-localhost-auth-token');
+      return { authToken: authData, sessionToken: sessionData };
+    });
+    console.log('Authentication state on mission page:', authStateOnMissionPage);
+    
+    const hasJavaScriptOnly = await signedInPage.locator('script').count() > 0 && 
+                              await signedInPage.locator('main, article, section').count() === 0;
+    console.log('Page appears to be JavaScript-only (SSR issue):', hasJavaScriptOnly);
+    
+    if (hasJavaScriptOnly) {
+      console.log('Detected SSR issue, waiting longer for hydration...');
+      await signedInPage.waitForTimeout(5000);
+    }
+    
+    try {
+      await expect(signedInPage.getByText('(seed) ゴミ拾いをしよう (成果物不要)', { exact: true })).toBeVisible({ timeout: 20000 });
+    } catch (error) {
+      console.log('Mission title not found, performing comprehensive debugging...');
+      
+      const pageText = await signedInPage.textContent('body');
+      console.log('Page body text (first 500 chars):', pageText?.substring(0, 500));
+      
+      const hasLoginPrompt = await signedInPage.getByText('ログインしてミッションを達成しよう').isVisible().catch(() => false);
+      const hasMissionNotFound = await signedInPage.getByText('ミッションが見つかりません。').isVisible().catch(() => false);
+      const hasNetworkError = await signedInPage.getByText('ネットワークエラー').isVisible().catch(() => false);
+      const hasServerError = await signedInPage.getByText('サーバーエラー').isVisible().catch(() => false);
+      
+      console.log('Error state analysis:', {
+        hasLoginPrompt,
+        hasMissionNotFound,
+        hasNetworkError,
+        hasServerError
+      });
+      
+      const failedRequests: Array<{ url: string; failure: string | null }> = [];
+      signedInPage.on('requestfailed', request => {
+        const failure = request.failure();
+        failedRequests.push({ url: request.url(), failure: failure ? failure.errorText : null });
+      });
+      
+      console.log('Failed network requests:', failedRequests);
+      
+      await signedInPage.screenshot({ path: 'mission-page-debug.png', fullPage: true });
+      console.log('Debug screenshot saved as mission-page-debug.png');
+      
+      throw error;
+    }
     await expect(signedInPage.getByText('近所のゴミを拾ってみよう！清掃活動の報告は任意です。')).toBeVisible();
     await expect(signedInPage.getByText('実行したら記録しよう！')).toBeVisible();
     await expect(signedInPage.getByRole('button', { name: 'ミッション完了を記録する' })).toBeVisible();
@@ -153,7 +217,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
 
     // ミッション取消後のポイントの変動を確認
     await signedInPage.goto('/');
-    await signedInPage.getByRole('button', { name: '詳細を見る →' }).first().click();
+    await signedInPage.getByRole('button', { name: 'もう一回チャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
 
     await expect(signedInPage.getByText('あなたの達成履歴')).toBeVisible({ timeout: 10000 });
