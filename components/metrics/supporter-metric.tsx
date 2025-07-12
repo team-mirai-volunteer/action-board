@@ -28,9 +28,9 @@ export function SupporterMetric({
       </div>
       <div className="text-right">
         {/* 総サポーター数（大きく表示） */}
-        <p className="text-3xl font-bold text-gray-800">
+        <p className="text-2xl font-bold text-gray-800">
           {formatNumber(supporterCount)}
-          <span className="text-xl">人</span>
+          <span className="text-lg">人</span>
         </p>
         {/* 24時間の増加数 */}
         <p className="text-sm text-gray-600">
