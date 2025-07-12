@@ -116,6 +116,7 @@ export default function PosterMap({
     filteredBoards,
     toggleStatus,
     toggleShowOnlyMine,
+    toggleHideCurrentLocation,
     selectAll,
     deselectAll,
     activeFilterCount,
@@ -209,8 +210,8 @@ export default function PosterMap({
       currentMarkerRef.current = null;
     }
 
-    // 現在地が取得できていればマーカーを追加
-    if (currentPos) {
+    // 現在地が取得できていて、かつフィルタで非表示にされていなければマーカーを追加
+    if (currentPos && !filterState.hideCurrentLocation) {
       const marker = L.circleMarker(currentPos, {
         radius: 12,
         color: "#2563eb",
@@ -223,7 +224,7 @@ export default function PosterMap({
 
       currentMarkerRef.current = marker;
     }
-  }, [currentPos]);
+  }, [currentPos, filterState.hideCurrentLocation]);
 
   // 現在地取得ボタンのハンドラ
   const handleLocate = () => {
@@ -285,6 +286,7 @@ export default function PosterMap({
         filterState={filterState}
         onToggleStatus={toggleStatus}
         onToggleShowOnlyMine={toggleShowOnlyMine}
+        onToggleHideCurrentLocation={toggleHideCurrentLocation}
         onSelectAll={selectAll}
         onDeselectAll={deselectAll}
         activeFilterCount={activeFilterCount}

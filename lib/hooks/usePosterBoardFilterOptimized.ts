@@ -16,6 +16,7 @@ export type FilterStatus = BoardStatus;
 export interface PosterBoardFilterState {
   statuses: Set<FilterStatus>;
   showOnlyMine: boolean;
+  hideCurrentLocation: boolean;
 }
 
 interface UsePosterBoardFilterProps {
@@ -37,6 +38,7 @@ const ALL_STATUSES: FilterStatus[] = [
 const defaultFilterState: PosterBoardFilterState = {
   statuses: new Set<FilterStatus>(ALL_STATUSES),
   showOnlyMine: false,
+  hideCurrentLocation: false,
 };
 
 // バッチ処理のサイズ
@@ -181,10 +183,18 @@ export function usePosterBoardFilterOptimized({
     }));
   }, []);
 
+  const toggleHideCurrentLocation = useCallback(() => {
+    setFilterState((prev) => ({
+      ...prev,
+      hideCurrentLocation: !prev.hideCurrentLocation,
+    }));
+  }, []);
+
   const selectAll = useCallback(() => {
     setFilterState((prev) => ({
       statuses: new Set<FilterStatus>(ALL_STATUSES),
       showOnlyMine: prev.showOnlyMine,
+      hideCurrentLocation: prev.hideCurrentLocation,
     }));
   }, []);
 
@@ -192,6 +202,7 @@ export function usePosterBoardFilterOptimized({
     setFilterState((prev) => ({
       statuses: new Set<FilterStatus>(),
       showOnlyMine: prev.showOnlyMine,
+      hideCurrentLocation: prev.hideCurrentLocation,
     }));
   }, []);
 
@@ -204,6 +215,7 @@ export function usePosterBoardFilterOptimized({
     filteredBoards,
     toggleStatus,
     toggleShowOnlyMine,
+    toggleHideCurrentLocation,
     selectAll,
     deselectAll,
     activeFilterCount,

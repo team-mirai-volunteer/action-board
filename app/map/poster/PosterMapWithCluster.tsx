@@ -311,6 +311,7 @@ export default function PosterMapWithCluster({
     filteredBoards,
     toggleStatus,
     toggleShowOnlyMine,
+    toggleHideCurrentLocation,
     selectAll,
     deselectAll,
     activeFilterCount,
@@ -528,8 +529,8 @@ export default function PosterMapWithCluster({
       currentMarkerRef.current = null;
     }
 
-    // 現在地が取得できていればマーカーを追加
-    if (currentPos) {
+    // 現在地が取得できていて、かつフィルタで非表示にされていなければマーカーを追加
+    if (currentPos && !filterState.hideCurrentLocation) {
       const marker = L.circleMarker(currentPos, {
         radius: 12,
         color: "#2563eb",
@@ -542,7 +543,7 @@ export default function PosterMapWithCluster({
 
       currentMarkerRef.current = marker;
     }
-  }, [currentPos]);
+  }, [currentPos, filterState.hideCurrentLocation]);
 
   // Cleanup
   useEffect(() => {
@@ -618,6 +619,7 @@ export default function PosterMapWithCluster({
         filterState={filterState}
         onToggleStatus={toggleStatus}
         onToggleShowOnlyMine={toggleShowOnlyMine}
+        onToggleHideCurrentLocation={toggleHideCurrentLocation}
         onSelectAll={selectAll}
         onDeselectAll={deselectAll}
         activeFilterCount={activeFilterCount}

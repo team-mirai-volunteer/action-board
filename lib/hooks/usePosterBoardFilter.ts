@@ -9,6 +9,7 @@ export type FilterStatus = BoardStatus;
 export interface PosterBoardFilterState {
   statuses: Set<FilterStatus>;
   showOnlyMine: boolean;
+  hideCurrentLocation: boolean;
 }
 
 interface UsePosterBoardFilterProps {
@@ -30,6 +31,7 @@ const ALL_STATUSES: FilterStatus[] = [
 const defaultFilterState: PosterBoardFilterState = {
   statuses: new Set<FilterStatus>(ALL_STATUSES),
   showOnlyMine: false,
+  hideCurrentLocation: false,
 };
 
 export function usePosterBoardFilter({
@@ -63,10 +65,18 @@ export function usePosterBoardFilter({
     }));
   }, []);
 
+  const toggleHideCurrentLocation = useCallback(() => {
+    setFilterState((prev) => ({
+      ...prev,
+      hideCurrentLocation: !prev.hideCurrentLocation,
+    }));
+  }, []);
+
   const selectAll = useCallback(() => {
     setFilterState((prev) => ({
       statuses: new Set<FilterStatus>(ALL_STATUSES),
       showOnlyMine: prev.showOnlyMine, // Preserve this setting
+      hideCurrentLocation: prev.hideCurrentLocation, // Preserve this setting
     }));
   }, []);
 
@@ -74,6 +84,7 @@ export function usePosterBoardFilter({
     setFilterState((prev) => ({
       statuses: new Set<FilterStatus>(),
       showOnlyMine: prev.showOnlyMine, // Preserve this setting
+      hideCurrentLocation: prev.hideCurrentLocation, // Preserve this setting
     }));
   }, []);
 
@@ -108,6 +119,7 @@ export function usePosterBoardFilter({
     filteredBoards,
     toggleStatus,
     toggleShowOnlyMine,
+    toggleHideCurrentLocation,
     selectAll,
     deselectAll,
     activeFilterCount,
