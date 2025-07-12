@@ -33,7 +33,7 @@ export function SupporterMetric({
           <span className="text-lg">人</span>
         </p>
         {/* 24時間の増加数 */}
-        <p className="text-sm text-gray-600">
+        <p className="text-xs text-gray-600">
           1日で{" "}
           <span className="font-bold text-teal-700">
             +{formatNumber(supporterIncrease)}人
