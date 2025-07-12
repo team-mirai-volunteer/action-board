@@ -2,10 +2,7 @@ import "server-only";
 import { cache } from "react";
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { Database } from "@/lib/types/supabase";
-
-type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
+import type { Tables } from "@/lib/types/supabase";
 
 export const getUser = cache(async () => {
   const supabase = await createClient();
