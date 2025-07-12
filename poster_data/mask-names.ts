@@ -62,12 +62,17 @@ function hasPersonalName(str: string): boolean {
 
 async function main(): Promise<void> {
   // Find all CSV files in data and broken_data directories
-  const dataPattern = path.join(__dirname, "data", "**", "*_normalized.csv");
+  const dataPattern = path.join(
+    __dirname,
+    "data",
+    "**",
+    "*{_normalized,append}.csv",
+  );
   const brokenDataPattern = path.join(
     __dirname,
     "broken_data",
     "**",
-    "*_normalized.csv",
+    "*{_normalized,append}.csv",
   );
 
   const dataFiles = await glob(dataPattern);

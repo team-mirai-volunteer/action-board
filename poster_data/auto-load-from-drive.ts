@@ -112,7 +112,7 @@ function findNormalizedCsvFiles(dir: string): string[] {
           walk(fullPath, depth + 1);
         } else if (
           stat.isFile() &&
-          entry.endsWith("_normalized.csv") &&
+          (entry.endsWith("_normalized.csv") || entry.endsWith("append.csv")) &&
           depth === 2 // Only get files at city level
         ) {
           files.push(fullPath);

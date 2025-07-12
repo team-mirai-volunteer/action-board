@@ -65,7 +65,7 @@ This will create a timestamped log file like `poster_data/auto-load-20250702-143
 
 This script will:
 1. Copy data from the Google Drive shared folder to `raw_data/`
-2. Find all `*_normalized.csv` files at the prefecture/city level
+2. Find all `*_normalized.csv` and `*append.csv` files at the prefecture/city level
 3. For each location:
    - If multiple normalized files exist, automatically selects the shortest one
    - Logs the selection to `choice.md`
