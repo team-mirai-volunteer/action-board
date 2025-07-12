@@ -16,7 +16,7 @@ export const FOOTER_BUTTON_STYLES = {
 
 export const FOOTER_IMAGE_SIZES = {
   socialIcon: { width: 48, height: 48 },
-  logo: { width: 64, height: 64 },
+  logo: { width: 80, height: 71 },
 } as const;
 
 export const FOOTER_CONFIG: FooterConfig = {
