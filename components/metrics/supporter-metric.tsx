@@ -22,39 +22,22 @@ export function SupporterMetric({
   const supporterIncrease = data?.last24hCount ?? fallbackIncrease;
 
   return (
-    <div className="mb-6">
-      <div
-        className="p-4 text-center rounded"
-        style={{ backgroundColor: "#F9F9F9" }}
-      >
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <p className="text-sm font-bold text-black">
-            チームみらい サポーター数
-          </p>
-        </div>
+    <div className="flex items-center justify-between py-6">
+      <div>
+        <p className="text-base font-bold text-black">サポーター数</p>
+      </div>
+      <div className="text-right">
         {/* 総サポーター数（大きく表示） */}
-        <p className="text-3xl font-bold text-teal-700 mb-1">
+        <p className="text-3xl font-bold text-gray-800">
           {formatNumber(supporterCount)}
           <span className="text-xl">人</span>
         </p>
         {/* 24時間の増加数 */}
-        <p className="text-sm text-black">
+        <p className="text-sm text-gray-600">
           1日で{" "}
           <span className="font-bold text-teal-700">
-            +{formatNumber(supporterIncrease)}
-            <span className="text-xs">人！</span>
+            +{formatNumber(supporterIncrease)}人
           </span>
-        </p>
-        {/* ダッシュボードへのリンク */}
-        <p className="mt-2 text-xs whitespace-nowrap">
-          <a
-            href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
-            className="text-teal-600 underline hover:text-teal-700"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            詳細を見る
-          </a>
         </p>
       </div>
     </div>

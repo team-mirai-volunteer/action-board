@@ -41,31 +41,80 @@ export default async function Metrics() {
 
   return (
     <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
-      {/* サポーター数表示エリア（メインハイライト） */}
+      {/* アクション達成数 */}
+      <AchievementMetric
+        data={metricsData.achievement}
+        fallbackTotal={fallbackAchievementCount}
+        fallbackToday={fallbackTodayAchievementCount}
+      />
+
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
+
+      {/* サポーター数 */}
       <SupporterMetric
         data={metricsData.supporter}
         fallbackCount={fallbackSupporterCount}
         fallbackIncrease={fallbackSupporterIncrease}
       />
 
-      {/* 下段：アクション数と寄付金額を左右に分割表示 */}
-      <div className="flex items-start">
-        {/* 左側：アクション達成数 */}
-        <AchievementMetric
-          data={metricsData.achievement}
-          fallbackTotal={fallbackAchievementCount}
-          fallbackToday={fallbackTodayAchievementCount}
-        />
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
 
-        {/* 中央：縦線セパレーター */}
-        <Separator orientation="vertical" className="mx-4 h-full" />
+      {/* 寄付金額 */}
+      <DonationMetric
+        data={metricsData.donation}
+        fallbackAmount={fallbackDonationAmount}
+        fallbackIncrease={fallbackDonationIncrease}
+      />
 
-        {/* 右側：寄付金額 */}
-        <DonationMetric
-          data={metricsData.donation}
-          fallbackAmount={fallbackDonationAmount}
-          fallbackIncrease={fallbackDonationIncrease}
-        />
+      {/* リンクセクション */}
+      <div className="flex flex-col items-center gap-3 mt-6 pt-4 border-t border-gray-200">
+        <a
+          href="https://team-mir.ai/support/donation"
+          className="flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>チームみらいを寄付で応援する</span>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <title>ご寄付に関するご案内</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
+
+        <a
+          href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-700 font-medium text-sm transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>もっと詳しい活動状況を見る</span>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <title>チームみらいダッシュボード</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </a>
       </div>
     </MetricsLayout>
   );

@@ -60,9 +60,9 @@ export function DonationMetric({
   };
 
   return (
-    <div className="flex-1 text-center flex flex-col justify-center">
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <p className="text-sm font-bold text-black">現在の寄付金額</p>
+    <div className="flex items-center justify-between py-6">
+      <div className="flex items-center gap-2">
+        <p className="text-base font-bold text-black">現在の寄付金額</p>
         {/* 寄付金額の詳細説明ツールチップ */}
         <Popover open={isMobile ? isTooltipOpen : undefined}>
           <PopoverTrigger asChild>
@@ -89,39 +89,19 @@ export function DonationMetric({
           </PopoverContent>
         </Popover>
       </div>
-      {/* 総寄付金額（外部APIから取得、失敗時は環境変数フォールバック） */}
-      <p className="text-2xl font-black text-black mb-1">
-        {formatAmount(donationAmount)}
-      </p>
-      {/* 24時間の寄付金増加額 */}
-      <p className="text-xs text-black">
-        1日で{" "}
-        <span className="font-bold text-teal-700">
-          +{formatAmount(donationIncrease)}
-        </span>
-      </p>
-      {/* ダッシュボードへのリンク */}
-      <p className="mt-2 text-xs whitespace-nowrap">
-        <a
-          href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_lvnweavysd"
-          className="text-teal-600 underline hover:text-teal-700"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          詳細を見る
-        </a>
-      </p>
-      {/* ここでリンクを追加 */}
-      <p className="mt-2 text-xs whitespace-nowrap">
-        <a
-          href="https://team-mir.ai/support/donation"
-          className="text-teal-600 underline hover:text-teal-700"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ご支援はこちらから
-        </a>
-      </p>
+      <div className="text-right">
+        {/* 総寄付金額（外部APIから取得、失敗時は環境変数フォールバック） */}
+        <p className="text-2xl font-black text-gray-800">
+          {formatAmount(donationAmount)}
+        </p>
+        {/* 24時間の寄付金増加額 */}
+        <p className="text-xs text-gray-600">
+          1日で{" "}
+          <span className="font-bold text-teal-700">
+            +{formatAmount(donationIncrease)}
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
