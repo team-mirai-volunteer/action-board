@@ -135,7 +135,6 @@ describe("missionsRanking service", () => {
         expect(rpcCall[1].p_start_date).toBeTruthy();
 
         const startDate = new Date(rpcCall[1].p_start_date);
-        const now = new Date();
         const todayMidnight = getJSTMidnightToday();
         expect(startDate.getTime()).toBe(todayMidnight.getTime());
       });

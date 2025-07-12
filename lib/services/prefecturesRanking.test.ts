@@ -136,7 +136,6 @@ describe("prefecturesRanking service", () => {
         expect(rpcCall[0]).toBe("get_period_prefecture_ranking");
 
         const startDate = new Date(rpcCall[1].p_start_date);
-        const now = new Date();
         const todayMidnight = getJSTMidnightToday();
         expect(startDate.getTime()).toBe(todayMidnight.getTime());
       });
