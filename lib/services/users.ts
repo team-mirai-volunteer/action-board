@@ -97,7 +97,7 @@ export async function deleteAccount(): Promise<void> {
   const userId = authUser.user.id;
 
   try {
-    // トランザクション開始 - Service Role Clientを使用してRLSを回避
+    // 1. 関連データを削除 - Service Role Clientを使用してRLSを回避
     const { error: transactionError } = await supabaseServiceClient.rpc(
       "delete_user_account",
       { target_user_id: userId },
@@ -106,6 +106,17 @@ export async function deleteAccount(): Promise<void> {
     if (transactionError) {
       console.error("退会処理でエラーが発生しました:", transactionError);
       throw new Error(`退会処理に失敗しました: ${transactionError.message}`);
+    }
+
+    // 2. auth.users テーブルからユーザーを削除（Admin API使用）
+    const { error: authDeleteError } =
+      await supabaseServiceClient.auth.admin.deleteUser(userId);
+
+    if (authDeleteError) {
+      console.error("認証ユーザー削除でエラーが発生しました:", authDeleteError);
+      throw new Error(
+        `認証ユーザー削除に失敗しました: ${authDeleteError.message}`,
+      );
     }
 
     console.log("退会処理が正常に完了しました:", userId);
