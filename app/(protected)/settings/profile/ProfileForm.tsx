@@ -461,7 +461,7 @@ export default function ProfileForm({
             <p className="text-center text-sm text-red-600">{state.error}</p>
           )}
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2">
+        <CardFooter>
           <SubmitButton className="w-full" disabled={isPending || !isAgeValid}>
             {isNew ? "登録する" : "更新する"}
           </SubmitButton>
