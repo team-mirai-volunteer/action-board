@@ -155,10 +155,8 @@ category_links:
         sort_no: 400
       - mission_slug: youtube-comment
         sort_no: 500
-      - mission_slug: youtube-live-comment
-        sort_no: 600
       - mission_slug: youtube-comment-reaction
-        sort_no: 700
+        sort_no: 600
   - category_slug: support-on-note
     missions:
       - mission_slug: follow-note
