@@ -151,7 +151,7 @@ function LocationInfo({
     <div className="text-sm text-muted-foreground">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="truncate">{displayText}</span>
+          <span className="break-words">{displayText}</span>
           <Button
             variant="ghost"
             size="sm"
