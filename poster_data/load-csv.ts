@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import { glob } from "glob";
 import { Client } from "pg";
 import { from as copyFrom } from "pg-copy-streams";
-import { ensureSupabaseRunning } from "./check-supabase";
 
 // Load environment variables with proper precedence
 // Don't load .env files if environment variables are already set (e.g., from cloud build or manual export)
@@ -31,12 +30,6 @@ interface PosterBoardRecord {
 }
 
 async function main() {
-  // Check if Supabase is running
-  const supabaseRunning = await ensureSupabaseRunning();
-  if (!supabaseRunning) {
-    process.exit(1);
-  }
-
   // Parse command line arguments
   const args = process.argv.slice(2);
   let specificFile: string | undefined;
