@@ -67,7 +67,8 @@ describe("Metrics", () => {
       render(await Metrics());
       // データが正しく表示されることを確認
       expect(screen.getByText("75,982")).toBeInTheDocument();
-      expect(screen.getByText("100万円")).toBeInTheDocument();
+      expect(screen.getByText("100")).toBeInTheDocument();
+      expect(screen.getByText("万円")).toBeInTheDocument();
     });
   });
 
@@ -93,7 +94,7 @@ describe("Metrics", () => {
     it("Separatorコンポーネントが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByTestId("separator")).toBeInTheDocument();
+      expect(screen.getAllByTestId("separator")).toHaveLength(3);
     });
   });
 });
