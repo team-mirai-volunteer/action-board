@@ -45,6 +45,17 @@ export function SupporterMetric({
             <span className="text-xs">人！</span>
           </span>
         </p>
+        {/* ダッシュボードへのリンク */}
+        <p className="mt-2 text-xs whitespace-nowrap">
+          <a
+            href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
+            className="text-teal-600 underline hover:text-teal-700"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            詳細を見る
+          </a>
+        </p>
       </div>
     </div>
   );

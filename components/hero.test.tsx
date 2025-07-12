@@ -32,8 +32,12 @@ describe("Hero", () => {
       const result = await Hero();
       render(result);
 
-      expect(screen.getByText("チームみらい")).toBeInTheDocument();
       expect(screen.getByText("アクションボード")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
+        ),
+      ).toBeInTheDocument();
     });
 
     it("メインタイトルが表示される", async () => {
@@ -60,7 +64,7 @@ describe("Hero", () => {
       render(result);
 
       const startButton = screen.getByRole("button", {
-        name: /チームみらいで手を動かす/,
+        name: /サポーター登録する/,
       });
       expect(startButton).toBeInTheDocument();
     });
