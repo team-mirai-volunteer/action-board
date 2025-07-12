@@ -592,3 +592,58 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
+  - slug: youtube-comment
+    title: YouTube動画にコメントしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: コメントしたYouTube動画のURL
+    ogp_image_url: null
+  - slug: youtube-live-comment
+    title: YouTubeライブ配信にコメントしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>でライブ配信を視聴して、ぜひコメントを残してみてください！あなたの声が、ライブ配信をより盛り上げます。動画の内容が気に入ったら高評価もお願いします！
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: コメントしたYouTubeライブ配信のURL
+    ogp_image_url: null
+  - slug: youtube-comment-reaction
+    title: YouTube動画のコメントにリアクションしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: リアクションしたYouTube動画のURL
+    ogp_image_url: null
+  - slug: tiktok-comment
+    title: TikTokでチームみらい動画にコメントしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: コメントしたTikTok動画のURL
+    ogp_image_url: null
+  - slug: tiktok-comment-reaction
+    title: TikTok動画のコメントにリアクションしよう
+    icon_url: /img/mission_fallback.svg
+    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    difficulty: 1
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: リアクションしたTikTok動画のURL
+    ogp_image_url: null
