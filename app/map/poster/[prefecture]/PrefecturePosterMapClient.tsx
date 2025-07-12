@@ -320,6 +320,11 @@ export default function PrefecturePosterMapClient({
 
     if (result.success) {
       toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
+    } else {
+      console.error("Mission achievement failed:", result.error);
+      toast.error(
+        "ミッション達成の処理に失敗しました。しばらく後に再度お試しください。",
+      );
     }
   };
 
@@ -346,8 +351,14 @@ export default function PrefecturePosterMapClient({
 
           if (!hasCompleted) {
             // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
-            completePosterBoardMission(selectedBoard).catch(() => {
-              // エラーは無視して、ステータス更新自体は成功として扱う
+            completePosterBoardMission(selectedBoard).catch((error) => {
+              console.error(
+                "Mission achievement failed in handleStatusUpdate:",
+                error,
+              );
+              toast.error(
+                "ミッション達成の処理に失敗しました。しばらく後に再度お試しください。",
+              );
             });
           }
         }
