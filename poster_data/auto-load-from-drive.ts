@@ -12,6 +12,7 @@ import { appendFile, copyFile, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { stdin as input, stdout as output } from "node:process";
 import * as readline from "node:readline/promises";
+import { ensureSupabaseRunning } from "./check-supabase";
 
 const SOURCE_PATH =
   "~/Google Drive/Shared drives/チームみらい(外部共有)/ポスター・ポスティングロジ/ポスター・ポスティング作業用/ポスター/ポスター掲示場CSV化/自治体";
@@ -292,6 +293,12 @@ async function moveToDestination(
 
 // Main function
 async function main() {
+  // Check if Supabase is running
+  const supabaseRunning = await ensureSupabaseRunning();
+  if (!supabaseRunning) {
+    process.exit(1);
+  }
+
   // Parse command line arguments
   const args = process.argv.slice(2);
   const validateAll = args.includes("--validate-all");
