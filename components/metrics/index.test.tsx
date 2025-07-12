@@ -42,22 +42,20 @@ describe("Metrics", () => {
       render(await Metrics());
 
       expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("現在の寄付金額")).toBeInTheDocument();
+      expect(screen.getByText("寄付金額")).toBeInTheDocument();
     });
 
     it("アクション達成数メトリクスが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("達成済アクション数")).toBeInTheDocument();
+      expect(screen.getByText("達成アクション数")).toBeInTheDocument();
     });
 
     it("参加者数メトリクスが表示される", async () => {
       render(await Metrics());
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/チームみらい.*サポーター数/),
-        ).toBeInTheDocument();
+        expect(screen.getByText("サポーター数")).toBeInTheDocument();
         expect(screen.getByText("75,982")).toBeInTheDocument();
         expect(screen.getByText("人")).toBeInTheDocument();
       });
@@ -69,7 +67,8 @@ describe("Metrics", () => {
       render(await Metrics());
       // データが正しく表示されることを確認
       expect(screen.getByText("75,982")).toBeInTheDocument();
-      expect(screen.getByText("100万円")).toBeInTheDocument();
+      expect(screen.getByText("100")).toBeInTheDocument();
+      expect(screen.getByText("万円")).toBeInTheDocument();
     });
   });
 
@@ -95,7 +94,7 @@ describe("Metrics", () => {
     it("Separatorコンポーネントが表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByTestId("separator")).toBeInTheDocument();
+      expect(screen.getAllByTestId("separator")).toHaveLength(3);
     });
   });
 });
