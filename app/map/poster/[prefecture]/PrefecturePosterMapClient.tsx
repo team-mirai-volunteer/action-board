@@ -105,7 +105,7 @@ export default function PrefecturePosterMapClient({
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [stats, setStats] = useState(initialStats);
-  const [_filters, _setFilters] = useState({
+  const [filters, setFilters] = useState({
     selectedStatuses: [
       "not_yet",
       "reserved",
@@ -431,7 +431,7 @@ export default function PrefecturePosterMapClient({
           prefectureKey={
             JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
           }
-          onFilterChange={_setFilters}
+          onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
         />
