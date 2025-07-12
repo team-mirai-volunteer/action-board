@@ -70,7 +70,7 @@ import {
   getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
 
-type MapAppType = "Google Maps" | "Gpple Maps";
+type MapAppType = "Google Maps" | "Apple Maps";
 type DisplayType = "address" | "coordinates" | "name";
 
 // 表示タイプに応じて日本語テキストを生成
@@ -133,7 +133,7 @@ function LocationInfo({
   const getDisplayText = () => {
     switch (displayType) {
       case "address":
-        return `${selectedBoard.city} ${selectedBoard.address} (${selectedBoard.number})`;
+        return `${selectedBoard.city} ${selectedBoard.address}`;
       case "coordinates":
         return `${selectedBoard.lat}, ${selectedBoard.long}`;
       case "name":
@@ -148,14 +148,14 @@ function LocationInfo({
   const displayText = getDisplayText();
 
   return (
-    <div className="mb-4 text-sm text-muted-foreground">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span>{displayText}</span>
+    <div className="text-sm text-muted-foreground">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="truncate">{displayText}</span>
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0"
+            className="h-6 w-6 p-0 flex-shrink-0"
             onClick={() => copyToClipboard(displayType, displayText)}
             title={`${getDisplayTypeText(displayType)}をコピー`}
           >
@@ -168,7 +168,7 @@ function LocationInfo({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-2"
+              className="h-8 px-2 flex-shrink-0 whitespace-nowrap"
               onClick={() => onNameConfirm(preferredMapApp)}
             >
               <MapPin className="h-4 w-4 mr-1" />
@@ -185,18 +185,26 @@ function LocationInfo({
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center h-8 px-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-accent/50 rounded-md transition-colors"
+              className="inline-flex items-center h-8 px-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-accent/50 rounded-md transition-colors flex-shrink-0 whitespace-nowrap"
             >
               <MapPin className="h-4 w-4 mr-1" />
-              {`${getDisplayTypeText(displayType)}で開く`}
+              {`${getDisplayTypeText(displayType)}で開く${
+                displayType === "coordinates" ? "(推奨)" : ""
+              }`}
             </a>
           )
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 px-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 flex-shrink-0 whitespace-nowrap"
+              >
                 <MapPin className="h-4 w-4 mr-1" />
-                {`${getDisplayTypeText(displayType)}で開く`}
+                {`${getDisplayTypeText(displayType)}で開く${
+                  displayType === "coordinates" ? "(推奨)" : ""
+                }`}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -475,7 +483,8 @@ function NameConfirmDialog({
   selectedBoard: PosterBoard | null;
   addressConfirmApp: MapAppType | null;
 }) {
-  const defaultText = selectedBoard?.name || "名称なし";
+  const defaultText =
+    `${selectedBoard?.city} ${selectedBoard?.name}` || "名称なし";
   const [selectedText, setSelectedText] = useState(defaultText);
 
   // selectedBoardが変更されたときにselectedTextを更新
@@ -1010,9 +1019,7 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.name ||
-                selectedBoard?.address ||
-                selectedBoard?.number}
+              {selectedBoard?.city} ({selectedBoard?.number})
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
@@ -1044,16 +1051,18 @@ export default function PrefecturePosterMapClient({
               />
             </>
           )}
-          <div className="flex justify-end">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={resetMapAppPreference}
-              className="text-xs text-muted-foreground hover:text-foreground cursor-pointer underline"
-            >
-              デフォルトのマップアプリをリセット
-            </Button>
-          </div>
+          {preferredMapApp && (
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetMapAppPreference}
+                className="text-xs text-muted-foreground hover:text-foreground cursor-pointer underline"
+              >
+                デフォルトのマップアプリをリセット
+              </Button>
+            </div>
+          )}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="status">ポスターの状況</Label>
