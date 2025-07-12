@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getJSTMidnightToday } from "../dateUtils";
 import {
   getPrefecturesRanking,
   getUserPrefecturesRanking,
@@ -136,14 +137,7 @@ describe("prefecturesRanking service", () => {
 
         const startDate = new Date(rpcCall[1].p_start_date);
         const now = new Date();
-        const todayMidnight = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
+        const todayMidnight = getJSTMidnightToday();
         expect(startDate.getTime()).toBe(todayMidnight.getTime());
       });
     });
