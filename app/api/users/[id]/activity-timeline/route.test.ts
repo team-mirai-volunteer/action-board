@@ -1,8 +1,8 @@
-import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
-import { NextRequest } from "next/server";
 /**
  * @jest-environment node
  */
+import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
+import { NextRequest } from "next/server";
 import { GET } from "./route";
 
 jest.mock("@/lib/services/activityTimeline");
@@ -11,6 +11,21 @@ const mockGetUserActivityTimeline =
     typeof getUserActivityTimeline
   >;
 
+/**
+ * APIルートテスト: /api/users/[id]/activity-timeline
+ *
+ * このテストファイルは以下のAPIエンドポイント機能を検証します：
+ * - クエリパラメータの正確な解析
+ * - デフォルト値の適切な適用
+ * - 無効パラメータの適切な処理
+ * - エラー時の適切なレスポンス
+ * - server-only関数のプロキシ機能
+ *
+ * APIの役割: クライアントコンポーネントからserver-only関数への
+ * 安全なアクセスを提供するプロキシとして機能
+ *
+ * 注意: Next.js API Routes用のNode.js環境が必要
+ */
 describe("/api/users/[id]/activity-timeline", () => {
   beforeEach(() => {
     jest.clearAllMocks();

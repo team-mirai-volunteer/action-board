@@ -1,3 +1,15 @@
+/**
+ * getUserActivityTimeline 統合テストユニット版
+ * 
+ * このテストファイルは以下の機能を検証します：
+ * - LIMIT句の正確な適用確認
+ * - 大量データでのソート順序確認
+ * - achievementsとuser_activitiesの統合確認
+ * - エラーハンドリングの適切性確認
+ * 
+ * 統合テストとの違い: モックを使用してより高速で
+ * 安定したテスト実行を実現
+ */
 import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
 
 jest.mock("@/lib/services/activityTimeline");

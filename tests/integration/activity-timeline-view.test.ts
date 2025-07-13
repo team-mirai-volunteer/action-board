@@ -2,6 +2,21 @@ import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
 
 jest.mock("@/lib/services/activityTimeline");
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+/**
+ * activity_timeline_view LIMIT句回帰防止統合テスト
+ * 
+ * このテストファイルは以下の重要な機能を検証します：
+ * - LIMIT句がUNION ALLクエリで正しく適用されること
+ * - 大量データでのソート順序が正確であること  
+ * - achievementsとuser_activitiesの統合が正しく動作すること
+ * - LIMIT句バグの回帰を防止すること
+ * 
+ * 背景: 以前のバグでLIMIT句がUNION ALLの各サブクエリではなく
+ * 全体結果に適用されていた問題を修正済み
+ */
 describe("activity_timeline_view LIMIT句回帰防止統合テスト", () => {
   const mockGetUserActivityTimeline = getUserActivityTimeline as jest.MockedFunction<typeof getUserActivityTimeline>;
   

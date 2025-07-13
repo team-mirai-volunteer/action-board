@@ -1,15 +1,48 @@
+/**
+ * 活動タイムラインサービス
+ *
+ * このサービスは以下の機能を提供します：
+ * - ユーザーのミッション達成とアクティビティの統合表示
+ * - 時系列順でのデータソート
+ * - ページネーション対応
+ * - エラーハンドリング
+ *
+ * データソース：
+ * - achievements テーブル（ミッション達成）
+ * - user_activities テーブル（ユーザー活動）
+ * - public_user_profiles テーブル（ユーザー情報）
+ *
+ * パフォーマンス最適化：
+ * - Promise.allによる並列データ取得
+ * - 適切なrange指定によるデータ量制限
+ * - メモリ効率的なデータ統合処理
+ */
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * 活動タイムラインアイテムの型定義
+ *
+ * ミッション達成とユーザーアクティビティを統合した
+ * 標準化されたデータ構造を定義します。
+ */
 export interface ActivityTimelineItem {
+  /** 一意識別子（achievement_${id} または activity_${id} 形式） */
   id: string;
+  /** ユーザーID */
   user_id: string;
+  /** ユーザー名 */
   name: string;
+  /** 都道府県（任意） */
   address_prefecture: string | null;
+  /** アバター画像URL（任意） */
   avatar_url: string | null;
+  /** 活動タイトル（ミッション名またはアクティビティ名） */
   title: string;
+  /** 作成日時（ISO 8601形式） */
   created_at: string;
+  /** 活動タイプ（mission_achievement, signup等） */
   activity_type: string;
 }
 
@@ -30,6 +63,7 @@ export async function getUserActivityTimeline(
 
   const [achievementsResult, activitiesResult, userProfileResult] =
     await Promise.all([
+      // ミッション達成データの取得
       supabase
         .from("achievements")
         .select("id, created_at, user_id, missions!inner(title)")
@@ -37,6 +71,7 @@ export async function getUserActivityTimeline(
         .order("created_at", { ascending: false })
         .range(offset, offset + Math.ceil(limit / 2) - 1),
 
+      // ユーザーアクティビティデータの取得
       supabase
         .from("user_activities")
         .select("id, created_at, activity_title, activity_type, user_id")
@@ -51,13 +86,11 @@ export async function getUserActivityTimeline(
         .single(),
     ]);
 
-  // ミッション達成データの取得エラーハンドリング
   if (achievementsResult.error) {
     console.error("Failed to fetch achievements:", achievementsResult.error);
     return [];
   }
 
-  // ユーザーアクティビティデータの取得エラーハンドリング
   if (activitiesResult.error) {
     console.error("Failed to fetch user activities:", activitiesResult.error);
     return [];
@@ -65,7 +98,6 @@ export async function getUserActivityTimeline(
 
   const userProfile = userProfileResult.data;
 
-  // ミッション達成データを活動タイムライン形式に変換
   const achievements = (achievementsResult.data || []).map((a) => ({
     id: `achievement_${a.id}`,
     user_id: userId,
@@ -77,7 +109,6 @@ export async function getUserActivityTimeline(
     activity_type: "mission_achievement",
   }));
 
-  // ユーザーアクティビティデータを活動タイムライン形式に変換
   const activities = (activitiesResult.data || []).map((a) => ({
     id: `activity_${a.id}`,
     user_id: userId,
@@ -89,7 +120,6 @@ export async function getUserActivityTimeline(
     activity_type: a.activity_type,
   }));
 
-  // 両方のデータを統合し、作成日時の降順でソートして指定件数まで取得
   return [...achievements, ...activities]
     .sort(
       (a, b) =>
@@ -98,6 +128,17 @@ export async function getUserActivityTimeline(
     .slice(0, limit);
 }
 
+/**
+ * ユーザーの活動総数を取得する
+ *
+ * この関数は以下の処理を行います：
+ * - achievementsテーブルとuser_activitiesテーブルの件数を並列取得
+ * - 両方の件数を合計してページネーション用の総数を返す
+ * - エラー時は0を返して安全にフォールバック
+ *
+ * @param userId - 対象ユーザーのID
+ * @returns 活動の総数（ミッション達成 + ユーザーアクティビティ）
+ */
 export async function getUserActivityTimelineCount(
   userId: string,
 ): Promise<number> {
