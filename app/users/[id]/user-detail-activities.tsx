@@ -1,9 +1,7 @@
 "use client";
 
 import { ActivityTimeline } from "@/components/activity-timeline";
-import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
 import type { ActivityTimelineItem } from "@/lib/services/activityTimeline";
-import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 
 interface UserDetailActivitiesProps {
@@ -23,11 +21,15 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
 
   const handleLoadMore = async () => {
     try {
-      const newTimeline = await getUserActivityTimeline(
-        props.userId,
-        props.pageSize,
-        timeline.length, // offset
+      const response = await fetch(
+        `/api/users/${props.userId}/activity-timeline?limit=${props.pageSize}&offset=${timeline.length}`,
       );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch activity timeline");
+      }
+
+      const { timeline: newTimeline } = await response.json();
 
       if (newTimeline.length > 0) {
         const updatedTimeline = [...timeline, ...newTimeline];

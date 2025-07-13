@@ -21,44 +21,41 @@ export async function getUserActivityTimeline(
 ): Promise<ActivityTimelineItem[]> {
   const supabase = await createClient();
 
-  const [achievementsResult, activitiesResult] = await Promise.all([
-    supabase
-      .from("achievements")
-      .select(`
+  const [achievementsResult, activitiesResult, userProfileResult] =
+    await Promise.all([
+      supabase
+        .from("achievements")
+        .select(`
         id,
         created_at,
-        public_user_profiles!inner (
-          id,
-          name,
-          address_prefecture,
-          avatar_url
-        ),
+        user_id,
         missions!inner (
           title
         )
       `)
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(offset, offset + Math.ceil(limit / 2) - 1),
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .range(offset, offset + Math.ceil(limit / 2) - 1),
 
-    supabase
-      .from("user_activities")
-      .select(`
+      supabase
+        .from("user_activities")
+        .select(`
         id,
         created_at,
         activity_title,
         activity_type,
-        public_user_profiles!inner (
-          id,
-          name,
-          address_prefecture,
-          avatar_url
-        )
+        user_id
       `)
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(offset, offset + Math.ceil(limit / 2) - 1),
-  ]);
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .range(offset, offset + Math.ceil(limit / 2) - 1),
+
+      supabase
+        .from("public_user_profiles")
+        .select("id, name, address_prefecture, avatar_url")
+        .eq("id", userId)
+        .single(),
+    ]);
 
   if (achievementsResult.error) {
     console.error("Failed to fetch achievements:", achievementsResult.error);
@@ -74,12 +71,14 @@ export async function getUserActivityTimeline(
     );
   }
 
+  const userProfile = userProfileResult.data;
+
   const achievements = (achievementsResult.data || []).map((a) => ({
     id: `achievement_${a.id}`,
     user_id: userId,
-    name: a.public_user_profiles.name,
-    address_prefecture: a.public_user_profiles.address_prefecture,
-    avatar_url: a.public_user_profiles.avatar_url,
+    name: userProfile?.name || "",
+    address_prefecture: userProfile?.address_prefecture || null,
+    avatar_url: userProfile?.avatar_url || null,
     title: a.missions.title,
     created_at: a.created_at,
     activity_type: "mission_achievement",
@@ -88,9 +87,9 @@ export async function getUserActivityTimeline(
   const activities = (activitiesResult.data || []).map((a) => ({
     id: `activity_${a.id}`,
     user_id: userId,
-    name: a.public_user_profiles.name,
-    address_prefecture: a.public_user_profiles.address_prefecture,
-    avatar_url: a.public_user_profiles.avatar_url,
+    name: userProfile?.name || "",
+    address_prefecture: userProfile?.address_prefecture || null,
+    avatar_url: userProfile?.avatar_url || null,
     title: a.activity_title,
     created_at: a.created_at,
     activity_type: a.activity_type,
