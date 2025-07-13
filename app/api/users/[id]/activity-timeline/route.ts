@@ -1,6 +1,10 @@
 import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
 import { type NextRequest, NextResponse } from "next/server";
 
+/**
+ * ユーザーの活動タイムラインを取得するAPIエンドポイント
+ * クライアントコンポーネントからserver-only関数を呼び出すためのプロキシ
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
@@ -10,6 +14,7 @@ export async function GET(
     const limit = Number(searchParams.get("limit")) || 20;
     const offset = Number(searchParams.get("offset")) || 0;
 
+    // activityTimeline.tsのgetUserActivityTimeline関数を呼び出し
     const timeline = await getUserActivityTimeline(params.id, limit, offset);
 
     return NextResponse.json({ timeline });
