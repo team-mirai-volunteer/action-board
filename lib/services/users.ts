@@ -94,8 +94,8 @@ export async function deleteAccount(): Promise<void> {
   const userId = authUser.user.id;
 
   try {
-    // 1. 関連データを削除 - Service Role Clientを使用してRLSを回避
-    const { error: transactionError } = await supabaseServiceClient.rpc(
+    // 1. 関連データを削除 - 通常のクライアントを使用（関数内で認証チェック実行）
+    const { error: transactionError } = await supabaseClient.rpc(
       "delete_user_account",
       { target_user_id: userId },
     );

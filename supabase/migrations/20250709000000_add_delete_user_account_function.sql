@@ -7,7 +7,21 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  current_user_id UUID;
 BEGIN
+  -- 現在のユーザーIDを取得
+  current_user_id := auth.uid();
+  
+  -- 認証チェック：自分のアカウントのみ削除可能
+  IF current_user_id IS NULL THEN
+    RAISE EXCEPTION 'Unauthorized: Authentication required';
+  END IF;
+  
+  IF current_user_id != target_user_id THEN
+    RAISE EXCEPTION 'Unauthorized: You can only delete your own account';
+  END IF;
+  
   -- トランザクション開始（関数内で自動的に開始される）
   
   -- 外部キー制約を考慮した削除順序
@@ -55,7 +69,6 @@ $$;
 
 -- セキュリティ設定：認証されたユーザーのみ実行可能
 GRANT EXECUTE ON FUNCTION delete_user_account(UUID) TO authenticated;
-GRANT EXECUTE ON FUNCTION delete_user_account(UUID) TO service_role;
 
 -- 関数の説明を追加
 COMMENT ON FUNCTION delete_user_account(UUID) IS 'ユーザーアカウントと関連するすべてのデータをトランザクション内で安全に削除する';
