@@ -4,6 +4,10 @@ import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
 import { UserBadges } from "@/components/user-badges/user-badges-server";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
+import {
+  getUserActivityTimeline,
+  getUserActivityTimelineCount,
+} from "@/lib/services/activityTimeline";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
 import UserDetailActivities from "./user-detail-activities";
@@ -31,20 +35,11 @@ export default async function UserDetailPage({ params }: Props) {
   if (!user) return <div>ユーザーが見つかりません</div>;
 
   // 並列でデータを取得
-  const [{ data: timeline }, { count }, missionAchievements] =
-    await Promise.all([
-      supabase
-        .from("activity_timeline_view")
-        .select("*")
-        .eq("user_id", id)
-        .order("created_at", { ascending: false })
-        .limit(PAGE_SIZE),
-      supabase
-        .from("activity_timeline_view")
-        .select("*", { count: "exact" })
-        .eq("user_id", id),
-      getUserRepeatableMissionAchievements(id),
-    ]);
+  const [timeline, count, missionAchievements] = await Promise.all([
+    getUserActivityTimeline(id, PAGE_SIZE),
+    getUserActivityTimelineCount(id),
+    getUserRepeatableMissionAchievements(id),
+  ]);
 
   return (
     <div className="flex flex-col items-stretch w-full max-w-xl gap-4 py-8">
@@ -93,9 +88,9 @@ export default async function UserDetailPage({ params }: Props) {
         </div>
         <UserDetailActivities
           userId={id}
-          initialTimeline={timeline || []}
+          initialTimeline={timeline}
           pageSize={PAGE_SIZE}
-          totalCount={count || 0}
+          totalCount={count}
         />
       </Card>
     </div>

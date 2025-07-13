@@ -1,11 +1,12 @@
 import { dateTimeFormatter } from "@/lib/formatter";
+import type { ActivityTimelineItem } from "@/lib/services/activityTimeline";
 import type { Tables } from "@/lib/types/supabase";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar";
 
 interface ActivityTimelineProps {
-  timeline: Tables<"activity_timeline_view">[];
+  timeline: Tables<"activity_timeline_view">[] | ActivityTimelineItem[];
   hasNext: boolean;
   onLoadMore?: () => void;
 }

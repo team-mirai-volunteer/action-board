@@ -1,20 +1,20 @@
 "use client";
 
 import { ActivityTimeline } from "@/components/activity-timeline";
+import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
+import type { ActivityTimelineItem } from "@/lib/services/activityTimeline";
 import { createClient } from "@/lib/supabase/client";
-import type { Tables } from "@/lib/types/supabase";
 import { useState } from "react";
 
 interface UserDetailActivitiesProps {
-  initialTimeline: Tables<"activity_timeline_view">[];
+  initialTimeline: ActivityTimelineItem[];
   totalCount: number;
   pageSize: number;
   userId: string;
 }
 
 export default function UserDetailActivities(props: UserDetailActivitiesProps) {
-  const supabase = createClient();
-  const [timeline, setTimeline] = useState<Tables<"activity_timeline_view">[]>(
+  const [timeline, setTimeline] = useState<ActivityTimelineItem[]>(
     props.initialTimeline,
   );
   const [hasNext, setHasNext] = useState(
@@ -22,16 +22,20 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
   );
 
   const handleLoadMore = async () => {
-    const { data: takeTimeline } = await supabase
-      .from("activity_timeline_view")
-      .select("*")
-      .eq("user_id", props.userId)
-      .order("created_at", { ascending: false })
-      .range(timeline.length, timeline.length + props.pageSize - 1);
-    if (takeTimeline) {
-      const newTimeline = [...timeline, ...takeTimeline];
-      setTimeline(newTimeline);
-      setHasNext(newTimeline.length < props.totalCount);
+    try {
+      const newTimeline = await getUserActivityTimeline(
+        props.userId,
+        props.pageSize,
+        timeline.length, // offset
+      );
+
+      if (newTimeline.length > 0) {
+        const updatedTimeline = [...timeline, ...newTimeline];
+        setTimeline(updatedTimeline);
+        setHasNext(updatedTimeline.length < props.totalCount);
+      }
+    } catch (error) {
+      console.error("Failed to load more activities:", error);
     }
   };
 
