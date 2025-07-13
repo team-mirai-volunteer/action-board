@@ -14,7 +14,7 @@ fi
 
 # 一時ファイルのクリーンアップ
 cleanup() {
-  rm -f /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt /tmp/deleted_tables_regex.txt /tmp/function_exists.txt /tmp/all_user_id_tables_unique.txt
+  rm -f /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt /tmp/deleted_tables_regex.txt /tmp/deleted_tables_regex_sorted.txt /tmp/function_exists.txt /tmp/all_user_id_tables_unique.txt
 }
 trap cleanup EXIT
 
@@ -60,11 +60,29 @@ mv /tmp/all_user_id_tables_unique.txt /tmp/all_user_id_tables.txt
 
 # 2. マイグレーション内の DELETE 対象テーブルを抽出
 echo "📊 マイグレーションファイルから削除対象テーブルを抽出中..."
-MIGRATION_FILE="supabase/migrations/20250709000000_add_delete_user_account_function.sql"
 
-if [ ! -f "$MIGRATION_FILE" ]; then
-  echo "エラー: マイグレーションファイルが見つかりません: $MIGRATION_FILE"
-  exit 1
+# delete_user_account関数を含むマイグレーションファイルを動的に検出
+MIGRATION_FILES=$(find supabase/migrations -name "*.sql" -exec grep -l "delete_user_account" {} \; 2>/dev/null | sort)
+
+if [ -z "$MIGRATION_FILES" ]; then
+  echo "⚠️  delete_user_account関数を含むマイグレーションファイルが見つかりません"
+  echo "📊 全ての.sqlファイルからDELETE文を検索します..."
+  
+  # フォールバック: 全マイグレーションファイルをチェック
+  ALL_MIGRATION_FILES=$(find supabase/migrations -name "*.sql" | sort)
+  
+  if [ -z "$ALL_MIGRATION_FILES" ]; then
+    echo "エラー: supabase/migrations/ディレクトリにマイグレーションファイルが見つかりません"
+    exit 1
+  fi
+  
+  MIGRATION_FILES="$ALL_MIGRATION_FILES"
+  echo "📋 全マイグレーションファイルを検査対象とします"
+else
+  echo "📋 delete_user_account関数を含むマイグレーションファイル:"
+  echo "$MIGRATION_FILES" | while read -r file; do
+    echo "  - $file"
+  done
 fi
 
 # より堅牢な方法：PostgreSQLのパーサーを使ってDELETE対象テーブルを抽出
@@ -74,12 +92,30 @@ echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽�
 # または関数の中身をパースする方法を使用
 
 # まず従来の方法で抽出（改良版の正規表現）
-sed -n '/DELETE FROM/p' "$MIGRATION_FILE" | \
-  grep -E "WHERE .*user_id" | \
-  sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"'][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
-  sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | \
-  sed 's/"//g' | \
-  sort > /tmp/deleted_tables_regex.txt
+# 全ての関連マイグレーションファイルからDELETE文を抽出
+> /tmp/deleted_tables_regex.txt  # ファイルを初期化
+
+echo "$MIGRATION_FILES" | while read -r file; do
+  if [ -f "$file" ]; then
+    echo "🔍 $file を検査中..."
+    DELETE_STATEMENTS=$(sed -n '/DELETE FROM/p' "$file" | grep -E "WHERE .*user_id" || true)
+    
+    if [ -n "$DELETE_STATEMENTS" ]; then
+      echo "  見つかったDELETE文:"
+      echo "$DELETE_STATEMENTS" | sed 's/^/    /'
+      
+      # テーブル名を抽出
+      echo "$DELETE_STATEMENTS" | \
+        sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
+        sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | \
+        sed 's/"//g' >> /tmp/deleted_tables_regex.txt
+    fi
+  fi
+done
+
+# 重複を削除してソート
+sort /tmp/deleted_tables_regex.txt | uniq > /tmp/deleted_tables_regex_sorted.txt
+mv /tmp/deleted_tables_regex_sorted.txt /tmp/deleted_tables_regex.txt
 
 # PostgreSQLを使った確実な方法：関数定義を実際にパースして検証
 echo "📊 PostgreSQL関数定義の妥当性を検証中..."
@@ -95,7 +131,7 @@ if [ -s /tmp/function_exists.txt ]; then
     -c "SELECT pg_get_functiondef((SELECT oid FROM pg_proc WHERE proname = 'delete_user_account'));" | \
     grep -E "DELETE FROM" | \
     grep -E "user_id" | \
-    sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"'\''][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
+    sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
     sed 's/"//g' | \
     sort > /tmp/deleted_tables.txt
 else
