@@ -32,8 +32,11 @@ function maskNamesInCsv(filePath: string): void {
       modified = true;
     }
     if (record.address && hasPersonalName(record.address)) {
-      record.address = "masked";
-      modified = true;
+      const cleanedAddress = removePersonalNameFromAddress(record.address);
+      if (cleanedAddress !== record.address) {
+        record.address = cleanedAddress;
+        modified = true;
+      }
     }
   }
 
@@ -58,6 +61,44 @@ function hasPersonalName(str: string): boolean {
     return true;
   }
   return false;
+}
+
+function removePersonalNameFromAddress(address: string): string {
+  if (!hasPersonalName(address)) {
+    return address;
+  }
+
+  // 個人名部分のパターンを定義
+  const personalNamePatterns = [
+    /[一-龯]+様.*$/, // 漢字+様
+    /[一-龯]+宅$/, // 漢字+宅
+    /[ひらがな]+様.*$/, // ひらがな+様
+    /[ひらがな]+宅$/, // ひらがな+宅
+    /[カタカナ]+様.*$/, // カタカナ+様
+    /[カタカナ]+宅$/, // カタカナ+宅
+    /[A-Za-z]+様.*$/, // アルファベット+様
+    /[A-Za-z]+宅$/, // アルファベット+宅
+  ];
+
+  let cleanedAddress = address;
+  for (const pattern of personalNamePatterns) {
+    cleanedAddress = cleanedAddress.replace(pattern, "").trim();
+  }
+
+  // 住宅は除外しない（個人名ではないため）
+  if (
+    address.includes("住宅") &&
+    cleanedAddress.length < address.length * 0.5
+  ) {
+    return address; // 住宅の場合は元のまま返す
+  }
+
+  // もし元の文字列の30%未満になった場合（住所部分が少なすぎる）はmasked
+  if (cleanedAddress.length < address.length * 0.3) {
+    return "masked";
+  }
+
+  return cleanedAddress;
 }
 
 async function main(): Promise<void> {
