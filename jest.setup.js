@@ -370,3 +370,10 @@ jest.mock("@/lib/services/metrics", () => ({
     }),
   ),
 }));
+
+jest.mock("@/lib/formatter", () => ({
+  dateTimeFormatter: jest.fn((date) => {
+    if (!date) return "";
+    return date.toISOString().split("T")[0]; // YYYY-MM-DD形式で返す
+  }),
+}));
