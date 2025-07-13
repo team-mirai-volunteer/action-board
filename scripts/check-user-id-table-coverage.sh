@@ -18,7 +18,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# 1. DBスキーマから user_id に対する外部キー制約を持つテーブル名を抽出
+# 1. DBスキーマから user_id に対する外部キー制約を持つテーブル名を抽出（ビューを除外）
 echo "📊 データベースから user_id 参照テーブルを抽出中..."
 psql "$DATABASE_URL" -Atc "
   SELECT DISTINCT
@@ -28,22 +28,30 @@ psql "$DATABASE_URL" -Atc "
     JOIN information_schema.key_column_usage AS kcu
       ON tc.constraint_name = kcu.constraint_name
       AND tc.constraint_schema = kcu.constraint_schema
+    JOIN information_schema.tables AS t
+      ON kcu.table_name = t.table_name
+      AND kcu.table_schema = t.table_schema
   WHERE
     tc.constraint_type = 'FOREIGN KEY'
     AND kcu.column_name = 'user_id'
-    AND kcu.table_schema = 'public';
+    AND kcu.table_schema = 'public'
+    AND t.table_type = 'BASE TABLE';
 " | sort > /tmp/all_user_id_tables.txt
 
-# user_idカラムを持つテーブルも追加（外部キー制約がない場合もあるため）
+# user_idカラムを持つテーブルも追加（外部キー制約がない場合もあるため、ビューを除外）
 echo "📊 user_idカラムを持つテーブルも追加確認中..."
 psql "$DATABASE_URL" -Atc "
   SELECT DISTINCT
-    table_name
+    c.table_name
   FROM
-    information_schema.columns
+    information_schema.columns AS c
+    JOIN information_schema.tables AS t
+      ON c.table_name = t.table_name
+      AND c.table_schema = t.table_schema
   WHERE
-    column_name = 'user_id'
-    AND table_schema = 'public';
+    c.column_name = 'user_id'
+    AND c.table_schema = 'public'
+    AND t.table_type = 'BASE TABLE';
 " | sort >> /tmp/all_user_id_tables.txt
 
 # 重複削除

@@ -49,19 +49,13 @@ BEGIN
   -- 8. user_referral テーブル（user_id参照）
   DELETE FROM user_referral WHERE user_id = target_user_id;
   
-  -- 9. activity_timeline_view テーブル（user_id参照）
-  DELETE FROM activity_timeline_view WHERE user_id = target_user_id;
-  
-  -- 10. user_activities テーブル（user_id参照）
+  -- 9. user_activities テーブル（user_id参照）
   DELETE FROM user_activities WHERE user_id = target_user_id;
   
-  -- 11. user_ranking_view テーブル（user_id参照）
-  DELETE FROM user_ranking_view WHERE user_id = target_user_id;
-  
-  -- 12. public_user_profiles テーブル（id参照）
+  -- 10. public_user_profiles テーブル（id参照）
   DELETE FROM public_user_profiles WHERE id = target_user_id;
   
-  -- 13. private_users テーブル（id参照、メインテーブル）
+  -- 11. private_users テーブル（id参照、メインテーブル）
   DELETE FROM private_users WHERE id = target_user_id;
   
   -- 成功した場合、トランザクションがコミットされる
