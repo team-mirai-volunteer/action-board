@@ -69,21 +69,10 @@ function removePersonalNameFromAddress(address: string): string {
   }
 
   // 個人名部分のパターンを定義
-  const personalNamePatterns = [
-    /[一-龯]+様.*$/, // 漢字+様
-    /[一-龯]+宅$/, // 漢字+宅
-    /[ひらがな]+様.*$/, // ひらがな+様
-    /[ひらがな]+宅$/, // ひらがな+宅
-    /[カタカナ]+様.*$/, // カタカナ+様
-    /[カタカナ]+宅$/, // カタカナ+宅
-    /[A-Za-z]+様.*$/, // アルファベット+様
-    /[A-Za-z]+宅$/, // アルファベット+宅
-  ];
+  const personalNamePattern = /[一-龯ぁ-んァ-ヶｱ-ﾝﾞﾟA-Za-z\s・]+(様|宅).*$/;
 
   let cleanedAddress = address;
-  for (const pattern of personalNamePatterns) {
-    cleanedAddress = cleanedAddress.replace(pattern, "").trim();
-  }
+  cleanedAddress = cleanedAddress.replace(personalNamePattern, "").trim();
 
   // 住宅は除外しない（個人名ではないため）
   if (
