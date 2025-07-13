@@ -6,6 +6,7 @@ import MetricsWithSuspense from "@/components/metrics/MetricsWithSuspense";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import Missions from "@/components/mission/missions";
+import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import RankingTop from "@/components/ranking/ranking-top";
 import RankingSection from "@/components/top/ranking-section";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,10 @@ export default async function Home({
       )}
 
       {/* ヒーローセクション */}
-      <section>
+      <section className="relative">
+        <div className="absolute top-4 right-4 z-50">
+          <OnboardingButton />
+        </div>
         <Hero />
       </section>
 
