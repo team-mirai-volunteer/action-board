@@ -610,7 +610,7 @@ missions:
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: リアクションしたYouTube動画のURL
     ogp_image_url: null
@@ -632,7 +632,7 @@ missions:
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: リアクションしたTikTok動画のURL
     ogp_image_url: null
