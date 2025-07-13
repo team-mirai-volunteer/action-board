@@ -12,6 +12,7 @@ import { appendFile, copyFile, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { stdin as input, stdout as output } from "node:process";
 import * as readline from "node:readline/promises";
+import { filesHaveSameContent } from "./file-utils.js";
 
 const SOURCE_PATH =
   "~/Google Drive/Shared drives/チームみらい(外部共有)/ポスター・ポスティングロジ/ポスター・ポスティング作業用/ポスター/ポスター掲示場CSV化/自治体";
@@ -384,6 +385,13 @@ async function moveFilesToDestination(
     const destFile = join(destDir, basename(csvFile));
     const isAppend = basename(csvFile).endsWith("append.csv");
 
+    if (existsSync(destFile) && filesHaveSameContent(csvFile, destFile)) {
+      console.log(
+        `⏭️  Skipping copy of ${basename(csvFile)} (content unchanged)`,
+      );
+      continue;
+    }
+
     console.log(
       `📋 Copying ${isAppend ? "append" : "main"} file from Google Drive to ${destBase}...`,
     );
@@ -492,7 +500,7 @@ async function main() {
     if (!hasChanged) {
       console.log(`⏭️  Files haven't changed since last run`);
       unchangedCount++;
-      // continue; // DISABLED FOR NOW - process all files
+      continue;
     }
 
     // Process all files with optional validation

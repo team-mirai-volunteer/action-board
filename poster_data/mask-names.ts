@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 import { glob } from "glob";
+import { wouldFileContentChange } from "./file-utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,8 +44,13 @@ function maskNamesInCsv(filePath: string): void {
       header: true,
       columns: Object.keys(records[0]),
     });
-    writeFileSync(filePath, output, "utf-8");
-    console.log(`Masked names in: ${filePath}`);
+
+    if (wouldFileContentChange(filePath, output)) {
+      writeFileSync(filePath, output, "utf-8");
+      console.log(`Masked names in: ${filePath}`);
+    } else {
+      console.log(`Content unchanged after masking: ${filePath}`);
+    }
   } else {
     console.log(`No names to mask in: ${filePath}`);
   }
