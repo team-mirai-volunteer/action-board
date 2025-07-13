@@ -6,13 +6,12 @@ import { NextRequest } from "next/server";
 import { GET } from "./route";
 
 jest.mock("@/lib/services/activityTimeline");
+const mockGetUserActivityTimeline =
+  getUserActivityTimeline as jest.MockedFunction<
+    typeof getUserActivityTimeline
+  >;
 
 describe("/api/users/[id]/activity-timeline", () => {
-  const mockGetUserActivityTimeline =
-    getUserActivityTimeline as jest.MockedFunction<
-      typeof getUserActivityTimeline
-    >;
-
   beforeEach(() => {
     jest.clearAllMocks();
   });

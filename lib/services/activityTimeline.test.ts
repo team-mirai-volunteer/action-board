@@ -1,3 +1,5 @@
+jest.unmock("@/lib/services/activityTimeline");
+
 import { createClient } from "@/lib/supabase/server";
 import {
   getUserActivityTimeline,
@@ -7,6 +9,10 @@ import {
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),
 }));
+
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 describe("activityTimeline service", () => {
   let mockSupabase: any;
@@ -18,7 +24,7 @@ describe("activityTimeline service", () => {
       from: jest.fn(),
     };
 
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    mockCreateClient.mockImplementation(() => Promise.resolve(mockSupabase));
   });
 
   describe("getUserActivityTimeline", () => {
@@ -51,27 +57,24 @@ describe("activityTimeline service", () => {
         avatar_url: null,
       };
 
-      const createMockChain = (result: any) => ({
+      const createMockChain = (data: any, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue(result),
-        single: jest.fn().mockResolvedValue(result),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(
-          createMockChain({ data: mockAchievements, error: null }),
-        )
-        .mockReturnValueOnce(
-          createMockChain({ data: mockActivities, error: null }),
-        )
-        .mockReturnValueOnce(
-          createMockChain({ data: mockUserProfile, error: null }),
-        );
+        .mockReturnValueOnce(createMockChain(mockAchievements))
+        .mockReturnValueOnce(createMockChain(mockActivities))
+        .mockReturnValueOnce(createMockChain(mockUserProfile));
 
       const result = await getUserActivityTimeline(userId, 20, 0);
 
+      expect(mockSupabase.from).toHaveBeenCalledWith("achievements");
+      expect(mockSupabase.from).toHaveBeenCalledWith("user_activities");
+      expect(mockSupabase.from).toHaveBeenCalledWith("public_user_profiles");
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
         id: "achievement_achievement-1",
@@ -92,20 +95,20 @@ describe("activityTimeline service", () => {
     it("achievementsエラー時はconsole.error + return []パターンで処理する", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      const createMockChain = (result: any) => ({
+      const createMockChain = (data: any, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue(result),
-        single: jest.fn().mockResolvedValue(result),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
       });
 
       mockSupabase.from
         .mockReturnValueOnce(
-          createMockChain({ data: null, error: { message: "Database error" } }),
+          createMockChain(null, { message: "Database error" }),
         )
-        .mockReturnValueOnce(createMockChain({ data: [], error: null }))
-        .mockReturnValueOnce(createMockChain({ data: null, error: null }));
+        .mockReturnValueOnce(createMockChain([]))
+        .mockReturnValueOnce(createMockChain(null));
 
       const result = await getUserActivityTimeline(userId);
 
@@ -120,23 +123,20 @@ describe("activityTimeline service", () => {
     it("user_activitiesエラー時はconsole.error + return []パターンで処理する", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      const createMockChain = (result: any) => ({
+      const createMockChain = (data: any, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue(result),
-        single: jest.fn().mockResolvedValue(result),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain({ data: [], error: null }))
+        .mockReturnValueOnce(createMockChain([]))
         .mockReturnValueOnce(
-          createMockChain({
-            data: null,
-            error: { message: "Activities error" },
-          }),
+          createMockChain(null, { message: "Activities error" }),
         )
-        .mockReturnValueOnce(createMockChain({ data: null, error: null }));
+        .mockReturnValueOnce(createMockChain(null));
 
       const result = await getUserActivityTimeline(userId);
 
@@ -149,20 +149,38 @@ describe("activityTimeline service", () => {
       consoleSpy.mockRestore();
     });
 
-    it("limit, offsetパラメータが正しく動作する", async () => {
-      const mockRange = jest.fn().mockResolvedValue({ data: [], error: null });
-
-      const createMockChain = (rangeMethod?: any) => ({
+    it("空データ時は空配列を返す", async () => {
+      const createMockChain = (data: any, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        range:
-          rangeMethod || jest.fn().mockResolvedValue({ data: [], error: null }),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
+      });
+
+      mockSupabase.from
+        .mockReturnValueOnce(createMockChain([]))
+        .mockReturnValueOnce(createMockChain([]))
+        .mockReturnValueOnce(createMockChain(null));
+
+      const result = await getUserActivityTimeline(userId);
+
+      expect(result).toEqual([]);
+    });
+
+    it("limit, offsetパラメータが正しく動作する", async () => {
+      const mockRange = jest.fn().mockResolvedValue({ data: [], error: null });
+
+      const createMockChain = () => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: mockRange,
         single: jest.fn().mockResolvedValue({ data: null, error: null }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain(mockRange))
+        .mockReturnValueOnce(createMockChain())
         .mockReturnValueOnce(createMockChain())
         .mockReturnValueOnce(createMockChain());
 
@@ -186,22 +204,18 @@ describe("activityTimeline service", () => {
         avatar_url: "https://example.com/avatar.jpg",
       };
 
-      const createMockChain = (result: any) => ({
+      const createMockChain = (data: any, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue(result),
-        single: jest.fn().mockResolvedValue(result),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(
-          createMockChain({ data: [mockAchievement], error: null }),
-        )
-        .mockReturnValueOnce(createMockChain({ data: [], error: null }))
-        .mockReturnValueOnce(
-          createMockChain({ data: mockUserProfile, error: null }),
-        );
+        .mockReturnValueOnce(createMockChain([mockAchievement]))
+        .mockReturnValueOnce(createMockChain([]))
+        .mockReturnValueOnce(createMockChain(mockUserProfile));
 
       const result = await getUserActivityTimeline(userId);
 
@@ -222,53 +236,49 @@ describe("activityTimeline service", () => {
     const userId = "test-user-id";
 
     it("両テーブルのカウント合計を返す", async () => {
-      const createMockChain = (result: any) => ({
+      const createMockChain = (count: number) => ({
         select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue(result),
+        eq: jest.fn().mockResolvedValue({ count, error: null }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain({ count: 5, error: null }))
-        .mockReturnValueOnce(createMockChain({ count: 3, error: null }));
+        .mockReturnValueOnce(createMockChain(5))
+        .mockReturnValueOnce(createMockChain(3));
 
       const result = await getUserActivityTimelineCount(userId);
 
+      expect(mockSupabase.from).toHaveBeenCalledWith("achievements");
+      expect(mockSupabase.from).toHaveBeenCalledWith("user_activities");
       expect(result).toBe(8);
     });
 
     it("countがnullの場合は0として扱う", async () => {
-      const createMockChain = (result: any) => ({
+      const createMockChain = (count: number | null) => ({
         select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue(result),
+        eq: jest.fn().mockResolvedValue({ count, error: null }),
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain({ count: null, error: null }))
-        .mockReturnValueOnce(createMockChain({ count: 2, error: null }));
+        .mockReturnValueOnce(createMockChain(null))
+        .mockReturnValueOnce(createMockChain(2));
 
       const result = await getUserActivityTimelineCount(userId);
 
       expect(result).toBe(2);
     });
 
-    it("エラー時は0を返す", async () => {
-      const createMockChain = (result: any) => ({
+    it("エラー処理は実装されていない（現在の仕様通り）", async () => {
+      const createMockChain = (count: number | null, error: any = null) => ({
         select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue(result),
+        eq: jest.fn().mockResolvedValue({ count, error }),
       });
 
       mockSupabase.from
         .mockReturnValueOnce(
-          createMockChain({
-            count: null,
-            error: { message: "Database error" },
-          }),
+          createMockChain(null, { message: "Database error" }),
         )
         .mockReturnValueOnce(
-          createMockChain({
-            count: null,
-            error: { message: "Database error" },
-          }),
+          createMockChain(null, { message: "Database error" }),
         );
 
       const result = await getUserActivityTimelineCount(userId);
