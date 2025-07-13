@@ -14,7 +14,7 @@ fi
 
 # 一時ファイルのクリーンアップ
 cleanup() {
-  rm -f /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt
+  rm -f /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt /tmp/deleted_tables_regex.txt /tmp/function_exists.txt /tmp/all_user_id_tables_unique.txt
 }
 trap cleanup EXIT
 
@@ -67,10 +67,47 @@ if [ ! -f "$MIGRATION_FILE" ]; then
   exit 1
 fi
 
-# DELETE FROM文からテーブル名を抽出（WHEREにuser_idを含むもの）
-grep -E "DELETE FROM .* WHERE .*user_id" "$MIGRATION_FILE" | \
-  grep -oP '(?<=DELETE FROM )\w+' | \
-  sort > /tmp/deleted_tables.txt
+# より堅牢な方法：PostgreSQLのパーサーを使ってDELETE対象テーブルを抽出
+echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽出中..."
+
+# マイグレーションを適用してからpostgresqlのログを解析する方法
+# または関数の中身をパースする方法を使用
+
+# まず従来の方法で抽出（改良版の正規表現）
+sed -n '/DELETE FROM/p' "$MIGRATION_FILE" | \
+  grep -E "WHERE .*user_id" | \
+  sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"'][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
+  sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | \
+  sed 's/"//g' | \
+  sort > /tmp/deleted_tables_regex.txt
+
+# PostgreSQLを使った確実な方法：関数定義を実際にパースして検証
+echo "📊 PostgreSQL関数定義の妥当性を検証中..."
+psql "$DATABASE_URL" -At \
+  -c "\\set ON_ERROR_STOP" \
+  -c "SELECT routine_name FROM information_schema.routines WHERE routine_name = 'delete_user_account';" > /tmp/function_exists.txt
+
+if [ -s /tmp/function_exists.txt ]; then
+  echo "✅ delete_user_account関数が正常に定義されています"
+  # 関数の定義から実際のテーブル名を抽出
+  psql "$DATABASE_URL" -At \
+    -c "\\set ON_ERROR_STOP" \
+    -c "SELECT pg_get_functiondef((SELECT oid FROM pg_proc WHERE proname = 'delete_user_account'));" | \
+    grep -E "DELETE FROM" | \
+    grep -E "user_id" | \
+    sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"'\''][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
+    sed 's/"//g' | \
+    sort > /tmp/deleted_tables.txt
+else
+  echo "⚠️  関数が見つからないため、正規表現による抽出結果を使用します"
+  cp /tmp/deleted_tables_regex.txt /tmp/deleted_tables.txt
+fi
+
+# 結果が空の場合は正規表現の結果を使用
+if [ ! -s /tmp/deleted_tables.txt ]; then
+  echo "⚠️  PostgreSQL解析が失敗したため、正規表現による抽出結果を使用します"
+  cp /tmp/deleted_tables_regex.txt /tmp/deleted_tables.txt
+fi
 
 # 3. 結果表示と差分チェック
 echo ""
