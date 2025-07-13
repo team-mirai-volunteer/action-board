@@ -508,7 +508,7 @@ missions:
     artifact_label: null
   - slug: "quiz-electionlaw-basic"
     title: 公職選挙法クイズ（基礎編）に挑戦しよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713-2_ol_quiz-electionlaw-basic.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_quiz-electionlaw-basic.svg
     content: 公職選挙法の基礎についてのクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
@@ -518,7 +518,7 @@ missions:
     artifact_label: null
   - slug: "quiz-electionlaw-period"
     title: 公職選挙法クイズ（選挙期間編）に挑戦しよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713-2_ol_quiz-electionlaw-period.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_quiz-electionlaw-period.svg
     content: 選挙期間に関する公職選挙法のクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
@@ -528,7 +528,7 @@ missions:
     artifact_label: null
   - slug: "quiz-electionlaw-electionday"
     title: 公職選挙法クイズ（投票日当日編）に挑戦しよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713-2_ol_quiz-electionlaw-electionday.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_quiz-electionlaw-electionday.svg
     content: 投票日当日に関する公職選挙法のクイズです。全問正解でミッション達成！
     difficulty: 2
     required_artifact_type: QUIZ
@@ -560,7 +560,7 @@ missions:
     ogp_image_url: null
   - slug: early-vote
     title: 期日前投票をしよう！
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg
     content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！
     difficulty: 5
     required_artifact_type: NONE
@@ -572,7 +572,7 @@ missions:
     ogp_image_url: null
   - slug: absent-vote
     title: 不在者投票をしよう！
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_absent-vote.svg
     content: 不在者投票:旅行中でも、病院からでも大丈夫！「不在者投票」は、遠方への出張や入院などで投票所に行けない人のために用意された制度です。<br>申請さえ済ませれば郵送や滞在先の投票所からでも大切な一票を確実に行使できます。<br>移動が難しくても、あなたの想いはしっかり届く――さぁ、みんなで投票率アップを目指そう！
     difficulty: 5
     required_artifact_type: NONE
@@ -594,7 +594,7 @@ missions:
     ogp_image_url: null
   - slug: youtube-comment
     title: YouTube動画にコメントしよう
-    icon_url: /img/mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
     content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 2
     required_artifact_type: LINK
@@ -605,7 +605,7 @@ missions:
     ogp_image_url: null
   - slug: youtube-comment-reaction
     title: YouTube動画のコメントにリアクションしよう
-    icon_url: /img/mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
     content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
@@ -616,7 +616,7 @@ missions:
     ogp_image_url: null
   - slug: tiktok-comment
     title: TikTokでチームみらい動画にコメントしよう
-    icon_url: /img/mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
     content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
     difficulty: 2
     required_artifact_type: LINK
@@ -627,7 +627,7 @@ missions:
     ogp_image_url: null
   - slug: tiktok-comment-reaction
     title: TikTok動画のコメントにリアクションしよう
-    icon_url: /img/mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
     content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
