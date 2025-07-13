@@ -3,14 +3,15 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get("limit")) || 20;
     const offset = Number(searchParams.get("offset")) || 0;
 
-    const timeline = await getUserActivityTimeline(params.id, limit, offset);
+    const { id } = await params;
+    const timeline = await getUserActivityTimeline(id, limit, offset);
 
     return NextResponse.json({ timeline });
   } catch (error) {
