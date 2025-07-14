@@ -299,4 +299,164 @@ describe("activityTimeline service", () => {
       expect(result).toBe(0);
     });
   });
+
+  describe("LIMIT句回帰防止テスト (Issue #1160)", () => {
+    const userId = "test-user-id";
+
+    it("大量データ環境でのLIMIT句適用確認（100件データセット）", async () => {
+      const mockData = Array.from({ length: 100 }, (_, i) => ({
+        id: `test-${i}`,
+        user_id: userId,
+        name: "テストユーザー",
+        address_prefecture: "東京都",
+        avatar_url: null,
+        title: `アクティビティ${i}`,
+        activity_type:
+          i % 2 === 0 ? ("mission_achievement" as const) : ("signup" as const),
+        created_at: new Date(Date.now() - i * 1000).toISOString(),
+      }));
+
+      const createMockChain = (data: any, error: any = null) => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data: null, error: null }),
+      });
+
+      mockSupabase.from
+        .mockReturnValueOnce(createMockChain(mockData.slice(0, 25)))
+        .mockReturnValueOnce(createMockChain(mockData.slice(25, 50)))
+        .mockReturnValueOnce(createMockChain(null));
+
+      const result = await getUserActivityTimeline(userId, 50, 0);
+
+      expect(result).toHaveLength(50);
+
+      const timestamps = result.map((item) =>
+        new Date(item.created_at).getTime(),
+      );
+      const sortedTimestamps = [...timestamps].sort((a, b) => b - a);
+      expect(timestamps).toEqual(sortedTimestamps);
+    });
+
+    it("UNION ALLクエリでのIDプレフィックス確認", async () => {
+      const mockAchievements = [
+        {
+          id: "achievement-1",
+          created_at: "2024-01-02T00:00:00Z",
+          user_id: userId,
+          missions: { title: "ミッション達成" },
+        },
+      ];
+
+      const mockActivities = [
+        {
+          id: "activity-1",
+          created_at: "2024-01-01T00:00:00Z",
+          activity_title: "新規登録",
+          activity_type: "signup",
+          user_id: userId,
+        },
+      ];
+
+      const mockUserProfile = {
+        id: userId,
+        name: "テストユーザー",
+        address_prefecture: "東京都",
+        avatar_url: null,
+      };
+
+      const createMockChain = (data: any, error: any = null) => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
+      });
+
+      mockSupabase.from
+        .mockReturnValueOnce(createMockChain(mockAchievements))
+        .mockReturnValueOnce(createMockChain(mockActivities))
+        .mockReturnValueOnce(createMockChain(mockUserProfile));
+
+      const result = await getUserActivityTimeline(userId);
+
+      expect(result).toHaveLength(2);
+
+      const achievementItem = result.find(
+        (item) => item.activity_type === "mission_achievement",
+      );
+      const activityItem = result.find(
+        (item) => item.activity_type === "signup",
+      );
+
+      expect(achievementItem?.id).toMatch(/^achievement_/);
+      expect(activityItem?.id).toMatch(/^activity_/);
+    });
+
+    it("ページネーション機能での正確なオフセット処理", async () => {
+      const mockData = Array.from({ length: 20 }, (_, i) => ({
+        id: `test-${i}`,
+        user_id: userId,
+        name: "テストユーザー",
+        address_prefecture: "東京都",
+        avatar_url: null,
+        title: `アクティビティ${i}`,
+        activity_type: "signup" as const,
+        created_at: new Date(Date.now() - i * 1000).toISOString(),
+      }));
+
+      const mockRange = jest.fn().mockResolvedValue({
+        data: mockData.slice(10, 20),
+        error: null,
+      });
+
+      const createMockChain = () => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: mockRange,
+        single: jest.fn().mockResolvedValue({ data: null, error: null }),
+      });
+
+      mockSupabase.from
+        .mockReturnValueOnce(createMockChain())
+        .mockReturnValueOnce(createMockChain())
+        .mockReturnValueOnce(createMockChain());
+
+      const result = await getUserActivityTimeline(userId, 10, 10);
+
+      expect(mockRange).toHaveBeenCalledWith(10, 19);
+      expect(result).toHaveLength(10);
+    });
+
+    it("データベース接続失敗時のエラーハンドリング統一性", async () => {
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      const createMockChain = (data: any, error: any = null) => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: jest.fn().mockResolvedValue({ data, error }),
+        single: jest.fn().mockResolvedValue({ data, error }),
+      });
+
+      mockSupabase.from
+        .mockReturnValueOnce(
+          createMockChain(null, { message: "Database connection failed" }),
+        )
+        .mockReturnValueOnce(createMockChain([]))
+        .mockReturnValueOnce(createMockChain(null));
+
+      const result = await getUserActivityTimeline(userId);
+
+      expect(consoleSpy).toHaveBeenCalledWith("Failed to fetch achievements:", {
+        message: "Database connection failed",
+      });
+      expect(result).toEqual([]);
+
+      consoleSpy.mockRestore();
+    });
+  });
 });
