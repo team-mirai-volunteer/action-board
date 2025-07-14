@@ -153,7 +153,7 @@ async function main() {
         `);
 
         const copyQuery = copyFrom(
-          `COPY ${tempTable} (prefecture, city, number, name, address, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+          `COPY ${tempTable} (prefecture, city, number, address, name, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
         );
 
         await pipeline(createReadStream(file), db.query(copyQuery));

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 import { glob } from "glob";
+import { extractWardFromAddress } from "./designated-cities.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,21 +19,71 @@ function maskNamesInCsv(filePath: string): void {
     bom: true,
   });
 
-  // Check if name column exists
-  if (records.length > 0 && !("name" in records[0])) {
-    console.log(`Warning: 'name' column not found in ${filePath}`);
-    return;
+  // Check if required columns exist
+  if (records.length > 0) {
+    const firstRecord = records[0];
+    if (!("name" in firstRecord)) {
+      console.log(`Warning: 'name' column not found in ${filePath}`);
+      return;
+    }
+    if (
+      !("prefecture" in firstRecord) ||
+      !("city" in firstRecord) ||
+      !("address" in firstRecord)
+    ) {
+      console.log(
+        `Warning: Required columns (prefecture, city, address) not found in ${filePath}`,
+      );
+      return;
+    }
   }
 
-  // Mask names containing '様' or '宅'
+  // Process each record
   let modified = false;
   for (const record of records) {
-    if (
-      record.name &&
-      (record.name.includes("様") || record.name.includes("宅"))
-    ) {
+    // Mask personal names in name field
+    if (record.name && hasPersonalName(record.name)) {
       record.name = "masked";
       modified = true;
+    }
+
+    // For address field: process only if it contains personal name
+    if (record.address && hasPersonalName(record.address)) {
+      if (record.prefecture && record.city) {
+        // Check if it's a designated city
+        const wardExtracted = extractWardFromAddress(
+          record.prefecture,
+          record.city,
+          record.address,
+          true, // hasPersonalName = true
+        );
+
+        if (wardExtracted !== record.address) {
+          // Ward was extracted or masked for designated city
+          record.address = wardExtracted;
+          modified = true;
+        } else {
+          // Not a designated city - simple masking
+          if (record.address.includes("住宅")) {
+            // 住宅の場合は元のまま保持
+            // 何もしない
+          } else {
+            // 個人名が含まれる場合はmasked
+            record.address = "masked";
+            modified = true;
+          }
+        }
+      } else {
+        // Prefecture/city info missing - simple masking
+        if (record.address.includes("住宅")) {
+          // 住宅の場合は元のまま保持
+          // 何もしない
+        } else {
+          // 個人名が含まれる場合はmasked
+          record.address = "masked";
+          modified = true;
+        }
+      }
     }
   }
 
@@ -47,6 +98,16 @@ function maskNamesInCsv(filePath: string): void {
   } else {
     console.log(`No names to mask in: ${filePath}`);
   }
+}
+
+function hasPersonalName(str: string): boolean {
+  if (str.includes("様")) {
+    return true;
+  }
+  if (str.includes("宅") && !str.includes("住宅")) {
+    return true;
+  }
+  return false;
 }
 
 async function main(): Promise<void> {
