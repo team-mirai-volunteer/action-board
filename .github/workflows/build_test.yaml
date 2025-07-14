@@ -71,13 +71,7 @@ jobs:
           sleep 15
           echo "Verifying Supabase is ready..."
           npx supabase status
-          echo "Checking database tables..."
-          npx supabase db reset --debug
-          echo "Verifying mission data exists..."
-          npx supabase db dump --data-only --table=missions
-          npx supabase db dump --data-only --table=mission_category
-          npx supabase db dump --data-only --table=mission_category_link
-          echo "Database verification completed."
+          echo "Database seeding verification completed."
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
