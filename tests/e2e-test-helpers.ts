@@ -23,6 +23,22 @@ export const test = base.extend<TestFixtures>({
 
     // ログイン完了を確認（ホームページにリダイレクトされることを想定）
     await page.waitForURL("/");
+    
+    await page.waitForTimeout(2000); // セッション確立を待機
+    
+    const authState = await page.evaluate(() => {
+      const authData = window.localStorage.getItem('supabase.auth.token');
+      const sessionData = window.localStorage.getItem('sb-localhost-auth-token');
+      return { authToken: authData, sessionToken: sessionData };
+    });
+    
+    console.log('Authentication state after login:', authState);
+    
+    if (!authState.authToken && !authState.sessionToken) {
+      throw new Error('Authentication failed: No auth tokens found after login');
+    }
+    
+    await expect(page.getByTestId("usermenubutton")).toBeVisible({ timeout: 10000 });
 
     // ログイン済みのページを渡す
     await use(page);
