@@ -76,8 +76,8 @@ export function PosterBoardFilter({
 
   return (
     <div
-      className={`absolute z-[1000] bg-white rounded-lg shadow-lg border border-gray-200 ${
-        isMobile ? "poster-filter-mobile" : "right-4 top-4 max-w-xs"
+      className={`bg-white rounded-lg shadow-lg border border-gray-200 ${
+        isMobile ? "poster-filter-mobile" : "max-w-xs"
       }`}
       data-expanded={isExpanded}
     >

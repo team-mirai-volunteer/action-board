@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -46,11 +47,19 @@ import {
   calculateProgressRate,
   getCompletedCount,
 } from "@/lib/utils/poster-progress";
-import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
+import {
+  ArrowLeft,
+  Copy,
+  HelpCircle,
+  History,
+  MapPin,
+  Search,
+  X,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
@@ -125,6 +134,14 @@ export default function PrefecturePosterMapClient({
   const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
     string | null
   >(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const mapRef = useRef<{
+    flyTo: (latlng: [number, number], zoom?: number) => void;
+  } | null>(null);
+  const [selectedSearchIndex, setSelectedSearchIndex] = useState(-1);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [isComposing, setIsComposing] = useState(false);
 
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
@@ -366,15 +383,56 @@ export default function PrefecturePosterMapClient({
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-lg">読み込み中...</div>
-        </div>
-      </div>
-    );
-  }
+  // 外側クリックでドロップダウンを閉じる
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // 検索結果の計算
+  const searchResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) {
+      // 検索クエリが変更されたら選択インデックスをリセット
+      if (selectedSearchIndex !== -1) {
+        setSelectedSearchIndex(-1);
+      }
+      return [];
+    }
+
+    const query = searchQuery.toLowerCase();
+    const results = boards.filter((board) => {
+      const number = board.number?.toLowerCase() || "";
+      const name = board.name?.toLowerCase() || "";
+      const address = board.address?.toLowerCase() || "";
+      const city = board.city?.toLowerCase() || "";
+
+      return (
+        number.includes(query) ||
+        name.includes(query) ||
+        address.includes(query) ||
+        city.includes(query)
+      );
+    });
+
+    // 検索結果が変わったら選択インデックスをリセット
+    if (selectedSearchIndex !== -1) {
+      setSelectedSearchIndex(-1);
+    }
+
+    // 最大10件まで表示
+    return results.slice(0, 10);
+  }, [boards, searchQuery, selectedSearchIndex]);
 
   // 統計情報を使用（初期値はサーバーから提供されたもの）
   const statusCounts = stats?.statusCounts || {
@@ -392,9 +450,67 @@ export default function PrefecturePosterMapClient({
   const completedCount = getCompletedCount(statusCounts);
   const completionRate = calculateProgressRate(completedCount, registeredCount);
 
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 text-lg">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // 検索結果の選択処理
+  const handleSearchResultSelect = (board: PosterBoard) => {
+    if (board.lat && board.long && mapRef.current) {
+      // マップを掲示板の位置に移動（ズームインのみ）
+      mapRef.current.flyTo([board.lat, board.long], 18);
+
+      // 選択インデックスのみリセット（検索テキストは残す）
+      setSelectedSearchIndex(-1);
+    }
+  };
+
+  // キーボードイベントハンドラー
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchResults.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) =>
+          prev < searchResults.length - 1 ? prev + 1 : prev,
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) => (prev > 0 ? prev - 1 : -1));
+        break;
+      case "Enter":
+        // IME変換中の場合は何もしない
+        if (isComposing) return;
+
+        e.preventDefault();
+        if (
+          selectedSearchIndex >= 0 &&
+          selectedSearchIndex < searchResults.length
+        ) {
+          handleSearchResultSelect(searchResults[selectedSearchIndex]);
+        } else if (searchResults.length > 0) {
+          handleSearchResultSelect(searchResults[0]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setSearchQuery("");
+        setSelectedSearchIndex(-1);
+        break;
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-7xl space-y-3 p-3">
-      {/* Header - コンパクト化 */}
+      {/* Header with Search - ヘッダーに検索を統合 */}
       <div className="flex items-center gap-3">
         <Link href="/map/poster">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -405,21 +521,22 @@ export default function PrefecturePosterMapClient({
           <h1 className="text-lg font-bold">
             {prefectureName}のポスター掲示板
           </h1>
-          <p className="text-xs text-muted-foreground hidden sm:block">
+          <p className="text-xs text-muted-foreground hidden lg:block">
             {userId
               ? "掲示板をクリックしてステータスを更新"
               : "ログインするとステータスを更新できます"}
           </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => setShowHelpDialog(true)}
-            title="使い方を見る"
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
         </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0"
+          onClick={() => setShowHelpDialog(true)}
+          title="使い方を見る"
+        >
+          <HelpCircle className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Map - 最優先表示 */}
@@ -434,6 +551,20 @@ export default function PrefecturePosterMapClient({
           onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
+          ref={mapRef}
+          searchQuery={searchQuery}
+          onSearchQueryChange={(query) => {
+            setSearchQuery(query);
+            setShowSearchDropdown(true);
+          }}
+          searchResults={searchResults}
+          onSearchResultSelect={handleSearchResultSelect}
+          showSearchDropdown={showSearchDropdown}
+          onSearchDropdownChange={setShowSearchDropdown}
+          selectedSearchIndex={selectedSearchIndex}
+          onSelectedSearchIndexChange={setSelectedSearchIndex}
+          isComposing={isComposing}
+          onComposingChange={setIsComposing}
         />
       </div>
 

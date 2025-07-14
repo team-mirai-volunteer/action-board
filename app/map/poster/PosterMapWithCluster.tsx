@@ -2,13 +2,20 @@
 
 import L from "leaflet";
 import "leaflet.markercluster";
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./poster-map.css";
 import "./poster-map-filter.css";
 import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
+import { Input } from "@/components/ui/input";
 import { MAX_ZOOM } from "@/lib/constants";
 import {
   type PosterPrefectureKey,
@@ -17,7 +24,7 @@ import {
 import { usePosterBoardFilterOptimized } from "@/lib/hooks/usePosterBoardFilterOptimized";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { Expand, Minimize } from "lucide-react";
+import { Expand, Minimize, Search, X } from "lucide-react";
 
 // Fix Leaflet default marker icon issue with Next.js
 // biome-ignore lint/performance/noDelete: Required for Leaflet icon fix
@@ -43,6 +50,16 @@ interface PosterMapWithClusterProps {
   }) => void;
   currentUserId?: string;
   userEditedBoardIds?: Set<string>;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
+  searchResults?: PosterBoard[];
+  onSearchResultSelect?: (board: PosterBoard) => void;
+  showSearchDropdown?: boolean;
+  onSearchDropdownChange?: (show: boolean) => void;
+  selectedSearchIndex?: number;
+  onSelectedSearchIndexChange?: (index: number) => void;
+  isComposing?: boolean;
+  onComposingChange?: (composing: boolean) => void;
 }
 
 // Status colors for markers
@@ -256,416 +273,641 @@ function createClusterIcon(cluster: L.MarkerCluster) {
   });
 }
 
-export default function PosterMapWithCluster({
-  boards,
-  onBoardClick,
-  center,
-  prefectureKey,
-  onFilterChange,
-  currentUserId: userIdFromProps,
-  userEditedBoardIds,
-}: PosterMapWithClusterProps) {
-  const mapRef = useRef<L.Map | null>(null);
-  const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
-  const currentMarkerRef = useRef<L.CircleMarker | null>(null);
-  const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | undefined>(
-    userIdFromProps,
-  );
-  const [isFullscreen, setIsFullscreen] = useState(false);
+interface MapHandle {
+  flyTo: (latlng: [number, number], zoom?: number) => void;
+}
 
-  // Fetch current user and board info
-  useEffect(() => {
-    let isMounted = true;
-    const fetchUserAndBoardInfo = async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+const PosterMapWithCluster = forwardRef<MapHandle, PosterMapWithClusterProps>(
+  (
+    {
+      boards,
+      onBoardClick,
+      center,
+      prefectureKey,
+      onFilterChange,
+      currentUserId: userIdFromProps,
+      userEditedBoardIds,
+      searchQuery,
+      onSearchQueryChange,
+      searchResults,
+      onSearchResultSelect,
+      showSearchDropdown,
+      onSearchDropdownChange,
+      selectedSearchIndex,
+      onSelectedSearchIndexChange,
+      isComposing,
+      onComposingChange,
+    },
+    ref,
+  ) => {
+    const mapRef = useRef<L.Map | null>(null);
+    const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
+    const currentMarkerRef = useRef<L.CircleMarker | null>(null);
+    const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | undefined>(
+      userIdFromProps,
+    );
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
 
-        if (userError) {
-          // ユーザー情報の取得に失敗した場合は静かに終了
-          return;
-        }
-
-        if (isMounted && !userIdFromProps) {
-          setCurrentUserId(user?.id);
-        }
-      } catch (error) {
-        // エラーは静かに処理
-      }
-    };
-
-    fetchUserAndBoardInfo();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [userIdFromProps]);
-
-  // Use optimized filter hook for better performance with large datasets
-  const {
-    filterState,
-    filteredBoards,
-    toggleStatus,
-    toggleShowOnlyMine,
-    selectAll,
-    deselectAll,
-    activeFilterCount,
-  } = usePosterBoardFilterOptimized({
-    boards,
-    currentUserId,
-    userEditedBoardIds: userEditedBoardIds,
-  });
-
-  // フィルター状態が変更されたときに親コンポーネントに通知
-  useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange({
-        selectedStatuses: Array.from(filterState.statuses),
-        showOnlyMine: filterState.showOnlyMine,
-      });
-    }
-  }, [filterState, onFilterChange]);
-
-  useEffect(() => {
-    // Get zoom level for the prefecture
-    const zoomLevel = prefectureKey
-      ? getPrefectureDefaultZoom(prefectureKey)
-      : 12;
-
-    if (!mapRef.current) {
-      // Initialize map with calculated zoom
-      mapRef.current = L.map("poster-map-cluster").setView(center, zoomLevel);
-
-      // Add tile layer (using GSI tiles)
-      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-        attribution:
-          '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: MAX_ZOOM,
-      }).addTo(mapRef.current);
-
-      // Initialize marker cluster group with optimized settings
-      markerClusterRef.current = L.markerClusterGroup({
-        maxClusterRadius: 50,
-        iconCreateFunction: createClusterIcon,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        chunkedLoading: true, // チャンク単位でロード
-        chunkInterval: 200, // チャンク間隔
-        chunkDelay: 50, // チャンク遅延
-        removeOutsideVisibleBounds: true, // 表示範囲外のマーカーを削除
-        animate: true, // アニメーションを有効化
-        animateAddingMarkers: true, // マーカー追加時のアニメーション
-        spiderfyDistanceMultiplier: 2, // スパイダリー表示時の距離を2倍に
-        spiderLegPolylineOptions: { weight: 2, color: "#222", opacity: 0.5 },
-      });
-
-      // Add cluster events for tooltips
-      markerClusterRef.current.on("clustermouseover", (e) => {
-        const cluster = e.propagatedFrom;
-        const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
-        const statusCounts: Record<BoardStatus, number> = {
-          not_yet: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        };
-
-        for (const marker of markers) {
-          const board = marker.boardData;
-          if (board) {
-            statusCounts[board.status]++;
+    // Expose map methods to parent component
+    useImperativeHandle(
+      ref,
+      () => ({
+        flyTo: (latlng: [number, number], zoom?: number) => {
+          if (mapRef.current) {
+            mapRef.current.flyTo(latlng, zoom || 18, {
+              animate: true,
+              duration: 1.0,
+            });
           }
+        },
+      }),
+      [],
+    );
+
+    // Fetch current user and board info
+    useEffect(() => {
+      let isMounted = true;
+      const fetchUserAndBoardInfo = async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+
+          if (userError) {
+            // ユーザー情報の取得に失敗した場合は静かに終了
+            return;
+          }
+
+          if (isMounted && !userIdFromProps) {
+            setCurrentUserId(user?.id);
+          }
+        } catch (error) {
+          // エラーは静かに処理
         }
+      };
 
-        const statusLabels: Record<BoardStatus, string> = {
-          not_yet: "未実施",
-          reserved: "予約済み",
-          done: "完了",
-          error_wrong_place: "場所違い",
-          error_damaged: "破損",
-          error_wrong_poster: "ポスター違い",
-          other: "その他",
-        };
+      fetchUserAndBoardInfo();
 
-        const tooltipContent = Object.entries(statusCounts)
-          .filter(([, count]) => count > 0)
-          .map(
-            ([status, count]) =>
-              `${statusLabels[status as BoardStatus]}: ${count}`,
-          )
-          .join("<br>");
+      return () => {
+        isMounted = false;
+      };
+    }, [userIdFromProps]);
 
-        cluster
-          .bindTooltip(
-            `掲示板数: ${cluster.getChildCount()}<br>${tooltipContent}`,
-            {
-              permanent: false,
-              direction: "top",
-              className: "cluster-tooltip",
-            },
-          )
-          .openTooltip();
-      });
+    // Use optimized filter hook for better performance with large datasets
+    const {
+      filterState,
+      filteredBoards,
+      toggleStatus,
+      toggleShowOnlyMine,
+      selectAll,
+      deselectAll,
+      activeFilterCount,
+    } = usePosterBoardFilterOptimized({
+      boards,
+      currentUserId,
+      userEditedBoardIds: userEditedBoardIds,
+    });
 
-      markerClusterRef.current.on("clustermouseout", (e) => {
-        const cluster = e.propagatedFrom;
-        cluster.closeTooltip();
-      });
-
-      mapRef.current.addLayer(markerClusterRef.current as unknown as L.Layer);
-    }
-
-    // Update map view when center changes
-    if (mapRef.current) {
-      mapRef.current.setView(center, zoomLevel);
-    }
-  }, [center, prefectureKey]);
-
-  useEffect(() => {
-    if (!markerClusterRef.current) return;
-
-    // Clear existing markers
-    markerClusterRef.current.clearLayers();
-
-    // バッチ処理でマーカーを追加
-    const markers: L.Marker[] = [];
-    const locationGroups = new Map<string, PosterBoard[]>();
-
-    // Add markers for each board (use filtered boards)
-    for (const board of filteredBoards) {
-      if (board.lat && board.long) {
-        const locationKey = `${board.lat.toFixed(6)}_${board.long.toFixed(6)}`;
-        if (!locationGroups.has(locationKey)) {
-          locationGroups.set(locationKey, []);
-        }
-        const group = locationGroups.get(locationKey);
-        if (group) {
-          group.push(board);
-        }
+    // フィルター状態が変更されたときに親コンポーネントに通知
+    useEffect(() => {
+      if (onFilterChange) {
+        onFilterChange({
+          selectedStatuses: Array.from(filterState.statuses),
+          showOnlyMine: filterState.showOnlyMine,
+        });
       }
-    }
+    }, [filterState, onFilterChange]);
 
-    // Create markers for each board
-    for (const boardsAtLocation of Array.from(locationGroups.values())) {
-      for (let index = 0; index < boardsAtLocation.length; index++) {
-        const board = boardsAtLocation[index];
+    useEffect(() => {
+      // Get zoom level for the prefecture
+      const zoomLevel = prefectureKey
+        ? getPrefectureDefaultZoom(prefectureKey)
+        : 12;
+
+      if (!mapRef.current) {
+        // Initialize map with calculated zoom
+        mapRef.current = L.map("poster-map-cluster").setView(center, zoomLevel);
+
+        // Add tile layer (using GSI tiles)
+        L.tileLayer(
+          "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
+            maxZoom: MAX_ZOOM,
+          },
+        ).addTo(mapRef.current);
+
+        // Initialize marker cluster group with optimized settings
+        markerClusterRef.current = L.markerClusterGroup({
+          maxClusterRadius: 50,
+          iconCreateFunction: createClusterIcon,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          chunkedLoading: true, // チャンク単位でロード
+          chunkInterval: 200, // チャンク間隔
+          chunkDelay: 50, // チャンク遅延
+          removeOutsideVisibleBounds: true, // 表示範囲外のマーカーを削除
+          animate: true, // アニメーションを有効化
+          animateAddingMarkers: true, // マーカー追加時のアニメーション
+          spiderfyDistanceMultiplier: 2, // スパイダリー表示時の距離を2倍に
+          spiderLegPolylineOptions: { weight: 2, color: "#222", opacity: 0.5 },
+        });
+
+        // Add cluster events for tooltips
+        markerClusterRef.current.on("clustermouseover", (e) => {
+          const cluster = e.propagatedFrom;
+          const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
+          const statusCounts: Record<BoardStatus, number> = {
+            not_yet: 0,
+            reserved: 0,
+            done: 0,
+            error_wrong_place: 0,
+            error_damaged: 0,
+            error_wrong_poster: 0,
+            other: 0,
+          };
+
+          for (const marker of markers) {
+            const board = marker.boardData;
+            if (board) {
+              statusCounts[board.status]++;
+            }
+          }
+
+          const statusLabels: Record<BoardStatus, string> = {
+            not_yet: "未実施",
+            reserved: "予約済み",
+            done: "完了",
+            error_wrong_place: "場所違い",
+            error_damaged: "破損",
+            error_wrong_poster: "ポスター違い",
+            other: "その他",
+          };
+
+          const tooltipContent = Object.entries(statusCounts)
+            .filter(([, count]) => count > 0)
+            .map(
+              ([status, count]) =>
+                `${statusLabels[status as BoardStatus]}: ${count}`,
+            )
+            .join("<br>");
+
+          cluster
+            .bindTooltip(
+              `掲示板数: ${cluster.getChildCount()}<br>${tooltipContent}`,
+              {
+                permanent: false,
+                direction: "top",
+                className: "cluster-tooltip",
+              },
+            )
+            .openTooltip();
+        });
+
+        markerClusterRef.current.on("clustermouseout", (e) => {
+          const cluster = e.propagatedFrom;
+          cluster.closeTooltip();
+        });
+
+        mapRef.current.addLayer(markerClusterRef.current as unknown as L.Layer);
+      }
+
+      // Update map view when center changes
+      if (mapRef.current) {
+        mapRef.current.setView(center, zoomLevel);
+      }
+    }, [center, prefectureKey]);
+
+    useEffect(() => {
+      if (!markerClusterRef.current) return;
+
+      // Clear existing markers
+      markerClusterRef.current.clearLayers();
+
+      // バッチ処理でマーカーを追加
+      const markers: L.Marker[] = [];
+      const locationGroups = new Map<string, PosterBoard[]>();
+
+      // Add markers for each board (use filtered boards)
+      for (const board of filteredBoards) {
         if (board.lat && board.long) {
-          let lat = board.lat;
-          let lng = board.long;
-
-          // 同じ位置に複数のマーカーがある場合、少しずらして配置
-          if (boardsAtLocation.length > 1) {
-            const angle = (index * 360) / boardsAtLocation.length;
-            const radius = 0.0001 + index * 0.00005; // 約10-15m程度のオフセット
-            lat += radius * Math.cos((angle * Math.PI) / 180);
-            lng += radius * Math.sin((angle * Math.PI) / 180);
+          const locationKey = `${board.lat.toFixed(6)}_${board.long.toFixed(6)}`;
+          if (!locationGroups.has(locationKey)) {
+            locationGroups.set(locationKey, []);
           }
+          const group = locationGroups.get(locationKey);
+          if (group) {
+            group.push(board);
+          }
+        }
+      }
 
-          const marker = L.marker([lat, lng], {
-            icon: createMarkerIcon(board.status),
-          }).on("click", () => onBoardClick(board));
+      // Create markers for each board
+      for (const boardsAtLocation of Array.from(locationGroups.values())) {
+        for (let index = 0; index < boardsAtLocation.length; index++) {
+          const board = boardsAtLocation[index];
+          if (board.lat && board.long) {
+            let lat = board.lat;
+            let lng = board.long;
 
-          const isHoverSupported = window.matchMedia("(hover: hover)").matches;
-          if (isHoverSupported) {
-            // スマホではツールチップを表示しない
-            marker.bindTooltip(
-              `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}${
-                boardsAtLocation.length > 1
-                  ? `<br><small>※この位置に${boardsAtLocation.length}件のマーカーがあります</small>`
-                  : ""
-              }`,
-              { permanent: false, direction: "top" },
+            // 同じ位置に複数のマーカーがある場合、少しずらして配置
+            if (boardsAtLocation.length > 1) {
+              const angle = (index * 360) / boardsAtLocation.length;
+              const radius = 0.0001 + index * 0.00005; // 約10-15m程度のオフセット
+              lat += radius * Math.cos((angle * Math.PI) / 180);
+              lng += radius * Math.sin((angle * Math.PI) / 180);
+            }
+
+            const marker = L.marker([lat, lng], {
+              icon: createMarkerIcon(board.status),
+            }).on("click", () => onBoardClick(board));
+
+            const isHoverSupported =
+              window.matchMedia("(hover: hover)").matches;
+            if (isHoverSupported) {
+              // スマホではツールチップを表示しない
+              marker.bindTooltip(
+                `${board.number ? `#${board.number} ` : ""}${board.name}<br/>${board.address}<br/>${board.city}${
+                  boardsAtLocation.length > 1
+                    ? `<br><small>※この位置に${boardsAtLocation.length}件のマーカーがあります</small>`
+                    : ""
+                }`,
+                { permanent: false, direction: "top" },
+              );
+            }
+
+            // Store board data in marker for cluster icon calculation
+            (marker as MarkerWithBoard).boardData = board;
+            markers.push(marker);
+          }
+        }
+      }
+
+      // バッチでマーカーを追加
+      if (markers.length > 0) {
+        markerClusterRef.current.addLayers(markers);
+      }
+    }, [filteredBoards, onBoardClick]);
+
+    // 画面を開いた瞬間から現在地をwatchし、移動に追従
+    useEffect(() => {
+      if (!navigator.geolocation) {
+        return;
+      }
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
+        },
+        () => {
+          // 位置情報の取得に失敗した場合は静かに処理
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+      );
+      return () => {
+        navigator.geolocation.clearWatch(watchId);
+      };
+    }, []);
+
+    // 現在地マーカーの管理
+    useEffect(() => {
+      if (!mapRef.current) return;
+
+      // 既存の現在地マーカーを削除
+      if (currentMarkerRef.current) {
+        currentMarkerRef.current.remove();
+        currentMarkerRef.current = null;
+      }
+
+      // 現在地が取得できていればマーカーを追加
+      if (currentPos) {
+        const marker = L.circleMarker(currentPos, {
+          radius: 12,
+          color: "#2563eb",
+          fillColor: "#60a5fa",
+          fillOpacity: 0.7,
+          weight: 3,
+        })
+          .addTo(mapRef.current)
+          .bindTooltip("あなたの現在地", {
+            permanent: false,
+            direction: "top",
+          });
+
+        currentMarkerRef.current = marker;
+      }
+    }, [currentPos]);
+
+    // Cleanup
+    useEffect(() => {
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.remove();
+          mapRef.current = null;
+          markerClusterRef.current = null;
+        }
+      };
+    }, []);
+
+    // 現在地取得ボタンのハンドラ
+    const handleLocate = () => {
+      if (currentPos && mapRef.current) {
+        mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+          animate: true,
+          duration: 0.8,
+        });
+      }
+    };
+
+    // フルスクリーンモードの切り替え
+    const toggleFullscreen = () => {
+      setIsFullscreen(!isFullscreen);
+    };
+
+    // 検索キーボードイベントハンドラー
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!searchResults || searchResults.length === 0) return;
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          if (onSelectedSearchIndexChange) {
+            onSelectedSearchIndexChange(
+              selectedSearchIndex !== undefined &&
+                selectedSearchIndex < searchResults.length - 1
+                ? selectedSearchIndex + 1
+                : (selectedSearchIndex ?? -1),
             );
           }
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          if (onSelectedSearchIndexChange) {
+            onSelectedSearchIndexChange(
+              selectedSearchIndex !== undefined && selectedSearchIndex > 0
+                ? selectedSearchIndex - 1
+                : -1,
+            );
+          }
+          break;
+        case "Enter":
+          // IME変換中の場合は何もしない
+          if (isComposing) return;
 
-          // Store board data in marker for cluster icon calculation
-          (marker as MarkerWithBoard).boardData = board;
-          markers.push(marker);
+          e.preventDefault();
+          if (onSearchResultSelect) {
+            if (
+              selectedSearchIndex !== undefined &&
+              selectedSearchIndex >= 0 &&
+              selectedSearchIndex < searchResults.length
+            ) {
+              onSearchResultSelect(searchResults[selectedSearchIndex]);
+            } else if (searchResults.length > 0) {
+              onSearchResultSelect(searchResults[0]);
+            }
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          if (onSearchQueryChange) onSearchQueryChange("");
+          if (onSelectedSearchIndexChange) onSelectedSearchIndexChange(-1);
+          break;
+      }
+    };
+
+    // モバイルサイズの検出
+    useEffect(() => {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 640);
+      };
+
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    // ESCキーでフルスクリーン解除
+    useEffect(() => {
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === "Escape" && isFullscreen) {
+          setIsFullscreen(false);
         }
+      };
+
+      if (isFullscreen) {
+        document.addEventListener("keydown", handleEscape);
+        // フルスクリーン時はbodyのスクロールを無効化
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "";
       }
-    }
 
-    // バッチでマーカーを追加
-    if (markers.length > 0) {
-      markerClusterRef.current.addLayers(markers);
-    }
-  }, [filteredBoards, onBoardClick]);
+      return () => {
+        document.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = "";
+      };
+    }, [isFullscreen]);
 
-  // 画面を開いた瞬間から現在地をwatchし、移動に追従
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      return;
-    }
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
-      },
-      () => {
-        // 位置情報の取得に失敗した場合は静かに処理
-      },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
-    );
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, []);
+    // 外側クリックでドロップダウンを閉じる
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          searchContainerRef.current &&
+          !searchContainerRef.current.contains(event.target as Node) &&
+          onSearchDropdownChange
+        ) {
+          onSearchDropdownChange(false);
+        }
+      };
 
-  // 現在地マーカーの管理
-  useEffect(() => {
-    if (!mapRef.current) return;
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [onSearchDropdownChange]);
 
-    // 既存の現在地マーカーを削除
-    if (currentMarkerRef.current) {
-      currentMarkerRef.current.remove();
-      currentMarkerRef.current = null;
-    }
-
-    // 現在地が取得できていればマーカーを追加
-    if (currentPos) {
-      const marker = L.circleMarker(currentPos, {
-        radius: 12,
-        color: "#2563eb",
-        fillColor: "#60a5fa",
-        fillOpacity: 0.7,
-        weight: 3,
-      })
-        .addTo(mapRef.current)
-        .bindTooltip("あなたの現在地", { permanent: false, direction: "top" });
-
-      currentMarkerRef.current = marker;
-    }
-  }, [currentPos]);
-
-  // Cleanup
-  useEffect(() => {
-    return () => {
+    // フルスクリーン時に地図サイズを更新
+    // biome-ignore lint/correctness/useExhaustiveDependencies: mapRefは安定した参照のため依存配列に含める必要なし
+    useEffect(() => {
       if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        markerClusterRef.current = null;
+        // 少し遅延を入れてから地図サイズを更新
+        const timeoutId = setTimeout(() => {
+          mapRef.current?.invalidateSize();
+        }, 100);
+        return () => clearTimeout(timeoutId);
       }
-    };
-  }, []);
+    }, [isFullscreen]);
 
-  // 現在地取得ボタンのハンドラ
-  const handleLocate = () => {
-    if (currentPos && mapRef.current) {
-      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
-        animate: true,
-        duration: 0.8,
-      });
-    }
-  };
-
-  // フルスクリーンモードの切り替え
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
-  // ESCキーでフルスクリーン解除
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isFullscreen) {
-        setIsFullscreen(false);
-      }
-    };
-
-    if (isFullscreen) {
-      document.addEventListener("keydown", handleEscape);
-      // フルスクリーン時はbodyのスクロールを無効化
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [isFullscreen]);
-
-  // フルスクリーン時に地図サイズを更新
-  // biome-ignore lint/correctness/useExhaustiveDependencies: mapRefは安定した参照のため依存配列に含める必要なし
-  useEffect(() => {
-    if (mapRef.current) {
-      // 少し遅延を入れてから地図サイズを更新
-      const timeoutId = setTimeout(() => {
-        mapRef.current?.invalidateSize();
-      }, 100);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isFullscreen]);
-
-  return (
-    <div
-      className={
-        isFullscreen
-          ? "fixed inset-0 z-50 h-screen w-screen bg-white"
-          : "relative h-[600px] w-full z-0"
-      }
-    >
-      <div id="poster-map-cluster" className="h-full w-full" />
-
-      <PosterBoardFilter
-        filterState={filterState}
-        onToggleStatus={toggleStatus}
-        onToggleShowOnlyMine={toggleShowOnlyMine}
-        onSelectAll={selectAll}
-        onDeselectAll={deselectAll}
-        activeFilterCount={activeFilterCount}
-      />
-
-      {/* フルスクリーンボタン */}
-      {!isFullscreen && (
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
-          style={{ zIndex: 1000 }}
-          aria-label="フルスクリーン表示"
-          title="フルスクリーン表示"
-        >
-          <Expand size={20} />
-        </button>
-      )}
-
-      {/* フルスクリーン解除ボタン */}
-      {isFullscreen && (
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
-          style={{ zIndex: 1000 }}
-          aria-label="フルスクリーン解除"
-          title="フルスクリーン解除 (ESC)"
-        >
-          <Minimize size={20} />
-        </button>
-      )}
-
-      {/* 現在地ボタン */}
-      <button
-        type="button"
-        onClick={handleLocate}
-        disabled={!currentPos}
-        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
-          currentPos
-            ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
-            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-        }`}
-        style={{ zIndex: 1000 }}
-        aria-label="現在地を表示"
+    return (
+      <div
+        className={
+          isFullscreen
+            ? "fixed inset-0 z-50 h-screen w-screen bg-white"
+            : "relative h-[600px] w-full z-0"
+        }
       >
-        📍 現在地
-      </button>
-    </div>
-  );
-}
+        <div id="poster-map-cluster" className="h-full w-full" />
+
+        {/* 検索とフィルタのコンテナ */}
+        <div
+          className={`absolute ${isMobile ? "top-2 right-2" : "top-4 right-4"} flex flex-row gap-2 z-[1000]`}
+        >
+          {/* 検索ボックス */}
+          <div
+            className="bg-white rounded-lg shadow-lg border border-gray-200"
+            ref={searchContainerRef}
+          >
+            <div className="relative">
+              <div
+                className={`flex items-center gap-2 ${isMobile ? "px-2 py-2" : "px-3 py-1.5"} rounded-lg`}
+              >
+                <Search
+                  className={`${isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} flex-shrink-0`}
+                />
+                <input
+                  type="text"
+                  placeholder={isMobile ? "検索" : "検索..."}
+                  className={`${isMobile ? "text-xs" : "text-sm font-medium"} bg-transparent border-none outline-none flex-1 ${isMobile ? "w-16" : "w-48"}`}
+                  value={searchQuery || ""}
+                  onChange={(e) => {
+                    if (onSearchQueryChange) {
+                      onSearchQueryChange(e.target.value);
+                      onSearchDropdownChange?.(true);
+                    }
+                  }}
+                  onFocus={() => onSearchDropdownChange?.(true)}
+                  onKeyDown={handleSearchKeyDown}
+                  onCompositionStart={() => onComposingChange?.(true)}
+                  onCompositionEnd={() => onComposingChange?.(false)}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onSearchQueryChange) onSearchQueryChange("");
+                      if (onSelectedSearchIndexChange)
+                        onSelectedSearchIndexChange(-1);
+                      if (onSearchDropdownChange) onSearchDropdownChange(false);
+                    }}
+                  >
+                    <X
+                      className={`${isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} text-gray-400 hover:text-gray-600`}
+                    />
+                  </button>
+                )}
+              </div>
+
+              {/* 検索結果ドロップダウン */}
+              {showSearchDropdown &&
+                searchResults &&
+                (searchResults.length > 0 ||
+                  (searchQuery &&
+                    searchQuery.length >= 2 &&
+                    searchResults.length === 0)) && (
+                  <div
+                    className={`absolute ${isMobile ? "left-auto right-0 w-64" : "left-0 right-0"} mt-1 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg`}
+                  >
+                    {searchResults.length > 0 ? (
+                      searchResults.map((board, index) => (
+                        <button
+                          type="button"
+                          key={board.id}
+                          className={`w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors ${
+                            index === selectedSearchIndex ? "bg-gray-100" : ""
+                          }`}
+                          onClick={() => onSearchResultSelect?.(board)}
+                          onMouseEnter={() =>
+                            onSelectedSearchIndexChange?.(index)
+                          }
+                        >
+                          <div className="text-sm">
+                            {board.number && (
+                              <span className="font-medium">
+                                #{board.number}
+                              </span>
+                            )}
+                            {board.name && (
+                              <span className="ml-2">{board.name}</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {board.address} {board.city}
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-gray-500 text-center">
+                        検索結果がありません
+                      </div>
+                    )}
+                  </div>
+                )}
+            </div>
+          </div>
+
+          {/* フィルタコンポーネント */}
+          <PosterBoardFilter
+            filterState={filterState}
+            onToggleStatus={toggleStatus}
+            onToggleShowOnlyMine={toggleShowOnlyMine}
+            onSelectAll={selectAll}
+            onDeselectAll={deselectAll}
+            activeFilterCount={activeFilterCount}
+          />
+        </div>
+
+        {/* フルスクリーンボタン */}
+        {!isFullscreen && (
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+            style={{ zIndex: 1000 }}
+            aria-label="フルスクリーン表示"
+            title="フルスクリーン表示"
+          >
+            <Expand size={20} />
+          </button>
+        )}
+
+        {/* フルスクリーン解除ボタン */}
+        {isFullscreen && (
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+            style={{ zIndex: 1000 }}
+            aria-label="フルスクリーン解除"
+            title="フルスクリーン解除 (ESC)"
+          >
+            <Minimize size={20} />
+          </button>
+        )}
+
+        {/* 現在地ボタン */}
+        <button
+          type="button"
+          onClick={handleLocate}
+          disabled={!currentPos}
+          className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+            currentPos
+              ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
+              : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+          }`}
+          style={{ zIndex: 1000 }}
+          aria-label="現在地を表示"
+        >
+          📍 現在地
+        </button>
+      </div>
+    );
+  },
+);
+
+export default PosterMapWithCluster;
