@@ -104,11 +104,33 @@ echo "$MIGRATION_FILES" | while read -r file; do
       echo "  見つかったDELETE文:"
       echo "$DELETE_STATEMENTS" | sed 's/^/    /'
       
-      # テーブル名を抽出
-      echo "$DELETE_STATEMENTS" | \
-        sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
-        sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | \
-        sed 's/"//g' >> /tmp/deleted_tables_regex.txt
+      # PostgreSQLのパーサーを使用してテーブル名を抽出
+      echo "$DELETE_STATEMENTS" | while IFS= read -r stmt; do
+        if [ -n "$stmt" ]; then
+          # PostgreSQLに直接問い合わせてテーブル名を抽出
+          table_name=$(psql "$DATABASE_URL" -At -c "
+            WITH parsed_query AS (
+              SELECT regexp_matches(
+                '$stmt', 
+                'DELETE\s+FROM\s+([\"']?[a-zA-Z_][a-zA-Z0-9_]*[\"']?)', 
+                'i'
+              ) AS table_match
+            )
+            SELECT 
+              CASE 
+                WHEN table_match[1] LIKE '\"%\"' THEN trim('\"' from table_match[1])
+                WHEN table_match[1] LIKE '''%''' THEN trim('''' from table_match[1])
+                ELSE table_match[1]
+              END as table_name
+            FROM parsed_query
+            WHERE table_match IS NOT NULL;
+          " 2>/dev/null || echo "")
+          
+          if [ -n "$table_name" ]; then
+            echo "$table_name" >> /tmp/deleted_tables_regex.txt
+          fi
+        fi
+      done
     fi
   fi
 done
@@ -125,15 +147,39 @@ psql "$DATABASE_URL" -At \
 
 if [ -s /tmp/function_exists.txt ]; then
   echo "✅ delete_user_account関数が正常に定義されています"
-  # 関数の定義から実際のテーブル名を抽出
+  # 関数の定義から実際のテーブル名を抽出（PostgreSQLパーサーを使用）
   psql "$DATABASE_URL" -At \
     -c "\\set ON_ERROR_STOP" \
-    -c "SELECT pg_get_functiondef((SELECT oid FROM pg_proc WHERE proname = 'delete_user_account'));" | \
-    grep -E "DELETE FROM" | \
-    grep -E "user_id" | \
-    sed -E 's/.*DELETE FROM[[:space:]]+([a-zA-Z_"][a-zA-Z0-9_".-]*)[[:space:]]*WHERE.*/\1/' | \
-    sed 's/"//g' | \
-    sort > /tmp/deleted_tables.txt
+    -c "
+      WITH function_body AS (
+        SELECT pg_get_functiondef((SELECT oid FROM pg_proc WHERE proname = 'delete_user_account')) AS func_def
+      ),
+      delete_statements AS (
+        SELECT 
+          regexp_split_to_table(func_def, '\n') AS line
+        FROM function_body
+        WHERE func_def IS NOT NULL
+      ),
+      filtered_deletes AS (
+        SELECT line
+        FROM delete_statements
+        WHERE line ~* 'DELETE\s+FROM.*user_id'
+      ),
+      extracted_tables AS (
+        SELECT 
+          (regexp_matches(line, 'DELETE\s+FROM\s+([\"'']?[a-zA-Z_][a-zA-Z0-9_]*[\"'']?)', 'i'))[1] AS table_match
+        FROM filtered_deletes
+      )
+      SELECT DISTINCT
+        CASE 
+          WHEN table_match LIKE '\"%\"' THEN trim('\"' from table_match)
+          WHEN table_match LIKE '''%''' THEN trim('''' from table_match)
+          ELSE table_match
+        END as table_name
+      FROM extracted_tables
+      WHERE table_match IS NOT NULL
+      ORDER BY table_name;
+    " > /tmp/deleted_tables.txt
 else
   echo "⚠️  関数が見つからないため、正規表現による抽出結果を使用します"
   cp /tmp/deleted_tables_regex.txt /tmp/deleted_tables.txt
