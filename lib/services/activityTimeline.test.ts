@@ -341,6 +341,7 @@ describe("activityTimeline service", () => {
     });
 
     it("UNION ALLクエリでのIDプレフィックス確認", async () => {
+      // activity_timeline_viewビューと同様の動作を検証
       const mockAchievements = [
         {
           id: "achievement-1",
