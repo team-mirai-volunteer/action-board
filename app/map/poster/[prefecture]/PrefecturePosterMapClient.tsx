@@ -108,6 +108,7 @@ export default function PrefecturePosterMapClient({
   const [filters, setFilters] = useState({
     selectedStatuses: [
       "not_yet",
+      "not_yet_dangerous",
       "reserved",
       "done",
       "error_wrong_place",
@@ -379,6 +380,7 @@ export default function PrefecturePosterMapClient({
   // 統計情報を使用（初期値はサーバーから提供されたもの）
   const statusCounts = stats?.statusCounts || {
     not_yet: 0,
+    not_yet_dangerous: 0,
     reserved: 0,
     done: 0,
     error_wrong_place: 0,

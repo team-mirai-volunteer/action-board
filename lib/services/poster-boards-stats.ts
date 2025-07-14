@@ -30,6 +30,7 @@ export async function getPosterBoardStats(): Promise<{
       if (!stats[row.prefecture]) {
         stats[row.prefecture] = {
           not_yet: 0,
+          not_yet_dangerous: 0,
           reserved: 0,
           done: 0,
           error_wrong_place: 0,
@@ -95,6 +96,7 @@ async function getFallbackStats(): Promise<{
     if (!stats[board.prefecture]) {
       stats[board.prefecture] = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,

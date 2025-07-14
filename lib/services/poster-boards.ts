@@ -289,6 +289,7 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
         total: 0,
         statuses: {
           not_yet: 0,
+          not_yet_dangerous: 0,
           reserved: 0,
           done: 0,
           error_wrong_place: 0,

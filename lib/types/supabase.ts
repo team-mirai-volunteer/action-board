@@ -447,6 +447,7 @@ export type Database = {
           created_at: string;
           difficulty: number;
           event_date: string | null;
+          featured_importance: number | null;
           icon_url: string | null;
           id: string;
           is_featured: boolean;
@@ -464,6 +465,7 @@ export type Database = {
           created_at?: string;
           difficulty: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id: string;
           is_featured?: boolean;
@@ -481,6 +483,7 @@ export type Database = {
           created_at?: string;
           difficulty?: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id?: string;
           is_featured?: boolean;
@@ -1574,6 +1577,7 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
+        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
@@ -1713,6 +1717,7 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
+        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",

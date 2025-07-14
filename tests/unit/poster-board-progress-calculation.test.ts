@@ -82,6 +82,7 @@ describe("Poster Board Progress Calculation", () => {
       const prefecture = "東京都";
       const stats: Record<BoardStatus, number> = {
         not_yet: 50,
+        not_yet_dangerous: 0,
         reserved: 30,
         done: 20,
         error_wrong_place: 0,
@@ -107,6 +108,7 @@ describe("Poster Board Progress Calculation", () => {
       const prefecture = "京都府";
       const stats: Record<BoardStatus, number> = {
         not_yet: 50,
+        not_yet_dangerous: 0,
         reserved: 30,
         done: 20,
         error_wrong_place: 0,
@@ -129,6 +131,7 @@ describe("Poster Board Progress Calculation", () => {
     it("登録数が0の場合は進捗率0%を返す", () => {
       const stats: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
