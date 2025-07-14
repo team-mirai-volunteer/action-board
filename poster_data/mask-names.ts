@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 import { glob } from "glob";
+import { extractWardFromAddress } from "./designated-cities.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,24 +19,63 @@ function maskNamesInCsv(filePath: string): void {
     bom: true,
   });
 
-  // Check if name column exists
-  if (records.length > 0 && !("name" in records[0])) {
-    console.log(`Warning: 'name' column not found in ${filePath}`);
-    return;
+  // Check if required columns exist
+  if (records.length > 0) {
+    const firstRecord = records[0];
+    if (!("name" in firstRecord)) {
+      console.log(`Warning: 'name' column not found in ${filePath}`);
+      return;
+    }
+    if (
+      !("prefecture" in firstRecord) ||
+      !("city" in firstRecord) ||
+      !("address" in firstRecord)
+    ) {
+      console.log(
+        `Warning: Required columns (prefecture, city, address) not found in ${filePath}`,
+      );
+      return;
+    }
   }
 
-  // Mask names containing personal name
+  // Process each record
   let modified = false;
   for (const record of records) {
+    // Mask personal names in name field
     if (record.name && hasPersonalName(record.name)) {
       record.name = "masked";
       modified = true;
     }
+
+    // For address field: process only if it contains personal name
     if (record.address && hasPersonalName(record.address)) {
-      const cleanedAddress = removePersonalNameFromAddress(record.address);
-      if (cleanedAddress !== record.address) {
-        record.address = cleanedAddress;
-        modified = true;
+      if (record.prefecture && record.city) {
+        // Check if it's a designated city
+        const wardExtracted = extractWardFromAddress(
+          record.prefecture,
+          record.city,
+          record.address,
+        );
+
+        if (wardExtracted !== record.address && wardExtracted !== "masked") {
+          // Ward was successfully extracted from designated city
+          record.address = wardExtracted;
+          modified = true;
+        } else {
+          // Not a designated city or ward couldn't be extracted
+          const cleanedAddress = removePersonalNameFromAddress(record.address);
+          if (cleanedAddress !== record.address) {
+            record.address = cleanedAddress;
+            modified = true;
+          }
+        }
+      } else {
+        // Prefecture/city info missing - use original logic
+        const cleanedAddress = removePersonalNameFromAddress(record.address);
+        if (cleanedAddress !== record.address) {
+          record.address = cleanedAddress;
+          modified = true;
+        }
       }
     }
   }
