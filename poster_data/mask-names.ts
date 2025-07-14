@@ -55,14 +55,15 @@ function maskNamesInCsv(filePath: string): void {
           record.prefecture,
           record.city,
           record.address,
+          true, // hasPersonalName = true
         );
 
-        if (wardExtracted !== record.address && wardExtracted !== "masked") {
-          // Ward was successfully extracted from designated city
+        if (wardExtracted !== record.address) {
+          // Ward was extracted or masked for designated city
           record.address = wardExtracted;
           modified = true;
         } else {
-          // Not a designated city or ward couldn't be extracted
+          // Not a designated city - use original logic
           const cleanedAddress = removePersonalNameFromAddress(record.address);
           if (cleanedAddress !== record.address) {
             record.address = cleanedAddress;

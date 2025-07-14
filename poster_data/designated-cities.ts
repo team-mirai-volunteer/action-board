@@ -227,6 +227,7 @@ export function extractWardFromAddress(
   prefecture: string,
   city: string,
   address: string,
+  hasPersonalName = false,
 ): string {
   // 政令指定都市でない場合は何もしない
   if (!isDesignatedCity(prefecture, city)) {
@@ -254,6 +255,6 @@ export function extractWardFromAddress(
     }
   }
 
-  // 区が特定できない場合はmasked
-  return "masked";
+  // 区が特定できない場合：個人名がある場合のみmasked、ない場合はそのまま返す
+  return hasPersonalName ? "masked" : address;
 }
