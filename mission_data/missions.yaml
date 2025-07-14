@@ -89,8 +89,7 @@ missions:
   - slug: tiktok-clip-final-push
     title: ラストスパート！簡単ショート動画投稿大作戦
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
-    content: |-
-      従来のショート動画作成手順を大幅に簡素化！あなたにもきっとできる！！TikTokに切り抜き動画を投稿して、チームみらいの魅力をもっと多くの人に届け、チームみらいに大きな波を起こしましょう！<a href="https://team-mirai.notion.site/1-1-TikTok-206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023安野たかひろ &#x0023チームみらい をコピーする</a>
+    content: <b>最終週のいまだからこそ、あなたの1投稿が効く！</b><br>流れはできてる。あとは、走りきるだけ。<br>TikTokで“好きなシーン”を届けよう。<br>🔗<a href="https://team-mirai.notion.site/1-1-TikTok-206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">切り抜きかんたんガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023安野たかひろ &#x0023チームみらい をコピーする</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
