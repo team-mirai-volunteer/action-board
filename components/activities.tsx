@@ -1,15 +1,57 @@
+"use client";
+
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
+import type { Tables } from "@/lib/types/supabase";
+import { useState } from "react";
 
-export default async function Activities() {
-  const supabase = await createClient();
+interface ActivitiesProps {
+  initialTimeline: Tables<"activity_timeline_view">[];
+  totalCount: number;
+  pageSize: number;
+}
 
-  const { data: activityTimelines } = await supabase
-    .from("activity_timeline_view")
-    .select()
-    .order("created_at", { ascending: false })
-    .limit(10);
+export default function Activities(props: ActivitiesProps) {
+  const supabase = createClient();
+  const [timeline, setTimeline] = useState<Tables<"activity_timeline_view">[]>(
+    props.initialTimeline,
+  );
+  const [hasNext, setHasNext] = useState(
+    props.totalCount > props.initialTimeline.length,
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLoadMore = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { data: takeTimeline, error: fetchError } = await supabase
+        .from("activity_timeline_view")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(timeline.length, timeline.length + props.pageSize - 1);
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      if (takeTimeline) {
+        const newTimeline = [...timeline, ...takeTimeline];
+        setTimeline(newTimeline);
+        setHasNext(newTimeline.length < props.totalCount);
+      }
+    } catch (err) {
+      console.error("Failed to load more activities:", err);
+      setError("活動データの読み込みに失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -26,9 +68,18 @@ export default async function Activities() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <ActivityTimeline
-                timeline={activityTimelines ?? []}
-                hasNext={false}
+                timeline={timeline || []}
+                hasNext={hasNext}
+                onLoadMore={handleLoadMore}
               />
+              {isLoading && (
+                <div className="text-center text-gray-500 py-4">
+                  読み込み中...
+                </div>
+              )}
+              {error && (
+                <div className="text-center text-red-500 py-4">{error}</div>
+              )}
             </div>
           </div>
         </Card>

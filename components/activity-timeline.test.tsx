@@ -20,6 +20,7 @@ describe("ActivityTimeline", () => {
           user_id: "user-1",
           address_prefecture: "東京都",
           avatar_url: null,
+          activity_type: "mission_achievement",
         },
       ];
       const result = await ActivityTimeline({

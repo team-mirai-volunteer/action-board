@@ -66,6 +66,18 @@ export default async function Home({
   //フューチャードミッションの存在確認
   const showFeatured = await hasFeaturedMissions();
 
+  const [activityTimelineResult, activityCountResult] = await Promise.all([
+    supabase
+      .from("activity_timeline_view")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10),
+    supabase.from("activity_timeline_view").select("*", { count: "exact" }),
+  ]);
+
+  const initialTimeline = activityTimelineResult.data || [];
+  const totalCount = activityCountResult.count || 0;
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* レベルアップ通知 */}
@@ -111,7 +123,11 @@ export default async function Home({
 
       {/* アクティビティセクション */}
       <section className="py-12 md:py-16 bg-white">
-        <Activities />
+        <Activities
+          initialTimeline={initialTimeline}
+          totalCount={totalCount}
+          pageSize={10}
+        />
       </section>
     </div>
   );
