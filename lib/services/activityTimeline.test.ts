@@ -304,16 +304,19 @@ describe("activityTimeline service", () => {
     const userId = "test-user-id";
 
     it("大量データ環境でのLIMIT句適用確認（100件データセット）", async () => {
-      const mockData = Array.from({ length: 100 }, (_, i) => ({
-        id: `test-${i}`,
+      const mockAchievements = Array.from({ length: 50 }, (_, i) => ({
+        id: `achievement-${i}`,
         user_id: userId,
-        name: "テストユーザー",
-        address_prefecture: "東京都",
-        avatar_url: null,
-        title: `アクティビティ${i}`,
-        activity_type:
-          i % 2 === 0 ? ("mission_achievement" as const) : ("signup" as const),
-        created_at: new Date(Date.now() - i * 1000).toISOString(),
+        created_at: new Date(Date.now() - i * 2000).toISOString(),
+        missions: { title: `テストミッション${i}` },
+      }));
+
+      const mockActivities = Array.from({ length: 50 }, (_, i) => ({
+        id: `activity-${i}`,
+        user_id: userId,
+        created_at: new Date(Date.now() - (i * 2000 + 1000)).toISOString(),
+        activity_title: `アクティビティ${i}`,
+        activity_type: "signup",
       }));
 
       const createMockChain = (data: any, error: any = null) => ({
@@ -325,8 +328,8 @@ describe("activityTimeline service", () => {
       });
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain(mockData.slice(0, 25)))
-        .mockReturnValueOnce(createMockChain(mockData.slice(25, 50)))
+        .mockReturnValueOnce(createMockChain(mockAchievements.slice(0, 25)))
+        .mockReturnValueOnce(createMockChain(mockActivities.slice(0, 25)))
         .mockReturnValueOnce(createMockChain(null));
 
       const result = await getUserActivityTimeline(userId, 50, 0);
@@ -397,19 +400,23 @@ describe("activityTimeline service", () => {
     });
 
     it("ページネーション機能での正確なオフセット処理", async () => {
-      const mockData = Array.from({ length: 20 }, (_, i) => ({
-        id: `test-${i}`,
+      const mockAchievements = Array.from({ length: 20 }, (_, i) => ({
+        id: `achievement-${i}`,
         user_id: userId,
-        name: "テストユーザー",
-        address_prefecture: "東京都",
-        avatar_url: null,
-        title: `アクティビティ${i}`,
-        activity_type: "signup" as const,
-        created_at: new Date(Date.now() - i * 1000).toISOString(),
+        created_at: new Date(Date.now() - i * 2000).toISOString(),
+        missions: { title: `テストミッション${i}` },
+      }));
+
+      const mockActivities = Array.from({ length: 20 }, (_, i) => ({
+        id: `activity-${i}`,
+        user_id: userId,
+        created_at: new Date(Date.now() - (i * 2000 + 1000)).toISOString(),
+        activity_title: `アクティビティ${i}`,
+        activity_type: "signup",
       }));
 
       const mockRange = jest.fn().mockResolvedValue({
-        data: mockData.slice(10, 20),
+        data: mockAchievements.slice(5, 10),
         error: null,
       });
 
@@ -421,14 +428,53 @@ describe("activityTimeline service", () => {
         single: jest.fn().mockResolvedValue({ data: null, error: null }),
       });
 
+      const mockRangeAchievements = jest.fn().mockResolvedValue({
+        data: mockAchievements.slice(10, 15),
+        error: null,
+      });
+
+      const mockRangeActivities = jest.fn().mockResolvedValue({
+        data: mockActivities.slice(10, 15),
+        error: null,
+      });
+
+      const createMockChainAchievements = () => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: mockRangeAchievements,
+      });
+
+      const createMockChainActivities = () => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        range: mockRangeActivities,
+      });
+
+      const createMockChainProfiles = () => ({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: {
+            id: userId,
+            name: "テストユーザー",
+            address_prefecture: "東京都",
+            avatar_url: null,
+          },
+          error: null,
+        }),
+      });
+
       mockSupabase.from
-        .mockReturnValueOnce(createMockChain())
-        .mockReturnValueOnce(createMockChain())
-        .mockReturnValueOnce(createMockChain());
+        .mockReturnValueOnce(createMockChainAchievements())
+        .mockReturnValueOnce(createMockChainActivities())
+        .mockReturnValueOnce(createMockChainProfiles());
 
       const result = await getUserActivityTimeline(userId, 10, 10);
 
-      expect(mockRange).toHaveBeenCalledWith(10, 19);
+      expect(mockRangeAchievements).toHaveBeenCalledWith(10, 14);
+      expect(mockRangeActivities).toHaveBeenCalledWith(10, 14);
       expect(result).toHaveLength(10);
     });
 
