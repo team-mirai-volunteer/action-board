@@ -108,7 +108,7 @@ echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽�
 
 # 全てのマイグレーションファイルからDELETE文を一括抽出（パフォーマンス最適化）
 echo "🔍 全マイグレーションファイルからDELETE文を抽出中..."
-ALL_DELETE_STMTS=$(echo "$MIGRATION_FILES" | xargs -r awk 'BEGIN{RS=";"} /DELETE[[:space:]]+FROM/ && /user_id/ {gsub(/\n/, " "); print}' 2>/dev/null)
+ALL_DELETE_STMTS=$(printf '%s\0' $MIGRATION_FILES | xargs -0 awk 'BEGIN{RS=";"} /DELETE[[:space:]]+FROM/ && /user_id/ {gsub(/\n/, " "); print}' 2>/dev/null)
 
 if [ -n "$ALL_DELETE_STMTS" ]; then
   echo "  見つかったDELETE文:"
@@ -146,7 +146,7 @@ if [ -n "$ALL_DELETE_STMTS" ]; then
 SQL
 else
   echo "⚠️  DELETE文が見つかりませんでした"
-  > "$DELETED_TABLES_REGEX_FILE"  # 空ファイルを作成
+  : > "$DELETED_TABLES_REGEX_FILE"  # 空ファイルを作成
 fi
 
 # 重複を削除してソート
