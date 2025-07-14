@@ -153,6 +153,10 @@ category_links:
         sort_no: 300
       - mission_slug: youtube-clip
         sort_no: 400
+      - mission_slug: youtube-comment
+        sort_no: 500
+      - mission_slug: youtube-comment-reaction
+        sort_no: 600
   - category_slug: support-on-note
     missions:
       - mission_slug: follow-note
@@ -177,6 +181,10 @@ category_links:
         sort_no: 200
       - mission_slug: youtube-clip
         sort_no: 300
+      - mission_slug: tiktok-comment
+        sort_no: 400
+      - mission_slug: tiktok-comment-reaction
+        sort_no: 500
   - category_slug: support-on-threads
     missions:
       - mission_slug: follow-anno-threads
@@ -184,4 +192,12 @@ category_links:
       - mission_slug: threads-like
         sort_no: 200
       - mission_slug: threads-post
+        sort_no: 300
+  - category_slug: vote-in-various-ways
+    missions:
+      - mission_slug: early-vote
+        sort_no: 100
+      - mission_slug: absent-vote
+        sort_no: 200
+      - mission_slug: overseas-vote
         sort_no: 300

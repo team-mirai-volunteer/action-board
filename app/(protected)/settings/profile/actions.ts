@@ -4,6 +4,7 @@ import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
+import { recordSignupActivity } from "@/lib/services/userActivity";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { encodedRedirect } from "@/lib/utils/utils";
 import { nanoid } from "nanoid";
@@ -243,6 +244,14 @@ export async function updateProfile(
     } catch (e) {
       console.error("案内メール送信失敗:", e);
     }
+
+    // 新規ユーザーの場合、サインアップアクティビティを記録
+    try {
+      await recordSignupActivity(user.id, validatedData.name);
+    } catch (e) {
+      console.error("サインアップアクティビティ記録失敗:", e);
+      // エラーがあっても処理は継続
+    }
   } else {
     const { error: privateUserError } = await supabaseClient
       .from("private_users")
@@ -362,6 +371,7 @@ export async function updateProfile(
   }
 
   revalidatePath("/settings/profile");
+  revalidatePath("/"); // ホームページの活動タイムラインも更新
   return {
     success: true,
   };

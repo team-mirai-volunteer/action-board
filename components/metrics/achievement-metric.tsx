@@ -22,21 +22,24 @@ export function AchievementMetric({
   const todayAchievementCount = data.todayCount ?? fallbackToday;
 
   return (
-    <div className="flex-1 text-center flex flex-col justify-center">
-      <p className="text-sm font-bold text-black mb-2">達成したアクション数</p>
-      {/* 総アクション数（Supabaseから取得、失敗時は環境変数フォールバック） */}
-      <p className="text-2xl font-black text-black mb-1">
-        {formatNumber(achievementCount)}
-        <span className="text-lg">件</span>
-      </p>
-      {/* 24時間のアクション増加数 */}
-      <p className="text-xs text-black">
-        1日で{" "}
-        <span className="font-bold text-teal-700">
-          +{formatNumber(todayAchievementCount)}
-          <span className="text-xs">件</span>
-        </span>
-      </p>
+    <div className="flex items-center justify-between py-6">
+      <div>
+        <p className="text-base text-black">達成アクション数</p>
+      </div>
+      <div className="text-right">
+        {/* 総アクション数（Supabaseから取得、失敗時は環境変数フォールバック） */}
+        <p className="text-2xl font-black text-gray-800">
+          {formatNumber(achievementCount)}
+          <span className="text-lg">件</span>
+        </p>
+        {/* 24時間のアクション増加数 */}
+        <p className="text-xs text-gray-600">
+          1日で{" "}
+          <span className="font-bold text-teal-700">
+            +{formatNumber(todayAchievementCount)}件
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

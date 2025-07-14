@@ -34,8 +34,9 @@ export function ActivityTimeline({
           </Link>
           <div>
             <div className="text-sm">
-              {activity.address_prefecture}の{activity.name}さんが「
-              {activity.title}」を達成しました！
+              {activity.activity_type === "signup"
+                ? activity.title
+                : `${activity.address_prefecture}の${activity.name}さんが「${activity.title}」を達成しました！`}
             </div>
             <div className="text-xs text-gray-500">
               {activity.created_at &&
