@@ -28,7 +28,7 @@ export function SupporterMetric({
       </div>
       <div className="text-right">
         {/* 総サポーター数（大きく表示） */}
-        <p className="text-2xl font-bold text-gray-800">
+        <p className="text-2xl font-black text-gray-800">
           {formatNumber(supporterCount)}
           <span className="text-lg">人</span>
         </p>
