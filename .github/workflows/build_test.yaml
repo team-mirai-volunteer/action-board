@@ -65,6 +65,15 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
+      - name: Sync mission data
+        run: |
+          echo "Syncing mission data..."
+          npm run mission:sync
+          echo "Mission data sync completed."
+        env:
+          SMTP_ENABLED: false
+          BQ_USER_PASSWORD: bq_user_password
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
