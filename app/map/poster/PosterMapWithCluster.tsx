@@ -15,7 +15,6 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./poster-map.css";
 import "./poster-map-filter.css";
 import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
-import { Input } from "@/components/ui/input";
 import { MAX_ZOOM } from "@/lib/constants";
 import {
   type PosterPrefectureKey,
@@ -756,11 +755,21 @@ const PosterMapWithCluster = forwardRef<MapHandle, PosterMapWithClusterProps>(
 
         {/* 検索とフィルタのコンテナ */}
         <div
-          className={`absolute ${isMobile ? "top-2 right-2" : "top-4 right-4"} flex flex-row gap-2 z-[1000]`}
+          className={`absolute ${isMobile ? "top-2 right-2" : "top-4 right-4"} flex flex-row items-start gap-2 z-[1000]`}
         >
+          {/* フィルタコンポーネント */}
+          <PosterBoardFilter
+            filterState={filterState}
+            onToggleStatus={toggleStatus}
+            onToggleShowOnlyMine={toggleShowOnlyMine}
+            onSelectAll={selectAll}
+            onDeselectAll={deselectAll}
+            activeFilterCount={activeFilterCount}
+          />
+
           {/* 検索ボックス */}
           <div
-            className="bg-white rounded-lg shadow-lg border border-gray-200"
+            className={`bg-white rounded-lg shadow-lg border border-gray-200 ${isMobile ? "w-24" : "w-60"} flex-shrink-0`}
             ref={searchContainerRef}
           >
             <div className="relative">
@@ -850,16 +859,6 @@ const PosterMapWithCluster = forwardRef<MapHandle, PosterMapWithClusterProps>(
                 )}
             </div>
           </div>
-
-          {/* フィルタコンポーネント */}
-          <PosterBoardFilter
-            filterState={filterState}
-            onToggleStatus={toggleStatus}
-            onToggleShowOnlyMine={toggleShowOnlyMine}
-            onSelectAll={selectAll}
-            onDeselectAll={deselectAll}
-            activeFilterCount={activeFilterCount}
-          />
         </div>
 
         {/* フルスクリーンボタン */}
