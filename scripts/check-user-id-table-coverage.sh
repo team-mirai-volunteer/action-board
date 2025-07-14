@@ -111,8 +111,8 @@ echo "$MIGRATION_FILES" | while read -r file; do
           table_name=$(psql "$DATABASE_URL" -At -c "
             WITH parsed_query AS (
               SELECT regexp_matches(
-                '$stmt', 
-                'DELETE\s+FROM\s+([\"']?[a-zA-Z_][a-zA-Z0-9_]*[\"']?)', 
+                \$stmt\$${stmt}\$stmt\$, 
+                'DELETE\s+FROM\s+([\"''']?[a-zA-Z_][a-zA-Z0-9_]*[\"''']?)', 
                 'i'
               ) AS table_match
             )
@@ -167,7 +167,7 @@ if [ -s /tmp/function_exists.txt ]; then
       ),
       extracted_tables AS (
         SELECT 
-          (regexp_matches(line, 'DELETE\s+FROM\s+([\"'']?[a-zA-Z_][a-zA-Z0-9_]*[\"'']?)', 'i'))[1] AS table_match
+          (regexp_matches(line, 'DELETE\s+FROM\s+([\"''']?[a-zA-Z_][a-zA-Z0-9_]*[\"''']?)', 'i'))[1] AS table_match
         FROM filtered_deletes
       )
       SELECT DISTINCT
