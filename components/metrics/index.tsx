@@ -41,31 +41,60 @@ export default async function Metrics() {
 
   return (
     <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
-      {/* サポーター数表示エリア（メインハイライト） */}
+      {/* サポーター数 */}
       <SupporterMetric
         data={metricsData.supporter}
         fallbackCount={fallbackSupporterCount}
         fallbackIncrease={fallbackSupporterIncrease}
       />
 
-      {/* 下段：アクション数と寄付金額を左右に分割表示 */}
-      <div className="flex items-start">
-        {/* 左側：アクション達成数 */}
-        <AchievementMetric
-          data={metricsData.achievement}
-          fallbackTotal={fallbackAchievementCount}
-          fallbackToday={fallbackTodayAchievementCount}
-        />
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
 
-        {/* 中央：縦線セパレーター */}
-        <Separator orientation="vertical" className="mx-4 h-full" />
+      {/* アクション達成数 */}
+      <AchievementMetric
+        data={metricsData.achievement}
+        fallbackTotal={fallbackAchievementCount}
+        fallbackToday={fallbackTodayAchievementCount}
+      />
 
-        {/* 右側：寄付金額 */}
-        <DonationMetric
-          data={metricsData.donation}
-          fallbackAmount={fallbackDonationAmount}
-          fallbackIncrease={fallbackDonationIncrease}
-        />
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
+
+      {/* 寄付金額 */}
+      <DonationMetric
+        data={metricsData.donation}
+        fallbackAmount={fallbackDonationAmount}
+        fallbackIncrease={fallbackDonationIncrease}
+      />
+
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
+
+      {/* ダッシュボードリンク */}
+      <div className="text-center">
+        <a
+          href="https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd"
+          className="inline-flex items-center gap-1 text-teal-600 hover:text-teal-700 text-sm transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>もっと詳しい活動状況を見る</span>
+          <svg
+            className="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <title>外部リンク</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
       </div>
     </MetricsLayout>
   );
