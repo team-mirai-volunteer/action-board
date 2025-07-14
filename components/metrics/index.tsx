@@ -1,5 +1,11 @@
 import { Separator } from "@/components/ui/separator";
 import { fetchAllMetricsData } from "@/lib/services/metrics";
+import type {
+  AchievementData,
+  DonationData,
+  RegistrationData,
+  SupporterData,
+} from "@/lib/types/metrics";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { AchievementMetric } from "./achievement-metric";
 import { DonationMetric } from "./donation-metric";
@@ -20,7 +26,24 @@ export { default as MetricsWithSuspense } from "./MetricsWithSuspense";
  * 4. ユーザー登録数（Supabase）
  */
 export default async function Metrics() {
-  const metricsData = await fetchAllMetricsData();
+  let metricsData: {
+    supporter: SupporterData | null;
+    donation: DonationData | null;
+    achievement: AchievementData | null;
+    registration: RegistrationData | null;
+  };
+  try {
+    metricsData = await fetchAllMetricsData();
+  } catch (error) {
+    console.error("Failed to fetch metrics data:", error);
+    // エラー時はnullデータでフォールバック値を使用
+    metricsData = {
+      supporter: null,
+      donation: null,
+      achievement: null,
+      registration: null,
+    };
+  }
 
   const fallbackSupporterCount =
     Number(process.env.FALLBACK_SUPPORTER_COUNT) || 0;
@@ -53,7 +76,12 @@ export default async function Metrics() {
 
       {/* アクション達成数 */}
       <AchievementMetric
-        data={metricsData.achievement}
+        data={
+          metricsData.achievement || {
+            totalCount: fallbackAchievementCount,
+            todayCount: fallbackTodayAchievementCount,
+          }
+        }
         fallbackTotal={fallbackAchievementCount}
         fallbackToday={fallbackTodayAchievementCount}
       />
