@@ -61,6 +61,9 @@ export default async function RankingPrefecturePage({
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
+      <h2 className="text-2xl font-bold text-center mb-4">
+        アクションリーダー
+      </h2>
       <RankingTabs>
         {/* 都道府県選択 */}
         <section className="py-4 bg-white">
