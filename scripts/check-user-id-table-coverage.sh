@@ -98,7 +98,9 @@ echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽�
 echo "$MIGRATION_FILES" | while read -r file; do
   if [ -f "$file" ]; then
     echo "🔍 $file を検査中..."
-    DELETE_STATEMENTS=$(sed -n '/DELETE FROM/p' "$file" | grep -E "WHERE .*user_id" || true)
+    
+    # awk RS=';' を使用して文単位に区切って処理（改行を跨ぐDELETE文に対応）
+    DELETE_STATEMENTS=$(awk 'BEGIN{RS=";"} /DELETE[[:space:]]+FROM/ && /user_id/ {gsub(/\n/, " "); print}' "$file")
     
     if [ -n "$DELETE_STATEMENTS" ]; then
       echo "  見つかったDELETE文:"
