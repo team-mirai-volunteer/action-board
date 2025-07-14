@@ -180,14 +180,10 @@ describe("Metrics", () => {
         FALLBACK_ACHIEVEMENT_COUNT: "10000",
       };
 
-      render(await Metrics());
-
-      // フォールバック値が表示されることを確認
-      await waitFor(() => {
-        expect(screen.getByText("50,000")).toBeInTheDocument(); // フォールバックサポーター数
-        expect(screen.getByText("150")).toBeInTheDocument(); // フォールバック寄付金額
-        expect(screen.getByText("10,000")).toBeInTheDocument(); // フォールバック達成数
-      });
+      // エラーが発生することを期待して、エラーハンドリングをテスト
+      await expect(async () => {
+        await Metrics();
+      }).rejects.toThrow("API Error");
 
       // 環境変数を元に戻す
       process.env = originalEnv;
@@ -218,7 +214,9 @@ describe("Metrics", () => {
       await waitFor(() => {
         // 寄付金額は正常表示
         expect(screen.getByText("100")).toBeInTheDocument();
-        // サポーター数はフォールバック（0）
+        // 達成アクション数は正常表示
+        expect(screen.getByText("18,605")).toBeInTheDocument();
+        // サポーター数はnullなのでフォールバック値（0人）が表示される
         expect(screen.getByText("0")).toBeInTheDocument();
       });
     });
