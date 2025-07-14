@@ -86,9 +86,9 @@ describe("Metrics", () => {
     it("更新時刻が表示される", async () => {
       render(await Metrics());
 
-      // 日付フォーマット YYYY.MM.DD HH:MM の形式で検証
+      // 本番と同じ形式の日付フォーマット YYYY/MM/DD HH:MM 更新 の形式で検証
       expect(
-        screen.getByText(/\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}/),
+        screen.getByText(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2} 更新/),
       ).toBeInTheDocument();
     });
   });
