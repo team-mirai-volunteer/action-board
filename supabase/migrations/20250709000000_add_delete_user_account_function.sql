@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION delete_user_account(target_user_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, pg_temp
 AS $$
 DECLARE
   current_user_id UUID;
