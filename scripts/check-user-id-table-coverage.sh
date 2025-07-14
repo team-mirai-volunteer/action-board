@@ -181,7 +181,7 @@ if [ -s "$FUNCTION_EXISTS_FILE" ]; then
       ),
       extracted_tables AS (
         SELECT 
-          (regexp_matches(line, 'DELETE\s+FROM\s+([\"''']?[a-zA-Z_][a-zA-Z0-9_]*[\"''']?)', 'i'))[1] AS table_match
+          (regexp_matches(line, 'DELETE\s+FROM\s+([''"]?[a-zA-Z_][a-zA-Z0-9_]*[''"]?)', 'i'))[1] AS table_match
         FROM filtered_deletes
       )
       SELECT DISTINCT
