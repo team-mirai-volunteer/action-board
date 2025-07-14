@@ -150,8 +150,8 @@ else
 fi
 
 # 重複を削除してソート
-sort "$DELETED_TABLES_REGEX_FILE" | uniq > "$DELETED_TABLES_REGEX_SORTED_FILE"
-mv "$DELETED_TABLES_REGEX_SORTED_FILE" "$DELETED_TABLES_REGEX_FILE"
+sort "$DELETED_TABLES_FILE" | uniq > "${DELETED_TABLES_FILE}.sorted"
+mv "${DELETED_TABLES_FILE}.sorted" "$DELETED_TABLES_FILE"
 
 # PostgreSQLを使った確実な方法：関数定義を実際にパースして検証
 echo "📊 PostgreSQL関数定義の妥当性を検証中..."
