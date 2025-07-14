@@ -581,17 +581,6 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
-  - slug: overseas-vote
-    title: 在外投票をしよう！
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_overseas-vote.svg
-    content: 海外にお住まいでも、「在外投票」なら、あなたの大切な一票を日本に届けることができます！<br>在外選挙人証をお持ちの方は、投票日の6日前まで、滞在国の大使館や領事館等、または郵送で投票が可能です。必要な手続きについて、詳しくは<a href="https://www.mofa.go.jp/mofaj/toko/senkyo/index.html" target="_blank" rel="noopener noreferrer">外務省のホームページ</a>をご確認ください。<br>より多くの人々が投票権を行使できるよう、チームみらいは在外投票制度のデジタル化推進と対象者拡大を提案します。<br>みんなで投票率アップを目指そう！
-    difficulty: 5
-    required_artifact_type: NONE
-    max_achievement_count: 1
-    is_featured: false
-    is_hidden: false
-    artifact_label: null
-    ogp_image_url: null
   - slug: youtube-comment
     title: YouTube動画にコメントしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
