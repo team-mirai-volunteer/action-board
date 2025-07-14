@@ -106,60 +106,48 @@ fi
 # より堅牢な方法：PostgreSQLのパーサーを使ってDELETE対象テーブルを抽出
 echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽出中..."
 
-# マイグレーションを適用してからpostgresqlのログを解析する方法
-# または関数の中身をパースする方法を使用
+# 全てのマイグレーションファイルからDELETE文を一括抽出（パフォーマンス最適化）
+echo "🔍 全マイグレーションファイルからDELETE文を抽出中..."
+ALL_DELETE_STMTS=$(echo "$MIGRATION_FILES" | xargs -r awk 'BEGIN{RS=";"} /DELETE[[:space:]]+FROM/ && /user_id/ {gsub(/\n/, " "); print}' 2>/dev/null)
 
-# まず従来の方法で抽出（改良版の正規表現）
-# 全ての関連マイグレーションファイルからDELETE文を抽出
-> "$DELETED_TABLES_REGEX_FILE"  # ファイルを初期化
-
-echo "$MIGRATION_FILES" | while read -r file; do
-  if [ -f "$file" ]; then
-    echo "🔍 $file を検査中..."
-    
-    # awk RS=';' を使用して文単位に区切って処理（改行を跨ぐDELETE文に対応）
-    DELETE_STATEMENTS=$(awk 'BEGIN{RS=";"} /DELETE[[:space:]]+FROM/ && /user_id/ {gsub(/\n/, " "); print}' "$file")
-    
-    if [ -n "$DELETE_STATEMENTS" ]; then
-      echo "  見つかったDELETE文:"
-      echo "$DELETE_STATEMENTS" | sed 's/^/    /'
-      
-      # PostgreSQLのパーサーを使用してテーブル名を一括抽出（性能・セキュリティ改善）
-      if [ -n "$DELETE_STATEMENTS" ]; then
-        # 一時的に全DELETE文を変数に設定してから処理
-        psql "$DATABASE_URL" -At -v ON_ERROR_STOP=1 -v statements="$DELETE_STATEMENTS" <<'SQL' >> "$DELETED_TABLES_REGEX_FILE" 2>/dev/null || true
-          WITH delete_lines AS (
-            SELECT trim(both from line) AS line_content
-            FROM (
-              SELECT unnest(string_to_array(:'statements', E'\n')) AS line
-            ) input_lines
-            WHERE length(trim(both from line)) > 0
-          ),
-          parsed_deletes AS (
-            SELECT 
-              line_content,
-              regexp_matches(
-                line_content, 
-                'DELETE\s+FROM\s+(("?[a-zA-Z_][a-zA-Z0-9_]*"?)|([a-zA-Z_][a-zA-Z0-9_]*))', 
-                'i'
-              ) AS table_match
-            FROM delete_lines
-            WHERE line_content ~* 'DELETE\s+FROM'
-          )
-          SELECT DISTINCT
-            CASE 
-              WHEN table_match[1] LIKE '"%"' THEN trim('"' from table_match[1])
-              WHEN table_match[1] LIKE '''%''' THEN trim('''' from table_match[1])
-              ELSE table_match[1]
-            END as table_name
-          FROM parsed_deletes
-          WHERE table_match IS NOT NULL
-          ORDER BY table_name;
+if [ -n "$ALL_DELETE_STMTS" ]; then
+  echo "  見つかったDELETE文:"
+  echo "$ALL_DELETE_STMTS" | sed 's/^/    /'
+  
+  # PostgreSQLのパーサーを使用してテーブル名を一括抽出（1回のpsql呼び出しで処理）
+  psql "$DATABASE_URL" -At -v ON_ERROR_STOP=1 -v statements="$ALL_DELETE_STMTS" <<'SQL' > "$DELETED_TABLES_REGEX_FILE" 2>/dev/null || true
+    WITH delete_lines AS (
+      SELECT trim(both from line) AS line_content
+      FROM (
+        SELECT unnest(string_to_array(:'statements', E'\n')) AS line
+      ) input_lines
+      WHERE length(trim(both from line)) > 0
+    ),
+    parsed_deletes AS (
+      SELECT 
+        line_content,
+        regexp_matches(
+          line_content, 
+          'DELETE\s+FROM\s+(("?[a-zA-Z_][a-zA-Z0-9_]*"?)|([a-zA-Z_][a-zA-Z0-9_]*))', 
+          'i'
+        ) AS table_match
+      FROM delete_lines
+      WHERE line_content ~* 'DELETE\s+FROM'
+    )
+    SELECT DISTINCT
+      CASE 
+        WHEN table_match[1] LIKE '"%"' THEN trim('"' from table_match[1])
+        WHEN table_match[1] LIKE '''%''' THEN trim('''' from table_match[1])
+        ELSE table_match[1]
+      END as table_name
+    FROM parsed_deletes
+    WHERE table_match IS NOT NULL
+    ORDER BY table_name;
 SQL
-      fi
-    fi
-  fi
-done
+else
+  echo "⚠️  DELETE文が見つかりませんでした"
+  > "$DELETED_TABLES_REGEX_FILE"  # 空ファイルを作成
+fi
 
 # 重複を削除してソート
 sort "$DELETED_TABLES_REGEX_FILE" | uniq > "$DELETED_TABLES_REGEX_SORTED_FILE"
