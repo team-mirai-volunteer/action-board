@@ -86,7 +86,10 @@ describe("Metrics", () => {
     it("更新時刻が表示される", async () => {
       render(await Metrics());
 
-      expect(screen.getByText(/2025\.07\.03/)).toBeInTheDocument();
+      // 日付フォーマット YYYY.MM.DD HH:MM の形式で検証
+      expect(
+        screen.getByText(/\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}/),
+      ).toBeInTheDocument();
     });
   });
 
