@@ -74,6 +74,17 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
+      - name: Restart application server
+        run: |
+          echo "Restarting application server to pick up mission data changes..."
+          pkill -f "next dev" || true
+          npm run dev &
+          timeout 60 bash -c 'until curl -s http://localhost:3000 > /dev/null; do sleep 2; done'
+          echo "Application server restarted and ready."
+        env:
+          SMTP_ENABLED: false
+          BQ_USER_PASSWORD: bq_user_password
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
