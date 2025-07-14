@@ -97,7 +97,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: true
-    featured_importance: 80
+    featured_importance: 10
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
     ogp_image_url: null
@@ -207,8 +207,8 @@ missions:
     difficulty: 3
     required_artifact_type: REFERRAL
     max_achievement_count: null
-    is_featured: false
-    featured_importance: 60
+    is_featured: true
+    featured_importance: 100
     is_hidden: false
     artifact_label: null
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//12_referral.png
@@ -395,8 +395,8 @@ missions:
     difficulty: 2
     required_artifact_type: POSTER
     max_achievement_count: null
-    is_featured: false
-    featured_importance: 90
+    is_featured: true
+    featured_importance: 20
     is_hidden: false
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
