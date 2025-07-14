@@ -17,6 +17,7 @@ import {
 import { usePosterBoardFilterOptimized } from "@/lib/hooks/usePosterBoardFilterOptimized";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
+import { Expand, Minimize } from "lucide-react";
 
 // Fix Leaflet default marker icon issue with Next.js
 // biome-ignore lint/performance/noDelete: Required for Leaflet icon fix
@@ -271,6 +272,7 @@ export default function PosterMapWithCluster({
   const [currentUserId, setCurrentUserId] = useState<string | undefined>(
     userIdFromProps,
   );
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Fetch current user and board info
   useEffect(() => {
@@ -563,8 +565,62 @@ export default function PosterMapWithCluster({
     }
   };
 
+  // フルスクリーンモードの切り替え
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  // ESCキーでフルスクリーン解除
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+
+    if (isFullscreen) {
+      document.addEventListener("keydown", handleEscape);
+      // フルスクリーン時はbodyのスクロールを無効化
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isFullscreen]);
+
+  // フルスクリーン時に地図サイズを更新
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mapRefは安定した参照のため依存配列に含める必要なし
+  useEffect(() => {
+    if (mapRef.current) {
+      // 少し遅延を入れてから地図サイズを更新
+      const timeoutId = setTimeout(() => {
+        mapRef.current?.invalidateSize();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isFullscreen]);
+
   return (
-    <div className="relative h-[600px] w-full z-0">
+    <div
+      className={
+        isFullscreen
+          ? "fixed inset-0 z-50 bg-white"
+          : "relative h-[600px] w-full z-0"
+      }
+      style={
+        isFullscreen
+          ? {
+              height: "100dvh",
+              width: "100dvw",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }
+          : {}
+      }
+    >
       <div id="poster-map-cluster" className="h-full w-full" />
 
       <PosterBoardFilter
@@ -575,16 +631,54 @@ export default function PosterMapWithCluster({
         onDeselectAll={deselectAll}
         activeFilterCount={activeFilterCount}
       />
+
+      {/* フルスクリーンボタン */}
+      {!isFullscreen && (
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          style={{ zIndex: 1000 }}
+          aria-label="フルスクリーン表示"
+          title="フルスクリーン表示"
+        >
+          <Expand size={20} />
+        </button>
+      )}
+
+      {/* フルスクリーン解除ボタン */}
+      {isFullscreen && (
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="absolute left-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          style={{
+            zIndex: 1000,
+            bottom: "calc(1rem + env(safe-area-inset-bottom))",
+          }}
+          aria-label="フルスクリーン解除"
+          title="フルスクリーン解除 (ESC)"
+        >
+          <Minimize size={20} />
+        </button>
+      )}
+
+      {/* 現在地ボタン */}
       <button
         type="button"
         onClick={handleLocate}
         disabled={!currentPos}
-        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+        className={`absolute right-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
           currentPos
             ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
             : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
         }`}
-        style={{ zIndex: 1000 }}
+        style={{
+          zIndex: 1000,
+          bottom: isFullscreen
+            ? "calc(1rem + env(safe-area-inset-bottom))"
+            : "1rem",
+        }}
         aria-label="現在地を表示"
       >
         📍 現在地
