@@ -63,18 +63,24 @@ function maskNamesInCsv(filePath: string): void {
           record.address = wardExtracted;
           modified = true;
         } else {
-          // Not a designated city - use original logic
-          const cleanedAddress = removePersonalNameFromAddress(record.address);
-          if (cleanedAddress !== record.address) {
-            record.address = cleanedAddress;
+          // Not a designated city - simple masking
+          if (record.address.includes("住宅")) {
+            // 住宅の場合は元のまま保持
+            // 何もしない
+          } else {
+            // 個人名が含まれる場合はmasked
+            record.address = "masked";
             modified = true;
           }
         }
       } else {
-        // Prefecture/city info missing - use original logic
-        const cleanedAddress = removePersonalNameFromAddress(record.address);
-        if (cleanedAddress !== record.address) {
-          record.address = cleanedAddress;
+        // Prefecture/city info missing - simple masking
+        if (record.address.includes("住宅")) {
+          // 住宅の場合は元のまま保持
+          // 何もしない
+        } else {
+          // 個人名が含まれる場合はmasked
+          record.address = "masked";
           modified = true;
         }
       }
@@ -102,33 +108,6 @@ function hasPersonalName(str: string): boolean {
     return true;
   }
   return false;
-}
-
-function removePersonalNameFromAddress(address: string): string {
-  if (!hasPersonalName(address)) {
-    return address;
-  }
-
-  // 個人名部分のパターンを定義
-  const personalNamePattern = /[一-龯ぁ-んァ-ヶｱ-ﾝﾞﾟA-Za-z\s・]+(様|宅).*$/;
-
-  let cleanedAddress = address;
-  cleanedAddress = cleanedAddress.replace(personalNamePattern, "").trim();
-
-  // 住宅は除外しない（個人名ではないため）
-  if (
-    address.includes("住宅") &&
-    cleanedAddress.length < address.length * 0.5
-  ) {
-    return address; // 住宅の場合は元のまま返す
-  }
-
-  // もし元の文字列の30%未満になった場合（住所部分が少なすぎる）はmasked
-  if (cleanedAddress.length < address.length * 0.3) {
-    return "masked";
-  }
-
-  return cleanedAddress;
 }
 
 async function main(): Promise<void> {
