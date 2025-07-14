@@ -124,33 +124,39 @@ echo "$MIGRATION_FILES" | while read -r file; do
       echo "  見つかったDELETE文:"
       echo "$DELETE_STATEMENTS" | sed 's/^/    /'
       
-      # PostgreSQLのパーサーを使用してテーブル名を抽出
-      echo "$DELETE_STATEMENTS" | while IFS= read -r stmt; do
-        if [ -n "$stmt" ]; then
-          # PostgreSQLに直接問い合わせてテーブル名を抽出
-          table_name=$(psql "$DATABASE_URL" -At -c "
-            WITH parsed_query AS (
-              SELECT regexp_matches(
-                \$stmt\$${stmt}\$stmt\$, 
-                'DELETE\s+FROM\s+([\"''']?[a-zA-Z_][a-zA-Z0-9_]*[\"''']?)', 
+      # PostgreSQLのパーサーを使用してテーブル名を一括抽出（性能・セキュリティ改善）
+      if [ -n "$DELETE_STATEMENTS" ]; then
+        # 一時的に全DELETE文を変数に設定してから処理
+        psql "$DATABASE_URL" -At -v ON_ERROR_STOP=1 -v statements="$DELETE_STATEMENTS" <<'SQL' >> "$DELETED_TABLES_REGEX_FILE" 2>/dev/null || true
+          WITH delete_lines AS (
+            SELECT trim(both from line) AS line_content
+            FROM (
+              SELECT unnest(string_to_array(:'statements', E'\n')) AS line
+            ) input_lines
+            WHERE length(trim(both from line)) > 0
+          ),
+          parsed_deletes AS (
+            SELECT 
+              line_content,
+              regexp_matches(
+                line_content, 
+                'DELETE\s+FROM\s+(("?[a-zA-Z_][a-zA-Z0-9_]*"?)|([a-zA-Z_][a-zA-Z0-9_]*))', 
                 'i'
               ) AS table_match
-            )
-            SELECT 
-              CASE 
-                WHEN table_match[1] LIKE '\"%\"' THEN trim('\"' from table_match[1])
-                WHEN table_match[1] LIKE '''%''' THEN trim('''' from table_match[1])
-                ELSE table_match[1]
-              END as table_name
-            FROM parsed_query
-            WHERE table_match IS NOT NULL;
-          " 2>/dev/null || echo "")
-          
-          if [ -n "$table_name" ]; then
-            echo "$table_name" >> "$DELETED_TABLES_REGEX_FILE"
-          fi
-        fi
-      done
+            FROM delete_lines
+            WHERE line_content ~* 'DELETE\s+FROM'
+          )
+          SELECT DISTINCT
+            CASE 
+              WHEN table_match[1] LIKE '"%"' THEN trim('"' from table_match[1])
+              WHEN table_match[1] LIKE '''%''' THEN trim('''' from table_match[1])
+              ELSE table_match[1]
+            END as table_name
+          FROM parsed_deletes
+          WHERE table_match IS NOT NULL
+          ORDER BY table_name;
+SQL
+      fi
     fi
   fi
 done
