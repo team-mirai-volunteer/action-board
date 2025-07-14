@@ -2,8 +2,13 @@ import * as path from "node:path";
 import { createServiceClient } from "@/lib/supabase/server";
 import * as dotenv from "dotenv";
 
-// Load .env.local from project root
-dotenv.config({ path: path.resolve(__dirname, "../../.env.local") });
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+  dotenv.config({
+    path: path.resolve(__dirname, "../../.env.local"),
+    override: true,
+  });
+}
 
 // Helper functions for slug to ID mapping
 export async function getCategorySlugToIdMap(): Promise<
