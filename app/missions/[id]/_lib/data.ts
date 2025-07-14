@@ -13,18 +13,86 @@ export async function getMissionData(
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
 
-  const { data: missionData, error } = await supabase
-    .from("missions")
-    .select("*, required_artifact_type, max_achievement_count")
-    .eq("id", missionId)
-    .single();
+  const maxRetries = 5;
+  let lastError = null;
 
-  if (error) {
-    console.error("Mission fetch error:", error);
-    return null;
+  console.log(`Fetching mission with ID: ${missionId}`);
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Mission fetch attempt ${attempt}/${maxRetries}`);
+
+      const { data: healthCheck, error: healthError } = await supabase
+        .from("missions")
+        .select("count")
+        .limit(1);
+
+      if (healthError) {
+        console.error(
+          `Database health check failed (attempt ${attempt}):`,
+          healthError,
+        );
+        if (attempt < maxRetries) {
+          await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+          continue;
+        }
+      } else {
+        console.log(`Database health check passed (attempt ${attempt})`);
+      }
+
+      const { data: missionData, error } = await supabase
+        .from("missions")
+        .select("*, required_artifact_type, max_achievement_count")
+        .eq("id", missionId)
+        .single();
+
+      if (error) {
+        lastError = error;
+        console.error(`Mission fetch error (attempt ${attempt}):`, error);
+        console.error("Mission ID:", missionId);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+
+        if (attempt === maxRetries) {
+          console.log("Fetching all available missions for debugging...");
+          const { data: availableMissions, error: listError } = await supabase
+            .from("missions")
+            .select("id, title, is_deleted, is_hidden");
+
+          if (listError) {
+            console.error("Failed to fetch available missions:", listError);
+          } else {
+            console.error("Available missions:", availableMissions);
+          }
+        }
+
+        if (attempt < maxRetries) {
+          await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+          continue;
+        }
+        return null;
+      }
+
+      console.log(
+        `Mission fetch successful (attempt ${attempt}):`,
+        missionData?.title,
+      );
+      return missionData;
+    } catch (err) {
+      lastError = err;
+      console.error(`Mission fetch exception (attempt ${attempt}):`, err);
+      console.error(
+        "Exception details:",
+        err instanceof Error ? err.stack : err,
+      );
+
+      if (attempt < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+      }
+    }
   }
 
-  return missionData;
+  console.error("All mission fetch attempts failed. Last error:", lastError);
+  return null;
 }
 
 export async function getTotalAchievementCount(

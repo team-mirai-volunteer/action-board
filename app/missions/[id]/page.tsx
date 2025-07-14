@@ -81,11 +81,18 @@ export default async function MissionPage({ params }: Props) {
   } = await supabase.auth.getUser();
 
   const { id } = await params;
+  console.log(`MissionPage: Loading mission with ID ${id}`);
+
   const pageData = await getMissionPageData(id, user?.id);
 
   if (!pageData) {
+    console.error(`MissionPage: Mission not found for ID ${id}`);
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
+
+  console.log(
+    `MissionPage: Successfully loaded mission "${pageData.mission.title}"`,
+  );
 
   const { mission, submissions, userAchievementCount, referralCode, mainLink } =
     pageData;

@@ -21,10 +21,10 @@ export const test = base.extend<TestFixtures>({
     await page.fill('input[name="password"]', testUser.password);
     await page.click('button[type="submit"]');
 
-    // ログイン完了を確認（ホームページにリダイレクトされることを想定）
     await page.waitForURL("/");
+    
+    await expect(page.getByTestId("usermenubutton")).toBeVisible({ timeout: 15000 });
 
-    // ログイン済みのページを渡す
     await use(page);
   },
 });
