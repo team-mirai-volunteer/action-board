@@ -41,21 +41,21 @@ export default async function Metrics() {
 
   return (
     <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
-      {/* アクション達成数 */}
-      <AchievementMetric
-        data={metricsData.achievement}
-        fallbackTotal={fallbackAchievementCount}
-        fallbackToday={fallbackTodayAchievementCount}
-      />
-
-      {/* 水平セパレーター */}
-      <Separator orientation="horizontal" className="my-4" />
-
       {/* サポーター数 */}
       <SupporterMetric
         data={metricsData.supporter}
         fallbackCount={fallbackSupporterCount}
         fallbackIncrease={fallbackSupporterIncrease}
+      />
+
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
+
+      {/* アクション達成数 */}
+      <AchievementMetric
+        data={metricsData.achievement}
+        fallbackTotal={fallbackAchievementCount}
+        fallbackToday={fallbackTodayAchievementCount}
       />
 
       {/* 水平セパレーター */}

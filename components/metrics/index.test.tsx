@@ -255,9 +255,9 @@ describe("Metrics", () => {
       const metrics =
         screen.getAllByText(/達成アクション数|サポーター数|寄付金額/);
 
-      // 期待される順序: 達成アクション数 → サポーター数 → 寄付金額
-      expect(metrics[0]).toHaveTextContent("達成アクション数");
-      expect(metrics[1]).toHaveTextContent("サポーター数");
+      // 期待される順序: サポーター数 → 達成アクション数 → 寄付金額
+      expect(metrics[0]).toHaveTextContent("サポーター数");
+      expect(metrics[1]).toHaveTextContent("達成アクション数");
       expect(metrics[2]).toHaveTextContent("寄付金額");
     });
   });
