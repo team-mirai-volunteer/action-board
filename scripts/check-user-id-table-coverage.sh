@@ -12,9 +12,27 @@ if [ -z "$DATABASE_URL" ]; then
   exit 1
 fi
 
+# 一時ファイルを安全に作成
+ALL_USER_ID_TABLES_FILE=$(mktemp)
+DELETED_TABLES_FILE=$(mktemp)
+DELETED_TABLES_REGEX_FILE=$(mktemp)
+DELETED_TABLES_REGEX_SORTED_FILE=$(mktemp)
+FUNCTION_EXISTS_FILE=$(mktemp)
+ALL_USER_ID_TABLES_UNIQUE_FILE=$(mktemp)
+
+# 一時ファイルの配列
+TEMP_FILES=(
+  "$ALL_USER_ID_TABLES_FILE"
+  "$DELETED_TABLES_FILE"
+  "$DELETED_TABLES_REGEX_FILE"
+  "$DELETED_TABLES_REGEX_SORTED_FILE"
+  "$FUNCTION_EXISTS_FILE"
+  "$ALL_USER_ID_TABLES_UNIQUE_FILE"
+)
+
 # 一時ファイルのクリーンアップ
 cleanup() {
-  rm -f /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt /tmp/deleted_tables_regex.txt /tmp/deleted_tables_regex_sorted.txt /tmp/function_exists.txt /tmp/all_user_id_tables_unique.txt
+  rm -f "${TEMP_FILES[@]}"
 }
 trap cleanup EXIT
 
@@ -36,7 +54,7 @@ psql "$DATABASE_URL" -Atc "
     AND kcu.column_name = 'user_id'
     AND kcu.table_schema = 'public'
     AND t.table_type = 'BASE TABLE';
-" | sort > /tmp/all_user_id_tables.txt
+" | sort > "$ALL_USER_ID_TABLES_FILE"
 
 # user_idカラムを持つテーブルも追加（外部キー制約がない場合もあるため、ビューを除外）
 echo "📊 user_idカラムを持つテーブルも追加確認中..."
@@ -52,11 +70,11 @@ psql "$DATABASE_URL" -Atc "
     c.column_name = 'user_id'
     AND c.table_schema = 'public'
     AND t.table_type = 'BASE TABLE';
-" | sort >> /tmp/all_user_id_tables.txt
+" | sort >> "$ALL_USER_ID_TABLES_FILE"
 
 # 重複削除
-sort /tmp/all_user_id_tables.txt | uniq > /tmp/all_user_id_tables_unique.txt
-mv /tmp/all_user_id_tables_unique.txt /tmp/all_user_id_tables.txt
+sort "$ALL_USER_ID_TABLES_FILE" | uniq > "$ALL_USER_ID_TABLES_UNIQUE_FILE"
+mv "$ALL_USER_ID_TABLES_UNIQUE_FILE" "$ALL_USER_ID_TABLES_FILE"
 
 # 2. マイグレーション内の DELETE 対象テーブルを抽出
 echo "📊 マイグレーションファイルから削除対象テーブルを抽出中..."
@@ -93,7 +111,7 @@ echo "📊 PostgreSQLパーサーを使用してDELETE対象テーブルを抽�
 
 # まず従来の方法で抽出（改良版の正規表現）
 # 全ての関連マイグレーションファイルからDELETE文を抽出
-> /tmp/deleted_tables_regex.txt  # ファイルを初期化
+> "$DELETED_TABLES_REGEX_FILE"  # ファイルを初期化
 
 echo "$MIGRATION_FILES" | while read -r file; do
   if [ -f "$file" ]; then
@@ -129,7 +147,7 @@ echo "$MIGRATION_FILES" | while read -r file; do
           " 2>/dev/null || echo "")
           
           if [ -n "$table_name" ]; then
-            echo "$table_name" >> /tmp/deleted_tables_regex.txt
+            echo "$table_name" >> "$DELETED_TABLES_REGEX_FILE"
           fi
         fi
       done
@@ -138,16 +156,16 @@ echo "$MIGRATION_FILES" | while read -r file; do
 done
 
 # 重複を削除してソート
-sort /tmp/deleted_tables_regex.txt | uniq > /tmp/deleted_tables_regex_sorted.txt
-mv /tmp/deleted_tables_regex_sorted.txt /tmp/deleted_tables_regex.txt
+sort "$DELETED_TABLES_REGEX_FILE" | uniq > "$DELETED_TABLES_REGEX_SORTED_FILE"
+mv "$DELETED_TABLES_REGEX_SORTED_FILE" "$DELETED_TABLES_REGEX_FILE"
 
 # PostgreSQLを使った確実な方法：関数定義を実際にパースして検証
 echo "📊 PostgreSQL関数定義の妥当性を検証中..."
 psql "$DATABASE_URL" -At \
   -c "\\set ON_ERROR_STOP" \
-  -c "SELECT routine_name FROM information_schema.routines WHERE routine_name = 'delete_user_account';" > /tmp/function_exists.txt
+  -c "SELECT routine_name FROM information_schema.routines WHERE routine_name = 'delete_user_account';" > "$FUNCTION_EXISTS_FILE"
 
-if [ -s /tmp/function_exists.txt ]; then
+if [ -s "$FUNCTION_EXISTS_FILE" ]; then
   echo "✅ delete_user_account関数が正常に定義されています"
   # 関数の定義から実際のテーブル名を抽出（PostgreSQLパーサーを使用）
   psql "$DATABASE_URL" -At \
@@ -181,30 +199,30 @@ if [ -s /tmp/function_exists.txt ]; then
       FROM extracted_tables
       WHERE table_match IS NOT NULL
       ORDER BY table_name;
-    " > /tmp/deleted_tables.txt
+    " > "$DELETED_TABLES_FILE"
 else
   echo "⚠️  関数が見つからないため、正規表現による抽出結果を使用します"
-  cp /tmp/deleted_tables_regex.txt /tmp/deleted_tables.txt
+  cp "$DELETED_TABLES_REGEX_FILE" "$DELETED_TABLES_FILE"
 fi
 
 # 結果が空の場合は正規表現の結果を使用
-if [ ! -s /tmp/deleted_tables.txt ]; then
+if [ ! -s "$DELETED_TABLES_FILE" ]; then
   echo "⚠️  PostgreSQL解析が失敗したため、正規表現による抽出結果を使用します"
-  cp /tmp/deleted_tables_regex.txt /tmp/deleted_tables.txt
+  cp "$DELETED_TABLES_REGEX_FILE" "$DELETED_TABLES_FILE"
 fi
 
 # 3. 結果表示と差分チェック
 echo ""
 echo "=== user_id参照テーブル一覧 ==="
-cat /tmp/all_user_id_tables.txt
+cat "$ALL_USER_ID_TABLES_FILE"
 
 echo ""
 echo "=== マイグレーションでDELETE済みテーブル一覧 ==="
-cat /tmp/deleted_tables.txt
+cat "$DELETED_TABLES_FILE"
 
 echo ""
 echo "=== マイグレーションで未DELETEのテーブル ==="
-MISSING_TABLES=$(comm -23 /tmp/all_user_id_tables.txt /tmp/deleted_tables.txt)
+MISSING_TABLES=$(comm -23 "$ALL_USER_ID_TABLES_FILE" "$DELETED_TABLES_FILE")
 
 if [ -z "$MISSING_TABLES" ]; then
   echo "✅ 漏れはありません - すべてのuser_id参照テーブルが削除対象に含まれています"
