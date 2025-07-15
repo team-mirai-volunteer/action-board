@@ -1,7 +1,7 @@
 // 外部リンク設定
 export const EXTERNAL_LINKS = {
   // FAQ
-  faq: "https://www.notion.so/team-mirai/228f6f56bae18037957dd5f108d00e2f",
+  faq: "https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f",
 
   // ご意見箱
   feedback_action_board:
