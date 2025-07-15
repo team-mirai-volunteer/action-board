@@ -25,17 +25,27 @@ export function usePosterSearch({
   boards,
 }: UsePosterSearchProps): UsePosterSearchResult {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selectedSearchIndex, setSelectedSearchIndex] = useState(-1);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
 
-  // 検索結果の計算
+  // 検索クエリのデバウンス処理
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300); // 300ms のデバウンス
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // 検索結果の計算（デバウンスされたクエリを使用）
   const searchResults = useMemo(() => {
-    if (!searchQuery || searchQuery.length < 2) {
+    if (!debouncedQuery || debouncedQuery.length < 2) {
       return [];
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = debouncedQuery.toLowerCase();
     const results = boards.filter((board) => {
       const number = board.number?.toLowerCase() || "";
       const name = board.name?.toLowerCase() || "";
@@ -52,7 +62,7 @@ export function usePosterSearch({
 
     // 最大10件まで表示
     return results.slice(0, 10);
-  }, [boards, searchQuery]);
+  }, [boards, debouncedQuery]);
 
   // 検索結果が変更されたときに選択インデックスをリセット
   // useMemoの外で副作用として処理
@@ -67,6 +77,13 @@ export function usePosterSearch({
       setSelectedSearchIndex(-1);
     }
   }, [searchResultsLength, selectedSearchIndex]);
+
+  // 検索クエリが変更されたときにドロップダウンを表示
+  useEffect(() => {
+    if (searchQuery.length >= 2) {
+      setShowSearchDropdown(true);
+    }
+  }, [searchQuery]);
 
   const handleSearchResultSelect = (board: PosterBoard) => {
     // 選択後の処理は親コンポーネントで実装
