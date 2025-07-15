@@ -184,9 +184,7 @@ async function main() {
         );
 
         await db.query(`DROP TABLE ${tempTable}`);
-        console.log(
-          `✓ Loaded ${file} (${insertResult.rowCount || 0} rows processed)`,
-        );
+        console.log(`✓ Loaded ${file} (7 columns)`);
         await db.query(`RELEASE SAVEPOINT ${savepoint}`);
       } catch (error) {
         // Rollback to savepoint to clear the error state
@@ -249,9 +247,7 @@ async function main() {
             );
 
             await db.query(`DROP TABLE ${tempTable}`);
-            console.log(
-              `✓ Loaded ${file} (${insertResult.rowCount || 0} rows processed, note column ignored)`,
-            );
+            console.log(`✓ Loaded ${file} (8 columns, note ignored)`);
             await db.query(`RELEASE SAVEPOINT ${savepoint}`);
           } catch (error2) {
             console.error(`✗ Failed to load ${file}:`, error2);
