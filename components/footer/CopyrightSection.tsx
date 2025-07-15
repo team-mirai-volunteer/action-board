@@ -1,6 +1,5 @@
-import { EXTERNAL_LINKS } from "@/lib/constants";
+import { EXTERNAL_LINKS } from "@/lib/links";
 import Link from "next/link";
-import { FOOTER_CONFIG } from "./footer";
 
 export function CopyrightSection() {
   return (
@@ -9,7 +8,7 @@ export function CopyrightSection() {
         <div className="text-center">
           <div className="flex justify-center items-center gap-2 text-sm">
             <Link
-              href="https://team-mir.ai/"
+              href={EXTERNAL_LINKS.team_mirai_main}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
@@ -32,7 +31,7 @@ export function CopyrightSection() {
             </Link>
             <span>|</span>
             <Link
-              href={FOOTER_CONFIG.feedback.url}
+              href={EXTERNAL_LINKS.feedback_action_board}
               className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
               target="_blank"
               rel="noopener noreferrer"
@@ -41,7 +40,7 @@ export function CopyrightSection() {
             </Link>
             <span>|</span>
             <Link
-              href={EXTERNAL_LINKS.FAQ}
+              href={EXTERNAL_LINKS.faq}
               className="hover:text-teal-700 transition-colors duration-200 text-teal-600"
               target="_blank"
               rel="noopener noreferrer"
