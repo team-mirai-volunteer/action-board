@@ -145,7 +145,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     const userBEmail = `test-user-b-${Date.now()}@example.com`;
     await userBPage.fill('input[name="email"]', userBEmail, { timeout: 60000 });
     await userBPage.fill('input[name="password"]', 'testpassword123', { timeout: 60000 });
-    await userBPage.click('button[type="submit"]');
+    await userBPage.click('button[type="submit"]', { timeout: 60000 });
     
     for (let i = 0; i < 55; i++) {
       await userBPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac', { timeout: 60000 });
