@@ -16,13 +16,13 @@ export const test = base.extend<TestFixtures>({
   },
   
   signedInPage: async ({ page, testUser }, use) => {
-    await page.goto("/sign-in");
-    await page.fill('input[name="email"]', testUser.email);
-    await page.fill('input[name="password"]', testUser.password);
+    await page.goto("/sign-in", { timeout: 30000 });
+    await page.fill('input[name="email"]', testUser.email, { timeout: 30000 });
+    await page.fill('input[name="password"]', testUser.password, { timeout: 30000 });
     await page.click('button[type="submit"]');
 
     // ログイン完了を確認（ホームページにリダイレクトされることを想定）
-    await page.waitForURL("/");
+    await page.waitForURL("/", { timeout: 30000 });
 
     // ログイン済みのページを渡す
     await use(page);
