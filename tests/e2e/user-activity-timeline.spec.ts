@@ -27,16 +27,14 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     
     await signedInPage.goto(`/users/${testUser.userId}`);
     
-    await expect(signedInPage.locator('h2:has-text("活動履歴")')).toBeVisible();
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
-    const activitySection = signedInPage.locator('[data-testid="activity-timeline"], .activity-timeline');
-    if (await activitySection.count() > 0) {
-      await expect(activitySection.first()).toBeVisible();
-      const achievementItems = signedInPage.locator('.activity-item, [data-testid="activity-item"]');
-      if (await achievementItems.count() > 0) {
-        await expect(achievementItems.first()).toBeVisible();
-      }
-    }
+    await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
+    
+    const activityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
+    await expect(activityItems.first()).toBeVisible();
+    
+    await expect(signedInPage.locator('text=を達成しました！')).toBeVisible();
   });
 
   test("ユーザーページで活動タイムラインが表示される", async ({ signedInPage, testUser }) => {
@@ -44,12 +42,10 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
 
     await signedInPage.goto(`/users/${testUser.userId}`);
 
-    await expect(signedInPage.locator('h2:has-text("活動履歴")')).toBeVisible();
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
-    const activitySection = signedInPage.locator('[data-testid="activity-timeline"], .activity-timeline');
-    if (await activitySection.count() > 0) {
-      await expect(activitySection.first()).toBeVisible();
-    }
+    const timelineSection = signedInPage.locator('div.flex.flex-col.gap-4');
+    await expect(timelineSection.first()).toBeVisible();
   });
 
   test("活動タイムラインのページネーション", async ({ signedInPage, testUser }) => {
@@ -57,15 +53,15 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
 
     await signedInPage.goto(`/users/${testUser.userId}`);
 
-    const loadMoreButton = signedInPage.locator('button:has-text("もっと見る"), button:has-text("Load More")');
+    const loadMoreButton = signedInPage.locator('button:has-text("もっと見る")');
     if (await loadMoreButton.count() > 0 && await loadMoreButton.first().isVisible()) {
-      const initialItemCount = await signedInPage.locator('.activity-item, [data-testid="activity-item"]').count();
+      const initialItemCount = await signedInPage.locator('div.flex.flex-row.gap-2.items-center').count();
       
       await loadMoreButton.first().click();
       
       await signedInPage.waitForTimeout(1000);
       
-      const newItemCount = await signedInPage.locator('.activity-item, [data-testid="activity-item"]').count();
+      const newItemCount = await signedInPage.locator('div.flex.flex-row.gap-2.items-center').count();
       expect(newItemCount).toBeGreaterThanOrEqual(initialItemCount);
     }
   });
@@ -80,8 +76,9 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
       await expect(userLinks.first()).toBeVisible();
     }
 
-    const timeElements = signedInPage.locator('time, .timestamp, [data-testid="activity-time"]');
-    if (await timeElements.count() > 0) {
+    const activityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
+    if (await activityItems.count() > 0) {
+      const timeElements = signedInPage.locator('div.text-xs.text-gray-500');
       await expect(timeElements.first()).toBeVisible();
     }
   });
@@ -107,7 +104,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     }
 
     if (!foundEmptyMessage) {
-      const activityItems = signedInPage.locator('.activity-item, [data-testid="activity-item"]');
+      const activityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
       expect(await activityItems.count()).toBe(0);
     }
   });
@@ -118,11 +115,34 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await signedInPage.setViewportSize({ width: 375, height: 667 });
     await signedInPage.goto(`/users/${testUser.userId}`);
 
-    await expect(signedInPage.locator('h2:has-text("活動履歴")')).toBeVisible();
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
-    const activitySection = signedInPage.locator('[data-testid="activity-timeline"], .activity-timeline');
-    if (await activitySection.count() > 0) {
-      await expect(activitySection.first()).toBeVisible();
-    }
+    const timelineSection = signedInPage.locator('div.flex.flex-col.gap-4');
+    await expect(timelineSection.first()).toBeVisible();
+  });
+
+  test("ユーザー自身の活動タイムラインが他ユーザーの大量データに影響されずに表示される", async ({ signedInPage, testUser }) => {
+    await assertAuthState(signedInPage, true);
+
+    await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+    
+    await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
+    await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
+    await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
+    
+    await signedInPage.goto(`/users/${testUser.userId}`);
+    
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
+    
+    await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
+    
+    const activityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
+    await expect(activityItems.first()).toBeVisible();
+    
+    await expect(signedInPage.locator('text=を達成しました！')).toBeVisible();
+    
+    const itemCount = await activityItems.count();
+    expect(itemCount).toBeGreaterThan(0);
   });
 });
