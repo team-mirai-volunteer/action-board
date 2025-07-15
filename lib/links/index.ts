@@ -1,0 +1,26 @@
+// 外部リンク設定
+export const EXTERNAL_LINKS = {
+  // FAQ
+  faq: "https://www.notion.so/team-mirai/228f6f56bae18037957dd5f108d00e2f",
+
+  // ご意見箱
+  feedback_action_board:
+    "https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105",
+  feedback_poster_map: "https://forms.gle/vyVkGb4CbNahggfW8",
+
+  // 組織内
+  team_mirai_main: "https://team-mir.ai/",
+  team_mirai_policy: "https://policy.team-mir.ai/view/README.md",
+  team_mirai_action_board: "https://action.team-mir.ai/",
+
+  // SNS
+  x_team_mirai: "https://x.com/team_mirai_jp",
+  x_anno_takahiro: "https://x.com/takahiroanno",
+  youtube_channel: "https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw",
+  line_official: "https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204",
+  note_anno_takahiro: "https://note.com/annotakahiro24",
+
+  // その他
+  speakerdeck_manifest:
+    "https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2",
+} as const;
