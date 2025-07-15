@@ -28,3 +28,5 @@ export const EXTERNAL_LINKS = {
   speakerdeck_manifest:
     "https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2",
 } as const;
+// 利用側で `keyof typeof EXTERNAL_LINKS` を直接書く手間を省く
+export type ExternalLinkKey = keyof typeof EXTERNAL_LINKS;
