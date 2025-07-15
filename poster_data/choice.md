@@ -2152,7 +2152,7 @@
 -> choose 置戸町_normalized.csv (shortest filename)
 
 📎 Append files to be loaded:
-  + 苫小牧市_normalized_20250714_append.csv (3.4 KB)
+  + 苫小牧市_normalized_20250714append.csv (3.4 KB)
 
 --- 千葉県/八千代市
 1. OLD八千代市_normalized.csv (35.5 KB)
@@ -2232,7 +2232,7 @@
   + 阿久比町_normalized_20250712append.csv (4.9 KB)
 
 📎 Append files to be loaded:
-  + 新宿区_normalized 20250714append.csv (1.2 KB)
+  + 新宿区_normalized_20250714append.csv (1.2 KB)
 
 --- 神奈川県/寒川町
 1. R6寒川町_normalized.csv (8.5 KB)
