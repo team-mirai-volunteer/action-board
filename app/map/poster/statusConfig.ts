@@ -10,8 +10,8 @@ export const statusConfig: Record<
   reserved: { label: "予約", color: "bg-yellow-500" },
   done: { label: "完了", color: "bg-green-500" },
   error_wrong_place: {
-    label: "エラー（ポスター掲示板マップと実際の場所・番号が違う）",
-    shortLabel: "場所違い",
+    label: "エラー（掲示板が見つからない）",
+    shortLabel: "見つからない",
     color: "bg-red-500",
   },
   error_damaged: {

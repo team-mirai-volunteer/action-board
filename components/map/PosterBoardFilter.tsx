@@ -42,7 +42,7 @@ const errorConfig: {
   label: string;
   color: string;
 }[] = [
-  { status: "error_wrong_place", label: "場所違い", color: "#EF4444" },
+  { status: "error_wrong_place", label: "見つからない", color: "#EF4444" },
   { status: "error_damaged", label: "破損", color: "#EF4444" },
   { status: "error_wrong_poster", label: "ポスター違い", color: "#EF4444" },
 ];
