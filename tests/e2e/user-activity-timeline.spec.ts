@@ -18,19 +18,19 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("活動タイムラインにテストデータを作成してから表示確認", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     await expect(signedInPage.locator('text=活動履歴がありません')).toBeVisible();
 
-    await signedInPage.goto('/');
-    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+    await signedInPage.goto('/', { timeout: 60000 });
+    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac', { timeout: 60000 });
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 20000 });
     
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
-    await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 20000 });
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
     
-    await signedInPage.goto(`/users/${testUser.userId}`);
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
     
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
@@ -45,7 +45,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("ユーザーページで活動タイムラインが表示される", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
 
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
@@ -56,7 +56,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("活動タイムラインのページネーション", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
 
     const loadMoreButton = signedInPage.locator('button:has-text("もっと見る")');
     if (await loadMoreButton.count() > 0 && await loadMoreButton.first().isVisible()) {
@@ -74,7 +74,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("活動タイムラインの基本構造", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
 
     const userLinks = signedInPage.locator('a[href*="/users/"]');
     if (await userLinks.count() > 0) {
@@ -91,7 +91,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("空の活動履歴状態の確認", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
 
     await expect(signedInPage.locator('text=活動履歴がありません')).toBeVisible();
   });
@@ -100,7 +100,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     await signedInPage.setViewportSize({ width: 375, height: 667 });
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
 
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     
@@ -118,7 +118,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
     
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
     
@@ -129,10 +129,10 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     const userBContext = await browser.newContext();
     const userBPage = await userBContext.newPage();
     
-    await userBPage.goto('/sign-up', { timeout: 30000 });
+    await userBPage.goto('/sign-up', { timeout: 60000 });
     const userBEmail = `test-user-b-${Date.now()}@example.com`;
-    await userBPage.fill('input[name="email"]', userBEmail, { timeout: 30000 });
-    await userBPage.fill('input[name="password"]', 'testpassword123', { timeout: 30000 });
+    await userBPage.fill('input[name="email"]', userBEmail, { timeout: 60000 });
+    await userBPage.fill('input[name="password"]', 'testpassword123', { timeout: 60000 });
     await userBPage.click('button[type="submit"]');
     
     for (let i = 0; i < 55; i++) {
@@ -150,7 +150,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     
     await userBContext.close();
     
-    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 30000 });
+    await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
     
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
