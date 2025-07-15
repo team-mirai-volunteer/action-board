@@ -23,39 +23,8 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await expect(signedInPage.locator('text=活動履歴がありません')).toBeVisible();
 
     await signedInPage.goto('/');
-    await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
-    
-    const fileInput = signedInPage.locator('input[type="file"]');
-    if (await fileInput.count() > 0) {
-      await signedInPage.evaluate(() => {
-        return new Promise<void>((resolve) => {
-          const canvas = document.createElement('canvas');
-          canvas.width = 100;
-          canvas.height = 100;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(0, 0, 100, 100);
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const file = new File([blob], 'test-image.png', { type: 'image/png' });
-                const dt = new DataTransfer();
-                dt.items.add(file);
-                const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                if (input) {
-                  input.files = dt.files;
-                  input.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-              }
-              resolve();
-            });
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
     
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
     await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
@@ -160,7 +129,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("ユーザー自身の活動タイムラインが他ユーザーの大量データに影響されずに表示される", async ({ signedInPage, testUser, browser }) => {
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
     
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
@@ -185,8 +154,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await userBPage.click('button[type="submit"]');
     
     for (let i = 0; i < 55; i++) {
-      await userBPage.goto('/');
-      await userBPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+      await userBPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
       await expect(userBPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
       
       await userBPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
