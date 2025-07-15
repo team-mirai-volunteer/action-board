@@ -26,6 +26,30 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
     
+    const fileInput = signedInPage.locator('input[type="file"]');
+    if (await fileInput.count() > 0) {
+      await signedInPage.evaluate(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 100;
+        canvas.height = 100;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.fillStyle = '#00ff00';
+          ctx.fillRect(0, 0, 100, 100);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const file = new File([blob], 'test-image.png', { type: 'image/png' });
+              const dt = new DataTransfer();
+              dt.items.add(file);
+              const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+              if (input) input.files = dt.files;
+            }
+          });
+        }
+      });
+      await signedInPage.waitForTimeout(1000); // ファイル設定の待機
+    }
+    
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
     await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
