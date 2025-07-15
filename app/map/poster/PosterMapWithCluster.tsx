@@ -608,8 +608,17 @@ export default function PosterMapWithCluster({
     <div
       className={
         isFullscreen
-          ? "fixed inset-0 z-50 h-screen w-screen bg-white"
+          ? "fixed inset-0 z-50 bg-white"
           : "relative h-[600px] w-full z-0"
+      }
+      style={
+        isFullscreen
+          ? {
+              height: "100dvh",
+              width: "100dvw",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }
+          : {}
       }
     >
       <div id="poster-map-cluster" className="h-full w-full" />
@@ -642,8 +651,11 @@ export default function PosterMapWithCluster({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
-          style={{ zIndex: 1000 }}
+          className="absolute left-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          style={{
+            zIndex: 1000,
+            bottom: "calc(1rem + env(safe-area-inset-bottom))",
+          }}
           aria-label="フルスクリーン解除"
           title="フルスクリーン解除 (ESC)"
         >
@@ -656,12 +668,17 @@ export default function PosterMapWithCluster({
         type="button"
         onClick={handleLocate}
         disabled={!currentPos}
-        className={`absolute right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+        className={`absolute right-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
           currentPos
             ? "bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
             : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
         }`}
-        style={{ zIndex: 1000 }}
+        style={{
+          zIndex: 1000,
+          bottom: isFullscreen
+            ? "calc(1rem + env(safe-area-inset-bottom))"
+            : "1rem",
+        }}
         aria-label="現在地を表示"
       >
         📍 現在地
