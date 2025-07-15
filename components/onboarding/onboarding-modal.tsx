@@ -1,15 +1,22 @@
 "use client";
 
+import OnboardingMissionCard from "@/components/onboarding/onboarding-mission-card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MissionIcon } from "@/components/ui/mission-icon";
+import { Textarea } from "@/components/ui/textarea";
 import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { cn } from "@/lib/utils/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface OnboardingModalProps {
   open: boolean;
@@ -19,6 +26,41 @@ interface OnboardingModalProps {
 export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   const [currentDialogue, setCurrentDialogue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSubmissionCompleted, setIsSubmissionCompleted] = useState(false);
+  const [artifactText, setArtifactText] = useState("");
+  const [artifactDescription, setArtifactDescription] = useState("");
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // join-street-speech ミッションのモックデータ
+  const mockMission = {
+    id: 1,
+    title: "街頭演説に参加しよう",
+    description:
+      "「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。",
+    content:
+      '<p>「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。</p><p><a href="https://team-mirai.notion.site/225f6f56bae180ceb7f4db761f78d2d2" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a></p>',
+    icon_url:
+      "/img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg",
+    difficulty: 2,
+    max_achievement_count: null,
+    event_date: null,
+    category: "support-activities",
+    slug: "join-street-speech",
+    artifact_type: "TEXT",
+    required_artifact_type: "TEXT",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  // join-street-speechミッションのartifact_label
+  const mockArtifactLabel = "参加した街頭演説の場所と日付";
+
+  // 画面遷移時にスクロール位置をトップにリセット
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  });
 
   const handleNext = () => {
     if (currentDialogue < onboardingDialogues.length - 1 && !isAnimating) {
@@ -30,7 +72,29 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
     } else if (currentDialogue === onboardingDialogues.length - 1) {
       onOpenChange(false);
       setCurrentDialogue(0);
+      setIsSubmissionCompleted(false);
     }
+  };
+
+  const handleScrollDown = () => {
+    if (contentRef.current) {
+      const scrollHeight = contentRef.current.scrollHeight;
+      const clientHeight = contentRef.current.clientHeight;
+      const scrollTarget = Math.min(scrollHeight - clientHeight, 300); // 300px下にスクロール
+
+      contentRef.current.scrollTo({
+        top: scrollTarget,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleSubmit = () => {
+    setIsSubmissionCompleted(true);
+    // 提出完了後、少し待ってから次へ進む
+    setTimeout(() => {
+      handleNext();
+    }, 1000);
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -38,6 +102,9 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
     if (!newOpen) {
       setCurrentDialogue(0);
       setIsAnimating(false);
+      setIsSubmissionCompleted(false);
+      setArtifactText("");
+      setArtifactDescription("");
     }
   };
 
@@ -68,28 +135,29 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
             </button>
 
             {/* コンテンツエリア - 背景画像の上にテキストとボタンdivを配置 */}
-            <div className="relative flex-1 overflow-hidden">
+            <div
+              ref={contentRef}
+              className="relative flex-1 overflow-hidden"
+              style={{
+                ...(onboardingDialogues[currentDialogue]?.showMissionCard ||
+                onboardingDialogues[currentDialogue]?.showMissionDetails
+                  ? { overflowY: "auto" }
+                  : {}),
+              }}
+            >
               {/* 背景画像 */}
               <div className="relative w-full h-full">
                 <Image
-                  src="/img/onboarding/background-only.svg"
+                  src={
+                    onboardingDialogues[currentDialogue].isWelcome
+                      ? "/img/onboarding/background-only.svg"
+                      : "/img/onboarding/background.svg"
+                  }
                   alt="オンボーディング背景"
                   fill
                   className="object-fill"
                 />
               </div>
-
-              {/* 1P目以外：吹き出し画像 */}
-              {!onboardingDialogues[currentDialogue].isWelcome && (
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <Image
-                    src="/img/onboarding/speech-bubble.svg"
-                    alt="吹き出し"
-                    fill
-                    className="object-fill"
-                  />
-                </div>
-              )}
 
               {/* 1P目：welcome画面 */}
               {onboardingDialogues[currentDialogue].isWelcome && (
@@ -151,23 +219,171 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                     </div>
                   )}
 
-                  {/* "次へ"ボタン（キャラクター基準の下） */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-8 sm:mt-10 md:mt-12 z-10">
-                    <motion.div whileTap={{ scale: 0.95 }}>
-                      <Button
-                        onClick={handleNext}
-                        disabled={isAnimating}
-                        className="bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[40vw] sm:w-24 md:w-40 lg:w-44"
+                  {/* "次へ"ボタン（キャラクター基準の下） - ミッションカード・詳細画面では非表示 */}
+                  {!onboardingDialogues[currentDialogue]?.showMissionCard &&
+                    !onboardingDialogues[currentDialogue]
+                      ?.showMissionDetails && (
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 mt-8 sm:mt-10 md:mt-12">
+                        <motion.div whileTap={{ scale: 0.95 }}>
+                          <Button
+                            onClick={handleNext}
+                            disabled={isAnimating}
+                            className="bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[40vw] sm:w-24 md:w-40 lg:w-44"
+                          >
+                            {currentDialogue === 0 &&
+                            onboardingDialogues[currentDialogue].isWelcome
+                              ? "はじめる"
+                              : currentDialogue ===
+                                  onboardingDialogues.length - 1
+                                ? "始める"
+                                : "次へ"}
+                          </Button>
+                        </motion.div>
+                      </div>
+                    )}
+
+                  {/* スクロール矢印（ミッションカード・詳細表示時のキャラクター下） */}
+                  {(onboardingDialogues[currentDialogue]?.showMissionCard ||
+                    onboardingDialogues[currentDialogue]
+                      ?.showMissionDetails) && (
+                    <button
+                      type="button"
+                      onClick={handleScrollDown}
+                      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 cursor-pointer bg-transparent border-none"
+                    >
+                      <motion.div
+                        animate={{ y: [0, 8, 0] }}
+                        transition={{
+                          repeat: Number.POSITIVE_INFINITY,
+                          duration: 1.5,
+                        }}
+                        className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
                       >
-                        {currentDialogue === 0 &&
-                        onboardingDialogues[currentDialogue].isWelcome
-                          ? "はじめる"
-                          : currentDialogue === onboardingDialogues.length - 1
-                            ? "始める"
-                            : "次へ"}
-                      </Button>
-                    </motion.div>
-                  </div>
+                        <span className="text-xs mb-1">下にスクロール</span>
+                        <ChevronDown className="h-5 w-5" />
+                      </motion.div>
+                    </button>
+                  )}
+
+                  {/* ミッションカード表示（キャラクターの下） */}
+                  {onboardingDialogues[currentDialogue]?.showMissionCard && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-16 w-[85vw] max-w-md pb-32">
+                      <OnboardingMissionCard
+                        mission={mockMission}
+                        achieved={false}
+                        achievementsCount={0}
+                        userAchievementCount={0}
+                        onCardClick={handleNext}
+                      />
+                    </div>
+                  )}
+
+                  {/* ミッション詳細表示（キャラクターの下） */}
+                  {onboardingDialogues[currentDialogue]?.showMissionDetails && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-16 w-[90vw] max-w-3xl z-20 pb-32">
+                      <Card>
+                        <CardHeader>
+                          <div className="flex items-start gap-4">
+                            {mockMission.icon_url && (
+                              <MissionIcon
+                                src={mockMission.icon_url}
+                                alt={mockMission.title}
+                                size="lg"
+                              />
+                            )}
+                            <div className="flex-1 space-y-2">
+                              <CardTitle className="text-xl">
+                                {mockMission.title}
+                              </CardTitle>
+                              <div className="flex flex-wrap gap-2">
+                                <DifficultyBadge
+                                  difficulty={mockMission.difficulty}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div
+                            className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
+                            ref={(el) => {
+                              if (el && mockMission.content) {
+                                el.innerHTML = mockMission.content;
+                              }
+                            }}
+                          />
+
+                          {/* 提出フォーム */}
+                          <Card className="mt-6">
+                            <CardHeader>
+                              <CardTitle className="text-lg text-center">
+                                ミッション完了を記録しよう
+                              </CardTitle>
+                              <p className="text-sm text-muted-foreground">
+                                ミッションを完了したら、達成を記録しましょう！
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                ※
+                                入力した内容は、外部に公開されることはありません。
+                              </p>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                              {/* テキスト入力フォーム */}
+                              <div className="space-y-2">
+                                <Label htmlFor="artifactText">
+                                  {mockArtifactLabel}
+                                  <span className="text-red-500"> (必須)</span>
+                                </Label>
+                                <Input
+                                  name="artifactText"
+                                  id="artifactText"
+                                  value={artifactText}
+                                  onChange={(e) =>
+                                    setArtifactText(e.target.value)
+                                  }
+                                  placeholder={`${mockArtifactLabel}を入力してください`}
+                                  disabled={false}
+                                  required
+                                />
+                              </div>
+
+                              {/* 補足説明テキストエリア */}
+                              <div className="space-y-2">
+                                <Label htmlFor="artifactDescription">
+                                  補足説明 (任意)
+                                </Label>
+                                <Textarea
+                                  name="artifactDescription"
+                                  id="artifactDescription"
+                                  value={artifactDescription}
+                                  onChange={(e) =>
+                                    setArtifactDescription(e.target.value)
+                                  }
+                                  placeholder="達成内容に関して補足説明があれば入力してください"
+                                  rows={3}
+                                  disabled={false}
+                                />
+                              </div>
+
+                              {/* 提出ボタン */}
+                              <Button
+                                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                onClick={handleSubmit}
+                                disabled={
+                                  isSubmissionCompleted ||
+                                  artifactText.trim() === ""
+                                }
+                              >
+                                {isSubmissionCompleted
+                                  ? "提出完了！"
+                                  : "チャレンジする"}
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
