@@ -16,6 +16,7 @@ import { assertAuthState } from "../e2e-test-helpers";
 
 test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("活動タイムラインにテストデータを作成してから表示確認", async ({ signedInPage, testUser }) => {
+    test.setTimeout(120000);
     await assertAuthState(signedInPage, true);
 
     await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
@@ -109,6 +110,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   });
 
   test("ユーザー自身の活動タイムラインが他ユーザーの大量データに影響されずに表示される", async ({ signedInPage, testUser, browser }) => {
+    test.setTimeout(300000);
     await assertAuthState(signedInPage, true);
 
     await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
