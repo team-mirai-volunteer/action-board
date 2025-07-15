@@ -132,6 +132,16 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     const userBPage = await userBContext.newPage();
     
     await userBPage.goto('/sign-up', { timeout: 60000 });
+    
+    await userBPage.selectOption('select[name="year_select"]', '1990');
+    await userBPage.selectOption('select[name="month_select"]', '1');
+    await userBPage.selectOption('select[name="day_select"]', '1');
+    await userBPage.check('input[id="terms"]');
+    await userBPage.click('button:has-text("次へ進む")');
+    
+    await userBPage.click('button:has-text("メールアドレスとパスワードで作成")');
+    await userBPage.waitForURL('/sign-up-email', { timeout: 60000 });
+    
     const userBEmail = `test-user-b-${Date.now()}@example.com`;
     await userBPage.fill('input[name="email"]', userBEmail, { timeout: 60000 });
     await userBPage.fill('input[name="password"]', 'testpassword123', { timeout: 60000 });
