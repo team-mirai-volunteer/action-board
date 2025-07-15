@@ -16,9 +16,13 @@ export const EXTERNAL_LINKS = {
   // SNS
   x_team_mirai: "https://x.com/team_mirai_jp",
   x_anno_takahiro: "https://x.com/takahiroanno",
-  youtube_channel: "https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw",
-  line_official: "https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204",
+  youtube_team_mirai:
+    "https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw",
+  line_team_mirai:
+    "https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204",
   note_anno_takahiro: "https://note.com/annotakahiro24",
+  tiktok_anno_takahiro: "https://www.tiktok.com/@annotakahiro2024",
+  threads_anno_takahiro: "https://www.threads.com/@annotakahiro2024",
 
   // その他
   speakerdeck_manifest:
