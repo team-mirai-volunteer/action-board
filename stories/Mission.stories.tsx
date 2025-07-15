@@ -31,6 +31,7 @@ const dummyMission: Tables<"missions"> = {
   artifact_label: null,
   is_featured: false,
   is_hidden: false,
+  featured_importance: null,
 };
 
 export const Default: Story = {
