@@ -18,6 +18,10 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
   test("活動タイムラインにテストデータを作成してから表示確認", async ({ signedInPage, testUser }) => {
     await assertAuthState(signedInPage, true);
 
+    await signedInPage.goto(`/users/${testUser.userId}`);
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
+    await expect(signedInPage.locator('text=活動履歴がありません')).toBeVisible();
+
     await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
     
@@ -121,7 +125,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await expect(timelineSection.first()).toBeVisible();
   });
 
-  test("ユーザー自身の活動タイムラインが他ユーザーの大量データに影響されずに表示される", async ({ signedInPage, testUser }) => {
+  test("ユーザー自身の活動タイムラインが他ユーザーの大量データに影響されずに表示される", async ({ signedInPage, testUser, browser }) => {
     await assertAuthState(signedInPage, true);
 
     await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
@@ -132,17 +136,49 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
     
     await signedInPage.goto(`/users/${testUser.userId}`);
+    await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
+    await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
+    
+    const userAActivityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
+    await expect(userAActivityItems.first()).toBeVisible();
+    await expect(signedInPage.locator('text=を達成しました！')).toBeVisible();
+    
+    const userBContext = await browser.newContext();
+    const userBPage = await userBContext.newPage();
+    
+    await userBPage.goto('/sign-up');
+    const userBEmail = `test-user-b-${Date.now()}@example.com`;
+    await userBPage.fill('input[name="email"]', userBEmail);
+    await userBPage.fill('input[name="password"]', 'testpassword123');
+    await userBPage.click('button[type="submit"]');
+    
+    for (let i = 0; i < 55; i++) {
+      await userBPage.goto('/');
+      await userBPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
+      await expect(userBPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+      
+      await userBPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
+      await expect(userBPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
+      await userBPage.getByRole('button', { name: 'このまま閉じる' }).click();
+      
+      if ((i + 1) % 10 === 0) {
+        console.log(`ユーザーBのミッション達成データ作成進捗: ${i + 1}/55件完了`);
+      }
+    }
+    
+    await userBContext.close();
+    
+    await signedInPage.goto(`/users/${testUser.userId}`);
     
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
-    
     await expect(signedInPage.locator('text=活動履歴がありません')).not.toBeVisible();
     
     const activityItems = signedInPage.locator('div.flex.flex-row.gap-2.items-center');
     await expect(activityItems.first()).toBeVisible();
-    
     await expect(signedInPage.locator('text=を達成しました！')).toBeVisible();
     
     const itemCount = await activityItems.count();
     expect(itemCount).toBeGreaterThan(0);
+    
   });
 });
