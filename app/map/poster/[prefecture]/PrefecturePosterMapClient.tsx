@@ -30,6 +30,7 @@ import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
 } from "@/lib/constants/poster-prefectures";
+import { usePosterSearch } from "@/lib/hooks/usePosterSearch";
 import {
   getPosterBoardDetail,
   getPosterBoardsMinimal,
@@ -134,14 +135,23 @@ export default function PrefecturePosterMapClient({
   const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
     string | null
   >(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const mapRef = useRef<{
     flyTo: (latlng: [number, number], zoom?: number) => void;
   } | null>(null);
-  const [selectedSearchIndex, setSelectedSearchIndex] = useState(-1);
-  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
-  const [isComposing, setIsComposing] = useState(false);
+
+  // 検索機能のカスタムフックを使用
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    selectedSearchIndex,
+    setSelectedSearchIndex,
+    showSearchDropdown,
+    setShowSearchDropdown,
+    isComposing,
+    setIsComposing,
+    handleSearchKeyDown,
+  } = usePosterSearch({ boards });
 
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
@@ -383,57 +393,6 @@ export default function PrefecturePosterMapClient({
     }
   };
 
-  // 外側クリックでドロップダウンを閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target as Node)
-      ) {
-        setShowSearchDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // 検索結果の計算
-  const searchResults = useMemo(() => {
-    if (!searchQuery || searchQuery.length < 2) {
-      // 検索クエリが変更されたら選択インデックスをリセット
-      if (selectedSearchIndex !== -1) {
-        setSelectedSearchIndex(-1);
-      }
-      return [];
-    }
-
-    const query = searchQuery.toLowerCase();
-    const results = boards.filter((board) => {
-      const number = board.number?.toLowerCase() || "";
-      const name = board.name?.toLowerCase() || "";
-      const address = board.address?.toLowerCase() || "";
-      const city = board.city?.toLowerCase() || "";
-
-      return (
-        number.includes(query) ||
-        name.includes(query) ||
-        address.includes(query) ||
-        city.includes(query)
-      );
-    });
-
-    // 検索結果が変わったら選択インデックスをリセット
-    if (selectedSearchIndex !== -1) {
-      setSelectedSearchIndex(-1);
-    }
-
-    // 最大10件まで表示
-    return results.slice(0, 10);
-  }, [boards, searchQuery, selectedSearchIndex]);
-
   // 統計情報を使用（初期値はサーバーから提供されたもの）
   const statusCounts = stats?.statusCounts || {
     not_yet: 0,
@@ -468,43 +427,6 @@ export default function PrefecturePosterMapClient({
 
       // 選択インデックスのみリセット（検索テキストは残す）
       setSelectedSearchIndex(-1);
-    }
-  };
-
-  // キーボードイベントハンドラー
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (searchResults.length === 0) return;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setSelectedSearchIndex((prev) =>
-          prev < searchResults.length - 1 ? prev + 1 : prev,
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setSelectedSearchIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        break;
-      case "Enter":
-        // IME変換中の場合は何もしない
-        if (isComposing) return;
-
-        e.preventDefault();
-        if (
-          selectedSearchIndex >= 0 &&
-          selectedSearchIndex < searchResults.length
-        ) {
-          handleSearchResultSelect(searchResults[selectedSearchIndex]);
-        } else if (searchResults.length > 0) {
-          handleSearchResultSelect(searchResults[0]);
-        }
-        break;
-      case "Escape":
-        e.preventDefault();
-        setSearchQuery("");
-        setSelectedSearchIndex(-1);
-        break;
     }
   };
 
