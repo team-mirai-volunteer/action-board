@@ -636,3 +636,20 @@ missions:
     is_hidden: false
     artifact_label: リアクションしたTikTok動画のURL
     ogp_image_url: null
+  - slug: join-719-mic-osame
+    title: 7/19(土)のマイク納めに参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
+    content: |-
+      7/19(土)に「マイク納め」イベントを開催します！ ✨🔥
+      多くの人に集まっていただきメディアに注目新党として取り上げてもらうことで、今後のメディア露出の時間や頻度が大きく変わる、とても重要なイベントです。
+      ぜひ皆さまご参加をお願いいたします！！
+
+      詳細な開催場所・時間については、後日お知らせいたします。
+    difficulty: 5
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: true
+    featured_importance: 110
+    is_hidden: false
+    artifact_label: 「参加します または 参加しました」のテキスト
+    ogp_image_url: null
