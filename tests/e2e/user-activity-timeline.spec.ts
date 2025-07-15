@@ -22,6 +22,7 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await expect(signedInPage.locator('span:has-text("活動タイムライン")')).toBeVisible();
     await expect(signedInPage.locator('text=活動履歴がありません')).toBeVisible();
 
+    await signedInPage.goto('/');
     await signedInPage.getByRole('button', { name: '今すぐチャレンジ🔥' }).first().click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
     
