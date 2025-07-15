@@ -380,7 +380,7 @@ missions:
   - slug: put-up-poster
     title: チームみらいの政党ポスターを貼ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
-    content: チームみらいの政党ポスターを貼って、地域の人々に政策を広めよう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/206f6f56bae180e6b471ec5360653227" target="_blank">政治ポスターを貼る</a>
+    content: チームみらいの政党ポスターを貼って、地域の人々に政策を広めよう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/222f6f56bae1802aaed2c98f36e2c46a" target="_blank">政治ポスターを貼る</a>
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
