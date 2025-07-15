@@ -1,5 +1,5 @@
+import { EXTERNAL_LINKS } from "@/lib/links";
 import Link from "next/link";
-import { FOOTER_CONFIG } from "./footer";
 
 export function FeedbackSection() {
   return (
@@ -14,7 +14,7 @@ export function FeedbackSection() {
           いただいたフィードバックは 今後の改善に活用させていただきます。
         </p>
         <Link
-          href={FOOTER_CONFIG.feedback.poster_map_url}
+          href={EXTERNAL_LINKS.feedback_poster_map}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="ポスターマップへのご意見フォーム（新しいタブで開きます）"
@@ -39,7 +39,7 @@ export function FeedbackSection() {
           ポスターマップへのご意見
         </Link>
         <Link
-          href={FOOTER_CONFIG.feedback.url}
+          href={EXTERNAL_LINKS.feedback_action_board}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="アクションボードへのご意見フォーム（新しいタブで開きます）"

@@ -6,6 +6,7 @@ jest.mock("@/lib/services/metrics", () => ({
   fetchAllMetricsData: jest.fn(),
 }));
 
+import { EXTERNAL_LINKS } from "@/lib/links";
 import { fetchAllMetricsData } from "@/lib/services/metrics";
 import Metrics from "./index";
 
@@ -250,7 +251,7 @@ describe("Metrics", () => {
       expect(donationLink).toBeInTheDocument();
       expect(donationLink.closest("a")).toHaveAttribute(
         "href",
-        "https://team-mir.ai/support/donation",
+        EXTERNAL_LINKS.team_mirai_donation,
       );
     });
 
