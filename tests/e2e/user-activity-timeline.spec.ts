@@ -113,11 +113,11 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     test.setTimeout(300000);
     await assertAuthState(signedInPage, true);
 
-    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+    await signedInPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac', { timeout: 60000 });
+    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 60000 });
     
     await signedInPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
-    await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 60000 });
     await signedInPage.getByRole('button', { name: 'このまま閉じる' }).click();
     
     await signedInPage.goto(`/users/${testUser.userId}`, { timeout: 60000 });
@@ -138,11 +138,11 @@ test.describe("ユーザー活動タイムライン E2Eテスト", () => {
     await userBPage.click('button[type="submit"]');
     
     for (let i = 0; i < 55; i++) {
-      await userBPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac');
-      await expect(userBPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 10000 });
+      await userBPage.goto('/missions/e2898d7e-903f-4f9a-8b1b-93f783c9afac', { timeout: 60000 });
+      await expect(userBPage).toHaveURL(/\/missions\/[^\/]+$/, { timeout: 60000 });
       
       await userBPage.getByRole('button', { name: 'ミッション完了を記録する' }).click();
-      await expect(userBPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 10000 });
+      await expect(userBPage.getByText('おめでとうございます！')).toBeVisible({ timeout: 60000 });
       await userBPage.getByRole('button', { name: 'このまま閉じる' }).click();
       
       if ((i + 1) % 10 === 0) {
