@@ -730,8 +730,17 @@ const PosterMapWithCluster = forwardRef<MapHandle, PosterMapWithClusterProps>(
       <div
         className={
           isFullscreen
-            ? "fixed inset-0 z-50 h-screen w-screen bg-white"
+            ? "fixed inset-0 z-50 bg-white"
             : "relative h-[600px] w-full z-0"
+        }
+        style={
+          isFullscreen
+            ? {
+                height: "100dvh",
+                width: "100dvw",
+                paddingBottom: "env(safe-area-inset-bottom)",
+              }
+            : {}
         }
       >
         <div id="poster-map-cluster" className="h-full w-full" />
