@@ -4,6 +4,7 @@ import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { MissionIcon } from "@/components/ui/mission-icon";
 import { BUTTON_TEXT, STYLE_CLASSES } from "../constants";
 import type { MockMission } from "../types";
+import { sanitizeHtml } from "../utils";
 
 interface OnboardingMissionDetailsProps {
   mission: MockMission;
@@ -43,7 +44,7 @@ export const OnboardingMissionDetails: React.FC<
             className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
             ref={(el) => {
               if (el && mission.content) {
-                el.innerHTML = mission.content;
+                el.innerHTML = sanitizeHtml(mission.content);
               }
             }}
           />
