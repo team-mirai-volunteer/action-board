@@ -86,6 +86,18 @@ missions:
     is_hidden: false
     artifact_label: シェアした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
+  - slug: tiktok-clip-final-push
+    title: 1日1アクション📣最後の拡散チャンス！かんたん動画投稿
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
+    content: <b>最終週のいまだからこそ、あなたの1投稿が効く！</b><br>流れはできてる。あとは、走りきるだけ。<br>TikTokで“好きなシーン”を届けよう。<br>🔗<a href="https://team-mirai.notion.site/1-1-TikTok-206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">切り抜きかんたんガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ2点セットをコピーする</a>
+    difficulty: 4
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: true
+    featured_importance: 1000
+    is_hidden: false
+    artifact_label: ショート動画のURL（TikTok）
+    ogp_image_url: null
   - slug: youtube-clip
     title: 動画を切り抜いてショート動画を作ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
@@ -96,7 +108,7 @@ missions:
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 10
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
