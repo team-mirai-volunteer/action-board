@@ -15,22 +15,8 @@ export const SCROLL_OFFSET = {
   CARD_MARGIN: 20,
 } as const;
 
-// ミッションタイプ
-export const MISSION_TYPE = {
-  EARLY_VOTE: "early-vote",
-} as const;
-
-// ミッション成果物タイプ
-export const ARTIFACT_TYPE = {
-  TEXT: "TEXT",
-  LINK_ACCESS: "LINK_ACCESS",
-  NONE: "NONE",
-  POSTER: "POSTER",
-  POSTING: "POSTING",
-} as const;
-
-// デフォルトのモックミッション
-export const DEFAULT_MOCK_MISSION = {
+// モックミッション（期日前投票専用）
+export const MOCK_MISSION = {
   id: "3",
   title: "期日前投票をしよう！",
   artifact_label: null,
@@ -41,7 +27,7 @@ export const DEFAULT_MOCK_MISSION = {
   difficulty: 5,
   max_achievement_count: 1,
   event_date: null,
-  required_artifact_type: ARTIFACT_TYPE.NONE,
+  required_artifact_type: "NONE",
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   is_featured: false,
@@ -49,16 +35,14 @@ export const DEFAULT_MOCK_MISSION = {
   ogp_image_url: null,
 } as const;
 
-// オンボーディングテキスト
+// オンボーディングテキスト（期日前投票専用）
 export const ONBOARDING_TEXTS = {
-  [MISSION_TYPE.EARLY_VOTE]: {
-    2: "ここは、アクション<wbr>ボード。チームみらいを応援する者たちが集いし場所。\n\nわしは、このアクション<wbr>ボードの主、アクション仙人じゃ。",
-    3: "このアプリではの、チラシ配り、イベント手伝い、ポスター貼り… あらゆる「応援のカタチ」を、気軽に、楽しく、こなせるようになっとる。",
-    4: "何をすればええか分からん？心配いらん。ちょいとした気軽なアクションも揃えとるから、初めてでも心配いらんぞい。",
-    5: "ではさっそく、初めてのアクションじゃ。\nまずは、期日前<wbr>投票について学んで、選挙参加の準備をしてみるとええ。",
-    6: "「期日前<wbr>投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッション<wbr>クリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
-    7: "うむ、上出来じゃ！\n\n実際のミッションでは、提出すると経験値がもらえて、レベルアップもできるぞい。\nさあ、アクションボードでみらいを切り開くのじゃ！",
-  },
+  2: "ここは、アクション<wbr>ボード。チームみらいを応援する者たちが集いし場所。\n\nわしは、このアクション<wbr>ボードの主、アクション仙人じゃ。",
+  3: "このアプリではの、チラシ配り、イベント手伝い、ポスター貼り… あらゆる「応援のカタチ」を、気軽に、楽しく、こなせるようになっとる。",
+  4: "何をすればええか分からん？心配いらん。ちょいとした気軽なアクションも揃えとるから、初めてでも心配いらんぞい。",
+  5: "ではさっそく、初めてのアクションじゃ。\nまずは、期日前<wbr>投票について学んで、選挙参加の準備をしてみるとええ。",
+  6: "「期日前<wbr>投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッション<wbr>クリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
+  7: "うむ、上出来じゃ！\n\n実際のミッションでは、提出すると経験値がもらえて、レベルアップもできるぞい。\nさあ、アクションボードでみらいを切り開くのじゃ！",
 } as const;
 
 // ボタンテキスト
@@ -75,10 +59,15 @@ export const BUTTON_TEXT = {
 // スクロールテキスト
 export const SCROLL_TEXT = "下にスクロール";
 
+// Z-index層の定義
+export const Z_INDEX = {
+  ONBOARDING_MODAL: 60, // 他のモーダル(z-50)より上に表示
+} as const;
+
 // スタイルクラス名
 export const STYLE_CLASSES = {
   MODAL_OVERLAY:
-    "fixed inset-4 md:inset-6 lg:inset-12 z-50 duration-200 lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
+    "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200 lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
   BACKGROUND_GRADIENT: "bg-gradient-to-b from-[#A8E6CF] to-[#7FCDCD]",
   CHARACTER_COMMENT:
     "text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium px-4 py-2",

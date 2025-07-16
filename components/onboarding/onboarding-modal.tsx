@@ -183,7 +183,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
         <DialogOverlay />
         <DialogPrimitive.Content
           className={cn(
-            "fixed inset-4 md:inset-6 lg:inset-12 z-50 duration-200",
+            "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200",
             "lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",

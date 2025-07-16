@@ -1,22 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MissionIcon } from "@/components/ui/mission-icon";
-import { Textarea } from "@/components/ui/textarea";
-import { ARTIFACT_TYPE, BUTTON_TEXT, STYLE_CLASSES } from "../constants";
+import { BUTTON_TEXT, STYLE_CLASSES } from "../constants";
 import type { MockMission } from "../types";
 
 interface OnboardingMissionDetailsProps {
   mission: MockMission;
-  artifactText: string;
-  artifactDescription: string;
-  artifactLabel: string;
   isSubmissionCompleted: boolean;
   onSubmit: () => void;
-  onArtifactTextChange: (text: string) => void;
-  onArtifactDescriptionChange: (text: string) => void;
 }
 
 /**
@@ -25,16 +17,7 @@ interface OnboardingMissionDetailsProps {
  */
 export const OnboardingMissionDetails: React.FC<
   OnboardingMissionDetailsProps
-> = ({
-  mission,
-  artifactText,
-  artifactDescription,
-  artifactLabel,
-  isSubmissionCompleted,
-  onSubmit,
-  onArtifactTextChange,
-  onArtifactDescriptionChange,
-}) => {
+> = ({ mission, isSubmissionCompleted, onSubmit }) => {
   return (
     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-16 w-[90vw] max-w-3xl z-20 pb-32">
       <Card data-mission-detail-card>
@@ -65,109 +48,16 @@ export const OnboardingMissionDetails: React.FC<
             }}
           />
 
-          {/* 提出フォーム - ミッションタイプに応じて表示 */}
-          {mission.required_artifact_type === ARTIFACT_TYPE.TEXT && (
-            <MissionSubmissionForm
-              artifactLabel={artifactLabel}
-              artifactText={artifactText}
-              artifactDescription={artifactDescription}
-              isSubmissionCompleted={isSubmissionCompleted}
-              onSubmit={onSubmit}
-              onArtifactTextChange={onArtifactTextChange}
-              onArtifactDescriptionChange={onArtifactDescriptionChange}
-            />
-          )}
-
-          {/* NONEタイプの場合 */}
-          {mission.required_artifact_type === ARTIFACT_TYPE.NONE && (
-            <MissionSubmissionButton
-              isSubmissionCompleted={isSubmissionCompleted}
-              onSubmit={onSubmit}
-            />
-          )}
+          {/* 提出フォーム - NONEタイプ（期日前投票専用） */}
+          <MissionSubmissionButton
+            isSubmissionCompleted={isSubmissionCompleted}
+            onSubmit={onSubmit}
+          />
         </CardContent>
       </Card>
     </div>
   );
 };
-
-/**
- * ミッション提出フォームコンポーネント（TEXTタイプ用）
- */
-const MissionSubmissionForm: React.FC<{
-  artifactLabel: string;
-  artifactText: string;
-  artifactDescription: string;
-  isSubmissionCompleted: boolean;
-  onSubmit: () => void;
-  onArtifactTextChange: (text: string) => void;
-  onArtifactDescriptionChange: (text: string) => void;
-}> = ({
-  artifactLabel,
-  artifactText,
-  artifactDescription,
-  isSubmissionCompleted,
-  onSubmit,
-  onArtifactTextChange,
-  onArtifactDescriptionChange,
-}) => (
-  <Card className="mt-6">
-    <CardHeader>
-      <CardTitle className="text-lg text-center">
-        ミッション完了を記録しよう
-      </CardTitle>
-      <p className="text-sm text-muted-foreground">
-        ミッションを完了したら、達成を記録しましょう！
-      </p>
-      <p className="text-sm text-muted-foreground">
-        ※ 入力した内容は、外部に公開されることはありません。
-      </p>
-    </CardHeader>
-    <CardContent className="space-y-6">
-      {/* テキスト入力フォーム */}
-      <div className="space-y-2">
-        <Label htmlFor="artifactText">
-          {artifactLabel}
-          <span className="text-red-500"> (必須)</span>
-        </Label>
-        <Input
-          name="artifactText"
-          id="artifactText"
-          value={artifactText}
-          onChange={(e) => onArtifactTextChange(e.target.value)}
-          placeholder={`${artifactLabel}を入力してください`}
-          disabled={false}
-          required
-        />
-      </div>
-
-      {/* 補足説明テキストエリア */}
-      <div className="space-y-2">
-        <Label htmlFor="artifactDescription">補足説明 (任意)</Label>
-        <Textarea
-          name="artifactDescription"
-          id="artifactDescription"
-          value={artifactDescription}
-          onChange={(e) => onArtifactDescriptionChange(e.target.value)}
-          placeholder="達成内容に関して補足説明があれば入力してください"
-          rows={3}
-          disabled={false}
-        />
-      </div>
-
-      {/* 提出ボタン */}
-      <Button
-        className={STYLE_CLASSES.BUTTON_SUBMIT}
-        onClick={onSubmit}
-        disabled={isSubmissionCompleted || artifactText.trim() === ""}
-      >
-        {isSubmissionCompleted
-          ? BUTTON_TEXT.SUBMISSION_COMPLETE
-          : BUTTON_TEXT.CHALLENGE}
-      </Button>
-    </CardContent>
-  </Card>
-);
 
 /**
  * ミッション提出ボタンコンポーネント（NONEタイプ用）

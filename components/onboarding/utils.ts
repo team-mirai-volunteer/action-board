@@ -1,12 +1,7 @@
 import { ONBOARDING_TEXTS } from "./constants";
-import type {
-  MissionOnboardingTexts,
-  MissionType,
-  TextGetterDialogue,
-} from "./types";
 
 /**
- * オンボーディング機能で使用するユーティリティ関数
+ * オンボーディング機能で使用するユーティリティ関数（期日前投票専用）
  */
 
 /**
@@ -19,27 +14,10 @@ export const sanitizeHtml = (html: string): string => {
 };
 
 /**
- * ミッションタイプに応じたオンボーディングテキストを取得
+ * オンボーディングテキストを取得
  */
-export const getDynamicOnboardingText = (
-  dialogue: TextGetterDialogue,
-  missionType: MissionType,
-): string => {
-  const customTexts = ONBOARDING_TEXTS[missionType];
-
-  if (customTexts && dialogue.id in customTexts) {
-    return customTexts[dialogue.id as keyof typeof customTexts];
-  }
-
-  // デフォルトテキストは使用しない
-  return "";
-};
-
-/**
- * 現在のダイアログがウェルカム画面かどうかを判定
- */
-export const isWelcomeScreen = (dialogue: TextGetterDialogue): boolean => {
-  return dialogue.id === 1;
+export const getOnboardingText = (dialogueId: number): string => {
+  return ONBOARDING_TEXTS[dialogueId as keyof typeof ONBOARDING_TEXTS] || "";
 };
 
 /**

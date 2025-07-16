@@ -1,29 +1,24 @@
 import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { useEffect, useRef, useState } from "react";
-import { ANIMATION_DURATION, MISSION_TYPE } from "../constants";
-import type {
-  MissionType,
-  UseOnboardingActions,
-  UseOnboardingState,
-} from "../types";
+import { ANIMATION_DURATION } from "../constants";
+import type { UseOnboardingActions, UseOnboardingState } from "../types";
 import {
   calculateDefaultScrollPosition,
   calculateScrollPosition,
 } from "../utils";
 
 /**
- * オンボーディング状態管理フック
+ * オンボーディング状態管理フック（期日前投票専用）
  */
 export const useOnboardingState = (
   onOpenChange: (open: boolean) => void,
 ): UseOnboardingState &
-  UseOnboardingActions & { contentRef: React.RefObject<HTMLDivElement> } => {
+  UseOnboardingActions & {
+    contentRef: React.RefObject<HTMLDivElement | null>;
+  } => {
   const [currentDialogue, setCurrentDialogue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSubmissionCompleted, setIsSubmissionCompleted] = useState(false);
-  const [artifactText, setArtifactText] = useState("");
-  const [artifactDescription, setArtifactDescription] = useState("");
-  const [missionType] = useState<MissionType>(MISSION_TYPE.EARLY_VOTE);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // 画面遷移時にスクロール位置をトップにリセット
@@ -96,8 +91,6 @@ export const useOnboardingState = (
       setCurrentDialogue(0);
       setIsAnimating(false);
       setIsSubmissionCompleted(false);
-      setArtifactText("");
-      setArtifactDescription("");
     }
   };
 
@@ -106,16 +99,11 @@ export const useOnboardingState = (
     currentDialogue,
     isAnimating,
     isSubmissionCompleted,
-    artifactText,
-    artifactDescription,
-    missionType,
     contentRef,
     // Actions
     handleNext,
     handleSubmit,
     handleScrollDown,
     handleOpenChange,
-    setArtifactText,
-    setArtifactDescription,
   };
 };

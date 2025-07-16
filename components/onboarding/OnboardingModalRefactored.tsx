@@ -11,7 +11,7 @@ import Image from "next/image";
 import { OnboardingCharacter } from "./components/OnboardingCharacter";
 import { OnboardingMissionDetails } from "./components/OnboardingMissionDetails";
 import { OnboardingWelcome } from "./components/OnboardingWelcome";
-import { DEFAULT_MOCK_MISSION } from "./constants";
+import { MOCK_MISSION } from "./constants";
 import { useOnboardingState } from "./hooks/useOnboardingState";
 import type { OnboardingModalProps } from "./types";
 
@@ -26,21 +26,15 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
     currentDialogue,
     isAnimating,
     isSubmissionCompleted,
-    artifactText,
-    artifactDescription,
-    missionType,
     contentRef,
     handleNext,
     handleSubmit,
     handleScrollDown,
     handleOpenChange,
-    setArtifactText,
-    setArtifactDescription,
   } = useOnboardingState(onOpenChange);
 
   const currentDialogueData = onboardingDialogues[currentDialogue];
-  const mockMission = DEFAULT_MOCK_MISSION;
-  const mockArtifactLabel = "";
+  const mockMission = MOCK_MISSION;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -48,7 +42,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
         <DialogOverlay />
         <DialogPrimitive.Content
           className={cn(
-            "fixed inset-4 md:inset-6 lg:inset-12 z-50 duration-200",
+            "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200",
             "lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -83,7 +77,6 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
               <OnboardingCharacter
                 currentDialogue={currentDialogue}
                 isAnimating={isAnimating}
-                missionType={missionType}
                 onNext={handleNext}
                 onScrollDown={handleScrollDown}
               />
@@ -92,13 +85,8 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
               {currentDialogueData?.showMissionDetails && (
                 <OnboardingMissionDetails
                   mission={mockMission}
-                  artifactText={artifactText}
-                  artifactDescription={artifactDescription}
-                  artifactLabel={mockArtifactLabel}
                   isSubmissionCompleted={isSubmissionCompleted}
                   onSubmit={handleSubmit}
-                  onArtifactTextChange={setArtifactText}
-                  onArtifactDescriptionChange={setArtifactDescription}
                 />
               )}
             </div>

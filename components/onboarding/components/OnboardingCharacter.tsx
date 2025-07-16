@@ -3,16 +3,10 @@ import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import {
-  ANIMATION_DURATION,
-  BUTTON_TEXT,
-  SCROLL_TEXT,
-  STYLE_CLASSES,
-} from "../constants";
-import type { MissionType } from "../types";
+import { ANIMATION_DURATION, SCROLL_TEXT, STYLE_CLASSES } from "../constants";
 import {
   getButtonText,
-  getDynamicOnboardingText,
+  getOnboardingText,
   isFinalScreen,
   sanitizeHtml,
 } from "../utils";
@@ -20,19 +14,17 @@ import {
 interface OnboardingCharacterProps {
   currentDialogue: number;
   isAnimating: boolean;
-  missionType: MissionType;
   onNext: () => void;
   onScrollDown: () => void;
 }
 
 /**
- * オンボーディングキャラクターコンポーネント
+ * オンボーディングキャラクターコンポーネント（期日前投票専用）
  * キャラクター画像、コメント、ボタンを表示
  */
 export const OnboardingCharacter: React.FC<OnboardingCharacterProps> = ({
   currentDialogue,
   isAnimating,
-  missionType,
   onNext,
   onScrollDown,
 }) => {
@@ -54,9 +46,7 @@ export const OnboardingCharacter: React.FC<OnboardingCharacterProps> = ({
               className={STYLE_CLASSES.CHARACTER_COMMENT}
               // biome-ignore lint/security/noDangerouslySetInnerHtml: wbrタグのサポートのため、サニタイズ済みHTMLを使用
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(
-                  getDynamicOnboardingText(dialogue, missionType),
-                ),
+                __html: sanitizeHtml(getOnboardingText(dialogue.id)),
               }}
             />
           </div>
