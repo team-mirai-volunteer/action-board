@@ -4,12 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { ANIMATION_DURATION, SCROLL_TEXT, STYLE_CLASSES } from "../constants";
-import {
-  getButtonText,
-  getOnboardingText,
-  isFinalScreen,
-  sanitizeHtml,
-} from "../utils";
+import { getButtonText, isFinalScreen, sanitizeHtml } from "../utils";
 
 interface OnboardingCharacterProps {
   currentDialogue: number;
@@ -46,7 +41,7 @@ export const OnboardingCharacter: React.FC<OnboardingCharacterProps> = ({
               className={STYLE_CLASSES.CHARACTER_COMMENT}
               // biome-ignore lint/security/noDangerouslySetInnerHtml: wbrタグのサポートのため、サニタイズ済みHTMLを使用
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(getOnboardingText(dialogue.id)),
+                __html: sanitizeHtml(dialogue.text),
               }}
             />
           </div>

@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { MOCK_MISSION } from "./constants";
 
 interface OnboardingModalProps {
   open: boolean;
@@ -35,69 +36,13 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   const sanitizeHtml = (html: string) => {
     return html
       .replace(/\n/g, "<br>")
-      .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, ""); // wbrとbr以外のタグを除去
+      .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, "") // wbrとbr以外のタグを除去
+      .replace(/javascript:/gi, "") // JavaScriptスキームを除去
+      .replace(/on\w+\s*=/gi, ""); // イベントハンドラ属性を除去
   };
 
-  // ミッションのモックデータ
-  const mockMissions = {
-    "early-vote": {
-      id: "3",
-      title: "期日前投票をしよう！",
-      artifact_label: null,
-      content:
-        "<p>予定が合わない方も安心！</p><p>みんなで投票率アップを目指そう！</p>",
-      icon_url:
-        "/img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg",
-      difficulty: 5,
-      max_achievement_count: 1,
-      event_date: null,
-      required_artifact_type: "NONE",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      is_featured: false,
-      is_hidden: false,
-      ogp_image_url: null,
-    },
-  };
-
-  const mockArtifactLabels = {
-    "early-vote": "",
-  };
-
-  const mockMission = mockMissions[missionType];
-  const mockArtifactLabel = mockArtifactLabels[missionType];
-
-  // ミッションタイプごとのオンボーディングテキストの定義
-  const missionOnboardingTexts = {
-    "early-vote": {
-      2: "ここは、アクション<wbr>ボード。チームみらいを応援する者たちが集いし場所。\n\nわしは、このアクション<wbr>ボードの主、アクション仙人じゃ。",
-      3: "このアプリではの、チラシ配り、イベント手伝い、ポスター貼り… あらゆる「応援のカタチ」を、気軽に、楽しく、こなせるようになっとる。",
-      4: "何をすればええか分からん？心配いらん。ちょいとした気軽なアクションも揃えとるから、初めてでも心配いらんぞい。",
-      5: "ではさっそく、初めてのアクションじゃ。\nまずは、期日前<wbr>投票について学んで、選挙参加の準備をしてみるとええ。",
-      6: "「期日前<wbr>投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッション<wbr>クリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
-      7: "うむ、上出来じゃ！\n\n実際のミッションでは、提出すると経験値がもらえて、レベルアップもできるぞい。\nさあ、アクションボードでみらいを切り開くのじゃ！",
-    },
-  } as const;
-
-  // ミッションタイプに応じたオンボーディングテキストを取得
-  const getDynamicOnboardingText = (dialogue: {
-    id: number;
-    text: string;
-    showScrollDown?: boolean;
-    showNewButton?: boolean;
-    showMissionCard?: boolean;
-    showMissionDetails?: boolean;
-    showPartyPeople?: boolean;
-  }) => {
-    const customTexts = missionOnboardingTexts[missionType];
-
-    if (customTexts && dialogue.id in customTexts) {
-      return customTexts[dialogue.id as keyof typeof customTexts];
-    }
-
-    // デフォルトテキストは使用しない
-    return "";
-  };
+  const mockMission = MOCK_MISSION;
+  const mockArtifactLabel = "";
 
   // 画面遷移時にスクロール位置をトップにリセット
   useEffect(() => {
@@ -264,9 +209,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                       // biome-ignore lint/security/noDangerouslySetInnerHtml: wbrタグのサポートのため、サニタイズ済みHTMLを使用
                       dangerouslySetInnerHTML={{
                         __html: sanitizeHtml(
-                          getDynamicOnboardingText(
-                            onboardingDialogues[currentDialogue],
-                          ),
+                          onboardingDialogues[currentDialogue].text,
                         ),
                       }}
                     />
@@ -373,80 +316,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                             }}
                           />
 
-                          {/* 提出フォーム - ミッションタイプに応じて表示 */}
-                          {mockMission.required_artifact_type === "TEXT" && (
-                            <Card className="mt-6">
-                              <CardHeader>
-                                <CardTitle className="text-lg text-center">
-                                  ミッション完了を記録しよう
-                                </CardTitle>
-                                <p className="text-sm text-muted-foreground">
-                                  ミッションを完了したら、達成を記録しましょう！
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  ※
-                                  入力した内容は、外部に公開されることはありません。
-                                </p>
-                              </CardHeader>
-                              <CardContent className="space-y-6">
-                                {/* テキスト入力フォーム */}
-                                <div className="space-y-2">
-                                  <Label htmlFor="artifactText">
-                                    {mockArtifactLabel}
-                                    <span className="text-red-500">
-                                      {" "}
-                                      (必須)
-                                    </span>
-                                  </Label>
-                                  <Input
-                                    name="artifactText"
-                                    id="artifactText"
-                                    value={artifactText}
-                                    onChange={(e) =>
-                                      setArtifactText(e.target.value)
-                                    }
-                                    placeholder={`${mockArtifactLabel}を入力してください`}
-                                    disabled={false}
-                                    required
-                                  />
-                                </div>
-
-                                {/* 補足説明テキストエリア */}
-                                <div className="space-y-2">
-                                  <Label htmlFor="artifactDescription">
-                                    補足説明 (任意)
-                                  </Label>
-                                  <Textarea
-                                    name="artifactDescription"
-                                    id="artifactDescription"
-                                    value={artifactDescription}
-                                    onChange={(e) =>
-                                      setArtifactDescription(e.target.value)
-                                    }
-                                    placeholder="達成内容に関して補足説明があれば入力してください"
-                                    rows={3}
-                                    disabled={false}
-                                  />
-                                </div>
-
-                                {/* 提出ボタン */}
-                                <Button
-                                  className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                  onClick={handleSubmit}
-                                  disabled={
-                                    isSubmissionCompleted ||
-                                    artifactText.trim() === ""
-                                  }
-                                >
-                                  {isSubmissionCompleted
-                                    ? "提出完了！"
-                                    : "チャレンジする"}
-                                </Button>
-                              </CardContent>
-                            </Card>
-                          )}
-
-                          {/* NONEタイプの場合 */}
+                          {/* 提出フォーム - NONEタイプ（期日前投票専用） */}
                           {mockMission.required_artifact_type === "NONE" && (
                             <Card className="mt-6">
                               <CardHeader>

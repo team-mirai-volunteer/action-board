@@ -1,5 +1,3 @@
-import { ONBOARDING_TEXTS } from "./constants";
-
 /**
  * オンボーディング機能で使用するユーティリティ関数（期日前投票専用）
  */
@@ -10,14 +8,9 @@ import { ONBOARDING_TEXTS } from "./constants";
 export const sanitizeHtml = (html: string): string => {
   return html
     .replace(/\n/g, "<br>")
-    .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, ""); // wbrとbr以外のタグを除去
-};
-
-/**
- * オンボーディングテキストを取得
- */
-export const getOnboardingText = (dialogueId: number): string => {
-  return ONBOARDING_TEXTS[dialogueId as keyof typeof ONBOARDING_TEXTS] || "";
+    .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, "") // wbrとbr以外のタグを除去
+    .replace(/javascript:/gi, "") // JavaScriptスキームを除去
+    .replace(/on\w+\s*=/gi, ""); // イベントハンドラ属性を除去
 };
 
 /**
