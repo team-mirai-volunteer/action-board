@@ -43,6 +43,41 @@ describe("poster_boards テーブルのRLSテスト", () => {
     }
   });
 
+  describe("NULL coordinates handling", () => {
+    it("should handle boards with NULL coordinates", async () => {
+      let testNullBoardId: string | null = null;
+      
+      try {
+        const { data, error } = await adminClient
+          .from("poster_boards")
+          .insert({
+            name: "Test Board No Coords",
+            lat: null as any,
+            long: null as any,
+            prefecture: "東京都",
+            status: "not_yet",
+            number: "TEST-NULL",
+            address: "テストアドレス（座標なし）",
+            city: "テスト市",
+          })
+          .select()
+          .single();
+
+        expect(error).toBeNull();
+        expect(data).not.toBeNull();
+        if (data) {
+          testNullBoardId = data.id;
+          expect(data.lat).toBeNull();
+          expect(data.long).toBeNull();
+        }
+      } finally {
+        if (testNullBoardId) {
+          await adminClient.from("poster_boards").delete().eq("id", testNullBoardId);
+        }
+      }
+    });
+  });
+
   describe("SELECT操作", () => {
     it("匿名ユーザーはボードを閲覧できる", async () => {
       const anonClient = getAnonClient();

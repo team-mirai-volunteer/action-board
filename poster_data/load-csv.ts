@@ -158,7 +158,7 @@ async function main() {
 
         await pipeline(createReadStream(file), db.query(copyQuery));
 
-        // Insert with type casting, skipping rows with invalid lat/long
+        // Insert with type casting, allowing NULL lat/long values
         const insertResult = await db.query(
           `
           INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
@@ -168,26 +168,20 @@ async function main() {
             number,
             name,
             address,
-            lat::decimal(10, 8),
-            long::decimal(11, 8),
+            CASE 
+              WHEN lat IN ('None', '') OR lat IS NULL THEN NULL
+              ELSE lat::decimal(10, 8)
+            END,
+            CASE 
+              WHEN long IN ('None', '') OR long IS NULL THEN NULL
+              ELSE long::decimal(11, 8)
+            END,
             row_num,
             $1
           FROM ${tempTable}
-          WHERE lat NOT IN ('None', '') 
-            AND long NOT IN ('None', '')
-            AND lat IS NOT NULL 
-            AND long IS NOT NULL
         `,
           [fileName],
         );
-
-        // Check if any rows were skipped
-        const totalRows = await db.query(`SELECT COUNT(*) FROM ${tempTable}`);
-        const skipped =
-          Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
-        if (skipped > 0) {
-          console.log(`  ⚠️  Skipped ${skipped} rows with invalid coordinates`);
-        }
 
         await db.query(`DROP TABLE ${tempTable}`);
         console.log(`✓ Loaded ${file} (7 columns)`);
@@ -237,30 +231,20 @@ async function main() {
                 number,
                 name,
                 address,
-                lat::decimal(10, 8),
-                long::decimal(11, 8),
+                CASE 
+                  WHEN lat IN ('None', '') OR lat IS NULL THEN NULL
+                  ELSE lat::decimal(10, 8)
+                END,
+                CASE 
+                  WHEN long IN ('None', '') OR long IS NULL THEN NULL
+                  ELSE long::decimal(11, 8)
+                END,
                 row_num,
                 $1
               FROM ${tempTable}
-              WHERE lat NOT IN ('None', '') 
-                AND long NOT IN ('None', '')
-                AND lat IS NOT NULL 
-                AND long IS NOT NULL
             `,
               [fileName],
             );
-
-            // Check if any rows were skipped
-            const totalRows = await db.query(
-              `SELECT COUNT(*) FROM ${tempTable}`,
-            );
-            const skipped =
-              Number(totalRows.rows[0].count) - (insertResult.rowCount || 0);
-            if (skipped > 0) {
-              console.log(
-                `  ⚠️  Skipped ${skipped} rows with invalid coordinates`,
-              );
-            }
 
             await db.query(`DROP TABLE ${tempTable}`);
             console.log(`✓ Loaded ${file} (8 columns, note ignored)`);

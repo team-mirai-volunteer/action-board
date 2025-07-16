@@ -67,6 +67,8 @@ async function getFallbackStats(): Promise<{
     const { data, error } = await supabase
       .from("poster_boards")
       .select("prefecture, status")
+      .not("lat", "is", null)
+      .not("long", "is", null)
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
