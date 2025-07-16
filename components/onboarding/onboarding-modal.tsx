@@ -39,7 +39,6 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogPortal>
-        <DialogOverlay />
         <DialogPrimitive.Content
           className={cn(
             "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200",
@@ -71,24 +70,30 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
               <BackgroundImage isWelcome={currentDialogueData.isWelcome} />
 
               {/* ウェルカム画面 */}
-              {currentDialogueData.isWelcome && <OnboardingWelcome />}
+              <div className="relative z-10">
+                {currentDialogueData.isWelcome && <OnboardingWelcome />}
+              </div>
 
               {/* キャラクターとコメント */}
-              <OnboardingCharacter
-                currentDialogue={currentDialogue}
-                isAnimating={isAnimating}
-                onNext={handleNext}
-                onScrollDown={handleScrollDown}
-              />
+              <div className="relative z-10">
+                <OnboardingCharacter
+                  currentDialogue={currentDialogue}
+                  isAnimating={isAnimating}
+                  onNext={handleNext}
+                  onScrollDown={handleScrollDown}
+                />
+              </div>
 
               {/* ミッション詳細表示 */}
-              {currentDialogueData?.showMissionDetails && (
-                <OnboardingMissionDetails
-                  mission={mockMission}
-                  isSubmissionCompleted={isSubmissionCompleted}
-                  onSubmit={handleSubmit}
-                />
-              )}
+              <div className="relative z-10">
+                {currentDialogueData?.showMissionDetails && (
+                  <OnboardingMissionDetails
+                    mission={mockMission}
+                    isSubmissionCompleted={isSubmissionCompleted}
+                    onSubmit={handleSubmit}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </DialogPrimitive.Content>
@@ -115,7 +120,7 @@ const CloseButton: React.FC<{ onClose: () => void }> = ({ onClose }) => (
  * 背景画像コンポーネント
  */
 const BackgroundImage: React.FC<{ isWelcome: boolean }> = ({ isWelcome }) => (
-  <div className="relative w-full h-full">
+  <div className="absolute inset-0 w-full h-full z-0">
     <Image
       src={
         isWelcome
@@ -125,6 +130,7 @@ const BackgroundImage: React.FC<{ isWelcome: boolean }> = ({ isWelcome }) => (
       alt="オンボーディング背景"
       fill
       className="object-fill"
+      priority
     />
   </div>
 );
