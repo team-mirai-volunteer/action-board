@@ -1,6 +1,5 @@
 "use client";
 
-import OnboardingMissionCard from "@/components/onboarding/onboarding-mission-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
@@ -29,55 +28,22 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   const [isSubmissionCompleted, setIsSubmissionCompleted] = useState(false);
   const [artifactText, setArtifactText] = useState("");
   const [artifactDescription, setArtifactDescription] = useState("");
-  const [missionType, setMissionType] = useState<
-    "join-street-speech" | "link-official-site" | "early-vote"
-  >("join-street-speech");
+  const [missionType] = useState<"early-vote">("early-vote");
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // HTMLコンテンツをサニタイズする関数（wbrタグのみ許可）
+  const sanitizeHtml = (html: string) => {
+    return html
+      .replace(/\n/g, "<br>")
+      .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, ""); // wbrとbr以外のタグを除去
+  };
 
   // ミッションのモックデータ
   const mockMissions = {
-    "join-street-speech": {
-      id: 1,
-      title: "街頭演説に参加しよう",
-      description:
-        "「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。",
-      content:
-        '<p>「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。</p><p><a href="https://team-mirai.notion.site/225f6f56bae180ceb7f4db761f78d2d2" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a></p>',
-      icon_url:
-        "/img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg",
-      difficulty: 2,
-      max_achievement_count: null,
-      event_date: null,
-      category: "support-activities",
-      slug: "join-street-speech",
-      artifact_type: "TEXT",
-      required_artifact_type: "TEXT",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    "link-official-site": {
-      id: 2,
-      title: "チームみらい公式サイトを見てみよう",
-      description:
-        "チームみらいの活動や政策について、もっと詳しく知りたいなら、まずは公式サイトをチェック！",
-      content:
-        "<p>チームみらいの活動や政策について、もっと詳しく知りたいなら、まずは公式サイトをチェック！</p><p>チームみらいのビジョンや価値観、政策の詳細がわかります。</p>",
-      icon_url:
-        "/img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg",
-      difficulty: 1,
-      max_achievement_count: 1,
-      event_date: null,
-      category: "learn-about-teammirai",
-      slug: "link-official-site",
-      artifact_type: "LINK_ACCESS",
-      required_artifact_type: "LINK_ACCESS",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
     "early-vote": {
-      id: 3,
+      id: "3",
       title: "期日前投票をしよう！",
-      description: "予定が合わない方も安心！",
+      artifact_label: null,
       content:
         "<p>予定が合わない方も安心！</p><p>みんなで投票率アップを目指そう！</p>",
       icon_url:
@@ -85,50 +51,31 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
       difficulty: 5,
       max_achievement_count: 1,
       event_date: null,
-      category: "vote-in-various-ways",
-      slug: "early-vote",
-      artifact_type: "NONE",
       required_artifact_type: "NONE",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      is_featured: false,
+      is_hidden: false,
+      ogp_image_url: null,
     },
   };
 
   const mockArtifactLabels = {
-    "join-street-speech": "参加した街頭演説の場所と日付",
-    "link-official-site": "",
     "early-vote": "",
-  };
-
-  const mockMainLinks = {
-    "join-street-speech": null,
-    "link-official-site": {
-      label: "チームみらい公式サイトを見る",
-      link: "https://team-mir.ai",
-    },
-    "early-vote": null,
   };
 
   const mockMission = mockMissions[missionType];
   const mockArtifactLabel = mockArtifactLabels[missionType];
-  const mockMainLink = mockMainLinks[missionType];
 
   // ミッションタイプごとのオンボーディングテキストの定義
   const missionOnboardingTexts = {
-    "join-street-speech": {
-      5: "ではさっそく、初めてのアクションじゃ。\nまずは、街頭演説に参加してチームみらいを盛り上げてみるとええ。",
-      6: "「街頭演説に参加しよう」\n\nこのミッションでは、チームみらいの街頭演説に参加して、声援を送ることができるぞい。\n参加した場所と日付を報告するだけでミッションクリアじゃ！",
-      8: "お次は詳細画面じゃ。\n\nここでは、ミッションの内容を確認して、下のボタンから挑戦できるぞい。\n参加した場所と日付を入力するだけでクリアできるから、気軽にタップしてみるとええ！",
-    },
-    "link-official-site": {
-      5: "ではさっそく、初めてのアクションじゃ。\nまずは、チームみらいの公式サイトを見て、理念や政策を学んでみるとええ。",
-      6: "「チームみらい公式サイトを見てみよう」\n\nこのミッションでは、チームみらいの公式サイトにアクセスして、活動内容や政策を学ぶことができるぞい。\nボタンをクリックするだけで自動的にミッションクリアじゃ！",
-      8: "お次は詳細画面じゃ。\n\nここでは、ミッションの内容を確認して、下のボタンから挑戦できるぞい。\nボタンをクリックして公式サイトにアクセスするだけでクリアできるから、気軽にタップしてみるとええ！",
-    },
     "early-vote": {
-      5: "ではさっそく、初めてのアクションじゃ。\nまずは、期日前投票について学んで、選挙参加の準備をしてみるとええ。",
-      6: "「期日前投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッションクリアじゃ！",
-      8: "お次は、完了の記録じゃ！",
+      2: "ここは、アクション<wbr>ボード。チームみらいを応援する者たちが集いし場所。\n\nわしは、このアクション<wbr>ボードの主、アクション仙人じゃ。",
+      3: "このアプリではの、チラシ配り、イベント手伝い、ポスター貼り… あらゆる「応援のカタチ」を、気軽に、楽しく、こなせるようになっとる。",
+      4: "何をすればええか分からん？心配いらん。ちょいとした気軽なアクションも揃えとるから、初めてでも心配いらんぞい。",
+      5: "ではさっそく、初めてのアクションじゃ。\nまずは、期日前<wbr>投票について学んで、選挙参加の準備をしてみるとええ。",
+      6: "「期日前<wbr>投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッション<wbr>クリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
+      7: "うむ、上出来じゃ！\n\n実際のミッションでは、提出すると経験値がもらえて、レベルアップもできるぞい。\nさあ、アクションボードでみらいを切り開くのじゃ！",
     },
   } as const;
 
@@ -148,15 +95,20 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
       return customTexts[dialogue.id as keyof typeof customTexts];
     }
 
-    return dialogue.text;
+    // デフォルトテキストは使用しない
+    return "";
   };
 
   // 画面遷移時にスクロール位置をトップにリセット
   useEffect(() => {
-    if (contentRef.current) {
+    // ミッション詳細画面以外、またはアニメーション完了後にスクロールリセット
+    if (
+      contentRef.current &&
+      !onboardingDialogues[currentDialogue]?.showMissionDetails
+    ) {
       contentRef.current.scrollTop = 0;
     }
-  });
+  }, [currentDialogue]);
 
   const handleNext = () => {
     if (currentDialogue < onboardingDialogues.length - 1 && !isAnimating) {
@@ -211,31 +163,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
     // 提出完了後、少し待ってから次へ進む
     setTimeout(() => {
       handleNext();
-    }, 1000);
-  };
-
-  const handleLinkClick = async () => {
-    // オンボーディング用のモック実装（別タブを開くがフォーカスは維持）
-    return new Promise<{ success: boolean; error?: string }>((resolve) => {
-      setTimeout(() => {
-        // 別タブで公式サイトを開くがフォーカスを移さない
-        const newTab = window.open(
-          "https://team-mir.ai",
-          "_blank",
-          "noopener,noreferrer",
-        );
-        if (newTab) {
-          // 元のタブ（オンボーディング）にフォーカスを戻す
-          window.focus();
-        }
-        setIsSubmissionCompleted(true);
-        resolve({ success: true });
-        // 少し待ってから次へ進む
-        setTimeout(() => {
-          handleNext();
-        }, 1000);
-      }, 500);
-    });
+    }, 300);
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -276,40 +204,12 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
               <X className="h-8 w-8" />
             </button>
 
-            {/* デバッグ用ミッション切り替えボタン */}
-            <div className="absolute top-4 left-4 z-10">
-              <Button
-                type="button"
-                onClick={() => {
-                  const nextMission =
-                    missionType === "join-street-speech"
-                      ? "link-official-site"
-                      : missionType === "link-official-site"
-                        ? "early-vote"
-                        : "join-street-speech";
-                  setMissionType(nextMission);
-                  setArtifactText("");
-                  setArtifactDescription("");
-                  setIsSubmissionCompleted(false);
-                }}
-                className="text-xs bg-black/20 hover:bg-black/30 text-white border border-white/20"
-                size="sm"
-              >
-                {missionType === "join-street-speech"
-                  ? "→公式サイト"
-                  : missionType === "link-official-site"
-                    ? "→期日前投票"
-                    : "→街頭演説"}
-              </Button>
-            </div>
-
             {/* コンテンツエリア - 背景画像の上にテキストとボタンdivを配置 */}
             <div
               ref={contentRef}
               className="relative flex-1 overflow-hidden"
               style={{
-                ...(onboardingDialogues[currentDialogue]?.showMissionCard ||
-                onboardingDialogues[currentDialogue]?.showMissionDetails
+                ...(onboardingDialogues[currentDialogue]?.showMissionDetails
                   ? { overflowY: "auto" }
                   : {}),
               }}
@@ -353,17 +253,23 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
 
               {/* テキストを配置するdiv（吹き出しエリア内に配置） */}
               {!onboardingDialogues[currentDialogue].isWelcome && (
-                <div className="absolute top-20 max-[375px]:top-12 min-[376px]:max-[639px]:top-24 sm:top-16 left-0 right-0 px-8">
+                <div className="absolute top-20 max-[375px]:top-8 min-[376px]:max-[639px]:top-24 sm:top-16 left-0 right-0 px-8">
                   <div
                     className={`transition-opacity duration-300 ease-in-out ${
                       isAnimating ? "opacity-0" : "opacity-100"
                     }`}
                   >
-                    <p className="text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium px-4 py-2 whitespace-pre-line">
-                      {getDynamicOnboardingText(
-                        onboardingDialogues[currentDialogue],
-                      )}
-                    </p>
+                    <p
+                      className="text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium px-4 py-2"
+                      // biome-ignore lint/security/noDangerouslySetInnerHtml: wbrタグのサポートのため、サニタイズ済みHTMLを使用
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHtml(
+                          getDynamicOnboardingText(
+                            onboardingDialogues[currentDialogue],
+                          ),
+                        ),
+                      }}
+                    />
                   </div>
                 </div>
               )}
@@ -390,33 +296,29 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                     </div>
                   )}
 
-                  {/* "次へ"ボタン（キャラクター基準の下） - ミッションカード・詳細画面では非表示 */}
-                  {!onboardingDialogues[currentDialogue]?.showMissionCard &&
-                    !onboardingDialogues[currentDialogue]
-                      ?.showMissionDetails && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 mt-8 sm:mt-10 md:mt-12">
-                        <motion.div whileTap={{ scale: 0.95 }}>
-                          <Button
-                            onClick={handleNext}
-                            disabled={isAnimating}
-                            className="bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[40vw] sm:w-24 md:w-40 lg:w-44"
-                          >
-                            {currentDialogue === 0 &&
-                            onboardingDialogues[currentDialogue].isWelcome
-                              ? "はじめる"
-                              : currentDialogue ===
-                                  onboardingDialogues.length - 1
-                                ? "始める"
-                                : "次へ"}
-                          </Button>
-                        </motion.div>
-                      </div>
-                    )}
+                  {/* "次へ"ボタン（キャラクター基準の下） - 詳細画面では非表示 */}
+                  {!onboardingDialogues[currentDialogue]
+                    ?.showMissionDetails && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 mt-8 sm:mt-10 md:mt-12">
+                      <motion.div whileTap={{ scale: 0.95 }}>
+                        <Button
+                          onClick={handleNext}
+                          disabled={isAnimating}
+                          className="bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[40vw] sm:w-24 md:w-40 lg:w-44"
+                        >
+                          {currentDialogue === 0 &&
+                          onboardingDialogues[currentDialogue].isWelcome
+                            ? "はじめる"
+                            : currentDialogue === onboardingDialogues.length - 1
+                              ? "始める"
+                              : "次へ"}
+                        </Button>
+                      </motion.div>
+                    </div>
+                  )}
 
-                  {/* スクロール矢印（ミッションカード・詳細表示時のキャラクター下） */}
-                  {(onboardingDialogues[currentDialogue]?.showMissionCard ||
-                    onboardingDialogues[currentDialogue]
-                      ?.showMissionDetails) && (
+                  {/* スクロール矢印（詳細表示時のキャラクター下） */}
+                  {onboardingDialogues[currentDialogue]?.showMissionDetails && (
                     <button
                       type="button"
                       onClick={handleScrollDown}
@@ -434,19 +336,6 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                         <ChevronDown className="h-5 w-5" />
                       </motion.div>
                     </button>
-                  )}
-
-                  {/* ミッションカード表示（キャラクターの下） */}
-                  {onboardingDialogues[currentDialogue]?.showMissionCard && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-16 w-[85vw] max-w-md pb-32">
-                      <OnboardingMissionCard
-                        mission={mockMission}
-                        achieved={false}
-                        achievementsCount={0}
-                        userAchievementCount={0}
-                        onCardClick={handleNext}
-                      />
-                    </div>
                   )}
 
                   {/* ミッション詳細表示（キャラクターの下） */}
@@ -588,44 +477,6 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
                               </CardContent>
                             </Card>
                           )}
-
-                          {/* LINK_ACCESSタイプの場合 */}
-                          {mockMission.required_artifact_type ===
-                            "LINK_ACCESS" &&
-                            mockMainLink && (
-                              <Card className="mt-6">
-                                <CardHeader>
-                                  <CardTitle className="text-lg text-center">
-                                    ミッションにチャレンジしよう
-                                  </CardTitle>
-                                  <p className="text-sm text-muted-foreground">
-                                    下のボタンをクリックして公式サイトを開くと、自動的にミッションが完了します！
-                                  </p>
-                                </CardHeader>
-                                <CardContent>
-                                  <Button
-                                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg"
-                                    onClick={async () => {
-                                      await handleLinkClick();
-                                    }}
-                                    disabled={isSubmissionCompleted}
-                                  >
-                                    {isSubmissionCompleted ? (
-                                      "ミッション完了！"
-                                    ) : (
-                                      <>{mockMainLink.label}</>
-                                    )}
-                                  </Button>
-                                  {isSubmissionCompleted && (
-                                    <div className="mt-4 text-center">
-                                      <p className="text-green-600 font-medium">
-                                        ミッション完了！
-                                      </p>
-                                    </div>
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
                         </CardContent>
                       </Card>
                     </div>
