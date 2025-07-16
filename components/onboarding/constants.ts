@@ -27,13 +27,13 @@ export const MOCK_MISSION = {
   difficulty: 5,
   max_achievement_count: 1,
   event_date: null,
-  required_artifact_type: "NONE",
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
+  required_artifact_type: "NONE" as const,
+  created_at: "2025-01-01T00:00:00.000Z",
+  updated_at: "2025-01-01T00:00:00.000Z",
   is_featured: false,
   is_hidden: false,
   ogp_image_url: null,
-} as const;
+};
 
 // ボタンテキスト
 export const BUTTON_TEXT = {
