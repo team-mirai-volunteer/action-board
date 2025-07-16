@@ -11,7 +11,7 @@ export function calculateProgressRate(
   registeredCount: number,
 ): number {
   if (registeredCount === 0) return 0;
-  return Math.round((completedCount / registeredCount) * 100);
+  return Math.floor((completedCount / registeredCount) * 100);
 }
 
 /**

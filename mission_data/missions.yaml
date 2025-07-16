@@ -86,6 +86,18 @@ missions:
     is_hidden: false
     artifact_label: シェアした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
+  - slug: tiktok-clip-final-push
+    title: 1日1アクション📣最後の拡散チャンス！かんたん動画投稿
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
+    content: <b>最終週のいまだからこそ、あなたの1投稿が効く！</b><br>流れはできてる。あとは、走りきるだけ。<br>TikTokで“好きなシーン”を届けよう。<br>🔗<a href="https://team-mirai.notion.site/1-1-TikTok-206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">切り抜きかんたんガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ2点セットをコピーする</a>
+    difficulty: 4
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: true
+    featured_importance: 1000
+    is_hidden: false
+    artifact_label: ショート動画のURL（TikTok）
+    ogp_image_url: null
   - slug: youtube-clip
     title: 動画を切り抜いてショート動画を作ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
@@ -96,7 +108,7 @@ missions:
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 10
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
@@ -589,7 +601,7 @@ missions:
     required_artifact_type: NONE
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: youtube-comment
@@ -635,4 +647,27 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: リアクションしたTikTok動画のURL
+    ogp_image_url: null
+  - slug: join-719-mic-osame
+    title: 7/19(土)のマイク納めに参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
+    content: |-
+      7/19(土)に「マイク納め」イベントを開催します！ ✨🔥
+      多くの人に集まっていただきメディアに注目新党として取り上げてもらうことで、今後のメディア露出の時間や頻度が大きく変わる、とても重要なイベントです。
+      ぜひ皆さまご参加をお願いいたします！！
+
+      ■7/19(土) マイク納め
+      【埼玉】17:30- 浦和駅東口（武藤かず子）
+      【東京】19:00- 東京駅丸の内口前（安野たかひろ・みねしま侑也）
+      【長野】19:00- 小諸駅そば相生坂公園（山田ゆうじ）
+      【大阪】19:00- 梅田HEP FIVE前（平りさこ）
+      【神奈川】19:00- 桜木町駅前広場（河合みちお）
+      【宮城】19:30- 仙台三越前（角野なすか）
+    difficulty: 5
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: true
+    featured_importance: 110
+    is_hidden: false
+    artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null

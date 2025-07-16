@@ -5,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { EXTERNAL_LINKS } from "@/lib/links";
 import type { DonationData } from "@/lib/types/metrics";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
@@ -141,7 +142,7 @@ export function DonationMetric({
       {/* 寄付リンク */}
       <div className="mt-4 text-center">
         <a
-          href="https://team-mir.ai/support/donation"
+          href={EXTERNAL_LINKS.team_mirai_donation}
           className="inline-flex items-center gap-1 text-teal-600 hover:text-teal-700 text-sm transition-colors"
           target="_blank"
           rel="noopener noreferrer"
