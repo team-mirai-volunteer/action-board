@@ -80,7 +80,13 @@ export async function GET(
     if (type === "complete") {
       baseImageFileName = "public/img/ogp_mission_complete_base.png";
     } else {
-      baseImageFileName = "public/img/ogp_mission_base.png";
+      // 投票関連ミッションの場合は専用の画像を使用
+      const votingMissionSlugs = ["early-vote", "absent-vote", "overseas-vote"];
+      if (votingMissionSlugs.includes(pageData?.mission.slug || "")) {
+        baseImageFileName = "public/img/ogp_mission_vote.png";
+      } else {
+        baseImageFileName = "public/img/ogp_mission_base.png";
+      }
     }
     const baseImagePath = join(process.cwd(), baseImageFileName);
     const baseImageBuffer = await readFile(baseImagePath);
