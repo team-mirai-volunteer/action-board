@@ -39,9 +39,10 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogPortal>
+        <DialogOverlay className="z-[100]" />
         <DialogPrimitive.Content
           className={cn(
-            "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200",
+            "fixed inset-4 md:inset-6 lg:inset-12 z-[110] duration-200",
             "lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -59,11 +60,11 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
             {/* コンテンツエリア */}
             <div
               ref={contentRef}
-              className="relative flex-1 overflow-hidden"
+              className="relative flex-1 overflow-y-auto"
               style={{
-                ...(currentDialogueData?.showMissionDetails
-                  ? { overflowY: "auto" }
-                  : {}),
+                height: currentDialogueData?.showMissionDetails
+                  ? "100%"
+                  : "auto",
               }}
             >
               {/* 背景画像 */}
@@ -120,17 +121,25 @@ const CloseButton: React.FC<{ onClose: () => void }> = ({ onClose }) => (
  * 背景画像コンポーネント
  */
 const BackgroundImage: React.FC<{ isWelcome: boolean }> = ({ isWelcome }) => (
-  <div className="absolute inset-0 w-full h-full z-0">
+  <div className="absolute inset-0 z-0">
+    {/* 両方の画像を事前読み込みして高速切り替え */}
     <Image
-      src={
-        isWelcome
-          ? "/img/onboarding/background-only.svg"
-          : "/img/onboarding/background.svg"
-      }
+      src="/img/onboarding/background-only.svg"
       alt="オンボーディング背景"
       fill
-      className="object-fill"
+      className={`object-fill transition-opacity duration-200 ${isWelcome ? "opacity-100" : "opacity-0"}`}
       priority
+      loading="eager"
+      unoptimized
+    />
+    <Image
+      src="/img/onboarding/background.svg"
+      alt="オンボーディング背景"
+      fill
+      className={`object-fill transition-opacity duration-200 ${!isWelcome ? "opacity-100" : "opacity-0"}`}
+      priority
+      loading="eager"
+      unoptimized
     />
   </div>
 );

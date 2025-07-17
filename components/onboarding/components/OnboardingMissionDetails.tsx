@@ -20,7 +20,7 @@ export const OnboardingMissionDetails: React.FC<
   OnboardingMissionDetailsProps
 > = ({ mission, isSubmissionCompleted, onSubmit }) => {
   return (
-    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-16 w-[90vw] max-w-3xl z-20 pb-32">
+    <div className="mt-[80vh] w-[90vw] max-w-lg mx-auto z-20 pb-32">
       <Card data-mission-detail-card>
         <CardHeader>
           <div className="flex items-start gap-4">

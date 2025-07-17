@@ -47,29 +47,33 @@ export const useOnboardingState = (
   };
 
   const handleScrollDown = () => {
+    console.log("🔽 handleScrollDown called");
+    console.log("📍 currentDialogue:", currentDialogue);
+    console.log("📍 contentRef.current exists:", !!contentRef.current);
+
     if (!contentRef.current) return;
 
     // ミッション詳細画面の場合はカードのボトムが見える位置までスクロール
     if (onboardingDialogues[currentDialogue]?.showMissionDetails) {
+      console.log("📍 Mission details screen detected");
       const missionDetailCard = contentRef.current.querySelector(
         "[data-mission-detail-card]",
       );
-      if (missionDetailCard) {
-        const scrollAmount = calculateScrollPosition(
-          contentRef.current,
-          missionDetailCard as HTMLElement,
-        );
+      console.log("📍 Mission detail card found:", !!missionDetailCard);
 
-        if (scrollAmount > 0) {
-          contentRef.current.scrollTo({
-            top: contentRef.current.scrollTop + scrollAmount,
-            behavior: "smooth",
-          });
-        }
+      if (missionDetailCard) {
+        // ミッション詳細まで直接スクロール（60vh分）
+        console.log("📍 Scrolling to mission details");
+        contentRef.current.scrollTo({
+          top: window.innerHeight * 0.6, // 0.6画面分下にスクロール
+          behavior: "smooth",
+        });
       }
     } else {
+      console.log("📍 Default scroll case");
       // それ以外の場合は300px下にスクロール
       const scrollTarget = calculateDefaultScrollPosition(contentRef.current);
+      console.log("📍 Default scroll target:", scrollTarget);
       contentRef.current.scrollTo({
         top: scrollTarget,
         behavior: "smooth",
