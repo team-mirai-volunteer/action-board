@@ -1,4 +1,4 @@
-import { EXTERNAL_LINKS } from "@/lib/constants";
+import { EXTERNAL_LINKS } from "@/lib/links";
 import clsx from "clsx";
 import { CheckCircle, Info, XCircle } from "lucide-react";
 
@@ -19,7 +19,7 @@ export type Message =
 const getMessageContent = (type: MessageType) => {
   const faqLink = (
     <a
-      href={EXTERNAL_LINKS.FAQ}
+      href={EXTERNAL_LINKS.faq}
       target="_blank"
       rel="noopener noreferrer"
       className="text-teal-600 hover:text-teal-700 underline"
