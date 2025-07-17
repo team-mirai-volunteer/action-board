@@ -80,11 +80,6 @@ export async function GET(
 
   let baseImageBase64 = "";
 
-  // デバッグ用ログ
-  console.log(
-    `Mission slug: ${pageData?.mission.slug}, isVotingMission: ${isVotingMission}, type: ${type}`,
-  );
-
   try {
     // ベース画像を読み込み
     let baseImageFileName = "";
