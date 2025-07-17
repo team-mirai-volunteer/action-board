@@ -40,6 +40,7 @@ export const BUTTON_TEXT = {
   START: "説明を聞く",
   NEXT: "次へ",
   RECORD: "記録する",
+  MISSION_COMPLETE: "完了済み",
   FINISH: "ミッションを探す 🔍",
 } as const;
 
