@@ -221,19 +221,19 @@ export async function getMissionPageData(
   if (userId) {
     const { achievements, count } = await getUserAchievements(
       userId,
-      missionId,
+      mission.id,
     );
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, missionId);
+    submissions = await getSubmissionHistory(userId, mission.id);
     referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(missionId);
+  const totalAchievementCount = await getTotalAchievementCount(mission.id);
 
   // メインリンクの取得
-  const mainLink = await getMissionMainLink(missionId);
+  const mainLink = await getMissionMainLink(mission.id);
 
   return {
     mission,
