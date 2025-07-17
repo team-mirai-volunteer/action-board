@@ -9,15 +9,27 @@ import type {
 } from "./types";
 
 export async function getMissionData(
-  missionId: string,
+  missionIdOrSlug: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
 
-  const { data: missionData, error } = await supabase
+  const isUUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      missionIdOrSlug,
+    );
+
+  let query = supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("id", missionId)
     .single();
+
+  if (isUUID) {
+    query = query.eq("id", missionIdOrSlug);
+  } else {
+    query = query.eq("slug", missionIdOrSlug);
+  }
+
+  const { data: missionData, error } = await query;
 
   if (error) {
     console.error("Mission fetch error:", error);
@@ -205,12 +217,14 @@ export async function getMissionMainLink(
 }
 
 export async function getMissionPageData(
-  missionId: string,
+  missionIdOrSlug: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionId);
+  const mission = await getMissionData(missionIdOrSlug);
 
   if (!mission) return null;
+
+  const missionId = mission.id;
 
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
