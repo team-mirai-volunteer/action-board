@@ -7,7 +7,7 @@ const ServiceStopNotification = () => {
       <img
         src="/img/close_image_a1.png"
         alt="サービス停止"
-        className="max-h-full max-w-full object-contain"
+        className="h-screen w-auto object-contain"
       />
       <Confetti />
     </div>

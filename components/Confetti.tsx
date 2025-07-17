@@ -10,10 +10,10 @@ const COLORS = [
 ] as const;
 
 export default function Confetti() {
-  // 1 回だけ 80 個の紙吹雪を作る
+  // 1 回だけ 50 個の紙吹雪を作る
   const items = React.useMemo(
     () =>
-      Array.from({ length: 80 }).map(() => {
+      Array.from({ length: 60 }).map(() => {
         const size = Math.random() * 8 + 4; // 4–12 px
         const left = Math.random() * 100; // 横位置 %
         const delay = Math.random() * 5; // 開始ディレイ s
