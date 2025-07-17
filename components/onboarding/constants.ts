@@ -37,13 +37,10 @@ export const MOCK_MISSION = {
 
 // ボタンテキスト
 export const BUTTON_TEXT = {
-  START: "はじめる",
+  START: "説明を聞く",
   NEXT: "次へ",
-  BEGIN: "始める",
-  CHALLENGE: "チャレンジする",
-  MISSION_COMPLETE: "ミッション完了！",
   RECORD: "記録する",
-  SUBMISSION_COMPLETE: "提出完了！",
+  FINISH: "ミッションを探す 🔍",
 } as const;
 
 // スクロールテキスト
@@ -62,7 +59,7 @@ export const STYLE_CLASSES = {
   CHARACTER_COMMENT:
     "text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium px-4 py-2",
   BUTTON_PRIMARY:
-    "bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[40vw] sm:w-24 md:w-40 lg:w-44",
+    "bg-white text-gray-800 hover:bg-white/90 text-base py-3 rounded-full shadow-lg font-medium w-[50vw] sm:w-32 md:w-48 lg:w-52",
   BUTTON_SUBMIT:
     "w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed",
 } as const;

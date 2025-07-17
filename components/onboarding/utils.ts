@@ -23,6 +23,8 @@ export const isFinalScreen = (
   return currentDialogue === totalDialogues - 1;
 };
 
+import { BUTTON_TEXT } from "./constants";
+
 /**
  * ボタンテキストを取得
  */
@@ -32,12 +34,12 @@ export const getButtonText = (
   isFinal: boolean,
 ): string => {
   if (currentDialogue === 0 && isWelcome) {
-    return "はじめる";
+    return BUTTON_TEXT.START;
   }
   if (isFinal) {
-    return "始める";
+    return BUTTON_TEXT.FINISH;
   }
-  return "次へ";
+  return BUTTON_TEXT.NEXT;
 };
 
 /**

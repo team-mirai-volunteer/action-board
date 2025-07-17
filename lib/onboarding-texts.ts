@@ -14,7 +14,7 @@ export const onboardingDialogues: OnboardingDialogue[] = [
   },
   {
     id: 2,
-    text: "ここは、アクション<wbr>ボード。チームみらいを応援する者たちが集いし場所。\n\nわしは、このアクション<wbr>ボードの主、アクション仙人じゃ。",
+    text: "ここは、アクションボード。\nチームみらいを応援する者たちが集いし場所。\n\nわしは、このアクションボードの主、アクション仙人じゃ。",
     isWelcome: false,
   },
   {
@@ -34,7 +34,7 @@ export const onboardingDialogues: OnboardingDialogue[] = [
   },
   {
     id: 6,
-    text: "「期日前<wbr>投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッション<wbr>クリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
+    text: "「期日前投票をしよう！」\n\nこのミッションでは、ボタンを押すだけで自動的にミッションクリアじゃ！\n\n下のボタンから挑戦してみるとええ！",
     isWelcome: false,
     showMissionDetails: true,
   },

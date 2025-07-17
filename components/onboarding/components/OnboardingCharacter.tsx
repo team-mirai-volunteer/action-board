@@ -31,7 +31,7 @@ export const OnboardingCharacter: React.FC<OnboardingCharacterProps> = ({
     <>
       {/* テキストを配置するdiv（吹き出しエリア内に配置） */}
       {!isWelcome && (
-        <div className="absolute top-20 max-[375px]:top-8 min-[376px]:max-[639px]:top-24 sm:top-16 left-0 right-0 px-8">
+        <div className="absolute top-20 max-[375px]:top-8 min-[376px]:max-[639px]:top-24 sm:top-16 left-0 right-0 px-4">
           <div
             className={`transition-opacity duration-300 ease-in-out ${
               isAnimating ? "opacity-0" : "opacity-100"
