@@ -20,8 +20,7 @@ export async function getMissionData(
 
   let query = supabase
     .from("missions")
-    .select("*, required_artifact_type, max_achievement_count")
-    .single();
+    .select("*, required_artifact_type, max_achievement_count");
 
   if (isUUID) {
     query = query.eq("id", missionIdOrSlug);
@@ -29,7 +28,7 @@ export async function getMissionData(
     query = query.eq("slug", missionIdOrSlug);
   }
 
-  const { data: missionData, error } = await query;
+  const { data: missionData, error } = await query.single();
 
   if (error) {
     console.error("Mission fetch error:", error);
