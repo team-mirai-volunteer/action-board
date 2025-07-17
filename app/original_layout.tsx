@@ -46,7 +46,22 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main className="md:container md:mx-auto flex flex-col items-center">
+            <Suspense>
+              <ReferralCodeHandlerWrapper />
+            </Suspense>
+            {children}
+          </main>
+          <Footer />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
