@@ -9,24 +9,14 @@ import type {
 } from "./types";
 
 export async function getMissionData(
-  missionIdOrSlug: string,
+  missionId: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
 
-  const isUUID =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      missionIdOrSlug,
-    );
-
-  let query = supabase
+  const query = supabase
     .from("missions")
-    .select("*, required_artifact_type, max_achievement_count");
-
-  if (isUUID) {
-    query = query.eq("id", missionIdOrSlug);
-  } else {
-    query = query.eq("slug", missionIdOrSlug);
-  }
+    .select("*, required_artifact_type, max_achievement_count")
+    .eq("id", missionId);
 
   const { data: missionData, error } = await query.single();
 
@@ -216,14 +206,12 @@ export async function getMissionMainLink(
 }
 
 export async function getMissionPageData(
-  missionIdOrSlug: string,
+  missionId: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionIdOrSlug);
+  const mission = await getMissionData(missionId);
 
   if (!mission) return null;
-
-  const missionId = mission.id;
 
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
