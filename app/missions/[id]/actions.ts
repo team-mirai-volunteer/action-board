@@ -299,10 +299,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count を確認
+  // ミッション情報を取得して、max_achievement_count と required_artifact_type を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("max_achievement_count")
+    .select("max_achievement_count, required_artifact_type")
     .eq("id", validatedMissionId)
     .single();
 
@@ -714,18 +714,21 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
-  // ミッション達成時にXPを付与
-  const xpResult = await grantMissionCompletionXp(
-    authUser.id,
-    validatedMissionId,
-    achievement.id,
-  );
+  // ポスティングミッション以外の場合のみ、ミッション達成時にXPを付与
+  let xpResult = { success: true, xpGranted: 0, userLevel: undefined };
+  if (missionData?.required_artifact_type !== "POSTING") {
+    xpResult = await grantMissionCompletionXp(
+      authUser.id,
+      validatedMissionId,
+      achievement.id,
+    );
 
-  if (!xpResult.success) {
-    console.error("XP付与に失敗しました:", xpResult.error);
-    // XP付与の失敗はミッション達成の成功を妨げない
+    if (!xpResult.success) {
+      console.error("XP付与に失敗しました:", xpResult.error);
+      // XP付与の失敗はミッション達成の成功を妨げない
+    }
+    totalXpGranted += xpResult?.xpGranted ?? 0;
   }
-  totalXpGranted += xpResult?.xpGranted ?? 0;
   return {
     success: true,
     message: "ミッションを達成しました！",
