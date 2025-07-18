@@ -46,6 +46,7 @@ import {
   calculateProgressRate,
   getCompletedCount,
 } from "@/lib/utils/poster-progress";
+import { maskUsername } from "@/lib/utils/privacy";
 import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -655,7 +656,23 @@ export default function PrefecturePosterMapClient({
           {/* History Section */}
           {showHistory && (
             <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
-              <h3 className="font-semibold mb-2">更新履歴</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">更新履歴</h3>
+                {selectedBoard && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <span>ID: {selectedBoard.id}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0"
+                      onClick={() => copyToClipboard(selectedBoard.id)}
+                      title="IDをコピー"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               {loadingHistory ? (
                 <div className="text-sm text-muted-foreground">
                   読み込み中...
@@ -677,6 +694,11 @@ export default function PrefecturePosterMapClient({
                       </div>
                       <div className="text-muted-foreground text-xs">
                         {new Date(item.created_at).toLocaleString("ja-JP")}
+                        {item.user?.name && (
+                          <span className="ml-2">
+                            by {maskUsername(item.user.name)}
+                          </span>
+                        )}
                         {item.note && (
                           <span className="ml-2">「{item.note}」</span>
                         )}
