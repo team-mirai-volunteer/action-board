@@ -195,6 +195,35 @@ export async function getUserPostingCount(userId: string): Promise<number> {
   return typeof data === "number" ? data : 0;
 }
 
+export async function getUserPostingCountByMission(
+  userId: string,
+  missionId: string,
+): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "get_user_posting_count_by_mission",
+    {
+      target_user_id: userId,
+      target_mission_id: missionId,
+    },
+  );
+
+  if (error) {
+    console.error("Failed to fetch user posting count by mission:", {
+      userId,
+      missionId,
+      errorMessage: error.message,
+      errorCode: error.code,
+      errorDetails: error.details,
+      timestamp: new Date().toISOString(),
+    });
+    return 0;
+  }
+
+  // dataがnullやundefinedの場合は0を返す
+  return typeof data === "number" ? data : 0;
+}
+
 export async function getTopUsersPostingCount(
   userIds: string[],
 ): Promise<{ user_id: string; posting_count: number }[]> {
