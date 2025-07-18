@@ -46,6 +46,7 @@ import {
   calculateProgressRate,
   getCompletedCount,
 } from "@/lib/utils/poster-progress";
+import { maskUsername } from "@/lib/utils/privacy";
 import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -677,6 +678,11 @@ export default function PrefecturePosterMapClient({
                       </div>
                       <div className="text-muted-foreground text-xs">
                         {new Date(item.created_at).toLocaleString("ja-JP")}
+                        {item.user?.name && (
+                          <span className="ml-2">
+                            by {maskUsername(item.user.name)}
+                          </span>
+                        )}
                         {item.note && (
                           <span className="ml-2">「{item.note}」</span>
                         )}
