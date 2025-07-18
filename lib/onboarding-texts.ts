@@ -29,7 +29,7 @@ export const onboardingDialogues: OnboardingDialogue[] = [
   },
   {
     id: 5,
-    text: "ではさっそく、初めてのアクションじゃ。\nまずは、チームみらいの公式サイトを見て、わしらの活動について学んでみるとええ。",
+    text: "ではさっそく、初めてのミッションじゃぞ。\nまずは、チームみらいの公式サイトを見て、わしらの活動について学ぶんじゃ。",
     isWelcome: false,
   },
   {
