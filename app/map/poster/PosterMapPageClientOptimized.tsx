@@ -119,15 +119,15 @@ export default function PosterMapPageClientOptimized({
         <CardContent>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold">
-                {totalStats.actualTotal.toLocaleString()}
-              </div>
-              <div className="text-sm text-muted-foreground">総掲示板数</div>
               {totalStats.actualTotal > 0 && (
-                <div className="text-xs text-muted-foreground">
-                  (登録済: {totalStats.registeredTotal.toLocaleString()})
+                <div className="text-2xl font-bold">
+                  {totalStats.registeredTotal.toLocaleString()}
                 </div>
               )}
+              <div className="text-sm text-muted-foreground">総掲示板数</div>
+              <div className="text-xs text-muted-foreground">
+                (選管公表数: {totalStats.actualTotal.toLocaleString()})
+              </div>
             </div>
             <div>
               <div className="text-2xl font-bold text-green-600">
@@ -226,15 +226,12 @@ export default function PosterMapPageClientOptimized({
                       <div className="space-y-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">
-                            掲示板数:{" "}
-                            {actualTotalInPrefecture > 0
-                              ? actualTotalInPrefecture.toLocaleString()
-                              : registeredInPrefecture.toLocaleString()}
+                            掲示板数: {registeredInPrefecture.toLocaleString()}
                             {actualTotalInPrefecture > 0 && (
                               <span className="text-xs">
                                 {" "}
-                                (登録: {registeredInPrefecture.toLocaleString()}
-                                )
+                                (選管公表数:{" "}
+                                {actualTotalInPrefecture.toLocaleString()})
                               </span>
                             )}
                           </span>

@@ -446,13 +446,13 @@ export default function PrefecturePosterMapClient({
           {/* 主要統計 */}
           <div className="flex items-baseline gap-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{totalCount}</span>
-              <span className="text-xs text-muted-foreground">総数</span>
               {actualTotalCount > 0 && (
-                <span className="text-xs text-muted-foreground">
-                  (登録: {registeredCount})
-                </span>
+                <span className="text-2xl font-bold">{registeredCount}</span>
               )}
+              <span className="text-xs text-muted-foreground">総数</span>
+              <span className="text-xs text-muted-foreground">
+                (選管公表数: {totalCount})
+              </span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-green-600">
