@@ -3,12 +3,15 @@
  */
 
 /**
- * HTMLコンテンツをサニタイズする関数（wbrタグのみ許可）
+ * HTMLコンテンツをサニタイズする関数（wbr、br、a、svg、path、polyline、lineタグを許可）
  */
 export const sanitizeHtml = (html: string): string => {
   return html
     .replace(/\n/g, "<br>")
-    .replace(/<(?!\/?(wbr|br)(?:\s[^>]*)?\/?>)[^>]*>/g, "") // wbrとbr以外のタグを除去
+    .replace(
+      /<(?!\/?(wbr|br|a|svg|path|polyline|line)(?:\s[^>]*)?\/?>)[^>]*>/g,
+      "",
+    ) // 許可されたタグ以外を除去
     .replace(/javascript:/gi, "") // JavaScriptスキームを除去
     .replace(/on\w+\s*=/gi, ""); // イベントハンドラ属性を除去
 };
