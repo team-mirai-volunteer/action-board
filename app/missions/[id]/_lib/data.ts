@@ -9,7 +9,7 @@ import type {
 } from "./types";
 
 export async function getMissionData(
-  missionId: string,
+  missionSlug: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = await createServerClient();
 
@@ -205,10 +205,10 @@ export async function getMissionMainLink(
 }
 
 export async function getMissionPageData(
-  missionId: string,
+  missionSlug: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionId);
+  const mission = await getMissionData(missionSlug);
 
   if (!mission) return null;
 

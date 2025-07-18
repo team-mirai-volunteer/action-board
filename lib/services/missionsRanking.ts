@@ -242,3 +242,27 @@ export async function getTopUsersPostingCount(
   // dataがnullやundefinedの場合は空配列を返す
   return (data as { user_id: string; posting_count: number }[]) || [];
 }
+
+export async function getTopUsersPostingCountByMission(
+  userIds: string[],
+  missionId: string,
+): Promise<{ user_id: string; posting_count: number }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "get_top_users_posting_count_by_mission",
+    {
+      user_ids: userIds,
+      target_mission_id: missionId,
+    },
+  );
+
+  if (error) {
+    console.error("Failed to fetch users posting count by mission:", error);
+    throw new Error(
+      `ミッション別ユーザーのポスティング枚数取得に失敗しました: ${error.message}`,
+    );
+  }
+
+  // dataがnullやundefinedの場合は空配列を返す
+  return (data as { user_id: string; posting_count: number }[]) || [];
+}
