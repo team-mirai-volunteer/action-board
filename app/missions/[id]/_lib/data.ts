@@ -16,7 +16,7 @@ export async function getMissionData(
   const { data: missionData, error } = await supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("slug", missionId)
+    .eq("id", missionId)
     .single();
 
   if (error) {
@@ -220,19 +220,19 @@ export async function getMissionPageData(
   if (userId) {
     const { achievements, count } = await getUserAchievements(
       userId,
-      mission.id,
+      missionId,
     );
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, mission.id);
+    submissions = await getSubmissionHistory(userId, missionId);
     referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(mission.id);
+  const totalAchievementCount = await getTotalAchievementCount(missionId);
 
   // メインリンクの取得
-  const mainLink = await getMissionMainLink(mission.id);
+  const mainLink = await getMissionMainLink(missionId);
 
   return {
     mission,
