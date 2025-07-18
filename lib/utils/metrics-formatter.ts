@@ -3,7 +3,7 @@
  */
 
 /**
- * 更新日時を日本語形式でフォーマット
+ * 更新日時を日本語形式でフォーマット（JST時刻で表示）
  * @param timestamp - ISO形式の日時文字列
  * @returns 日本語ロケールでフォーマットされた日時文字列（例: "2025/07/03 14:30"）
  */
@@ -14,6 +14,7 @@ export const formatUpdateTime = (timestamp: string): string => {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Asia/Tokyo",
   });
 };
 
