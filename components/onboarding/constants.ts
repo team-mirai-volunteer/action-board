@@ -15,13 +15,13 @@ export const SCROLL_OFFSET = {
   CARD_MARGIN: 20,
 } as const;
 
-// モックミッション（期日前投票専用）
+// モックミッション（チームみらい公式サイト専用）
 export const MOCK_MISSION = {
   id: "3",
-  title: "期日前投票をしよう！",
+  title: "チームみらい公式サイトを見てみよう！",
   artifact_label: null,
   content:
-    "<p>予定が合わない方も安心！</p><p>みんなで投票率アップを目指そう！</p>",
+    "<p>チームみらいの公式サイトをぜひ見てみてください！</p><p>一緒により良い未来を作っていきましょう！</p>",
   icon_url:
     "/img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg",
   difficulty: 5,
