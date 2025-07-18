@@ -2,11 +2,8 @@
 @media (max-width: 640px) {
   /* Adjust filter position on mobile */
   .poster-filter-mobile {
-    left: auto !important;
-    right: 0.5rem !important;
-    top: 0.5rem !important;
+    position: relative !important;
     max-width: 150px !important; /* Compact width */
-    z-index: 1001 !important; /* Ensure it's above map controls */
   }
 
   /* Expanded state on mobile */
