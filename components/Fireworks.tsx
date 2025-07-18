@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { loadFireworksPreset } from "tsparticles-preset-fireworks";
@@ -9,76 +9,87 @@ import { loadFireworksPreset } from "tsparticles-preset-fireworks";
 interface FireworksProps {
   onTrigger?: () => void;
 }
-
 interface ContributorData {
   name: string;
 }
 
-async function fetchContributors(): Promise<ContributorData[]> {
-  try {
-    const supabase = createClient();
+async function fetchAllContributors(): Promise<ContributorData[]> {
+  const supabase = createClient();
+  const pageSize = 1000;
+  let from = 0;
+  let all: ContributorData[] = [];
+  while (true) {
     const { data, error } = await supabase
       .from("user_ranking_view")
       .select("name")
-      .order("rank", { ascending: false });
-
+      .order("rank", { ascending: false })
+      .range(from, from + pageSize - 1);
     if (error) throw error;
-
-    return (data || []).map((user) => ({
-      name: user.name || "Unknown",
-    }));
-  } catch (error) {
-    console.error("Failed to fetch contributors:", error);
-    return [{ name: "Alice" }, { name: "Ken" }, { name: "Devid" }];
+    if (!data || data.length === 0) break;
+    all = all.concat(data.map((u) => ({ name: u.name || "Unknown" })));
+    if (data.length < pageSize) break;
+    from += pageSize;
   }
+  return all;
 }
 
 const EndCredits = ({
   contributors,
-  duration,
+  scrollSpeedPxPerSec,
   onEnd,
 }: {
   contributors: ContributorData[];
-  duration: number;
+  scrollSpeedPxPerSec: number; // 固定速度(px/s)
   onEnd: () => void;
 }) => {
-  const contributorRows = [];
-  for (let i = 0; i < contributors.length; i += 3) {
-    contributorRows.push(contributors.slice(i, i + 3));
-  }
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [totalHeight, setTotalHeight] = useState(0); // スクロールすべき総距離
+  const [ready, setReady] = useState(false);
 
-  const rowCount = contributorRows.length;
-  const timePerRow = 1000;
-  const creditsAnimationDuration = rowCount * timePerRow + 3000;
-  const rowHeight = 2.5 * 16 + 32; // 2.5rem + marginBottom(2rem=32px)
-  const totalHeight = rowCount * rowHeight + 300; // 少し余白を追加
+  // contributors が確定→DOM描画→高さ測定
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (wrapperRef.current) {
+      // scrollHeight: padding + 内容全体
+      const h = wrapperRef.current.scrollHeight;
+      setTotalHeight(h);
+      setReady(true);
+    }
+  }, [contributors]);
+
+  // アニメーション時間(ms) = 距離(px) / 速度(px/s) * 1000
+  const durationMs = ready ? (totalHeight / scrollSpeedPxPerSec) * 1000 : 0;
+
+  // 3列に整形
+  const rows = contributors.reduce<ContributorData[][]>((acc, c, i) => {
+    if (i % 3 === 0) acc.push([]);
+    acc[acc.length - 1].push(c);
+    return acc;
+  }, []);
 
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        pointerEvents: "none",
-        zIndex: 15,
-        color: "white",
-        textAlign: "center",
-        fontFamily: "serif",
         overflow: "hidden",
+        pointerEvents: "none",
+        color: "#fff",
+        fontFamily: "serif",
+        zIndex: 15,
       }}
     >
       <div
+        ref={wrapperRef}
         style={{
           width: "100%",
           paddingTop: "20vh",
           paddingBottom: "20vh",
-          animation: `scrollUp ${creditsAnimationDuration}ms linear`,
-          // biome-ignore lint/style/noUnusedTemplateLiteral: <explanation>
-          transform: `translateY(100vh)`,
-          animationFillMode: "forwards",
+          // totalHeight を測った後でアニメーションを付与
+          animation: ready
+            ? `scrollUp ${durationMs}ms linear forwards`
+            : "none",
+          transform: "translateY(100vh)",
         }}
         onAnimationEnd={onEnd}
       >
@@ -87,45 +98,36 @@ const EndCredits = ({
             fontSize: "2rem",
             fontWeight: "bold",
             marginBottom: "3rem",
-            textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
+            textShadow: "2px 2px 4px rgba(0,0,0,.8)",
           }}
         >
           Contributors
         </div>
-        <div
-          style={{
-            fontSize: "1.2rem",
-            lineHeight: "2.5rem",
-            textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
-          }}
-        >
-          {contributorRows.map((row) => (
+        <div style={{ fontSize: "1.2rem", lineHeight: "2.5rem" }}>
+          {rows.map((row, idx) => (
             <div
-              key={row.map((c) => c.name).join("-")}
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={idx}
               style={{
                 display: "flex",
                 justifyContent: "center",
                 gap: "3rem",
                 marginBottom: "2rem",
+                textShadow: "1px 1px 2px rgba(0,0,0,.8)",
               }}
             >
-              {row.map((contributor) => (
-                <span key={contributor.name}>{contributor.name}</span>
+              {row.map((c) => (
+                <span key={c.name}>{c.name}</span>
               ))}
             </div>
           ))}
         </div>
       </div>
 
-      {/* 動的 @keyframes スタイル */}
       <style jsx>{`
         @keyframes scrollUp {
-          0% {
-            transform: translateY(100vh);
-          }
-          100% {
-            transform: translateY(-${totalHeight}px);
-          }
+          0% { transform: translateY(100vh); }
+          100% { transform: translateY(-${totalHeight}px); }
         }
       `}</style>
     </div>
@@ -137,48 +139,40 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   const [showCredits, setShowCredits] = useState(false);
   const [showSpecialThanks, setShowSpecialThanks] = useState(false);
   const [contributors, setContributors] = useState<ContributorData[]>([]);
-  const [duration, setDuration] = useState(15000);
+
+  // ★ 固定スクロール速度(px/s) をここで決める
+  const SCROLL_SPEED = 80; // 例: 50px/秒
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
   }, []);
 
   useEffect(() => {
-    const loadContributors = async () => {
-      const contributorData = await fetchContributors();
-      setContributors(contributorData);
-
-      const calculatedDuration = Math.max(
-        15000,
-        (contributorData.length / 6) * 1000 + 3000,
-      );
-      setDuration(calculatedDuration);
-    };
-    loadContributors();
+    (async () => {
+      const data = await fetchAllContributors();
+      setContributors(data);
+    })();
   }, []);
 
   const handleClick = useCallback(() => {
     if (showSpecialThanks) {
+      // リセット
       setIsActive(false);
       setShowCredits(false);
       setShowSpecialThanks(false);
       return;
     }
-
     setIsActive(true);
     setShowCredits(false);
     setShowSpecialThanks(false);
     onTrigger?.();
-
-    setTimeout(() => {
-      setShowCredits(true);
-    }, 3000);
+    setTimeout(() => setShowCredits(true), 3000);
   }, [onTrigger, showSpecialThanks]);
 
   const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
         handleClick();
       }
     },
@@ -186,8 +180,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   );
 
   return (
+    // biome-ignore lint/a11y/useButtonType: <explanation>
     <button
-      type="button"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       aria-label={
@@ -220,9 +214,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
                 position: { x: 50, y: 100 },
                 direction: "top",
               },
-              particles: {
-                life: { duration: { min: 1, max: 3 } },
-              },
+              particles: { life: { duration: { min: 1, max: 3 } } },
               background: { color: { value: "transparent" } },
             }}
             style={{
@@ -236,7 +228,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
           {showCredits && (
             <EndCredits
               contributors={contributors}
-              duration={duration}
+              scrollSpeedPxPerSec={SCROLL_SPEED}
               onEnd={() => {
                 setShowCredits(false);
                 setShowSpecialThanks(true);
@@ -262,7 +254,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
                 style={{
                   fontSize: "3rem",
                   fontWeight: "bold",
-                  textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
+                  textShadow: "3px 3px 6px rgba(0,0,0,.8)",
                   animation: "fadeIn 2s ease-in-out",
                 }}
               >
@@ -270,14 +262,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               </div>
               <style jsx>{`
                 @keyframes fadeIn {
-                  0% {
-                    opacity: 0;
-                    transform: scale(0.8);
-                  }
-                  100% {
-                    opacity: 1;
-                    transform: scale(1);
-                  }
+                  0% { opacity: 0; transform: scale(0.8); }
+                  100% { opacity: 1; transform: scale(1); }
                 }
               `}</style>
             </div>
