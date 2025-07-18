@@ -656,7 +656,23 @@ export default function PrefecturePosterMapClient({
           {/* History Section */}
           {showHistory && (
             <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
-              <h3 className="font-semibold mb-2">更新履歴</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">更新履歴</h3>
+                {selectedBoard && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <span>ID: {selectedBoard.id}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0"
+                      onClick={() => copyToClipboard(selectedBoard.id)}
+                      title="IDをコピー"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               {loadingHistory ? (
                 <div className="text-sm text-muted-foreground">
                   読み込み中...
