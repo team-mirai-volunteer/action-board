@@ -60,6 +60,7 @@ export default function PosterMapPageClientOptimized({
     let completed = 0;
     const allStatuses: Record<BoardStatus, number> = {
       not_yet: 0,
+      not_yet_dangerous: 0,
       reserved: 0,
       done: 0,
       error_wrong_place: 0,
@@ -182,6 +183,7 @@ export default function PosterMapPageClientOptimized({
             ([prefectureKey, prefectureData]) => {
               const stats = boardStats[prefectureData.jp] || {
                 not_yet: 0,
+                not_yet_dangerous: 0,
                 reserved: 0,
                 done: 0,
                 error_wrong_place: 0,

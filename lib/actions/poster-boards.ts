@@ -32,6 +32,7 @@ export async function getPosterBoardStatsAction(
       // フォールバック: 元の実装を使用
       const statusTypes: BoardStatus[] = [
         "not_yet",
+        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",
@@ -42,6 +43,7 @@ export async function getPosterBoardStatsAction(
 
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
@@ -105,6 +107,7 @@ export async function getPosterBoardStatsAction(
       totalCount: 0,
       statusCounts: {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
@@ -120,6 +123,7 @@ export async function getPosterBoardStatsAction(
       totalCount: 0,
       statusCounts: {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,

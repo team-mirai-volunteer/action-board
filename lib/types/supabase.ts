@@ -1581,6 +1581,7 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
+        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
@@ -1735,6 +1736,7 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
+        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",

@@ -44,6 +44,7 @@ describe("Poster Board Progress Calculation", () => {
     it("doneステータスの数を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 15,
         error_wrong_place: 1,
@@ -57,6 +58,7 @@ describe("Poster Board Progress Calculation", () => {
     it("doneが0の場合は0を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 0,
         error_wrong_place: 1,
@@ -72,6 +74,7 @@ describe("Poster Board Progress Calculation", () => {
     it("error_wrong_posterを除く全ステータスの合計数を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 15,
         error_wrong_place: 1,
@@ -85,6 +88,7 @@ describe("Poster Board Progress Calculation", () => {
     it("全てが0の場合は0を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
@@ -133,6 +137,7 @@ describe("Poster Board Progress Calculation", () => {
     it("ステータス別統計から進捗率を計算する", () => {
       const stats: Record<BoardStatus, number> = {
         not_yet: 50,
+        not_yet_dangerous: 0,
         reserved: 30,
         done: 20,
         error_wrong_place: 0,
@@ -153,6 +158,7 @@ describe("Poster Board Progress Calculation", () => {
     it("登録数が0の場合は進捗率0%を返す", () => {
       const stats: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
