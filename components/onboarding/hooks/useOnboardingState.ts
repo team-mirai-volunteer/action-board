@@ -82,9 +82,6 @@ export const useOnboardingState = (
   };
 
   const handleSubmit = () => {
-    // チームみらい公式サイトを新しいタブで開く
-    window.open("https://team-mir.ai/", "_blank", "noopener,noreferrer");
-
     setIsSubmissionCompleted(true);
     // 提出完了後、少し待ってから次へ進む
     setTimeout(() => {

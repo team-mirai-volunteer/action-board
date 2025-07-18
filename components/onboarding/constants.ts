@@ -23,7 +23,7 @@ export const MOCK_MISSION = {
   content:
     "<p>チームみらいの公式サイトをぜひ見てみてください！</p><p>一緒により良い未来を作っていきましょう！</p>",
   icon_url:
-    "/img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg",
+    "/img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg",
   difficulty: 5,
   max_achievement_count: 1,
   event_date: null,
