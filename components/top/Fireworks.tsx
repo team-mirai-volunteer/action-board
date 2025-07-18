@@ -19,7 +19,7 @@ export default function Fireworks() {
         fullScreen: { enable: false },
         interactivity: {
           events: {
-            onClick: { enable: true, mode: "push" },
+            onClick: { enable: true, mode: "emitter" },
           },
         },
         background: { color: { value: "transparent" } },
@@ -28,7 +28,22 @@ export default function Fireworks() {
             value: 0,
           },
         },
-        emitters: [],
+        emitters: {
+          direction: "top",
+          life: {
+            count: 0,
+            duration: 0.1,
+            delay: 0,
+          },
+          rate: {
+            delay: 0.1,
+            quantity: 1,
+          },
+          size: {
+            width: 0,
+            height: 0,
+          },
+        },
       }}
       style={{
         position: "absolute",
