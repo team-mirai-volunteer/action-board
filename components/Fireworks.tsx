@@ -17,7 +17,6 @@ interface ContributorData {
 async function fetchContributors(): Promise<ContributorData[]> {
   try {
     const supabase = createClient();
-
     const { data, error } = await supabase
       .from("user_ranking_view")
       .select("name")
@@ -37,13 +36,22 @@ async function fetchContributors(): Promise<ContributorData[]> {
 const EndCredits = ({
   contributors,
   duration,
-}: { contributors: ContributorData[]; duration: number }) => {
+  onEnd,
+}: {
+  contributors: ContributorData[];
+  duration: number;
+  onEnd: () => void;
+}) => {
   const contributorRows = [];
   for (let i = 0; i < contributors.length; i += 3) {
     contributorRows.push(contributors.slice(i, i + 3));
   }
 
-  const creditsAnimationDuration = duration - 1000;
+  const rowCount = contributorRows.length;
+  const timePerRow = 1000;
+  const creditsAnimationDuration = rowCount * timePerRow + 3000;
+  const rowHeight = 2.5 * 16 + 32; // 2.5rem + marginBottom(2rem=32px)
+  const totalHeight = rowCount * rowHeight + 300; // 少し余白を追加
 
   return (
     <div
@@ -65,10 +73,14 @@ const EndCredits = ({
       <div
         style={{
           width: "100%",
-          animation: `scrollUp ${creditsAnimationDuration}ms linear`,
           paddingTop: "20vh",
-          paddingBottom: "50vh",
+          paddingBottom: "20vh",
+          animation: `scrollUp ${creditsAnimationDuration}ms linear`,
+          // biome-ignore lint/style/noUnusedTemplateLiteral: <explanation>
+          transform: `translateY(100vh)`,
+          animationFillMode: "forwards",
         }}
+        onAnimationEnd={onEnd}
       >
         <div
           style={{
@@ -104,13 +116,15 @@ const EndCredits = ({
           ))}
         </div>
       </div>
+
+      {/* 動的 @keyframes スタイル */}
       <style jsx>{`
         @keyframes scrollUp {
           0% {
             transform: translateY(100vh);
           }
           100% {
-            transform: translateY(-150vh);
+            transform: translateY(-${totalHeight}px);
           }
         }
       `}</style>
@@ -121,6 +135,7 @@ const EndCredits = ({
 export default function Fireworks({ onTrigger }: FireworksProps) {
   const [isActive, setIsActive] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+  const [showSpecialThanks, setShowSpecialThanks] = useState(false);
   const [contributors, setContributors] = useState<ContributorData[]>([]);
   const [duration, setDuration] = useState(15000);
 
@@ -143,19 +158,22 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   }, []);
 
   const handleClick = useCallback(() => {
+    if (showSpecialThanks) {
+      setIsActive(false);
+      setShowCredits(false);
+      setShowSpecialThanks(false);
+      return;
+    }
+
     setIsActive(true);
     setShowCredits(false);
+    setShowSpecialThanks(false);
     onTrigger?.();
 
     setTimeout(() => {
       setShowCredits(true);
     }, 3000);
-
-    setTimeout(() => {
-      setIsActive(false);
-      setShowCredits(false);
-    }, duration);
-  }, [onTrigger, duration]);
+  }, [onTrigger, showSpecialThanks]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -172,7 +190,9 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
       type="button"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      aria-label="花火を打ち上げる"
+      aria-label={
+        showSpecialThanks ? "エンドクレジットを閉じる" : "花火を打ち上げる"
+      }
       style={{
         position: "absolute",
         inset: 0,
@@ -195,8 +215,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               fullScreen: { enable: false },
               emitters: {
                 life: { count: 0 },
-                rate: { quantity: 3, delay: 0.7 },
-                size: { width: 100, height: 100 },
+                rate: { quantity: 6, delay: 0.5 },
+                size: { width: 150, height: 150 },
                 position: { x: 50, y: 100 },
                 direction: "top",
               },
@@ -214,7 +234,53 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
             }}
           />
           {showCredits && (
-            <EndCredits contributors={contributors} duration={duration} />
+            <EndCredits
+              contributors={contributors}
+              duration={duration}
+              onEnd={() => {
+                setShowCredits(false);
+                setShowSpecialThanks(true);
+              }}
+            />
+          )}
+          {showSpecialThanks && (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                pointerEvents: "none",
+                zIndex: 15,
+                color: "white",
+                textAlign: "center",
+                fontFamily: "serif",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "3rem",
+                  fontWeight: "bold",
+                  textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
+                  animation: "fadeIn 2s ease-in-out",
+                }}
+              >
+                Special Thanks to All Our Supporters
+              </div>
+              <style jsx>{`
+                @keyframes fadeIn {
+                  0% {
+                    opacity: 0;
+                    transform: scale(0.8);
+                  }
+                  100% {
+                    opacity: 1;
+                    transform: scale(1);
+                  }
+                }
+              `}</style>
+            </div>
           )}
         </>
       )}
