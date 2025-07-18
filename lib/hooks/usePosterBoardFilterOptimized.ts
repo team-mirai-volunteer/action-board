@@ -26,6 +26,7 @@ interface UsePosterBoardFilterProps {
 
 const ALL_STATUSES: FilterStatus[] = [
   "not_yet",
+  "not_yet_dangerous",
   "reserved",
   "done",
   "error_wrong_place",
