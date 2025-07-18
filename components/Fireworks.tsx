@@ -61,7 +61,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               life: { count: 0 },
               rate: { quantity: 3, delay: 0.7 },
               size: { width: 100, height: 100 },
-              position: { x: 50, y: 50 },
+              position: { x: 50, y: 100 },
+              direction: "top",
             },
             particles: {
               life: { duration: { min: 1, max: 3 } },
