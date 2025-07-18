@@ -21,8 +21,7 @@ async function fetchContributors(): Promise<ContributorData[]> {
     const { data, error } = await supabase
       .from("user_ranking_view")
       .select("name")
-      .order("rank", { ascending: false })
-      .limit(100);
+      .order("rank", { ascending: false });
 
     if (error) throw error;
 
@@ -35,7 +34,15 @@ async function fetchContributors(): Promise<ContributorData[]> {
   }
 }
 
-const EndCredits = ({ contributors }: { contributors: ContributorData[] }) => {
+const EndCredits = ({
+  contributors,
+  duration,
+}: { contributors: ContributorData[]; duration: number }) => {
+  const contributorRows = [];
+  for (let i = 0; i < contributors.length; i += 3) {
+    contributorRows.push(contributors.slice(i, i + 3));
+  }
+
   return (
     <div
       style={{
@@ -43,14 +50,14 @@ const EndCredits = ({ contributors }: { contributors: ContributorData[] }) => {
         inset: 0,
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "flex-end",
         alignItems: "center",
         pointerEvents: "none",
         zIndex: 15,
         color: "white",
         textAlign: "center",
         fontFamily: "serif",
-        animation: "fadeInUp 2s ease-in-out",
+        overflow: "hidden",
       }}
     >
       <div
@@ -59,59 +66,42 @@ const EndCredits = ({ contributors }: { contributors: ContributorData[] }) => {
           fontWeight: "bold",
           marginBottom: "2rem",
           textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
+          animation: `scrollUp ${duration}ms linear`,
         }}
       >
         Contributors
       </div>
       <div
         style={{
-          fontSize: "1.5rem",
-          lineHeight: "3rem",
+          fontSize: "1.2rem",
+          lineHeight: "2rem",
           textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
+          animation: `scrollUp ${duration}ms linear`,
         }}
       >
-        {contributors.map((contributor, index) => (
+        {contributorRows.map((row) => (
           <div
-            key={contributor.name}
+            key={row.map((c) => c.name).join("-")}
             style={{
-              marginBottom: "2rem",
-              opacity: 0,
-              animation: `fadeInAndScroll 2s ease-in-out ${index * 1.5 + 1}s forwards`,
-              transform: "translateY(100px)",
+              display: "flex",
+              justifyContent: "center",
+              gap: "3rem",
+              marginBottom: "1.5rem",
             }}
           >
-            {contributor.name}
+            {row.map((contributor) => (
+              <span key={contributor.name}>{contributor.name}</span>
+            ))}
           </div>
         ))}
       </div>
       <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes fadeInAndScroll {
+        @keyframes scrollUp {
           0% {
-            opacity: 0;
-            transform: translateY(100px);
-          }
-          20% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          80% {
-            opacity: 1;
-            transform: translateY(-50px);
+            transform: translateY(100vh);
           }
           100% {
-            opacity: 0;
-            transform: translateY(-150px);
+            transform: translateY(-100vh);
           }
         }
       `}</style>
@@ -122,6 +112,7 @@ const EndCredits = ({ contributors }: { contributors: ContributorData[] }) => {
 export default function Fireworks({ onTrigger }: FireworksProps) {
   const [isActive, setIsActive] = useState(false);
   const [contributors, setContributors] = useState<ContributorData[]>([]);
+  const [duration, setDuration] = useState(15000);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
@@ -131,6 +122,12 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
     const loadContributors = async () => {
       const contributorData = await fetchContributors();
       setContributors(contributorData);
+
+      const calculatedDuration = Math.max(
+        15000,
+        (contributorData.length / 6) * 1000 + 3000,
+      );
+      setDuration(calculatedDuration);
     };
     loadContributors();
   }, []);
@@ -138,8 +135,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   const handleClick = useCallback(() => {
     setIsActive(true);
     onTrigger?.();
-    setTimeout(() => setIsActive(false), 15000);
-  }, [onTrigger]);
+    setTimeout(() => setIsActive(false), duration);
+  }, [onTrigger, duration]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -197,7 +194,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               pointerEvents: "none",
             }}
           />
-          <EndCredits contributors={contributors} />
+          <EndCredits contributors={contributors} duration={duration} />
         </>
       )}
     </button>
