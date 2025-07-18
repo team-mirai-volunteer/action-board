@@ -43,6 +43,8 @@ const EndCredits = ({
     contributorRows.push(contributors.slice(i, i + 3));
   }
 
+  const creditsAnimationDuration = duration - 1000;
+
   return (
     <div
       style={{
@@ -50,7 +52,7 @@ const EndCredits = ({
         inset: 0,
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-end",
+        justifyContent: "flex-start",
         alignItems: "center",
         pointerEvents: "none",
         zIndex: 15,
@@ -62,38 +64,45 @@ const EndCredits = ({
     >
       <div
         style={{
-          fontSize: "2rem",
-          fontWeight: "bold",
-          marginBottom: "2rem",
-          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
-          animation: `scrollUp ${duration}ms linear`,
+          width: "100%",
+          animation: `scrollUp ${creditsAnimationDuration}ms linear`,
+          paddingTop: "20vh",
+          paddingBottom: "50vh",
         }}
       >
-        Contributors
-      </div>
-      <div
-        style={{
-          fontSize: "1.2rem",
-          lineHeight: "2rem",
-          textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
-          animation: `scrollUp ${duration}ms linear`,
-        }}
-      >
-        {contributorRows.map((row) => (
-          <div
-            key={row.map((c) => c.name).join("-")}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "3rem",
-              marginBottom: "1.5rem",
-            }}
-          >
-            {row.map((contributor) => (
-              <span key={contributor.name}>{contributor.name}</span>
-            ))}
-          </div>
-        ))}
+        <div
+          style={{
+            fontSize: "2rem",
+            fontWeight: "bold",
+            marginBottom: "3rem",
+            textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
+          }}
+        >
+          Contributors
+        </div>
+        <div
+          style={{
+            fontSize: "1.2rem",
+            lineHeight: "2.5rem",
+            textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
+          }}
+        >
+          {contributorRows.map((row) => (
+            <div
+              key={row.map((c) => c.name).join("-")}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "3rem",
+                marginBottom: "2rem",
+              }}
+            >
+              {row.map((contributor) => (
+                <span key={contributor.name}>{contributor.name}</span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       <style jsx>{`
         @keyframes scrollUp {
@@ -101,7 +110,7 @@ const EndCredits = ({
             transform: translateY(100vh);
           }
           100% {
-            transform: translateY(-100vh);
+            transform: translateY(-150vh);
           }
         }
       `}</style>
@@ -111,6 +120,7 @@ const EndCredits = ({
 
 export default function Fireworks({ onTrigger }: FireworksProps) {
   const [isActive, setIsActive] = useState(false);
+  const [showCredits, setShowCredits] = useState(false);
   const [contributors, setContributors] = useState<ContributorData[]>([]);
   const [duration, setDuration] = useState(15000);
 
@@ -134,8 +144,17 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
 
   const handleClick = useCallback(() => {
     setIsActive(true);
+    setShowCredits(false);
     onTrigger?.();
-    setTimeout(() => setIsActive(false), duration);
+
+    setTimeout(() => {
+      setShowCredits(true);
+    }, 3000);
+
+    setTimeout(() => {
+      setIsActive(false);
+      setShowCredits(false);
+    }, duration);
   }, [onTrigger, duration]);
 
   const handleKeyDown = useCallback(
@@ -194,7 +213,9 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               pointerEvents: "none",
             }}
           />
-          <EndCredits contributors={contributors} duration={duration} />
+          {showCredits && (
+            <EndCredits contributors={contributors} duration={duration} />
+          )}
         </>
       )}
     </button>
