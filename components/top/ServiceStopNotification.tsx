@@ -1,17 +1,23 @@
-import React from "react";
-import Confetti from "../Confetti";
+"use client";
 
-const ServiceStopNotification = () => {
+import dynamic from "next/dynamic";
+import React from "react";
+
+const Fireworks = dynamic(() => import("../Fireworks"), {
+  ssr: false,
+});
+
+export default function ServiceStopNotification() {
   return (
     <div className="fixed inset-0 z-50 bg-[#BCECD3] flex items-center justify-center overflow-hidden">
       <img
         src="/img/close_image_a1.png"
         alt="サービス停止"
-        className="h-screen w-auto object-contain"
+        className="h-full w-auto object-contain"
       />
-      <Confetti />
+
+      {/* tsParticles の fireworks - now clickable */}
+      <Fireworks />
     </div>
   );
-};
-
-export default ServiceStopNotification;
+}
