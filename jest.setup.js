@@ -246,9 +246,11 @@ jest.mock("react-dom", () => ({
 jest.mock("@/lib/services/userLevel", () => ({
   getUserLevel: jest.fn(() =>
     Promise.resolve({
+      user_id: "test-user-id",
       level: 2,
-      current_xp: 100,
-      xp_to_next_level: 200,
+      xp: 100,
+      last_notified_level: 1,
+      updated_at: "2023-01-01T00:00:00Z",
     }),
   ),
 }));
