@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useCallback, useEffect, useState } from "react";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { loadFireworksPreset } from "tsparticles-preset-fireworks";
@@ -9,9 +10,32 @@ interface FireworksProps {
   onTrigger?: () => void;
 }
 
-const EndCredits = () => {
-  const contributors = ["Alice", "Ken", "Devid"];
+interface ContributorData {
+  name: string;
+}
 
+async function fetchContributors(): Promise<ContributorData[]> {
+  try {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("user_ranking_view")
+      .select("name")
+      .order("rank", { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    return (data || []).map((user) => ({
+      name: user.name || "Unknown",
+    }));
+  } catch (error) {
+    console.error("Failed to fetch contributors:", error);
+    return [{ name: "Alice" }, { name: "Ken" }, { name: "Devid" }];
+  }
+}
+
+const EndCredits = ({ contributors }: { contributors: ContributorData[] }) => {
   return (
     <div
       style={{
@@ -46,9 +70,9 @@ const EndCredits = () => {
           textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
         }}
       >
-        {contributors.map((name, index) => (
+        {contributors.map((contributor, index) => (
           <div
-            key={name}
+            key={contributor.name}
             style={{
               marginBottom: "2rem",
               opacity: 0,
@@ -56,7 +80,7 @@ const EndCredits = () => {
               transform: "translateY(100px)",
             }}
           >
-            {name}
+            {contributor.name}
           </div>
         ))}
       </div>
@@ -97,9 +121,18 @@ const EndCredits = () => {
 
 export default function Fireworks({ onTrigger }: FireworksProps) {
   const [isActive, setIsActive] = useState(false);
+  const [contributors, setContributors] = useState<ContributorData[]>([]);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
+  }, []);
+
+  useEffect(() => {
+    const loadContributors = async () => {
+      const contributorData = await fetchContributors();
+      setContributors(contributorData);
+    };
+    loadContributors();
   }, []);
 
   const handleClick = useCallback(() => {
@@ -164,7 +197,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               pointerEvents: "none",
             }}
           />
-          <EndCredits />
+          <EndCredits contributors={contributors} />
         </>
       )}
     </button>
