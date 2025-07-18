@@ -7,7 +7,7 @@ export function CopyrightSection() {
     <div className="bg-white py-8">
       <div className="px-4 md:container md:mx-auto">
         <div className="text-center">
-          <div className="hidden xs570:flex justify-center items-center gap-2 text-sm">
+          <div className="hidden min-[571px]:flex justify-center items-center gap-2 text-sm">
             <Link
               href="https://team-mir.ai/"
               target="_blank"
@@ -55,7 +55,7 @@ export function CopyrightSection() {
             </Link>
           </div>
 
-          <div className="xs570:flex xs570:flex-col xs570:items-center xs570:gap-4 hidden">
+          <div className="flex flex-col items-center gap-4 min-[571px]:hidden">
             <div className="flex justify-center items-center gap-2 text-sm">
               <Link
                 href="https://team-mir.ai/"
