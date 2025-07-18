@@ -57,6 +57,11 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type");
 
+  const votingMissionSlugs = ["early-vote", "absent-vote", "overseas-vote"];
+  const isVotingMission = votingMissionSlugs.includes(
+    pageData?.mission.slug || "",
+  );
+
   if (type === "complete") {
     const key = [id, pageData?.mission.slug ?? ""].join("|");
 
@@ -74,10 +79,13 @@ export async function GET(
   }
 
   let baseImageBase64 = "";
+
   try {
     // ベース画像を読み込み
     let baseImageFileName = "";
-    if (type === "complete") {
+    if (isVotingMission) {
+      baseImageFileName = "public/img/ogp_mission_vote.png";
+    } else if (type === "complete") {
       baseImageFileName = "public/img/ogp_mission_complete_base.png";
     } else {
       baseImageFileName = "public/img/ogp_mission_base.png";
@@ -100,7 +108,23 @@ export async function GET(
   );
 
   let imageResponse: ImageResponse;
-  if (type === "complete") {
+
+  if (isVotingMission) {
+    // 投票ミッションの場合は画像のみ表示（文字オーバーレイなし）
+    imageResponse = new ImageResponse(
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          backgroundImage: `url(${baseImageBase64})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />,
+      { ...size },
+    );
+  } else if (type === "complete") {
     imageResponse = new ImageResponse(
       <div
         style={{
