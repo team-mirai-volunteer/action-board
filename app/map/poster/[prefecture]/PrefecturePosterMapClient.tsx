@@ -451,7 +451,7 @@ export default function PrefecturePosterMapClient({
               )}
               <span className="text-xs text-muted-foreground">総数</span>
               <span className="text-xs text-muted-foreground">
-                (選管公表数: {totalCount})
+                (公表数: {totalCount})
               </span>
             </div>
             <div className="flex items-baseline gap-1">
