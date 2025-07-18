@@ -126,7 +126,7 @@ export default function PosterMapPageClientOptimized({
               )}
               <div className="text-sm text-muted-foreground">総掲示板数</div>
               <div className="text-xs text-muted-foreground">
-                (公表数: {totalStats.actualTotal.toLocaleString()})
+                (公表: {totalStats.actualTotal.toLocaleString()})
               </div>
             </div>
             <div>
@@ -230,7 +230,7 @@ export default function PosterMapPageClientOptimized({
                             {actualTotalInPrefecture > 0 && (
                               <span className="text-xs">
                                 {" "}
-                                (公表数:{" "}
+                                (公表:{" "}
                                 {actualTotalInPrefecture.toLocaleString()})
                               </span>
                             )}
