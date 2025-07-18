@@ -3,6 +3,7 @@
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import {
+  type UserLevel,
   getUserXpBonus,
   grantMissionCompletionXp,
   grantXp,
@@ -715,7 +716,11 @@ export const achieveMissionAction = async (formData: FormData) => {
   }
 
   // ポスティングミッション以外の場合のみ、ミッション達成時にXPを付与
-  let xpResult = { success: true, xpGranted: 0, userLevel: undefined };
+  let xpResult: {
+    success: boolean;
+    xpGranted: number;
+    userLevel?: UserLevel | null;
+  };
   if (missionData?.required_artifact_type !== "POSTING") {
     xpResult = await grantMissionCompletionXp(
       authUser.id,
@@ -728,6 +733,19 @@ export const achieveMissionAction = async (formData: FormData) => {
       // XP付与の失敗はミッション達成の成功を妨げない
     }
     totalXpGranted += xpResult?.xpGranted ?? 0;
+  } else {
+    // ポスティングミッションの場合は現在のユーザーレベルを取得
+    const { data: currentUserLevel } = await supabase
+      .from("user_levels")
+      .select("*")
+      .eq("user_id", authUser.id)
+      .single();
+
+    xpResult = {
+      success: true,
+      xpGranted: 0,
+      userLevel: currentUserLevel,
+    };
   }
   return {
     success: true,
