@@ -132,6 +132,7 @@ const mockMission: Tables<"missions"> = {
   max_achievement_count: 3,
   is_featured: false,
   is_hidden: false,
+  featured_importance: null,
   required_artifact_type: "NONE",
   artifact_label: null,
   ogp_image_url: null,

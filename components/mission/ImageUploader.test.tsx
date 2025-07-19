@@ -16,6 +16,7 @@ const mockUser: User = {
 
 const mockMission: Tables<"missions"> = {
   id: "test-mission-1",
+  slug: "test-mission-1",
   title: "テストミッション",
   content: "テストミッションの内容",
   difficulty: 1,
@@ -24,6 +25,7 @@ const mockMission: Tables<"missions"> = {
   max_achievement_count: null,
   is_featured: false,
   is_hidden: false,
+  featured_importance: null,
   required_artifact_type: "IMAGE",
   artifact_label: null,
   ogp_image_url: null,
