@@ -51,7 +51,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline?limit=10&offset=5",
       );
-      const params = Promise.resolve({ id: "user-123" });
+      const params = { id: "user-123" };
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -71,7 +71,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline",
       );
-      const params = Promise.resolve({ id: "user-123" });
+      const params = { id: "user-123" };
 
       await GET(request, { params });
 
@@ -88,7 +88,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline?limit=invalid&offset=abc",
       );
-      const params = Promise.resolve({ id: "user-123" });
+      const params = { id: "user-123" };
 
       await GET(request, { params });
 
@@ -107,7 +107,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline",
       );
-      const params = Promise.resolve({ id: "user-123" });
+      const params = { id: "user-123" };
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -141,7 +141,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-456/activity-timeline?limit=5",
       );
-      const params = Promise.resolve({ id: "user-456" });
+      const params = { id: "user-456" };
 
       const response = await GET(request, { params });
       const data = await response.json();
