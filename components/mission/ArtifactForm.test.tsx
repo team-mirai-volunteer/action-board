@@ -35,6 +35,7 @@ const baseMission: Tables<"missions"> = {
   updated_at: "2025-06-22T00:00:00Z",
   slug: "test-mission-1",
   required_artifact_type: "LINK",
+  featured_importance: null,
 };
 
 describe("ArtifactForm", () => {
@@ -126,9 +127,9 @@ describe("ArtifactForm", () => {
       />,
     );
 
-    expect(screen.getByText("ポスティング枚数")).toBeInTheDocument();
+    expect(screen.getByText("ポスティング・配布枚数")).toBeInTheDocument();
     expect(
-      screen.getByText("ポスティング場所の郵便番号（ハイフンなし）"),
+      screen.getByText("ポスティング・配布場所の郵便番号（ハイフンなし）"),
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：50")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：1540017")).toBeInTheDocument();
