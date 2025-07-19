@@ -141,13 +141,13 @@ export function ArtifactForm({
             <div className="space-y-2">
               <Label htmlFor="locationText">
                 ポスティング・配布場所の郵便番号（ハイフンなし）
-                <span className="text-red-500">*</span>
+                {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
                 type="text"
                 name="locationText"
                 id="locationText"
-                required
+                // required
                 maxLength={100}
                 disabled={disabled}
                 placeholder="例：1540017"
