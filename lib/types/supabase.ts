@@ -1565,6 +1565,14 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: number;
       };
+      get_user_posting_count_by_mission: {
+        Args: { target_user_id: string; target_mission_id: string };
+        Returns: number;
+      };
+      get_top_users_posting_count_by_mission: {
+        Args: { user_ids: string[]; target_mission_id: string };
+        Returns: { user_id: string; posting_count: number }[];
+      };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
         Returns: {
@@ -1581,6 +1589,7 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
+        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
@@ -1735,6 +1744,7 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
+        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",

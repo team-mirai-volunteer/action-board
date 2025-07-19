@@ -2,6 +2,7 @@ import { getUser } from "@/lib/services/users";
 import Image from "next/image";
 import Link from "next/link";
 import Levels from "./levels";
+import { OnboardingButton } from "./onboarding/onboarding-button";
 import { Button } from "./ui/button";
 
 export default async function Hero() {
@@ -61,6 +62,13 @@ export default async function Hero() {
                   サポーター登録する →
                 </Button>
               </Link>
+
+              <OnboardingButton
+                variant="link"
+                className="text-sm text-[#0f8472] hover:text-[#0d6b5e] underline font-medium transition-colors duration-200"
+              >
+                アクションボードとは？
+              </OnboardingButton>
             </div>
           )}
         </div>

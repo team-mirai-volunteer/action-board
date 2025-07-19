@@ -7,6 +7,11 @@ export const statusConfig: Record<
   { label: string; shortLabel?: string; color: string }
 > = {
   not_yet: { label: "未貼付", color: "bg-gray-500" },
+  not_yet_dangerous: {
+    label: "未貼付（貼り付けに危険が伴う）",
+    shortLabel: "未貼付（危険）",
+    color: "bg-gray-500",
+  },
   reserved: { label: "予約", color: "bg-yellow-500" },
   done: { label: "完了", color: "bg-green-500" },
   error_wrong_place: {

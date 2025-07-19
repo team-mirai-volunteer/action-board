@@ -38,6 +38,7 @@ interface PosterMapProps {
 // Status colors for markers
 const statusColors: Record<BoardStatus, string> = {
   not_yet: "#6B7280", // gray
+  not_yet_dangerous: "#6B7280", // gray
   reserved: "#F59E0B", // yellow/orange
   done: "#10B981", // green
   error_wrong_place: "#EF4444", // red

@@ -44,6 +44,7 @@ describe("Poster Board Progress Calculation", () => {
     it("doneステータスの数を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 15,
         error_wrong_place: 1,
@@ -57,6 +58,7 @@ describe("Poster Board Progress Calculation", () => {
     it("doneが0の場合は0を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 0,
         error_wrong_place: 1,
@@ -69,9 +71,10 @@ describe("Poster Board Progress Calculation", () => {
   });
 
   describe("getRegisteredCount関数", () => {
-    it("全ステータスの合計数を返す", () => {
+    it("error_wrong_posterを除く全ステータスの合計数を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 10,
+        not_yet_dangerous: 0,
         reserved: 5,
         done: 15,
         error_wrong_place: 1,
@@ -79,12 +82,13 @@ describe("Poster Board Progress Calculation", () => {
         error_wrong_poster: 1,
         other: 1,
       };
-      expect(getRegisteredCount(statusCounts)).toBe(35);
+      expect(getRegisteredCount(statusCounts)).toBe(34);
     });
 
     it("全てが0の場合は0を返す", () => {
       const statusCounts: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
@@ -93,6 +97,19 @@ describe("Poster Board Progress Calculation", () => {
         other: 0,
       };
       expect(getRegisteredCount(statusCounts)).toBe(0);
+    });
+
+    it("error_wrong_posterステータスを除外して登録数を計算する", () => {
+      const statusCounts: Record<BoardStatus, number> = {
+        not_yet: 10,
+        reserved: 5,
+        done: 15,
+        error_wrong_place: 1,
+        error_damaged: 2,
+        error_wrong_poster: 3,
+        other: 1,
+      };
+      expect(getRegisteredCount(statusCounts)).toBe(34);
     });
   });
   describe("全体進捗率の計算", () => {
@@ -120,6 +137,7 @@ describe("Poster Board Progress Calculation", () => {
     it("ステータス別統計から進捗率を計算する", () => {
       const stats: Record<BoardStatus, number> = {
         not_yet: 50,
+        not_yet_dangerous: 0,
         reserved: 30,
         done: 20,
         error_wrong_place: 0,
@@ -128,10 +146,7 @@ describe("Poster Board Progress Calculation", () => {
         other: 0,
       };
       
-      const registeredTotal = Object.values(stats).reduce(
-        (sum, count) => sum + count,
-        0
-      );
+      const registeredTotal = getRegisteredCount(stats);
       const completed = stats.done || 0;
       const percentage = Math.floor((completed / registeredTotal) * 100);
 
@@ -143,6 +158,7 @@ describe("Poster Board Progress Calculation", () => {
     it("登録数が0の場合は進捗率0%を返す", () => {
       const stats: Record<BoardStatus, number> = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
@@ -151,10 +167,7 @@ describe("Poster Board Progress Calculation", () => {
         other: 0,
       };
 
-      const registeredTotal = Object.values(stats).reduce(
-        (sum, count) => sum + count,
-        0
-      );
+      const registeredTotal = getRegisteredCount(stats);
       
       if (registeredTotal === 0) {
         const percentage = 0;

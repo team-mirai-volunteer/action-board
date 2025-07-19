@@ -21,6 +21,7 @@ export function UserMissionAchievements({
         {achievements.map((achievement) => (
           <MissionAchievementCard
             key={achievement.mission_id}
+            missionId={achievement.mission_id}
             title={achievement.mission_title}
             count={achievement.achievement_count}
           />

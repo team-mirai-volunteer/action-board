@@ -48,6 +48,7 @@ interface PosterMapWithClusterProps {
 // Status colors for markers
 const statusColors: Record<BoardStatus, string> = {
   not_yet: "#6B7280", // gray
+  not_yet_dangerous: "#6B7280", // gray
   reserved: "#F59E0B", // yellow/orange
   done: "#10B981", // green
   error_wrong_place: "#EF4444", // red
@@ -92,6 +93,7 @@ function createPieSegments(
     "done",
     "reserved",
     "not_yet",
+    "not_yet_dangerous",
     "error_wrong_place",
     "error_damaged",
     "error_wrong_poster",
@@ -156,6 +158,7 @@ function createClusterIcon(cluster: L.MarkerCluster) {
   // Count boards by status
   const statusCounts: Record<BoardStatus, number> = {
     not_yet: 0,
+    not_yet_dangerous: 0,
     reserved: 0,
     done: 0,
     error_wrong_place: 0,
@@ -370,6 +373,7 @@ export default function PosterMapWithCluster({
         const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
         const statusCounts: Record<BoardStatus, number> = {
           not_yet: 0,
+          not_yet_dangerous: 0,
           reserved: 0,
           done: 0,
           error_wrong_place: 0,
@@ -386,7 +390,8 @@ export default function PosterMapWithCluster({
         }
 
         const statusLabels: Record<BoardStatus, string> = {
-          not_yet: "未実施",
+          not_yet: "未貼付",
+          not_yet_dangerous: "未貼付（危険）",
           reserved: "予約済み",
           done: "完了",
           error_wrong_place: "場所違い",
