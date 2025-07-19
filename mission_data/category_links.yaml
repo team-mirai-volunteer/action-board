@@ -73,6 +73,8 @@ category_links:
     missions:
       - mission_slug: posting-magazine
         sort_no: 100
+      - mission_slug: posting-flyer
+        sort_no: 150
       - mission_slug: join-street-speech
         sort_no: 200
       - mission_slug: help-street-speech
