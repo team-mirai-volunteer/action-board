@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
 import { Suspense } from "react";
+import NewHome from "./newHome";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -22,11 +23,7 @@ export const viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout() {
   return (
     <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -46,7 +43,7 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        {children}
+        <NewHome />
       </body>
     </html>
   );
