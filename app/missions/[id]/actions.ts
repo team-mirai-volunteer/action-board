@@ -119,10 +119,7 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
     .max(MAX_POSTING_COUNT, {
       message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
     }),
-  locationText: z
-    .string()
-    .min(1, { message: "ポスティング場所を入力してください" })
-    .max(100, { message: "ポスティング場所は100文字以下で入力してください" }),
+  locationText: z.string().optional(),
 });
 
 // POSTERタイプ用スキーマ
@@ -617,7 +614,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         .insert({
           mission_artifact_id: newArtifact.id,
           posting_count: validatedData.postingCount,
-          location_text: validatedData.locationText,
+          location_text: validatedData.locationText ?? "",
         });
 
       if (postingError) {
