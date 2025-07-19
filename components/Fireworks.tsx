@@ -85,6 +85,8 @@ const EndCredits = ({
           width: "100%",
           paddingTop: "20vh",
           paddingBottom: "20vh",
+          paddingLeft: "24px",
+          paddingRight: "24px",
           // totalHeight を測った後でアニメーションを付与
           animation: ready
             ? `scrollUp ${durationMs}ms linear forwards`
@@ -95,15 +97,15 @@ const EndCredits = ({
       >
         <div
           style={{
-            fontSize: "2rem",
+            fontSize: "1.8rem",
             fontWeight: "bold",
             marginBottom: "3rem",
             textShadow: "2px 2px 4px rgba(0,0,0,.8)",
           }}
         >
-          Contributors
+          アクションボード参画者
         </div>
-        <div style={{ fontSize: "1.2rem", lineHeight: "2.5rem" }}>
+        <div style={{ fontSize: "16px", lineHeight: "1.6" }}>
           {rows.map((row, idx) => (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
@@ -111,7 +113,7 @@ const EndCredits = ({
               style={{
                 display: "flex",
                 justifyContent: "center",
-                gap: "3rem",
+                gap: "1rem",
                 marginBottom: "2rem",
                 textShadow: "1px 1px 2px rgba(0,0,0,.8)",
               }}
@@ -141,7 +143,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   const [contributors, setContributors] = useState<ContributorData[]>([]);
 
   // ★ 固定スクロール速度(px/s) をここで決める
-  const SCROLL_SPEED = 80; // 例: 50px/秒
+  const SCROLL_SPEED = 500000; // 例: 50px/秒
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
@@ -252,13 +254,15 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
             >
               <div
                 style={{
-                  fontSize: "3rem",
+                  fontSize: "1.8rem",
                   fontWeight: "bold",
+                  paddingLeft: "24px",
+                  paddingRight: "24px",
                   textShadow: "3px 3px 6px rgba(0,0,0,.8)",
                   animation: "fadeIn 2s ease-in-out",
                 }}
               >
-                Special Thanks to All Our Supporters
+                ご支援をいただき、 誠にありがとうございました
               </div>
               <style jsx>{`
                 @keyframes fadeIn {
