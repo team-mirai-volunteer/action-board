@@ -22,7 +22,7 @@ async function fetchAllContributors(): Promise<ContributorData[]> {
     const { data, error } = await supabase
       .from("user_ranking_view")
       .select("name")
-      .order("rank", { ascending: false })
+      .order("rank", { ascending: true })
       .range(from, from + pageSize - 1);
     if (error) throw error;
     if (!data || data.length === 0) break;
