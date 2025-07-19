@@ -127,7 +127,7 @@ describe("ArtifactForm", () => {
       />,
     );
 
-    expect(screen.getByText("ポスティング")).toBeInTheDocument();
+    expect(screen.getByText("ポスティング・配布枚数")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：50")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：1540017")).toBeInTheDocument();
   });
