@@ -29,7 +29,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               children: [
                 // ロゴ
                 Image.asset(
-                  'assets/img/logo.png',
+                  'assets/img/logo_shiro.png',
                   width: 45,
                   height: 39,
                   errorBuilder: (context, error, stackTrace) {
