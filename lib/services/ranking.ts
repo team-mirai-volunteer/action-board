@@ -70,3 +70,26 @@ export async function getRanking(
     throw error;
   }
 }
+
+export async function getAllUsersForEndCredit(): Promise<UserRanking[]> {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("user_ranking_view")
+      .select("*")
+      .order("rank", { ascending: true });
+
+    if (error) {
+      console.error("Failed to fetch all users for end credit:", error);
+      throw new Error(
+        `エンドクレジット用ユーザーデータの取得に失敗しました: ${error.message}`,
+      );
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("End credit service error:", error);
+    throw error;
+  }
+}

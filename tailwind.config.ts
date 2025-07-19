@@ -83,10 +83,19 @@ const config = {
             height: "0",
           },
         },
+        "scroll-up": {
+          from: {
+            transform: "translateY(100vh)",
+          },
+          to: {
+            transform: "translateY(-100%)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "scroll-up": "scroll-up 60s linear infinite",
       },
     },
   },
