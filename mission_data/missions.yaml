@@ -595,7 +595,7 @@ missions:
   - slug: early-vote
     title: 期日前投票をしよう！
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg
-    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！
+    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！<br><br>■選挙区候補者<br>北海道　：稲原 むねよし<br>宮城県　：角野 なすか<br>長野県　：山田 ゆうじ<br>埼玉県　：武藤 かずこ<br>千葉県　：小林 しゅうへい<br>東京都　：みねしま 侑也<br>神奈川県：河合 みちお<br>愛知県　：山根 ゆきや<br>大阪府　：平 りさこ<br>兵庫県　：前田 みさ<br>愛媛県　：川端 ゆうすけ<br>福岡県　：古川 あおい<br><br>■比例代表候補者<br>安野 たかひろ<br>高山 さとし<br>須田 えいたろう
     difficulty: 5
     required_artifact_type: NONE
     max_achievement_count: 1
