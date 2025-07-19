@@ -52,6 +52,7 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "tm-teal": "#30BAA7",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -61,8 +62,18 @@ const config = {
       fontSize: {
         xxs: "0.625rem", // 10px
         xxl: "1.375rem",
+        "2xl-custom": ["24px", { lineHeight: "40px", letterSpacing: "0.48px" }],
+        "lg-custom": ["18px", { lineHeight: "32px", letterSpacing: "0.36px" }],
+        "sm-custom": ["14px", { lineHeight: "22px", letterSpacing: "0.28px" }],
       },
       keyframes: {
+        confettiFall: {
+          "0%": { transform: "translateY(-10vh) rotate(0deg)", opacity: "1" },
+          "100%": {
+            transform: "translateY(100vh) rotate(360deg)",
+            opacity: "0.5",
+          },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -83,6 +94,7 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "confetti-fall": "confettiFall 5s linear infinite",
       },
     },
   },

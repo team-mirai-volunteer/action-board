@@ -100,10 +100,33 @@ export const signUpActionWithState = async (
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
+
+  if (error) {
+    // メールアドレスが既に使用されている場合
+    if (
+      error.message.includes("already registered") ||
+      error.message.includes("already exists")
+    ) {
+      return {
+        error:
+          "このメールアドレスは既に登録されています。ログインページからログインしてください。",
+        formData: currentFormData,
+      };
+    }
+    return {
+      error: "ユーザー登録に失敗しました",
+      formData: currentFormData,
+    };
+  }
+
   //サインアップ完了後にuserIdを取得
   const userId = data?.user?.id;
   if (!userId) {
-    return { error: "ユーザー登録に失敗しました", formData: currentFormData };
+    return {
+      error:
+        "アカウント作成処理でエラーが発生しました。しばらく時間をおいて再度お試しください。",
+      formData: currentFormData,
+    };
   }
 
   //紹介URLから遷移した場合のみ以下を実行

@@ -244,13 +244,6 @@ export type Database = {
             referencedRelation: "achievements";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "mission_artifacts_achievement_id_fkey";
-            columns: ["achievement_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["id"];
-          },
         ];
       };
       mission_category: {
@@ -454,6 +447,7 @@ export type Database = {
           created_at: string;
           difficulty: number;
           event_date: string | null;
+          featured_importance: number | null;
           icon_url: string | null;
           id: string;
           is_featured: boolean;
@@ -471,6 +465,7 @@ export type Database = {
           created_at?: string;
           difficulty: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id: string;
           is_featured?: boolean;
@@ -488,6 +483,7 @@ export type Database = {
           created_at?: string;
           difficulty?: number;
           event_date?: string | null;
+          featured_importance?: number | null;
           icon_url?: string | null;
           id?: string;
           is_featured?: boolean;
@@ -1004,6 +1000,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_activities: {
+        Row: {
+          activity_title: string;
+          activity_type: string;
+          created_at: string;
+          id: string;
+          user_id: string | null;
+        };
+        Insert: {
+          activity_title: string;
+          activity_type: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          activity_title?: string;
+          activity_type?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_activities_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "public_user_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       user_badges: {
         Row: {
           achieved_at: string;
@@ -1161,6 +1189,7 @@ export type Database = {
     Views: {
       activity_timeline_view: {
         Row: {
+          activity_type: string | null;
           address_prefecture: string | null;
           avatar_url: string | null;
           created_at: string | null;
@@ -1333,6 +1362,10 @@ export type Database = {
       };
     };
     Functions: {
+      delete_user_account: {
+        Args: { target_user_id: string };
+        Returns: undefined;
+      };
       get_mission_links: {
         Args: { p_mission_id: string };
         Returns: {
@@ -1511,6 +1544,7 @@ export type Database = {
         Returns: {
           user_id: string;
           name: string;
+          level: number;
           rank: number;
           xp: number;
         }[];
@@ -1531,6 +1565,14 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: number;
       };
+      get_user_posting_count_by_mission: {
+        Args: { target_user_id: string; target_mission_id: string };
+        Returns: number;
+      };
+      get_top_users_posting_count_by_mission: {
+        Args: { user_ids: string[]; target_mission_id: string };
+        Returns: { user_id: string; posting_count: number }[];
+      };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
         Returns: {
@@ -1547,6 +1589,7 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
+        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
@@ -1573,21 +1616,28 @@ export type Database = {
   };
 };
 
-type DefaultSchema = Database[Extract<keyof Database, "public">];
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R;
     }
     ? R
@@ -1605,14 +1655,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I;
     }
     ? I
@@ -1628,14 +1680,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U;
     }
     ? U
@@ -1651,14 +1705,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never;
@@ -1666,14 +1722,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;
@@ -1686,6 +1744,7 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
+        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",

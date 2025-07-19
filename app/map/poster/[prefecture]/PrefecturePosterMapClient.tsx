@@ -46,6 +46,7 @@ import {
   calculateProgressRate,
   getCompletedCount,
 } from "@/lib/utils/poster-progress";
+import { maskUsername } from "@/lib/utils/privacy";
 import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -108,6 +109,7 @@ export default function PrefecturePosterMapClient({
   const [filters, setFilters] = useState({
     selectedStatuses: [
       "not_yet",
+      "not_yet_dangerous",
       "reserved",
       "done",
       "error_wrong_place",
@@ -379,6 +381,7 @@ export default function PrefecturePosterMapClient({
   // 統計情報を使用（初期値はサーバーから提供されたもの）
   const statusCounts = stats?.statusCounts || {
     not_yet: 0,
+    not_yet_dangerous: 0,
     reserved: 0,
     done: 0,
     error_wrong_place: 0,
@@ -443,13 +446,13 @@ export default function PrefecturePosterMapClient({
           {/* 主要統計 */}
           <div className="flex items-baseline gap-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{totalCount}</span>
-              <span className="text-xs text-muted-foreground">総数</span>
               {actualTotalCount > 0 && (
-                <span className="text-xs text-muted-foreground">
-                  (登録: {registeredCount})
-                </span>
+                <span className="text-2xl font-bold">{registeredCount}</span>
               )}
+              <span className="text-xs text-muted-foreground">総数</span>
+              <span className="text-xs text-muted-foreground">
+                (公表: {totalCount})
+              </span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-green-600">
@@ -520,31 +523,34 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              <div className="flex items-center gap-2">
-                <span>
-                  {selectedBoard?.name ||
-                    selectedBoard?.address ||
-                    selectedBoard?.number}
-                  の状況を教えてください
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0"
-                  onClick={() => {
-                    const text =
-                      selectedBoard?.name ||
-                      selectedBoard?.address ||
-                      selectedBoard?.number;
-                    if (text) copyToClipboard(text);
-                  }}
-                  title="名前/住所をコピー"
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
+              {selectedBoard?.name ||
+                selectedBoard?.address ||
+                selectedBoard?.number}
+              の状況を教えてください
             </DialogDescription>
           </DialogHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm text-muted-foreground">
+              {selectedBoard?.name ||
+                selectedBoard?.address ||
+                selectedBoard?.number}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
+              onClick={() => {
+                const text =
+                  selectedBoard?.name ||
+                  selectedBoard?.address ||
+                  selectedBoard?.number;
+                if (text) copyToClipboard(text);
+              }}
+              title="名前/住所をコピー"
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
           {selectedBoard && (
             <div className="mb-4 text-sm text-muted-foreground">
               <div className="flex items-center justify-between">
@@ -616,7 +622,9 @@ export default function PrefecturePosterMapClient({
               <Label htmlFor="status">ポスターの状況</Label>
               <Select
                 value={updateStatus}
-                onValueChange={(value) => setUpdateStatus(value as BoardStatus)}
+                onValueChange={(value: string) =>
+                  setUpdateStatus(value as BoardStatus)
+                }
               >
                 <SelectTrigger id="status">
                   <SelectValue />
@@ -650,7 +658,23 @@ export default function PrefecturePosterMapClient({
           {/* History Section */}
           {showHistory && (
             <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
-              <h3 className="font-semibold mb-2">更新履歴</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">更新履歴</h3>
+                {selectedBoard && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <span>ID: {selectedBoard.id}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0"
+                      onClick={() => copyToClipboard(selectedBoard.id)}
+                      title="IDをコピー"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               {loadingHistory ? (
                 <div className="text-sm text-muted-foreground">
                   読み込み中...
@@ -672,6 +696,11 @@ export default function PrefecturePosterMapClient({
                       </div>
                       <div className="text-muted-foreground text-xs">
                         {new Date(item.created_at).toLocaleString("ja-JP")}
+                        {item.user?.name && (
+                          <span className="ml-2">
+                            by {maskUsername(item.user.name)}
+                          </span>
+                        )}
                         {item.note && (
                           <span className="ml-2">「{item.note}」</span>
                         )}

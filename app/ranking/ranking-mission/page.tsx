@@ -9,6 +9,7 @@ import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import {
   getUserMissionRanking,
   getUserPostingCount,
+  getUserPostingCountByMission,
 } from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
@@ -78,7 +79,9 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = selectedMission.required_artifact_type === "POSTING";
   const userPostingCount =
-    user && isPostingMission ? await getUserPostingCount(user.id) : 0;
+    user && isPostingMission
+      ? await getUserPostingCountByMission(user.id, selectedMission.id)
+      : 0;
   let badgeText = "";
 
   if (userRanking) {
@@ -91,6 +94,9 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
+      <h2 className="text-2xl font-bold text-center mb-4">
+        アクションリーダー
+      </h2>
       <RankingTabs>
         {/* ミッション選択 */}
         <section className="py-4 bg-white">

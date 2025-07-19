@@ -47,6 +47,11 @@ export default async function Levels({
               {profile.address_prefecture}
             </div>
           </div>
+          <div className="flex items-center mt-2 text-sm text-gray-600">
+            <div>
+              {userLevel ? userLevel.xp.toLocaleString() : "0"} ポイント
+            </div>
+          </div>
         </div>
       </div>
       {showBadge && (

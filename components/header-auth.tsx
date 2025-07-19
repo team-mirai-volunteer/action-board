@@ -1,4 +1,5 @@
 import { signOutAction } from "@/app/actions";
+import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
@@ -39,10 +40,21 @@ export default async function AuthButton() {
               <Link href="/">ホーム</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
+              <Link href={`/users/${user.id}`}>マイページ</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/map/posting">機関誌配布マップ</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/map/poster">ポスター掲示板マップ</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <OnboardingButton
+                variant="link"
+                className="w-full justify-start p-0 h-auto text-sm"
+              >
+                アクションボードとは？
+              </OnboardingButton>
             </DropdownMenuItem>
             {/*
             <DropdownMenuItem asChild>

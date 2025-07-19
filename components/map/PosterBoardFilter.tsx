@@ -27,7 +27,8 @@ const statusConfig: {
   label: string;
   color: string;
 }[] = [
-  { status: "not_yet", label: "未実施", color: "#6B7280" },
+  { status: "not_yet", label: "未貼付", color: "#6B7280" },
+  { status: "not_yet_dangerous", label: "未貼付（危険）", color: "#6B7280" },
   { status: "done", label: "完了", color: "#10B981" },
 ];
 

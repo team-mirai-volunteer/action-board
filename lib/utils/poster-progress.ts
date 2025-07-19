@@ -11,7 +11,7 @@ export function calculateProgressRate(
   registeredCount: number,
 ): number {
   if (registeredCount === 0) return 0;
-  return Math.round((completedCount / registeredCount) * 100);
+  return Math.floor((completedCount / registeredCount) * 100);
 }
 
 /**
@@ -27,11 +27,14 @@ export function getCompletedCount(
 
 /**
  * ステータス別の統計から登録済み掲示板数を取得
+ * 他党のポスター貼付状態（error_wrong_poster）は進捗率計算の分母から除外
  * @param statusCounts ステータス別の統計
- * @returns 登録済み掲示板数
+ * @returns 登録済み掲示板数（error_wrong_posterを除く）
  */
 export function getRegisteredCount(
   statusCounts: Record<BoardStatus, number>,
 ): number {
-  return Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+  return Object.entries(statusCounts)
+    .filter(([status]) => status !== "error_wrong_poster")
+    .reduce((sum, [, count]) => sum + count, 0);
 }

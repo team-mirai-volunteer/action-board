@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
+import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
 
@@ -19,19 +20,11 @@ export async function getMissionRanking(
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
-    const now = new Date();
 
     switch (period) {
       case "daily":
-        // 本日の0時0分を基準にする
-        dateFilter = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
+        // 日本時間の今日の0時0分を基準にする
+        dateFilter = getJSTMidnightToday();
         break;
       default:
         dateFilter = null;
@@ -111,19 +104,11 @@ export async function getUserMissionRanking(
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
-    const now = new Date();
 
     switch (period) {
       case "daily":
-        // 本日の0時0分を基準にする
-        dateFilter = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          0,
-          0,
-          0,
-        );
+        // 日本時間の今日の0時0分を基準にする
+        dateFilter = getJSTMidnightToday();
         break;
       default:
         dateFilter = null;
@@ -210,6 +195,35 @@ export async function getUserPostingCount(userId: string): Promise<number> {
   return typeof data === "number" ? data : 0;
 }
 
+export async function getUserPostingCountByMission(
+  userId: string,
+  missionId: string,
+): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "get_user_posting_count_by_mission",
+    {
+      target_user_id: userId,
+      target_mission_id: missionId,
+    },
+  );
+
+  if (error) {
+    console.error("Failed to fetch user posting count by mission:", {
+      userId,
+      missionId,
+      errorMessage: error.message,
+      errorCode: error.code,
+      errorDetails: error.details,
+      timestamp: new Date().toISOString(),
+    });
+    return 0;
+  }
+
+  // dataがnullやundefinedの場合は0を返す
+  return typeof data === "number" ? data : 0;
+}
+
 export async function getTopUsersPostingCount(
   userIds: string[],
 ): Promise<{ user_id: string; posting_count: number }[]> {
@@ -222,6 +236,30 @@ export async function getTopUsersPostingCount(
     console.error("Failed to fetch users posting count:", error);
     throw new Error(
       `ユーザーのポスティング枚数取得に失敗しました: ${error.message}`,
+    );
+  }
+
+  // dataがnullやundefinedの場合は空配列を返す
+  return (data as { user_id: string; posting_count: number }[]) || [];
+}
+
+export async function getTopUsersPostingCountByMission(
+  userIds: string[],
+  missionId: string,
+): Promise<{ user_id: string; posting_count: number }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "get_top_users_posting_count_by_mission",
+    {
+      user_ids: userIds,
+      target_mission_id: missionId,
+    },
+  );
+
+  if (error) {
+    console.error("Failed to fetch users posting count by mission:", error);
+    throw new Error(
+      `ミッション別ユーザーのポスティング枚数取得に失敗しました: ${error.message}`,
     );
   }
 

@@ -1,6 +1,5 @@
-import { EXTERNAL_LINKS } from "@/lib/constants";
+import { EXTERNAL_LINKS } from "@/lib/links";
 import Link from "next/link";
-import { FOOTER_CONFIG } from "./footer";
 
 export function CopyrightSection() {
   return (
@@ -10,7 +9,7 @@ export function CopyrightSection() {
           {/* Desktop layout - single row */}
           <div className="hidden min-[571px]:flex justify-center items-center gap-2 text-sm">
             <Link
-              href="https://team-mir.ai/"
+              href={EXTERNAL_LINKS.team_mirai_main}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-70 transition-opacity duration-200"
@@ -36,7 +35,7 @@ export function CopyrightSection() {
             </Link>
             <span className="text-black">|</span>
             <Link
-              href={FOOTER_CONFIG.feedback.url}
+              href={EXTERNAL_LINKS.feedback_action_board}
               className="hover:opacity-70 transition-opacity duration-200"
               target="_blank"
               rel="noopener noreferrer"
@@ -46,7 +45,7 @@ export function CopyrightSection() {
             </Link>
             <span className="text-black">|</span>
             <Link
-              href={EXTERNAL_LINKS.FAQ}
+              href={EXTERNAL_LINKS.faq}
               className="hover:opacity-70 transition-opacity duration-200"
               target="_blank"
               rel="noopener noreferrer"
@@ -61,7 +60,7 @@ export function CopyrightSection() {
             {/* First row */}
             <div className="flex justify-center items-center gap-2 text-sm">
               <Link
-                href="https://team-mir.ai/"
+                href={EXTERNAL_LINKS.team_mirai_main}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-70 transition-opacity duration-200"
@@ -90,7 +89,7 @@ export function CopyrightSection() {
             {/* Second row */}
             <div className="flex justify-center items-center gap-2 text-sm">
               <Link
-                href={FOOTER_CONFIG.feedback.url}
+                href={EXTERNAL_LINKS.feedback_action_board}
                 className="hover:opacity-70 transition-opacity duration-200"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -100,7 +99,7 @@ export function CopyrightSection() {
               </Link>
               <span className="text-black">|</span>
               <Link
-                href={EXTERNAL_LINKS.FAQ}
+                href={EXTERNAL_LINKS.faq}
                 className="hover:opacity-70 transition-opacity duration-200"
                 target="_blank"
                 rel="noopener noreferrer"

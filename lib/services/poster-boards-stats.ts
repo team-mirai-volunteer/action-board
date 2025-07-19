@@ -30,6 +30,7 @@ export async function getPosterBoardStats(): Promise<{
       if (!stats[row.prefecture]) {
         stats[row.prefecture] = {
           not_yet: 0,
+          not_yet_dangerous: 0,
           reserved: 0,
           done: 0,
           error_wrong_place: 0,
@@ -66,6 +67,8 @@ async function getFallbackStats(): Promise<{
     const { data, error } = await supabase
       .from("poster_boards")
       .select("prefecture, status")
+      .not("lat", "is", null)
+      .not("long", "is", null)
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
@@ -95,6 +98,7 @@ async function getFallbackStats(): Promise<{
     if (!stats[board.prefecture]) {
       stats[board.prefecture] = {
         not_yet: 0,
+        not_yet_dangerous: 0,
         reserved: 0,
         done: 0,
         error_wrong_place: 0,
