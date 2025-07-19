@@ -79,7 +79,7 @@ export default async function Home({
       )}
 
       {/* ヒーローセクション */}
-      <section>
+      <section className="relative">
         <Hero />
       </section>
 
