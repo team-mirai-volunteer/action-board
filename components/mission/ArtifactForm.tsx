@@ -120,7 +120,7 @@ export function ArtifactForm({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="postingCount">
-                ポスティング枚数 <span className="text-red-500">*</span>
+                ポスティング・配布枚数 <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="number"
@@ -140,7 +140,7 @@ export function ArtifactForm({
 
             <div className="space-y-2">
               <Label htmlFor="locationText">
-                ポスティング場所の郵便番号（ハイフンなし）
+                ポスティング・配布場所の郵便番号（ハイフンなし）
                 <span className="text-red-500">*</span>
               </Label>
               <Input
