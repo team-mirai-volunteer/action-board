@@ -81,9 +81,9 @@ export function MissionFormWrapper({
   // XPアニメーションデータを設定する共通関数
   const handleXpAnimation = (result: {
     xpGranted?: number;
-    userLevel?: { xp: number };
+    userLevel?: { xp: number } | null;
   }) => {
-    if (result.xpGranted && result.userLevel) {
+    if (result.xpGranted && result.userLevel?.xp !== undefined) {
       const initialXp = result.userLevel.xp - result.xpGranted;
       setXpAnimationData({
         initialXp,

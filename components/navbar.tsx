@@ -1,4 +1,5 @@
 import HeaderAuth from "@/components/header-auth";
+import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +65,14 @@ export default async function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/map/poster">ポスター掲示板マップ</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <OnboardingButton
+                        variant="link"
+                        className="w-full justify-start p-0 h-auto text-sm"
+                      >
+                        アクションボードとは？
+                      </OnboardingButton>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />

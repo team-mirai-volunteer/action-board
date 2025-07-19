@@ -3,6 +3,7 @@
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import {
+  type UserLevel,
   getUserXpBonus,
   grantMissionCompletionXp,
   grantXp,
@@ -118,10 +119,7 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
     .max(MAX_POSTING_COUNT, {
       message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
     }),
-  locationText: z
-    .string()
-    .min(1, { message: "ポスティング場所を入力してください" })
-    .max(100, { message: "ポスティング場所は100文字以下で入力してください" }),
+  locationText: z.string().optional(),
 });
 
 // POSTERタイプ用スキーマ
@@ -299,10 +297,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count を確認
+  // ミッション情報を取得して、max_achievement_count と required_artifact_type を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("max_achievement_count")
+    .select("max_achievement_count, required_artifact_type")
     .eq("id", validatedMissionId)
     .single();
 
@@ -616,7 +614,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         .insert({
           mission_artifact_id: newArtifact.id,
           posting_count: validatedData.postingCount,
-          location_text: validatedData.locationText,
+          location_text: validatedData.locationText ?? "",
         });
 
       if (postingError) {
@@ -714,18 +712,39 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
-  // ミッション達成時にXPを付与
-  const xpResult = await grantMissionCompletionXp(
-    authUser.id,
-    validatedMissionId,
-    achievement.id,
-  );
+  // ポスティングミッション以外の場合のみ、ミッション達成時にXPを付与
+  let xpResult: {
+    success: boolean;
+    xpGranted?: number;
+    userLevel?: UserLevel | null;
+    error?: string;
+  };
+  if (missionData?.required_artifact_type !== "POSTING") {
+    xpResult = await grantMissionCompletionXp(
+      authUser.id,
+      validatedMissionId,
+      achievement.id,
+    );
 
-  if (!xpResult.success) {
-    console.error("XP付与に失敗しました:", xpResult.error);
-    // XP付与の失敗はミッション達成の成功を妨げない
+    if (!xpResult.success) {
+      console.error("XP付与に失敗しました:", xpResult.error);
+      // XP付与の失敗はミッション達成の成功を妨げない
+    }
+    totalXpGranted += xpResult?.xpGranted ?? 0;
+  } else {
+    // ポスティングミッションの場合は現在のユーザーレベルを取得
+    const { data: currentUserLevel } = await supabase
+      .from("user_levels")
+      .select("*")
+      .eq("user_id", authUser.id)
+      .single();
+
+    xpResult = {
+      success: true,
+      xpGranted: 0,
+      userLevel: currentUserLevel,
+    };
   }
-  totalXpGranted += xpResult?.xpGranted ?? 0;
   return {
     success: true,
     message: "ミッションを達成しました！",

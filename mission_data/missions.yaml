@@ -299,6 +299,28 @@ missions:
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
+  - slug: posting-flyer
+    title: 確認団体ビラを配布しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-proportional-representation-poster.svg
+    content: |-
+      チームみらいの確認団体ビラを配布しよう！
+      確認団体ビラは選挙活動の一環として認められている印刷物で、街頭配布・ポスティングが可能です。確認団体ビラ配布は全国どこでも実施可能です。
+
+      配布した枚数を報告してください。配布1枚につき50ポイントを獲得できます。
+
+      ご協力いただける方はぜひ以下フォームよりお申し込みいただけますと幸いです。
+
+      <a target="_blank" href="https://forms.gle/bUAVjG91dsNK8Sf97">チームみらい確認団体ビラ受取登録フォーム</a>
+
+      確認団体ビラは7/20以降は一切配布できません。ご注意ください。
+      
+    difficulty: 2
+    required_artifact_type: POSTING
+    max_achievement_count: null
+    is_featured: true
+    is_hidden: false
+    artifact_label: ポスティング情報
+    ogp_image_url: null
   - slug: youtube-watch
     title: YouTube動画を視聴しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
@@ -573,11 +595,11 @@ missions:
   - slug: early-vote
     title: 期日前投票をしよう！
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg
-    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！
+    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！<br><br>■選挙区候補者<br>北海道　：稲原 むねよし<br>宮城県　：角野 なすか<br>長野県　：山田 ゆうじ<br>埼玉県　：武藤 かずこ<br>千葉県　：小林 しゅうへい<br>東京都　：みねしま 侑也<br>神奈川県：河合 みちお<br>愛知県　：山根 ゆきや<br>大阪府　：平 りさこ<br>兵庫県　：前田 みさ<br>愛媛県　：川端 ゆうすけ<br>福岡県　：古川 あおい<br><br>■比例代表候補者<br>安野 たかひろ<br>高山 さとし<br>須田 えいたろう
     difficulty: 5
     required_artifact_type: NONE
     max_achievement_count: 1
-    is_featured: false
+    is_featured: true
     featured_importance: 100
     is_hidden: false
     artifact_label: null
@@ -611,7 +633,7 @@ missions:
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: コメントしたYouTube動画のURL
     ogp_image_url: null
@@ -633,7 +655,7 @@ missions:
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: false
     artifact_label: コメントしたTikTok動画のURL
     ogp_image_url: null
@@ -662,7 +684,7 @@ missions:
       【埼玉】17:30- @浦和駅東口（武藤かず子）
       【千葉】17:00- @流山おおたかの森駅前（小林しゅうへい）
       【東京】19:00- @丸の内駅前広場（みねしま侑也・安野たかひろ）
-      【神奈川】19:00- @武蔵小杉駅コアパーク前（河合みちお）
+      【神奈川】19:00- @武蔵小杉駅北口（河合みちお）
       【長野】19:15- @小諸駅近く 相生坂公園（山田ゆうじ）
       【愛知】19:00- @名古屋駅太閤通口（山根ゆきや・須田えいたろう）
       【大阪】19:00- @梅田 HEP FIVE前（平りさこ）
@@ -670,8 +692,7 @@ missions:
       【愛媛】19:00- @松山市大街頭商店街入り口（川端ゆうすけ）
       【福岡】19:30- @天神ワンビル（ワン・フクオカ・ビルディング）前（古川あおい）
 
-      2025/07/17 23:34 現在の情報です。<br>
-      現地の状況によっては、場所・時間が変更になる可能性があります。最新情報は、候補者のXアカウント、または<a href="https://team-mirai.notion.site/7-19-231f6f56bae180cba059c38f7c9e7567" target="_blank" rel="noopener noreferrer">こちらのページ</a>をご確認ください。
+      現地の状況により、場所・時間が変更になる場合がございます。最新情報は、候補者のXアカウント、または<a href="https://team-mirai.notion.site/7-19-231f6f56bae180cba059c38f7c9e7567" target="_blank" rel="noopener noreferrer">こちらのページ</a>をご確認ください。
 
       ▼公認候補者・SNSアカウント一覧
       https://team-mir.ai/#member

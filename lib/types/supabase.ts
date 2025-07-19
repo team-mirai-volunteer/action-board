@@ -1565,6 +1565,14 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: number;
       };
+      get_user_posting_count_by_mission: {
+        Args: { target_user_id: string; target_mission_id: string };
+        Returns: number;
+      };
+      get_top_users_posting_count_by_mission: {
+        Args: { user_ids: string[]; target_mission_id: string };
+        Returns: { user_id: string; posting_count: number }[];
+      };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
         Returns: {
