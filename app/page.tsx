@@ -4,8 +4,15 @@ import NewHome from "./newHome";
 import OldHome from "./oldHome";
 export const dynamic = "force-dynamic";
 
-export default function Page(props: {
-  searchParams: Promise<{ ref?: string }>;
+export default async function Page(props: {
+  searchParams: Promise<{ ref?: string; preview?: string }>;
 }) {
+  const params = await props.searchParams;
+  const isPreview = params.preview === "1";
+
+  if (isPreview) {
+    return <NewHome />;
+  }
+
   return isAfterSwitchTime() ? <NewHome /> : <OldHome {...props} />;
 }
