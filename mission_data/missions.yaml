@@ -704,3 +704,18 @@ missions:
     is_hidden: false
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
+  - slug: create-poster-board-csv
+    title: ポスター掲示板の位置情報をCSVファイル化しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    content: |-
+      チームみらいのポスター掲示板の位置情報をCSVファイルにまとめて、地域の活動をより効率的にしよう！1つの市区町村あたり400ポイントを獲得できます。
+
+      作成したCSVファイルは、チームみらいの活動をサポートする重要なデータとなります。
+      地図アプリへの取り込みや、効率的なルート計画の作成に活用できます。
+    difficulty: 3
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: true
+    artifact_label: CSVファイル化した市区町村の数
+    ogp_image_url: null
