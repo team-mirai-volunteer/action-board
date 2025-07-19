@@ -103,7 +103,7 @@ const EndCredits = ({
             textShadow: "2px 2px 4px rgba(0,0,0,.8)",
           }}
         >
-          アクションボード参画者
+          アクションボードチーム
         </div>
         <div style={{ fontSize: "16px", lineHeight: "1.6" }}>
           {rows.map((row, idx) => (
@@ -143,7 +143,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   const [contributors, setContributors] = useState<ContributorData[]>([]);
 
   // ★ 固定スクロール速度(px/s) をここで決める
-  const SCROLL_SPEED = 500000; // 例: 50px/秒
+  const SCROLL_SPEED = 80; // 例: 80px/秒
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
@@ -211,7 +211,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               fullScreen: { enable: false },
               emitters: {
                 life: { count: 0 },
-                rate: { quantity: 6, delay: 0.5 },
+                rate: { quantity: 6, delay: { min: 0.5, max: 1.3 } },
                 size: { width: 150, height: 150 },
                 position: { x: 50, y: 100 },
                 direction: "top",
