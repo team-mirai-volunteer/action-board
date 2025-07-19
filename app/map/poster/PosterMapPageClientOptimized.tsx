@@ -112,68 +112,76 @@ export default function PosterMapPageClientOptimized({
       </div>
 
       {/* Overall Stats Card */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>全体の進捗状況</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              {totalStats.actualTotal > 0 && (
-                <div className="text-2xl font-bold">
-                  {totalStats.registeredTotal.toLocaleString()}
-                </div>
-              )}
-              <div className="text-sm text-muted-foreground">総掲示板数</div>
-              <div className="text-xs text-muted-foreground">
-                (公表: {totalStats.actualTotal.toLocaleString()})
+      <Link href="/map/poster/japan" className="block">
+        <Card className="transition-all hover:shadow-lg cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle>全体の進捗状況</CardTitle>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <MapPin className="mr-1 h-4 w-4" />
+                日本全国マップ
               </div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {totalStats.completed.toLocaleString()}
-              </div>
-              <div className="text-sm text-muted-foreground">完了</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {totalStats.percentage}%
-              </div>
-              <div className="text-sm text-muted-foreground">達成率</div>
-            </div>
-          </div>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span>進捗</span>
-              <span className="font-medium">{totalStats.percentage}%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
-                style={{ width: `${totalStats.percentage}%` }}
-              />
-            </div>
-          </div>
-          {/* ステータス詳細 */}
-          <div className="mt-4 pt-4 border-t">
-            <div className="text-sm font-medium mb-2">ステータス内訳</div>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(totalStats.statuses).map(([status, count]) => {
-                if (count === 0) return null;
-                const config = statusConfig[status as BoardStatus];
-                return (
-                  <div key={status} className="flex items-center gap-1">
-                    <div className={`h-2 w-2 rounded-full ${config.color}`} />
-                    <span className="text-xs text-muted-foreground">
-                      {config.label}: {count.toLocaleString()}
-                    </span>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                {totalStats.actualTotal > 0 && (
+                  <div className="text-2xl font-bold">
+                    {totalStats.registeredTotal.toLocaleString()}
                   </div>
-                );
-              })}
+                )}
+                <div className="text-sm text-muted-foreground">総掲示板数</div>
+                <div className="text-xs text-muted-foreground">
+                  (公表: {totalStats.actualTotal.toLocaleString()})
+                </div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-green-600">
+                  {totalStats.completed.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">完了</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {totalStats.percentage}%
+                </div>
+                <div className="text-sm text-muted-foreground">達成率</div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>進捗</span>
+                <span className="font-medium">{totalStats.percentage}%</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+                  style={{ width: `${totalStats.percentage}%` }}
+                />
+              </div>
+            </div>
+            {/* ステータス詳細 */}
+            <div className="mt-4 pt-4 border-t">
+              <div className="text-sm font-medium mb-2">ステータス内訳</div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(totalStats.statuses).map(([status, count]) => {
+                  if (count === 0) return null;
+                  const config = statusConfig[status as BoardStatus];
+                  return (
+                    <div key={status} className="flex items-center gap-1">
+                      <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                      <span className="text-xs text-muted-foreground">
+                        {config.label}: {count.toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
 
       {/* Prefecture List */}
       <div className="space-y-4">

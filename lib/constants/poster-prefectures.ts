@@ -1,4 +1,9 @@
 export const POSTER_PREFECTURE_MAP = {
+  japan: {
+    jp: "日本全国",
+    center: [36.2048, 138.2529] as [number, number],
+    defaultZoom: 5, // 日本全国が見える広域ズームレベル
+  },
   hokkaido: {
     jp: "北海道",
     center: [43.0642, 141.3469] as [number, number],
@@ -88,4 +93,9 @@ export function getPrefectureDefaultZoom(
   prefectureKey: PosterPrefectureKey,
 ): number {
   return POSTER_PREFECTURE_MAP[prefectureKey].defaultZoom;
+}
+
+// Helper function to check if key is a prefecture (not japan)
+export function isPrefectureKey(key: PosterPrefectureKey): boolean {
+  return key !== "japan";
 }
