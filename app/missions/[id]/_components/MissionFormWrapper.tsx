@@ -302,7 +302,9 @@ export function MissionFormWrapper({
           mission.max_achievement_count === null)) && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
           <p className="text-sm font-medium text-gray-800">
-            このミッションは達成済みです。
+            {mission.max_achievement_count === null
+              ? "このミッションは何度でもチャレンジできます。"
+              : "このミッションはすでに達成済みです。"}
           </p>
           <div className="flex flex-col gap-2 mt-2">
             <Button
