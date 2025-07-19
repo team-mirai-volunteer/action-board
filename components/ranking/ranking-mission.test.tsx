@@ -19,6 +19,7 @@ type UserPostingCount = {
 jest.mock("@/lib/services/missionsRanking", () => ({
   getMissionRanking: jest.fn(),
   getTopUsersPostingCount: jest.fn(),
+  getTopUsersPostingCountByMission: jest.fn(),
 }));
 
 jest.mock("@/components/ui/card", () => ({
@@ -96,11 +97,13 @@ describe("RankingMission", () => {
   const {
     getMissionRanking,
     getTopUsersPostingCount,
+    getTopUsersPostingCountByMission,
   } = require("@/lib/services/missionsRanking");
 
   beforeEach(() => {
     getMissionRanking.mockClear();
     getTopUsersPostingCount.mockClear();
+    getTopUsersPostingCountByMission.mockClear();
   });
 
   describe("基本的な表示", () => {
@@ -170,7 +173,7 @@ describe("RankingMission", () => {
 
     it("ポスティングミッションの場合は枚数が表示される", async () => {
       getMissionRanking.mockResolvedValue(mockRankings);
-      getTopUsersPostingCount.mockResolvedValue(mockPostingCounts);
+      getTopUsersPostingCountByMission.mockResolvedValue(mockPostingCounts);
 
       render(
         await RankingMission({
@@ -198,9 +201,9 @@ describe("RankingMission", () => {
       expect(getMissionRanking).toHaveBeenCalledWith("mission-1", 15);
     });
 
-    it("ポスティングミッションの場合はgetTopUsersPostingCountが呼ばれる", async () => {
+    it("ポスティングミッションの場合はgetTopUsersPostingCountByMissionが呼ばれる", async () => {
       getMissionRanking.mockResolvedValue(mockRankings);
-      getTopUsersPostingCount.mockResolvedValue(mockPostingCounts);
+      getTopUsersPostingCountByMission.mockResolvedValue(mockPostingCounts);
 
       await RankingMission({
         mission: mockMission,
@@ -208,10 +211,10 @@ describe("RankingMission", () => {
         isPostingMission: true,
       });
 
-      expect(getTopUsersPostingCount).toHaveBeenCalledWith([
-        "user-1",
-        "user-2",
-      ]);
+      expect(getTopUsersPostingCountByMission).toHaveBeenCalledWith(
+        ["user-1", "user-2"],
+        "mission-1",
+      );
     });
   });
 
@@ -228,9 +231,11 @@ describe("RankingMission", () => {
       ).rejects.toThrow("API Error");
     });
 
-    it("getTopUsersPostingCountがエラーを投げても処理が継続される", async () => {
+    it("getTopUsersPostingCountByMissionがエラーを投げても処理が継続される", async () => {
       getMissionRanking.mockResolvedValue(mockRankings);
-      getTopUsersPostingCount.mockRejectedValue(new Error("API Error"));
+      getTopUsersPostingCountByMission.mockRejectedValue(
+        new Error("API Error"),
+      );
 
       await expect(
         RankingMission({

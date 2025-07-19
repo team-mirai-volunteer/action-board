@@ -299,6 +299,26 @@ missions:
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
+  - slug: posting-flyer
+    title: 確認団体ビラを配布しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-proportional-representation-poster.svg
+    content: |-
+      チームみらいの確認団体ビラを配布しよう！
+      確認団体ビラは選挙活動の一環として認められている印刷物で、街頭配布・ポスティングが可能です。確認団体ビラ配布は全国どこでも実施可能です。
+
+      配布した枚数を報告してください。配布1枚につき50ポイントを獲得できます。
+
+      ご協力いただける方はぜひ以下フォームよりお申し込みいただけますと幸いです。
+
+      <a target="_blank" href="https://forms.gle/bUAVjG91dsNK8Sf97">チームみらい確認団体ビラ受取登録フォーム</a>
+      
+    difficulty: 2
+    required_artifact_type: POSTING
+    max_achievement_count: null
+    is_featured: true
+    is_hidden: false
+    artifact_label: ポスティング情報
+    ogp_image_url: null
   - slug: youtube-watch
     title: YouTube動画を視聴しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
@@ -662,7 +682,7 @@ missions:
       【埼玉】17:30- @浦和駅東口（武藤かず子）
       【千葉】17:00- @流山おおたかの森駅前（小林しゅうへい）
       【東京】19:00- @丸の内駅前広場（みねしま侑也・安野たかひろ）
-      【神奈川】19:00- @武蔵小杉駅コアパーク前（河合みちお）
+      【神奈川】19:00- @武蔵小杉駅北口（河合みちお）
       【長野】19:15- @小諸駅近く 相生坂公園（山田ゆうじ）
       【愛知】19:00- @名古屋駅太閤通口（山根ゆきや・須田えいたろう）
       【大阪】19:00- @梅田 HEP FIVE前（平りさこ）

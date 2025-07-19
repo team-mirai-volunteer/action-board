@@ -2,6 +2,7 @@
 import {
   getMissionRanking,
   getTopUsersPostingCount,
+  getTopUsersPostingCountByMission,
 } from "@/lib/services/missionsRanking";
 import type { Tables } from "@/lib/types/supabase";
 import BaseRanking from "./base-ranking";
@@ -32,8 +33,9 @@ export default async function RankingMission({
   // ポスティングミッションの場合のみ、上位ユーザーの投稿数を取得
   const topUsersPostingCount =
     isPostingMission && rankings.length > 0
-      ? await getTopUsersPostingCount(
+      ? await getTopUsersPostingCountByMission(
           rankings.map((user) => user.user_id ?? ""),
+          mission.id,
         )
       : [];
 

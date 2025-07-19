@@ -19,6 +19,7 @@ import {
 import {
   getUserMissionRanking,
   getUserPostingCount,
+  getUserPostingCountByMission,
 } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
@@ -111,7 +112,9 @@ export default async function MissionPage({ params }: Props) {
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = mission.required_artifact_type === "POSTING";
   const userPostingCount =
-    user && isPostingMission ? await getUserPostingCount(user.id) : 0;
+    user && isPostingMission
+      ? await getUserPostingCountByMission(user.id, mission.id)
+      : 0;
   let badgeText = "";
 
   if (userWithMissionRanking) {

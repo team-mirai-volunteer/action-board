@@ -11,7 +11,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await assertAuthState(signedInPage, true);
 
     // 自身のステータス表示を確認
-    await expect(signedInPage.locator('section').getByText('テストユーザーLV.1東京都次のレベルまで40ポイント')).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.locator('section').getByText('テストユーザーLV.1東京都0 ポイント次のレベルまで40ポイント')).toBeVisible({ timeout: 10000 });
     await expect(signedInPage.getByRole('link', { name: 'テストユーザーさんのプロフィールへ' })).toBeVisible();
 
     // 活動状況の表示を確認
@@ -138,7 +138,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await signedInPage.goto('/');
     await expect(signedInPage.getByRole('dialog', { name: 'サポーターレベルが アップしました！' })).toBeVisible();
     await signedInPage.getByRole('button', { name: 'Close' }).click();
-    await expect(signedInPage.locator('section').getByText('テストユーザーLV.9東京都次のレベルまで100ポイント')).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.locator('section').getByText('テストユーザーLV.9東京都800 ポイント次のレベルまで100ポイント')).toBeVisible({ timeout: 10000 });
 
     await signedInPage.goto('/ranking');
     await signedInPage.getByRole('button', { name: '全期間' }).click();
@@ -159,7 +159,7 @@ test.describe('アクションボード（Web版）のe2eテスト', () => {
     await signedInPage.waitForTimeout(2000);
 
     await signedInPage.goto('/');
-    await expect(signedInPage.locator('section').getByText('テストユーザーLV.1東京都次のレベルまで40ポイント')).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.locator('section').getByText('テストユーザーLV.1東京都0 ポイント次のレベルまで40ポイント')).toBeVisible({ timeout: 10000 });
   });
 
   test('TOP100ランキング - 全タブ遷移が正常に動作する', async ({
