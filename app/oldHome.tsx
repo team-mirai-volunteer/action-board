@@ -1,3 +1,4 @@
+import NoticeBoardAlert from "@/components/NoticeBoardAlert";
 import Activities from "@/components/activities";
 import { BadgeNotificationCheck } from "@/components/badge-notification-check";
 import Hero from "@/components/hero";
@@ -68,6 +69,9 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* 注意書き */}
+      <NoticeBoardAlert />
+
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />
