@@ -12,7 +12,7 @@ class AuthHeader extends StatelessWidget {
         Container(
           width: 130,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(0)),
-          child: Image.asset('assets/img/logo.png', fit: BoxFit.cover),
+          child: Image.asset('assets/img/logo_shiro.png', fit: BoxFit.cover),
         ),
         const SizedBox(height: 8),
         // タイトル
