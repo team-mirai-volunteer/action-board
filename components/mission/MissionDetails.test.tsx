@@ -27,6 +27,7 @@ jest.mock("@/lib/formatter", () => ({
 
 const mockMission: Tables<"missions"> = {
   id: "test-mission-1",
+  slug: "test-mission-1",
   title: "テストミッション",
   content: "<p>テストミッションの<strong>詳細</strong>内容</p>",
   difficulty: 2,
@@ -35,6 +36,7 @@ const mockMission: Tables<"missions"> = {
   max_achievement_count: null,
   is_featured: true,
   is_hidden: false,
+  featured_importance: null,
   required_artifact_type: "NONE",
   artifact_label: null,
   ogp_image_url: null,
