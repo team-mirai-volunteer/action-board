@@ -41,6 +41,6 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/img/logo.png"
+  image_path: "assets/img/logo_shiro.png"
   min_sdk_android: 21
   remove_alpha_ios: true

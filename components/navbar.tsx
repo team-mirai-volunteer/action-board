@@ -25,7 +25,12 @@ export default async function Navbar() {
       <div className="px-4 md:container md:mx-auto w-full flex justify-between items-center text-sm">
         <div className="flex gap-5 items-center font-semibold min-w-[60px]">
           <Link href="/" className="flex items-center gap-4">
-            <Image src="/img/logo.png" alt="logo" width={57} height={48} />
+            <Image
+              src="/img/logo_shiro.png"
+              alt="logo"
+              width={57}
+              height={48}
+            />
             <div className="text-lg">アクションボード</div>
           </Link>
         </div>
