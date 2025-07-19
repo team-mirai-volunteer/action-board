@@ -126,10 +126,7 @@ describe("ArtifactForm", () => {
       />,
     );
 
-    expect(screen.getByText("ポスティング枚数")).toBeInTheDocument();
-    expect(
-      screen.getByText("ポスティング場所の郵便番号（ハイフンなし）"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("ポスティング")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：50")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：1540017")).toBeInTheDocument();
   });
