@@ -39,33 +39,37 @@ const EndCredits = ({
   onEnd,
 }: {
   contributors: ContributorData[];
-  scrollSpeedPxPerSec: number; // 固定速度(px/s)
+  scrollSpeedPxPerSec: number;
   onEnd: () => void;
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [totalHeight, setTotalHeight] = useState(0); // スクロールすべき総距離
+  const [totalHeight, setTotalHeight] = useState(0);
   const [ready, setReady] = useState(false);
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 50 });
 
-  // contributors が確定→DOM描画→高さ測定
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (wrapperRef.current) {
-      // scrollHeight: padding + 内容全体
-      const h = wrapperRef.current.scrollHeight;
-      setTotalHeight(h);
-      setReady(true);
-    }
-  }, [contributors]);
+  const ITEM_HEIGHT = 80;
+  const BUFFER_SIZE = 10;
 
-  // アニメーション時間(ms) = 距離(px) / 速度(px/s) * 1000
-  const durationMs = ready ? (totalHeight / scrollSpeedPxPerSec) * 1000 : 0;
-
-  // 3列に整形
   const rows = contributors.reduce<ContributorData[][]>((acc, c, i) => {
     if (i % 3 === 0) acc.push([]);
     acc[acc.length - 1].push(c);
     return acc;
   }, []);
+
+  const visibleRows = rows.slice(
+    Math.max(0, visibleRange.start - BUFFER_SIZE),
+    Math.min(rows.length, visibleRange.end + BUFFER_SIZE),
+  );
+
+  useEffect(() => {
+    if (wrapperRef.current && contributors.length > 0) {
+      const estimatedHeight = rows.length * ITEM_HEIGHT + 1000;
+      setTotalHeight(estimatedHeight);
+      setReady(true);
+    }
+  }, [contributors, rows.length]);
+
+  const durationMs = ready ? (totalHeight / scrollSpeedPxPerSec) * 1000 : 0;
 
   return (
     <div
@@ -77,6 +81,7 @@ const EndCredits = ({
         color: "#fff",
         fontFamily: "serif",
         zIndex: 15,
+        willChange: "transform",
       }}
     >
       <div
@@ -85,11 +90,11 @@ const EndCredits = ({
           width: "100%",
           paddingTop: "20vh",
           paddingBottom: "20vh",
-          // totalHeight を測った後でアニメーションを付与
           animation: ready
             ? `scrollUp ${durationMs}ms linear forwards`
             : "none",
-          transform: "translateY(100vh)",
+          transform: "translate3d(0, 100vh, 0)",
+          willChange: "transform",
         }}
         onAnimationEnd={onEnd}
       >
@@ -103,31 +108,49 @@ const EndCredits = ({
         >
           Contributors
         </div>
-        <div style={{ fontSize: "1.2rem", lineHeight: "2.5rem" }}>
-          {rows.map((row, idx) => (
-            <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              key={idx}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "3rem",
-                marginBottom: "2rem",
-                textShadow: "1px 1px 2px rgba(0,0,0,.8)",
-              }}
-            >
-              {row.map((c) => (
-                <span key={c.name}>{c.name}</span>
-              ))}
-            </div>
-          ))}
+
+        <div
+          style={{
+            height: `${rows.length * ITEM_HEIGHT}px`,
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              transform: `translateY(${Math.max(0, visibleRange.start - BUFFER_SIZE) * ITEM_HEIGHT}px)`,
+              willChange: "transform",
+            }}
+          >
+            {visibleRows.map((row, idx) => {
+              const actualIdx =
+                Math.max(0, visibleRange.start - BUFFER_SIZE) + idx;
+              return (
+                <div
+                  key={actualIdx}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "3rem",
+                    height: `${ITEM_HEIGHT}px`,
+                    alignItems: "center",
+                    textShadow: "1px 1px 2px rgba(0,0,0,.8)",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  {row.map((c) => (
+                    <span key={c.name}>{c.name}</span>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       <style jsx>{`
         @keyframes scrollUp {
-          0% { transform: translateY(100vh); }
-          100% { transform: translateY(-${totalHeight}px); }
+          0% { transform: translate3d(0, 100vh, 0); }
+          100% { transform: translate3d(0, -${totalHeight}px, 0); }
         }
       `}</style>
     </div>
@@ -140,18 +163,35 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   const [showSpecialThanks, setShowSpecialThanks] = useState(false);
   const [contributors, setContributors] = useState<ContributorData[]>([]);
 
-  // ★ 固定スクロール速度(px/s) をここで決める
-  const SCROLL_SPEED = 80; // 例: 50px/秒
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.log(`Contributors loaded: ${contributors.length}`);
+    }
+  }, [contributors.length]);
+
+  const SCROLL_SPEED = 50;
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFireworksPreset(engine);
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
     (async () => {
-      const data = await fetchAllContributors();
-      setContributors(data);
+      try {
+        const data = await fetchAllContributors();
+        if (isMounted) {
+          setContributors(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch contributors:", error);
+      }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleClick = useCallback(() => {
@@ -207,15 +247,26 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
             options={{
               preset: "fireworks",
               fullScreen: { enable: false },
+              fpsLimit: 60,
+              particles: {
+                number: {
+                  value: 50,
+                  density: { enable: true, value_area: 800 },
+                },
+                life: { duration: { min: 1, max: 3 } },
+                size: { value: { min: 1, max: 3 } },
+                opacity: { value: { min: 0.3, max: 0.8 } },
+              },
               emitters: {
                 life: { count: 0 },
-                rate: { quantity: 6, delay: 0.5 },
-                size: { width: 150, height: 150 },
+                rate: { quantity: 3, delay: 0.8 },
+                size: { width: 100, height: 100 },
                 position: { x: 50, y: 100 },
                 direction: "top",
               },
-              particles: { life: { duration: { min: 1, max: 3 } } },
               background: { color: { value: "transparent" } },
+              detectRetina: false,
+              reduceDuplicates: true,
             }}
             style={{
               position: "absolute",
@@ -223,6 +274,8 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
               width: "100%",
               height: "100%",
               pointerEvents: "none",
+              willChange: "transform, opacity",
+              transform: "translate3d(0, 0, 0)",
             }}
           />
           {showCredits && (
