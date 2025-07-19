@@ -97,13 +97,28 @@ const EndCredits = ({
       >
         <div
           style={{
-            fontSize: "1.8rem",
-            fontWeight: "bold",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             marginBottom: "3rem",
-            textShadow: "2px 2px 4px rgba(0,0,0,.8)",
+            gap: "3rem", // ← 画像とテキストの間にスペース
           }}
         >
-          アクションボードチーム
+          <img
+            src="/img/logo.png"
+            alt="チームロゴ"
+            style={{ width: "120px", height: "auto" }}
+          />
+          <div
+            style={{
+              fontSize: "1.8rem",
+              fontWeight: "bold",
+              textShadow: "2px 2px 4px rgba(0,0,0,.8)",
+              fontFamily: "'Noto Sans JP', sans-serif",
+            }}
+          >
+            アクションボードチーム
+          </div>
         </div>
         <div style={{ fontSize: "16px", lineHeight: "1.6" }}>
           {rows.map((row, idx) => (
@@ -116,6 +131,7 @@ const EndCredits = ({
                 gap: "1rem",
                 marginBottom: "2rem",
                 textShadow: "1px 1px 2px rgba(0,0,0,.8)",
+                fontFamily: "'Noto Sans JP', sans-serif",
               }}
             >
               {row.map((c) => (
@@ -150,6 +166,21 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   }, []);
 
   useEffect(() => {
+    if (isActive) return;
+
+    const timer = setTimeout(() => {
+      setIsActive(true);
+      onTrigger?.();
+
+      setTimeout(() => {
+        setShowCredits(true);
+      }, 3000);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [isActive, onTrigger]);
+
+  useEffect(() => {
     (async () => {
       const data = await fetchAllContributors();
       setContributors(data);
@@ -157,19 +188,23 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   }, []);
 
   const handleClick = useCallback(() => {
+    // すでにアニメーション中なら何もしない
+    if (isActive && !showSpecialThanks) return;
+
     if (showSpecialThanks) {
-      // リセット
+      // リセット時のみ有効
       setIsActive(false);
       setShowCredits(false);
       setShowSpecialThanks(false);
       return;
     }
+
     setIsActive(true);
     setShowCredits(false);
     setShowSpecialThanks(false);
     onTrigger?.();
     setTimeout(() => setShowCredits(true), 3000);
-  }, [onTrigger, showSpecialThanks]);
+  }, [isActive, showSpecialThanks, onTrigger]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -260,10 +295,21 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
                   paddingRight: "24px",
                   textShadow: "3px 3px 6px rgba(0,0,0,.8)",
                   animation: "fadeIn 2s ease-in-out",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "4rem", // テキストと画像の間隔
+                  fontFamily: "'Noto Sans JP', sans-serif",
                 }}
               >
                 ご支援をいただき、 誠にありがとうございました
+                <img
+                  src="/img/logo.png"
+                  alt="チームロゴ"
+                  style={{ width: "120px", height: "auto" }}
+                />
               </div>
+
               <style jsx>{`
                 @keyframes fadeIn {
                   0% { opacity: 0; transform: scale(0.8); }
