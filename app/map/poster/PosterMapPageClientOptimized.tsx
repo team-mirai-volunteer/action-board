@@ -172,6 +172,14 @@ export default function PosterMapPageClientOptimized({
               })}
             </div>
           </div>
+          <div className="mt-4 pt-4 border-t">
+            <Button asChild className="w-full">
+              <Link href="/map/poster/all">
+                <MapPin className="mr-2 h-4 w-4" />
+                全国地図を見る
+              </Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
