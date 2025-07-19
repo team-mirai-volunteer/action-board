@@ -718,8 +718,9 @@ export const achieveMissionAction = async (formData: FormData) => {
   // ポスティングミッション以外の場合のみ、ミッション達成時にXPを付与
   let xpResult: {
     success: boolean;
-    xpGranted: number;
+    xpGranted?: number;
     userLevel?: UserLevel | null;
+    error?: string;
   };
   if (missionData?.required_artifact_type !== "POSTING") {
     xpResult = await grantMissionCompletionXp(
