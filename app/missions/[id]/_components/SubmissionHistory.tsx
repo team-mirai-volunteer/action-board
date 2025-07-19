@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useState } from "react";
 import CancelSubmissionDialog from "./CancelSubmissionDialog";
 import SubmissionItem from "./SubmissionItem";
 import type { Submission } from "./types";
@@ -38,11 +39,18 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
+  // 5件ずつ表示するためのstate
+  const [showAll, setShowAll] = useState(false);
+
+  const displayedSubmissions = showAll
+    ? sortedSubmissions
+    : sortedSubmissions.slice(0, 5);
+
   return (
     <div className="mt-8">
       <h2 className="text-xl font-semibold mb-4">あなたの達成履歴</h2>
       <ul className="space-y-4">
-        {sortedSubmissions.map((submission, index) => (
+        {displayedSubmissions.map((submission, index) => (
           <SubmissionItem
             key={submission.id}
             submission={submission}
@@ -52,6 +60,19 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
           />
         ))}
       </ul>
+
+      {!showAll && sortedSubmissions.length > 5 && (
+        <div className="flex justify-center mt-4">
+          <button
+            className="px-4 py-2 rounded bg-gray-100 hover:bg-gray-200"
+            onClick={() => setShowAll(true)}
+            type="button"
+            data-testid="show-all-achievement"
+          >
+            すべて見る
+          </button>
+        </div>
+      )}
 
       <CancelSubmissionDialog
         isOpen={isDialogOpen}
