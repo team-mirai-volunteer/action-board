@@ -29,6 +29,7 @@ const baseMission: Tables<"missions"> = {
   max_achievement_count: null,
   is_featured: false,
   is_hidden: false,
+  featured_importance: null,
   artifact_label: "テストラベル",
   ogp_image_url: null,
   created_at: "2025-06-22T00:00:00Z",
