@@ -70,7 +70,10 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-qr-code": "^2.0.15",
+    "react-tsparticles": "^2.12.2",
     "sonner": "^2.0.4",
+    "tsparticles-engine": "^2.12.0",
+    "tsparticles-preset-fireworks": "^2.12.0",
     "uuid": "^9.0.1",
     "zod": "^3.25.23"
   },
