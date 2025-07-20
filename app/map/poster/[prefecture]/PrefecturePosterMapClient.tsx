@@ -51,7 +51,7 @@ import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
@@ -71,6 +71,23 @@ import {
   getUserEditedBoardIdsAction,
 } from "@/lib/actions/poster-boards";
 
+type MapAppType = "Google Maps" | "Apple Maps";
+type DisplayType = "address" | "coordinates" | "name";
+
+// 表示タイプに応じて日本語テキストを生成
+const getDisplayTypeText = (displayType: DisplayType) => {
+  switch (displayType) {
+    case "address":
+      return "住所";
+    case "coordinates":
+      return "座標";
+    case "name":
+      return "名称";
+    default:
+      return "情報";
+  }
+};
+
 interface PrefecturePosterMapClientProps {
   userId?: string;
   prefecture: string;
@@ -79,6 +96,452 @@ interface PrefecturePosterMapClientProps {
   initialStats?: BoardStats;
   boardTotal?: PosterBoardTotal | null;
   userEditedBoardIds?: string[];
+}
+
+function generateMapUrl(
+  app: MapAppType,
+  lat: number,
+  long: number,
+  address: string,
+  useCoords: boolean,
+) {
+  if (app === "Google Maps") {
+    return useCoords
+      ? `https://www.google.com/maps?q=${lat},${long}`
+      : `https://www.google.com/maps/search/${encodeURIComponent(address)}`;
+  }
+  return useCoords
+    ? `maps://maps.apple.com/?q=${lat},${long}`
+    : `maps://maps.apple.com/?q=${encodeURIComponent(address)}`;
+}
+
+function LocationInfo({
+  selectedBoard,
+  displayType,
+  preferredMapApp,
+  saveMapAppPreference,
+  copyToClipboard,
+  onNameConfirm,
+}: {
+  selectedBoard: PosterBoard;
+  displayType: DisplayType;
+  preferredMapApp: MapAppType | null;
+  saveMapAppPreference: (app: MapAppType) => void;
+  copyToClipboard: (displayType: DisplayType, text: string) => Promise<void>;
+  onNameConfirm: (app: MapAppType) => void;
+}) {
+  // 表示タイプに応じてテキストを生成
+  const getDisplayText = () => {
+    switch (displayType) {
+      case "address":
+        return `${selectedBoard.city} ${selectedBoard.address}`;
+      case "coordinates":
+        return `${selectedBoard.lat}, ${selectedBoard.long}`;
+      case "name":
+        return selectedBoard.name || "名称なし";
+      default:
+        return "";
+    }
+  };
+
+  // 地図URL生成時のuseCoords判定
+  const shouldUseCoords = displayType === "coordinates";
+  const displayText = getDisplayText();
+
+  return (
+    <div className="text-sm text-muted-foreground">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="break-words">{displayText}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 flex-shrink-0"
+            onClick={() => copyToClipboard(displayType, displayText)}
+            title={`${getDisplayTypeText(displayType)}をコピー`}
+          >
+            <Copy className="h-3 w-3" />
+          </Button>
+        </div>
+
+        {preferredMapApp ? (
+          displayType === "name" ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 flex-shrink-0 whitespace-nowrap"
+              onClick={() => onNameConfirm(preferredMapApp)}
+            >
+              <MapPin className="h-4 w-4 mr-1" />
+              {`${getDisplayTypeText(displayType)}で開く`}
+            </Button>
+          ) : (
+            <a
+              href={generateMapUrl(
+                preferredMapApp,
+                selectedBoard.lat,
+                selectedBoard.long,
+                displayText,
+                shouldUseCoords,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center h-8 px-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-accent/50 rounded-md transition-colors flex-shrink-0 whitespace-nowrap"
+            >
+              <MapPin className="h-4 w-4 mr-1" />
+              {`${getDisplayTypeText(displayType)}で開く${
+                displayType === "coordinates" ? "(推奨)" : ""
+              }`}
+            </a>
+          )
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 flex-shrink-0 whitespace-nowrap"
+              >
+                <MapPin className="h-4 w-4 mr-1" />
+                {`${getDisplayTypeText(displayType)}で開く${
+                  displayType === "coordinates" ? "(推奨)" : ""
+                }`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {["Google Maps", "Apple Maps"].map((app) => (
+                <DropdownMenuItem asChild key={app}>
+                  {displayType === "name" ? (
+                    <button
+                      type="button"
+                      className="flex items-center w-full px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onClick={() => {
+                        saveMapAppPreference(app as MapAppType);
+                        onNameConfirm(app as MapAppType);
+                      }}
+                    >
+                      {app}
+                    </button>
+                  ) : (
+                    <a
+                      href={generateMapUrl(
+                        app as MapAppType,
+                        selectedBoard.lat,
+                        selectedBoard.long,
+                        displayText,
+                        shouldUseCoords,
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center w-full px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                      onClick={() => saveMapAppPreference(app as MapAppType)}
+                    >
+                      {app}
+                    </a>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const TextSelector = ({
+  text,
+  onSelectionChange,
+}: {
+  text: string;
+  onSelectionChange?: (selectedText: string) => void;
+}) => {
+  const selectableAreaRef = useRef<HTMLDivElement>(null);
+  const spanRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  const initialText = text;
+
+  const [selection, setSelection] = useState({
+    start: 0,
+    end: initialText.length - 1,
+  });
+  const [activeHandle, setActiveHandle] = useState<string | null>(null);
+  const [handlePositions, setHandlePositions] = useState<{
+    start: { top: number; left: number } | null;
+    end: { top: number; left: number } | null;
+  }>({
+    start: null,
+    end: null,
+  });
+
+  const styles = {
+    selectedText: {
+      backgroundColor: "yellow",
+      color: "black",
+    },
+    selectableArea: {
+      position: "relative" as const,
+      userSelect: "none" as const,
+      cursor: "text",
+    },
+    selectionHandle: {
+      position: "absolute" as const,
+      width: "24px",
+      height: "24px",
+      backgroundColor: "hsl(var(--primary))",
+      borderRadius: "50%",
+      cursor: "pointer",
+      zIndex: 1000,
+    },
+  };
+
+  const textSpans = initialText.split("").map((char, index) => (
+    <span
+      key={`span-${index}-${char.charCodeAt(0)}`}
+      ref={(el) => {
+        spanRefs.current[index] = el;
+      }}
+      style={
+        selection.start !== null &&
+        index >= selection.start &&
+        index <= selection.end
+          ? styles.selectedText
+          : {}
+      }
+    >
+      {char}
+    </span>
+  ));
+
+  const findSpanIndexFromPoint = useCallback(
+    (clientX: number, clientY: number) => {
+      const closest = { index: -1, distance: Number.POSITIVE_INFINITY };
+      for (let i = 0; i < spanRefs.current.length; i++) {
+        const span = spanRefs.current[i];
+        if (span) {
+          const rect = span.getBoundingClientRect();
+          if (
+            clientX >= rect.left &&
+            clientX <= rect.right &&
+            clientY >= rect.top &&
+            clientY <= rect.bottom
+          ) {
+            return i;
+          }
+          const midX = rect.left + rect.width / 2;
+          const midY = rect.top + rect.height / 2;
+          const dist = Math.hypot(midX - clientX, midY - clientY);
+          if (dist < closest.distance) {
+            closest.distance = dist;
+            closest.index = i;
+          }
+        }
+      }
+      return closest.distance < 50 ? closest.index : -1;
+    },
+    [],
+  );
+
+  const updateSelection = useCallback(
+    (startIndex: number, endIndex: number) => {
+      const newStart = Math.min(startIndex, endIndex);
+      const newEnd = Math.max(startIndex, endIndex);
+      setSelection({ start: newStart, end: newEnd });
+
+      if (onSelectionChange) {
+        const selectedText = initialText.slice(newStart, newEnd + 1);
+        onSelectionChange(selectedText);
+      }
+    },
+    [initialText, onSelectionChange],
+  );
+
+  const handleInteractionStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      if (
+        e.target instanceof Element &&
+        e.target.classList.contains("selection-handle-class")
+      ) {
+        setActiveHandle(e.target.getAttribute("data-handle"));
+      }
+    },
+    [],
+  );
+
+  const handleInteractionMove = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if (!activeHandle) return;
+      if (e.cancelable) e.preventDefault();
+
+      const clientX = "clientX" in e ? e.clientX : e.touches?.[0]?.clientX;
+      const clientY = "clientY" in e ? e.clientY : e.touches?.[0]?.clientY;
+      if (clientX === undefined || clientY === undefined) return;
+      const currentIndex = findSpanIndexFromPoint(clientX, clientY);
+      if (currentIndex === -1) return;
+
+      if (activeHandle === "start") {
+        updateSelection(currentIndex, selection.end);
+      } else {
+        updateSelection(selection.start, currentIndex);
+      }
+    },
+    [activeHandle, selection, findSpanIndexFromPoint, updateSelection],
+  );
+
+  const handleInteractionEnd = useCallback(() => {
+    if (!activeHandle) return;
+    setActiveHandle(null);
+  }, [activeHandle]);
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleInteractionMove);
+    document.addEventListener("touchmove", handleInteractionMove, {
+      passive: false,
+    });
+    document.addEventListener("mouseup", handleInteractionEnd);
+    document.addEventListener("touchend", handleInteractionEnd);
+
+    return () => {
+      document.removeEventListener("mousemove", handleInteractionMove);
+      document.removeEventListener("touchmove", handleInteractionMove);
+      document.removeEventListener("mouseup", handleInteractionEnd);
+      document.removeEventListener("touchend", handleInteractionEnd);
+    };
+  }, [handleInteractionMove, handleInteractionEnd]);
+
+  useEffect(() => {
+    if (selection.start === null || !selectableAreaRef.current) {
+      setHandlePositions({ start: null, end: null });
+      return;
+    }
+
+    const areaRect = selectableAreaRef.current.getBoundingClientRect();
+    const startSpan = spanRefs.current[selection.start];
+    const endSpan = spanRefs.current[selection.end];
+
+    if (startSpan && endSpan) {
+      const startSpanRect = startSpan.getBoundingClientRect();
+      const endSpanRect = endSpan.getBoundingClientRect();
+
+      setHandlePositions({
+        start: {
+          top: startSpanRect.bottom - areaRect.top,
+          left: startSpanRect.left - areaRect.left - 12,
+        },
+        end: {
+          top: endSpanRect.bottom - areaRect.top,
+          left: endSpanRect.right - areaRect.left - 12,
+        },
+      });
+    }
+  }, [selection]);
+
+  return (
+    <div className="w-full">
+      <div
+        ref={selectableAreaRef}
+        onMouseDown={handleInteractionStart}
+        onTouchStart={handleInteractionStart}
+        style={styles.selectableArea}
+        className="break-words leading-relaxed text-sm sm:text-base"
+      >
+        {textSpans}
+        {handlePositions.start && (
+          <div
+            className="selection-handle-class"
+            data-handle="start"
+            style={{
+              ...styles.selectionHandle,
+              top: handlePositions.start.top,
+              left: handlePositions.start.left,
+            }}
+          />
+        )}
+        {handlePositions.end && (
+          <div
+            className="selection-handle-class"
+            data-handle="end"
+            style={{
+              ...styles.selectionHandle,
+              top: handlePositions.end.top,
+              left: handlePositions.end.left,
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+function NameConfirmDialog({
+  open,
+  onOpenChange,
+  selectedBoard,
+  addressConfirmApp,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedBoard: PosterBoard | null;
+  addressConfirmApp: MapAppType | null;
+}) {
+  const defaultText =
+    `${selectedBoard?.city} ${selectedBoard?.name}` || "名称なし";
+  const [selectedText, setSelectedText] = useState(defaultText);
+
+  // selectedBoardが変更されたときにselectedTextを更新
+  useEffect(() => {
+    setSelectedText(defaultText);
+  }, [defaultText]);
+
+  const mapUrl =
+    addressConfirmApp && selectedBoard
+      ? generateMapUrl(
+          addressConfirmApp,
+          selectedBoard.lat,
+          selectedBoard.long,
+          selectedText,
+          false,
+        )
+      : "#";
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>どの範囲で検索しますか？</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            丸を動かして範囲を選択してください
+          </p>
+          <div className="p-4 border rounded-lg bg-muted/50">
+            <TextSelector
+              text={defaultText}
+              onSelectionChange={setSelectedText}
+            />
+          </div>
+        </div>
+        <DialogFooter className="gap-4 top-10 flex-col sm:flex-row">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto"
+          >
+            キャンセル
+          </Button>
+          <a
+            href={mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => onOpenChange(false)}
+            className="inline-flex items-center justify-center w-full sm:w-auto h-10 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors"
+          >
+            マップを開く
+          </a>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default function PrefecturePosterMapClient({
@@ -105,6 +568,11 @@ export default function PrefecturePosterMapClient({
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
+  const [showAddressConfirmDialog, setShowAddressConfirmDialog] =
+    useState(false);
+  const [addressConfirmApp, setAddressConfirmApp] = useState<MapAppType | null>(
+    null,
+  );
   const [stats, setStats] = useState(initialStats);
   const [filters, setFilters] = useState({
     selectedStatuses: [
@@ -127,6 +595,29 @@ export default function PrefecturePosterMapClient({
   const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
     string | null
   >(null);
+
+  const [preferredMapApp, setPreferredMapApp] = useState<MapAppType | null>(
+    null,
+  );
+  // 地図アプリの選択をlocalStorageから読み込み
+  useEffect(() => {
+    const saved = localStorage.getItem("preferredMapApp");
+    if (saved === "Google Maps" || saved === "Apple Maps") {
+      setPreferredMapApp(saved as MapAppType);
+    }
+  }, []);
+
+  // 地図アプリの選択を保存
+  const saveMapAppPreference = (app: MapAppType) => {
+    setPreferredMapApp(app);
+    localStorage.setItem("preferredMapApp", app);
+  };
+
+  // 地図アプリの選択をリセット
+  const resetMapAppPreference = () => {
+    setPreferredMapApp(null);
+    localStorage.removeItem("preferredMapApp");
+  };
 
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
@@ -178,13 +669,19 @@ export default function PrefecturePosterMapClient({
   }, [userId, boards, prefecture]);
 
   // 住所をクリップボードにコピー
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (displayType: DisplayType, text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("住所をコピーしました");
+      toast.success(`${getDisplayTypeText(displayType)}をコピーしました`);
     } catch (error) {
       toast.error("コピーに失敗しました");
     }
+  };
+
+  // 名称確認モーダルを開く
+  const handleNameConfirm = (app: MapAppType) => {
+    setAddressConfirmApp(app);
+    setShowAddressConfirmDialog(true);
   };
 
   const loadBoards = async () => {
@@ -272,7 +769,8 @@ export default function PrefecturePosterMapClient({
     // この掲示板で既にミッション達成しているかチェック
     const { data: activities } = await supabase
       .from("poster_activities")
-      .select(`
+      .select(
+        `
         id,
         mission_artifacts!inner(
           achievements!inner(
@@ -280,7 +778,8 @@ export default function PrefecturePosterMapClient({
             user_id
           )
         )
-      `)
+      `,
+      )
       .eq("board_id", boardId)
       .eq("mission_artifacts.achievements.user_id", userId)
       .eq("mission_artifacts.achievements.mission_id", mission.id);
@@ -523,98 +1022,48 @@ export default function PrefecturePosterMapClient({
           <DialogHeader>
             <DialogTitle>ポスターの状況を報告</DialogTitle>
             <DialogDescription>
-              {selectedBoard?.name ||
-                selectedBoard?.address ||
-                selectedBoard?.number}
+              {selectedBoard?.city} ({selectedBoard?.number})
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm text-muted-foreground">
-              {selectedBoard?.name ||
-                selectedBoard?.address ||
-                selectedBoard?.number}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={() => {
-                const text =
-                  selectedBoard?.name ||
-                  selectedBoard?.address ||
-                  selectedBoard?.number;
-                if (text) copyToClipboard(text);
-              }}
-              title="名前/住所をコピー"
-            >
-              <Copy className="h-3 w-3" />
-            </Button>
-          </div>
           {selectedBoard && (
-            <div className="mb-4 text-sm text-muted-foreground">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span>
-                    {selectedBoard.city} {selectedBoard.address} (
-                    {selectedBoard.number})
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0"
-                    onClick={() => {
-                      const address = `${selectedBoard.city} ${selectedBoard.address}`;
-                      copyToClipboard(address);
-                    }}
-                    title="住所をコピー"
-                  >
-                    <Copy className="h-3 w-3" />
-                  </Button>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      地図で開く
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <a
-                        href={
-                          selectedBoard.lat && selectedBoard.long
-                            ? `https://www.google.com/maps?q=${selectedBoard.lat},${selectedBoard.long}`
-                            : `https://www.google.com/maps/search/${encodeURIComponent(
-                                `${selectedBoard.city}${selectedBoard.address}`,
-                              )}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center w-full"
-                      >
-                        Google Maps
-                      </a>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a
-                        href={
-                          selectedBoard.lat && selectedBoard.long
-                            ? `maps://maps.apple.com/?q=${selectedBoard.lat},${selectedBoard.long}`
-                            : `maps://maps.apple.com/?q=${encodeURIComponent(
-                                `${selectedBoard.city}${selectedBoard.address}`,
-                              )}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center w-full"
-                      >
-                        Apple Maps
-                      </a>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+            <>
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="name"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+                onNameConfirm={handleNameConfirm}
+              />
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="address"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+                onNameConfirm={handleNameConfirm}
+              />
+              <LocationInfo
+                selectedBoard={selectedBoard}
+                displayType="coordinates"
+                preferredMapApp={preferredMapApp}
+                saveMapAppPreference={saveMapAppPreference}
+                copyToClipboard={copyToClipboard}
+                onNameConfirm={handleNameConfirm}
+              />
+            </>
+          )}
+          {preferredMapApp && (
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetMapAppPreference}
+                className="text-xs text-muted-foreground hover:text-foreground cursor-pointer underline"
+              >
+                デフォルトのマップアプリをリセット
+              </Button>
             </div>
           )}
           <div className="space-y-4">
@@ -842,6 +1291,13 @@ export default function PrefecturePosterMapClient({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <NameConfirmDialog
+        open={showAddressConfirmDialog}
+        onOpenChange={setShowAddressConfirmDialog}
+        selectedBoard={selectedBoard}
+        addressConfirmApp={addressConfirmApp}
+      />
     </div>
   );
 }
