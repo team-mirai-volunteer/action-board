@@ -529,6 +529,12 @@ export default function PrefecturePosterMapClient({
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
+          {/* アーカイブ版の説明 */}
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+            <p className="text-sm text-yellow-800">
+              現在アーカイブ版のため、ステータスの更新はできません。
+            </p>
+          </div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm text-muted-foreground">
               {selectedBoard?.name ||
@@ -654,7 +660,6 @@ export default function PrefecturePosterMapClient({
               />
             </div>
           </div>
-
           {/* History Section */}
           {showHistory && (
             <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
@@ -711,7 +716,6 @@ export default function PrefecturePosterMapClient({
               )}
             </div>
           )}
-
           <DialogFooter className="flex items-center justify-between">
             <Button
               variant="ghost"
