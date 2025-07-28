@@ -1,12 +1,12 @@
 import { createClient as createServerClient } from "@/lib/supabase/server";
-import type { Tables } from "@/lib/types/supabase";
-import { nanoid } from "nanoid";
 import type {
   Achievement,
   MissionArtifact,
   MissionPageData,
   SubmissionData,
-} from "./types";
+} from "@/lib/types/domain";
+import type { Tables } from "@/lib/types/supabase";
+import { nanoid } from "nanoid";
 
 export async function getMissionData(
   missionId: string,
