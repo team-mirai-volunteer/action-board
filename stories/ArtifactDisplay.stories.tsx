@@ -1,6 +1,6 @@
+import type { MissionArtifact } from "@/lib/types/domain";
 import type { Meta, StoryObj } from "@storybook/react";
 import ArtifactDisplay from "../app/missions/[id]/_components/ArtifactDisplay";
-import type { MissionArtifact } from "../app/missions/[id]/_components/types";
 
 const meta = {
   title: "ArtifactDisplay",
