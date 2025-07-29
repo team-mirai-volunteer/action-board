@@ -1,12 +1,12 @@
 import NoticeBoardAlert from "@/components/NoticeBoardAlert";
 import Activities from "@/components/activities";
 import { BadgeNotificationCheck } from "@/components/badge-notification-check";
+import { FeaturedMissions } from "@/components/features/mission/components/FeaturedMissions";
+import Missions from "@/components/features/mission/components/Missions";
+import { MissionsByCategory } from "@/components/features/mission/components/MissionsByCategory";
 import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
 import MetricsWithSuspense from "@/components/metrics/MetricsWithSuspense";
-import FeaturedMissions from "@/components/mission/FeaturedMissions";
-import MissionsByCategory from "@/components/mission/MissionsByCategory";
-import Missions from "@/components/mission/missions";
 import RankingTop from "@/components/ranking/ranking-top";
 import RankingSection from "@/components/top/ranking-section";
 import { Button } from "@/components/ui/button";
@@ -99,7 +99,11 @@ export default async function Home({
         {/* フューチャードミッションセクション */}
         {showFeatured && (
           <section className="py-12 md:py-16 bg-white">
-            <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
+            <FeaturedMissions
+              missions={[]}
+              userAchievements={{}}
+              totalAchievements={{}}
+            />
           </section>
         )}
 
@@ -107,9 +111,9 @@ export default async function Home({
       </div>
       <section className="py-12 md:py-16 bg-white">
         <MissionsByCategory
-          userId={user?.id}
-          showAchievedMissions={true}
-          id="missions"
+          missions={[]}
+          userAchievements={{}}
+          totalAchievements={{}}
         />
       </section>
 

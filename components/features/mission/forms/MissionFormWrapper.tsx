@@ -1,12 +1,10 @@
 "use client";
 
-import { achieveMissionAction } from "@/app/missions/[id]/actions";
 import { MissionCompleteDialog } from "@/components/features/mission/dialogs/MissionCompleteDialog";
-import { ArtifactForm } from "@/components/mission/ArtifactForm";
-import QuizComponent from "@/components/mission/QuizComponent";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
+import { achieveMissionAction } from "@/lib/api/missions/actions";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -17,6 +15,8 @@ import { toast } from "sonner";
 import { MainLinkButton } from "../components/MainLinkButton";
 import { useMissionSubmission } from "../hooks/useMissionSubmission";
 import { useQuizMission } from "../hooks/useQuizMission";
+import { ArtifactForm } from "./ArtifactForm";
+import QuizComponent from "./QuizComponent";
 
 type Props = {
   mission: Tables<"missions">;
@@ -164,19 +164,6 @@ export function MissionFormWrapper({
 
   const isCompleted = hasReachedUserMaxAchievements;
 
-  if (isCompleted) {
-    return (
-      <div className="text-center p-6 bg-green-50 border border-green-200 rounded-lg">
-        <div className="text-green-600 font-medium">
-          このミッションは完了済みです
-        </div>
-        <div className="text-sm text-green-500 mt-1">
-          おめでとうございます！このミッションを達成しました。
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {errorMessage && (
@@ -247,6 +234,13 @@ export function MissionFormWrapper({
             >
               {isSubmitting ? "送信中..." : buttonLabel}
             </SubmitButton>
+            {isCompleted && (
+              <div className="text-center mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="text-green-600 font-medium text-sm">
+                  このミッションは完了済みです
+                </div>
+              </div>
+            )}
           </div>
         </form>
       )}

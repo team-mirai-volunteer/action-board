@@ -34,17 +34,14 @@ export function useMissionSubmission(
   }, [mission.max_achievement_count, userAchievementCount]);
 
   const buttonLabel = useMemo(() => {
-    if (hasReachedUserMaxAchievements) {
-      return "完了済み";
-    }
     if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
       return "クイズに回答";
     }
     if (mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) {
       return "リンクにアクセス";
     }
-    return "ミッションを達成";
-  }, [hasReachedUserMaxAchievements, mission.required_artifact_type]);
+    return "ミッション完了を記録する";
+  }, [mission.required_artifact_type]);
 
   const isButtonDisabled = useMemo(() => {
     return hasReachedUserMaxAchievements;

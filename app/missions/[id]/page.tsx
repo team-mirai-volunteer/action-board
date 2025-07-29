@@ -1,5 +1,5 @@
+import { MissionDetails } from "@/components/features/mission/components/MissionDetails";
 import { MissionWithSubmissionHistory } from "@/components/features/mission/components/MissionWithSubmissionHistory";
-import { MissionDetails } from "@/components/mission/MissionDetails";
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   defaultUrl,
   notoSansJP,
 } from "@/lib/metadata";
+import { getMissionPageData } from "@/lib/services/mission/dataService";
 import {
   getUserMissionRanking,
   getUserPostingCount,
@@ -27,7 +28,6 @@ import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { getMissionPageData } from "./_lib/data";
 import { getQuizQuestionsAction } from "./actions";
 
 type Props = {

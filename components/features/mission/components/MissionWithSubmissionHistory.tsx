@@ -1,6 +1,6 @@
 "use client";
 
-import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
+import { MissionGuidanceArrow } from "@/components/features/mission/utils/MissionGuidanceArrow";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
 import type { SubmissionData } from "@/lib/types/domain";

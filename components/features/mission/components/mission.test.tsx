@@ -1,4 +1,4 @@
-import Mission from "@/components/mission/mission";
+import Mission from "@/components/features/mission/components/Mission";
 import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
@@ -89,31 +89,34 @@ jest.mock("@/components/ui/mission-icon", () => ({
   ),
 }));
 
-jest.mock("@/components/mission/mission-achievement-status", () => {
-  return function MockMissionAchievementStatus({
-    hasReachedMaxAchievements,
-    userAchievementCount,
-    maxAchievementCount,
-  }: {
-    hasReachedMaxAchievements: boolean;
-    userAchievementCount: number;
-    maxAchievementCount: number | null;
-  }) {
-    if (hasReachedMaxAchievements) {
-      return <div data-testid="achievement-status">達成済み</div>;
-    }
-    if (maxAchievementCount !== null) {
+jest.mock(
+  "@/components/features/mission/components/MissionAchievementStatus",
+  () => {
+    return function MockMissionAchievementStatus({
+      hasReachedMaxAchievements,
+      userAchievementCount,
+      maxAchievementCount,
+    }: {
+      hasReachedMaxAchievements: boolean;
+      userAchievementCount: number;
+      maxAchievementCount: number | null;
+    }) {
+      if (hasReachedMaxAchievements) {
+        return <div data-testid="achievement-status">達成済み</div>;
+      }
+      if (maxAchievementCount !== null) {
+        return (
+          <div data-testid="achievement-status">
+            {userAchievementCount}/{maxAchievementCount}回達成
+          </div>
+        );
+      }
       return (
-        <div data-testid="achievement-status">
-          {userAchievementCount}/{maxAchievementCount}回達成
-        </div>
+        <div data-testid="achievement-status">{userAchievementCount}回達成</div>
       );
-    }
-    return (
-      <div data-testid="achievement-status">{userAchievementCount}回達成</div>
-    );
-  };
-});
+    };
+  },
+);
 
 jest.mock("lucide-react", () => ({
   UsersRound: ({ className }: { className?: string }) => (
@@ -145,9 +148,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
-        achievementsCount={10}
         userAchievementCount={0}
+        totalAchievementCount={10}
       />,
     );
 
@@ -160,9 +162,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
-        achievementsCount={5}
         userAchievementCount={0}
+        totalAchievementCount={5}
       />,
     );
 
@@ -173,9 +174,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={true}
-        achievementsCount={15}
         userAchievementCount={3}
+        totalAchievementCount={15}
       />,
     );
 
@@ -188,9 +188,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutLimit}
-        achieved={false}
-        achievementsCount={20}
         userAchievementCount={5}
+        totalAchievementCount={20}
       />,
     );
 
@@ -203,9 +202,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutIcon}
-        achieved={false}
-        achievementsCount={0}
         userAchievementCount={0}
+        totalAchievementCount={0}
       />,
     );
 
@@ -217,9 +215,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
-        achievementsCount={undefined}
         userAchievementCount={0}
+        totalAchievementCount={0}
       />,
     );
 
@@ -232,9 +229,8 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutDate}
-        achieved={false}
-        achievementsCount={5}
         userAchievementCount={0}
+        totalAchievementCount={5}
       />,
     );
 

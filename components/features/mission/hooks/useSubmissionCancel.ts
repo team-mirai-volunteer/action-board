@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelSubmissionAction } from "@/app/missions/[id]/actions";
+import { cancelSubmissionAction } from "@/lib/api/missions/actions";
 import { useState } from "react";
 
 export const useSubmissionCancel = (missionId: string) => {

@@ -1,4 +1,4 @@
-import Mission from "@/components/mission/mission";
+import Mission from "@/components/features/mission/components/Mission";
 import type { Tables } from "@/lib/types/supabase";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -37,8 +37,8 @@ const dummyMission: Tables<"missions"> = {
 export const Default: Story = {
   args: {
     mission: dummyMission,
-    achieved: false,
-    achievementsCount: 123,
+    userAchievementCount: 0,
+    totalAchievementCount: 123,
   },
 };
 
@@ -52,15 +52,15 @@ const dummyMissionWithDate = {
 export const WithDate: Story = {
   args: {
     mission: dummyMissionWithDate,
-    achieved: false,
-    achievementsCount: 123,
+    userAchievementCount: 0,
+    totalAchievementCount: 123,
   },
 };
 
 export const Achieved: Story = {
   args: {
     mission: dummyMissionWithDate,
-    achieved: true,
-    achievementsCount: 123,
+    userAchievementCount: 3,
+    totalAchievementCount: 123,
   },
 };

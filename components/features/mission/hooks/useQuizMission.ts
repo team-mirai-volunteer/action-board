@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  achieveMissionAction,
-  getMissionQuizCategoryAction,
-} from "@/app/missions/[id]/actions";
+import { achieveMissionAction } from "@/lib/api/missions/actions";
+import { getQuizCategoriesAction } from "@/lib/api/missions/quiz-actions";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
@@ -49,19 +47,41 @@ export function useQuizMission({
 
   useEffect(() => {
     if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
-      getMissionQuizCategoryAction(mission.id).then((result) => {
-        if (result.success) {
-          setQuizCategory(result.category);
-        }
-      });
+      getQuizCategoriesAction().then(
+        (result: {
+          success: boolean;
+          categories?: Array<{ id: string; name: string }>;
+        }) => {
+          if (
+            result.success &&
+            result.categories &&
+            result.categories.length > 0
+          ) {
+            setQuizCategory(result.categories[0].id);
+          }
+        },
+      );
     }
-  }, [mission.id, mission.required_artifact_type]);
+  }, [mission.required_artifact_type]);
 
-  const handleQuizComplete = (results: QuizResults) => {
+  const handleQuizComplete = (
+    questionIds: string[],
+    answers: string[],
+    score: number,
+    passed: boolean,
+  ) => {
     onErrorMessage?.(null);
 
+    const results: QuizResults = {
+      score,
+      passed,
+      correctAnswers: questionIds.length,
+      totalQuestions: questionIds.length,
+      results: [],
+    };
+
     setQuizResults(results);
-    setQuizPassed(results.passed);
+    setQuizPassed(passed);
   };
 
   const handleQuizSubmit = async () => {

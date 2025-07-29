@@ -6,7 +6,7 @@ import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
-import MissionAchievementStatus from "../mission/mission-achievement-status";
+import { MissionAchievementStatus } from "../features/mission/components/MissionAchievementStatus";
 import { Button } from "../ui/button";
 import { MissionIcon } from "../ui/mission-icon";
 
@@ -49,9 +49,8 @@ export default function OnboardingMissionCard({
               </div>
             </div>
             <MissionAchievementStatus
-              hasReachedMaxAchievements={hasReachedMaxAchievements}
+              mission={mission}
               userAchievementCount={userAchievementCount}
-              maxAchievementCount={mission.max_achievement_count}
             />
           </div>
           <div className="flex-1">

@@ -10,3 +10,5 @@ export {
   createMissionArtifact,
   type CreateAchievementResult,
 } from "./submissionService";
+
+export * from "./dataService";

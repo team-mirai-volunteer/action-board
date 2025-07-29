@@ -1,4 +1,4 @@
-import { MissionDetails } from "@/components/mission/MissionDetails";
+import { MissionDetails } from "@/components/features/mission/components/MissionDetails";
 import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import React from "react";

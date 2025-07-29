@@ -9,8 +9,8 @@ import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { GeolocationInput } from "./GeolocationInput";
-import { ImageUploader } from "./ImageUploader";
+import { GeolocationInput } from "../utils/GeolocationInput";
+import { ImageUploader } from "../utils/ImageUploader";
 import { PosterForm } from "./PosterForm";
 
 type ArtifactFormProps = {
@@ -62,7 +62,6 @@ export function ArtifactForm({
         )}
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
             <Label htmlFor="artifactLink">
@@ -80,7 +79,6 @@ export function ArtifactForm({
           </div>
         )}
 
-        {/* テキスト入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.TEXT.key && (
           <div className="space-y-2">
             <Label htmlFor="artifactText">
@@ -97,7 +95,6 @@ export function ArtifactForm({
           </div>
         )}
 
-        {/* メールアドレス入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.EMAIL.key && (
           <div className="space-y-2">
             <Label htmlFor="artifactEmail">
@@ -115,7 +112,6 @@ export function ArtifactForm({
           </div>
         )}
 
-        {/* ポスティング入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTING.key && (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -141,13 +137,11 @@ export function ArtifactForm({
             <div className="space-y-2">
               <Label htmlFor="locationText">
                 ポスティング・配布場所の郵便番号（ハイフンなし）
-                {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
                 type="text"
                 name="locationText"
                 id="locationText"
-                // required
                 maxLength={100}
                 disabled={disabled}
                 placeholder="例：1540017"
@@ -159,12 +153,10 @@ export function ArtifactForm({
           </div>
         )}
 
-        {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
           <PosterForm disabled={disabled} />
         )}
 
-        {/* 画像アップロードフォーム */}
         {(artifactConfig.key === ARTIFACT_TYPES.IMAGE.key ||
           artifactConfig.key === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key) && (
           <div className="space-y-4">
@@ -186,7 +178,6 @@ export function ArtifactForm({
               value={artifactImagePath || ""}
             />
 
-            {/* 提出済みタスク時のプレビュー表示 */}
             {submittedArtifactImagePath && (
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">提出済み画像:</p>
@@ -198,7 +189,6 @@ export function ArtifactForm({
               </div>
             )}
 
-            {/* 位置情報入力 */}
             {artifactConfig.key ===
               ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key && (
               <>
@@ -206,7 +196,6 @@ export function ArtifactForm({
                   disabled={disabled}
                   onGeolocationChange={setGeolocation}
                 />
-                {/* 位置情報用の隠しフィールド */}
                 {geolocation && (
                   <>
                     <Input
@@ -244,7 +233,6 @@ export function ArtifactForm({
           </div>
         )}
 
-        {/* 補足説明テキストエリア */}
         <div className="space-y-2">
           <Label htmlFor="artifactDescription">補足説明 (任意)</Label>
           <Textarea
