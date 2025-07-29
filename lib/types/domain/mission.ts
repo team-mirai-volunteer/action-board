@@ -18,9 +18,7 @@ export interface MissionYaml {
 
 export type Mission = Tables<"missions">;
 
-export type MissionArtifact = Tables<"mission_artifacts"> & {
-  geolocations?: Tables<"mission_artifact_geolocations">[];
-};
+export type MissionArtifact = Tables<"mission_artifacts">;
 
 export interface Achievement {
   created_at: string;
@@ -31,9 +29,9 @@ export interface Achievement {
 
 export interface SubmissionData {
   id: string;
-  mission_id: string;
-  user_id: string;
-  artifacts: MissionArtifact[];
+  mission_id: string | null;
+  user_id: string | null;
+  artifact: MissionArtifact | null;
   created_at: string;
 }
 

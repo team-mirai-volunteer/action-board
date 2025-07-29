@@ -161,7 +161,10 @@ export async function getSubmissionHistory(
 
       return {
         ...achievement,
-        artifacts: artifactsWithGeolocations,
+        artifact:
+          artifactsWithGeolocations.length > 0
+            ? artifactsWithGeolocations[0]
+            : null,
       } as SubmissionData;
     }),
   );

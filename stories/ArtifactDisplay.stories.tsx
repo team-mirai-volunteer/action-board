@@ -1,6 +1,6 @@
+import ArtifactDisplay from "@/components/features/mission/components/ArtifactDisplay";
 import type { MissionArtifact } from "@/lib/types/domain";
 import type { Meta, StoryObj } from "@storybook/react";
-import ArtifactDisplay from "../app/missions/[id]/_components/ArtifactDisplay";
 
 const meta = {
   title: "ArtifactDisplay",
@@ -48,17 +48,6 @@ const imageWithGeolocationArtifact: MissionArtifact = {
   description: "これは位置情報付き画像アーティファクトのサンプルです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
-  geolocations: [
-    {
-      id: 1,
-      mission_artifact_id: "artifact-2",
-      lat: 35.6762,
-      lon: 139.6503,
-      accuracy: 10,
-      altitude: 100,
-      created_at: "2024-01-01T00:00:00Z",
-    },
-  ],
 };
 
 // 位置情報なしの画像アーティファクト（位置情報付きタイプだが位置情報が空）
@@ -73,7 +62,6 @@ const imageWithoutGeolocationArtifact: MissionArtifact = {
   description: "位置情報付きタイプですが、位置情報がないアーティファクトです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
-  geolocations: [],
 };
 
 // リンクアーティファクトのダミーデータ

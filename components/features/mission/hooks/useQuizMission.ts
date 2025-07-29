@@ -1,12 +1,14 @@
 "use client";
 
+import {
+  achieveMissionAction,
+  getMissionQuizCategoryAction,
+} from "@/app/missions/[id]/actions";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { achieveMissionAction, getMissionQuizCategoryAction } from "../actions";
 
-// クイズ結果の型定義
 export interface QuizResults {
   score: number;
   passed: boolean;
@@ -38,16 +40,13 @@ export function useQuizMission({
   onErrorMessage,
   scrollToTop,
 }: UseQuizMissionProps) {
-  // クイズカテゴリの状態
   const [quizCategory, setQuizCategory] = useState<string>("その他");
 
-  // クイズ関連の状態
   const [quizPassed, setQuizPassed] = useState(false);
   const [quizResults, setQuizResults] = useState<QuizResults | null>(null);
-  const [quizKey, setQuizKey] = useState(0); // QuizComponentを再マウントするためのkey
+  const [quizKey, setQuizKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ミッションがQUIZタイプの場合、DBからカテゴリを取得
   useEffect(() => {
     if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
       getMissionQuizCategoryAction(mission.id).then((result) => {
@@ -58,20 +57,14 @@ export function useQuizMission({
     }
   }, [mission.id, mission.required_artifact_type]);
 
-  // クイズ完了時のハンドラ（結果を受け取り、状態を更新）
   const handleQuizComplete = (results: QuizResults) => {
-    // エラー状態をクリア（新しいクイズ結果が得られたため）
     onErrorMessage?.(null);
 
     setQuizResults(results);
     setQuizPassed(results.passed);
-
-    // スクロールはQuizComponent内で結果カードまでスクロールするため、ここでは行わない
   };
 
-  // クイズミッション達成時の処理
   const handleQuizSubmit = async () => {
-    // 連続報告を防ぐため、提出中や結果がない場合は早期リターン
     if (isSubmitting || !quizPassed || !quizResults) {
       return;
     }
@@ -80,7 +73,6 @@ export function useQuizMission({
       setIsSubmitting(true);
       onErrorMessage?.(null);
 
-      // achieveMissionActionを呼び出してミッション達成を記録
       const formData = new FormData();
       formData.append("missionId", mission.id);
       formData.append("requiredArtifactType", ARTIFACT_TYPES.QUIZ.key);
@@ -92,15 +84,13 @@ export function useQuizMission({
       const result = await achieveMissionAction(formData);
 
       if (result.success) {
-        // 即座にクイズの状態をリセット（連続報告を防ぐ）
         setQuizResults(null);
         setQuizPassed(false);
-        setQuizKey((prev) => prev + 1); // QuizComponentを再マウント
+        setQuizKey((prev) => prev + 1);
 
         toast.success("クイズミッション達成！");
         onDialogOpen?.();
 
-        // XPアニメーション表示
         if (result.xpGranted && result.userLevel) {
           const initialXp = result.userLevel.xp - result.xpGranted;
           onXpAnimationData?.({
@@ -108,8 +98,6 @@ export function useQuizMission({
             xpGained: result.xpGranted,
           });
         }
-
-        // スクロールはQuizComponent内で処理されるため、ここでは行わない
 
         if (onSubmissionSuccess) {
           onSubmissionSuccess();
@@ -127,14 +115,12 @@ export function useQuizMission({
   };
 
   return {
-    // 状態
     quizCategory,
     quizPassed,
     quizResults,
     quizKey,
     isSubmitting,
 
-    // ハンドラ
     handleQuizComplete,
     handleQuizSubmit,
   };

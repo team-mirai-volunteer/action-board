@@ -15,22 +15,22 @@ interface CancelSubmissionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
 const CancelSubmissionDialog: React.FC<CancelSubmissionDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  isLoading = false,
+  isLoading,
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>達成履歴を削除しますか？</DialogTitle>
+          <DialogTitle>達成履歴を削除</DialogTitle>
           <DialogDescription>
-            報告した履歴と関連データは削除され、元に戻すことはできません。
+            この達成履歴を削除してもよろしいですか？この操作は取り消せません。
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -42,7 +42,7 @@ const CancelSubmissionDialog: React.FC<CancelSubmissionDialogProps> = ({
             onClick={onConfirm}
             disabled={isLoading}
           >
-            {isLoading ? "削除中..." : "削除する"}
+            {isLoading ? "削除中..." : "削除"}
           </Button>
         </DialogFooter>
       </DialogContent>

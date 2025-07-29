@@ -1,7 +1,7 @@
 "use client";
 
-import { MainLinkButton } from "@/app/missions/[id]/_components/MainLinkButton";
-import { YouTubeSubscribeButton } from "@/app/missions/[id]/_components/YouTubeSubscribeButton";
+import { MainLinkButton } from "@/components/features/mission/components/MainLinkButton";
+import { YouTubeSubscribeButton } from "@/components/features/mission/components/YouTubeSubscribeButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";

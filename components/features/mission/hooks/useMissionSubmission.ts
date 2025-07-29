@@ -4,7 +4,10 @@ import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Mission } from "@/lib/types/domain/mission";
 import { useMemo } from "react";
 
-export function useMissionSubmission(mission: Mission) {
+export function useMissionSubmission(
+  mission: Mission,
+  userAchievementCount: number,
+) {
   const canSubmitMultipleTimes = useMemo(() => {
     return (
       mission.max_achievement_count === null ||
@@ -23,9 +26,36 @@ export function useMissionSubmission(mission: Mission) {
     return mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key;
   }, [mission.required_artifact_type]);
 
+  const hasReachedUserMaxAchievements = useMemo(() => {
+    return (
+      mission.max_achievement_count !== null &&
+      userAchievementCount >= mission.max_achievement_count
+    );
+  }, [mission.max_achievement_count, userAchievementCount]);
+
+  const buttonLabel = useMemo(() => {
+    if (hasReachedUserMaxAchievements) {
+      return "完了済み";
+    }
+    if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
+      return "クイズに回答";
+    }
+    if (mission.required_artifact_type === ARTIFACT_TYPES.LINK_ACCESS.key) {
+      return "リンクにアクセス";
+    }
+    return "ミッションを達成";
+  }, [hasReachedUserMaxAchievements, mission.required_artifact_type]);
+
+  const isButtonDisabled = useMemo(() => {
+    return hasReachedUserMaxAchievements;
+  }, [hasReachedUserMaxAchievements]);
+
   return {
     canSubmitMultipleTimes,
     requiresArtifact,
     isQuizMission,
+    hasReachedUserMaxAchievements,
+    buttonLabel,
+    isButtonDisabled,
   };
 }

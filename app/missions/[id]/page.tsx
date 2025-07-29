@@ -1,3 +1,4 @@
+import { MissionWithSubmissionHistory } from "@/components/features/mission/components/MissionWithSubmissionHistory";
 import { MissionDetails } from "@/components/mission/MissionDetails";
 import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
 import RankingMission from "@/components/ranking/ranking-mission";
@@ -26,7 +27,6 @@ import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
 import { getQuizQuestionsAction } from "./actions";
 

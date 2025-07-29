@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import type { Tables } from "@/lib/types/supabase";
 import { ExternalLink } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 interface MainLinkButtonProps {
@@ -34,7 +34,6 @@ export function MainLinkButton({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    // LINK_ACCESSタイプでonLinkClickが提供されている場合
     if (mission.required_artifact_type === "LINK_ACCESS" && onLinkClick) {
       setIsLoading(true);
 
@@ -42,7 +41,6 @@ export function MainLinkButton({
         const result = await onLinkClick();
 
         if (result.success) {
-          // 新しいタブでリンクを開く
           window.open(mainLink.link, "_blank", "noopener,noreferrer");
           toast.success("ミッションを達成しました！");
         } else {
@@ -55,7 +53,6 @@ export function MainLinkButton({
         setIsLoading(false);
       }
     } else {
-      // 通常のリンクとして開く
       window.open(mainLink.link, "_blank", "noopener,noreferrer");
     }
   };
