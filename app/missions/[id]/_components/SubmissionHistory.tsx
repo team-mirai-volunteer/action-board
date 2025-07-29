@@ -1,14 +1,14 @@
 "use client";
 
+import type { SubmissionData } from "@/lib/types/domain";
 import type React from "react";
 import { useState } from "react";
 import CancelSubmissionDialog from "./CancelSubmissionDialog";
 import SubmissionItem from "./SubmissionItem";
-import type { Submission } from "./types";
 import { useSubmissionCancel } from "./useSubmissionCancel";
 
 interface SubmissionHistoryProps {
-  submissions: Submission[];
+  submissions: SubmissionData[];
   missionId: string;
   userId?: string | null;
   maxAchievementCount: number;

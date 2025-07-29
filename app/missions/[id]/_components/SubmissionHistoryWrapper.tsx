@@ -1,6 +1,6 @@
 "use client";
 
-import type { SubmissionData } from "../_lib/types";
+import type { SubmissionData } from "@/lib/types/domain";
 import SubmissionHistory from "./SubmissionHistory";
 
 type Props = {

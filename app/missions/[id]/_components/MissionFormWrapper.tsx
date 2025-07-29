@@ -1,5 +1,6 @@
 "use client";
 
+import { MissionCompleteDialog } from "@/components/features/mission/dialogs/MissionCompleteDialog";
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import QuizComponent from "@/components/mission/QuizComponent";
 import { SubmitButton } from "@/components/submit-button";
@@ -16,7 +17,6 @@ import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { useQuizMission } from "../_hooks/useQuizMission";
 import { achieveMissionAction } from "../actions";
 import { MainLinkButton } from "./MainLinkButton";
-import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
   mission: Tables<"missions">;

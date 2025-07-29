@@ -1,8 +1,8 @@
 "use client";
 
+import type { MissionArtifact } from "@/lib/types/domain";
 import Link from "next/link";
 import type React from "react";
-import type { MissionArtifact } from "./types";
 
 interface ArtifactDisplayProps {
   artifact: MissionArtifact;

@@ -3,12 +3,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { dateTimeFormatter } from "@/lib/formatter";
+import type { SubmissionData } from "@/lib/types/domain";
 import type React from "react";
 import ArtifactDisplay from "./ArtifactDisplay";
-import type { Submission } from "./types";
 
 interface SubmissionItemProps {
-  submission: Submission;
+  submission: SubmissionData;
   isLatest: boolean;
   userId?: string | null;
   onCancelClick: (submissionId: string) => void;

@@ -3,12 +3,12 @@
 import { MissionGuidanceArrow } from "@/components/mission/MissionGuidanceArrow";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
+import type { SubmissionData } from "@/lib/types/domain";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
-import type { SubmissionData } from "../_lib/types";
 import { CopyReferralButton } from "./CopyReferralButton";
 import { MissionFormWrapper } from "./MissionFormWrapper";
 import QRCodeDisplay from "./QRCodeDisplay";
