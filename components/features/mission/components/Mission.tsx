@@ -1,7 +1,14 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type { Tables } from "@/lib/types/supabase";
 import { Calendar, Star, Users } from "lucide-react";
 import Link from "next/link";
@@ -49,57 +56,92 @@ export default function Mission({
     ));
   };
 
+  const maxAchievements = mission.max_achievement_count;
+  const hasReachedMaxAchievements =
+    maxAchievements !== null && userAchievementCount >= maxAchievements;
+  const canRepeat = maxAchievements === null || maxAchievements > 1;
+
+  const getButtonText = () => {
+    if (hasReachedMaxAchievements) {
+      return "ミッションクリア🎉";
+    }
+    if (userAchievementCount > 0 && canRepeat) {
+      return "もう一回チャレンジ🔥";
+    }
+    return "今すぐチャレンジ🔥";
+  };
+
+  const formatEventDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
+    return `${month}月${day}日（${dayOfWeek}）開催`;
+  };
+
   return (
-    <Link href={`/missions/${mission.id}`}>
-      <Card
-        className={`hover:shadow-md transition-shadow cursor-pointer ${className}`}
-      >
-        <CardHeader className="pb-3">
-          <div className="flex items-start gap-3">
-            {mission.icon_url && (
-              <img
-                src={mission.icon_url}
-                alt={mission.title}
-                className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
-              />
-            )}
-            <div className="flex-1 min-w-0">
-              <CardTitle className="text-lg line-clamp-2">
-                {mission.title}
-              </CardTitle>
-              <div className="flex items-center gap-2 mt-2">
-                <Badge className={getDifficultyColor(mission.difficulty)}>
-                  難易度 {mission.difficulty}
-                </Badge>
-                <div className="flex items-center gap-1">
-                  {getDifficultyStars(mission.difficulty)}
-                </div>
+    <Card className={`hover:shadow-md transition-shadow ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-3">
+          {mission.icon_url ? (
+            <img
+              src={mission.icon_url}
+              alt={mission.title}
+              className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+            />
+          ) : (
+            <img
+              src="/mission_fallback.svg"
+              alt={mission.title}
+              className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+            />
+          )}
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg line-clamp-2">
+              {mission.title}
+            </CardTitle>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge className={getDifficultyColor(mission.difficulty)}>
+                難易度 {mission.difficulty}
+              </Badge>
+              <div className="flex items-center gap-1">
+                {getDifficultyStars(mission.difficulty)}
               </div>
             </div>
           </div>
-        </CardHeader>
+        </div>
+      </CardHeader>
 
-        <CardContent className="pt-0 space-y-3">
-          {mission.event_date && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>
-                {new Date(mission.event_date).toLocaleDateString("ja-JP")}
-              </span>
-            </div>
-          )}
-
+      <CardContent className="pt-0 space-y-3">
+        {mission.event_date && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>{totalAchievementCount}人が達成</span>
+            <Calendar className="h-4 w-4" />
+            <span>{formatEventDate(mission.event_date)}</span>
           </div>
+        )}
 
-          <MissionAchievementStatus
-            mission={mission}
-            userAchievementCount={userAchievementCount}
-          />
-        </CardContent>
-      </Card>
-    </Link>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Users className="h-4 w-4" />
+          <span>みんなで{totalAchievementCount}回達成</span>
+        </div>
+
+        <MissionAchievementStatus
+          mission={mission}
+          userAchievementCount={userAchievementCount}
+        />
+      </CardContent>
+
+      <CardFooter className="pt-0">
+        <Link href={`/missions/${mission.id}`} className="w-full">
+          <Button
+            className="w-full"
+            variant={hasReachedMaxAchievements ? "secondary" : "default"}
+            disabled={hasReachedMaxAchievements}
+          >
+            {getButtonText()}
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }

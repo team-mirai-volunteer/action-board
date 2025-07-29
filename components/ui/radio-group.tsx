@@ -29,7 +29,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
           ) {
             const childProps = child.props as { value: string };
             return React.cloneElement(
-              child as React.ReactElement<{ value: string }>,
+              child as React.ReactElement<RadioGroupItemProps>,
               {
                 name,
                 checked: childProps.value === value,
