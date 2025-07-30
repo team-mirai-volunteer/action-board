@@ -83,12 +83,12 @@ describe("MissionDetails", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("ミッション内容がHTMLとして表示される", () => {
+  it("ミッション内容がテキストとして表示される", () => {
     render(<MissionDetails mission={mockMission} />);
 
     const contentElement = document.querySelector(".mission-content");
     expect(contentElement).toBeInTheDocument();
-    expect(contentElement?.innerHTML).toBe(
+    expect(contentElement?.textContent).toBe(
       "<p>テストミッションの<strong>詳細</strong>内容</p>",
     );
   });
