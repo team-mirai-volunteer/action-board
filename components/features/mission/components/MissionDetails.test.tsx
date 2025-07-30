@@ -54,7 +54,7 @@ describe("MissionDetails", () => {
     render(<MissionDetails mission={mockMission} />);
 
     expect(screen.getByText("テストミッション")).toBeInTheDocument();
-    expect(screen.getByText("2025年6月22日")).toBeInTheDocument();
+    expect(screen.getByText("イベント日: 2025年6月22日")).toBeInTheDocument();
   });
 
   it("アイコンが表示される", () => {
@@ -78,7 +78,9 @@ describe("MissionDetails", () => {
 
     render(<MissionDetails mission={missionWithoutDate} />);
 
-    expect(screen.queryByText("2025年6月22日")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("イベント日: 2025年6月22日"),
+    ).not.toBeInTheDocument();
   });
 
   it("ミッション内容がHTMLとして表示される", () => {

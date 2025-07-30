@@ -30,6 +30,14 @@ jest.mock("@/components/ui/card", () => ({
       {children}
     </div>
   ),
+  CardContent: ({
+    children,
+    className,
+  }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="card-content">
+      {children}
+    </div>
+  ),
   CardFooter: ({
     children,
     className,
@@ -56,13 +64,13 @@ jest.mock("@/components/ui/card", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/difficulty-badge", () => ({
-  DifficultyBadge: ({
-    difficulty,
+jest.mock("@/components/ui/badge", () => ({
+  Badge: ({
+    children,
     className,
-  }: { difficulty: number; className?: string }) => (
-    <span className={className} data-testid="difficulty-badge">
-      難易度{difficulty}
+  }: { children: React.ReactNode; className?: string }) => (
+    <span className={className} data-testid="badge">
+      {children}
     </span>
   ),
 }));
@@ -72,8 +80,19 @@ jest.mock("@/components/ui/button", () => ({
     children,
     className,
     variant,
-  }: { children: React.ReactNode; className?: string; variant?: string }) => (
-    <button type="button" className={className} data-testid="button">
+    disabled,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    variant?: string;
+    disabled?: boolean;
+  }) => (
+    <button
+      type="button"
+      className={className}
+      disabled={disabled}
+      data-testid="button"
+    >
       {children}
     </button>
   ),
@@ -92,35 +111,50 @@ jest.mock("@/components/ui/mission-icon", () => ({
 jest.mock(
   "@/components/features/mission/components/MissionAchievementStatus",
   () => {
-    return function MockMissionAchievementStatus({
-      hasReachedMaxAchievements,
-      userAchievementCount,
-      maxAchievementCount,
-    }: {
-      hasReachedMaxAchievements: boolean;
-      userAchievementCount: number;
-      maxAchievementCount: number | null;
-    }) {
-      if (hasReachedMaxAchievements) {
-        return <div data-testid="achievement-status">達成済み</div>;
-      }
-      if (maxAchievementCount !== null) {
-        return (
-          <div data-testid="achievement-status">
-            {userAchievementCount}/{maxAchievementCount}回達成
-          </div>
-        );
-      }
-      return (
-        <div data-testid="achievement-status">{userAchievementCount}回達成</div>
-      );
+    return {
+      MissionAchievementStatus: function MockMissionAchievementStatus({
+        mission,
+        userAchievementCount,
+      }: {
+        mission: { max_achievement_count: number | null };
+        userAchievementCount: number;
+      }) {
+        const maxAchievements = mission.max_achievement_count;
+        const isCompleted =
+          maxAchievements !== null && userAchievementCount >= maxAchievements;
+
+        if (isCompleted) {
+          return <div data-testid="achievement-status">完了済み</div>;
+        }
+        if (userAchievementCount > 0) {
+          return (
+            <div data-testid="achievement-status">
+              進行中 ({userAchievementCount}
+              {maxAchievements ? `/${maxAchievements}` : ""})
+            </div>
+          );
+        }
+        return <div data-testid="achievement-status">未達成</div>;
+      },
     };
   },
 );
 
 jest.mock("lucide-react", () => ({
-  UsersRound: ({ className }: { className?: string }) => (
-    <div className={className} data-testid="users-round-icon" />
+  Calendar: ({ className }: { className?: string }) => (
+    <div className={className} data-testid="calendar-icon" />
+  ),
+  Star: ({ className }: { className?: string }) => (
+    <div className={className} data-testid="star-icon" />
+  ),
+  Users: ({ className }: { className?: string }) => (
+    <div className={className} data-testid="users-icon" />
+  ),
+  CheckCircle: ({ className }: { className?: string }) => (
+    <div className={className} data-testid="check-circle-icon" />
+  ),
+  Clock: ({ className }: { className?: string }) => (
+    <div className={className} data-testid="clock-icon" />
   ),
 }));
 

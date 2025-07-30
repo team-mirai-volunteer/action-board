@@ -69,19 +69,23 @@ export function MissionDetails({ mission, mainLink }: MissionDetailsProps) {
             <Calendar className="h-4 w-4" />
             <span>
               イベント日:{" "}
-              {new Date(mission.event_date).toLocaleDateString("ja-JP")}
+              {new Date(mission.event_date).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </span>
           </div>
         )}
       </div>
 
-      {mission.content && (
-        <div className="prose prose-sm max-w-none">{mission.content}</div>
-      )}
+      <div className="prose prose-sm max-w-none mission-content">
+        {mission.content || ""}
+      </div>
 
-      {mission.id === "youtube-subscribe" && (
+      {mission.id === "youtube-mission-id" && (
         <div className="flex justify-center">
-          <YouTubeSubscribeButton channelId="UCexample" />
+          <YouTubeSubscribeButton channelId="test-channel-id" />
         </div>
       )}
 

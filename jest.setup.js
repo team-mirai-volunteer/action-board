@@ -78,6 +78,27 @@ jest.mock("lucide-react", () => ({
       className,
     });
   },
+  Calendar: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "calendar-icon",
+      className,
+    });
+  },
+  Star: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "star-icon",
+      className,
+    });
+  },
+  Users: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "users-icon",
+      className,
+    });
+  },
 }));
 
 const createMockSupabaseQuery = () => {
@@ -371,4 +392,98 @@ jest.mock("@/lib/services/metrics", () => ({
       },
     }),
   ),
+}));
+
+jest.mock("@/components/ui/badge", () => ({
+  Badge: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "span",
+      {
+        "data-testid": "badge",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
+}));
+
+jest.mock("@/components/ui/button", () => ({
+  Button: ({ children, className, variant, disabled, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "button",
+      {
+        "data-testid": "button",
+        className,
+        disabled,
+        ...props,
+      },
+      children,
+    );
+  },
+}));
+
+jest.mock("@/components/ui/card", () => ({
+  Card: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "div",
+      {
+        "data-testid": "card",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
+  CardContent: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "div",
+      {
+        "data-testid": "card-content",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
+  CardHeader: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "div",
+      {
+        "data-testid": "card-header",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
+  CardTitle: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "h3",
+      {
+        "data-testid": "card-title",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
+  CardFooter: ({ children, className, ...props }) => {
+    const mockReact = require("react");
+    return mockReact.createElement(
+      "div",
+      {
+        "data-testid": "card-footer",
+        className,
+        ...props,
+      },
+      children,
+    );
+  },
 }));
