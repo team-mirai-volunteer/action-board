@@ -228,6 +228,10 @@ export function MissionFormWrapper({
             submittedArtifactImagePath={null}
           />
           <div className="mt-4">
+            <div className="mb-3 text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </div>
             <SubmitButton
               disabled={isButtonDisabled || isSubmitting}
               className="w-full"

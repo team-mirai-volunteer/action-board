@@ -23,7 +23,7 @@ export function FeaturedMissions({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">注目のミッション</h2>
+      <h2 className="text-xl font-semibold">重要ミッション</h2>
       <Missions
         missions={featuredMissions}
         userAchievements={userAchievements}

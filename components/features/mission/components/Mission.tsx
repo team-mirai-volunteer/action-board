@@ -68,7 +68,7 @@ export default function Mission({
     if (userAchievementCount > 0 && canRepeat) {
       return "もう一回チャレンジ🔥";
     }
-    return "今すぐチャレンジ🔥";
+    return "今すぐチャレンジ";
   };
 
   const formatEventDate = (dateString: string) => {
