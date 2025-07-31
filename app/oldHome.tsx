@@ -36,6 +36,57 @@ export default async function Home({
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { data: missions, error: missionsError } = await supabase
+    .from("missions")
+    .select("*")
+    .order("is_featured", { ascending: false })
+    .order("difficulty", { ascending: true });
+
+  if (missionsError) {
+    console.error("Mission fetch error:", missionsError);
+  }
+
+  const allMissions = missions || [];
+
+  let userAchievements: Record<string, number> = {};
+  let totalAchievements: Record<string, number> = {};
+
+  if (user) {
+    const { data: userAchievementData } = await supabase
+      .from("achievements")
+      .select("mission_id")
+      .eq("user_id", user.id);
+
+    if (userAchievementData) {
+      userAchievements = userAchievementData.reduce(
+        (acc, achievement) => {
+          if (achievement.mission_id) {
+            acc[achievement.mission_id] =
+              (acc[achievement.mission_id] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+    }
+  }
+
+  const { data: totalAchievementData } = await supabase
+    .from("achievements")
+    .select("mission_id");
+
+  if (totalAchievementData) {
+    totalAchievements = totalAchievementData.reduce(
+      (acc, achievement) => {
+        if (achievement.mission_id) {
+          acc[achievement.mission_id] = (acc[achievement.mission_id] || 0) + 1;
+        }
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+  }
+
   // レベルアップ通知とバッジ通知をチェック
   let levelUpNotification = null;
   let badgeNotifications = null;
@@ -100,9 +151,9 @@ export default async function Home({
         {showFeatured && (
           <section className="py-12 md:py-16 bg-white">
             <FeaturedMissions
-              missions={[]}
-              userAchievements={{}}
-              totalAchievements={{}}
+              missions={allMissions}
+              userAchievements={userAchievements}
+              totalAchievements={totalAchievements}
             />
           </section>
         )}
@@ -111,9 +162,9 @@ export default async function Home({
       </div>
       <section className="py-12 md:py-16 bg-white">
         <MissionsByCategory
-          missions={[]}
-          userAchievements={{}}
-          totalAchievements={{}}
+          missions={allMissions}
+          userAchievements={userAchievements}
+          totalAchievements={totalAchievements}
         />
       </section>
 
