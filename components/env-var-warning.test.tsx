@@ -25,15 +25,15 @@ describe("EnvVarWarning", () => {
     });
   });
 
-  describe("リンク", () => {
-    it("リンクが正しく設定される", () => {
+  describe("ボタン", () => {
+    it("ボタンが正しく表示される", () => {
       render(<EnvVarWarning />);
 
-      const signInLink = screen.getByRole("link", { name: "Sign in" });
-      const signUpLink = screen.getByRole("link", { name: "Sign up" });
+      const signInButton = screen.getByRole("button", { name: "Sign in" });
+      const signUpButton = screen.getByRole("button", { name: "Sign up" });
 
-      expect(signInLink).toHaveAttribute("href", "/sign-in");
-      expect(signUpLink).toHaveAttribute("href", "/sign-up");
+      expect(signInButton).toBeInTheDocument();
+      expect(signUpButton).toBeInTheDocument();
     });
   });
 
@@ -41,11 +41,11 @@ describe("EnvVarWarning", () => {
     it("ボタンが無効化されている", () => {
       render(<EnvVarWarning />);
 
-      const signInLink = screen.getByRole("link", { name: "Sign in" });
-      const signUpLink = screen.getByRole("link", { name: "Sign up" });
+      const signInButton = screen.getByRole("button", { name: "Sign in" });
+      const signUpButton = screen.getByRole("button", { name: "Sign up" });
 
-      expect(signInLink).toHaveAttribute("disabled");
-      expect(signUpLink).toHaveAttribute("disabled");
+      expect(signInButton).toHaveAttribute("aria-disabled", "true");
+      expect(signUpButton).toHaveAttribute("aria-disabled", "true");
     });
   });
 });
