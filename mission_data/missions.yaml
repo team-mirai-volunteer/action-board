@@ -7,7 +7,7 @@ missions:
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     ogp_image_url: null
   - slug: x-repost
     title: Xでチームみらいの投稿をリポストしよう
@@ -17,7 +17,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: リポストした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//19_x_repost.png
   - slug: read-manifest
@@ -28,7 +28,7 @@ missions:
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
@@ -38,7 +38,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 提案したページのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//9_propose_manifest_policy.png
   - slug: add-line-friend
@@ -49,7 +49,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのLINEアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//7_add_official_line.png
   - slug: follow-teammirai-x
@@ -60,7 +60,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//11_follow_teammirai_x.png
   - slug: follow-teammirai-tiktok
@@ -71,7 +71,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのTikTokアカウント名
     ogp_image_url: null
     event_date: null
@@ -83,7 +83,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: シェアした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
   - slug: tiktok-clip-final-push
@@ -95,7 +95,7 @@ missions:
     max_achievement_count: null
     is_featured: true
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: ショート動画のURL（TikTok）
     ogp_image_url: null
   - slug: youtube-clip
@@ -110,7 +110,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     featured_importance: 10
-    is_hidden: false
+    is_hidden: true
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
     ogp_image_url: null
   - slug: follow-anno-x
@@ -121,7 +121,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//5_follow_anno_x.png
   - slug: youtube-subscribe
@@ -132,7 +132,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのYouTubeアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//8_subscribe_official_youtube.png
   - slug: join-purpose-openchat
@@ -154,7 +154,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのnoteアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//1_follow_note.png
   - slug: follow-anno-threads
@@ -165,7 +165,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのThreadsアカウント名
     ogp_image_url: null
   - slug: threads-like
@@ -176,7 +176,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 一番応援したい投稿のURL
     ogp_image_url: null
   - slug: threads-post
@@ -187,7 +187,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿したポストのURL
     ogp_image_url: null
   - slug: join-prefecture-openchat
@@ -198,7 +198,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//2_join_prefecture_openchat.png
   - slug: join-event
@@ -209,7 +209,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: イベントコード
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//4_join_event.png
   - slug: referral
@@ -221,7 +221,7 @@ missions:
     max_achievement_count: null
     is_featured: true
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//12_referral.png
   - slug: github-pull-request
@@ -232,7 +232,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが作成したプルリクエストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//14_github_pull_request.png
   - slug: join-slack
@@ -243,7 +243,7 @@ missions:
     required_artifact_type: EMAIL
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
   - slug: join-street-speech
@@ -254,7 +254,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
   - slug: join-73-mirai-kaigi
@@ -279,7 +279,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
   - slug: posting-magazine
@@ -318,7 +318,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: true
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: youtube-watch
@@ -329,7 +329,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが視聴したYouTube動画のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//20_youtube_view.png
   - slug: youtube-like
@@ -340,7 +340,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが高評価したYouTube動画のURL
     ogp_image_url: null
   - slug: x-post
@@ -351,7 +351,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿したポストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/18_x_post.png
   - slug: help-street-speech
@@ -364,7 +364,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: help-event-operation
@@ -375,7 +375,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: イベントコード
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: instagram-like
@@ -386,7 +386,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 一番応援したくなった投稿のURL
     ogp_image_url: null
   - slug: x-like
@@ -397,7 +397,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 一番応援したい投稿のURL
     ogp_image_url: null
   - slug: note-like
@@ -408,7 +408,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: スキを押した記事のURL
     ogp_image_url: null
   - slug: put-up-poster
@@ -431,7 +431,7 @@ missions:
     max_achievement_count: null
     is_featured: true
     featured_importance: 20
-    is_hidden: false
+    is_hidden: true
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
     title: 比例代表ポスターを貼ろう
@@ -441,7 +441,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスターを貼った場所の郵便番号
     ogp_image_url: null
   - slug: chat-idobata-ai
@@ -452,7 +452,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: いどばたのユーザー名
     ogp_image_url: null
   - slug: quiz-teammirai-anno
@@ -463,7 +463,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-teammirai-vision
@@ -474,7 +474,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-teammirai-values
@@ -485,7 +485,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-vision
@@ -496,7 +496,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step1
@@ -507,7 +507,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step2
@@ -518,7 +518,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-step3
     title: 政策クイズ（ステップ３）に挑戦しよう
@@ -528,7 +528,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-100days
     title: 政策クイズ（100日プラン）に挑戦しよう
@@ -538,7 +538,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: "quiz-electionlaw-basic"
     title: 公職選挙法クイズ（基礎編）に挑戦しよう
@@ -548,7 +548,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: "quiz-electionlaw-period"
     title: 公職選挙法クイズ（選挙期間編）に挑戦しよう
@@ -558,7 +558,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: "quiz-electionlaw-electionday"
     title: 公職選挙法クイズ（投票日当日編）に挑戦しよう
@@ -568,7 +568,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: tiktok-like
     title: TikTokでチームみらい動画に♡をつけよう
@@ -578,7 +578,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 一番応援したくなった投稿のURL
     ogp_image_url: null
   - slug: design-create
@@ -589,7 +589,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが作成した成果物のURL
     ogp_image_url: null
   - slug: early-vote
@@ -601,7 +601,7 @@ missions:
     max_achievement_count: 1
     is_featured: true
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: absent-vote
@@ -612,7 +612,7 @@ missions:
     required_artifact_type: NONE
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: overseas-vote
@@ -634,7 +634,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: コメントしたYouTube動画のURL
     ogp_image_url: null
   - slug: youtube-comment-reaction
@@ -645,7 +645,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: リアクションしたYouTube動画のURL
     ogp_image_url: null
   - slug: tiktok-comment
@@ -656,7 +656,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: コメントしたTikTok動画のURL
     ogp_image_url: null
   - slug: tiktok-comment-reaction
@@ -667,7 +667,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: リアクションしたTikTok動画のURL
     ogp_image_url: null
   - slug: join-719-mic-osame
@@ -701,6 +701,6 @@ missions:
     max_achievement_count: 1
     is_featured: true
     featured_importance: 110
-    is_hidden: false
+    is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
