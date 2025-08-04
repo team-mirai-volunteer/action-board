@@ -211,6 +211,7 @@ export async function getMissionPageData(
   const mission = await getMissionData(missionId);
 
   if (!mission) return null;
+  if (mission.is_hidden) return null;
 
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
