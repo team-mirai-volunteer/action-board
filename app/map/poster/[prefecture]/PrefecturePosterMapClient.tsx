@@ -1,6 +1,7 @@
 "use client";
 
 import { achieveMissionAction } from "@/app/missions/[id]/actions";
+import { PosterMapStats } from "@/components/map/poster/PosterMapStats";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,6 +43,7 @@ import type {
   PosterBoardTotal,
   StatusHistory,
 } from "@/lib/types/poster-boards";
+import type { PosterBoardMinimal } from "@/lib/types/poster-boards-minimal";
 import {
   calculateProgressRate,
   getCompletedCount,
@@ -51,7 +53,7 @@ import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../statusConfig";
 
@@ -91,7 +93,7 @@ export default function PrefecturePosterMapClient({
   userEditedBoardIds,
 }: PrefecturePosterMapClientProps) {
   const router = useRouter();
-  const [boards, setBoards] = useState<PosterBoard[]>([]);
+  const [boards, setBoards] = useState<PosterBoardMinimal[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBoard, setSelectedBoard] = useState<PosterBoard | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -100,7 +102,7 @@ export default function PrefecturePosterMapClient({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [selectedBoardForLogin, setSelectedBoardForLogin] =
-    useState<PosterBoard | null>(null);
+    useState<PosterBoardMinimal | null>(null);
   const [history, setHistory] = useState<StatusHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -127,6 +129,44 @@ export default function PrefecturePosterMapClient({
   const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
     string | null
   >(null);
+
+  // 住所をクリップボードにコピー
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("住所をコピーしました");
+    } catch (error) {
+      toast.error("コピーに失敗しました");
+    }
+  };
+
+  const handleBoardSelect = useCallback(
+    async (board: PosterBoardMinimal) => {
+      if (!userId) {
+        // ログイン後に戻ってきた時のために選択した掲示板情報を保存
+        localStorage.setItem("selectedBoardId", board.id);
+        localStorage.setItem("selectedBoardPrefecture", prefecture);
+        setSelectedBoardForLogin(board);
+        setIsLoginDialogOpen(true);
+        return;
+      }
+
+      // 詳細データを取得
+      const fullBoardData = await getPosterBoardDetail(board.id);
+      if (!fullBoardData) {
+        toast.error("掲示板の詳細情報の取得に失敗しました");
+        return;
+      }
+
+      setSelectedBoard(fullBoardData);
+      setUpdateStatus(fullBoardData.status);
+      setUpdateNote("");
+      setHistory([]);
+      setShowHistory(false);
+      setIsUpdateDialogOpen(true);
+    },
+    [userId, prefecture],
+  );
 
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
@@ -162,12 +202,7 @@ export default function PrefecturePosterMapClient({
         const savedBoard = boards.find((board) => board.id === savedBoardId);
         if (savedBoard) {
           // 保存された掲示板を選択してダイアログを開く
-          setSelectedBoard(savedBoard);
-          setUpdateStatus(savedBoard.status);
-          setUpdateNote("");
-          setHistory([]);
-          setShowHistory(false);
-          setIsUpdateDialogOpen(true);
+          handleBoardSelect(savedBoard);
 
           // 使用済みのデータをクリア
           localStorage.removeItem("selectedBoardId");
@@ -175,23 +210,13 @@ export default function PrefecturePosterMapClient({
         }
       }
     }
-  }, [userId, boards, prefecture]);
-
-  // 住所をクリップボードにコピー
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success("住所をコピーしました");
-    } catch (error) {
-      toast.error("コピーに失敗しました");
-    }
-  };
+  }, [userId, boards, prefecture, handleBoardSelect]);
 
   const loadBoards = async () => {
     try {
       // 最小限のデータのみ取得
       const data = await getPosterBoardsMinimal(prefecture);
-      setBoards(data as PosterBoard[]);
+      setBoards(data);
 
       // 統計情報も更新
       const newStats = await getPosterBoardStatsAction(
@@ -212,31 +237,6 @@ export default function PrefecturePosterMapClient({
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleBoardSelect = async (board: PosterBoard) => {
-    if (!userId) {
-      // ログイン後に戻ってきた時のために選択した掲示板情報を保存
-      localStorage.setItem("selectedBoardId", board.id);
-      localStorage.setItem("selectedBoardPrefecture", prefecture);
-      setSelectedBoardForLogin(board);
-      setIsLoginDialogOpen(true);
-      return;
-    }
-
-    // 詳細データを取得
-    const fullBoardData = await getPosterBoardDetail(board.id);
-    if (!fullBoardData) {
-      toast.error("掲示板の詳細情報の取得に失敗しました");
-      return;
-    }
-
-    setSelectedBoard(fullBoardData);
-    setUpdateStatus(fullBoardData.status);
-    setUpdateNote("");
-    setHistory([]);
-    setShowHistory(false);
-    setIsUpdateDialogOpen(true);
   };
 
   const loadHistory = async () => {
@@ -308,7 +308,7 @@ export default function PrefecturePosterMapClient({
     formData.append("missionId", mission.id);
     formData.append("requiredArtifactType", "POSTER");
     formData.append("posterCount", "1");
-    formData.append("prefecture", board.prefecture);
+    formData.append("prefecture", prefecture);
     formData.append("city", board.city);
     formData.append("boardNumber", board.number || "");
     formData.append("boardName", board.name || "");
@@ -440,56 +440,14 @@ export default function PrefecturePosterMapClient({
         />
       </div>
 
-      {/* 統計情報とステータス - 統合版 */}
-      <div className="rounded-lg border bg-card p-3">
-        <div className="flex flex-wrap items-center gap-3">
-          {/* 主要統計 */}
-          <div className="flex items-baseline gap-4">
-            <div className="flex items-baseline gap-1">
-              {actualTotalCount > 0 && (
-                <span className="text-2xl font-bold">{registeredCount}</span>
-              )}
-              <span className="text-xs text-muted-foreground">総数</span>
-              <span className="text-xs text-muted-foreground">
-                (公表: {totalCount})
-              </span>
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-green-600">
-                {completedCount}
-              </span>
-              <span className="text-xs text-muted-foreground">完了</span>
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-blue-600">
-                {completionRate}%
-              </span>
-              <span className="text-xs text-muted-foreground">達成率</span>
-            </div>
-          </div>
-
-          {/* 区切り線 */}
-          <div className="hidden sm:block h-6 w-px bg-border" />
-
-          {/* ステータス別内訳 */}
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {Object.entries(statusConfig).map(([status, config]) => {
-              const count = statusCounts[status as BoardStatus] || 0;
-              return (
-                <div key={status} className="flex items-center gap-1">
-                  <div
-                    className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${config.color}`}
-                  />
-                  <span className="text-xs whitespace-nowrap">
-                    {config.shortLabel || config.label}
-                    <span className="ml-0.5 font-semibold">{count}</span>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      {/* 統計情報とステータス */}
+      <PosterMapStats
+        registeredCount={registeredCount}
+        actualTotalCount={actualTotalCount}
+        completedCount={completedCount}
+        completionRate={completionRate}
+        statusCounts={statusCounts}
+      />
 
       {/* ミッション「選挙区ポスターを貼ろう」への誘導 */}
       <div className="max-w-xl mx-auto mt-4 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-gray-800 text-sm">

@@ -664,8 +664,8 @@ export type Database = {
           created_at: string;
           file_name: string | null;
           id: string;
-          lat: number;
-          long: number;
+          lat: number | null;
+          long: number | null;
           name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -679,8 +679,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string;
-          lat: number;
-          long: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -694,8 +694,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string;
-          lat?: number;
-          long?: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -959,8 +959,8 @@ export type Database = {
           created_at: string;
           file_name: string | null;
           id: string | null;
-          lat: number;
-          long: number;
+          lat: number | null;
+          long: number | null;
           name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -974,8 +974,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
-          lat: number;
-          long: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -989,8 +989,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
-          lat?: number;
-          long?: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -1475,6 +1475,13 @@ export type Database = {
           posting_count: number;
         }[];
       };
+      get_top_users_posting_count_by_mission: {
+        Args: { user_ids: string[]; target_mission_id: string };
+        Returns: {
+          user_id: string;
+          posting_count: number;
+        }[];
+      };
       get_user_by_email: {
         Args: { user_email: string };
         Returns: {
@@ -1569,10 +1576,6 @@ export type Database = {
         Args: { target_user_id: string; target_mission_id: string };
         Returns: number;
       };
-      get_top_users_posting_count_by_mission: {
-        Args: { user_ids: string[]; target_mission_id: string };
-        Returns: { user_id: string; posting_count: number }[];
-      };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
         Returns: {
@@ -1589,13 +1592,13 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
-        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
         | "error_damaged"
         | "error_wrong_poster"
-        | "other";
+        | "other"
+        | "not_yet_dangerous";
       poster_prefecture_enum:
         | "北海道"
         | "宮城県"
@@ -1744,13 +1747,13 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
-        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",
         "error_damaged",
         "error_wrong_poster",
         "other",
+        "not_yet_dangerous",
       ],
       poster_prefecture_enum: [
         "北海道",

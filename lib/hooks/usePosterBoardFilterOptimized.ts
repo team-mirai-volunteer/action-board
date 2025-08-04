@@ -1,3 +1,4 @@
+import type { PosterBoardMinimal } from "@/lib/types/poster-boards-minimal";
 import type { Database } from "@/lib/types/supabase";
 import {
   useCallback,
@@ -18,8 +19,10 @@ export interface PosterBoardFilterState {
   showOnlyMine: boolean;
 }
 
-interface UsePosterBoardFilterProps {
-  boards: PosterBoard[];
+interface UsePosterBoardFilterProps<
+  T extends PosterBoardMinimal = PosterBoard,
+> {
+  boards: T[];
   currentUserId?: string;
   userEditedBoardIds?: Set<string>;
 }
@@ -43,14 +46,12 @@ const defaultFilterState: PosterBoardFilterState = {
 // バッチ処理のサイズ
 const BATCH_SIZE = 5000;
 
-export function usePosterBoardFilterOptimized({
-  boards,
-  currentUserId,
-  userEditedBoardIds,
-}: UsePosterBoardFilterProps) {
+export function usePosterBoardFilterOptimized<
+  T extends PosterBoardMinimal = PosterBoard,
+>({ boards, currentUserId, userEditedBoardIds }: UsePosterBoardFilterProps<T>) {
   const [filterState, setFilterState] =
     useState<PosterBoardFilterState>(defaultFilterState);
-  const [filteredBoards, setFilteredBoards] = useState<PosterBoard[]>(boards);
+  const [filteredBoards, setFilteredBoards] = useState<T[]>(boards);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isPending, startTransition] = useTransition();
   const workerRef = useRef<Worker | null>(null);
@@ -111,7 +112,7 @@ export function usePosterBoardFilterOptimized({
     }
 
     // Web Workerが使えない場合は、バッチ処理で実行
-    const result: PosterBoard[] = [];
+    const result: T[] = [];
     const statusSet = filterState.statuses;
 
     // バッチ処理でフィルタリング

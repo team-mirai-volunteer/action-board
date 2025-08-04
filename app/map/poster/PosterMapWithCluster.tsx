@@ -9,13 +9,13 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./poster-map.css";
 import "./poster-map-filter.css";
 import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
-import { MAX_ZOOM } from "@/lib/constants";
 import {
   type PosterPrefectureKey,
   getPrefectureDefaultZoom,
 } from "@/lib/constants/poster-prefectures";
 import { usePosterBoardFilterOptimized } from "@/lib/hooks/usePosterBoardFilterOptimized";
 import { createClient } from "@/lib/supabase/client";
+import type { PosterBoardMinimal } from "@/lib/types/poster-boards-minimal";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
 
@@ -29,12 +29,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "/leaflet/marker-shadow.png",
 });
 
-type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
 interface PosterMapWithClusterProps {
-  boards: PosterBoard[];
-  onBoardClick: (board: PosterBoard) => void;
+  boards: PosterBoardMinimal[];
+  onBoardClick: (board: PosterBoardMinimal) => void;
   center: [number, number];
   prefectureKey?: PosterPrefectureKey;
   onFilterChange?: (filters: {
@@ -80,7 +79,7 @@ function createMarkerIcon(status: BoardStatus) {
 
 // Extend marker interface to include board data
 interface MarkerWithBoard extends L.Marker {
-  boardData?: PosterBoard;
+  boardData?: PosterBoardMinimal;
 }
 
 // Create pie chart segments for cluster using simpler approach
@@ -271,6 +270,7 @@ export default function PosterMapWithCluster({
   const mapRef = useRef<L.Map | null>(null);
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
   const currentMarkerRef = useRef<L.CircleMarker | null>(null);
+  const markersMapRef = useRef<Map<string, L.Marker>>(new Map());
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>(
     userIdFromProps,
@@ -347,22 +347,22 @@ export default function PosterMapWithCluster({
       L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
         attribution:
           '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
-        maxZoom: MAX_ZOOM,
+        maxZoom: 18,
       }).addTo(mapRef.current);
 
       // Initialize marker cluster group with optimized settings
+      // 日本全国表示の場合はクラスタリング半径を大きくする
+      const clusterRadius = prefectureKey === "japan" ? 80 : 50;
       markerClusterRef.current = L.markerClusterGroup({
-        maxClusterRadius: 50,
+        maxClusterRadius: clusterRadius,
         iconCreateFunction: createClusterIcon,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
-        chunkedLoading: true, // チャンク単位でロード
-        chunkInterval: 200, // チャンク間隔
-        chunkDelay: 50, // チャンク遅延
+        chunkedLoading: false, // チャンク単位でのロードを無効化（重複の原因）
         removeOutsideVisibleBounds: true, // 表示範囲外のマーカーを削除
         animate: true, // アニメーションを有効化
-        animateAddingMarkers: true, // マーカー追加時のアニメーション
+        animateAddingMarkers: false, // マーカー追加時のアニメーションを無効化
         spiderfyDistanceMultiplier: 2, // スパイダリー表示時の距離を2倍に
         spiderLegPolylineOptions: { weight: 2, color: "#222", opacity: 0.5 },
       });
@@ -435,19 +435,26 @@ export default function PosterMapWithCluster({
   }, [center, prefectureKey]);
 
   useEffect(() => {
-    if (!markerClusterRef.current) return;
+    if (!markerClusterRef.current || !mapRef.current) return;
 
-    // Clear existing markers
-    markerClusterRef.current.clearLayers();
+    // タイマーを使って少し遅延させる（マップの準備が完了するのを待つ）
+    const timeoutId = setTimeout(() => {
+      if (!markerClusterRef.current) return;
 
-    // バッチ処理でマーカーを追加
-    const markers: L.Marker[] = [];
-    const locationGroups = new Map<string, PosterBoard[]>();
+      console.log("=== マーカー更新開始 ===");
+      console.log("filteredBoards数:", filteredBoards.length);
 
-    // Add markers for each board (use filtered boards)
-    for (const board of filteredBoards) {
-      if (board.lat && board.long) {
-        const locationKey = `${board.lat.toFixed(6)}_${board.long.toFixed(6)}`;
+      // 現在のボードIDセットを作成
+      const newBoardIds = new Set<string>();
+      const locationGroups = new Map<string, PosterBoardMinimal[]>();
+
+      // Add markers for each board (use filtered boards)
+      for (const board of filteredBoards) {
+        // サーバー側で座標がないものは除外済みなので、チェック不要
+        newBoardIds.add(board.id);
+        const lat = board.lat as number;
+        const long = board.long as number;
+        const locationKey = `${lat.toFixed(6)}_${long.toFixed(6)}`;
         if (!locationGroups.has(locationKey)) {
           locationGroups.set(locationKey, []);
         }
@@ -456,15 +463,31 @@ export default function PosterMapWithCluster({
           group.push(board);
         }
       }
-    }
 
-    // Create markers for each board
-    for (const boardsAtLocation of Array.from(locationGroups.values())) {
-      for (let index = 0; index < boardsAtLocation.length; index++) {
-        const board = boardsAtLocation[index];
-        if (board.lat && board.long) {
-          let lat = board.lat;
-          let lng = board.long;
+      // 削除するマーカーを特定
+      const markersToRemove: L.Marker[] = [];
+      markersMapRef.current.forEach((marker, boardId) => {
+        if (!newBoardIds.has(boardId)) {
+          markersToRemove.push(marker);
+          markersMapRef.current.delete(boardId);
+        }
+      });
+
+      // 追加するマーカーを作成
+      const markersToAdd: L.Marker[] = [];
+
+      for (const boardsAtLocation of Array.from(locationGroups.values())) {
+        for (let index = 0; index < boardsAtLocation.length; index++) {
+          const board = boardsAtLocation[index];
+
+          // 既存のマーカーがある場合はスキップ
+          if (markersMapRef.current.has(board.id)) {
+            continue;
+          }
+
+          // サーバー側で座標がないものは除外済み
+          let lat = board.lat as number;
+          let lng = board.long as number;
 
           // 同じ位置に複数のマーカーがある場合、少しずらして配置
           if (boardsAtLocation.length > 1) {
@@ -493,15 +516,35 @@ export default function PosterMapWithCluster({
 
           // Store board data in marker for cluster icon calculation
           (marker as MarkerWithBoard).boardData = board;
-          markers.push(marker);
+          markersToAdd.push(marker);
+          markersMapRef.current.set(board.id, marker);
         }
       }
-    }
 
-    // バッチでマーカーを追加
-    if (markers.length > 0) {
-      markerClusterRef.current.addLayers(markers);
-    }
+      // 差分更新を実行
+      if (markerClusterRef.current) {
+        console.log("削除するマーカー数:", markersToRemove.length);
+        console.log("追加するマーカー数:", markersToAdd.length);
+
+        // 削除と追加を実行
+        if (markersToRemove.length > 0) {
+          markerClusterRef.current.removeLayers(markersToRemove);
+        }
+        if (markersToAdd.length > 0) {
+          markerClusterRef.current.addLayers(markersToAdd);
+        }
+
+        console.log(
+          "更新後の総マーカー数:",
+          markerClusterRef.current.getLayers().length,
+        );
+      }
+    }, 50); // 遅延を短縮
+
+    // クリーンアップ関数
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [filteredBoards, onBoardClick]);
 
   // 画面を開いた瞬間から現在地をwatchし、移動に追従
@@ -552,18 +595,27 @@ export default function PosterMapWithCluster({
   // Cleanup
   useEffect(() => {
     return () => {
+      if (markerClusterRef.current) {
+        markerClusterRef.current.clearLayers();
+        if (mapRef.current) {
+          mapRef.current.removeLayer(
+            markerClusterRef.current as unknown as L.Layer,
+          );
+        }
+        markerClusterRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
-        markerClusterRef.current = null;
       }
+      markersMapRef.current.clear();
     };
   }, []);
 
   // 現在地取得ボタンのハンドラ
   const handleLocate = () => {
     if (currentPos && mapRef.current) {
-      mapRef.current.flyTo(currentPos, MAX_ZOOM, {
+      mapRef.current.flyTo(currentPos, 18, {
         animate: true,
         duration: 0.8,
       });

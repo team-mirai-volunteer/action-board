@@ -24,6 +24,8 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
     let query = supabase
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
+      .not("lat", "is", null)
+      .not("long", "is", null)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
