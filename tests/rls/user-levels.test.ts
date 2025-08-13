@@ -8,18 +8,33 @@ import {
 describe("user_levels テーブルのRLSテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
   let user2: Awaited<ReturnType<typeof createTestUser>>;
+  let testSeasonId: string;
 
   beforeEach(async () => {
     // テストユーザーを2人作成
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
     user2 = await createTestUser(`${crypto.randomUUID()}@example.com`);
 
+    // テスト用のシーズンを作成
+    testSeasonId = crypto.randomUUID();
+    const { error: seasonError } = await adminClient.from("seasons").insert({
+      id: testSeasonId,
+      name: "テストシーズン",
+      slug: `test-season-${Date.now()}`,
+      start_date: new Date().toISOString(),
+      is_active: false,
+    });
+
+    if (seasonError) {
+      throw new Error(`テストシーズン作成エラー: ${seasonError.message}`);
+    }
+
     // テスト用のuser_levelsデータを作成（管理者権限で）
     const { error: user1LevelError } = await adminClient
       .from("user_levels")
       .insert({
         user_id: user1.user.userId,
-        season_id: "test-season-1",
+        season_id: testSeasonId,
         xp: 150,
         level: 2,
       });
@@ -28,7 +43,7 @@ describe("user_levels テーブルのRLSテスト", () => {
       .from("user_levels")
       .insert({
         user_id: user2.user.userId,
-        season_id: "test-season-1",
+        season_id: testSeasonId,
         xp: 300,
         level: 3,
       });
@@ -51,6 +66,10 @@ describe("user_levels テーブルのRLSテスト", () => {
       .from("user_levels")
       .delete()
       .eq("user_id", user2.user.userId);
+
+    // テストシーズンを削除
+    await adminClient.from("seasons").delete().eq("id", testSeasonId);
+
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
   });
@@ -149,7 +168,7 @@ describe("user_levels テーブルのRLSテスト", () => {
     const testUserId = crypto.randomUUID();
     const { data } = await user1.client.from("user_levels").insert({
       user_id: testUserId,
-      season_id: "test-season-1",
+      season_id: testSeasonId,
       xp: 100,
       level: 1,
     });
