@@ -38,7 +38,7 @@ BEGIN
             pup.address_prefecture::TEXT,
             COUNT(a.id)::BIGINT as user_achievement_count,
             COALESCE(SUM(pa.posting_count * 10), COUNT(a.id) * 10)::BIGINT as total_points,
-            ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
+            RANK() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
             ul.level,
             ul.xp::BIGINT,
             ul.updated_at
@@ -63,7 +63,7 @@ BEGIN
             pup.address_prefecture::TEXT,
             COUNT(a.id)::BIGINT as user_achievement_count,
             COALESCE(SUM(pa.posting_count * 10), COUNT(a.id) * 10)::BIGINT as total_points,
-            ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
+            RANK() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
             COALESCE(ul.level, 1) as level,
             COALESCE(ul.xp, 0)::BIGINT,
             COALESCE(ul.updated_at, now()) as updated_at
@@ -119,7 +119,7 @@ BEGIN
                 pup.address_prefecture::TEXT,
                 COUNT(a.id)::BIGINT as user_achievement_count,
                 COALESCE(SUM(pa.posting_count * 10), COUNT(a.id) * 10)::BIGINT as total_points,
-                ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
+                RANK() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
                 ul.level,
                 ul.xp::BIGINT,
                 ul.updated_at
@@ -147,7 +147,7 @@ BEGIN
                 pup.address_prefecture::TEXT,
                 COUNT(a.id)::BIGINT as user_achievement_count,
                 COALESCE(SUM(pa.posting_count * 10), COUNT(a.id) * 10)::BIGINT as total_points,
-                ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
+                RANK() OVER (ORDER BY COALESCE(SUM(pa.posting_count), COUNT(a.id)) DESC)::BIGINT as rank,
                 COALESCE(ul.level, 1) as level,
                 COALESCE(ul.xp, 0)::BIGINT,
                 COALESCE(ul.updated_at, now()) as updated_at

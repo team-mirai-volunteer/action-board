@@ -40,7 +40,7 @@ BEGIN
                 sx.user_id,
                 pup.name,
                 pup.address_prefecture,
-                ROW_NUMBER() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
+                RANK() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
                 ul.level,
                 sx.season_xp_total AS xp,
                 ul.updated_at
@@ -141,7 +141,7 @@ BEGIN
                 sx.user_id,
                 pup.name,
                 pup.address_prefecture,
-                ROW_NUMBER() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
+                RANK() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
                 ul.level,
                 sx.season_xp_total AS xp,
                 ul.updated_at

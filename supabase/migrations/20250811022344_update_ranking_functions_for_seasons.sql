@@ -43,7 +43,7 @@ BEGIN
                 pup.address_prefecture,
                 ul.level,
                 pup.name,
-                ROW_NUMBER() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
+                RANK() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
                 ul.updated_at,
                 sx.season_xp_total AS xp
             FROM season_xp sx
@@ -144,7 +144,7 @@ BEGIN
                 pup.address_prefecture,
                 ul.level,
                 pup.name,
-                ROW_NUMBER() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
+                RANK() OVER (ORDER BY sx.season_xp_total DESC) AS rank,
                 ul.updated_at,
                 sx.season_xp_total AS xp
             FROM season_xp sx
