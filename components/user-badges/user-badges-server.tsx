@@ -3,10 +3,11 @@ import { BadgeDisplay } from "./badge-display";
 
 interface UserBadgesProps {
   userId: string;
+  seasonId?: string;
 }
 
-export async function UserBadges({ userId }: UserBadgesProps) {
-  const badges = await getUserBadges(userId);
+export async function UserBadges({ userId, seasonId }: UserBadgesProps) {
+  const badges = await getUserBadges(userId, seasonId);
 
   if (badges.length === 0) {
     return (

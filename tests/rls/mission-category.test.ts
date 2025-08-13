@@ -20,7 +20,9 @@ describe("mission_category テーブルのRLSテスト", () => {
       slug: `test-category-${crypto.randomUUID()}`,
     };
 
-    const { error } = await adminClient.from("mission_category").insert(categoryData);
+    const { error } = await adminClient
+      .from("mission_category")
+      .insert(categoryData);
     if (error) throw new Error(`カテゴリ作成エラー: ${error.message}`);
 
     categoryId = categoryData.id;
@@ -33,7 +35,9 @@ describe("mission_category テーブルのRLSテスト", () => {
 
   test("匿名ユーザーはカテゴリ一覧を読み取れる", async () => {
     const anonClient = getAnonClient();
-    const { data, error } = await anonClient.from("mission_category").select("*");
+    const { data, error } = await anonClient
+      .from("mission_category")
+      .select("*");
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();
@@ -41,7 +45,9 @@ describe("mission_category テーブルのRLSテスト", () => {
   });
 
   test("認証済みユーザーはカテゴリ一覧を読み取れる", async () => {
-    const { data, error } = await user1.client.from("mission_category").select("*");
+    const { data, error } = await user1.client
+      .from("mission_category")
+      .select("*");
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();

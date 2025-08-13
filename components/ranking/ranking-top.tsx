@@ -9,6 +9,7 @@ interface RankingTopProps {
   limit?: number;
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   period?: RankingPeriod;
+  seasonId?: string; // シーズン指定
 }
 
 export default async function RankingTop({
@@ -16,8 +17,9 @@ export default async function RankingTop({
   limit = 10,
   showDetailedInfo = false,
   period = "all",
+  seasonId,
 }: RankingTopProps) {
-  const rankings = await getRanking(limit, period);
+  const rankings = await getRanking(limit, period, seasonId);
 
   const periodLabel = period === "daily" ? "今日の" : "全期間";
 

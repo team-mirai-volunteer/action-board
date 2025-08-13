@@ -3,6 +3,7 @@ import "server-only";
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentSeasonId } from "./seasons";
 
 export interface UserRanking {
   user_id: string | null;
@@ -17,9 +18,18 @@ export interface UserRanking {
 export async function getRanking(
   limit = 10,
   period: RankingPeriod = "all",
+  seasonId?: string,
 ): Promise<UserRanking[]> {
   try {
     const supabase = await createClient();
+
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return [];
+    }
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
@@ -33,38 +43,25 @@ export async function getRanking(
         dateFilter = null;
     }
 
-    // 期間別ランキングの場合は、xp_transactionsテーブルから集計
-    if (dateFilter) {
-      // RPC関数を使用してデータベース側で集計を行う
-      const { data: periodRankingData, error: rpcError } = await supabase.rpc(
-        "get_period_ranking",
-        {
-          p_start_date: dateFilter.toISOString(),
-          p_limit: limit,
-        },
+    // 指定されたシーズンのRPC関数を使用
+    const { data: periodRankingData, error: rpcError } = await supabase.rpc(
+      "get_period_ranking",
+      {
+        p_start_date: dateFilter?.toISOString() || undefined,
+        p_limit: limit,
+        p_end_date: undefined,
+        p_season_id: targetSeasonId, // 指定されたシーズンIDを使用
+      },
+    );
+
+    if (rpcError) {
+      console.log(rpcError);
+      throw new Error(
+        `シーズンランキングの取得に失敗しました: ${rpcError.message}`,
       );
-
-      if (rpcError) {
-        console.error("Failed to fetch period ranking:", rpcError);
-        throw new Error(
-          `期間別ランキングの取得に失敗しました: ${rpcError.message}`,
-        );
-      }
-
-      return periodRankingData || [];
-    }
-    // 全期間の場合は既存のビューを使用
-    const { data, error } = await supabase
-      .from("user_ranking_view")
-      .select("*")
-      .limit(limit);
-
-    if (error) {
-      console.error("Failed to fetch ranking:", error);
-      throw new Error(`ランキングデータの取得に失敗しました: ${error.message}`);
     }
 
-    return data || [];
+    return periodRankingData || [];
   } catch (error) {
     console.error("Ranking service error:", error);
     throw error;

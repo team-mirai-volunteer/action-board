@@ -24,16 +24,16 @@ describe("Poster Board Optimization", () => {
         { size: 180000, shouldUseWorker: true },
       ];
 
-      testDatasets.forEach(dataset => {
+      for (const dataset of testDatasets) {
         const usesWorker = dataset.size > WORKER_THRESHOLD;
         expect(usesWorker).toBe(dataset.shouldUseWorker);
-      });
+      }
     });
 
     it("should implement batch processing for medium datasets", () => {
       const BATCH_SIZE = 5000;
       const dataset = Array.from({ length: 8000 }, (_, i) => ({ id: i }));
-      
+
       const batches = [];
       for (let i = 0; i < dataset.length; i += BATCH_SIZE) {
         batches.push(dataset.slice(i, i + BATCH_SIZE));
@@ -89,9 +89,9 @@ describe("Poster Board Optimization", () => {
         "Statistics display",
       ];
 
-      features.forEach(feature => {
+      for (const feature of features) {
         expect(feature).toBeDefined();
-      });
+      }
     });
 
     it("should add performance indicators", () => {
@@ -102,9 +102,9 @@ describe("Poster Board Optimization", () => {
         "Server-side statistics",
       ];
 
-      newFeatures.forEach(feature => {
+      for (const feature of newFeatures) {
         expect(feature).toBeDefined();
-      });
+      }
     });
   });
 });

@@ -67,3 +67,5 @@ temp
 
 # csv export
 users-prefecture-export.csv
+
+.mcp.json

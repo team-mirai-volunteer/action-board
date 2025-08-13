@@ -4,14 +4,24 @@ import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
+import { getCurrentSeasonId } from "./seasons";
 
 export async function getPrefecturesRanking(
   prefecture: string,
   limit = 10,
   period: RankingPeriod = "all",
+  seasonId?: string,
 ): Promise<UserRanking[]> {
   try {
     const supabase = await createClient();
+
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return [];
+    }
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
@@ -25,21 +35,15 @@ export async function getPrefecturesRanking(
         dateFilter = null;
     }
 
-    // データベース関数を使用して都道府県別ランキングを取得
+    // シーズン対応の都道府県別ランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      period === "all"
-        ? "get_prefecture_ranking"
-        : "get_period_prefecture_ranking",
-      period === "all"
-        ? {
-            prefecture: prefecture,
-            limit_count: limit,
-          }
-        : {
-            p_prefecture: prefecture,
-            p_limit: limit,
-            p_start_date: dateFilter?.toISOString(),
-          },
+      "get_period_prefecture_ranking",
+      {
+        p_prefecture: prefecture,
+        p_limit: limit,
+        p_start_date: dateFilter?.toISOString() || undefined,
+        p_season_id: targetSeasonId,
+      },
     );
 
     if (rankingsError) {
@@ -53,32 +57,17 @@ export async function getPrefecturesRanking(
       return [];
     }
 
-    // ランキングデータを変換
-    if (period === "all") {
-      return rankings.map(
-        (ranking: Record<string, unknown>) =>
-          ({
-            user_id: ranking.user_id,
-            name: ranking.user_name,
-            address_prefecture: ranking.address_prefecture,
-            rank: ranking.rank,
-            level: ranking.level,
-            xp: ranking.xp,
-            updated_at: ranking.updated_at,
-          }) as UserRanking,
-      );
-    }
-    // 期間別の場合
+    // ランキングデータを変換（period_prefecture_rankingの結果形式）
     return rankings.map(
       (ranking: Record<string, unknown>) =>
         ({
           user_id: ranking.user_id,
           name: ranking.name,
-          address_prefecture: prefecture, // 都道府県は取得されないので引数を使用
+          address_prefecture: prefecture,
           rank: ranking.rank,
-          level: null, // 期間別では取得しない
+          level: ranking.level,
           xp: ranking.xp,
-          updated_at: null,
+          updated_at: ranking.updated_at,
         }) as UserRanking,
     );
   } catch (error) {
@@ -90,10 +79,19 @@ export async function getPrefecturesRanking(
 export async function getUserPrefecturesRanking(
   prefecture: string,
   userId: string,
+  seasonId?: string,
   period: RankingPeriod = "all",
 ): Promise<UserRanking | null> {
   try {
     const supabase = await createClient();
+
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return null;
+    }
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
@@ -107,21 +105,15 @@ export async function getUserPrefecturesRanking(
         dateFilter = null;
     }
 
-    // データベース関数を使用して特定ユーザーのランキングを取得
+    // シーズン対応の特定ユーザーの都道府県別ランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      period === "all"
-        ? "get_user_prefecture_ranking"
-        : "get_user_period_prefecture_ranking",
-      period === "all"
-        ? {
-            prefecture: prefecture,
-            target_user_id: userId,
-          }
-        : {
-            p_prefecture: prefecture,
-            p_user_id: userId,
-            p_start_date: dateFilter?.toISOString(),
-          },
+      "get_user_period_prefecture_ranking",
+      {
+        p_prefecture: prefecture,
+        p_user_id: userId,
+        p_start_date: dateFilter?.toISOString() || undefined,
+        p_season_id: targetSeasonId,
+      },
     );
 
     if (rankingsError) {
@@ -136,26 +128,15 @@ export async function getUserPrefecturesRanking(
     }
 
     const ranking = rankings[0] as Record<string, unknown>;
-    if (period === "all") {
-      return {
-        user_id: ranking.user_id,
-        name: ranking.user_name,
-        address_prefecture: ranking.address_prefecture,
-        rank: ranking.rank,
-        level: ranking.level,
-        xp: ranking.xp,
-        updated_at: ranking.updated_at,
-      } as UserRanking;
-    }
-    // 期間別の場合
+
     return {
       user_id: ranking.user_id,
       name: ranking.name,
-      address_prefecture: prefecture,
+      address_prefecture: ranking.address_prefecture,
       rank: ranking.rank,
-      level: null,
+      level: ranking.level,
       xp: ranking.xp,
-      updated_at: null,
+      updated_at: ranking.updated_at,
     } as UserRanking;
   } catch (error) {
     console.error("User prefecture ranking service error:", error);

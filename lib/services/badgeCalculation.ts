@@ -4,11 +4,12 @@ import { PREFECTURES } from "@/lib/address";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createServiceClient } from "@/lib/supabase/server";
 import { updateBadge } from "./badges";
+import { getCurrentSeasonId } from "./seasons";
 
 /**
  * 全体ランキングのバッジを計算・更新
  */
-export async function calculateAllRankingBadges(): Promise<{
+export async function calculateAllRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -16,11 +17,20 @@ export async function calculateAllRankingBadges(): Promise<{
   let updatedCount = 0;
 
   try {
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return { success: false, updatedCount: 0 };
+    }
+
     // TOP100のユーザーを取得
     const { data: allRanking, error } = await supabase.rpc(
       "get_period_ranking",
       {
         p_limit: 100,
+        p_season_id: targetSeasonId,
       },
     );
 
@@ -54,7 +64,7 @@ export async function calculateAllRankingBadges(): Promise<{
  * デイリーランキングのバッジを計算・更新
  * 深夜に実行されるため、前日のランキングを計算する
  */
-export async function calculateDailyRankingBadges(): Promise<{
+export async function calculateDailyRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -62,6 +72,14 @@ export async function calculateDailyRankingBadges(): Promise<{
   let updatedCount = 0;
 
   try {
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return { success: false, updatedCount: 0 };
+    }
+
     // 日本時間（JST）で前日の0時と当日の0時を取得
     const todayJST = getJSTMidnightToday();
 
@@ -83,6 +101,7 @@ export async function calculateDailyRankingBadges(): Promise<{
         p_limit: 100,
         p_start_date: yesterdayJST.toISOString(),
         p_end_date: todayJST.toISOString(),
+        p_season_id: targetSeasonId,
       },
     );
 
@@ -115,7 +134,9 @@ export async function calculateDailyRankingBadges(): Promise<{
 /**
  * 都道府県別ランキングのバッジを計算・更新
  */
-export async function calculatePrefectureRankingBadges(): Promise<{
+export async function calculatePrefectureRankingBadges(
+  seasonId?: string,
+): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -123,13 +144,22 @@ export async function calculatePrefectureRankingBadges(): Promise<{
   let updatedCount = 0;
 
   try {
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return { success: false, updatedCount: 0 };
+    }
+
     // 各都道府県ごとに処理
     for (const prefecture of PREFECTURES) {
       const { data: prefectureRanking, error } = await supabase.rpc(
-        "get_prefecture_ranking",
+        "get_period_prefecture_ranking",
         {
-          prefecture: prefecture,
-          limit_count: 100,
+          p_prefecture: prefecture,
+          p_limit: 100,
+          p_season_id: targetSeasonId,
         },
       );
 
@@ -163,7 +193,9 @@ export async function calculatePrefectureRankingBadges(): Promise<{
 /**
  * ミッション別ランキングのバッジを計算・更新
  */
-export async function calculateMissionRankingBadges(): Promise<{
+export async function calculateMissionRankingBadges(
+  seasonId?: string,
+): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -171,6 +203,14 @@ export async function calculateMissionRankingBadges(): Promise<{
   let updatedCount = 0;
 
   try {
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return { success: false, updatedCount: 0 };
+    }
+
     // max_achievement_countがnullのミッションを取得
     const { data: missions, error: missionsError } = await supabase
       .from("missions")
@@ -186,10 +226,11 @@ export async function calculateMissionRankingBadges(): Promise<{
     // 各ミッションごとに処理
     for (const mission of missions || []) {
       const { data: missionRanking, error } = await supabase.rpc(
-        "get_mission_ranking",
+        "get_period_mission_ranking",
         {
-          mission_id: mission.id,
-          limit_count: 100,
+          p_mission_id: mission.id,
+          p_limit: 100,
+          p_season_id: targetSeasonId,
         },
       );
 
@@ -226,7 +267,7 @@ export async function calculateMissionRankingBadges(): Promise<{
 /**
  * 全てのバッジを計算・更新
  */
-export async function calculateAllBadges(): Promise<{
+export async function calculateAllBadges(seasonId?: string): Promise<{
   success: boolean;
   results: {
     all: { success: boolean; updatedCount: number };
@@ -239,10 +280,10 @@ export async function calculateAllBadges(): Promise<{
 
   const [allResult, dailyResult, prefectureResult, missionResult] =
     await Promise.all([
-      calculateAllRankingBadges(),
-      calculateDailyRankingBadges(),
-      calculatePrefectureRankingBadges(),
-      calculateMissionRankingBadges(),
+      calculateAllRankingBadges(seasonId),
+      calculateDailyRankingBadges(seasonId),
+      calculatePrefectureRankingBadges(seasonId),
+      calculateMissionRankingBadges(seasonId),
     ]);
 
   const results = {

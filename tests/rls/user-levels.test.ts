@@ -19,6 +19,7 @@ describe("user_levels テーブルのRLSテスト", () => {
       .from("user_levels")
       .insert({
         user_id: user1.user.userId,
+        season_id: "test-season-1",
         xp: 150,
         level: 2,
       });
@@ -27,6 +28,7 @@ describe("user_levels テーブルのRLSテスト", () => {
       .from("user_levels")
       .insert({
         user_id: user2.user.userId,
+        season_id: "test-season-1",
         xp: 300,
         level: 3,
       });
@@ -147,6 +149,7 @@ describe("user_levels テーブルのRLSテスト", () => {
     const testUserId = crypto.randomUUID();
     const { data } = await user1.client.from("user_levels").insert({
       user_id: testUserId,
+      season_id: "test-season-1",
       xp: 100,
       level: 1,
     });

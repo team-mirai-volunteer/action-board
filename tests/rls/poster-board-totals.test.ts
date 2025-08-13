@@ -33,7 +33,10 @@ describe("poster_board_totals テーブルのRLSテスト", () => {
   afterEach(async () => {
     // Cleanup
     if (testTotalId) {
-      await adminClient.from("poster_board_totals").delete().eq("id", testTotalId);
+      await adminClient
+        .from("poster_board_totals")
+        .delete()
+        .eq("id", testTotalId);
     }
     if (testUser) {
       await cleanupTestUser(testUser.user.userId);
@@ -153,7 +156,7 @@ describe("poster_board_totals テーブルのRLSテスト", () => {
       } else {
         expect(error).toBeDefined();
       }
-      
+
       // 実際にデータがまだ存在することを確認
       const { data: checkData } = await adminClient
         .from("poster_board_totals")

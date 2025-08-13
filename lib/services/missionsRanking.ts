@@ -4,6 +4,7 @@ import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
+import { getCurrentSeasonId } from "./seasons";
 
 export interface UserMissionRanking extends UserRanking {
   user_achievement_count: number | null;
@@ -14,9 +15,18 @@ export async function getMissionRanking(
   missionId: string,
   limit = 10,
   period: RankingPeriod = "all",
+  seasonId?: string,
 ): Promise<UserMissionRanking[]> {
   try {
     const supabase = await createClient();
+
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return [];
+    }
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
@@ -30,23 +40,19 @@ export async function getMissionRanking(
         dateFilter = null;
     }
 
-    // データベース関数を使用してランキングを取得
+    // シーズン対応のミッション別ランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      period === "all" ? "get_mission_ranking" : "get_period_mission_ranking",
-      period === "all"
-        ? {
-            mission_id: missionId,
-            limit_count: limit,
-          }
-        : {
-            p_mission_id: missionId,
-            p_limit: limit,
-            p_start_date: dateFilter?.toISOString(),
-          },
+      "get_period_mission_ranking",
+      {
+        p_mission_id: missionId,
+        p_limit: limit,
+        p_start_date: dateFilter?.toISOString() || undefined,
+        p_season_id: targetSeasonId,
+      },
     );
 
     if (rankingsError) {
-      console.error("Failed to fetch mission rankings:", rankingsError);
+      console.log("Failed to fetch mission rankings:", rankingsError);
       throw new Error(
         `ミッションランキングデータの取得に失敗しました: ${rankingsError.message}`,
       );
@@ -59,7 +65,7 @@ export async function getMissionRanking(
     // ランキングデータを変換
     if (period === "all") {
       return rankings.map(
-        (ranking: Record<string, unknown>) =>
+        (ranking) =>
           ({
             user_id: ranking.user_id,
             name: ranking.user_name,
@@ -68,17 +74,17 @@ export async function getMissionRanking(
             level: ranking.level,
             xp: ranking.xp,
             updated_at: ranking.updated_at,
-            user_achievement_count: ranking.clear_count,
+            user_achievement_count: ranking.user_achievement_count,
             total_points: ranking.total_points,
           }) as UserMissionRanking,
       );
     }
     // 期間別の場合
     return rankings.map(
-      (ranking: Record<string, unknown>) =>
+      (ranking) =>
         ({
           user_id: ranking.user_id,
-          name: ranking.name,
+          name: ranking.user_name,
           address_prefecture: ranking.address_prefecture,
           rank: ranking.rank,
           level: null, // 期間別では取得しない
@@ -97,10 +103,19 @@ export async function getMissionRanking(
 export async function getUserMissionRanking(
   missionId: string,
   userId: string,
+  seasonId?: string,
   period: RankingPeriod = "all",
 ): Promise<UserMissionRanking | null> {
   try {
     const supabase = await createClient();
+
+    // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+    const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+    if (!targetSeasonId) {
+      console.error("Target season not found");
+      return null;
+    }
 
     // 期間に応じた日付フィルタを設定
     let dateFilter: Date | null = null;
@@ -114,25 +129,19 @@ export async function getUserMissionRanking(
         dateFilter = null;
     }
 
-    // データベース関数を使用して特定ユーザーのランキングを取得
+    // シーズン対応の特定ユーザーのミッションランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
-      period === "all"
-        ? "get_user_mission_ranking"
-        : "get_user_period_mission_ranking",
-      period === "all"
-        ? {
-            mission_id: missionId,
-            user_id: userId,
-          }
-        : {
-            p_mission_id: missionId,
-            p_user_id: userId,
-            p_start_date: dateFilter?.toISOString(),
-          },
+      "get_user_period_mission_ranking",
+      {
+        p_mission_id: missionId,
+        p_user_id: userId,
+        p_start_date: dateFilter?.toISOString() || undefined,
+        p_season_id: targetSeasonId,
+      },
     );
 
     if (rankingsError) {
-      console.error("Failed to fetch user mission ranking:", rankingsError);
+      console.log("Failed to fetch user mission ranking:", rankingsError);
       throw new Error(
         `ユーザーのミッションランキングデータの取得に失敗しました: ${rankingsError.message}`,
       );
@@ -143,28 +152,15 @@ export async function getUserMissionRanking(
     }
 
     const ranking = rankings[0] as Record<string, unknown>;
-    if (period === "all") {
-      return {
-        user_id: ranking.user_id,
-        name: ranking.user_name,
-        address_prefecture: ranking.address_prefecture,
-        rank: ranking.rank,
-        level: ranking.level,
-        xp: ranking.xp,
-        updated_at: ranking.updated_at,
-        user_achievement_count: ranking.clear_count,
-        total_points: ranking.total_points,
-      } as UserMissionRanking;
-    }
-    // 期間別の場合
+
     return {
       user_id: ranking.user_id,
       name: ranking.name,
       address_prefecture: ranking.address_prefecture,
       rank: ranking.rank,
-      level: null,
-      xp: null,
-      updated_at: null,
+      level: ranking.level,
+      xp: ranking.xp,
+      updated_at: ranking.updated_at,
       user_achievement_count: ranking.user_achievement_count,
       total_points: ranking.total_points,
     } as UserMissionRanking;
@@ -198,13 +194,24 @@ export async function getUserPostingCount(userId: string): Promise<number> {
 export async function getUserPostingCountByMission(
   userId: string,
   missionId: string,
+  seasonId?: string,
 ): Promise<number> {
   const supabase = await createClient();
+
+  // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+  const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
+  if (!targetSeasonId) {
+    console.error("Target season not found");
+    return 0;
+  }
+
   const { data, error } = await supabase.rpc(
     "get_user_posting_count_by_mission",
     {
       target_user_id: userId,
       target_mission_id: missionId,
+      p_season_id: targetSeasonId,
     },
   );
 
@@ -246,13 +253,19 @@ export async function getTopUsersPostingCount(
 export async function getTopUsersPostingCountByMission(
   userIds: string[],
   missionId: string,
+  seasonId?: string,
 ): Promise<{ user_id: string; posting_count: number }[]> {
   const supabase = await createClient();
+
+  // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
+  const targetSeasonId = seasonId || (await getCurrentSeasonId());
+
   const { data, error } = await supabase.rpc(
     "get_top_users_posting_count_by_mission",
     {
       user_ids: userIds,
       target_mission_id: missionId,
+      p_season_id: targetSeasonId ?? undefined, // シーズンIDが指定されていない場合はundefinedを渡す
     },
   );
 

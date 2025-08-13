@@ -2,6 +2,7 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import { totalXp } from "@/lib/utils/utils";
+import { getCurrentSeasonId } from "./seasons";
 
 /**
  * レベルアップ通知をチェックし、必要に応じて通知データを返す
@@ -15,11 +16,18 @@ export async function checkLevelUpNotification(userId: string): Promise<{
   };
 }> {
   const supabase = await createServiceClient();
+  const currentSeasonId = await getCurrentSeasonId();
+
+  if (!currentSeasonId) {
+    console.error("Current season not found");
+    return { shouldNotify: false };
+  }
 
   const { data: userLevel, error } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
+    .eq("season_id", currentSeasonId)
     .single();
 
   if (error || !userLevel) {
@@ -56,13 +64,20 @@ export async function markLevelUpNotificationAsSeen(
   userId: string,
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createServiceClient();
+  const currentSeasonId = await getCurrentSeasonId();
+
+  if (!currentSeasonId) {
+    console.error("Current season not found");
+    return { success: false, error: "現在のシーズンが見つかりません" };
+  }
 
   try {
-    // 現在のレベルを取得
+    // 現在のレベルを取得（シーズン対応）
     const { data: userLevel, error: fetchError } = await supabase
       .from("user_levels")
       .select("level")
       .eq("user_id", userId)
+      .eq("season_id", currentSeasonId)
       .single();
 
     if (fetchError || !userLevel) {
@@ -70,14 +85,15 @@ export async function markLevelUpNotificationAsSeen(
       return { success: false, error: "ユーザーレベルの取得に失敗しました" };
     }
 
-    // last_notified_levelを現在のレベルに更新
+    // last_notified_levelを現在のレベルに更新（シーズン対応）
     const { error: updateError } = await supabase
       .from("user_levels")
       .update({
         last_notified_level: userLevel.level,
         updated_at: new Date().toISOString(),
       })
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .eq("season_id", currentSeasonId);
 
     if (updateError) {
       console.error("Failed to update last_notified_level:", updateError);

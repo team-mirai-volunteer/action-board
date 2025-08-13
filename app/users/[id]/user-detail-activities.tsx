@@ -27,6 +27,8 @@ interface UserDetailActivitiesProps {
   pageSize: number;
   /** 対象ユーザーのID */
   userId: string;
+  /** 特定シーズンの活動のみ表示する場合のシーズンID（オプション） */
+  seasonId?: string;
 }
 
 export default function UserDetailActivities(props: UserDetailActivitiesProps) {
@@ -50,8 +52,9 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
     setIsLoading(true);
 
     try {
+      const seasonParam = props.seasonId ? `&seasonId=${props.seasonId}` : "";
       const response = await fetch(
-        `/api/users/${props.userId}/activity-timeline?limit=${props.pageSize}&offset=${timeline.length}`,
+        `/api/users/${props.userId}/activity-timeline?limit=${props.pageSize}&offset=${timeline.length}${seasonParam}`,
       );
 
       if (!response.ok) {

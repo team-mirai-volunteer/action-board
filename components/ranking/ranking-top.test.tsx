@@ -177,7 +177,7 @@ describe("RankingTop", () => {
 
       await RankingTop({ limit: 15 });
 
-      expect(getRanking).toHaveBeenCalledWith(15, "all");
+      expect(getRanking).toHaveBeenCalledWith(15, "all", undefined);
     });
 
     it("デフォルトのlimit値で呼ばれる", async () => {
@@ -185,7 +185,7 @@ describe("RankingTop", () => {
 
       await RankingTop({});
 
-      expect(getRanking).toHaveBeenCalledWith(10, "all");
+      expect(getRanking).toHaveBeenCalledWith(10, "all", undefined);
     });
 
     it("期間パラメータが渡される", async () => {
@@ -193,7 +193,7 @@ describe("RankingTop", () => {
 
       await RankingTop({ period: "daily" });
 
-      expect(getRanking).toHaveBeenCalledWith(10, "daily");
+      expect(getRanking).toHaveBeenCalledWith(10, "daily", undefined);
     });
   });
 
