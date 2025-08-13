@@ -2,7 +2,7 @@
 
 import type { Tables } from "@/lib/types/supabase";
 import { ChevronDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface MissionSelectProps {
@@ -11,6 +11,7 @@ interface MissionSelectProps {
 
 export function MissionSelect({ missions }: MissionSelectProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [selectedMissionId, setSelectedMissionId] = useState<string>("");
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function MissionSelect({ missions }: MissionSelectProps) {
     // 現在のURLパラメータを保持
     const params = new URLSearchParams(window.location.search);
     params.set("missionId", missionId);
-    router.push(`/ranking/ranking-mission?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (

@@ -15,6 +15,7 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  usePathname: () => "/ranking/ranking-mission",
 }));
 
 jest.mock("lucide-react", () => ({

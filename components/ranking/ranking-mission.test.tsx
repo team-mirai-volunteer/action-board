@@ -198,7 +198,12 @@ describe("RankingMission", () => {
         limit: 15,
       });
 
-      expect(getMissionRanking).toHaveBeenCalledWith("mission-1", 15);
+      expect(getMissionRanking).toHaveBeenCalledWith(
+        "mission-1",
+        15,
+        "all",
+        undefined,
+      );
     });
 
     it("ポスティングミッションの場合はgetTopUsersPostingCountByMissionが呼ばれる", async () => {
@@ -214,6 +219,7 @@ describe("RankingMission", () => {
       expect(getTopUsersPostingCountByMission).toHaveBeenCalledWith(
         ["user-1", "user-2"],
         "mission-1",
+        undefined,
       );
     });
   });

@@ -26,6 +26,7 @@ export function SubmissionHistoryWrapper({
         ...sub,
         mission_id: sub.mission_id || "",
         user_id: sub.user_id || "",
+        season_id: sub.season_id || "",
       }))}
       missionId={missionId}
       userId={userId}

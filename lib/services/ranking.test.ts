@@ -1,9 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { getRanking } from "./ranking";
+import { getCurrentSeasonId } from "./seasons";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),
+}));
+
+// seasonsサービスをモック
+jest.mock("./seasons", () => ({
+  getCurrentSeasonId: jest.fn(),
 }));
 
 describe("ranking service", () => {
@@ -15,6 +21,7 @@ describe("ranking service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
   });
 
   describe("getRanking", () => {
@@ -41,50 +48,47 @@ describe("ranking service", () => {
           },
         ];
 
-        mockSupabase.from.mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue({
-              data: mockRankingData,
-              error: null,
-            }),
-          }),
+        mockSupabase.rpc.mockResolvedValue({
+          data: mockRankingData,
+          error: null,
         });
 
         const result = await getRanking();
 
-        expect(mockSupabase.from).toHaveBeenCalledWith("user_ranking_view");
+        expect(mockSupabase.rpc).toHaveBeenCalledWith("get_period_ranking", {
+          p_start_date: undefined,
+          p_limit: 10,
+          p_end_date: undefined,
+          p_season_id: "test-season-id",
+        });
         expect(result).toEqual(mockRankingData);
       });
 
       it("limitパラメータで取得件数を制限できる", async () => {
-        mockSupabase.from.mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue({
-              data: [],
-              error: null,
-            }),
-          }),
+        mockSupabase.rpc.mockResolvedValue({
+          data: [],
+          error: null,
         });
 
         await getRanking(20);
 
-        const limitCall = mockSupabase.from().select().limit;
-        expect(limitCall).toHaveBeenCalledWith(20);
+        expect(mockSupabase.rpc).toHaveBeenCalledWith("get_period_ranking", {
+          p_start_date: undefined,
+          p_limit: 20,
+          p_end_date: undefined,
+          p_season_id: "test-season-id",
+        });
       });
 
       it("エラー時は例外をスローする", async () => {
         const mockError = { message: "Database error" };
-        mockSupabase.from.mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue({
-              data: null,
-              error: mockError,
-            }),
-          }),
+        mockSupabase.rpc.mockResolvedValue({
+          data: null,
+          error: mockError,
         });
 
         await expect(getRanking()).rejects.toThrow(
-          "ランキングデータの取得に失敗しました: Database error",
+          "シーズンランキングの取得に失敗しました: Database error",
         );
       });
     });
@@ -122,6 +126,8 @@ describe("ranking service", () => {
         expect(mockSupabase.rpc).toHaveBeenCalledWith("get_period_ranking", {
           p_start_date: expect.any(String),
           p_limit: 10,
+          p_end_date: undefined,
+          p_season_id: "test-season-id",
         });
         expect(result).toHaveLength(2);
         expect(result[0]).toMatchObject({
@@ -184,7 +190,7 @@ describe("ranking service", () => {
         });
 
         await expect(getRanking(10, "daily")).rejects.toThrow(
-          "期間別ランキングの取得に失敗しました: RPC fetch error",
+          "シーズンランキングの取得に失敗しました: RPC fetch error",
         );
       });
     });

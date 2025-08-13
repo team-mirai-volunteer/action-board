@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface PrefectureSelectProps {
@@ -14,6 +14,7 @@ export function PrefectureSelect({
   selectedPrefecture,
 }: PrefectureSelectProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [currentPrefecture, setCurrentPrefecture] = useState<string>(
     selectedPrefecture || "",
   );
@@ -30,7 +31,7 @@ export function PrefectureSelect({
     // 現在のURLパラメータを保持
     const params = new URLSearchParams(window.location.search);
     params.set("prefecture", prefecture);
-    router.push(`/ranking/ranking-prefecture?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (

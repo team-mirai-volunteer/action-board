@@ -215,7 +215,12 @@ describe("RankingPrefecture", () => {
         showDetailedInfo: false,
       });
 
-      expect(getPrefecturesRanking).toHaveBeenCalledWith("福岡県", 15);
+      expect(getPrefecturesRanking).toHaveBeenCalledWith(
+        "福岡県",
+        15,
+        "all",
+        undefined,
+      );
     });
   });
 

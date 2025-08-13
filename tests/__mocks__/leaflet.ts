@@ -6,12 +6,15 @@ export const mockMap = {
 };
 
 export const mockIcon = {
-  Default: Object.assign(jest.fn().mockImplementation(() => ({})), {
-    prototype: {
-      _getIconUrl: undefined,
+  Default: Object.assign(
+    jest.fn().mockImplementation(() => ({})),
+    {
+      prototype: {
+        _getIconUrl: undefined,
+      },
+      mergeOptions: jest.fn(),
     },
-    mergeOptions: jest.fn(),
-  }),
+  ),
 };
 
 const mockLeaflet = {

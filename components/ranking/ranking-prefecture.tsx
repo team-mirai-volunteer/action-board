@@ -8,18 +8,25 @@ interface RankingPrefectureProps {
   limit?: number;
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   prefecture?: string;
+  seasonId?: string; // シーズン指定
 }
 
 export default async function RankingPrefecture({
   prefecture,
   limit = 10,
   showDetailedInfo = false,
+  seasonId,
 }: RankingPrefectureProps) {
   if (!prefecture) {
     return null;
   }
 
-  const rankings = await getPrefecturesRanking(prefecture, limit);
+  const rankings = await getPrefecturesRanking(
+    prefecture,
+    limit,
+    "all",
+    seasonId,
+  );
 
   const title = `🏅${prefecture}トップ${limit}`;
 

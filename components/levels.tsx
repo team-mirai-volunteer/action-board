@@ -11,6 +11,7 @@ interface LevelsProps {
   hideProgress?: boolean;
   clickable?: boolean;
   showBadge?: boolean;
+  seasonId?: string;
 }
 
 export default async function Levels({
@@ -18,6 +19,7 @@ export default async function Levels({
   hideProgress = false,
   clickable = false,
   showBadge = false,
+  seasonId,
 }: LevelsProps) {
   const profile = await getProfile(userId);
 
@@ -25,7 +27,7 @@ export default async function Levels({
     throw new Error("Private user data not found");
   }
 
-  const userLevel = await getUserLevel(userId);
+  const userLevel = await getUserLevel(userId, seasonId);
 
   const cardContent = (
     <div

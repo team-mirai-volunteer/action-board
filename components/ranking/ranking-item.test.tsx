@@ -9,6 +9,7 @@ type UserRanking = {
   rank: number | null;
   level: number | null;
   xp: number | null;
+  updated_at: string | null;
 };
 
 type UserMissionRanking = {
@@ -16,6 +17,10 @@ type UserMissionRanking = {
   name: string;
   address_prefecture: string;
   rank: number | null;
+  level: number | null;
+  xp: number | null;
+  updated_at: string | null;
+  user_achievement_count: number | null;
   total_points: number | null;
 };
 
@@ -55,6 +60,7 @@ const mockUserRanking: UserRanking = {
   rank: 1,
   level: 15,
   xp: 1500,
+  updated_at: "2024-01-01T00:00:00Z",
 };
 
 const mockUserMissionRanking: UserMissionRanking = {
@@ -62,6 +68,10 @@ const mockUserMissionRanking: UserMissionRanking = {
   name: "テストユーザー",
   address_prefecture: "東京都",
   rank: 2,
+  level: null,
+  xp: null,
+  updated_at: null,
+  user_achievement_count: null,
   total_points: 2500,
 };
 

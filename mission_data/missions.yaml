@@ -38,7 +38,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 提案したページのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//9_propose_manifest_policy.png
   - slug: add-line-friend
@@ -83,7 +83,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: シェアした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png
   - slug: tiktok-clip-final-push
@@ -95,7 +95,7 @@ missions:
     max_achievement_count: null
     is_featured: true
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: ショート動画のURL（TikTok）
     ogp_image_url: null
   - slug: youtube-clip
@@ -177,7 +177,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: 一番応援したい投稿のURL
+    artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: threads-post
     title: Threads でチームみらいに関する投稿をしよう
@@ -198,7 +198,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//2_join_prefecture_openchat.png
   - slug: join-event
@@ -254,7 +254,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
   - slug: join-73-mirai-kaigi
@@ -279,7 +279,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
   - slug: posting-magazine
@@ -318,7 +318,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: true
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: youtube-watch
@@ -364,7 +364,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: help-event-operation
@@ -387,7 +387,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: 一番応援したくなった投稿のURL
+    artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: x-like
     title: X でチームみらい投稿に♡をつけよう
@@ -398,7 +398,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: 一番応援したい投稿のURL
+    artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: note-like
     title: note でチームみらい記事にスキ♡をつけよう
@@ -431,7 +431,7 @@ missions:
     max_achievement_count: null
     is_featured: true
     featured_importance: 20
-    is_hidden: false
+    is_hidden: true
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
     title: 比例代表ポスターを貼ろう
@@ -441,7 +441,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスターを貼った場所の郵便番号
     ogp_image_url: null
   - slug: chat-idobata-ai
@@ -452,7 +452,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: いどばたのユーザー名
     ogp_image_url: null
   - slug: quiz-teammirai-anno
@@ -601,7 +601,7 @@ missions:
     max_achievement_count: 1
     is_featured: true
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: absent-vote
@@ -612,7 +612,7 @@ missions:
     required_artifact_type: NONE
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: overseas-vote
@@ -701,6 +701,6 @@ missions:
     max_achievement_count: 1
     is_featured: true
     featured_importance: 110
-    is_hidden: false
+    is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null

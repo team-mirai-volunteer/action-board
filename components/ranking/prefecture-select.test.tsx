@@ -8,6 +8,7 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  usePathname: () => "/ranking/ranking-prefecture",
 }));
 
 jest.mock("lucide-react", () => ({
@@ -16,7 +17,6 @@ jest.mock("lucide-react", () => ({
   ),
 }));
 
-(window as any).location = undefined;
 (window as any).location = { search: "" };
 
 const mockPrefectures = [

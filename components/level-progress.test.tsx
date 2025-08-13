@@ -17,6 +17,7 @@ jest.mock("@/components/ui/progress-bar-simple", () => ({
 describe("LevelProgress", () => {
   const mockUserLevel = {
     user_id: "test-user-id",
+    season_id: "season-123",
     level: 5,
     xp: 750,
     last_notified_level: 1,

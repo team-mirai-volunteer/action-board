@@ -19,7 +19,7 @@ describe("Levels", () => {
       );
       expect(
         require("@/lib/services/userLevel").getUserLevel,
-      ).toHaveBeenCalledWith("test-user-id");
+      ).toHaveBeenCalledWith("test-user-id", undefined);
     });
   });
 });

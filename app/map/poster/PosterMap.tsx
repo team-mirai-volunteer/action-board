@@ -159,7 +159,7 @@ export default function PosterMap({
     // Add markers for each board (use filtered boards)
     for (const board of filteredBoards) {
       if (mapRef.current) {
-        const marker = L.marker([board.lat, board.long], {
+        const marker = L.marker([board.lat ?? 0, board.long ?? 0], {
           icon: createMarkerIcon(board.status),
         })
           .addTo(mapRef.current)

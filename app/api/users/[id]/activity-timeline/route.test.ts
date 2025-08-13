@@ -51,7 +51,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline?limit=10&offset=5",
       );
-      const params = { id: "user-123" };
+      const params = Promise.resolve({ id: "user-123" });
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -60,6 +60,7 @@ describe("/api/users/[id]/activity-timeline", () => {
         "user-123",
         10,
         5,
+        undefined,
       );
       expect(response.status).toBe(200);
       expect(data).toEqual({ timeline: mockTimeline });
@@ -71,7 +72,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline",
       );
-      const params = { id: "user-123" };
+      const params = Promise.resolve({ id: "user-123" });
 
       await GET(request, { params });
 
@@ -79,6 +80,7 @@ describe("/api/users/[id]/activity-timeline", () => {
         "user-123",
         20,
         0,
+        undefined,
       );
     });
 
@@ -88,7 +90,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline?limit=invalid&offset=abc",
       );
-      const params = { id: "user-123" };
+      const params = Promise.resolve({ id: "user-123" });
 
       await GET(request, { params });
 
@@ -96,6 +98,7 @@ describe("/api/users/[id]/activity-timeline", () => {
         "user-123",
         20,
         0,
+        undefined,
       );
     });
 
@@ -107,7 +110,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-123/activity-timeline",
       );
-      const params = { id: "user-123" };
+      const params = Promise.resolve({ id: "user-123" });
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -141,7 +144,7 @@ describe("/api/users/[id]/activity-timeline", () => {
       const request = new NextRequest(
         "http://localhost:3000/api/users/user-456/activity-timeline?limit=5",
       );
-      const params = { id: "user-456" };
+      const params = Promise.resolve({ id: "user-456" });
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -150,10 +153,29 @@ describe("/api/users/[id]/activity-timeline", () => {
         "user-456",
         5,
         0,
+        undefined,
       );
       expect(data.timeline).toEqual(mockTimeline);
       expect(response.headers.get("content-type")).toContain(
         "application/json",
+      );
+    });
+
+    it("seasonIdパラメータが正しく渡される", async () => {
+      mockGetUserActivityTimeline.mockResolvedValue([]);
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/users/user-123/activity-timeline?seasonId=season1&limit=10&offset=0",
+      );
+      const params = Promise.resolve({ id: "user-123" });
+
+      await GET(request, { params });
+
+      expect(mockGetUserActivityTimeline).toHaveBeenCalledWith(
+        "user-123",
+        10,
+        0,
+        "season1",
       );
     });
   });

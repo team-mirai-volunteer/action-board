@@ -17,10 +17,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
+          extensions?: Json;
           operationName?: string;
           query?: string;
           variables?: Json;
-          extensions?: Json;
         };
         Returns: Json;
       };
@@ -39,18 +39,21 @@ export type Database = {
           created_at: string;
           id: string;
           mission_id: string | null;
+          season_id: string | null;
           user_id: string | null;
         };
         Insert: {
           created_at?: string;
           id?: string;
           mission_id?: string | null;
+          season_id?: string | null;
           user_id?: string | null;
         };
         Update: {
           created_at?: string;
           id?: string;
           mission_id?: string | null;
+          season_id?: string | null;
           user_id?: string | null;
         };
         Relationships: [
@@ -73,6 +76,13 @@ export type Database = {
             columns: ["mission_id"];
             isOneToOne: false;
             referencedRelation: "missions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "achievements_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
             referencedColumns: ["id"];
           },
         ];
@@ -664,8 +674,8 @@ export type Database = {
           created_at: string;
           file_name: string | null;
           id: string;
-          lat: number;
-          long: number;
+          lat: number | null;
+          long: number | null;
           name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -679,8 +689,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string;
-          lat: number;
-          long: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -694,8 +704,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string;
-          lat?: number;
-          long?: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -952,6 +962,39 @@ export type Database = {
           },
         ];
       };
+      seasons: {
+        Row: {
+          created_at: string | null;
+          end_date: string | null;
+          id: string;
+          is_active: boolean | null;
+          name: string;
+          slug: string;
+          start_date: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          name: string;
+          slug: string;
+          start_date: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          end_date?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          name?: string;
+          slug?: string;
+          start_date?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       staging_poster_boards: {
         Row: {
           address: string | null;
@@ -959,8 +1002,8 @@ export type Database = {
           created_at: string;
           file_name: string | null;
           id: string | null;
-          lat: number;
-          long: number;
+          lat: number | null;
+          long: number | null;
           name: string | null;
           number: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -974,8 +1017,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
-          lat: number;
-          long: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -989,8 +1032,8 @@ export type Database = {
           created_at?: string;
           file_name?: string | null;
           id?: string | null;
-          lat?: number;
-          long?: number;
+          lat?: number | null;
+          long?: number | null;
           name?: string | null;
           number?: string | null;
           prefecture?: Database["public"]["Enums"]["poster_prefecture_enum"];
@@ -1040,6 +1083,7 @@ export type Database = {
           id: string;
           is_notified: boolean;
           rank: number;
+          season_id: string | null;
           sub_type: string | null;
           updated_at: string;
           user_id: string;
@@ -1051,6 +1095,7 @@ export type Database = {
           id?: string;
           is_notified?: boolean;
           rank: number;
+          season_id?: string | null;
           sub_type?: string | null;
           updated_at?: string;
           user_id: string;
@@ -1062,16 +1107,26 @@ export type Database = {
           id?: string;
           is_notified?: boolean;
           rank?: number;
+          season_id?: string | null;
           sub_type?: string | null;
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       user_levels: {
         Row: {
           last_notified_level: number | null;
           level: number;
+          season_id: string;
           updated_at: string;
           user_id: string;
           xp: number;
@@ -1079,6 +1134,7 @@ export type Database = {
         Insert: {
           last_notified_level?: number | null;
           level?: number;
+          season_id: string;
           updated_at?: string;
           user_id: string;
           xp?: number;
@@ -1086,11 +1142,20 @@ export type Database = {
         Update: {
           last_notified_level?: number | null;
           level?: number;
+          season_id?: string;
           updated_at?: string;
           user_id?: string;
           xp?: number;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "user_levels_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       user_referral: {
         Row: {
@@ -1160,6 +1225,7 @@ export type Database = {
           created_at: string;
           description: string | null;
           id: string;
+          season_id: string | null;
           source_id: string | null;
           source_type: string;
           user_id: string;
@@ -1169,6 +1235,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          season_id?: string | null;
           source_id?: string | null;
           source_type: string;
           user_id: string;
@@ -1178,12 +1245,21 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          season_id?: string | null;
           source_id?: string | null;
           source_type?: string;
           user_id?: string;
           xp_amount?: number;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "xp_transactions_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
@@ -1393,7 +1469,7 @@ export type Database = {
         }[];
       };
       get_mission_ranking: {
-        Args: { mission_id: string; limit_count?: number };
+        Args: { limit_count?: number; mission_id: string };
         Returns: {
           user_id: string;
           user_name: string;
@@ -1407,28 +1483,49 @@ export type Database = {
         }[];
       };
       get_period_mission_ranking: {
-        Args: { p_mission_id: string; p_limit?: number; p_start_date?: string };
+        Args: {
+          p_limit?: number;
+          p_mission_id: string;
+          p_season_id?: string;
+          p_start_date?: string;
+        };
         Returns: {
           mission_id: string;
           user_id: string;
-          name: string;
+          user_name: string;
           address_prefecture: string;
           user_achievement_count: number;
           total_points: number;
           rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
         }[];
       };
       get_period_prefecture_ranking: {
-        Args: { p_prefecture: string; p_limit?: number; p_start_date?: string };
+        Args: {
+          p_limit?: number;
+          p_prefecture: string;
+          p_season_id?: string;
+          p_start_date?: string;
+        };
         Returns: {
           user_id: string;
           name: string;
+          address_prefecture: string;
           rank: number;
+          level: number;
           xp: number;
+          updated_at: string;
         }[];
       };
       get_period_ranking: {
-        Args: { p_limit?: number; p_start_date?: string; p_end_date?: string };
+        Args: {
+          p_end_date?: string;
+          p_limit?: number;
+          p_season_id?: string;
+          p_start_date?: string;
+        };
         Returns: {
           user_id: string;
           address_prefecture: string;
@@ -1457,7 +1554,7 @@ export type Database = {
         }[];
       };
       get_prefecture_ranking: {
-        Args: { prefecture: string; limit_count?: number };
+        Args: { limit_count?: number; prefecture: string };
         Returns: {
           user_id: string;
           user_name: string;
@@ -1470,6 +1567,17 @@ export type Database = {
       };
       get_top_users_posting_count: {
         Args: { user_ids: string[] };
+        Returns: {
+          user_id: string;
+          posting_count: number;
+        }[];
+      };
+      get_top_users_posting_count_by_mission: {
+        Args: {
+          p_season_id?: string;
+          target_mission_id: string;
+          user_ids: string[];
+        };
         Returns: {
           user_id: string;
           posting_count: number;
@@ -1522,35 +1630,46 @@ export type Database = {
       get_user_period_mission_ranking: {
         Args: {
           p_mission_id: string;
-          p_user_id: string;
+          p_season_id?: string;
           p_start_date?: string;
+          p_user_id: string;
         };
         Returns: {
           mission_id: string;
           user_id: string;
-          name: string;
+          user_name: string;
           address_prefecture: string;
           user_achievement_count: number;
           total_points: number;
           rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
         }[];
       };
       get_user_period_prefecture_ranking: {
         Args: {
           p_prefecture: string;
-          p_user_id: string;
+          p_season_id?: string;
           p_start_date?: string;
+          p_user_id: string;
         };
         Returns: {
           user_id: string;
           name: string;
-          level: number;
+          address_prefecture: string;
           rank: number;
+          level: number;
           xp: number;
+          updated_at: string;
         }[];
       };
       get_user_period_ranking: {
-        Args: { target_user_id: string; start_date?: string };
+        Args: {
+          p_season_id?: string;
+          start_date?: string;
+          target_user_id: string;
+        };
         Returns: {
           user_id: string;
           address_prefecture: string;
@@ -1566,12 +1685,12 @@ export type Database = {
         Returns: number;
       };
       get_user_posting_count_by_mission: {
-        Args: { target_user_id: string; target_mission_id: string };
+        Args: {
+          p_season_id?: string;
+          target_mission_id: string;
+          target_user_id: string;
+        };
         Returns: number;
-      };
-      get_top_users_posting_count_by_mission: {
-        Args: { user_ids: string[]; target_mission_id: string };
-        Returns: { user_id: string; posting_count: number }[];
       };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
@@ -1589,13 +1708,13 @@ export type Database = {
     Enums: {
       poster_board_status:
         | "not_yet"
-        | "not_yet_dangerous"
         | "reserved"
         | "done"
         | "error_wrong_place"
         | "error_damaged"
         | "error_wrong_poster"
-        | "other";
+        | "other"
+        | "not_yet_dangerous";
       poster_prefecture_enum:
         | "北海道"
         | "宮城県"
@@ -1744,13 +1863,13 @@ export const Constants = {
     Enums: {
       poster_board_status: [
         "not_yet",
-        "not_yet_dangerous",
         "reserved",
         "done",
         "error_wrong_place",
         "error_damaged",
         "error_wrong_poster",
         "other",
+        "not_yet_dangerous",
       ],
       poster_prefecture_enum: [
         "北海道",
