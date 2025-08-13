@@ -68,7 +68,7 @@ export function UserSeasonHistory({
                   Lv.{userLevel?.level || 1}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {userLevel?.xp?.toLocaleString() || 0} XP
+                  {userLevel?.xp?.toLocaleString() || 0} ポイント
                 </div>
               </div>
             </div>
