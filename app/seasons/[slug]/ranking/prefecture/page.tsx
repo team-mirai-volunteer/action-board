@@ -91,7 +91,7 @@ export default async function SeasonPrefectureRankingPage({
   }
 
   return (
-    <div className="flex flex-col min-h-screen py-4 w-full">
+    <div className="flex flex-col items-center min-h-screen py-4 w-full">
       <h2 className="text-2xl font-bold text-center mb-4">
         都道府県別ランキング
       </h2>
