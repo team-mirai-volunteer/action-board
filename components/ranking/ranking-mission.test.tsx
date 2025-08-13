@@ -219,6 +219,7 @@ describe("RankingMission", () => {
       expect(getTopUsersPostingCountByMission).toHaveBeenCalledWith(
         ["user-1", "user-2"],
         "mission-1",
+        undefined,
       );
     });
   });
