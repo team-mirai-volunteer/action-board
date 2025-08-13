@@ -53,7 +53,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          <main className="md:container md:mx-auto flex flex-col items-center">
+          <main className="flex flex-col items-center">
             <Suspense>
               <ReferralCodeHandlerWrapper />
             </Suspense>

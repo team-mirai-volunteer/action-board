@@ -15,7 +15,6 @@
  */
 import UserDetailActivities from "@/app/users/[id]/user-detail-activities";
 import Levels from "@/components/levels";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
 import { UserBadges } from "@/components/user-badges/user-badges-server";
@@ -29,7 +28,6 @@ import {
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -61,30 +59,6 @@ export default async function SeasonUserDetailPage({ params }: Props) {
     .single();
 
   if (!user) return <div>ユーザーが見つかりません</div>;
-
-  // そのシーズンでのユーザーレベル情報を取得
-  const { data: userLevel } = await supabase
-    .from("user_levels")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("season_id", season.id)
-    .single();
-
-  if (!userLevel) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8 space-y-4">
-        <div className="text-lg text-gray-600">
-          このユーザーは{season.name}に参加していませんでした
-        </div>
-        <Link
-          href={`/seasons/${season.slug}/ranking`}
-          className="text-teal-600 hover:text-teal-700 hover:underline transition-colors"
-        >
-          {season.name}のランキングを見る
-        </Link>
-      </div>
-    );
-  }
 
   const [timeline, count, missionAchievements, seasonHistory] =
     await Promise.all([

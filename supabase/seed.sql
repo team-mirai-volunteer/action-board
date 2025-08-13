@@ -344,3 +344,79 @@ INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address,
 ('博多駅前掲示板', 33.5903, 130.4208, '福岡県', 'done', '40-1', '博多区博多駅中央街1-1', '福岡市博多区'),
 ('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区')
 ON CONFLICT DO NOTHING;
+
+-- バッジデータ（各シーズンごとにバッジを付与）
+INSERT INTO user_badges (user_id, badge_type, sub_type, rank, season_id, achieved_at, is_notified)
+SELECT 
+  b.user_id::uuid,
+  b.badge_type,
+  b.sub_type,
+  b.rank,
+  s.id as season_id,
+  b.achieved_at::timestamptz,
+  b.is_notified
+FROM (VALUES
+  -- シーズン1のバッジ（過去シーズン）
+  -- 安野たかひろ - 総合1位、デイリー1位、東京都1位
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'ALL', NULL, 1, 'season1', '2025-07-18T10:00:00Z', true),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'DAILY', NULL, 1, 'season1', '2025-07-18T10:00:00Z', true),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'PREFECTURE', '東京都', 1, 'season1', '2025-07-18T10:00:00Z', true),
+  
+  -- 佐藤太郎 - 総合2位、東京都2位
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'ALL', NULL, 2, 'season1', '2025-07-18T09:30:00Z', true),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'PREFECTURE', '東京都', 2, 'season1', '2025-07-18T09:30:00Z', true),
+  
+  -- 田中花子 - 大阪府1位
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'PREFECTURE', '大阪府', 1, 'season1', '2025-07-18T06:00:00Z', true),
+  
+  -- 鈴木美咲 - 総合3位、神奈川県1位
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 3, 'season1', '2025-07-18T09:00:00Z', true),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '神奈川県', 1, 'season1', '2025-07-18T09:00:00Z', true),
+
+  -- シーズン2のバッジ（現在のシーズン）
+  -- 安野たかひろ - 総合1位、デイリー3位、東京都1位、ミッション「ゴミ拾い」1位
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'ALL', NULL, 1, 'season2', '2025-08-10T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'DAILY', NULL, 3, 'season2', '2025-08-12T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'PREFECTURE', '東京都', 1, 'season2', '2025-08-10T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'MISSION', 'seed-cleanup', 1, 'season2', '2025-08-11T10:00:00Z', false),
+  
+  -- 佐藤太郎 - 総合2位、デイリー1位、東京都2位
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'ALL', NULL, 2, 'season2', '2025-08-10T09:30:00Z', false),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'DAILY', NULL, 1, 'season2', '2025-08-13T09:30:00Z', false),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'PREFECTURE', '東京都', 2, 'season2', '2025-08-10T09:30:00Z', false),
+  
+  -- 鈴木美咲 - 総合3位、神奈川県1位、ミッション「活動ブログ」2位
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 3, 'season2', '2025-08-10T09:00:00Z', false),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '神奈川県', 1, 'season2', '2025-08-10T09:00:00Z', false),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'MISSION', 'seed-activity-blog', 2, 'season2', '2025-08-11T09:00:00Z', false),
+  
+  -- 高橋健一 - 総合4位、大阪府1位
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 4, 'season2', '2025-08-10T08:30:00Z', false),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '大阪府', 1, 'season2', '2025-08-10T08:30:00Z', false),
+  
+  -- 伊藤愛子 - 総合5位、愛知県1位、デイリー2位
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 5, 'season2', '2025-08-10T08:00:00Z', false),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '愛知県', 1, 'season2', '2025-08-10T08:00:00Z', false),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'DAILY', NULL, 2, 'season2', '2025-08-13T08:00:00Z', false),
+  
+  -- 田中花子 - 大阪府2位、ミッション「ベストショット」3位
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'PREFECTURE', '大阪府', 2, 'season2', '2025-08-10T06:00:00Z', false),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'MISSION', 'seed-best-shot', 3, 'season2', '2025-08-11T06:00:00Z', false),
+  
+  -- 山田次郎 - 福岡県1位
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '福岡県', 1, 'season2', '2025-08-10T07:30:00Z', false),
+  
+  -- 中村さくら - 北海道1位
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '北海道', 1, 'season2', '2025-08-10T07:00:00Z', false),
+  
+  -- 小林直人 - 京都府1位
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '京都府', 1, 'season2', '2025-08-10T06:30:00Z', false),
+  
+  -- 渡辺雄一 - 広島県1位
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '広島県', 1, 'season2', '2025-08-10T05:00:00Z', false),
+  
+  -- 松本かな - 沖縄県1位
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '沖縄県', 1, 'season2', '2025-08-10T04:30:00Z', false)
+) AS b(user_id, badge_type, sub_type, rank, slug, achieved_at, is_notified)
+CROSS JOIN seasons s
+WHERE s.slug = b.slug;

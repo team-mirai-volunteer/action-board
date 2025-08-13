@@ -58,7 +58,7 @@ export default async function Levels({
       </div>
       {showBadge && (
         <div className="mt-3">
-          <UserTopBadge userId={userId} />
+          <UserTopBadge userId={userId} seasonId={seasonId} />
         </div>
       )}
       {!hideProgress && (
