@@ -9,7 +9,8 @@ type TestFixtures = {
 
 // テストヘルパー関数を拡張したテストオブジェクト
 export const test = base.extend<TestFixtures>({
-  testUser: async (_, use) => {
+  // biome-ignore lint/correctness/noEmptyPattern: playwrightで First argument must use the object destructuring pattern とでるのを防ぐため.
+  testUser: async ({}, use) => {
     const { user } = await createTestUser();
     await use(user);
     await cleanupTestUser(user.userId);
