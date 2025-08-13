@@ -1,9 +1,8 @@
-"use client";
-
 import {
   CopyrightSection,
   FeedbackSection,
   LogoSection,
+  SeasonsList,
 } from "@/components/footer";
 import Image from "next/image";
 
@@ -40,8 +39,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* CopyrightSectionを背景の上に配置 */}
         <div className="relative z-20">
+          <SeasonsList />
           <CopyrightSection />
         </div>
       </div>

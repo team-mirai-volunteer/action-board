@@ -6,6 +6,7 @@ import {
 } from "@/components/ranking/period-toggle";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
@@ -19,6 +20,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const period = resolvedSearchParams.period || "daily";
 
+  // 現在のシーズンIDを取得
+  const currentSeasonId = await getCurrentSeasonId();
+
   // ユーザー情報取得
   const {
     data: { user },
@@ -26,38 +30,29 @@ export default async function RankingPage({ searchParams }: PageProps) {
 
   let userRanking = null;
 
-  if (user) {
-    if (period === "all") {
-      // 全期間の場合は既存のビューを使用
-      const { data } = await supabase
-        .from("user_ranking_view")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-      userRanking = data;
-    } else {
-      // 期間別の場合は関数を使用
-      let dateFilter: Date | null = null;
-      if (period === "daily") {
-        // 日本時間の今日の0時0分を基準にする
-        dateFilter = getJSTMidnightToday();
-      }
+  if (user && currentSeasonId) {
+    // 期間別の場合は関数を使用（シーズン対応）
+    let dateFilter: Date | null = null;
+    if (period === "daily") {
+      // 日本時間の今日の0時0分を基準にする
+      dateFilter = getJSTMidnightToday();
+    }
 
-      const { data } = await supabase.rpc("get_user_period_ranking", {
-        target_user_id: user.id,
-        start_date: dateFilter?.toISOString(),
-      });
-      if (data && data.length > 0) {
-        userRanking = {
-          user_id: data[0].user_id,
-          address_prefecture: data[0].address_prefecture,
-          level: data[0].level,
-          name: data[0].name,
-          rank: data[0].rank,
-          updated_at: data[0].updated_at,
-          xp: data[0].xp,
-        };
-      }
+    const { data } = await supabase.rpc("get_user_period_ranking", {
+      target_user_id: user.id,
+      start_date: dateFilter?.toISOString() || undefined,
+      p_season_id: currentSeasonId,
+    });
+    if (data && data.length > 0) {
+      userRanking = {
+        user_id: data[0].user_id,
+        address_prefecture: data[0].address_prefecture,
+        level: data[0].level,
+        name: data[0].name,
+        rank: data[0].rank,
+        updated_at: data[0].updated_at,
+        xp: data[0].xp,
+      };
     }
   }
 

@@ -6,7 +6,9 @@ describe("validateReturnUrl", () => {
       expect(validateReturnUrl("/")).toBe("/");
       expect(validateReturnUrl("/home")).toBe("/home");
       expect(validateReturnUrl("/missions/123")).toBe("/missions/123");
-      expect(validateReturnUrl("/settings/profile?new=true")).toBe("/settings/profile?new=true");
+      expect(validateReturnUrl("/settings/profile?new=true")).toBe(
+        "/settings/profile?new=true",
+      );
     });
 
     it("should handle null and undefined", () => {
@@ -28,7 +30,9 @@ describe("validateReturnUrl", () => {
     });
 
     it("should reject data: protocol", () => {
-      expect(validateReturnUrl("data:text/html,<script>alert(1)</script>")).toBe(null);
+      expect(
+        validateReturnUrl("data:text/html,<script>alert(1)</script>"),
+      ).toBe(null);
     });
 
     it("should reject other dangerous protocols", () => {
@@ -65,8 +69,12 @@ describe("validateReturnUrl", () => {
 
     it("should accept relative URLs with colons in query parameters", () => {
       expect(validateReturnUrl("/path?time=10:30")).toBe("/path?time=10:30");
-      expect(validateReturnUrl("/search?q=test:value")).toBe("/search?q=test:value");
-      expect(validateReturnUrl("/api/data?filter=key:value")).toBe("/api/data?filter=key:value");
+      expect(validateReturnUrl("/search?q=test:value")).toBe(
+        "/search?q=test:value",
+      );
+      expect(validateReturnUrl("/api/data?filter=key:value")).toBe(
+        "/api/data?filter=key:value",
+      );
     });
 
     it("should trim whitespace and still validate", () => {
@@ -77,7 +85,9 @@ describe("validateReturnUrl", () => {
     it("should reject bypass attempts", () => {
       expect(validateReturnUrl("http://evil.com#@localhost:3000")).toBe(null);
       expect(validateReturnUrl("http://localhost:3000@evil.com")).toBe(null);
-      expect(validateReturnUrl("http://evil.com?redirect=localhost:3000")).toBe(null);
+      expect(validateReturnUrl("http://evil.com?redirect=localhost:3000")).toBe(
+        null,
+      );
       expect(validateReturnUrl("home")).toBe(null); // Not starting with /
       expect(validateReturnUrl("./home")).toBe(null); // Relative but not starting with /
       expect(validateReturnUrl("../home")).toBe(null); // Relative but not starting with /
@@ -85,15 +95,15 @@ describe("validateReturnUrl", () => {
 
     it("should reject extremely long URLs to prevent DoS attacks", () => {
       // URL with exactly 2048 characters should be accepted
-      const maxLengthUrl = "/" + "a".repeat(2047);
+      const maxLengthUrl = `/${"a".repeat(2047)}`;
       expect(validateReturnUrl(maxLengthUrl)).toBe(maxLengthUrl);
 
       // URL with 2049 characters should be rejected
-      const tooLongUrl = "/" + "a".repeat(2048);
+      const tooLongUrl = `/${"a".repeat(2048)}`;
       expect(validateReturnUrl(tooLongUrl)).toBe(null);
 
       // Very long URL with query parameters
-      const longQueryUrl = "/path?" + "param=value&".repeat(200);
+      const longQueryUrl = `/path?${"param=value&".repeat(200)}`;
       expect(validateReturnUrl(longQueryUrl)).toBe(null);
     });
   });

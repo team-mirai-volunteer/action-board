@@ -2,6 +2,7 @@
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import {
   type UserLevel,
   getUserXpBonus,
@@ -375,10 +376,20 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // 現在のシーズンIDを取得
+  const currentSeasonId = await getCurrentSeasonId();
+  if (!currentSeasonId) {
+    return {
+      success: false,
+      error: "Current season not found",
+    };
+  }
+
   // ミッション達成を記録
   const achievementPayload = {
     user_id: authUser.id,
     mission_id: validatedMissionId,
+    season_id: currentSeasonId,
   };
 
   const { data: achievement, error: achievementError } = await supabase
@@ -732,11 +743,12 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
     totalXpGranted += xpResult?.xpGranted ?? 0;
   } else {
-    // ポスティングミッションの場合は現在のユーザーレベルを取得
+    // ポスティングミッションの場合は現在のユーザーレベルを取得（シーズン対応）
     const { data: currentUserLevel } = await supabase
       .from("user_levels")
       .select("*")
       .eq("user_id", authUser.id)
+      .eq("season_id", currentSeasonId)
       .single();
 
     xpResult = {
@@ -790,7 +802,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // 達成記録が存在し、ユーザーのものかチェック
   const { data: achievement, error: achievementFetchError } = await supabase
     .from("achievements")
-    .select("id, user_id, mission_id")
+    .select("id, user_id, mission_id, season_id")
     .eq("id", validatedAchievementId)
     .eq("user_id", authUser.id)
     .single();

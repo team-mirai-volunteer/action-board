@@ -1,10 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { getJSTMidnightToday } from "../dateUtils";
 import { getMissionRanking, getUserMissionRanking } from "./missionsRanking";
+import { getCurrentSeasonId } from "./seasons";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),
+}));
+
+// seasonsサービスをモック
+jest.mock("./seasons", () => ({
+  getCurrentSeasonId: jest.fn(),
 }));
 
 describe("missionsRanking service", () => {
@@ -15,6 +21,7 @@ describe("missionsRanking service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
   });
 
   describe("getMissionRanking", () => {
@@ -30,7 +37,7 @@ describe("missionsRanking service", () => {
             level: 10,
             xp: 1000,
             updated_at: "2024-01-01T00:00:00Z",
-            clear_count: 5,
+            user_achievement_count: 5,
             total_points: 500,
             rank: 1,
           },
@@ -41,7 +48,7 @@ describe("missionsRanking service", () => {
             level: 8,
             xp: 800,
             updated_at: "2024-01-01T00:00:00Z",
-            clear_count: 3,
+            user_achievement_count: 3,
             total_points: 300,
             rank: 2,
           },
@@ -54,10 +61,15 @@ describe("missionsRanking service", () => {
 
         const result = await getMissionRanking(missionId);
 
-        expect(mockSupabase.rpc).toHaveBeenCalledWith("get_mission_ranking", {
-          mission_id: missionId,
-          limit_count: 10,
-        });
+        expect(mockSupabase.rpc).toHaveBeenCalledWith(
+          "get_period_mission_ranking",
+          {
+            p_mission_id: missionId,
+            p_limit: 10,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
+          },
+        );
         expect(result).toHaveLength(2);
         expect(result[0]).toMatchObject({
           user_id: "user1",
@@ -75,10 +87,15 @@ describe("missionsRanking service", () => {
 
         await getMissionRanking(missionId, 20);
 
-        expect(mockSupabase.rpc).toHaveBeenCalledWith("get_mission_ranking", {
-          mission_id: missionId,
-          limit_count: 20,
-        });
+        expect(mockSupabase.rpc).toHaveBeenCalledWith(
+          "get_period_mission_ranking",
+          {
+            p_mission_id: missionId,
+            p_limit: 20,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
+          },
+        );
       });
     });
 
@@ -88,7 +105,7 @@ describe("missionsRanking service", () => {
           {
             mission_id: missionId,
             user_id: "user1",
-            name: "テストユーザー1",
+            user_name: "テストユーザー1",
             address_prefecture: "東京都",
             user_achievement_count: 2,
             total_points: 100,
@@ -109,6 +126,7 @@ describe("missionsRanking service", () => {
             p_mission_id: missionId,
             p_limit: 10,
             p_start_date: expect.any(String),
+            p_season_id: "test-season-id",
           },
         );
         expect(result[0]).toMatchObject({
@@ -171,12 +189,12 @@ describe("missionsRanking service", () => {
         const mockRankingData = [
           {
             user_id: userId,
-            user_name: "テストユーザー",
+            name: "テストユーザー",
             address_prefecture: "東京都",
             level: 10,
             xp: 1000,
             updated_at: "2024-01-01T00:00:00Z",
-            clear_count: 5,
+            user_achievement_count: 5,
             total_points: 500,
             rank: 3,
           },
@@ -190,10 +208,12 @@ describe("missionsRanking service", () => {
         const result = await getUserMissionRanking(missionId, userId);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_user_mission_ranking",
+          "get_user_period_mission_ranking",
           {
-            mission_id: missionId,
-            user_id: userId,
+            p_mission_id: missionId,
+            p_user_id: userId,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
           },
         );
         expect(result).toMatchObject({
@@ -216,6 +236,9 @@ describe("missionsRanking service", () => {
             user_achievement_count: 2,
             total_points: 50,
             rank: 5,
+            level: null,
+            xp: null,
+            updated_at: null,
           },
         ];
 
@@ -224,7 +247,12 @@ describe("missionsRanking service", () => {
           error: null,
         });
 
-        const result = await getUserMissionRanking(missionId, userId, "daily");
+        const result = await getUserMissionRanking(
+          missionId,
+          userId,
+          undefined,
+          "daily",
+        );
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
           "get_user_period_mission_ranking",
@@ -232,6 +260,7 @@ describe("missionsRanking service", () => {
             p_mission_id: missionId,
             p_user_id: userId,
             p_start_date: expect.any(String),
+            p_season_id: "test-season-id",
           },
         );
         expect(result).toMatchObject({

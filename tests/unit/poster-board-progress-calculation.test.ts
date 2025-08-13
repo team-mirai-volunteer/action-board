@@ -1,14 +1,15 @@
-import { describe, expect, it } from "@jest/globals";
 import type { Database } from "@/lib/types/supabase";
-import { 
-  calculateProgressRate, 
-  getCompletedCount, 
-  getRegisteredCount 
+import {
+  calculateProgressRate,
+  getCompletedCount,
+  getRegisteredCount,
 } from "@/lib/utils/poster-progress";
+import { describe, expect, it } from "@jest/globals";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type PosterBoardTotal = Database["public"]["Tables"]["poster_board_totals"]["Row"];
+type PosterBoardTotal =
+  Database["public"]["Tables"]["poster_board_totals"]["Row"];
 
 describe("Poster Board Progress Calculation", () => {
   describe("calculateProgressRate関数", () => {
@@ -107,6 +108,7 @@ describe("Poster Board Progress Calculation", () => {
         error_wrong_place: 1,
         error_damaged: 2,
         error_wrong_poster: 3,
+        not_yet_dangerous: 0,
         other: 1,
       };
       expect(getRegisteredCount(statusCounts)).toBe(34);
@@ -130,7 +132,6 @@ describe("Poster Board Progress Calculation", () => {
       expect(completed).toBe(3);
       expect(percentage).toBe(60); // 3 / 5 = 60%
     });
-
   });
 
   describe("都道府県別進捗率の計算", () => {
@@ -145,7 +146,7 @@ describe("Poster Board Progress Calculation", () => {
         error_wrong_poster: 0,
         other: 0,
       };
-      
+
       const registeredTotal = getRegisteredCount(stats);
       const completed = stats.done || 0;
       const percentage = Math.floor((completed / registeredTotal) * 100);
@@ -168,7 +169,7 @@ describe("Poster Board Progress Calculation", () => {
       };
 
       const registeredTotal = getRegisteredCount(stats);
-      
+
       if (registeredTotal === 0) {
         const percentage = 0;
         expect(percentage).toBe(0);
@@ -183,7 +184,8 @@ describe("Poster Board Progress Calculation", () => {
 
       // UIに表示する値
       const displayTotal = actualTotal > 0 ? actualTotal : registeredTotal;
-      const showRegisteredCount = actualTotal > 0 && registeredTotal !== actualTotal;
+      const showRegisteredCount =
+        actualTotal > 0 && registeredTotal !== actualTotal;
 
       expect(displayTotal).toBe(14076);
       expect(showRegisteredCount).toBe(true);
@@ -194,7 +196,8 @@ describe("Poster Board Progress Calculation", () => {
       const registeredTotal: number = 100; // DB登録数
 
       const displayTotal = actualTotal > 0 ? actualTotal : registeredTotal;
-      const showRegisteredCount = actualTotal > 0 && registeredTotal !== actualTotal;
+      const showRegisteredCount =
+        actualTotal > 0 && registeredTotal !== actualTotal;
 
       expect(displayTotal).toBe(100);
       expect(showRegisteredCount).toBe(false);

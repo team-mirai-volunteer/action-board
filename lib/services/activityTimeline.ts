@@ -19,23 +19,34 @@ export interface ActivityTimelineItem {
  * @param userId - 対象ユーザーのID
  * @param limit - 取得する最大件数（デフォルト: 20）
  * @param offset - 取得開始位置（デフォルト: 0）
+ * @param seasonId - 特定シーズンの活動のみ取得する場合のシーズンID（オプション）
  * @returns 活動タイムラインアイテムの配列
  */
 export async function getUserActivityTimeline(
   userId: string,
   limit = 20,
   offset = 0,
+  seasonId?: string,
 ): Promise<ActivityTimelineItem[]> {
   const supabase = await createClient();
 
   const [achievementsResult, activitiesResult, userProfileResult] =
     await Promise.all([
-      supabase
-        .from("achievements")
-        .select("id, created_at, user_id, missions!inner(title)")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .range(offset, offset + Math.ceil(limit / 2) - 1),
+      // Achievement query with optional season filter
+      seasonId
+        ? supabase
+            .from("achievements")
+            .select("id, created_at, user_id, missions!inner(title)")
+            .eq("user_id", userId)
+            .eq("season_id", seasonId)
+            .order("created_at", { ascending: false })
+            .range(offset, offset + Math.ceil(limit / 2) - 1)
+        : supabase
+            .from("achievements")
+            .select("id, created_at, user_id, missions!inner(title)")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false })
+            .range(offset, offset + Math.ceil(limit / 2) - 1),
 
       supabase
         .from("user_activities")
@@ -100,14 +111,22 @@ export async function getUserActivityTimeline(
 
 export async function getUserActivityTimelineCount(
   userId: string,
+  seasonId?: string,
 ): Promise<number> {
   const supabase = await createClient();
 
   const [achievementsCount, activitiesCount] = await Promise.all([
-    supabase
-      .from("achievements")
-      .select("*", { count: "exact" })
-      .eq("user_id", userId),
+    // Achievement count with optional season filter
+    seasonId
+      ? supabase
+          .from("achievements")
+          .select("*", { count: "exact" })
+          .eq("user_id", userId)
+          .eq("season_id", seasonId)
+      : supabase
+          .from("achievements")
+          .select("*", { count: "exact" })
+          .eq("user_id", userId),
     supabase
       .from("user_activities")
       .select("*", { count: "exact" })

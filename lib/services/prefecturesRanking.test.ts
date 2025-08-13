@@ -4,10 +4,16 @@ import {
   getPrefecturesRanking,
   getUserPrefecturesRanking,
 } from "./prefecturesRanking";
+import { getCurrentSeasonId } from "./seasons";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/server", () => ({
   createClient: jest.fn(),
+}));
+
+// seasonsサービスをモック
+jest.mock("./seasons", () => ({
+  getCurrentSeasonId: jest.fn(),
 }));
 
 describe("prefecturesRanking service", () => {
@@ -18,6 +24,7 @@ describe("prefecturesRanking service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
   });
 
   describe("getPrefecturesRanking", () => {
@@ -28,7 +35,7 @@ describe("prefecturesRanking service", () => {
         const mockRankingData = [
           {
             user_id: "user1",
-            user_name: "東京ユーザー1",
+            name: "東京ユーザー1",
             address_prefecture: "東京都",
             rank: 1,
             level: 10,
@@ -37,7 +44,7 @@ describe("prefecturesRanking service", () => {
           },
           {
             user_id: "user2",
-            user_name: "東京ユーザー2",
+            name: "東京ユーザー2",
             address_prefecture: "東京都",
             rank: 2,
             level: 8,
@@ -54,10 +61,12 @@ describe("prefecturesRanking service", () => {
         const result = await getPrefecturesRanking(prefecture);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_prefecture_ranking",
+          "get_period_prefecture_ranking",
           {
-            prefecture: prefecture,
-            limit_count: 10,
+            p_prefecture: prefecture,
+            p_limit: 10,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
           },
         );
         expect(result).toHaveLength(2);
@@ -78,10 +87,12 @@ describe("prefecturesRanking service", () => {
         await getPrefecturesRanking(prefecture, 50);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_prefecture_ranking",
+          "get_period_prefecture_ranking",
           {
-            prefecture: prefecture,
-            limit_count: 50,
+            p_prefecture: prefecture,
+            p_limit: 50,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
           },
         );
       });
@@ -111,6 +122,7 @@ describe("prefecturesRanking service", () => {
             p_prefecture: prefecture,
             p_limit: 10,
             p_start_date: expect.any(String),
+            p_season_id: "test-season-id",
           },
         );
         expect(result[0]).toMatchObject({
@@ -119,8 +131,8 @@ describe("prefecturesRanking service", () => {
           address_prefecture: "東京都", // 引数から設定される
           rank: 1,
           xp: 200,
-          level: null,
-          updated_at: null,
+          level: undefined,
+          updated_at: undefined,
         });
       });
 
@@ -171,7 +183,7 @@ describe("prefecturesRanking service", () => {
       it("特定ユーザーのランキング情報を取得する", async () => {
         const mockRankingData = {
           user_id: userId,
-          user_name: "テストユーザー",
+          name: "テストユーザー",
           address_prefecture: "東京都",
           rank: 5,
           level: 7,
@@ -187,11 +199,13 @@ describe("prefecturesRanking service", () => {
         const result = await getUserPrefecturesRanking(prefecture, userId);
 
         expect(mockSupabase.rpc).toHaveBeenCalledWith(
-          "get_user_prefecture_ranking",
-          expect.objectContaining({
-            prefecture: prefecture,
-            target_user_id: userId,
-          }),
+          "get_user_period_prefecture_ranking",
+          {
+            p_prefecture: prefecture,
+            p_user_id: userId,
+            p_start_date: undefined,
+            p_season_id: "test-season-id",
+          },
         );
         expect(result).toMatchObject({
           user_id: userId,
@@ -221,6 +235,7 @@ describe("prefecturesRanking service", () => {
         const result = await getUserPrefecturesRanking(
           prefecture,
           userId,
+          undefined,
           "daily",
         );
 
@@ -230,15 +245,16 @@ describe("prefecturesRanking service", () => {
             p_prefecture: prefecture,
             p_user_id: userId,
             p_start_date: expect.any(String),
+            p_season_id: "test-season-id",
           },
         );
         expect(result).toMatchObject({
           user_id: userId,
           name: "テストユーザー",
-          address_prefecture: "東京都",
+          address_prefecture: undefined,
           rank: 3,
           xp: 150,
-          level: null,
+          level: undefined,
         });
       });
 
@@ -260,6 +276,7 @@ describe("prefecturesRanking service", () => {
         const result = await getUserPrefecturesRanking(
           prefecture,
           userId,
+          undefined,
           "daily",
         );
 

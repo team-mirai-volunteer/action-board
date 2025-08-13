@@ -138,15 +138,20 @@ export async function updateBadge({
 /**
  * ユーザーの現在のバッジを取得（ミッション情報付き）
  */
-export async function getUserBadges(userId: string): Promise<UserBadge[]> {
+export async function getUserBadges(
+  userId: string,
+  seasonId?: string,
+): Promise<UserBadge[]> {
   const supabase = await createServiceClient();
 
-  const { data, error } = await supabase
-    .from("user_badges")
-    .select("*")
-    .eq("user_id", userId)
-    .order("badge_type")
-    .order("rank");
+  let query = supabase.from("user_badges").select("*").eq("user_id", userId);
+
+  // seasonIdが指定された場合はそのシーズンのバッジのみ取得
+  if (seasonId) {
+    query = query.eq("season_id", seasonId);
+  }
+
+  const { data, error } = await query.order("badge_type").order("rank");
 
   if (error) {
     console.error("Error fetching user badges:", error);

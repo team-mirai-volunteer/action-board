@@ -16,6 +16,7 @@ export type SubmissionData = {
   id: string; // achievement_id
   mission_id: string;
   user_id: string;
+  season_id: string;
   artifacts: MissionArtifact[];
   created_at: string;
 };

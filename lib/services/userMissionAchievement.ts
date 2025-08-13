@@ -10,10 +10,11 @@ export interface MissionAchievementSummary {
 
 export async function getUserRepeatableMissionAchievements(
   userId: string,
+  seasonId?: string,
 ): Promise<MissionAchievementSummary[]> {
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("achievements")
     .select(`
       mission_id,
@@ -25,6 +26,13 @@ export async function getUserRepeatableMissionAchievements(
     `)
     .eq("user_id", userId)
     .is("missions.max_achievement_count", null);
+
+  // Add season filter if specified
+  if (seasonId) {
+    query = query.eq("season_id", seasonId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Failed to fetch user mission achievements:", error);

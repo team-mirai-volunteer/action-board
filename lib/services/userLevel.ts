@@ -7,6 +7,7 @@ import {
   executeChunkedQuery,
 } from "@/lib/utils/supabase-utils";
 import { calculateLevel, calculateMissionXp } from "../utils/utils";
+import { getCurrentSeasonId } from "./seasons";
 import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
@@ -14,12 +15,18 @@ export type XpTransaction = Tables<"xp_transactions">;
 export type XpTransactionInsert = TablesInsert<"xp_transactions">;
 
 /**
- * ユーザーのレベル情報を取得する
+ * ユーザーのレベル情報を取得する（現在のアクティブシーズン）
  */
 export async function getMyUserLevel(): Promise<UserLevel | null> {
   const user = await getUser();
   if (!user) {
     console.error("User not found");
+    return null;
+  }
+
+  const seasonId = await getCurrentSeasonId();
+  if (!seasonId) {
+    console.error("Current season not found");
     return null;
   }
 
@@ -29,21 +36,36 @@ export async function getMyUserLevel(): Promise<UserLevel | null> {
     .from("user_levels")
     .select("*")
     .eq("user_id", user.id)
+    .eq("season_id", seasonId)
     .maybeSingle();
 
   return data;
 }
 
 /**
- * ユーザーのレベル情報を取得する
+ * ユーザーのレベル情報を取得する（現在のアクティブシーズン）
  */
-export async function getUserLevel(userId: string): Promise<UserLevel | null> {
+export async function getUserLevel(
+  userId: string,
+  seasonId?: string,
+): Promise<UserLevel | null> {
+  let targetSeasonId = seasonId ?? null;
+
+  if (!targetSeasonId) {
+    targetSeasonId = await getCurrentSeasonId();
+    if (!targetSeasonId) {
+      console.error("Current season not found");
+      return null;
+    }
+  }
+
   const supabase = await createServiceClient();
 
   const { data } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
+    .eq("season_id", targetSeasonId)
     .single();
 
   return data;
@@ -55,12 +77,19 @@ export async function getUserLevel(userId: string): Promise<UserLevel | null> {
 export async function initializeUserLevel(
   userId: string,
 ): Promise<UserLevel | null> {
+  const seasonId = await getCurrentSeasonId();
+  if (!seasonId) {
+    console.error("Current season not found");
+    return null;
+  }
+
   const supabase = await createServiceClient();
 
   const { data, error } = await supabase
     .from("user_levels")
     .insert({
       user_id: userId,
+      season_id: seasonId,
       xp: 0,
       level: 1,
     })
@@ -104,6 +133,11 @@ async function processXpTransaction(
   sourceId?: string,
   description?: string,
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
+  const seasonId = await getCurrentSeasonId();
+  if (!seasonId) {
+    return { success: false, error: "Current season not found" };
+  }
+
   const supabase = await createServiceClient();
 
   try {
@@ -112,6 +146,7 @@ async function processXpTransaction(
       .from("xp_transactions")
       .insert({
         user_id: userId,
+        season_id: seasonId,
         xp_amount: xpAmount,
         source_type: sourceType,
         source_id: sourceId,
@@ -145,6 +180,7 @@ async function processXpTransaction(
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
+      .eq("season_id", seasonId)
       .select()
       .single();
 
@@ -348,6 +384,12 @@ export async function grantXpBatch(
     return { success: true, results: [] };
   }
 
+  // 現在のシーズンIDを取得
+  const seasonId = await getCurrentSeasonId();
+  if (!seasonId) {
+    return { success: false, error: "Current season not found", results: [] };
+  }
+
   try {
     // 1. 全てのユーザーIDを収集（重複排除）
     const userIdSet = new Set<string>();
@@ -364,7 +406,8 @@ export async function grantXpBatch(
           return await supabase
             .from("user_levels")
             .select("*")
-            .in("user_id", chunkIds);
+            .in("user_id", chunkIds)
+            .eq("season_id", seasonId);
         },
         50,
       );
@@ -387,6 +430,7 @@ export async function grantXpBatch(
         await executeChunkedInsert(
           missingUserIds.map((userId) => ({
             user_id: userId,
+            season_id: seasonId,
             xp: 0,
             level: 1,
           })),
@@ -444,6 +488,7 @@ export async function grantXpBatch(
     // 7. ユーザーレベルを一括更新
     const levelUpdates: Array<{
       user_id: string;
+      season_id: string;
       xp: number;
       level: number;
       updated_at: string;
@@ -473,6 +518,7 @@ export async function grantXpBatch(
 
       levelUpdates.push({
         user_id: userId,
+        season_id: seasonId,
         xp: newXp,
         level: newLevel,
         updated_at: new Date().toISOString(),
@@ -491,7 +537,7 @@ export async function grantXpBatch(
       const { error: updateError } = await supabase
         .from("user_levels")
         .upsert(levelUpdates, {
-          onConflict: "user_id",
+          onConflict: "user_id,season_id",
         });
 
       if (updateError) {
