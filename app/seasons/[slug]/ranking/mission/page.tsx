@@ -129,7 +129,7 @@ export default async function SeasonMissionRankingPage({
   }
 
   return (
-    <div className="flex flex-col min-h-screen py-4 w-full">
+    <div className="flex flex-col items-center min-h-screen py-4 w-full">
       <h2 className="text-2xl font-bold text-center mb-4">
         ミッション別ランキング
       </h2>

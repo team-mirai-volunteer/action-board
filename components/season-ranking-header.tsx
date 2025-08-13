@@ -20,9 +20,7 @@ export function SeasonRankingHeader({
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {season.name}
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">{season.name}</h2>
               {season.is_active && (
                 <Badge
                   variant="default"
