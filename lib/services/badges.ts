@@ -1,11 +1,7 @@
 "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
-import {
-  BadgeType,
-  type BadgeUpdateParams,
-  type UserBadge,
-} from "@/lib/types/badge";
+import type { BadgeUpdateParams, UserBadge } from "@/lib/types/badge";
 
 /**
  * ミッションバッジにタイトル情報を追加する
@@ -169,8 +165,9 @@ export async function getUserBadges(
  */
 export async function getUserTopBadge(
   userId: string,
+  seasonId?: string,
 ): Promise<UserBadge | null> {
-  const badges = await getUserBadges(userId);
+  const badges = await getUserBadges(userId, seasonId);
 
   if (badges.length === 0) {
     return null;

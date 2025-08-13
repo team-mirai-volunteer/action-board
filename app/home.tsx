@@ -6,18 +6,12 @@ import { LevelUpCheck } from "@/components/level-up-check";
 import MetricsWithSuspense from "@/components/metrics/MetricsWithSuspense";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
-import Missions from "@/components/mission/missions";
-import RankingTop from "@/components/ranking/ranking-top";
 import RankingSection from "@/components/top/ranking-section";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
 import { checkBadgeNotifications } from "@/lib/services/badgeNotification";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
 import { createClient } from "@/lib/supabase/server";
-import { Edit3, MessageCircle } from "lucide-react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 // メタデータ生成を外部関数に委譲
@@ -68,7 +62,7 @@ export default async function Home({
   const showFeatured = await hasFeaturedMissions();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen w-full">
       {/* 注意書き */}
       <NoticeBoardAlert />
 
