@@ -1445,41 +1445,41 @@ export type Database = {
       get_mission_links: {
         Args: { p_mission_id: string };
         Returns: {
+          display_order: number;
           link: string;
           remark: string;
-          display_order: number;
         }[];
       };
       get_mission_quiz_questions: {
         Args: { p_mission_id: string };
         Returns: {
-          question_id: string;
-          question_order: number;
+          category_description: string;
           category_id: string;
           category_name: string;
-          category_description: string;
+          correct_answer: number;
+          explanation: string;
           mission_links: Json;
-          question: string;
           option1: string;
           option2: string;
           option3: string;
           option4: string;
-          correct_answer: number;
-          explanation: string;
+          question: string;
+          question_id: string;
+          question_order: number;
         }[];
       };
       get_mission_ranking: {
         Args: { limit_count?: number; mission_id: string };
         Returns: {
+          address_prefecture: string;
+          clear_count: number;
+          level: number;
+          rank: number;
+          total_points: number;
+          updated_at: string;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          level: number;
           xp: number;
-          updated_at: string;
-          clear_count: number;
-          total_points: number;
-          rank: number;
         }[];
       };
       get_period_mission_ranking: {
@@ -1490,16 +1490,16 @@ export type Database = {
           p_start_date?: string;
         };
         Returns: {
+          address_prefecture: string;
+          level: number;
           mission_id: string;
+          rank: number;
+          total_points: number;
+          updated_at: string;
+          user_achievement_count: number;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          user_achievement_count: number;
-          total_points: number;
-          rank: number;
-          level: number;
           xp: number;
-          updated_at: string;
         }[];
       };
       get_period_prefecture_ranking: {
@@ -1510,13 +1510,13 @@ export type Database = {
           p_start_date?: string;
         };
         Returns: {
-          user_id: string;
-          name: string;
           address_prefecture: string;
-          rank: number;
           level: number;
-          xp: number;
+          name: string;
+          rank: number;
           updated_at: string;
+          user_id: string;
+          xp: number;
         }[];
       };
       get_period_ranking: {
@@ -1527,21 +1527,21 @@ export type Database = {
           p_start_date?: string;
         };
         Returns: {
-          user_id: string;
           address_prefecture: string;
           level: number;
           name: string;
           rank: number;
           updated_at: string;
+          user_id: string;
           xp: number;
         }[];
       };
       get_poster_board_stats: {
         Args: Record<PropertyKey, never>;
         Returns: {
+          count: number;
           prefecture: string;
           status: Database["public"]["Enums"]["poster_board_status"];
-          count: number;
         }[];
       };
       get_poster_board_stats_optimized: {
@@ -1549,27 +1549,27 @@ export type Database = {
           target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
         };
         Returns: {
-          total_count: number;
           status_counts: Json;
+          total_count: number;
         }[];
       };
       get_prefecture_ranking: {
         Args: { limit_count?: number; prefecture: string };
         Returns: {
+          address_prefecture: string;
+          level: number;
+          rank: number;
+          updated_at: string;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          rank: number;
-          level: number;
           xp: number;
-          updated_at: string;
         }[];
       };
       get_top_users_posting_count: {
         Args: { user_ids: string[] };
         Returns: {
-          user_id: string;
           posting_count: number;
+          user_id: string;
         }[];
       };
       get_top_users_posting_count_by_mission: {
@@ -1579,15 +1579,15 @@ export type Database = {
           user_ids: string[];
         };
         Returns: {
-          user_id: string;
           posting_count: number;
+          user_id: string;
         }[];
       };
       get_user_by_email: {
         Args: { user_email: string };
         Returns: {
-          id: string;
           email: string;
+          id: string;
           user_metadata: Json;
         }[];
       };
@@ -1607,24 +1607,24 @@ export type Database = {
         };
         Returns: {
           board_id: string;
+          last_edited_at: string;
           lat: number;
           long: number;
           status: Database["public"]["Enums"]["poster_board_status"];
-          last_edited_at: string;
         }[];
       };
       get_user_mission_ranking: {
         Args: { mission_id: string; user_id: string };
         Returns: {
+          address_prefecture: string;
+          clear_count: number;
+          level: number;
+          rank: number;
+          total_points: number;
+          updated_at: string;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          level: number;
           xp: number;
-          updated_at: string;
-          clear_count: number;
-          total_points: number;
-          rank: number;
         }[];
       };
       get_user_period_mission_ranking: {
@@ -1635,16 +1635,16 @@ export type Database = {
           p_user_id: string;
         };
         Returns: {
+          address_prefecture: string;
+          level: number;
           mission_id: string;
+          rank: number;
+          total_points: number;
+          updated_at: string;
+          user_achievement_count: number;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          user_achievement_count: number;
-          total_points: number;
-          rank: number;
-          level: number;
           xp: number;
-          updated_at: string;
         }[];
       };
       get_user_period_prefecture_ranking: {
@@ -1655,13 +1655,13 @@ export type Database = {
           p_user_id: string;
         };
         Returns: {
-          user_id: string;
-          name: string;
           address_prefecture: string;
-          rank: number;
           level: number;
-          xp: number;
+          name: string;
+          rank: number;
           updated_at: string;
+          user_id: string;
+          xp: number;
         }[];
       };
       get_user_period_ranking: {
@@ -1671,12 +1671,12 @@ export type Database = {
           target_user_id: string;
         };
         Returns: {
-          user_id: string;
           address_prefecture: string;
           level: number;
           name: string;
           rank: number;
           updated_at: string;
+          user_id: string;
           xp: number;
         }[];
       };
@@ -1695,13 +1695,13 @@ export type Database = {
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };
         Returns: {
+          address_prefecture: string;
+          level: number;
+          rank: number;
+          updated_at: string;
           user_id: string;
           user_name: string;
-          address_prefecture: string;
-          rank: number;
-          level: number;
           xp: number;
-          updated_at: string;
         }[];
       };
     };
