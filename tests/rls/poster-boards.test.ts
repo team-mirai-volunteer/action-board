@@ -214,7 +214,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
       .select()
       .single();
 
-    testBoardId = boardData?.id;
+    testBoardId = boardData?.id ?? "";
 
     // Create test history entry
     await adminClient.from("poster_board_status_history").insert({
