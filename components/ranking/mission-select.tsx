@@ -9,7 +9,7 @@ type MissionWithCategory = Tables<"missions"> & {
   mission_category_link: Array<{
     mission_category: {
       id: string;
-      category_title: string;
+      category_title: string | null;
       sort_no: number;
     } | null;
   }>;
@@ -36,7 +36,7 @@ export function MissionSelect({ missions }: MissionSelectProps) {
       const categoryLink = mission.mission_category_link?.[0];
       const category = categoryLink?.mission_category;
 
-      if (category) {
+      if (category?.category_title) {
         const key = category.id;
         if (!groups[key]) {
           groups[key] = {
