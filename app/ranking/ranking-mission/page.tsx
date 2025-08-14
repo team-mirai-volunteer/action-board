@@ -38,11 +38,20 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
     error: userError,
   } = await supabase.auth.getUser();
 
-  // ミッション一覧を取得（max_achievement_countがnullのもののみ）
   const { data: missions, error: missionsError } = await supabase
     .from("missions")
-    .select("*")
+    .select(`
+      *,
+      mission_category_link(
+        mission_category(
+          id,
+          category_title,
+          sort_no
+        )
+      )
+    `)
     .is("max_achievement_count", null)
+    .eq("is_hidden", false)
     .order("is_featured", { ascending: false }) // is_featuredがtrueのものを先頭に
     .order("difficulty", { ascending: true }); // その後、難易度の昇順でソート
 
