@@ -155,7 +155,7 @@ export async function getUserMissionRanking(
 
     return {
       user_id: ranking.user_id,
-      name: ranking.name,
+      name: ranking.user_name,
       address_prefecture: ranking.address_prefecture,
       rank: ranking.rank,
       level: ranking.level,
