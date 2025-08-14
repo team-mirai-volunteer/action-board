@@ -189,7 +189,7 @@ describe("missionsRanking service", () => {
         const mockRankingData = [
           {
             user_id: userId,
-            name: "テストユーザー",
+            user_name: "テストユーザー",
             address_prefecture: "東京都",
             level: 10,
             xp: 1000,
@@ -231,7 +231,7 @@ describe("missionsRanking service", () => {
           {
             mission_id: missionId,
             user_id: userId,
-            name: "テストユーザー",
+            user_name: "テストユーザー",
             address_prefecture: "東京都",
             user_achievement_count: 2,
             total_points: 50,
