@@ -1,5 +1,4 @@
 import HeaderAuth from "@/components/header-auth";
-import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import { createClient } from "@/lib/supabase/server";
 import { Menu } from "lucide-react";
 import Image from "next/image";
