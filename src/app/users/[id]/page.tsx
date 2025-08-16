@@ -12,12 +12,11 @@
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import Levels from "@/components/levels";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserBadges } from "@/components/user-badges/user-badges-server";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,

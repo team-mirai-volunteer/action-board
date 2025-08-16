@@ -1,15 +1,64 @@
-"server-only";
+import "server-only";
 
 import { PREFECTURES } from "@/lib/address";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
-import { createAdminClient } from "../supabase/adminClient";
-import { updateBadge } from "./badges";
-import { getCurrentSeasonId } from "./seasons";
+import { getCurrentSeasonId } from "../../lib/services/seasons";
+import { createAdminClient } from "../../lib/supabase/adminClient";
+import type { BadgeUpdateParams } from "../user-badges/badge-types";
+
+/**
+ * 全てのバッジを計算・更新
+ */
+export async function calculateAllBadges(seasonId?: string): Promise<{
+  success: boolean;
+  results: {
+    all: { success: boolean; updatedCount: number };
+    daily: { success: boolean; updatedCount: number };
+    prefecture: { success: boolean; updatedCount: number };
+    mission: { success: boolean; updatedCount: number };
+  };
+}> {
+  console.log("Starting badge calculation...");
+
+  const [allResult, dailyResult, prefectureResult, missionResult] =
+    await Promise.all([
+      calculateAllRankingBadges(seasonId),
+      calculateDailyRankingBadges(seasonId),
+      calculatePrefectureRankingBadges(seasonId),
+      calculateMissionRankingBadges(seasonId),
+    ]);
+
+  const results = {
+    all: allResult,
+    daily: dailyResult,
+    prefecture: prefectureResult,
+    mission: missionResult,
+  };
+
+  const totalUpdated =
+    allResult.updatedCount +
+    dailyResult.updatedCount +
+    prefectureResult.updatedCount +
+    missionResult.updatedCount;
+
+  console.log(
+    `Badge calculation completed. Total badges updated: ${totalUpdated}`,
+  );
+
+  return {
+    success:
+      allResult.success &&
+      dailyResult.success &&
+      prefectureResult.success &&
+      missionResult.success,
+    results,
+  };
+}
 
 /**
  * 全体ランキングのバッジを計算・更新
  */
-export async function calculateAllRankingBadges(seasonId?: string): Promise<{
+async function calculateAllRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -64,7 +113,7 @@ export async function calculateAllRankingBadges(seasonId?: string): Promise<{
  * デイリーランキングのバッジを計算・更新
  * 深夜に実行されるため、前日のランキングを計算する
  */
-export async function calculateDailyRankingBadges(seasonId?: string): Promise<{
+async function calculateDailyRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -134,9 +183,7 @@ export async function calculateDailyRankingBadges(seasonId?: string): Promise<{
 /**
  * 都道府県別ランキングのバッジを計算・更新
  */
-export async function calculatePrefectureRankingBadges(
-  seasonId?: string,
-): Promise<{
+async function calculatePrefectureRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -193,9 +240,7 @@ export async function calculatePrefectureRankingBadges(
 /**
  * ミッション別ランキングのバッジを計算・更新
  */
-export async function calculateMissionRankingBadges(
-  seasonId?: string,
-): Promise<{
+async function calculateMissionRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
@@ -265,50 +310,84 @@ export async function calculateMissionRankingBadges(
 }
 
 /**
- * 全てのバッジを計算・更新
+ * バッジを更新する（順位が改善された場合のみ）
  */
-export async function calculateAllBadges(seasonId?: string): Promise<{
-  success: boolean;
-  results: {
-    all: { success: boolean; updatedCount: number };
-    daily: { success: boolean; updatedCount: number };
-    prefecture: { success: boolean; updatedCount: number };
-    mission: { success: boolean; updatedCount: number };
-  };
-}> {
-  console.log("Starting badge calculation...");
+async function updateBadge({
+  user_id,
+  badge_type,
+  sub_type,
+  rank,
+}: BadgeUpdateParams): Promise<{ success: boolean; updated: boolean }> {
+  const supabaseAdmin = await createAdminClient();
 
-  const [allResult, dailyResult, prefectureResult, missionResult] =
-    await Promise.all([
-      calculateAllRankingBadges(seasonId),
-      calculateDailyRankingBadges(seasonId),
-      calculatePrefectureRankingBadges(seasonId),
-      calculateMissionRankingBadges(seasonId),
-    ]);
+  try {
+    // 既存バッジを確認
+    const query = supabaseAdmin
+      .from("user_badges")
+      .select("*")
+      .eq("user_id", user_id)
+      .eq("badge_type", badge_type);
 
-  const results = {
-    all: allResult,
-    daily: dailyResult,
-    prefecture: prefectureResult,
-    mission: missionResult,
-  };
+    // sub_typeがnullの場合とそうでない場合で処理を分ける
+    if (sub_type === null) {
+      query.is("sub_type", null);
+    } else {
+      query.eq("sub_type", sub_type);
+    }
 
-  const totalUpdated =
-    allResult.updatedCount +
-    dailyResult.updatedCount +
-    prefectureResult.updatedCount +
-    missionResult.updatedCount;
+    const { data: existing, error: fetchError } = await query.single();
 
-  console.log(
-    `Badge calculation completed. Total badges updated: ${totalUpdated}`,
-  );
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // PGRST116 = no rows returned
+      console.error("Error fetching existing badge:", fetchError);
+      return { success: false, updated: false };
+    }
 
-  return {
-    success:
-      allResult.success &&
-      dailyResult.success &&
-      prefectureResult.success &&
-      missionResult.success,
-    results,
-  };
+    if (!existing) {
+      // 新規作成
+      const { error: insertError } = await supabaseAdmin
+        .from("user_badges")
+        .insert({
+          user_id,
+          badge_type,
+          sub_type,
+          rank,
+          achieved_at: new Date().toISOString(),
+          is_notified: false,
+        });
+
+      if (insertError) {
+        console.error("Error inserting new badge:", insertError);
+        return { success: false, updated: false };
+      }
+
+      return { success: true, updated: true };
+    }
+
+    if (rank < existing.rank) {
+      // 順位が改善された場合のみ更新
+      const { error: updateError } = await supabaseAdmin
+        .from("user_badges")
+        .update({
+          rank,
+          achieved_at: new Date().toISOString(),
+          is_notified: false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existing.id);
+
+      if (updateError) {
+        console.error("Error updating badge:", updateError);
+        return { success: false, updated: false };
+      }
+
+      return { success: true, updated: true };
+    }
+
+    // 順位が改善されていない場合
+    return { success: true, updated: false };
+  } catch (error) {
+    console.error("Unexpected error in updateBadge:", error);
+    return { success: false, updated: false };
+  }
 }
