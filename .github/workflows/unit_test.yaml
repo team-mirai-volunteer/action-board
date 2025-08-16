@@ -1,0 +1,33 @@
+name: Unit Tests
+on:
+  pull_request:
+
+jobs:
+  test:
+    name: Unit Tests
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CI Tests
+        run: npm run test:ci:unit
+        env:
+          CI: 'true'
+
+      - name: Upload Jest test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-report
+          path: jest-report/
+          retention-days: 30

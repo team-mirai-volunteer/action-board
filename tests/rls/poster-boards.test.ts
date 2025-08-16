@@ -107,23 +107,24 @@ describe("poster_boards テーブルのRLSテスト", () => {
   });
 
   describe("UPDATE操作", () => {
-    it("認証済みユーザーはボードのステータスを更新できる", async () => {
-      const { error } = await testUser.client
-        .from("poster_boards")
-        .update({ status: "done" })
-        .eq("id", testBoardId);
+    // 選挙終了後、ボードのステータス更新は止めている
+    // it("認証済みユーザーはボードのステータスを更新できる", async () => {
+    //   const { error } = await testUser.client
+    //     .from("poster_boards")
+    //     .update({ status: "done" })
+    //     .eq("id", testBoardId);
 
-      expect(error).toBeNull();
+    //   expect(error).toBeNull();
 
-      // Verify the update
-      const { data } = await adminClient
-        .from("poster_boards")
-        .select("status")
-        .eq("id", testBoardId)
-        .single();
+    //   // Verify the update
+    //   const { data } = await adminClient
+    //     .from("poster_boards")
+    //     .select("status")
+    //     .eq("id", testBoardId)
+    //     .single();
 
-      expect(data?.status).toBe("done");
-    });
+    //   expect(data?.status).toBe("done");
+    // });
 
     it("匿名ユーザーはボードを更新できない", async () => {
       const anonClient = getAnonClient();
