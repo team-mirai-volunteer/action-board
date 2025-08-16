@@ -1,5 +1,5 @@
-import type { SupporterData } from "@/lib/types/metrics";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
+import type { SupporterData } from "../types";
 
 interface SupporterMetricProps {
   data: SupporterData | null;
