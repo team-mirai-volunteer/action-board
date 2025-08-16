@@ -1,8 +1,9 @@
 import "server-only";
 import { cache } from "react";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
+import { createAdminClient } from "../supabase/adminClient";
 
 export const getUser = cache(async () => {
   const supabase = await createClient();
@@ -83,7 +84,7 @@ export async function updateProfile(
 
 export async function deleteAccount(): Promise<void> {
   const supabaseClient = await createClient();
-  const supabaseServiceClient = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
   // 現在のユーザー情報を取得
   const { data: authUser } = await supabaseClient.auth.getUser();
@@ -107,7 +108,7 @@ export async function deleteAccount(): Promise<void> {
 
     // 2. auth.users テーブルからユーザーを削除（Admin API使用）
     const { error: authDeleteError } =
-      await supabaseServiceClient.auth.admin.deleteUser(userId);
+      await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (authDeleteError) {
       console.error("認証ユーザー削除でエラーが発生しました:", authDeleteError);

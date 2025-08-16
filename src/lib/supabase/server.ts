@@ -2,25 +2,8 @@
 
 import type { Database } from "@/lib/types/supabase";
 import { createServerClient } from "@supabase/ssr";
-import { createClient as createClientSupabase } from "@supabase/supabase-js";
 
 import { cookies } from "next/headers";
-
-// サービスロールでの操作を行うクライアントです。
-// RLSが無効になりますのでご注意ください。
-export const createServiceClient = async () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
-  }
-
-  if (!supabaseServiceRoleKey) {
-    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
-  }
-  return createClientSupabase<Database>(supabaseUrl, supabaseServiceRoleKey);
-};
 
 export const createClient = async () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

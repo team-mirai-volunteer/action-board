@@ -2,7 +2,7 @@
 
 import { createWriteStream } from "node:fs";
 import { join } from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 interface UserData {
   id: string;
@@ -11,7 +11,7 @@ interface UserData {
 }
 
 async function getAllUsers(): Promise<UserData[]> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   const allUsers: UserData[] = [];
   let hasMore = true;
   let offset = 0;

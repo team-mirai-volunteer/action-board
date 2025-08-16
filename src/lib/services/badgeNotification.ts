@@ -4,8 +4,8 @@ import {
   getUnnotifiedBadges,
   markBadgesAsNotified,
 } from "@/lib/services/badges";
-import { createServiceClient } from "@/lib/supabase/server";
 import { type UserBadge, getBadgeTitle } from "@/lib/types/badge";
+import { createAdminClient } from "../supabase/adminClient";
 
 /**
  * バッジ獲得通知をチェックし、必要に応じて通知データを返す
@@ -54,9 +54,9 @@ export async function markBadgeNotificationAsSeen(
  * ミッションのタイトルを取得するヘルパー関数
  */
 async function getMissionTitle(missionSlug: string): Promise<string> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
-  const { data: mission } = await supabase
+  const { data: mission } = await supabaseAdmin
     .from("missions")
     .select("title")
     .eq("slug", missionSlug)

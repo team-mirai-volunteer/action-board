@@ -1,6 +1,6 @@
 "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { BadgeUpdateParams, UserBadge } from "@/lib/types/badge";
 
 /**
@@ -16,10 +16,10 @@ async function enrichMissionBadges(badges: UserBadge[]): Promise<UserBadge[]> {
     return badges;
   }
 
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
   // ミッション情報を取得（IDも含める）
-  const { data: missions, error: missionError } = await supabase
+  const { data: missions, error: missionError } = await supabaseAdmin
     .from("missions")
     .select("id, slug, title")
     .in("slug", missionSlugs);
@@ -59,11 +59,11 @@ export async function updateBadge({
   sub_type,
   rank,
 }: BadgeUpdateParams): Promise<{ success: boolean; updated: boolean }> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
   try {
     // 既存バッジを確認
-    const query = supabase
+    const query = supabaseAdmin
       .from("user_badges")
       .select("*")
       .eq("user_id", user_id)
@@ -86,14 +86,16 @@ export async function updateBadge({
 
     if (!existing) {
       // 新規作成
-      const { error: insertError } = await supabase.from("user_badges").insert({
-        user_id,
-        badge_type,
-        sub_type,
-        rank,
-        achieved_at: new Date().toISOString(),
-        is_notified: false,
-      });
+      const { error: insertError } = await supabaseAdmin
+        .from("user_badges")
+        .insert({
+          user_id,
+          badge_type,
+          sub_type,
+          rank,
+          achieved_at: new Date().toISOString(),
+          is_notified: false,
+        });
 
       if (insertError) {
         console.error("Error inserting new badge:", insertError);
@@ -105,7 +107,7 @@ export async function updateBadge({
 
     if (rank < existing.rank) {
       // 順位が改善された場合のみ更新
-      const { error: updateError } = await supabase
+      const { error: updateError } = await supabaseAdmin
         .from("user_badges")
         .update({
           rank,
@@ -138,9 +140,12 @@ export async function getUserBadges(
   userId: string,
   seasonId?: string,
 ): Promise<UserBadge[]> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
-  let query = supabase.from("user_badges").select("*").eq("user_id", userId);
+  let query = supabaseAdmin
+    .from("user_badges")
+    .select("*")
+    .eq("user_id", userId);
 
   // seasonIdが指定された場合はそのシーズンのバッジのみ取得
   if (seasonId) {
@@ -185,9 +190,9 @@ export async function getUserTopBadge(
 export async function getUnnotifiedBadges(
   userId: string,
 ): Promise<UserBadge[]> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("user_badges")
     .select("*")
     .eq("user_id", userId)
@@ -211,10 +216,10 @@ export async function getUnnotifiedBadges(
 export async function markBadgesAsNotified(
   badgeIds: string[],
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
 
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("user_badges")
       .update({
         is_notified: true,
