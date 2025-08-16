@@ -1,7 +1,7 @@
 import { signOutAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import MyAvatar from "./my-avatar";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export default async function AuthButton() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },

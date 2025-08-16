@@ -14,7 +14,7 @@ describe("Events", () => {
     it("Supabaseクライアントが呼び出される", async () => {
       await Events();
 
-      expect(require("@/lib/supabase/server").createClient).toHaveBeenCalled();
+      expect(require("@/lib/supabase/client").createClient).toHaveBeenCalled();
     });
   });
 });

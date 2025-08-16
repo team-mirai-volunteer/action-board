@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
 import { HorizontalScrollContainer } from "./HorizontalScrollContainer";
@@ -14,7 +14,7 @@ export default async function MissionsByCategory({
   showAchievedMissions,
   title = "📈 ミッション",
 }: MissionsProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザーの達成状況取得
   let achievedMissionIds: string[] = [];

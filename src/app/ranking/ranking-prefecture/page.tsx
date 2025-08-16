@@ -10,7 +10,7 @@ import { PREFECTURES } from "@/lib/address";
 import { getUserPrefecturesRanking } from "@/lib/services/prefecturesRanking";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { getMyProfile } from "@/lib/services/users";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,7 +22,7 @@ interface PageProps {
 export default async function RankingPrefecturePage({
   searchParams,
 }: PageProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const resolvedSearchParams = await searchParams;
 
   // 現在のシーズンIDを取得

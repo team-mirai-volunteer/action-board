@@ -5,7 +5,8 @@ import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { recordSignupActivity } from "@/lib/services/userActivity";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
@@ -60,8 +61,8 @@ export async function updateProfile(
   previousState: UpdateProfileResult | null,
   formData: FormData,
 ): Promise<UpdateProfileResult | null> {
-  const supabaseServiceClient = await createServiceClient();
-  const supabaseClient = await createClient();
+  const supabaseServiceClient = await createAdminClient();
+  const supabaseClient = createClient();
 
   const {
     data: { user },

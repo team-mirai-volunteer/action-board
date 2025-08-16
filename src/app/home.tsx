@@ -11,7 +11,7 @@ import { generateRootMetadata } from "@/lib/metadata";
 import { checkBadgeNotifications } from "@/lib/services/badgeNotification";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
 
 // メタデータ生成を外部関数に委譲
@@ -22,7 +22,7 @@ export default async function Home({
 }: {
   searchParams: Promise<{ ref?: string }>;
 }) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const params = await searchParams;
   const referralCode = params.ref;
 

@@ -7,7 +7,7 @@ import { PREFECTURES } from "@/lib/address";
 import { getUserPrefecturesRanking } from "@/lib/services/prefecturesRanking";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { getMyProfile } from "@/lib/services/users";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -49,7 +49,7 @@ export default async function SeasonPrefectureRankingPage({
     notFound();
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザー情報取得
   const {

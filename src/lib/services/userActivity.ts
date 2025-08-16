@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 /**
  * ユーザーアクティビティを記録する
@@ -11,7 +11,7 @@ export async function recordUserActivity(
   activityType: string,
   activityTitle: string,
 ): Promise<void> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { error } = await supabase.from("user_activities").insert({
     user_id: userId,
@@ -34,7 +34,7 @@ export async function recordSignupActivity(
   userId: string,
   userName: string,
 ): Promise<void> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   // 既存のサインアップアクティビティをチェック
   const { data: existingActivity } = await supabase

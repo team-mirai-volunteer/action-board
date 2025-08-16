@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { getCurrentSeasonId } from "./seasons";
 
 export interface UserRanking {
@@ -21,7 +21,7 @@ export async function getRanking(
   seasonId?: string,
 ): Promise<UserRanking[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());

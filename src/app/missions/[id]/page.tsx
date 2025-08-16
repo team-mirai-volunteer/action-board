@@ -21,7 +21,7 @@ import {
   getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/lib/services/missionsRanking";
-import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -76,7 +76,7 @@ export async function generateMetadata({
 }
 
 export default async function MissionPage({ params }: Props) {
-  const supabase = await createServerClient();
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

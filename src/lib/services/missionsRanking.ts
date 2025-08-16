@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { UserRanking } from "./ranking";
 import { getCurrentSeasonId } from "./seasons";
 
@@ -18,7 +18,7 @@ export async function getMissionRanking(
   seasonId?: string,
 ): Promise<UserMissionRanking[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());
@@ -107,7 +107,7 @@ export async function getUserMissionRanking(
   period: RankingPeriod = "all",
 ): Promise<UserMissionRanking | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());
@@ -171,7 +171,7 @@ export async function getUserMissionRanking(
 }
 
 export async function getUserPostingCount(userId: string): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data, error } = await supabase.rpc("get_user_posting_count", {
     target_user_id: userId,
   });
@@ -196,7 +196,7 @@ export async function getUserPostingCountByMission(
   missionId: string,
   seasonId?: string,
 ): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
   const targetSeasonId = seasonId || (await getCurrentSeasonId());
@@ -234,7 +234,7 @@ export async function getUserPostingCountByMission(
 export async function getTopUsersPostingCount(
   userIds: string[],
 ): Promise<{ user_id: string; posting_count: number }[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data, error } = await supabase.rpc("get_top_users_posting_count", {
     user_ids: userIds,
   });
@@ -255,7 +255,7 @@ export async function getTopUsersPostingCountByMission(
   missionId: string,
   seasonId?: string,
 ): Promise<{ user_id: string; posting_count: number }[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
   const targetSeasonId = seasonId || (await getCurrentSeasonId());

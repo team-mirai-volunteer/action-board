@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
 import {
   executeChunkedInsert,
@@ -30,7 +30,7 @@ export async function getMyUserLevel(): Promise<UserLevel | null> {
     return null;
   }
 
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data } = await supabase
     .from("user_levels")
@@ -59,7 +59,7 @@ export async function getUserLevel(
     }
   }
 
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data } = await supabase
     .from("user_levels")
@@ -83,7 +83,7 @@ export async function initializeUserLevel(
     return null;
   }
 
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("user_levels")
@@ -138,7 +138,7 @@ async function processXpTransaction(
     return { success: false, error: "Current season not found" };
   }
 
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   try {
     // XPトランザクションを記録
@@ -226,7 +226,7 @@ export async function getUserXpHistory(
   userId: string,
   limit = 50,
 ): Promise<XpTransaction[]> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("xp_transactions")
@@ -250,7 +250,7 @@ export async function getUserXpBonus(
   userId: string,
   achievementId: string,
 ): Promise<number> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("xp_transactions")
@@ -272,7 +272,7 @@ export async function getUserXpBonus(
  * 特定ユーザーのランクを取得する
  */
 export async function getUserRank(userId: string): Promise<number | null> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   // より高いXPを持つユーザーの数を数える
   const { data: userLevel } = await supabase
@@ -309,7 +309,7 @@ export async function grantMissionCompletionXp(
   xpGranted?: number;
   error?: string;
 }> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   try {
     // ミッション情報を取得して難易度を確認
@@ -378,7 +378,7 @@ export async function grantXpBatch(
   }>;
   error?: string;
 }> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   if (!transactions || transactions.length === 0) {
     return { success: true, results: [] };

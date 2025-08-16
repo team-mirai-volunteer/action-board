@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "../dateUtils";
 import {
   getPrefecturesRanking,
@@ -7,7 +7,7 @@ import {
 import { getCurrentSeasonId } from "./seasons";
 
 // Supabaseクライアントをモック
-jest.mock("@/lib/supabase/server", () => ({
+jest.mock("@/lib/supabase/client", () => ({
   createClient: jest.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe("prefecturesRanking service", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
     (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
   });
 

@@ -2,12 +2,12 @@ import {
   checkBadgeNotifications,
   markBadgeNotificationAsSeen,
 } from "@/lib/services/badgeNotification";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // 認証チェック
     const {
@@ -34,7 +34,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // 認証チェック
     const {

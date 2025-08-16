@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { UserRanking } from "./ranking";
 import { getCurrentSeasonId } from "./seasons";
 
@@ -13,7 +13,7 @@ export async function getPrefecturesRanking(
   seasonId?: string,
 ): Promise<UserRanking[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());
@@ -83,7 +83,7 @@ export async function getUserPrefecturesRanking(
   period: RankingPeriod = "all",
 ): Promise<UserRanking | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());

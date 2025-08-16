@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarUrl } from "@/lib/avatar";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { HTMLProps } from "react";
 
 interface MyAvatarProps {
@@ -8,7 +8,7 @@ interface MyAvatarProps {
 }
 
 export default async function MyAvatar({ className }: MyAvatarProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },

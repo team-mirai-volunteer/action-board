@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
 import { v4 as uuidv4 } from "uuid";
@@ -42,7 +42,7 @@ async function loadYamlFile<T>(filename: string): Promise<T> {
 
 async function syncCategories(categories: Category[], dryRun: boolean) {
   console.log("\n📁 Syncing categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const category of categories) {
     if (dryRun) {
@@ -82,7 +82,7 @@ async function syncCategories(categories: Category[], dryRun: boolean) {
 
 async function syncMissions(missions: Mission[], dryRun: boolean) {
   console.log("\n📋 Syncing missions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const mission of missions) {
     if (dryRun) {
@@ -132,7 +132,7 @@ async function syncCategoryLinks(
   dryRun: boolean,
 ) {
   console.log("\n🔗 Syncing category links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const categoryMap = await getCategorySlugToIdMap();
   const missionMap = await getMissionSlugToIdMap();
@@ -197,7 +197,7 @@ async function syncQuizCategories(
   dryRun: boolean,
 ) {
   console.log("\n📚 Syncing quiz categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const category of quizCategories) {
     if (dryRun) {
@@ -244,7 +244,7 @@ async function syncQuizQuestions(
   dryRun: boolean,
 ) {
   console.log("\n❓ Syncing quiz questions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const categoryMap = await getQuizCategorySlugToIdMap();
   const missionMap = await getMissionSlugToIdMap();
@@ -309,7 +309,7 @@ async function syncMissionQuizLinks(
   dryRun: boolean,
 ) {
   console.log("\n🔗 Syncing mission quiz links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const missionMap = await getMissionSlugToIdMap();
 
@@ -366,7 +366,7 @@ async function syncMissionMainLinks(
   dryRun: boolean,
 ) {
   console.log("\n🔗 Syncing mission main links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const missionMap = await getMissionSlugToIdMap();
 

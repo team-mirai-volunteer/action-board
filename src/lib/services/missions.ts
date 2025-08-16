@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 export async function hasFeaturedMissions(): Promise<boolean> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { count } = await supabase
     .from("missions")
     .select("id", { count: "exact", head: true })

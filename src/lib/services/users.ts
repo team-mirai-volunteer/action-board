@@ -1,11 +1,12 @@
 import "server-only";
 import { cache } from "react";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
+import { createAdminClient } from "../supabase/adminClient";
 
 export const getUser = cache(async () => {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },
@@ -20,7 +21,7 @@ export const getMyProfile = cache(async () => {
     console.error("User not found");
     throw new Error("ユーザー（認証）が見つかりません");
   }
-  const supabaseClient = await createClient();
+  const supabaseClient = createClient();
   const { data: privateUser } = await supabaseClient
     .from("private_users")
     .select("*")
@@ -30,7 +31,7 @@ export const getMyProfile = cache(async () => {
 });
 
 export const getProfile = cache(async (userId: string) => {
-  const supabaseClient = await createClient();
+  const supabaseClient = createClient();
   const { data: privateUser } = await supabaseClient
     .from("public_user_profiles")
     .select("*")
@@ -42,7 +43,7 @@ export const getProfile = cache(async (userId: string) => {
 export async function updateProfile(
   user: Tables<"private_users">,
 ): Promise<Tables<"private_users"> | null> {
-  const supabaseClient = await createClient();
+  const supabaseClient = createClient();
 
   // 先にユーザー情報を取得
   const { data: authUser } = await supabaseClient.auth.getUser();
@@ -82,8 +83,8 @@ export async function updateProfile(
 }
 
 export async function deleteAccount(): Promise<void> {
-  const supabaseClient = await createClient();
-  const supabaseServiceClient = await createServiceClient();
+  const supabaseClient = createClient();
+  const supabaseAdmin = await createAdminClient();
 
   // 現在のユーザー情報を取得
   const { data: authUser } = await supabaseClient.auth.getUser();
@@ -107,7 +108,7 @@ export async function deleteAccount(): Promise<void> {
 
     // 2. auth.users テーブルからユーザーを削除（Admin API使用）
     const { error: authDeleteError } =
-      await supabaseServiceClient.auth.admin.deleteUser(userId);
+      await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (authDeleteError) {
       console.error("認証ユーザー削除でエラーが発生しました:", authDeleteError);

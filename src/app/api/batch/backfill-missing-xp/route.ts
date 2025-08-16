@@ -1,5 +1,5 @@
 import { grantXpBatch } from "@/lib/services/userLevel";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { executeChunkedQuery } from "@/lib/utils/supabase-utils";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import { type NextRequest, NextResponse } from "next/server";
@@ -33,7 +33,7 @@ type AchievementWithMission = {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServiceClient();
+    const supabaseAdmin = await createAdminClient();
 
     // リクエストボディから認証情報を確認（簡易的な認証）
     const body = await request.json();
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // XPが付与されていない達成を特定するため、すべての達成を取得し
     // それぞれにXPトランザクションが存在するかチェック
     const { data: allAchievements, error: allAchievementsError } =
-      await supabase
+      await supabaseAdmin
         .from("achievements")
         .select(`
         id,
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       await executeChunkedQuery(
         achievementIds,
         async (chunkIds) => {
-          return await supabase
+          return await supabaseAdmin
             .from("xp_transactions")
             .select("source_id")
             .eq("source_type", "MISSION_COMPLETION")
@@ -302,13 +302,14 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const supabase = await createServiceClient();
+    const supabaseAdmin = await createAdminClient();
 
     // XP未付与の達成数を確認（IN句を使用してN+1クエリを回避）
-    const { data: allAchievements, error: achievementsError } = await supabase
-      .from("achievements")
-      .select("id")
-      .order("created_at", { ascending: true });
+    const { data: allAchievements, error: achievementsError } =
+      await supabaseAdmin
+        .from("achievements")
+        .select("id")
+        .order("created_at", { ascending: true });
 
     if (achievementsError) {
       return NextResponse.json(
@@ -331,7 +332,7 @@ export async function GET() {
       const { data: existingXpTransactions } = await executeChunkedQuery(
         achievementIds,
         async (chunkIds) => {
-          return await supabase
+          return await supabaseAdmin
             .from("xp_transactions")
             .select("source_id")
             .eq("source_type", "MISSION_COMPLETION")
@@ -352,14 +353,15 @@ export async function GET() {
     }
 
     // 統計情報を返却（count機能を使用して効率化）
-    const { count: totalAchievements, error: countError } = await supabase
+    const { count: totalAchievements, error: countError } = await supabaseAdmin
       .from("achievements")
       .select("*", { count: "exact", head: true });
 
-    const { count: totalXpTransactions, error: xpCountError } = await supabase
-      .from("xp_transactions")
-      .select("*", { count: "exact", head: true })
-      .eq("source_type", "MISSION_COMPLETION");
+    const { count: totalXpTransactions, error: xpCountError } =
+      await supabaseAdmin
+        .from("xp_transactions")
+        .select("*", { count: "exact", head: true })
+        .eq("source_type", "MISSION_COMPLETION");
 
     return NextResponse.json({
       statistics: {

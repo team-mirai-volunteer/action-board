@@ -122,8 +122,8 @@ const createMockSupabaseQuery = () => {
   return mockQuery;
 };
 
-jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
+jest.mock("@/lib/supabase/adminClient", () => ({
+  createAdminClient: jest.fn(() => ({
     auth: {
       getUser: jest.fn(() =>
         Promise.resolve({ data: { user: null }, error: null }),
