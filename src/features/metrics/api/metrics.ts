@@ -7,7 +7,7 @@ import type {
   MetricsData,
   RegistrationData,
   SupporterData,
-} from "@/lib/types/metrics";
+} from "../types";
 
 /**
  * サポーター数データの型ガード関数

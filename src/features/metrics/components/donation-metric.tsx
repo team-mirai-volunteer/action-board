@@ -6,9 +6,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { EXTERNAL_LINKS } from "@/lib/links";
-import type { DonationData } from "@/lib/types/metrics";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
+import type { DonationData } from "../types";
 
 interface DonationMetricProps {
   data: DonationData | null;
