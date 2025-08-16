@@ -49,5 +49,3 @@ export function MetricsWithSuspense() {
     </MetricsErrorBoundary>
   );
 }
-
-export default MetricsWithSuspense;

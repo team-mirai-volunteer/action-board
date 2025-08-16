@@ -6,7 +6,7 @@ import { LevelUpCheck } from "@/components/level-up-check";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import RankingSection from "@/components/top/ranking-section";
-import MetricsWithSuspense from "@/features/metrics/components/metrics-with-suspense";
+import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import { generateRootMetadata } from "@/lib/metadata";
 import { checkBadgeNotifications } from "@/lib/services/badgeNotification";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
