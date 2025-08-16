@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { totalXp } from "@/lib/utils/utils";
 import { getCurrentSeasonId } from "./seasons";
 
@@ -15,7 +15,7 @@ export async function checkLevelUpNotification(userId: string): Promise<{
     pointsToNextLevel: number;
   };
 }> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   const currentSeasonId = await getCurrentSeasonId();
 
   if (!currentSeasonId) {
@@ -63,7 +63,7 @@ export async function checkLevelUpNotification(userId: string): Promise<{
 export async function markLevelUpNotificationAsSeen(
   userId: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   const currentSeasonId = await getCurrentSeasonId();
 
   if (!currentSeasonId) {

@@ -1,4 +1,5 @@
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
 
 type Season = Database["public"]["Tables"]["seasons"]["Row"];
@@ -90,7 +91,7 @@ export async function getUserSeasonHistory(userId: string): Promise<
     } | null;
   }>
 > {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   // 全シーズンを取得（アクティブなシーズンを最初に、その後は開始日の降順）
   const { data: seasons, error: seasonsError } = await supabase

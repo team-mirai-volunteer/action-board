@@ -5,7 +5,7 @@ import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
 } from "@/lib/services/userLevel";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -23,6 +23,7 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
@@ -131,7 +132,7 @@ export const signUpActionWithState = async (
 
   //紹介URLから遷移した場合のみ以下を実行
   if (referralCode) {
-    const serviceSupabase = await createServiceClient();
+    const serviceSupabase = await createAdminClient();
     let shouldInsertReferral = false;
     let referrerUserId: string | null = null;
     let referralMissionId: string | null = null;
@@ -301,7 +302,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   // LINEユーザーかどうかを確認
-  const serviceSupabase = await createServiceClient();
+  const serviceSupabase = await createAdminClient();
 
   // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
   // listUsers()の全件取得 (O(n)) から大幅な性能改善
@@ -563,7 +564,7 @@ export async function handleLineAuthAction(
     }
 
     // 3. Supabaseでユーザー処理
-    const supabase = await createServiceClient();
+    const supabase = await createAdminClient();
     const lineUserId = userInfo.sub;
     const email = userInfo.email || `line-${lineUserId}@line.local`;
     const name = userInfo.name || "LINEユーザー";
@@ -730,7 +731,7 @@ export async function handleLineAuthAction(
 
 // 紹介コード処理
 async function handleReferralCode(referralCode: string, email: string) {
-  const serviceSupabase = await createServiceClient();
+  const serviceSupabase = await createAdminClient();
 
   try {
     // 紹介コードの検証

@@ -2,7 +2,7 @@
 
 import { PREFECTURES } from "@/lib/address";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "../supabase/adminClient";
 import { updateBadge } from "./badges";
 import { getCurrentSeasonId } from "./seasons";
 
@@ -13,7 +13,7 @@ export async function calculateAllRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
   let updatedCount = 0;
 
   try {
@@ -26,7 +26,7 @@ export async function calculateAllRankingBadges(seasonId?: string): Promise<{
     }
 
     // TOP100のユーザーを取得
-    const { data: allRanking, error } = await supabase.rpc(
+    const { data: allRanking, error } = await supabaseAdmin.rpc(
       "get_period_ranking",
       {
         p_limit: 100,
@@ -68,7 +68,7 @@ export async function calculateDailyRankingBadges(seasonId?: string): Promise<{
   success: boolean;
   updatedCount: number;
 }> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
   let updatedCount = 0;
 
   try {
@@ -95,7 +95,7 @@ export async function calculateDailyRankingBadges(seasonId?: string): Promise<{
     );
 
     // 前日のデイリーランキングTOP100を取得
-    const { data: dailyRanking, error } = await supabase.rpc(
+    const { data: dailyRanking, error } = await supabaseAdmin.rpc(
       "get_period_ranking",
       {
         p_limit: 100,
@@ -140,7 +140,7 @@ export async function calculatePrefectureRankingBadges(
   success: boolean;
   updatedCount: number;
 }> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   let updatedCount = 0;
 
   try {
@@ -199,7 +199,7 @@ export async function calculateMissionRankingBadges(
   success: boolean;
   updatedCount: number;
 }> {
-  const supabase = await createServiceClient();
+  const supabaseAdmin = await createAdminClient();
   let updatedCount = 0;
 
   try {
@@ -212,7 +212,7 @@ export async function calculateMissionRankingBadges(
     }
 
     // max_achievement_countがnullのミッションを取得
-    const { data: missions, error: missionsError } = await supabase
+    const { data: missions, error: missionsError } = await supabaseAdmin
       .from("missions")
       .select("id, slug")
       .is("max_achievement_count", null)
@@ -225,7 +225,7 @@ export async function calculateMissionRankingBadges(
 
     // 各ミッションごとに処理
     for (const mission of missions || []) {
-      const { data: missionRanking, error } = await supabase.rpc(
+      const { data: missionRanking, error } = await supabaseAdmin.rpc(
         "get_period_mission_ranking",
         {
           p_mission_id: mission.id,

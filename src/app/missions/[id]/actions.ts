@@ -9,7 +9,7 @@ import {
   grantMissionCompletionXp,
   grantXp,
 } from "@/lib/services/userLevel";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
 import {
