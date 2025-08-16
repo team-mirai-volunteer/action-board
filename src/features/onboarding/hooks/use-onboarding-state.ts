@@ -1,11 +1,11 @@
-import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { useEffect, useRef, useState } from "react";
-import { ANIMATION_DURATION } from "../constants";
-import type { UseOnboardingActions, UseOnboardingState } from "../types";
+import { ANIMATION_DURATION } from "../constants/constants";
+import { onboardingDialogues } from "../constants/onboarding-texts";
+import type { UseOnboardingActions, UseOnboardingState } from "../types/types";
 import {
   calculateDefaultScrollPosition,
   calculateScrollPosition,
-} from "../utils";
+} from "../utils/utils";
 
 /**
  * オンボーディング状態管理フック（期日前投票専用）

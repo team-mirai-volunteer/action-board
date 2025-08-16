@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import { ANIMATION_DURATION, SCROLL_TEXT, STYLE_CLASSES } from "../constants";
-import { getButtonText, isFinalScreen, sanitizeHtml } from "../utils";
+import {
+  ANIMATION_DURATION,
+  SCROLL_TEXT,
+  STYLE_CLASSES,
+} from "../constants/constants";
+import { onboardingDialogues } from "../constants/onboarding-texts";
+import { getButtonText, isFinalScreen, sanitizeHtml } from "../utils/utils";
 
 interface OnboardingCharacterProps {
   currentDialogue: number;

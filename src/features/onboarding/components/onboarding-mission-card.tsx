@@ -1,14 +1,14 @@
 "use client";
 
+import MissionAchievementStatus from "@/components/mission/mission-achievement-status";
+import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { MissionIcon } from "@/components/ui/mission-icon";
 import type { Tables } from "@/lib/types/supabase";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
-import MissionAchievementStatus from "../mission/mission-achievement-status";
-import { Button } from "../ui/button";
-import { MissionIcon } from "../ui/mission-icon";
 
 interface OnboardingMissionCardProps {
   mission: Omit<Tables<"missions">, "slug">;

@@ -1,19 +1,19 @@
 "use client";
 
 import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
-import { onboardingDialogues } from "@/lib/onboarding-texts";
 import { cn } from "@/lib/utils/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { X } from "lucide-react";
 import Image from "next/image";
+import { onboardingDialogues } from "../constants/onboarding-texts";
 
-import { OnboardingCharacter } from "./components/OnboardingCharacter";
-import { OnboardingMissionDetails } from "./components/OnboardingMissionDetails";
-import { OnboardingWelcome } from "./components/OnboardingWelcome";
-import { MOCK_MISSION } from "./constants";
-import { useOnboardingState } from "./hooks/useOnboardingState";
-import type { OnboardingModalProps } from "./types";
+import { MOCK_MISSION } from "../constants/constants";
+import { useOnboardingState } from "../hooks/use-onboarding-state";
+import type { OnboardingModalProps } from "../types/types";
+import { OnboardingCharacter } from "./onboarding-character";
+import { OnboardingMissionDetails } from "./onboarding-mission-details";
+import { OnboardingWelcome } from "./onboarding-welcome";
 
 /**
  * オンボーディングモーダルコンポーネント

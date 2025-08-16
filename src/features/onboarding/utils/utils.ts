@@ -26,7 +26,7 @@ export const isFinalScreen = (
   return currentDialogue === totalDialogues - 1;
 };
 
-import { BUTTON_TEXT } from "./constants";
+import { BUTTON_TEXT } from "../constants/constants";
 
 /**
  * ボタンテキストを取得

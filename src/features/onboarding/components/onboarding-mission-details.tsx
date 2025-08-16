@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { MissionIcon } from "@/components/ui/mission-icon";
-import { BUTTON_TEXT, STYLE_CLASSES } from "../constants";
-import type { MockMission } from "../types";
-import { sanitizeHtml } from "../utils";
+import { BUTTON_TEXT, STYLE_CLASSES } from "../constants/constants";
+import type { MockMission } from "../types/types";
+import { sanitizeHtml } from "../utils/utils";
 
 interface OnboardingMissionDetailsProps {
   mission: MockMission;

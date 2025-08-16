@@ -1,6 +1,6 @@
 import { signOutAction } from "@/app/actions";
-import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import { Button } from "@/components/ui/button";
+import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import MyAvatar from "./my-avatar";
