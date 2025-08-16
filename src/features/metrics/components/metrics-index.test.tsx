@@ -2,12 +2,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
 // メトリクスサービスのモック
-jest.mock("../api/metrics", () => ({
+jest.mock("../services/get-metrics", () => ({
   fetchAllMetricsData: jest.fn(),
 }));
 
 import { EXTERNAL_LINKS } from "@/lib/links";
-import { fetchAllMetricsData } from "../api/metrics";
+import { fetchAllMetricsData } from "../services/get-metrics";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション

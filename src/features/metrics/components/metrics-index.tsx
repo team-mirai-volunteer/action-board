@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
-import { fetchAllMetricsData } from "../api/metrics";
+import { fetchAllMetricsData } from "../services/get-metrics";
 import type {
   AchievementData,
   DonationData,
