@@ -6,7 +6,7 @@ import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { recordSignupActivity } from "@/lib/services/userActivity";
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
@@ -62,7 +62,7 @@ export async function updateProfile(
   formData: FormData,
 ): Promise<UpdateProfileResult | null> {
   const supabaseServiceClient = await createAdminClient();
-  const supabaseClient = await createClient();
+  const supabaseClient = createClient();
 
   const {
     data: { user },

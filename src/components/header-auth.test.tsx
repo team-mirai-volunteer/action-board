@@ -54,8 +54,8 @@ describe("HeaderAuth", () => {
 
   describe("認証状態", () => {
     beforeEach(() => {
-      const mockSupabase = require("@/lib/supabase/server").createClient;
-      mockSupabase.mockResolvedValue({
+      const mockSupabase = require("@/lib/supabase/client").createClient;
+      mockSupabase.mockReturnValue({
         auth: {
           getUser: jest.fn(() =>
             Promise.resolve({

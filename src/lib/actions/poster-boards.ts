@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
@@ -15,7 +15,7 @@ export async function getPosterBoardStatsAction(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   try {
     // 最適化されたRPC関数を使用
@@ -140,7 +140,7 @@ export async function getUserEditedBoardIdsAction(
   prefecture: PrefectureName,
   userId: string,
 ): Promise<string[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   try {
     // RPC関数を使用して効率的にデータを取得
@@ -186,7 +186,7 @@ export async function getUserEditedBoardIdsAction(
 
 // 個別の掲示板の履歴を取得
 export async function getBoardStatusHistoryAction(boardId: string) {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // まず履歴データを取得
   const { data: historyData, error: historyError } = await supabase

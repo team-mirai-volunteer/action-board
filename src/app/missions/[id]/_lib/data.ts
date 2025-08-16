@@ -1,4 +1,4 @@
-import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
 import type {
@@ -11,7 +11,7 @@ import type {
 export async function getMissionData(
   missionId: string,
 ): Promise<Tables<"missions"> | null> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   const { data: missionData, error } = await supabase
     .from("missions")
@@ -30,7 +30,7 @@ export async function getMissionData(
 export async function getTotalAchievementCount(
   missionId: string,
 ): Promise<number> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   const { data: countData, error } = await supabase
     .from("mission_achievement_count_view")
@@ -50,7 +50,7 @@ export async function getUserAchievements(
   userId: string,
   missionId: string,
 ): Promise<{ achievements: Achievement[]; count: number }> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   const { data: achievementsData, error } = await supabase
     .from("achievements")
@@ -74,7 +74,7 @@ export async function getSubmissionHistory(
   userId: string,
   missionId: string,
 ): Promise<SubmissionData[]> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   // ユーザーの達成履歴を取得
   const { data: achievementsData, error: achievementsError } = await supabase
@@ -188,7 +188,7 @@ export async function getSubmissionHistory(
 export async function getMissionMainLink(
   missionId: string,
 ): Promise<Tables<"mission_main_links"> | null> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("mission_main_links")
@@ -248,7 +248,7 @@ export async function getMissionPageData(
 
 // ログインユーザーに紐づくリファラルコードの取得
 export async function getReferralCode(userId: string): Promise<string> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("user_referral")

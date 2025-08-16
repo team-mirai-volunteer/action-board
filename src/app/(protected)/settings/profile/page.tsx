@@ -1,5 +1,5 @@
 import type { Message } from "@/components/form-message";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
 import { AccountDeletionSection } from "./AccountDeletionSection";
 import ProfileForm from "./ProfileForm";
@@ -14,7 +14,7 @@ export default async function ProfileSettingsPage({
   searchParams: Promise<ProfileSettingsPageSearchParams | undefined>;
 }) {
   const params = await searchParams;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },

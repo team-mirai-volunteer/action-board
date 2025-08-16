@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { getRanking } from "./ranking";
 import { getCurrentSeasonId } from "./seasons";
 
 // Supabaseクライアントをモック
-jest.mock("@/lib/supabase/server", () => ({
+jest.mock("@/lib/supabase/client", () => ({
   createClient: jest.fn(),
 }));
 

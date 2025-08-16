@@ -8,7 +8,7 @@ import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -51,7 +51,7 @@ export default async function SeasonRankingPage({
     notFound();
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザー情報取得
   const {

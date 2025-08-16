@@ -1,9 +1,9 @@
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function Activities() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data: activityTimelines } = await supabase
     .from("activity_timeline_view")

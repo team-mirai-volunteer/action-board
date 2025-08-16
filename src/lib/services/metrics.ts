@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type {
   AchievementData,
   DonationData,
@@ -183,7 +183,7 @@ export async function fetchDonationData(): Promise<DonationData | null> {
  * @returns Promise<AchievementData> - アクション達成数データ
  */
 export async function fetchAchievementData(): Promise<AchievementData> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { count: totalCount } = await supabase
     .from("achievements")
@@ -209,7 +209,7 @@ export async function fetchAchievementData(): Promise<AchievementData> {
  * @returns Promise<RegistrationData> - ユーザー登録数データ
  */
 export async function fetchRegistrationData(): Promise<RegistrationData> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { count: totalCount } = await supabase
     .from("public_user_profiles")

@@ -13,13 +13,13 @@
  */
 jest.unmock("@/lib/services/activityTimeline");
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
 } from "./activityTimeline";
 
-jest.mock("@/lib/supabase/server", () => ({
+jest.mock("@/lib/supabase/client", () => ({
   createClient: jest.fn(),
 }));
 
@@ -37,7 +37,7 @@ describe("activityTimeline service", () => {
       from: jest.fn(),
     };
 
-    mockCreateClient.mockImplementation(() => Promise.resolve(mockSupabase));
+    mockCreateClient.mockReturnValue(mockSupabase);
   });
 
   describe("getUserActivityTimeline", () => {
