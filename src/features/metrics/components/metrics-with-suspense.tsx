@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import React, { Suspense } from "react";
-import { MetricsErrorBoundary } from "./MetricsErrorBoundary";
-import Metrics from "./index";
+import { MetricsErrorBoundary } from "./metrics-error-boundary";
+import { Metrics } from "./metrics-index";
 
 function MetricsSkeleton() {
   return (
@@ -40,7 +40,7 @@ function MetricsSkeleton() {
   );
 }
 
-export default function MetricsWithSuspense() {
+export function MetricsWithSuspense() {
   return (
     <MetricsErrorBoundary>
       <Suspense fallback={<MetricsSkeleton />}>

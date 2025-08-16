@@ -1,5 +1,5 @@
-import type { AchievementData } from "@/lib/types/metrics";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
+import type { AchievementData } from "../types";
 
 interface AchievementMetricProps {
   data: AchievementData;

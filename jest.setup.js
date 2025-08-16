@@ -322,7 +322,7 @@ jest.mock("@radix-ui/react-dialog", () => {
   return mockComponents;
 });
 
-jest.mock("@/lib/services/metrics", () => ({
+jest.mock("@/features/metrics/services/get-metrics", () => ({
   fetchSupporterData: jest.fn(() =>
     Promise.resolve({
       totalCount: 75982,

@@ -1,19 +1,19 @@
 import { Separator } from "@/components/ui/separator";
-import { fetchAllMetricsData } from "@/lib/services/metrics";
+import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
+import { fetchAllMetricsData } from "../services/get-metrics";
 import type {
   AchievementData,
   DonationData,
   RegistrationData,
   SupporterData,
-} from "@/lib/types/metrics";
-import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
+} from "../types";
 import { AchievementMetric } from "./achievement-metric";
 import { DonationMetric } from "./donation-metric";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 
-export { MetricsErrorBoundary } from "./MetricsErrorBoundary";
-export { default as MetricsWithSuspense } from "./MetricsWithSuspense";
+export { MetricsErrorBoundary } from "./metrics-error-boundary";
+export { MetricsWithSuspense } from "./metrics-with-suspense";
 
 /**
  * メトリクス表示コンポーネント
@@ -25,7 +25,7 @@ export { default as MetricsWithSuspense } from "./MetricsWithSuspense";
  * 3. アクション達成数（Supabase）
  * 4. ユーザー登録数（Supabase）
  */
-export default async function Metrics() {
+export async function Metrics() {
   let metricsData: {
     supporter: SupporterData | null;
     donation: DonationData | null;
