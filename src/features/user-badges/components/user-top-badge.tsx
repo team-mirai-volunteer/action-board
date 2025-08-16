@@ -1,6 +1,6 @@
-import { getUserTopBadge } from "@/lib/services/badges";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { BadgeDisplay } from "./badge-display";
+import { getUserTopBadge } from "../services/get-user-top-badges";
+import { BadgeItem } from "./badge-item";
 
 interface UserTopBadgeProps {
   userId: string;
@@ -16,5 +16,5 @@ export async function UserTopBadge({ userId, seasonId }: UserTopBadgeProps) {
     return null;
   }
 
-  return <BadgeDisplay badge={topBadge} className="w-fit" />;
+  return <BadgeItem badge={topBadge} className="w-fit" />;
 }

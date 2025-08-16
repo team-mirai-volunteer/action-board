@@ -1,5 +1,5 @@
-import { getUserBadges } from "@/lib/services/badges";
-import { BadgeDisplay } from "./badge-display";
+import { getUserBadges } from "../services/get-user-badges";
+import { BadgeItem } from "./badge-item";
 
 interface UserBadgesProps {
   userId: string;
@@ -22,7 +22,7 @@ export async function UserBadges({ userId, seasonId }: UserBadgesProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {badges.map((badge) => (
-        <BadgeDisplay key={badge.id} badge={badge} />
+        <BadgeItem key={badge.id} badge={badge} />
       ))}
     </div>
   );
