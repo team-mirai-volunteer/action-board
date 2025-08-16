@@ -8,7 +8,7 @@ import {
   getUserPostingCountByMission,
 } from "@/lib/services/missionsRanking";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -50,7 +50,7 @@ export default async function SeasonMissionRankingPage({
     notFound();
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザー情報取得
   const {

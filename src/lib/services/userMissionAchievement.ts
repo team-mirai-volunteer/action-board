@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 export interface MissionAchievementSummary {
   mission_id: string;
@@ -12,7 +12,7 @@ export async function getUserRepeatableMissionAchievements(
   userId: string,
   seasonId?: string,
 ): Promise<MissionAchievementSummary[]> {
-  const supabase = await createServerClient();
+  const supabase = createClient();
 
   let query = supabase
     .from("achievements")

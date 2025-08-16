@@ -27,7 +27,7 @@ import {
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import UserDetailActivities from "./user-detail-activities";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
@@ -43,7 +43,7 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data: user } = await supabase
     .from("public_user_profiles")

@@ -12,7 +12,7 @@ import {
   getUserPostingCountByMission,
 } from "@/lib/services/missionsRanking";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,7 +22,7 @@ interface PageProps {
 }
 
 export default async function RankingMissionPage({ searchParams }: PageProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const resolvedSearchParams = await searchParams;
 
   // 現在のシーズンIDを取得

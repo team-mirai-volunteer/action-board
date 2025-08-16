@@ -36,7 +36,7 @@ describe("MyAvatar", () => {
 
   describe("認証状態", () => {
     it("ユーザーがログインしていない場合", async () => {
-      const mockCreateClient = require("@/lib/supabase/server").createClient;
+      const mockCreateClient = require("@/lib/supabase/client").createClient;
       mockCreateClient.mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() =>
@@ -51,7 +51,7 @@ describe("MyAvatar", () => {
     });
 
     it("ユーザーがログインしている場合", async () => {
-      const mockCreateClient = require("@/lib/supabase/server").createClient;
+      const mockCreateClient = require("@/lib/supabase/client").createClient;
       mockCreateClient.mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() =>
@@ -83,7 +83,7 @@ describe("MyAvatar", () => {
 
   describe("プロフィール情報", () => {
     it("プロフィール名からフォールバックが生成される", async () => {
-      const mockCreateClient = require("@/lib/supabase/server").createClient;
+      const mockCreateClient = require("@/lib/supabase/client").createClient;
       mockCreateClient.mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() =>
@@ -115,7 +115,7 @@ describe("MyAvatar", () => {
 
   describe("エラーハンドリング", () => {
     it("Supabaseエラー時の処理", async () => {
-      const mockCreateClient = require("@/lib/supabase/server").createClient;
+      const mockCreateClient = require("@/lib/supabase/client").createClient;
       mockCreateClient.mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() =>

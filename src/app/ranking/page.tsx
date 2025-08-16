@@ -7,7 +7,7 @@ import {
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
   searchParams: Promise<{
@@ -16,7 +16,7 @@ interface PageProps {
 }
 
 export default async function RankingPage({ searchParams }: PageProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const resolvedSearchParams = await searchParams;
   const period = resolvedSearchParams.period || "daily";
 

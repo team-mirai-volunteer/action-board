@@ -27,7 +27,7 @@ import {
 } from "@/lib/services/activityTimeline";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -43,7 +43,7 @@ type Props = {
 
 export default async function SeasonUserDetailPage({ params }: Props) {
   const { slug, userId } = await params;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // シーズン情報を取得
   const season = await getSeasonBySlug(slug);

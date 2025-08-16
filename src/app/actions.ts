@@ -5,7 +5,7 @@ import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
 } from "@/lib/services/userLevel";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -81,7 +81,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
@@ -255,7 +255,7 @@ export const signInActionWithState = async (
     };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -280,7 +280,7 @@ export const signInActionWithState = async (
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
-  const supabase = await createClient();
+  const supabase = createClient();
   const origin = (await headers()).get("origin");
   const callbackUrl = formData.get("callbackUrl")?.toString();
 
@@ -353,7 +353,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
@@ -388,7 +388,7 @@ export const resetPasswordAction = async (formData: FormData) => {
 };
 
 export const signOutAction = async () => {
-  const supabase = await createClient();
+  const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
@@ -694,7 +694,7 @@ export async function handleLineAuthAction(
     }
 
     // 6. Supabaseセッション作成
-    const clientSupabase = await createClient();
+    const clientSupabase = createClient();
     const { error: signInError } = await clientSupabase.auth.signInWithPassword(
       {
         email,

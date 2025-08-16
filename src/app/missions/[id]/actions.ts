@@ -9,7 +9,7 @@ import {
   grantMissionCompletionXp,
   grantXp,
 } from "@/lib/services/userLevel";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { calculateMissionXp } from "@/lib/utils/utils";
 
 import {
@@ -217,7 +217,7 @@ const cancelSubmissionFormSchema = z.object({
 });
 
 export const achieveMissionAction = async (formData: FormData) => {
-  const supabase = await createClient();
+  const supabase = createClient();
   const missionId = formData.get("missionId")?.toString();
   const requiredArtifactType = formData.get("requiredArtifactType")?.toString();
   const artifactLink = formData.get("artifactLink")?.toString();
@@ -789,7 +789,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     missionId: validatedMissionId,
   } = validatedFields.data;
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザーがログイン済みかチェック
   const {

@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 // クイズ用の型定義
 export interface QuizQuestion {
@@ -214,7 +214,7 @@ export const checkQuizAnswersAction = async (
   answers: { questionId: string; selectedAnswer: number }[],
 ) => {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // ユーザー認証確認
     const {

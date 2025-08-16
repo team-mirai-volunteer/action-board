@@ -1,8 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 export async function isValidReferralCode(code: string): Promise<boolean> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data } = await supabase
     .from("user_referral")
     .select("user_id")
