@@ -4,7 +4,7 @@ import {
   getBadgeEmoji,
   getBadgeRankingUrl,
   getBadgeTitle,
-} from "@/lib/types/badge";
+} from "@/features/user-badges/badge-types";
 import Link from "next/link";
 
 interface BadgeDisplayProps {
@@ -18,7 +18,7 @@ export function getGradientClass(rank: number): string {
   return "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0";
 }
 
-export function BadgeDisplay({
+export function BadgeItem({
   badge,
   showTitle = true,
   className = "",

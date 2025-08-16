@@ -2,9 +2,9 @@ import { getUserLevel } from "@/lib/services/userLevel";
 import { getProfile } from "@/lib/services/users";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
+import { UserTopBadge } from "../features/user-badges/components/user-top-badge";
 import { LevelProgress } from "./level-progress";
 import UserAvatar from "./user-avatar";
-import { UserTopBadge } from "./user-badges/user-top-badge";
 
 interface LevelsProps {
   userId: string;

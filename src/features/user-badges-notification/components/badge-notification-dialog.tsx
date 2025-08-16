@@ -9,18 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BadgeDisplay } from "@/components/user-badges/badge-display";
-import type { UserBadge } from "@/lib/types/badge";
+import type { UserBadge } from "@/features/user-badges/badge-types";
+import { BadgeItem } from "@/features/user-badges/components/badge-item";
 import { Award } from "lucide-react";
 
 interface BadgeNotificationDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  badges: {
-    badge: UserBadge;
-    title: string;
-    description: string;
-  }[];
+  badges: UserBadge[];
 }
 
 export function BadgeNotificationDialog({
@@ -44,12 +40,7 @@ export function BadgeNotificationDialog({
         </DialogHeader>
         <div className="flex flex-col gap-3 py-4">
           {badges.map((item) => (
-            <BadgeDisplay
-              key={item.badge.id}
-              badge={item.badge}
-              className="w-fit"
-            />
-            // </div>
+            <BadgeItem key={item.id} badge={item} className="w-fit" />
           ))}
         </div>
         <DialogFooter>

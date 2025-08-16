@@ -1,16 +1,12 @@
 "use client";
 
-import { markBadgeNotificationAsSeenAction } from "@/app/actions/badge-notification";
-import { BadgeNotificationDialog } from "@/components/badge-notification-dialog";
-import type { UserBadge } from "@/lib/types/badge";
+import { markBadgeNotificationAsSeenAction } from "@/features/user-badges-notification/badge-notification-action";
+import { BadgeNotificationDialog } from "@/features/user-badges-notification/components/badge-notification-dialog";
+import type { UserBadge } from "@/features/user-badges/badge-types";
 import { useEffect, useState } from "react";
 
 interface BadgeNotificationCheckProps {
-  badgeData?: {
-    badge: UserBadge;
-    title: string;
-    description: string;
-  }[];
+  badgeData?: UserBadge[];
 }
 
 export function BadgeNotificationCheck({
@@ -36,7 +32,7 @@ export function BadgeNotificationCheck({
 
     // Server Actionを呼び出して通知を確認済みとしてマーク
     try {
-      const badgeIds = badgeData.map((item) => item.badge.id);
+      const badgeIds = badgeData.map((item) => item.id);
       const result = await markBadgeNotificationAsSeenAction(badgeIds);
       if (!result.success) {
         console.error(
