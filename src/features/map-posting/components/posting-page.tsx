@@ -1,18 +1,18 @@
 "use client";
 
-import {
-  type MapShape as MapShapeData,
-  deleteShape as deleteMapShape,
-  loadShapes as loadMapShapes,
-  saveShape as saveMapShape,
-  updateShape as updateMapShape,
-} from "@/lib/services/posting";
 import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  type MapShape as MapShapeData,
+  deleteShape as deleteMapShape,
+  loadShapes as loadMapShapes,
+  saveShape as saveMapShape,
+  updateShape as updateMapShape,
+} from "../services/posting-shapes";
 
 const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
   ssr: false,

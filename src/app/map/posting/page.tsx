@@ -1,7 +1,7 @@
+import PostingPageClient from "@/features/map-posting/components/posting-page";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import PostingPageClient from "./PostingPageClient";
 
 export const metadata: Metadata = {
   title: "チームみらい機関誌配布マップ",
