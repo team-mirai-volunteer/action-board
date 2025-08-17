@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type React from "react";
-import BaseRanking from "./base-ranking";
+import { BaseRanking } from "./base-ranking";
 
 jest.mock("@/components/ui/card", () => ({
   Card: ({

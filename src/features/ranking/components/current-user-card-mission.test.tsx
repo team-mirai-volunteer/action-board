@@ -61,7 +61,7 @@ jest.mock("@/components/ui/card", () => ({
   ),
 }));
 
-jest.mock("../ui/badge", () => ({
+jest.mock("@/components/ui/badge", () => ({
   Badge: ({
     children,
     className,
@@ -72,7 +72,7 @@ jest.mock("../ui/badge", () => ({
   ),
 }));
 
-jest.mock("@/lib/utils/ranking-utils", () => ({
+jest.mock("@/features/ranking/utils/ranking-utils", () => ({
   formatUserDisplayName: (name: string) => name || "名前未設定",
   formatUserPrefecture: (prefecture: string) => prefecture || "未設定",
 }));

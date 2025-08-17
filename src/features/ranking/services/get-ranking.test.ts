@@ -1,6 +1,6 @@
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { getRanking } from "./ranking";
-import { getCurrentSeasonId } from "./seasons";
+import { getRanking } from "./get-ranking";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/client", () => ({
@@ -8,7 +8,7 @@ jest.mock("@/lib/supabase/client", () => ({
 }));
 
 // seasonsサービスをモック
-jest.mock("./seasons", () => ({
+jest.mock("@/lib/services/seasons", () => ({
   getCurrentSeasonId: jest.fn(),
 }));
 

@@ -1,7 +1,10 @@
+import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { getJSTMidnightToday } from "../dateUtils";
-import { getMissionRanking, getUserMissionRanking } from "./missionsRanking";
-import { getCurrentSeasonId } from "./seasons";
+import {
+  getMissionRanking,
+  getUserMissionRanking,
+} from "./get-missions-ranking";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/client", () => ({
@@ -9,7 +12,7 @@ jest.mock("@/lib/supabase/client", () => ({
 }));
 
 // seasonsサービスをモック
-jest.mock("./seasons", () => ({
+jest.mock("@/lib/services/seasons", () => ({
   getCurrentSeasonId: jest.fn(),
 }));
 

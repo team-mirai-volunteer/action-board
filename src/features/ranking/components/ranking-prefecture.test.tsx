@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type React from "react";
-import RankingPrefecture from "./ranking-prefecture";
+import { RankingPrefecture } from "./ranking-prefecture";
 
 type UserRanking = {
   user_id: string;
@@ -11,7 +11,7 @@ type UserRanking = {
   xp: number | null;
 };
 
-jest.mock("@/lib/services/prefecturesRanking", () => ({
+jest.mock("@/features/ranking/services/get-prefectures-ranking", () => ({
   getPrefecturesRanking: jest.fn(),
 }));
 
@@ -70,7 +70,7 @@ const mockRankings: UserRanking[] = [
 describe("RankingPrefecture", () => {
   const {
     getPrefecturesRanking,
-  } = require("@/lib/services/prefecturesRanking");
+  } = require("@/features/ranking/services/get-prefectures-ranking");
 
   beforeEach(() => {
     getPrefecturesRanking.mockClear();

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type React from "react";
-import BaseCurrentUserCard from "./base-current-user-card";
+import { BaseCurrentUserCard } from "./base-current-user-card";
 
 jest.mock("@/components/ui/card", () => ({
   Card: ({
@@ -33,7 +33,7 @@ jest.mock("lucide-react", () => ({
   ),
 }));
 
-jest.mock("@/lib/utils/ranking-utils", () => ({
+jest.mock("@/features/ranking/utils/ranking-utils", () => ({
   formatUserDisplayName: (name: string | null) => name || "名無しユーザー",
   formatUserPrefecture: (prefecture: string | null) => prefecture || "未設定",
 }));
