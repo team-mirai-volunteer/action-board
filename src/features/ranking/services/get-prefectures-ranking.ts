@@ -1,10 +1,9 @@
 import "server-only";
 
-import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import type { UserRanking } from "./ranking";
-import { getCurrentSeasonId } from "./seasons";
+import type { RankingPeriod, UserRanking } from "../types/ranking-types";
 
 export async function getPrefecturesRanking(
   prefecture: string,

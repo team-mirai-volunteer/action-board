@@ -1,6 +1,6 @@
-import type { UserRanking } from "@/lib/services/ranking";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
+import type { UserRanking } from "../types/ranking-types";
 import { CurrentUserCardPrefecture } from "./current-user-card-prefecture";
 
 // CardコンポーネントはBaseCurrentUserCardモック内で処理されるため削除
@@ -12,8 +12,7 @@ jest.mock("./ranking-level-badge", () => ({
 }));
 
 jest.mock("./base-current-user-card", () => ({
-  __esModule: true,
-  default: ({
+  BaseCurrentUserCard: ({
     currentUser,
     children,
   }: {

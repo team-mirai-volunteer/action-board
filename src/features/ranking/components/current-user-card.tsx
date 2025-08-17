@@ -1,6 +1,6 @@
-import { LevelBadge } from "@/components/ranking/ranking-level-badge";
-import type { UserRanking } from "@/lib/services/ranking";
-import BaseCurrentUserCard from "./base-current-user-card";
+import type { UserRanking } from "../types/ranking-types";
+import { BaseCurrentUserCard } from "./base-current-user-card";
+import { LevelBadge } from "./ranking-level-badge";
 
 interface CurrentUserCardProps {
   currentUser: UserRanking | null;

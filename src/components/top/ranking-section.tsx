@@ -1,6 +1,6 @@
+import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { RankingTop } from "../ranking";
 import {
   Carousel,
   CarouselContent,

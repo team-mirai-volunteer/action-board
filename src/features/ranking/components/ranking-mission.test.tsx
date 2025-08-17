@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type React from "react";
-import RankingMission from "./ranking-mission";
+import { RankingMission } from "./ranking-mission";
 
 type UserMissionRanking = {
   user_id: string;
@@ -16,7 +16,7 @@ type UserPostingCount = {
   posting_count: number;
 };
 
-jest.mock("@/lib/services/missionsRanking", () => ({
+jest.mock("@/features/ranking/services/get-missions-ranking", () => ({
   getMissionRanking: jest.fn(),
   getTopUsersPostingCount: jest.fn(),
   getTopUsersPostingCountByMission: jest.fn(),
@@ -98,7 +98,7 @@ describe("RankingMission", () => {
     getMissionRanking,
     getTopUsersPostingCount,
     getTopUsersPostingCountByMission,
-  } = require("@/lib/services/missionsRanking");
+  } = require("@/features/ranking/services/get-missions-ranking");
 
   beforeEach(() => {
     getMissionRanking.mockClear();

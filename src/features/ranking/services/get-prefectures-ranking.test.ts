@@ -1,10 +1,15 @@
+import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/client";
-import { getJSTMidnightToday } from "../dateUtils";
+
+// Mock dateUtils
+jest.mock("@/lib/dateUtils", () => ({
+  getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T00:00:00Z")),
+}));
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import {
   getPrefecturesRanking,
   getUserPrefecturesRanking,
-} from "./prefecturesRanking";
-import { getCurrentSeasonId } from "./seasons";
+} from "./get-prefectures-ranking";
 
 // Supabaseクライアントをモック
 jest.mock("@/lib/supabase/client", () => ({
@@ -12,7 +17,7 @@ jest.mock("@/lib/supabase/client", () => ({
 }));
 
 // seasonsサービスをモック
-jest.mock("./seasons", () => ({
+jest.mock("@/lib/services/seasons", () => ({
   getCurrentSeasonId: jest.fn(),
 }));
 

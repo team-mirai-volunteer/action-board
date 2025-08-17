@@ -1,8 +1,7 @@
 // TOPページ用のランキングコンポーネント
 import { Badge } from "@/components/ui/badge";
-import type { UserMissionRanking } from "@/lib/services/missionsRanking";
-import type { UserRanking } from "@/lib/services/ranking";
 import Link from "next/link";
+import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
 import { getRankIcon } from "./ranking-icon";
 
 interface RankingItemProps {

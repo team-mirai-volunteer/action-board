@@ -1,12 +1,12 @@
-import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
-import { MissionSelect } from "@/components/ranking/mission-select";
-import RankingMission from "@/components/ranking/ranking-mission";
-import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { SeasonRankingHeader } from "@/components/season-ranking-header";
+import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
+import { MissionSelect } from "@/features/ranking/components/mission-select";
+import { RankingMission } from "@/features/ranking/components/ranking-mission";
+import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/lib/services/missionsRanking";
+} from "@/features/ranking/services/get-missions-ranking";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";

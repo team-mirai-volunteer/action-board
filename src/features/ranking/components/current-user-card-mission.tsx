@@ -1,7 +1,7 @@
-import type { UserMissionRanking } from "@/lib/services/missionsRanking";
+import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/lib/types/supabase";
-import { Badge } from "../ui/badge";
-import BaseCurrentUserCard from "./base-current-user-card";
+import type { UserMissionRanking } from "../types/ranking-types";
+import { BaseCurrentUserCard } from "./base-current-user-card";
 
 interface CurrentUserCardProps {
   currentUser: UserMissionRanking | null;

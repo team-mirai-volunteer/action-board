@@ -1,13 +1,13 @@
-import { CurrentUserCardPrefecture } from "@/components/ranking/current-user-card-prefecture";
+import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
 import {
   PeriodToggle,
   type RankingPeriod,
-} from "@/components/ranking/period-toggle";
-import { PrefectureSelect } from "@/components/ranking/prefecture-select";
-import RankingPrefecture from "@/components/ranking/ranking-prefecture";
-import { RankingTabs } from "@/components/ranking/ranking-tabs";
+} from "@/features/ranking/components/period-toggle";
+import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
+import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
+import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { PREFECTURES } from "@/lib/address";
-import { getUserPrefecturesRanking } from "@/lib/services/prefecturesRanking";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { getMyProfile } from "@/lib/services/users";
 import { createClient } from "@/lib/supabase/client";

@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { User } from "lucide-react";
+import type React from "react";
 import {
   formatUserDisplayName,
   formatUserPrefecture,
-} from "@/lib/utils/ranking-utils";
-import { User } from "lucide-react";
-import type React from "react";
+} from "../utils/ranking-utils";
 
 interface BaseCurrentUserCardProps {
   currentUser: {
@@ -17,7 +17,7 @@ interface BaseCurrentUserCardProps {
   children: React.ReactNode;
 }
 
-const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
+export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
   currentUser,
   title = "あなたのランク",
   children,
@@ -64,5 +64,3 @@ const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
     </div>
   );
 };
-
-export default BaseCurrentUserCard;

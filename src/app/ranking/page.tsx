@@ -1,10 +1,10 @@
-import { RankingTop } from "@/components/ranking";
-import { CurrentUserCard } from "@/components/ranking/current-user-card";
+import { CurrentUserCard } from "@/features/ranking/components/current-user-card";
 import {
   PeriodToggle,
   type RankingPeriod,
-} from "@/components/ranking/period-toggle";
-import { RankingTabs } from "@/components/ranking/ranking-tabs";
+} from "@/features/ranking/components/period-toggle";
+import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";

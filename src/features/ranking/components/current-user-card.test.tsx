@@ -42,7 +42,7 @@ jest.mock("@/components/ui/card", () => ({
   ),
 }));
 
-jest.mock("@/components/ranking/ranking-level-badge", () => ({
+jest.mock("@/features/ranking/components/ranking-level-badge", () => ({
   LevelBadge: ({ level }: { level: number }) => (
     <span data-testid="level-badge">Lv.{level}</span>
   ),
@@ -54,7 +54,7 @@ jest.mock("@/components/user-avatar", () => {
   );
 });
 
-jest.mock("@/lib/utils/ranking-utils", () => ({
+jest.mock("@/features/ranking/utils/ranking-utils", () => ({
   formatUserDisplayName: (name: string) => name || "名前未設定",
   formatUserPrefecture: (prefecture: string) => prefecture || "未設定",
 }));
