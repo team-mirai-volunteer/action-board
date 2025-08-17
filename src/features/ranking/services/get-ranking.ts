@@ -5,8 +5,6 @@ import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type { RankingPeriod, UserRanking } from "../types/ranking-types";
 
-// Type moved to ../types.ts
-
 export async function getRanking(
   limit = 10,
   period: RankingPeriod = "all",
