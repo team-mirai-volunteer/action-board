@@ -1,5 +1,5 @@
 {
-  "name": "Node.js 22 & Supabase CLI Dev Container",
+  "name": "Node.js 22 with docker Dev Container",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -16,5 +16,8 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
-  "remoteUser": "node"
+  "remoteUser": "node",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin"
+  }
 }
