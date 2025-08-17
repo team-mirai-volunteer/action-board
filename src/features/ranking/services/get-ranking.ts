@@ -1,19 +1,11 @@
 import "server-only";
 
-import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { getCurrentSeasonId } from "./seasons";
+import type { RankingPeriod, UserRanking } from "../types/ranking-types";
 
-export interface UserRanking {
-  user_id: string | null;
-  address_prefecture: string | null;
-  level: number | null;
-  name: string | null;
-  rank: number | null;
-  updated_at: string | null;
-  xp: number | null;
-}
+// Type moved to ../types.ts
 
 export async function getRanking(
   limit = 10,

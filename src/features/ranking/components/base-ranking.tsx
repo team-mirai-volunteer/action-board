@@ -11,7 +11,7 @@ interface BaseRankingProps {
   detailsLinkText?: string;
 }
 
-const BaseRanking: React.FC<BaseRankingProps> = ({
+export const BaseRanking: React.FC<BaseRankingProps> = ({
   title,
   children,
   detailsHref,
@@ -44,5 +44,3 @@ const BaseRanking: React.FC<BaseRankingProps> = ({
     </div>
   );
 };
-
-export default BaseRanking;

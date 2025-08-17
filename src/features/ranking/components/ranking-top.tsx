@@ -1,6 +1,6 @@
 // TOPページ用のランキングコンポーネント
-import { getRanking } from "@/lib/services/ranking";
-import BaseRanking from "./base-ranking";
+import { getRanking } from "../services/get-ranking";
+import { BaseRanking } from "./base-ranking";
 import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
@@ -12,7 +12,7 @@ interface RankingTopProps {
   seasonId?: string; // シーズン指定
 }
 
-export default async function RankingTop({
+export async function RankingTop({
   title,
   limit = 10,
   showDetailedInfo = false,

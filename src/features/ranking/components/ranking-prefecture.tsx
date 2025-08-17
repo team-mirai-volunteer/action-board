@@ -1,6 +1,6 @@
 // TOPページ用のランキングコンポーネント
-import { getPrefecturesRanking } from "@/lib/services/prefecturesRanking";
-import BaseRanking from "./base-ranking";
+import { getPrefecturesRanking } from "../services/get-prefectures-ranking";
+import { BaseRanking } from "./base-ranking";
 import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
@@ -11,7 +11,7 @@ interface RankingPrefectureProps {
   seasonId?: string; // シーズン指定
 }
 
-export default async function RankingPrefecture({
+export async function RankingPrefecture({
   prefecture,
   limit = 10,
   showDetailedInfo = false,

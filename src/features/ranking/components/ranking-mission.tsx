@@ -1,11 +1,11 @@
+import type { Tables } from "@/lib/types/supabase";
 // TOPページ用のランキングコンポーネント
 import {
   getMissionRanking,
   getTopUsersPostingCount,
   getTopUsersPostingCountByMission,
-} from "@/lib/services/missionsRanking";
-import type { Tables } from "@/lib/types/supabase";
-import BaseRanking from "./base-ranking";
+} from "../services/get-missions-ranking";
+import { BaseRanking } from "./base-ranking";
 import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
@@ -17,7 +17,7 @@ interface RankingTopProps {
   seasonId?: string; // シーズン指定
 }
 
-export default async function RankingMission({
+export async function RankingMission({
   mission,
   limit = 10,
   showDetailedInfo = false,

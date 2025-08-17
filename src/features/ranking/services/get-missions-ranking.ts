@@ -1,15 +1,9 @@
 import "server-only";
 
-import type { RankingPeriod } from "@/components/ranking/period-toggle";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import type { UserRanking } from "./ranking";
-import { getCurrentSeasonId } from "./seasons";
-
-export interface UserMissionRanking extends UserRanking {
-  user_achievement_count: number | null;
-  total_points: number | null;
-}
+import type { RankingPeriod, UserMissionRanking } from "../types/ranking-types";
 
 export async function getMissionRanking(
   missionId: string,
