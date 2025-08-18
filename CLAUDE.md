@@ -20,8 +20,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run test:e2e:debug` - デバッグモードでE2Eテストを実行
 - `npm run test:ci` - GitHub Actions用CIレポーター付きでテストを実行
 
-### データベース型生成
+### データベース型生成とマイグレーション
 - `npm run types` - SupabaseスキーマからTypeScript型を生成 (lib/types/supabase.tsに出力)
+- `npx supabase migration new <migration_name>` - 新しいマイグレーションファイルを作成
+- `npx supabase migration up` - ローカルデータベースにマイグレーションを適用
+- `npx supabase db reset` - マイグレーションとシードデータでローカルデータベースをリセット
 
 ### ビルドとデプロイメント
 - `npm run build` - 本番用Next.jsアプリケーションをビルド
