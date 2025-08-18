@@ -1,5 +1,3 @@
-import "server-only";
-
 import { PREFECTURES } from "@/lib/address";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "../../lib/services/seasons";
