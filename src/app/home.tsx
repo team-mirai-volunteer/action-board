@@ -11,6 +11,7 @@ import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotif
 import { generateRootMetadata } from "@/lib/metadata";
 import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
 
@@ -44,6 +45,9 @@ export default async function Home({
       redirect("/settings/profile?new=true");
     }
 
+    // 現在のシーズンIDを取得
+    const currentSeasonId = await getCurrentSeasonId();
+
     // レベルアップ通知をチェック
     // 自動ミッション（紹介など）でレベルアップした場合の通知を表示するため有効化
     const levelUpCheck = await checkLevelUpNotification(user.id);
@@ -51,8 +55,11 @@ export default async function Home({
       levelUpNotification = levelUpCheck.levelUp;
     }
 
-    // バッジ通知をチェック
-    const unnotifiedBadges = await getUnnotifiedBadges(user.id);
+    // バッジ通知をチェック（現在のシーズンのみ）
+    const unnotifiedBadges = await getUnnotifiedBadges(
+      user.id,
+      currentSeasonId ?? undefined,
+    );
     if (unnotifiedBadges.length > 0) {
       badgeNotifications = unnotifiedBadges;
     }

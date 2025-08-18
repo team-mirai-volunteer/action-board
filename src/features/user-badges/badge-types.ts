@@ -6,6 +6,7 @@ export interface UserBadge {
   badge_type: BadgeType;
   sub_type: string | null;
   rank: number;
+  season_id: string;
   achieved_at: string;
   is_notified: boolean;
   created_at: string;

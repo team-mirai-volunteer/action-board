@@ -93,6 +93,7 @@ async function calculateAllRankingBadges(seasonId?: string): Promise<{
         badge_type: "ALL",
         sub_type: null,
         rank: user.rank,
+        season_id: targetSeasonId,
       });
 
       if (result.updated) {
@@ -164,6 +165,7 @@ async function calculateDailyRankingBadges(seasonId?: string): Promise<{
         badge_type: "DAILY",
         sub_type: null,
         rank: user.rank,
+        season_id: targetSeasonId,
       });
 
       if (result.updated) {
@@ -220,6 +222,7 @@ async function calculatePrefectureRankingBadges(seasonId?: string): Promise<{
           badge_type: "PREFECTURE",
           sub_type: prefecture,
           rank: user.rank,
+          season_id: targetSeasonId,
         });
 
         if (result.updated) {
@@ -292,6 +295,7 @@ async function calculateMissionRankingBadges(seasonId?: string): Promise<{
           badge_type: "MISSION",
           sub_type: mission.slug,
           rank: user.rank,
+          season_id: targetSeasonId,
         });
 
         if (result.updated) {
@@ -315,16 +319,21 @@ async function updateBadge({
   badge_type,
   sub_type,
   rank,
-}: BadgeUpdateParams): Promise<{ success: boolean; updated: boolean }> {
+  season_id,
+}: BadgeUpdateParams & { season_id: string }): Promise<{
+  success: boolean;
+  updated: boolean;
+}> {
   const supabaseAdmin = await createAdminClient();
 
   try {
-    // 既存バッジを確認
+    // 既存バッジを確認（シーズンとタイプで検索）
     const query = supabaseAdmin
       .from("user_badges")
       .select("*")
       .eq("user_id", user_id)
-      .eq("badge_type", badge_type);
+      .eq("badge_type", badge_type)
+      .eq("season_id", season_id);
 
     // sub_typeがnullの場合とそうでない場合で処理を分ける
     if (sub_type === null) {
@@ -350,6 +359,7 @@ async function updateBadge({
           badge_type,
           sub_type,
           rank,
+          season_id,
           achieved_at: new Date().toISOString(),
           is_notified: false,
         });
