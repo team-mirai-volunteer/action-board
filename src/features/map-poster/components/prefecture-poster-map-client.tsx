@@ -25,27 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  JP_TO_EN_PREFECTURE,
-  type PosterPrefectureKey,
-} from "@/lib/constants/poster-prefectures";
-import {
-  getPosterBoardDetail,
-  getPosterBoardsMinimal,
-  updateBoardStatus,
-} from "@/lib/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
-import type {
-  BoardStats,
-  BoardStatus,
-  PosterBoard,
-  PosterBoardTotal,
-  StatusHistory,
-} from "@/lib/types/poster-boards";
-import {
-  calculateProgressRate,
-  getCompletedCount,
-} from "@/lib/utils/poster-progress";
 import { maskUsername } from "@/lib/utils/privacy";
 import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -53,10 +33,30 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { statusConfig } from "../statusConfig";
+import { statusConfig } from "../config/status-config";
+import {
+  JP_TO_EN_PREFECTURE,
+  type PosterPrefectureKey,
+} from "../constants/poster-prefectures";
+import {
+  getPosterBoardDetail,
+  getPosterBoardsMinimal,
+  updateBoardStatus,
+} from "../services/poster-boards";
+import type {
+  BoardStats,
+  BoardStatus,
+  PosterBoard,
+  PosterBoardTotal,
+  StatusHistory,
+} from "../types/poster-types";
+import {
+  calculateProgressRate,
+  getCompletedCount,
+} from "../utils/poster-progress";
 
 // Dynamic import to avoid SSR issues
-const PosterMap = dynamic(() => import("../PosterMapWithCluster"), {
+const PosterMap = dynamic(() => import("./poster-map-with-cluster"), {
   ssr: false,
   loading: () => (
     <div className="flex h-[600px] items-center justify-center">
@@ -69,7 +69,7 @@ import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
   getUserEditedBoardIdsAction,
-} from "@/lib/actions/poster-boards";
+} from "../actions/poster-boards";
 
 interface PrefecturePosterMapClientProps {
   userId?: string;

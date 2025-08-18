@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
+import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
