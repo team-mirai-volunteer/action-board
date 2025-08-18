@@ -127,7 +127,7 @@ missions:
   - slug: youtube-subscribe
     title: 公式YouTubeチャンネルを登録しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-subscribe.svg
-    content: AIや政治の話をもっとわかりやすく。<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>を登録して、政策解説、候補者のトーク、生配信アーカイブなど、多彩な動画をチェックしよう！難しそうな話題もわかりやすく解説しています。
+    content: AIや政治の話をもっとわかりやすく。<a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>を登録して、政策解説、候補者のトーク、生配信アーカイブなど、多彩な動画をチェックしよう！難しそうな話題もわかりやすく解説しています。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -324,7 +324,7 @@ missions:
   - slug: youtube-watch
     title: YouTube動画を視聴しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
-    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>でチームみらいの活動や政策解説、候補者のトーク、生配信アーカイブを視聴しよう！政治のことをわかりやすく解説してお届けしています。日本の政治を考えるヒントがきっと見つかるはず。まずは気になる動画から、ぜひご覧ください。動画の内容が気に入ったら高評価をお願いします！
+    content: <a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>でチームみらいの活動や政策解説、候補者のトーク、生配信アーカイブを視聴しよう！政治のことをわかりやすく解説してお届けしています。日本の政治を考えるヒントがきっと見つかるはず。まずは気になる動画から、ぜひご覧ください。動画の内容が気に入ったら高評価をお願いします！
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
@@ -629,7 +629,7 @@ missions:
   - slug: youtube-comment
     title: YouTube動画にコメントしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
-    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
+    content: <a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -640,7 +640,7 @@ missions:
   - slug: youtube-comment-reaction
     title: YouTube動画のコメントにリアクションしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
-    content: <a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
+    content: <a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null
