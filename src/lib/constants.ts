@@ -6,10 +6,10 @@ export const POSTER_POINTS_PER_UNIT = 400;
 
 // YouTubeチャンネル登録ミッションの設定
 export const YOUTUBE_MISSION_CONFIG = {
-  // YouTubeチャンネル登録ミッションID
-  MISSION_ID: "9071a1eb-e272-43be-9c6b-e08b258a41c3",
+  // YouTubeチャンネル登録ミッションslug
+  SLUG: "youtube-subscribe",
   // 安野たかひろYouTubeチャンネルID
-  CHANNEL_ID: "UCiMwbmcCSMORJ-85XWhStBw",
+  CHANNEL_ID: "UC72A_x2FKHkJ8Nc2eIzqj8Q",
 } as const;
 
 // ポスティングミッションでの最大枚数
