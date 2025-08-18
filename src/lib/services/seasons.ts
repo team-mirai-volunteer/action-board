@@ -1,12 +1,11 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 
 type Season = Database["public"]["Tables"]["seasons"]["Row"];
 export type { Season };
 
 export async function getCurrentSeason(): Promise<Season | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("seasons")
@@ -23,7 +22,7 @@ export async function getCurrentSeason(): Promise<Season | null> {
 }
 
 export async function getAllSeasons(): Promise<Season[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("seasons")
@@ -40,7 +39,7 @@ export async function getAllSeasons(): Promise<Season[]> {
 }
 
 export async function getInactiveSeasons(): Promise<Season[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("seasons")
@@ -57,7 +56,7 @@ export async function getInactiveSeasons(): Promise<Season[]> {
 }
 
 export async function getSeasonBySlug(slug: string): Promise<Season | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("seasons")
