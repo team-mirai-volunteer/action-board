@@ -13,7 +13,7 @@ jest.mock("@/app/missions/[id]/_components/YouTubeSubscribeButton", () => ({
 
 jest.mock("@/lib/constants", () => ({
   YOUTUBE_MISSION_CONFIG: {
-    MISSION_ID: "youtube-mission-id",
+    SLUG: "youtube-subscribe",
     CHANNEL_ID: "test-channel-id",
   },
 }));
@@ -87,7 +87,7 @@ describe("MissionDetails", () => {
   });
 
   it("YouTubeミッションの場合はYouTubeボタンが表示される", () => {
-    const youtubeMission = { ...mockMission, id: "youtube-mission-id" };
+    const youtubeMission = { ...mockMission, slug: "youtube-subscribe" };
 
     render(<MissionDetails mission={youtubeMission} />);
 

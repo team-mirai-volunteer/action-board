@@ -2,17 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { POSTER_PREFECTURE_MAP } from "@/lib/constants/poster-prefectures";
-import type { BoardStatus, PosterBoardTotal } from "@/lib/types/poster-boards";
+import { ChevronRight, MapPin } from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
+import { statusConfig } from "../config/status-config";
+import { POSTER_PREFECTURE_MAP } from "../constants/poster-prefectures";
+import type { BoardStatus, PosterBoardTotal } from "../types/poster-types";
 import {
   calculateProgressRate,
   getCompletedCount,
   getRegisteredCount,
-} from "@/lib/utils/poster-progress";
-import { ChevronRight, MapPin } from "lucide-react";
-import Link from "next/link";
-import { useMemo } from "react";
-import { statusConfig } from "./statusConfig";
+} from "../utils/poster-progress";
 
 interface Props {
   initialSummary: Record<

@@ -1,9 +1,9 @@
-import type { Database } from "@/lib/types/supabase";
 import {
   calculateProgressRate,
   getCompletedCount,
   getRegisteredCount,
-} from "@/lib/utils/poster-progress";
+} from "@/features/map-poster/utils/poster-progress";
+import type { Database } from "@/lib/types/supabase";
 import { describe, expect, it } from "@jest/globals";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
