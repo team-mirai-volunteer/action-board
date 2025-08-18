@@ -52,7 +52,7 @@ export function MissionDetails({
         />
 
         {/* YouTubeチャンネル登録ミッションの場合のみ、YouTube登録ボタンを表示 */}
-        {mission.id === YOUTUBE_MISSION_CONFIG.MISSION_ID && (
+        {mission.slug === YOUTUBE_MISSION_CONFIG.SLUG && (
           <div className="flex justify-center mt-6">
             <YouTubeSubscribeButton
               channelId={YOUTUBE_MISSION_CONFIG.CHANNEL_ID}

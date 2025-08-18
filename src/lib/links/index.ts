@@ -17,8 +17,7 @@ export const EXTERNAL_LINKS = {
   // SNSアカウント
   x_team_mirai: "https://x.com/team_mirai_jp",
   x_anno_takahiro: "https://x.com/takahiroanno",
-  youtube_team_mirai:
-    "https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw",
+  youtube_team_mirai: "https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q",
   line_team_mirai:
     "https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204",
   note_anno_takahiro: "https://note.com/annotakahiro24",
