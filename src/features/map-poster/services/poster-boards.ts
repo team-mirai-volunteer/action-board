@@ -1,11 +1,11 @@
-import { getPosterBoardStatsAction } from "@/lib/actions/poster-boards";
 import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/lib/types/supabase";
+import { getPosterBoardStatsAction } from "../actions/poster-boards";
 import type {
   BoardStatus,
   PosterBoard,
   PosterBoardTotal,
-} from "@/lib/types/poster-boards";
-import type { Database } from "@/lib/types/supabase";
+} from "../types/poster-types";
 
 // 最小限のデータのみ取得（マップ表示用）
 export async function getPosterBoardsMinimal(prefecture?: string) {

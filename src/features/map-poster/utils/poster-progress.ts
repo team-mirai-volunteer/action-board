@@ -1,4 +1,4 @@
-import type { BoardStatus } from "@/lib/types/poster-boards";
+import type { BoardStatus } from "../types/poster-types";
 
 /**
  * 進捗率を計算する

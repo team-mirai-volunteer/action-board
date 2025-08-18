@@ -3,17 +3,17 @@
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import "./poster-map.css";
-import "./poster-map-filter.css";
-import { PosterBoardFilter } from "@/components/map/PosterBoardFilter";
-import {
-  type PosterPrefectureKey,
-  getPrefectureDefaultZoom,
-} from "@/lib/constants/poster-prefectures";
-import { usePosterBoardFilter } from "@/lib/hooks/usePosterBoardFilter";
+import "../styles/poster-map.css";
+import "../styles/poster-map-filter.css";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
+import {
+  type PosterPrefectureKey,
+  getPrefectureDefaultZoom,
+} from "../constants/poster-prefectures";
+import { usePosterBoardFilter } from "../hooks/use-poster-board-filter";
+import { PosterBoardFilter } from "./poster-board-filter";
 
 // Fix Leaflet default marker icon issue with Next.js
 // biome-ignore lint/performance/noDelete: Required for Leaflet icon fix

@@ -1,9 +1,9 @@
+import PosterMapPageClientOptimized from "@/features/map-poster/components/poster-map-page-client-optimized";
 import {
   getPosterBoardSummaryByPrefecture,
   getPosterBoardTotals,
-} from "@/lib/services/poster-boards";
+} from "@/features/map-poster/services/poster-boards";
 import type { Metadata } from "next";
-import PosterMapPageClientOptimized from "./PosterMapPageClientOptimized";
 
 export const metadata: Metadata = {
   title: "ポスター掲示板マップ",

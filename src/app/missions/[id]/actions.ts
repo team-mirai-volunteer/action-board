@@ -1,7 +1,7 @@
 "use server";
 
+import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { VALID_JP_PREFECTURES } from "@/lib/constants/poster-prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import {
   type UserLevel,

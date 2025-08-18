@@ -1,16 +1,16 @@
-import { getUserEditedBoardIdsAction } from "@/lib/actions/poster-boards";
+import { getUserEditedBoardIdsAction } from "@/features/map-poster/actions/poster-boards";
+import PrefecturePosterMapClient from "@/features/map-poster/components/prefecture-poster-map-client";
 import {
   POSTER_PREFECTURE_MAP,
   type PosterPrefectureKey,
-} from "@/lib/constants/poster-prefectures";
+} from "@/features/map-poster/constants/poster-prefectures";
 import {
   getPosterBoardStats,
   getPosterBoardTotalByPrefecture,
-} from "@/lib/services/poster-boards";
+} from "@/features/map-poster/services/poster-boards";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import PrefecturePosterMapClient from "./PrefecturePosterMapClient";
 
 export async function generateMetadata({
   params,
