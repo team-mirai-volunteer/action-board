@@ -1,7 +1,7 @@
-import GeomanMap from "@/components/map/GeomanMap";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
+import GeomanMap from "./geoman-map";
 
 const originalError = console.error;
 beforeAll(() => {

@@ -1,33 +1,27 @@
 "use client";
 
+import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
+import type { Json } from "@/lib/types/supabase";
+import type { Layer, Map as LeafletMap } from "leaflet";
+import dynamic from "next/dynamic";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
-  type MapShape as MapShapeData,
   deleteShape as deleteMapShape,
   loadShapes as loadMapShapes,
   saveShape as saveMapShape,
   updateShape as updateMapShape,
-} from "@/lib/services/posting";
-import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
-import type { Json } from "@/lib/types/supabase";
-import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
-import dynamic from "next/dynamic";
-import React, { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+} from "../services/posting-shapes";
+import type {
+  GeomanEvent,
+  LeafletWindow,
+  MapShape as MapShapeData,
+  PostingPageClientProps,
+} from "../types/posting-types";
 
-const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
+const GeomanMap = dynamic(() => import("./geoman-map"), {
   ssr: false,
 });
-
-interface PostingPageClientProps {
-  userId: string;
-}
-
-// Type definitions for Leaflet and Geoman
-type GeomanEvent = {
-  layer?: Layer;
-  target?: Layer;
-};
-type LeafletWindow = Window & { L: typeof import("leaflet") };
 
 export default function PostingPageClient(_props: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);

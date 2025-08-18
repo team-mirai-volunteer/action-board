@@ -1,14 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import type { Json } from "@/lib/types/supabase";
-
-export interface MapShape {
-  id?: string;
-  type: "polygon" | "text";
-  coordinates: Json;
-  properties?: Json;
-  created_at?: string;
-  updated_at?: string;
-}
+import type { MapShape } from "../types/posting-types";
 
 const supabase = createClient();
 
