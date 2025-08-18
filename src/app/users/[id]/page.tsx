@@ -12,12 +12,11 @@
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import Levels from "@/components/levels";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserBadges } from "@/components/user-badges/user-badges-server";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
@@ -27,7 +26,7 @@ import {
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import UserDetailActivities from "./user-detail-activities";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
@@ -43,7 +42,7 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data: user } = await supabase
     .from("public_user_profiles")

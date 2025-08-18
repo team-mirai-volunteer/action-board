@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import PostingPageClient from "@/features/map-posting/components/posting-page";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import PostingPageClient from "./PostingPageClient";
 
 export const metadata: Metadata = {
   title: "チームみらい機関誌配布マップ",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PostingPage() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },

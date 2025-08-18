@@ -7,7 +7,7 @@ import {
   getPosterBoardStats,
   getPosterBoardTotalByPrefecture,
 } from "@/lib/services/poster-boards";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PrefecturePosterMapClient from "./PrefecturePosterMapClient";
@@ -36,7 +36,7 @@ export default async function PrefecturePosterMapPage({
 }: {
   params: Promise<{ prefecture: string }>;
 }) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { prefecture } = await params;
 
   const {

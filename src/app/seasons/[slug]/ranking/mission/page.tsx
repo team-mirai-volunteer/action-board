@@ -1,14 +1,14 @@
-import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
-import { MissionSelect } from "@/components/ranking/mission-select";
-import RankingMission from "@/components/ranking/ranking-mission";
-import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { SeasonRankingHeader } from "@/components/season-ranking-header";
+import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
+import { MissionSelect } from "@/features/ranking/components/mission-select";
+import { RankingMission } from "@/features/ranking/components/ranking-mission";
+import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/lib/services/missionsRanking";
+} from "@/features/ranking/services/get-missions-ranking";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -50,7 +50,7 @@ export default async function SeasonMissionRankingPage({
     notFound();
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザー情報取得
   const {

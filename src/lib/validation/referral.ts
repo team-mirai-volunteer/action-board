@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 
 export async function isValidReferralCode(code: string): Promise<boolean> {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data } = await supabase
     .from("user_referral")
     .select("user_id")
@@ -15,7 +15,7 @@ export async function isValidReferralCode(code: string): Promise<boolean> {
 export async function isEmailAlreadyUsedInReferral(
   email: string,
 ): Promise<boolean> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   const { data } = await supabase
     .from("mission_artifacts")
     .select("id")

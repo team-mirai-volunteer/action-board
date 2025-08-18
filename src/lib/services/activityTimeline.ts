@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 export interface ActivityTimelineItem {
   id: string;
@@ -28,7 +28,7 @@ export async function getUserActivityTimeline(
   offset = 0,
   seasonId?: string,
 ): Promise<ActivityTimelineItem[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const [achievementsResult, activitiesResult, userProfileResult] =
     await Promise.all([
@@ -113,7 +113,7 @@ export async function getUserActivityTimelineCount(
   userId: string,
   seasonId?: string,
 ): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const [achievementsCount, activitiesCount] = await Promise.all([
     // Achievement count with optional season filter

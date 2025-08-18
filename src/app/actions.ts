@@ -5,7 +5,7 @@ import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
 } from "@/lib/services/userLevel";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -23,6 +23,7 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
@@ -80,7 +81,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
@@ -131,7 +132,7 @@ export const signUpActionWithState = async (
 
   //紹介URLから遷移した場合のみ以下を実行
   if (referralCode) {
-    const serviceSupabase = await createServiceClient();
+    const serviceSupabase = await createAdminClient();
     let shouldInsertReferral = false;
     let referrerUserId: string | null = null;
     let referralMissionId: string | null = null;
@@ -254,7 +255,7 @@ export const signInActionWithState = async (
     };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -279,7 +280,7 @@ export const signInActionWithState = async (
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
-  const supabase = await createClient();
+  const supabase = createClient();
   const origin = (await headers()).get("origin");
   const callbackUrl = formData.get("callbackUrl")?.toString();
 
@@ -301,7 +302,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   // LINEユーザーかどうかを確認
-  const serviceSupabase = await createServiceClient();
+  const serviceSupabase = await createAdminClient();
 
   // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
   // listUsers()の全件取得 (O(n)) から大幅な性能改善
@@ -352,7 +353,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
@@ -387,7 +388,7 @@ export const resetPasswordAction = async (formData: FormData) => {
 };
 
 export const signOutAction = async () => {
-  const supabase = await createClient();
+  const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
@@ -563,7 +564,7 @@ export async function handleLineAuthAction(
     }
 
     // 3. Supabaseでユーザー処理
-    const supabase = await createServiceClient();
+    const supabase = await createAdminClient();
     const lineUserId = userInfo.sub;
     const email = userInfo.email || `line-${lineUserId}@line.local`;
     const name = userInfo.name || "LINEユーザー";
@@ -693,7 +694,7 @@ export async function handleLineAuthAction(
     }
 
     // 6. Supabaseセッション作成
-    const clientSupabase = await createClient();
+    const clientSupabase = createClient();
     const { error: signInError } = await clientSupabase.auth.signInWithPassword(
       {
         email,
@@ -730,7 +731,7 @@ export async function handleLineAuthAction(
 
 // 紹介コード処理
 async function handleReferralCode(referralCode: string, email: string) {
-  const serviceSupabase = await createServiceClient();
+  const serviceSupabase = await createAdminClient();
 
   try {
     // 紹介コードの検証

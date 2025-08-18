@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 
 // クイズ用の型定義
 export interface QuizQuestion {
@@ -43,7 +44,7 @@ interface MissionQuizQuestion extends DbQuizQuestion {
 async function getMissionQuizCategory(
   missionId: string,
 ): Promise<string | null> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("quiz_questions")
@@ -72,7 +73,7 @@ async function getMissionQuizCategory(
 async function getQuestionsByMission(
   missionId: string,
 ): Promise<QuizQuestion[]> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   // ミッションに紐づく問題を直接取得
   const { data, error } = await supabase
@@ -145,7 +146,7 @@ export const getMissionQuizCategoryAction = async (missionId: string) => {
 // ミッションのリンクを取得する
 export const getMissionLinksAction = async (missionId: string) => {
   try {
-    const supabase = await createServiceClient();
+    const supabase = await createAdminClient();
 
     const { data, error } = await supabase
       .from("mission_quiz_links")
@@ -213,7 +214,7 @@ export const checkQuizAnswersAction = async (
   answers: { questionId: string; selectedAnswer: number }[],
 ) => {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // ユーザー認証確認
     const {

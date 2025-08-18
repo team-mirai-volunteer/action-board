@@ -1,5 +1,4 @@
 import HeaderAuth from "@/components/header-auth";
-import { OnboardingButton } from "@/components/onboarding/onboarding-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,13 +7,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createClient } from "@/lib/supabase/server";
+import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
+import { createClient } from "@/lib/supabase/client";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function Navbar() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const {
     data: { user },

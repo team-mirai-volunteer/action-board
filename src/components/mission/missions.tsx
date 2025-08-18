@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import Mission from "./mission";
 
 export type MissionsProps = {
@@ -18,7 +18,7 @@ export default async function Missions({
   title = "📈 ミッション",
   id,
 }: MissionsProps) {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザーが達成したミッションIDのリスト
   let achievedMissionIds: string[] = [];
