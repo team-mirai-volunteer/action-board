@@ -70,9 +70,11 @@ steps:
           --build-arg NEXT_PUBLIC_LINE_CLIENT_ID=${_NEXT_PUBLIC_LINE_CLIENT_ID} \
           --build-arg SENTRY_RELEASE=${COMMIT_SHA} \
           --build-arg SENTRY_AUTH_TOKEN="$$SENTRY_AUTH_TOKEN" \
+          --build-arg SUPABASE_SERVICE_ROLE_KEY="$$SUPABASE_SERVICE_ROLE_KEY" \
           .
     secretEnv:
       - SENTRY_AUTH_TOKEN
+      - SUPABASE_SERVICE_ROLE_KEY
 
   # Artifact Registryへのプッシュ
   - name: 'gcr.io/cloud-builders/docker'
