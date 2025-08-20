@@ -104,7 +104,7 @@ missions:
     content: |-
       ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
       SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-      <a href="https://team-mirai.notion.site/206f6f56bae180d7b7e9e5afff07e2b3" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a><br><br><a href="javascript:void(0)" onclick="navigator.clipboard.writeText('&#x0023安野たかひろ &#x0023チームみらい');alert('ハッシュタグをコピーしました')">公式ハッシュタグ &#x0023安野たかひろ &#x0023チームみらい をコピーする</a>
+      <a href="https://team-mirai.notion.site/255f6f56bae1804cbdecdd7b81f9e591" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
@@ -198,7 +198,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 参加したオープンチャット名とあなたのLINEアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//2_join_prefecture_openchat.png
   - slug: join-event
