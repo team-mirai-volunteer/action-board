@@ -1,6 +1,5 @@
 "use client";
 
-import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
@@ -12,6 +11,10 @@ import {
   saveShape as saveMapShape,
   updateShape as updateMapShape,
 } from "../services/posting-shapes";
+import type {
+  PolygonProperties,
+  TextCoordinates,
+} from "../types/posting-types";
 import type {
   GeomanEvent,
   LeafletWindow,
