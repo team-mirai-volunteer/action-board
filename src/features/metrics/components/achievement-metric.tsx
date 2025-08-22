@@ -1,11 +1,5 @@
-import type { AchievementData } from "@/features/metrics/types/metrics-types";
+import type { AchievementMetricProps } from "@/features/metrics/types/metrics-types";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
-
-interface AchievementMetricProps {
-  data: AchievementData;
-  fallbackTotal?: number;
-  fallbackToday?: number;
-}
 
 /**
  * アクション達成数表示コンポーネント

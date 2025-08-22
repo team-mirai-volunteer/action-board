@@ -1,11 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
-import type {
-  AchievementData,
-  DonationData,
-  RegistrationData,
-  SupporterData,
-} from "@/features/metrics/types/metrics-types";
+import type { MetricsData } from "@/features/metrics/types/metrics-types";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { AchievementMetric } from "./achievement-metric";
 import { DonationMetric } from "./donation-metric";
@@ -26,12 +21,7 @@ export { MetricsWithSuspense } from "./metrics-with-suspense";
  * 4. ユーザー登録数（Supabase）
  */
 export async function Metrics() {
-  let metricsData: {
-    supporter: SupporterData | null;
-    donation: DonationData | null;
-    achievement: AchievementData | null;
-    registration: RegistrationData | null;
-  };
+  let metricsData: MetricsData;
   try {
     metricsData = await fetchAllMetricsData();
   } catch (error) {

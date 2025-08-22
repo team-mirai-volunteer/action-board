@@ -1,11 +1,5 @@
-import type { SupporterData } from "@/features/metrics/types/metrics-types";
+import type { SupporterMetricProps } from "@/features/metrics/types/metrics-types";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
-
-interface SupporterMetricProps {
-  data: SupporterData | null;
-  fallbackCount?: number;
-  fallbackIncrease?: number;
-}
 
 /**
  * サポーター数表示コンポーネント
