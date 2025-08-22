@@ -1,4 +1,5 @@
 import { Separator } from "@/components/ui/separator";
+import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
 import type {
   AchievementData,
   DonationData,
@@ -6,7 +7,6 @@ import type {
   SupporterData,
 } from "@/features/metrics/types/metrics-types";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
-import { fetchAllMetricsData } from "../services/get-metrics";
 import { AchievementMetric } from "./achievement-metric";
 import { DonationMetric } from "./donation-metric";
 import { MetricsLayout } from "./metrics-layout";
