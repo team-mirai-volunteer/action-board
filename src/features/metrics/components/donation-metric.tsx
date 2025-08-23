@@ -5,16 +5,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type { DonationMetricProps } from "@/features/metrics/types/metrics-types";
 import { EXTERNAL_LINKS } from "@/lib/links";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
-import type { DonationData } from "../types";
-
-interface DonationMetricProps {
-  data: DonationData | null;
-  fallbackAmount?: number;
-  fallbackIncrease?: number;
-}
 
 /**
  * 寄付金額表示コンポーネント

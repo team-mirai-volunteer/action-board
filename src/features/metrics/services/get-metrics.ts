@@ -1,13 +1,13 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
 import type {
   AchievementData,
   DonationData,
   MetricsData,
   RegistrationData,
   SupporterData,
-} from "../types";
+} from "@/features/metrics/types/metrics-types";
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * サポーター数データの型ガード関数

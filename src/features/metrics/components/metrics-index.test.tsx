@@ -6,8 +6,8 @@ jest.mock("../services/get-metrics", () => ({
   fetchAllMetricsData: jest.fn(),
 }));
 
+import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
 import { EXTERNAL_LINKS } from "@/lib/links";
-import { fetchAllMetricsData } from "../services/get-metrics";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション

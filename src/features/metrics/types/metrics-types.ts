@@ -47,6 +47,56 @@ export interface RegistrationData {
 export interface MetricsData {
   supporter: SupporterData | null;
   donation: DonationData | null;
-  achievement: AchievementData;
-  registration: RegistrationData;
+  achievement: AchievementData | null;
+  registration: RegistrationData | null;
+}
+
+/**
+ * アクション達成数表示コンポーネントのProps型
+ */
+export interface AchievementMetricProps {
+  data: AchievementData;
+  fallbackTotal?: number;
+  fallbackToday?: number;
+}
+
+/**
+ * 寄付金額表示コンポーネントのProps型
+ */
+export interface DonationMetricProps {
+  data: DonationData | null;
+  fallbackAmount?: number;
+  fallbackIncrease?: number;
+}
+
+/**
+ * メトリクス表示レイアウトコンポーネントのProps型
+ */
+export interface MetricsLayoutProps {
+  children: React.ReactNode;
+  title: string;
+  lastUpdated: string;
+}
+
+/**
+ * サポーター数表示コンポーネントのProps型
+ */
+export interface SupporterMetricProps {
+  data: SupporterData | null;
+  fallbackCount?: number;
+  fallbackIncrease?: number;
+}
+
+/**
+ * メトリクスエラーバウンダリーの状態を定義
+ */
+export interface MetricsErrorBoundaryState {
+  hasError: boolean;
+}
+
+/**
+ * メトリクスエラーバウンダリーのプロパティを定義
+ */
+export interface MetricsErrorBoundaryProps {
+  children: React.ReactNode;
 }
