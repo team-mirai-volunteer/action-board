@@ -79,23 +79,9 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     }
   }
 
-  included_files = [
-    "cloudbuild.yaml",
-    "Dockerfile",
-    "package.json",
-    "package-lock.json",
-    "next.config.ts",
-    "tsconfig.json",
-    "postcss.config.js",
-    "tailwind.config.ts",
-    "middleware.ts",
-    "app/**",
-    "components/**",
-    "lib/**",
-    "utils/**",
-    "public/**",
-    "supabase/**"
-  ]
+  # Trigger on all changes except ignored files
+  # included_files is commented out to trigger on all files not in ignored_files
+  # included_files = []
 
   ignored_files = [
     "README.md",

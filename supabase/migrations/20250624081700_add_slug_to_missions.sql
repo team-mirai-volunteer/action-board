@@ -56,6 +56,10 @@ UPDATE missions SET slug = CASE
 END
 WHERE slug IS NULL;
 
+UPDATE missions
+SET slug = 'dummy-slug-' || id
+WHERE slug IS NULL;
+
 -- Make slug column NOT NULL after updating all existing records
 ALTER TABLE missions ALTER COLUMN slug SET NOT NULL;
 

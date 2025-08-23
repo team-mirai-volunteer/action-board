@@ -192,7 +192,7 @@ function Optimize-SecurityProtocol {
 function Get-Downloader {
     $downloadSession = New-Object System.Net.WebClient
 
-    # Set proxy to null if NoProxy is specificed
+    # Set proxy to null if NoProxy is specified
     if ($NoProxy) {
         $downloadSession.Proxy = $null
     } elseif ($Proxy) {
@@ -648,7 +648,7 @@ function Install-Scoop {
     }
     # Create the scoop shim
     Import-ScoopShim
-    # Finially ensure scoop shims is in the PATH
+    # Finally ensure scoop shims is in the PATH
     Add-ShimsDirToPath
     # Setup initial configuration of Scoop
     Add-DefaultConfig

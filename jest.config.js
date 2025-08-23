@@ -11,14 +11,25 @@ const config = {
   testEnvironment: "jsdom",
   testMatch: ["**/*.test.{ts,tsx}"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   collectCoverage: true,
-  collectCoverageFrom: ["(app|components|lib|stories)/**/*.(ts|tsx)"],
+  collectCoverageFrom: [
+    "{app,components,lib}/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/*.stories.{ts,tsx}",
+  ],
   coverageReporters: ["html", "text", "lcov"],
   coverageDirectory: "<rootDir>/coverage",
-  coveragePathIgnorePatterns: [],
+  coveragePathIgnorePatterns: [
+    "<rootDir>/app/privacy/",
+    "<rootDir>/app/terms/",
+    "<rootDir>/lib/types/",
+    "<rootDir>/lib/supabase/",
+    "<rootDir>/lib/address.ts",
+    "<rootDir>/lib/constants.ts",
+  ],
   coverageProvider: "v8",
 };
 

@@ -14,6 +14,7 @@ export interface Mission {
   required_artifact_type: string;
   max_achievement_count: number | null;
   is_featured: boolean;
+  featured_importance?: number | null;
   is_hidden: boolean;
   artifact_label?: string | null;
   ogp_image_url?: string | null;
@@ -58,6 +59,12 @@ export interface MissionQuizLink {
   display_order: number;
 }
 
+export interface MissionMainLink {
+  mission_slug: string;
+  label: string;
+  link: string;
+}
+
 export interface MissionData {
   categories: Category[];
   missions: Mission[];
@@ -65,4 +72,5 @@ export interface MissionData {
   quiz_categories: QuizCategory[];
   quiz_questions: QuizQuestion[];
   mission_quiz_links: MissionQuizLink[];
+  mission_main_links?: MissionMainLink[];
 }

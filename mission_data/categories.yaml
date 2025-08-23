@@ -28,7 +28,7 @@ categories:
     sort_no: 700
     category_kbn: DEFAULT
   - slug: improve-policies
-    title: 政策を改善しよう
+    title: 政策を見てみよう
     sort_no: 800
     category_kbn: DEFAULT
   - slug: support-on-youtube
@@ -36,7 +36,7 @@ categories:
     sort_no: 900
     category_kbn: DEFAULT
   - slug: support-on-tiktok
-    title: Tiktokで応援しよう
+    title: TikTokで応援しよう
     sort_no: 1000
     category_kbn: DEFAULT
   - slug: support-on-x
@@ -47,7 +47,15 @@ categories:
     title: noteで応援しよう
     sort_no: 1200
     category_kbn: DEFAULT
+  - slug: support-on-threads
+    title: Threadsで応援しよう
+    sort_no: 1250
+    category_kbn: DEFAULT
   - slug: create-and-support
     title: 作って応援しよう
     sort_no: 1300
+    category_kbn: DEFAULT
+  - slug: vote-in-various-ways
+    title: 投票しよう
+    sort_no: 1400
     category_kbn: DEFAULT

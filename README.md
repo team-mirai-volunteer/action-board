@@ -39,9 +39,9 @@
 
    - Hyper-Vの有効化
       1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
-      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になっていない場合があるので、以下で確認
-      1. PowerShell(管理者権限)でHyper-vが有効になっているか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
-      1. Offになっている場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-Vが有効になっていない場合があるので、以下で確認
+      1. PowerShell(管理者権限)でHyper-Vが有効になっているか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      1. Offになっている場合、Hyper-VをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
       1. Autoに変更したあとPCの再起動が必要です
 
 #### インストール
@@ -96,6 +96,8 @@
    ```
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 
+   # `supabase start` 実行時に表示される値を指定します。
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
    # SentryのDSNを指定します。開発時は空でもかまいません。
@@ -109,7 +111,7 @@
    supabase db reset
    ```
 
-  supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。
+  `supabase/migrations`配下にあるマイグレーションを実行し、`supabase/seed.sql`にあるシードデータをローカルデータベースに流し込みます。
 
 5. 必要なパッケージをインストール:
 
@@ -117,15 +119,40 @@
    npm install
    ```
 
-6. Next.js のローカル開発サーバーを起動:
+6. `.env` ファイルの作成
+
+   ```bash
+   cp .env.local .env
+   ```
+
+   `.env.local` ファイルをコピーして `.env` を作成します。
+
+7. ミッションデータの同期:
+
+   ```bash
+   npm run mission:sync
+   ```
+
+   `mission_data/README.md`を参照ください。
+
+8. Next.js のローカル開発サーバーを起動:
 
    ```bash
    npm run dev
    ```
 
    サービスは [localhost:3000](http://localhost:3000/) でアクセス可能になります。
+   `supabase/seed.sql`のシードデータに含まれるユーザー情報を使用してログインしてください。
 
+## サービスの停止方法
 
+1. Supabase のローカル環境を停止
+
+   ```bash
+   supabase stop
+   ````
+
+   停止しないまま PC を再起動すると Docker コンテナが常駐し、ポート衝突やリソース消費が発生します。
 
 ## 開発ガイドライン
 
@@ -148,14 +175,14 @@ mainブランチはリリース可能な状態に保ちましょう。
 3. commitを作成後、pushをする前にオリジナル（fork元）のリポジトリのdevelopブランチに入った変更を取り込み、必要であればコンフリクトを解消してください。
 4. コンフリクトを解消後、リモートリポジトリにpushを行ってください。
 5. `fork先:feature -> fork元:develop`のPRを作成してください。
-6. 開発スレッドにてレビュー依頼をお願いします。
+6. レビュー可能な状態のPRはOpenにし、PR内コメントでレビュー可能な状態である旨を明記しましょう。
 
 #### slackチャネルでDevinを使用して開発するケース
 
 1. slackチャネル`9_devinと人間の部屋`で過去のやり取りを参考に、Devinに開発を依頼してください。
 2. Devinの修正内容に不足がある場合は、slackでのやりとりを継続、もしくはスレッド内(open webapp)のリンクからGUIにてやりとり、修正を継続してください。
 3. コンフリクトが発生している場合は解消を依頼してください。
-4. 開発スレッドにてレビュー依頼をお願いします。
+4. レビュー可能な状態のPRはOpenにし、PR内コメントでレビュー可能な状態である旨を明記しましょう。
 
 ### migrationファイル追加手順
 

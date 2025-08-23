@@ -1,6 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
+import * as dotenv from "dotenv";
 
-// Next.jsは内部で環境変数をサポートしているためdotenvは不要
+if (!process.env.CI) {
+  dotenv.config({ path: ".env" });
+  dotenv.config({ path: ".env.local", override: true });
+  dotenv.config({ path: ".env.test", override: true });
+}
+
 const PORT = process.env.PORT || 3000;
 const baseURL = `http://localhost:${PORT}`;
 
@@ -11,6 +17,7 @@ const baseURL = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./tests/e2e",
   /* 各テスト実行の最大タイムアウト時間 */
+  workers: 2,
   timeout: 30 * 1000,
   expect: {
     /* テストアサーションのタイムアウト時間 */
