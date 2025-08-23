@@ -4,4 +4,4 @@ mission_main_links:
     link: https://team-mir.ai
   - mission_slug: read-manifest
     label: チームみらいのマニフェスト(要約版)を読む
-    link: https://speakerdeck.com/teammirai/timumiraimanihuesuto-yao-yue-ban-v0-dot-2
+    link: https://team-mir.ai/pdf-viewer?url=https%3A%2F%2Ftibsocpjqvxxipszbwui.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fassets%2Fmanifestos%2Fteammirai_manifest_summary_v1.0.pdf
