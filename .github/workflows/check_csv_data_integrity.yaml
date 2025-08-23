@@ -1,0 +1,117 @@
+name: Check CSV Data Integrity
+on:
+  pull_request:
+    paths:
+      - 'poster_data/**/*.csv'
+      - '.github/workflows/check_csv_data_integrity.yaml'
+
+jobs:
+  check-csv-integrity:
+    name: Validate CSV Data Integrity
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check CSV length preservation
+        run: |
+          echo "🔍 Checking CSV length preservation for edited files..."
+          
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'poster_data/data/**/*.csv' || true)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "✅ No CSV files in poster_data/data were changed"
+            exit 0
+          fi
+          
+          echo "Changed CSV files:"
+          echo "$CHANGED_FILES"
+          
+          for file in $CHANGED_FILES; do
+            if [ -f "$file" ]; then
+              BASE_LINES=$(git show origin/${{ github.base_ref }}:"$file" 2>/dev/null | wc -l || echo "0")
+              CURRENT_LINES=$(wc -l < "$file")
+              
+              echo "File: $file"
+              echo "  Base lines: $BASE_LINES"
+              echo "  Current lines: $CURRENT_LINES"
+              
+              if [ "$BASE_LINES" != "0" ] && [ "$BASE_LINES" != "$CURRENT_LINES" ]; then
+                echo "❌ ERROR: CSV length changed for $file (was $BASE_LINES, now $CURRENT_LINES)"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "✅ All CSV files maintain their original length"
+
+      - name: Check for data deletion
+        run: |
+          echo "🔍 Checking for data deletion in poster_data/data..."
+          
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'poster_data/data/**/*.csv' || true)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "✅ No CSV files in poster_data/data were changed"
+            exit 0
+          fi
+          
+          for file in $CHANGED_FILES; do
+            if [ -f "$file" ]; then
+              echo "Checking $file for deleted data..."
+              
+              DELETED_LINES=$(git diff origin/${{ github.base_ref }}...HEAD -- "$file" | grep "^-" | grep -v "^---" | grep -v "^-prefecture,city,number" || true)
+              
+              if [ -n "$DELETED_LINES" ]; then
+                echo "❌ ERROR: Data deletion detected in $file:"
+                echo "$DELETED_LINES"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "✅ No data deletion detected"
+
+      - name: Check for duplicate filenames between data and broken_data
+        run: |
+          echo "🔍 Checking for duplicate filenames between data and broken_data directories..."
+          
+          DATA_FILES=$(find poster_data/data -name "*.csv" -type f 2>/dev/null | sed 's|poster_data/data/||' || true)
+          
+          BROKEN_FILES=$(find poster_data/broken_data -name "*.csv" -type f 2>/dev/null | sed 's|poster_data/broken_data/||' || true)
+          
+          if [ -z "$DATA_FILES" ]; then
+            echo "✅ No CSV files found in poster_data/data"
+            exit 0
+          fi
+          
+          if [ -z "$BROKEN_FILES" ]; then
+            echo "✅ No CSV files found in poster_data/broken_data"
+            exit 0
+          fi
+          
+          COMMON_FILES=$(comm -12 <(echo "$DATA_FILES" | sort) <(echo "$BROKEN_FILES" | sort))
+          
+          if [ -n "$COMMON_FILES" ]; then
+            echo "❌ ERROR: Duplicate file paths found between data and broken_data:"
+            echo "$COMMON_FILES"
+            echo "This indicates the same file exists in both directories with the same prefecture path."
+            exit 1
+          fi
+          
+          echo "✅ No duplicate file paths found between data and broken_data directories"
+
+      - name: Show validation summary
+        run: |
+          echo "📊 CSV Data Integrity Validation Summary:"
+          echo "Total CSV files in data: $(find poster_data/data -name "*.csv" -type f | wc -l)"
+          echo "Total CSV files in broken_data: $(find poster_data/broken_data -name "*.csv" -type f 2>/dev/null | wc -l || echo "0")"
+          echo "✅ All integrity checks passed!"

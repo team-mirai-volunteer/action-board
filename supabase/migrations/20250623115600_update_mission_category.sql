@@ -1,7 +1,7 @@
 -- mission-categoryを一度削除。
 TRUNCATE mission_category_link, mission_category;
 
-正のカゴリ定義でINSRT。
+-- 正のカテゴリ定義でINSERT。
 insert into mission_category (id, category_title, sort_no, category_kbn)
 values  
 ('0cc2f4f9-ab0a-480c-c1e2-442513421dfc', 'チームみらいのことを知ろう', 100, 'DEFAULT'),
@@ -13,7 +13,7 @@ values
 ('720b511c-8be3-8e0c-e2ae-d95be1613281', 'クイズで学ぼう', 700, 'DEFAULT'),
 ('19bb0960-86af-4162-2351-530f664ac5b5', '政策を改善しよう', 800, 'DEFAULT'),
 ('373fe78b-9e63-96f7-40af-650120a599f1', 'YouTubeで応援しよう', 900, 'DEFAULT'),
-('91a10bef-fab0-1a99-c8d5-4353cd39c402', 'Tiktokで応援しよう', 1000, 'DEFAULT'),
+('91a10bef-fab0-1a99-c8d5-4353cd39c402', 'TikTokで応援しよう', 1000, 'DEFAULT'),
 ('089ed58c-9bbc-fb5d-8b51-e608906a965c', 'Xで応援しよう', 1100, 'DEFAULT'),
 ('6d4a5924-5411-277c-9c7d-911df2b717a1', 'noteで応援しよう', 1200, 'DEFAULT'),
 ('cb1da45e-740d-5ad9-55e8-40cb5c8446e1', '作って応援しよう', 1300, 'DEFAULT');
@@ -33,7 +33,7 @@ values
 --   (coalesce((select id from missions where title = '公式LINEアカウントと友達になろう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 100),
 --   (coalesce((select id from missions where title = '公式YouTubeチャンネルを登録しよう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 200),
 --   (coalesce((select id from missions where title = 'チームみらいの公式Xをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 300),
--- --   (coalesce((select id from missions where title = '公式Tiktokをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 400),
+-- --   (coalesce((select id from missions where title = '公式TikTokをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 400),
 --   (coalesce((select id from missions where title = '公式noteをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '8b36a669-3457-0b67-308b-b4b8b0a3356d', 500),
 
 -- -- 3. コミュニティに参加しよう
@@ -44,7 +44,7 @@ values
 
 -- -- 4. いいねで応援しよう
 -- --   (coalesce((select id from missions where title = 'YouTubeでチームみらい動画に高評価をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 100),
--- --   (coalesce((select id from missions where title = 'Tiktokでチームみらい動画に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 200),
+-- --   (coalesce((select id from missions where title = 'TikTokでチームみらい動画に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 200),
 -- --   (coalesce((select id from missions where title = 'Xでチームみらい投稿に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 300),
 -- --   (coalesce((select id from missions where title = 'noteでチームみらい記事にスキ♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 400),
 -- --   (coalesce((select id from missions where title = 'Instagramでチームみらい投稿に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '504a2520-23e3-e49b-e3f8-9e97981a1d03', 500),
@@ -82,9 +82,9 @@ values
 -- --   (coalesce((select id from missions where title = 'YouTubeでチームみらい動画に高評価をつけよう'), '00000000-0000-0000-0000-000000000000'), '373fe78b-9e63-96f7-40af-650120a599f1', 300),
 --   (coalesce((select id from missions where title = 'YouTube動画を切り抜こう'), '00000000-0000-0000-0000-000000000000'), '373fe78b-9e63-96f7-40af-650120a599f1', 400),
 
--- -- 10. Tiktokで応援しよう
--- --   (coalesce((select id from missions where title = '公式Tiktokをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '91a10bef-fab0-1a99-c8d5-4353cd39c402', 100),
--- --   (coalesce((select id from missions where title = 'Tiktokでチームみらい動画に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '91a10bef-fab0-1a99-c8d5-4353cd39c402', 200),
+-- -- 10. TikTokで応援しよう
+-- --   (coalesce((select id from missions where title = '公式TikTokをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '91a10bef-fab0-1a99-c8d5-4353cd39c402', 100),
+-- --   (coalesce((select id from missions where title = 'TikTokでチームみらい動画に♡をつけよう'), '00000000-0000-0000-0000-000000000000'), '91a10bef-fab0-1a99-c8d5-4353cd39c402', 200),
 
 -- -- 11. Xで応援しよう
 --   (coalesce((select id from missions where title = 'チームみらいの公式Xをフォローしよう'), '00000000-0000-0000-0000-000000000000'), '089ed58c-9bbc-fb5d-8b51-e608906a965c', 100),

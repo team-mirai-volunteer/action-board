@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
 import { v4 as uuidv4 } from "uuid";
@@ -13,6 +13,7 @@ import type {
   Category,
   CategoryLink,
   Mission,
+  MissionMainLink,
   MissionQuizLink,
   QuizCategory,
   QuizQuestion,
@@ -41,7 +42,7 @@ async function loadYamlFile<T>(filename: string): Promise<T> {
 
 async function syncCategories(categories: Category[], dryRun: boolean) {
   console.log("\n📁 Syncing categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const category of categories) {
     if (dryRun) {
@@ -81,7 +82,7 @@ async function syncCategories(categories: Category[], dryRun: boolean) {
 
 async function syncMissions(missions: Mission[], dryRun: boolean) {
   console.log("\n📋 Syncing missions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const mission of missions) {
     if (dryRun) {
@@ -106,6 +107,7 @@ async function syncMissions(missions: Mission[], dryRun: boolean) {
         required_artifact_type: mission.required_artifact_type,
         max_achievement_count: mission.max_achievement_count,
         is_featured: mission.is_featured,
+        featured_importance: mission.featured_importance,
         is_hidden: mission.is_hidden,
         artifact_label: mission.artifact_label,
         ogp_image_url: mission.ogp_image_url,
@@ -130,7 +132,7 @@ async function syncCategoryLinks(
   dryRun: boolean,
 ) {
   console.log("\n🔗 Syncing category links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const categoryMap = await getCategorySlugToIdMap();
   const missionMap = await getMissionSlugToIdMap();
@@ -195,7 +197,7 @@ async function syncQuizCategories(
   dryRun: boolean,
 ) {
   console.log("\n📚 Syncing quiz categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   for (const category of quizCategories) {
     if (dryRun) {
@@ -242,7 +244,7 @@ async function syncQuizQuestions(
   dryRun: boolean,
 ) {
   console.log("\n❓ Syncing quiz questions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const categoryMap = await getQuizCategorySlugToIdMap();
   const missionMap = await getMissionSlugToIdMap();
@@ -307,7 +309,7 @@ async function syncMissionQuizLinks(
   dryRun: boolean,
 ) {
   console.log("\n🔗 Syncing mission quiz links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const missionMap = await getMissionSlugToIdMap();
 
@@ -359,6 +361,61 @@ async function syncMissionQuizLinks(
   }
 }
 
+async function syncMissionMainLinks(
+  missionMainLinks: MissionMainLink[],
+  dryRun: boolean,
+) {
+  console.log("\n🔗 Syncing mission main links...");
+  const supabase = await createAdminClient();
+
+  const missionMap = await getMissionSlugToIdMap();
+
+  // First, delete all existing links if not dry run
+  if (!dryRun) {
+    const { error } = await supabase
+      .from("mission_main_links")
+      .delete()
+      .neq("mission_id", "00000000-0000-0000-0000-000000000000"); // Delete all
+
+    if (error) {
+      console.error("  ❌ Error deleting existing main links:", error);
+      return;
+    }
+  }
+
+  for (const link of missionMainLinks) {
+    const missionId = missionMap[link.mission_slug];
+
+    if (!missionId) {
+      console.error(`  ❌ Mission not found: ${link.mission_slug}`);
+      continue;
+    }
+
+    if (dryRun) {
+      console.log(
+        `  [DRY RUN] Would create main link: ${link.mission_slug} -> ${link.link}`,
+      );
+    } else {
+      const { error } = await supabase.from("mission_main_links").insert({
+        mission_id: missionId,
+        label: link.label,
+        link: link.link,
+      });
+
+      if (error) {
+        console.error(
+          `  ❌ Error creating main link for ${link.mission_slug}:`,
+          error,
+        );
+      } else {
+        console.log(
+          `  ✅ Created main link: ${link.mission_slug} -> ${link.link}`,
+        );
+      }
+    }
+  }
+}
+
 async function main() {
   try {
     console.log("🚀 Starting mission data sync...");
@@ -404,6 +461,13 @@ async function main() {
         mission_quiz_links: MissionQuizLink[];
       }>("mission_quiz_links.yaml");
       await syncMissionQuizLinks(mission_quiz_links, options.dryRun);
+    }
+
+    if (!options.only || options.only === "main-links") {
+      const { mission_main_links } = await loadYamlFile<{
+        mission_main_links: MissionMainLink[];
+      }>("mission_main_links.yaml");
+      await syncMissionMainLinks(mission_main_links, options.dryRun);
     }
 
     console.log("\n✨ Sync completed!");

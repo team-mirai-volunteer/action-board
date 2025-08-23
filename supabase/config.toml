@@ -15,7 +15,7 @@ schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
 # for accidental or malicious requests.
-max_rows = 1000
+max_rows = 10000
 
 [api.tls]
 # Enable HTTPS endpoints locally using a self-signed certificate.
@@ -58,7 +58,7 @@ enabled = true
 sql_paths = ["./seed.sql"]
 
 [realtime]
-enabled = true
+enabled = false
 # Bind realtime via either IPv4 or IPv6. (default: IPv4)
 # ip_version = "IPv6"
 # The maximum length in bytes of HTTP request headers. (default: 4096)

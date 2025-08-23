@@ -13,8 +13,7 @@
       "**/supabase/.temp/**",
       "**/playwright-report/**",
       "**/coverage/**",
-      "**/mobile_flutter/**",
-      "**/tests/**"
+      "**/mobile_flutter/**"
     ]
   },
   "formatter": {
