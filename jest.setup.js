@@ -243,7 +243,7 @@ jest.mock("react-dom", () => ({
   useFormStatus: jest.fn(() => ({ pending: false })),
 }));
 
-jest.mock("@/lib/services/userLevel", () => ({
+jest.mock("@/features/user-level/services/level", () => ({
   getUserLevel: jest.fn(() =>
     Promise.resolve({
       user_id: "test-user-id",

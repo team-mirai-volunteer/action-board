@@ -1,20 +1,16 @@
 import "server-only";
 
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { totalXp } from "@/lib/utils/utils";
-import { getCurrentSeasonId } from "./seasons";
+import type { LevelUpNotification } from "../types/level-types";
+import { totalXp } from "../utils/level-calculator";
 
 /**
  * レベルアップ通知をチェックし、必要に応じて通知データを返す
  */
-export async function checkLevelUpNotification(userId: string): Promise<{
-  shouldNotify: boolean;
-  levelUp?: {
-    previousLevel: number;
-    newLevel: number;
-    pointsToNextLevel: number;
-  };
-}> {
+export async function checkLevelUpNotification(
+  userId: string,
+): Promise<LevelUpNotification> {
   const supabase = await createAdminClient();
   const currentSeasonId = await getCurrentSeasonId();
 

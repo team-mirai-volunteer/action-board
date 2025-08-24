@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
-} from "@/lib/services/userLevel";
+} from "@/features/user-level/services/level";
 import { createClient } from "@/lib/supabase/client";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";

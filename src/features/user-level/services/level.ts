@@ -1,18 +1,21 @@
 import "server-only";
 
+import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getUser } from "@/lib/services/users";
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import type { Tables, TablesInsert } from "@/lib/types/supabase";
 import {
   executeChunkedInsert,
   executeChunkedQuery,
 } from "@/lib/utils/supabase-utils";
-import { calculateLevel, calculateMissionXp } from "../utils/utils";
-import { getCurrentSeasonId } from "./seasons";
-import { getUser } from "./users";
-
-export type UserLevel = Tables<"user_levels">;
-export type XpTransaction = Tables<"xp_transactions">;
-export type XpTransactionInsert = TablesInsert<"xp_transactions">;
+import type {
+  BatchXpResult,
+  BatchXpTransaction,
+  UserLevel,
+  XpGrantResult,
+  XpSourceType,
+  XpTransaction,
+} from "../types/level-types";
+import { calculateLevel, calculateMissionXp } from "../utils/level-calculator";
 
 /**
  * ユーザーのレベル情報を取得する（現在のアクティブシーズン）
@@ -125,14 +128,10 @@ export async function getOrInitializeUserLevel(
 async function processXpTransaction(
   userId: string,
   xpAmount: number,
-  sourceType:
-    | "MISSION_COMPLETION"
-    | "BONUS"
-    | "PENALTY"
-    | "MISSION_CANCELLATION",
+  sourceType: XpSourceType,
   sourceId?: string,
   description?: string,
-): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
+): Promise<XpGrantResult> {
   const seasonId = await getCurrentSeasonId();
   if (!seasonId) {
     return { success: false, error: "Current season not found" };
@@ -202,14 +201,10 @@ async function processXpTransaction(
 export async function grantXp(
   userId: string,
   xpAmount: number,
-  sourceType:
-    | "MISSION_COMPLETION"
-    | "BONUS"
-    | "PENALTY"
-    | "MISSION_CANCELLATION" = "BONUS",
+  sourceType: XpSourceType = "BONUS",
   sourceId?: string,
   description?: string,
-): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
+): Promise<XpGrantResult> {
   return processXpTransaction(
     userId,
     xpAmount,
@@ -303,12 +298,7 @@ export async function grantMissionCompletionXp(
   userId: string,
   missionId: string,
   achievementId: string,
-): Promise<{
-  success: boolean;
-  userLevel?: UserLevel;
-  xpGranted?: number;
-  error?: string;
-}> {
+): Promise<XpGrantResult> {
   const supabase = await createAdminClient();
 
   try {
@@ -356,28 +346,8 @@ export async function grantMissionCompletionXp(
  * N+1問題を回避し、パフォーマンスを最適化
  */
 export async function grantXpBatch(
-  transactions: Array<{
-    userId: string;
-    xpAmount: number;
-    sourceType:
-      | "MISSION_COMPLETION"
-      | "BONUS"
-      | "PENALTY"
-      | "MISSION_CANCELLATION";
-    sourceId?: string;
-    description?: string;
-  }>,
-): Promise<{
-  success: boolean;
-  results: Array<{
-    userId: string;
-    success: boolean;
-    error?: string;
-    newXp?: number;
-    newLevel?: number;
-  }>;
-  error?: string;
-}> {
+  transactions: BatchXpTransaction[],
+): Promise<BatchXpResult> {
   const supabase = await createAdminClient();
 
   if (!transactions || transactions.length === 0) {

@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { LevelUpCheck } from "./level-up-check";
 
-jest.mock("@/components/level-up-dialog", () => ({
+jest.mock("@/features/user-level/components/level-up-dialog", () => ({
   LevelUpDialog: ({ isOpen, onClose, newLevel }: any) =>
     isOpen ? (
       <button type="button" data-testid="dialog" onClick={onClose}>

@@ -1,3 +1,8 @@
+import { Card } from "@/components/ui/card";
+import { SocialBadge } from "@/components/ui/social-badge";
+import { UserMissionAchievements } from "@/components/user-mission-achievements";
+import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
 /**
  * ユーザー詳細ページ
  *
@@ -11,12 +16,7 @@
  * - Promise.allを使用した並列データ取得
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
-import Levels from "@/components/levels";
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import Levels from "@/features/user-level/components/levels";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,

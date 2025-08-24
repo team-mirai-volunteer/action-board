@@ -1,15 +1,15 @@
 import NoticeBoardAlert from "@/components/NoticeBoardAlert";
 import Activities from "@/components/activities";
 import Hero from "@/components/hero";
-import { LevelUpCheck } from "@/components/level-up-check";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import RankingSection from "@/components/top/ranking-section";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
+import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
+import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
 import { generateRootMetadata } from "@/lib/metadata";
-import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { hasFeaturedMissions } from "@/lib/services/missions";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
