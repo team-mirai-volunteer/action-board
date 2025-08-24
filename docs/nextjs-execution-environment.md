@@ -22,6 +22,7 @@ src/
     └── [feature-name]/
         ├── components/     # UIコンポーネント
         ├── services/       # データアクセス層
+        ├── constants/      # 定数定義（環境非依存）
         ├── hooks/          # React Hooks
         ├── types/          # 型定義
         └── utils/          # ユーティリティ関数
@@ -37,28 +38,44 @@ src/
 実行環境: デフォルトはサーバーコンポーネント。ただし、インタラクティブ要素がある場合はクライアントサイドで実行される。
 
 ルール:
-✅ インタラクティブな要素（クリック、フォーム、useState/useEffect など）を持つ場合は 'use client' を原則として付与する
-✅ 静的な表示のみの場合は Server Component を推奨する
-❌ 直接データベースアクセス禁止
+- ✅ インタラクティブな要素（クリック、フォーム、useState/useEffect など）を持つ場合は `'use client'` を原則として付与する
+- ✅ 静的な表示のみの場合は `import 'server-only'` を明示してServer Component を推奨する。
+- ❌ 直接データベースアクセス禁止
+- ℹ️ 備考：
+  サーバーコンポーネントはデフォルトでサーバー実行されますが、明示的にサーバー処理であることを示すために必要に応じて `import 'server-only'` を使用する。
+  クライアント専用ユーティリティや非 React モジュールの場合は `import 'client-only'` を使用してクライアント実行を明示する
 
 ### 🔧 src/features/[feature-name]/services/
 役割: データアクセス・ビジネスロジック層
 実行環境: サーバーサイド専用
 
 ルール:
-✅ import 'server-only' 必須
-✅ データベースアクセス・外部API呼び出し
-✅ ビジネスロジックの実装
-❌ React Hooks・DOM操作禁止
+- ✅ サーバーサイド処理は `import 'server-only'` を必須付与
+- ✅ Server Actions は `'use server'` を付与
+- ✅ データベースアクセス・外部API呼び出し
+- ✅ ビジネスロジックの実装
+- ❌ React Hooks・DOM操作禁止
+- ℹ️ 備考：クライアント専用処理は Services ではなく utils に配置すること
+
+### 🔢 src/features/[feature-name]/constants/
+役割: 機能固有の定数定義
+実行環境: 共通（環境非依存）
+
+ルール:
+- ✅ 環境非依存の定数のみ
+- ✅ 機能固有の設定値・マジックナンバーの排除
+- ✅ readonly な値の定義
+- ❌ 実行時に変更される値の定義禁止
+- ❌ 環境依存の値（プロセス環境変数等）の直接定義禁止
 
 ### 🎣 src/features/[feature-name]/hooks/
 役割: React Hooks・クライアントサイドのロジック
 実行環境: クライアントサイド専用
 
 ルール:
-✅ 'use client' 必須
-✅ React Hooks・状態管理
-✅ ブラウザAPI・DOM操作
+- ✅ 'use client' 必須
+- ✅ React Hooks・状態管理
+- ✅ ブラウザAPI・DOM操作
 ❌ 直接データベースアクセス禁止
 
 ### 📝 src/features/[feature-name]/types/
@@ -66,19 +83,18 @@ src/
 実行環境: 共通（環境非依存）
 
 ルール:
-✅ 環境非依存の型定義のみ
-❌ 実行時コード・関数の実装禁止
+- ✅ 環境非依存の型定義のみ
+- ❌ 実行時コード・関数の実装禁止
 
 ### 🛠️ src/features/[feature-name]/utils/
 役割: 共通的に使用される関数・ロジックの定義
 実行環境: 実装内容により決定
 
 ルール:
-✅ 環境非依存：実行環境指定不要
-✅ サーバー固有処理：import 'server-only' 必須
-✅ クライアント固有処理：`import 'client-only'` を推奨（React を使用するモジュールのみ `'use client'`）
-ℹ️ 備考：`'use client'` はモジュール境界を広げ依存をクライアントバンドルへ巻き込みやすいため、非 UI のユーティリティでは避ける
-
+- ✅ 環境非依存：実行環境指定不要
+- ✅ サーバー固有処理：`import 'server-only'` 必須
+- ✅ クライアント固有処理：`import 'client-only'` を推奨（React を使用するモジュールのみ `'use client'`）
+- ℹ️ 備考：`'use client'` はモジュール境界を広げ依存をクライアントバンドルへ巻き込みやすいため、非 UI のユーティリティでは避ける
 
 ### データフローの原則
 🔄 推奨データフロー
@@ -116,23 +132,6 @@ export async function privilegedOperation() {
   return await supabase.from('admin_table').select('*');
 }
 ```
-
-## 実行環境の明確化ルール（暫定ガイドライン）
-
-### コンポーネント
-- ✅ インタラクティブな要素（クリック、フォーム、useState/useEffect など）を持つ場合は `'use client'` を原則として付与する
-- ✅ 静的な表示のみの場合は Server Componentで実装する
-
-### Services
-- ✅ サーバーサイド処理は `import 'server-only'` を必須付与
-- ✅ Server Actions は `'use server'` を付与
-- ℹ️ 備考：クライアント専用処理は Services ではなく utils に配置すること
-
-### Utils
-- ✅ 環境非依存：実行環境指定不要
-- ✅ サーバー固有処理：`import 'server-only'` 必須
-- ✅ クライアント固有処理（ユーティリティ）：`import 'client-only'` 推奨
-- ✅ クライアントコンポーネント共存またはReact使用時：`'use client'` を使用
 
 ## 📋 チェックリスト
 ### ファイル作成時:
