@@ -13,7 +13,7 @@ jest.mock("@/components/ui/button", () => ({
     asChild ? children : <button {...props}>{children}</button>,
 }));
 
-jest.mock("@/components/my-avatar", () => {
+jest.mock("@/features/user-profile/components/my-avatar", () => {
   return ({ className }: any) => (
     <div data-testid="my-avatar" className={className} />
   );

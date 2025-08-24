@@ -48,7 +48,7 @@ jest.mock("@/features/ranking/components/ranking-level-badge", () => ({
   ),
 }));
 
-jest.mock("@/components/user-avatar", () => {
+jest.mock("@/features/user-profile/components/user-avatar", () => {
   return ({ userId }: { userId: string }) => (
     <div data-testid="user-avatar">{userId}</div>
   );

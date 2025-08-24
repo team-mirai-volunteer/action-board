@@ -1,12 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import type { Season } from "@/lib/services/seasons";
-import Link from "next/link";
-
-interface UserSeasonHeaderProps {
-  season: Season;
-  userId: string;
-}
+import type { UserSeasonHeaderProps } from "@/features/user-season/types/season-types";
 
 export function UserSeasonHeader({ season, userId }: UserSeasonHeaderProps) {
   return (

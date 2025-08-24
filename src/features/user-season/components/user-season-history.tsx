@@ -1,19 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import type { Season } from "@/lib/services/seasons";
+import type { UserSeasonHistoryProps } from "@/features/user-season/types/season-types";
 import Link from "next/link";
-
-interface UserSeasonHistoryProps {
-  userId: string;
-  seasonHistory: Array<{
-    season: Season;
-    userLevel: {
-      level: number;
-      xp: number;
-      updated_at: string;
-    } | null;
-  }>;
-}
 
 export function UserSeasonHistory({
   userId,

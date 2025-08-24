@@ -1,7 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserSeasonHeader } from "@/components/user-season-header";
-import { UserSeasonHistory } from "@/components/user-season-history";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
@@ -26,6 +24,8 @@ import {
 } from "@/features/user-activity/services/timeline";
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
+import { UserSeasonHeader } from "@/features/user-season/components/user-season-header";
+import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 

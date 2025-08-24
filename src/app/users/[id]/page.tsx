@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserSeasonHistory } from "@/components/user-season-history";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
@@ -23,6 +22,7 @@ import { UserBadges } from "@/features/user-badges/components/user-badges";
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import Levels from "@/features/user-level/components/levels";
+import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import {
   getCurrentSeasonId,
   getUserSeasonHistory,
