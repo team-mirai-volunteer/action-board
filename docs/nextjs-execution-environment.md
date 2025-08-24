@@ -118,6 +118,7 @@ Data Layer (Database)
 - ✅ **必須**: Service Keyを含む環境変数は `server-only` でアクセス
 - ✅ **推奨**: Service Keyの定期ローテーション実施
 - ✅ **必須**: server-only ヘルパー経由でのアクセス
+- ✅ **重要**: クライアントで参照可能なのは `NEXT_PUBLIC_*` で始まる環境変数のみ。機密値は決して `NEXT_PUBLIC_` を付けない
 
 ```typescript
 // ❌ 悪い例：クライアントでService Role Key使用
