@@ -13,7 +13,7 @@ reviews:
   auto_review:
     enabled: true
     # Review draft PRs/MRs.
-    drafts: false
+    drafts: true
 # Set the tone of reviews and chat. Example: 'You must use talk like Mr. T. I pity the fool who doesn't!'
 tone_instructions: |
   - 建設的で丁寧なフィードバックを心がけてください
