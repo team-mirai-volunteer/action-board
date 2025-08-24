@@ -1,6 +1,6 @@
-import type { MissionAchievementSummary } from "@/lib/services/userMissionAchievement";
-import { MissionAchievementCard } from "./mission-card";
-import { MissionAchievementTotalCard } from "./total-card";
+import { MissionAchievementCard } from "@/features/user-achievements/components/mission-card";
+import { MissionAchievementTotalCard } from "@/features/user-achievements/components/total-card";
+import type { MissionAchievementSummary } from "@/features/user-achievements/types/achievement-types";
 
 interface UserMissionAchievementsProps {
   achievements: MissionAchievementSummary[];

@@ -1,7 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
@@ -25,7 +26,6 @@ import {
   getCurrentSeasonId,
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
-import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/client";
 import UserDetailActivities from "./user-detail-activities";
 

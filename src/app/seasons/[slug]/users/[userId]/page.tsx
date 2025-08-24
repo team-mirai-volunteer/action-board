@@ -16,9 +16,10 @@
 import UserDetailActivities from "@/app/users/[id]/user-detail-activities";
 import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHeader } from "@/components/user-season-header";
 import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
@@ -26,7 +27,6 @@ import {
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
-import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */

@@ -1,12 +1,7 @@
 import "server-only";
 
+import type { MissionAchievementSummary } from "@/features/user-achievements/types/achievement-types";
 import { createClient } from "@/lib/supabase/client";
-
-export interface MissionAchievementSummary {
-  mission_id: string;
-  mission_title: string;
-  achievement_count: number;
-}
 
 export async function getUserRepeatableMissionAchievements(
   userId: string,
