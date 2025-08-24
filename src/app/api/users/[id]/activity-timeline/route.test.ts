@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
+import { getUserActivityTimeline } from "@/features/user-activity/services/timeline";
 import { NextRequest } from "next/server";
 import { GET } from "./route";
 
-jest.mock("@/lib/services/activityTimeline");
+jest.mock("@/features/user-activity/services/timeline");
 const mockGetUserActivityTimeline =
   getUserActivityTimeline as jest.MockedFunction<
     typeof getUserActivityTimeline

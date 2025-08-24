@@ -2,11 +2,11 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import Hero from "./hero";
 
-jest.mock("@/lib/services/users", () => ({
+jest.mock("@/features/user-profile/services/profile", () => ({
   getUser: jest.fn(() => Promise.resolve(null)),
 }));
 
-jest.mock("./levels", () => {
+jest.mock("@/features/user-level/components/levels", () => {
   return function MockLevels({ userId, clickable }: any) {
     return <div data-testid="levels">Levels Component for {userId}</div>;
   };
