@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import UserAvatar from "@/components/user-avatar";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
+import UserAvatar from "@/features/user-profile/components/user-avatar";
 /**
  * 活動タイムライン表示コンポーネント
  *

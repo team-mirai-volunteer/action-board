@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import MyAvatar from "./my-avatar";
 
-jest.mock("@/components/user-avatar", () => ({
+jest.mock("@/features/user-profile/components/user-avatar", () => ({
   UserAvatar: ({ url, size, onUpload }: any) => (
     <div data-testid="user-avatar">
       <img src={url} width={size} height={size} alt="avatar" />

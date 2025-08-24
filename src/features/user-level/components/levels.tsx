@@ -1,8 +1,8 @@
-import UserAvatar from "@/components/user-avatar";
 import { UserTopBadge } from "@/features/user-badges/components/user-top-badge";
 import { LevelProgress } from "@/features/user-level/components/level-progress";
 import { getUserLevel } from "@/features/user-level/services/level";
-import { getProfile } from "@/lib/services/users";
+import UserAvatar from "@/features/user-profile/components/user-avatar";
+import { getProfile } from "@/features/user-profile/services/profile";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 

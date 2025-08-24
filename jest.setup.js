@@ -255,7 +255,7 @@ jest.mock("@/features/user-level/services/level", () => ({
   ),
 }));
 
-jest.mock("@/lib/services/users", () => ({
+jest.mock("@/features/user-profile/services/profile", () => ({
   getPrivateUserData: jest.fn(() =>
     Promise.resolve({
       id: "test-user-id",

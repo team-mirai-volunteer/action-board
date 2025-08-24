@@ -1,9 +1,9 @@
 import { signOutAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
+import MyAvatar from "@/features/user-profile/components/my-avatar";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import MyAvatar from "./my-avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,

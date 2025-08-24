@@ -1,7 +1,7 @@
 import "server-only";
 
+import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { getUser } from "@/lib/services/users";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import {
   executeChunkedInsert,

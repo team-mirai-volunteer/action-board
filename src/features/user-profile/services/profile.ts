@@ -1,9 +1,9 @@
 import "server-only";
 import { cache } from "react";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { createAdminClient } from "../supabase/adminClient";
 
 export const getUser = cache(async () => {
   const supabase = createClient();
