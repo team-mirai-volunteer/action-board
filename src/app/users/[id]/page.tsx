@@ -2,6 +2,10 @@ import { Card } from "@/components/ui/card";
 import { SocialBadge } from "@/components/ui/social-badge";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHistory } from "@/components/user-season-history";
+import {
+  getUserActivityTimeline,
+  getUserActivityTimelineCount,
+} from "@/features/user-activity/services/timeline";
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 /**
  * ユーザー詳細ページ
@@ -17,10 +21,6 @@ import { UserBadges } from "@/features/user-badges/components/user-badges";
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import Levels from "@/features/user-level/components/levels";
-import {
-  getUserActivityTimeline,
-  getUserActivityTimelineCount,
-} from "@/lib/services/activityTimeline";
 import {
   getCurrentSeasonId,
   getUserSeasonHistory,

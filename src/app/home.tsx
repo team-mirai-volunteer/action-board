@@ -1,10 +1,10 @@
 import NoticeBoardAlert from "@/components/NoticeBoardAlert";
-import Activities from "@/components/activities";
 import Hero from "@/components/hero";
 import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import RankingSection from "@/components/top/ranking-section";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
+import Activities from "@/features/user-activity/components/activities";
 import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";

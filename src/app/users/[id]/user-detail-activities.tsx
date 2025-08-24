@@ -14,8 +14,8 @@
  */
 "use client";
 
-import { ActivityTimeline } from "@/components/activity-timeline";
-import type { ActivityTimelineItem } from "@/lib/services/activityTimeline";
+import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
+import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { useState } from "react";
 
 interface UserDetailActivitiesProps {

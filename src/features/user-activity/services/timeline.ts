@@ -1,17 +1,7 @@
 import "server-only";
 
+import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { createClient } from "@/lib/supabase/client";
-
-export interface ActivityTimelineItem {
-  id: string;
-  user_id: string;
-  name: string;
-  address_prefecture: string | null;
-  avatar_url: string | null;
-  title: string;
-  created_at: string;
-  activity_type: string;
-}
 
 /**
  * ユーザーの活動タイムラインを取得する

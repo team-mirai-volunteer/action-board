@@ -1,5 +1,5 @@
-import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
+import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import { createClient } from "@/lib/supabase/client";
 
 export default async function Activities() {

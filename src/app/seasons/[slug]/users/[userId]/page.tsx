@@ -19,12 +19,12 @@ import { SocialBadge } from "@/components/ui/social-badge";
 import { UserMissionAchievements } from "@/components/user-mission-achievements";
 import { UserSeasonHeader } from "@/components/user-season-header";
 import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
-import Levels from "@/features/user-level/components/levels";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
-} from "@/lib/services/activityTimeline";
+} from "@/features/user-activity/services/timeline";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
+import Levels from "@/features/user-level/components/levels";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
 import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/client";

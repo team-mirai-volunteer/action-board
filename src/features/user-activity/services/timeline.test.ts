@@ -11,13 +11,13 @@
  * カバレッジ目標: 100%達成済み
  * 既存テストの改善により完全なテストカバレッジを実現
  */
-jest.unmock("@/lib/services/activityTimeline");
+jest.unmock("@/features/user-activity/services/timeline");
 
 import { createClient } from "@/lib/supabase/client";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
-} from "./activityTimeline";
+} from "./timeline";
 
 jest.mock("@/lib/supabase/client", () => ({
   createClient: jest.fn(),

@@ -1,4 +1,4 @@
-import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
+import { getUserActivityTimeline } from "@/features/user-activity/services/timeline";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
