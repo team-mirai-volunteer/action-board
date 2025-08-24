@@ -1,3 +1,9 @@
+import { Card } from "@/components/ui/card";
+import { SocialBadge } from "@/components/ui/social-badge";
+import { UserSeasonHeader } from "@/components/user-season-header";
+import { UserSeasonHistory } from "@/components/user-season-history";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -13,13 +19,7 @@
  * - 活動タイムライン
  * - 全シーズン履歴
  */
-import UserDetailActivities from "@/app/users/[id]/user-detail-activities";
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserSeasonHeader } from "@/components/user-season-header";
-import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,

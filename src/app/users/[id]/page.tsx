@@ -3,6 +3,7 @@ import { SocialBadge } from "@/components/ui/social-badge";
 import { UserSeasonHistory } from "@/components/user-season-history";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
@@ -27,7 +28,6 @@ import {
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import UserDetailActivities from "./user-detail-activities";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
