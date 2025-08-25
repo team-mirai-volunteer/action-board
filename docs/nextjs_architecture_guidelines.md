@@ -149,7 +149,7 @@ export async function privilegedOperation() {
 ```
 
 ## 📋 チェックリスト
-### ファイル作成時:
+### ファイル作成時
 - 適切なディレクトリに配置しているか
 - 実行環境を明示しているか（原則として 'use client' / 'use server' / server-only / client-only を利用する）
 - 依存関係が適切か（UIがサービス層経由でデータアクセスしているか）
