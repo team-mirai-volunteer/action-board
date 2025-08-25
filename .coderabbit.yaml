@@ -17,8 +17,6 @@ reviews:
 # Set the tone of reviews and chat. Example: 'You must use talk like Mr. T. I pity the fool who doesn't!'
 tone_instructions: |
   - 建設的で丁寧なフィードバックを心がけてください
-  - コードの改善提案を具体的に示してください
-  - セキュリティやパフォーマンスの問題は優先して指摘してください
 # Configuration for knowledge base
 knowledge_base:
   # CodeRabbit will analyse and learn from your organization's code guidelines, which you can mention in the file patterns section. These guidelines will then be used to conduct thorough code reviews.

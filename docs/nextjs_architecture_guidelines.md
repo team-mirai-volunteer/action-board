@@ -21,7 +21,8 @@ src/
 └── features/               # 機能単位のモジュール
     └── [feature-name]/
         ├── components/     # UIコンポーネント
-        ├── services/       # データアクセス層
+        ├── services/       # データアクセス層（API, DB操作, ビジネスロジック）
+        ├── actions/        # Server Actions（認可処理・フォーム処理）
         ├── constants/      # 定数定義（環境非依存）
         ├── hooks/          # React Hooks
         ├── types/          # 型定義
@@ -51,11 +52,24 @@ src/
 
 ルール:
 - ✅ サーバーサイド処理は `import 'server-only'` を必須付与
-- ✅ Server Actions は `'use server'` を付与
 - ✅ データベースアクセス・外部API呼び出し
 - ✅ ビジネスロジックの実装
 - ❌ React Hooks・DOM操作禁止
 - ℹ️ 備考：クライアント専用処理は Services ではなく utils に配置すること
+- ℹ️ 備考：Server Actions は actions に配置すること
+
+### 🎬 src/features/[feature-name]/actions/
+役割: Server Actions・認可処理・フォーム処理
+実行環境: サーバーサイド専用
+
+ルール:
+- ✅ ファイル先頭に `'use server'` を必須付与
+- ✅ Server Actions（フォーム送信処理・mutation系処理）を実装
+- ✅ 認可チェック（Authorization）を必ず行う
+  - 処理対象のデータに対して、ユーザーが操作権限を持っているか確認する
+- ✅ 必要に応じて services 層を呼び出してデータアクセスやビジネスロジックを利用
+- ❌ 直接 DB や外部APIを叩かない（services 層に委譲）
+- ❌ React Hooks・DOM操作禁止
 
 ### 🔢 src/features/[feature-name]/constants/
 役割: 機能固有の定数定義
