@@ -227,23 +227,23 @@ missions:
   - slug: github-pull-request
     title: '開発者向け: GitHubでプルリクエストを出そう'
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_github-pull-request.svg
-    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-397eiqk1g-xGljR5LdplaMod6n7sToUQ" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: あなたが作成したプルリクエストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//14_github_pull_request.png
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-slack.svg
-    content: <a href="https://team-mirai.notion.site/Slack-20af6f56bae180289341c49a2b395ea3" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: <a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
   - slug: join-street-speech
@@ -584,12 +584,12 @@ missions:
   - slug: design-create
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_design-create.svg
-    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-397eiqk1g-xGljR5LdplaMod6n7sToUQ" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
+    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: あなたが作成した成果物のURL
     ogp_image_url: null
   - slug: early-vote
