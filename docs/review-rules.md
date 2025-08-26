@@ -26,7 +26,7 @@ CodeRabbitもこれらを参考にレビューを行います。
    - コメントやドキュメント不足がないか
 
 ## 推奨スタイル
-- **アーキテクチャガイドライン**（`docs/nextjs-execution-environment.md`）を優先する。
+- **アーキテクチャガイドライン**（`docs/nextjs_architecture_guidelines.md`）を優先する。
 - **ESLint/Prettier設定**に従う
 - **Next.js App Routerのベストプラクティス**を採用
 - **Bulletproof Reactパターン**に準拠
