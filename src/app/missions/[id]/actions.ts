@@ -1,16 +1,16 @@
 "use server";
 
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { getCurrentSeasonId } from "@/lib/services/seasons";
 import {
-  type UserLevel,
   getUserXpBonus,
   grantMissionCompletionXp,
   grantXp,
-} from "@/lib/services/userLevel";
+} from "@/features/user-level/services/level";
+import type { UserLevel } from "@/features/user-level/types/level-types";
+import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
+import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { calculateMissionXp } from "@/lib/utils/utils";
 
 import {
   MAX_POSTER_COUNT,

@@ -1,3 +1,13 @@
+import { Card } from "@/components/ui/card";
+import { SocialBadge } from "@/components/ui/social-badge";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
+import {
+  getUserActivityTimeline,
+  getUserActivityTimelineCount,
+} from "@/features/user-activity/services/timeline";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
 /**
  * ユーザー詳細ページ
  *
@@ -11,23 +21,13 @@
  * - Promise.allを使用した並列データ取得
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
-import Levels from "@/components/levels";
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
-import {
-  getUserActivityTimeline,
-  getUserActivityTimelineCount,
-} from "@/lib/services/activityTimeline";
+import Levels from "@/features/user-level/components/levels";
+import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import {
   getCurrentSeasonId,
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
-import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/client";
-import UserDetailActivities from "./user-detail-activities";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;

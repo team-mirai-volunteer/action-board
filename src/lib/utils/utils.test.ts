@@ -1,14 +1,12 @@
 import {
-  calculateAge,
   calculateLevel,
   calculateMissionXp,
-  cn,
-  encodedRedirect,
   getLevelProgress,
   getXpToNextLevel,
   totalXp,
   xpDelta,
-} from "./utils";
+} from "@/features/user-level/utils/level-calculator";
+import { calculateAge, cn, encodedRedirect } from "./utils";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),

@@ -1,3 +1,7 @@
+import { Card } from "@/components/ui/card";
+import { SocialBadge } from "@/components/ui/social-badge";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -13,20 +17,16 @@
  * - 活動タイムライン
  * - 全シーズン履歴
  */
-import UserDetailActivities from "@/app/users/[id]/user-detail-activities";
-import Levels from "@/components/levels";
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import { UserSeasonHeader } from "@/components/user-season-header";
-import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
-} from "@/lib/services/activityTimeline";
+} from "@/features/user-activity/services/timeline";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
+import Levels from "@/features/user-level/components/levels";
+import { UserSeasonHeader } from "@/features/user-season/components/user-season-header";
+import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
-import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
 import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */

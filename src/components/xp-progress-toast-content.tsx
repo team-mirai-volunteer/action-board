@@ -1,9 +1,13 @@
 "use client";
 
 import { markLevelUpSeenAction } from "@/app/actions/level-up";
-import { calculateLevel, getXpToNextLevel, totalXp } from "@/lib/utils/utils";
+import { LevelUpDialog } from "@/features/user-level/components/level-up-dialog";
+import {
+  calculateLevel,
+  getXpToNextLevel,
+  totalXp,
+} from "@/features/user-level/utils/level-calculator";
 import React, { useEffect, useState } from "react";
-import { LevelUpDialog } from "./level-up-dialog";
 import { ProgressBarAnimated } from "./ui/progress-bar-animated";
 
 interface XpProgressToastContentProps {

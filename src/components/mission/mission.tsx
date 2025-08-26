@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import type { Tables } from "@/lib/types/supabase";
-import { calculateMissionXp } from "@/lib/utils/utils";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";

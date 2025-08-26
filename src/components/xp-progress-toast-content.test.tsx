@@ -8,7 +8,7 @@ import {
 import React from "react";
 import { XpProgressToastContent } from "./xp-progress-toast-content";
 
-jest.mock("@/components/level-up-dialog", () => ({
+jest.mock("@/features/user-level/components/level-up-dialog", () => ({
   LevelUpDialog: ({ isOpen, onClose, newLevel }: any) =>
     isOpen ? (
       <button type="button" data-testid="level-up-dialog" onClick={onClose}>

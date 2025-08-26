@@ -1,10 +1,10 @@
 "use server";
 
+import { recordSignupActivity } from "@/features/user-activity/services/activity";
 import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
-import { recordSignupActivity } from "@/lib/services/userActivity";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";

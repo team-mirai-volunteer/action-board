@@ -1,7 +1,7 @@
 "use server";
 
-import { markLevelUpNotificationAsSeen } from "@/lib/services/levelUpNotification";
-import { getUser } from "@/lib/services/users";
+import { markLevelUpNotificationAsSeen } from "@/features/user-level/services/level-up-notification";
+import { getUser } from "@/features/user-profile/services/profile";
 
 export async function markLevelUpSeenAction(): Promise<{
   success: boolean;
