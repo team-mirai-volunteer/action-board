@@ -8,9 +8,9 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import { onboardingDialogues } from "../constants/onboarding-texts";
 
+import type { OnboardingModalProps } from "@/features/onboarding/types/types";
 import { MOCK_MISSION } from "../constants/constants";
 import { useOnboardingState } from "../hooks/use-onboarding-state";
-import type { OnboardingModalProps } from "../types/types";
 import { OnboardingCharacter } from "./onboarding-character";
 import { OnboardingMissionDetails } from "./onboarding-mission-details";
 import { OnboardingWelcome } from "./onboarding-welcome";

@@ -2,15 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { MissionIcon } from "@/components/ui/mission-icon";
+import type { OnboardingMissionDetailsProps } from "@/features/onboarding/types/types";
 import { BUTTON_TEXT, STYLE_CLASSES } from "../constants/constants";
-import type { MockMission } from "../types/types";
 import { sanitizeHtml } from "../utils/utils";
-
-interface OnboardingMissionDetailsProps {
-  mission: MockMission;
-  isSubmissionCompleted: boolean;
-  onSubmit: () => void;
-}
 
 /**
  * オンボーディングミッション詳細コンポーネント
