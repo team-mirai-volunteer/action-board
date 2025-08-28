@@ -61,7 +61,7 @@ describe("Metrics", () => {
     it("メトリクスが正しくレンダリングされる", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
+      expect(screen.getByText("チームはやまの活動状況🚀")).toBeInTheDocument();
       expect(screen.getByText("寄付金額")).toBeInTheDocument();
       expect(screen.getByText("達成アクション数")).toBeInTheDocument();
       expect(screen.getByText("サポーター数")).toBeInTheDocument();
@@ -247,7 +247,7 @@ describe("Metrics", () => {
       );
 
       // 寄付リンク
-      const donationLink = screen.getByText("チームみらいを寄付で応援する");
+      const donationLink = screen.getByText("チームはやまを寄付で応援する");
       expect(donationLink).toBeInTheDocument();
       expect(donationLink.closest("a")).toHaveAttribute(
         "href",

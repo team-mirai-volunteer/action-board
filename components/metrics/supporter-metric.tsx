@@ -10,7 +10,7 @@ interface SupporterMetricProps {
 /**
  * サポーター数表示コンポーネント
  *
- * チームみらいのサポーター数とその増加数を表示します。
+ * チームはやまのサポーター数とその増加数を表示します。
  * 外部APIからのデータが取得できない場合は、環境変数のフォールバック値を使用します。
  */
 export function SupporterMetric({

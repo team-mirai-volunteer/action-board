@@ -1,23 +1,8 @@
+import type { UserMissionRanking } from "@/lib/services/missionsRanking";
+import type { UserRanking } from "@/lib/services/ranking";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { RankingItem } from "./ranking-item";
-
-type UserRanking = {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  rank: number | null;
-  level: number | null;
-  xp: number | null;
-};
-
-type UserMissionRanking = {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  rank: number | null;
-  total_points: number | null;
-};
 
 jest.mock("next/link", () => {
   return ({ children, href }: { children: React.ReactNode; href: string }) => (
@@ -55,6 +40,7 @@ const mockUserRanking: UserRanking = {
   rank: 1,
   level: 15,
   xp: 1500,
+  updated_at: "2024-01-01T00:00:00Z",
 };
 
 const mockUserMissionRanking: UserMissionRanking = {
@@ -63,6 +49,10 @@ const mockUserMissionRanking: UserMissionRanking = {
   address_prefecture: "東京都",
   rank: 2,
   total_points: 2500,
+  user_achievement_count: 5,
+  level: 15,
+  updated_at: "2024-01-01T00:00:00Z",
+  xp: 1500,
 };
 
 describe("RankingItem", () => {

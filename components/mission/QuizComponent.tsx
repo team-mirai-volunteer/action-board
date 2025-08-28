@@ -73,8 +73,8 @@ export default function QuizComponent({
     switch (categoryName) {
       case "政策・マニフェスト":
         return "ミッション達成！政策・マニフェストマスターですね！";
-      case "チームみらい":
-        return "ミッション達成！チームみらいマスターですね！";
+      case "チームはやま":
+        return "ミッション達成！チームはやまマスターですね！";
       case "公職選挙法":
         return "ミッション達成！公職選挙法マスターですね！";
       default:

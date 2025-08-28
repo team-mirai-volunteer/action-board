@@ -1,12 +1,13 @@
 {
   "name": "action-board",
   "version": "0.1.0",
-  "description": "チームみらい Action Board",
+  "description": "チームはやま Action Board",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "CLOUDFLARE_BUILD=true next build",
     "start": "next start",
     "types": "npx supabase gen types typescript --local > lib/types/supabase.ts && biome check --write lib/types/supabase.ts",
     "biome:check:write": "biome check --write .",

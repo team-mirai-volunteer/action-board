@@ -59,13 +59,13 @@ BEGIN
     WHERE title = '政策・マニフェストクイズ（中級2）に挑戦しよう'
         AND required_artifact_type = 'QUIZ';
     
-    -- チームみらいクイズ
+    -- チームはやまクイズ
     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
     SELECT 
         id, 
         quiz_category_id,
         3
     FROM missions 
-    WHERE title = 'チームみらいクイズ（初級）に挑戦しよう'
+    WHERE title = 'チームはやまクイズ（初級）に挑戦しよう'
         AND required_artifact_type = 'QUIZ';
 END $$;

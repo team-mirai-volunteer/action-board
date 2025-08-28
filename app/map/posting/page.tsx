@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import PostingPageClient from "./PostingPageClient";
 
 export const metadata: Metadata = {
-  title: "チームみらい機関誌配布マップ",
-  description: "チームみらい機関誌配布マップ",
+  title: "チームはやま機関誌配布マップ",
+  description: "チームはやま機関誌配布マップ",
 };
 
 export default async function PostingPage() {

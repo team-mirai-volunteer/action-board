@@ -185,14 +185,14 @@ function ConsentPhase({
       >
         次へ進む
       </Button>
-      {/* チームみらいサポーター情報 */}
+      {/* チームはやまサポーター情報 */}
       <Card className="bg-gray-50 border-gray-200 mt-4">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="text-sm text-gray-600">
-              {/* <p className="font-medium mb-1">チームみらいサポーターへの参加</p> */}
+              {/* <p className="font-medium mb-1">チームはやまサポーターへの参加</p> */}
               <p className="text-gray-600">
-                アクションボードに登録することで、サポーターとしてチームみらいを応援することができます。義務や費用は一切発生しません。
+                アクションボードに登録することで、サポーターとしてチームはやまを応援することができます。義務や費用は一切発生しません。
               </p>
             </div>
           </div>

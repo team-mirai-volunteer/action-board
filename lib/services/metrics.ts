@@ -56,7 +56,7 @@ function validateDonationData(data: unknown): data is DonationData {
 }
 
 /**
- * チームみらいサポーター数データを外部APIから取得
+ * チームはやまサポーター数データを外部APIから取得
  *
  * この関数は以下の処理を行います：
  * 1. GitHub Gistに保存されたサポーター数データを取得
@@ -115,7 +115,7 @@ export async function fetchSupporterData(): Promise<SupporterData | null> {
 }
 
 /**
- * チームみらい寄付金データを外部APIから取得
+ * チームはやま寄付金データを外部APIから取得
  *
  * この関数は以下の処理を行います：
  * 1. GitHub Gistに保存されたStripe寄付金データを取得
@@ -125,7 +125,7 @@ export async function fetchSupporterData(): Promise<SupporterData | null> {
  * 5. エラー時は適切にログ出力してnullを返却
  *
  * 寄付金データには以下が含まれます：
- * - 政治団体「チームみらい」への寄付
+ * - 政治団体「チームはやま」への寄付
  * - 安野たかひろ及び各公認候補予定者の政治団体への寄付
  *
  * @returns Promise<DonationData | null> - 成功時は寄付金データ、失敗時はnull

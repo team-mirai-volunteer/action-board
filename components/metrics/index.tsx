@@ -18,7 +18,7 @@ export { default as MetricsWithSuspense } from "./MetricsWithSuspense";
 /**
  * メトリクス表示コンポーネント
  *
- * チームみらいの活動状況を表示するメインコンポーネント
+ * チームはやまの活動状況を表示するメインコンポーネント
  * 以下のデータを統合して表示：
  * 1. サポーター数（外部API）
  * 2. 寄付金額（外部API）
@@ -63,7 +63,7 @@ export default async function Metrics() {
     : process.env.FALLBACK_UPDATE_DATE || "2025.07.03 02:20";
 
   return (
-    <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
+    <MetricsLayout title="チームはやまの活動状況🚀" lastUpdated={lastUpdated}>
       {/* サポーター数 */}
       <SupporterMetric
         data={metricsData.supporter}

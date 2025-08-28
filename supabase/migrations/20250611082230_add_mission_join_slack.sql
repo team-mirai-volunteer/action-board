@@ -4,7 +4,7 @@ VALUES
     gen_random_uuid(),
     'サポーターSlackに入ろう',
     '/img/mission_fallback.svg',
-    '<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-36k0jx72s-EUWYKNTYTjbZhUnNjCqduA" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。',
+    '<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-36k0jx72s-EUWYKNTYTjbZhUnNjCqduA" target="_blank" rel="noopener noreferrer">チームはやまサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。',
     1,
     NULL,
     'TEXT',

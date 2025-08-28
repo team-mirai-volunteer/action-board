@@ -19,7 +19,7 @@ interface DonationMetricProps {
 /**
  * 寄付金額表示コンポーネント
  *
- * チームみらいの寄付金額とその増加額を表示します。
+ * チームはやまの寄付金額とその増加額を表示します。
  * 外部APIからのデータが取得できない場合は、環境変数のフォールバック値を使用します。
  */
 export function DonationMetric({
@@ -89,7 +89,7 @@ export function DonationMetric({
               </button>
             </PopoverTrigger>
             <PopoverContent>
-              政治団体「チームみらい」への寄付と、
+              政治団体「チームはやま」への寄付と、
               <br />
               安野及び各公認候補予定者の政治団体への寄付の合計金額
             </PopoverContent>
@@ -147,7 +147,7 @@ export function DonationMetric({
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span>チームみらいを寄付で応援する</span>
+          <span>チームはやまを寄付で応援する</span>
           <svg
             className="w-3 h-3"
             fill="none"

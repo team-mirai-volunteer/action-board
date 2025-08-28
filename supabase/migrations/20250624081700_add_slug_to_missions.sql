@@ -13,14 +13,14 @@ UPDATE missions SET slug = CASE
   
   -- X (Twitter)関連
   WHEN title = '安野たかひろの公式Xをフォローしよう' THEN 'follow-anno-x'
-  WHEN title = 'チームみらいの公式Xをフォローしよう' THEN 'follow-teammirai-x'
-  WHEN title = 'Xでチームみらいに関する投稿をしよう' THEN 'x-post'
-  WHEN title = 'Xでチームみらいの投稿をリポストしよう' THEN 'x-repost'
-  WHEN title = 'X でチームみらい投稿に♡をつけよう' THEN 'x-like'
+  WHEN title = 'チームはやまの公式Xをフォローしよう' THEN 'follow-teammirai-x'
+  WHEN title = 'Xでチームはやまに関する投稿をしよう' THEN 'x-post'
+  WHEN title = 'Xでチームはやまの投稿をリポストしよう' THEN 'x-repost'
+  WHEN title = 'X でチームはやま投稿に♡をつけよう' THEN 'x-like'
   
   -- SNS関連
-  WHEN title = 'Instagram でチームみらい投稿に♡をつけよう' THEN 'instagram-like'
-  WHEN title = 'note でチームみらい記事にスキ♡をつけよう' THEN 'note-like'
+  WHEN title = 'Instagram でチームはやま投稿に♡をつけよう' THEN 'instagram-like'
+  WHEN title = 'note でチームはやま記事にスキ♡をつけよう' THEN 'note-like'
   WHEN title = '公式noteをフォローしよう' THEN 'follow-note'
   WHEN title = 'マニフェストの感想をSNSでシェアしよう' THEN 'share-manifest-sns'
   
@@ -38,19 +38,19 @@ UPDATE missions SET slug = CASE
   WHEN title = 'イベントに参加しよう' THEN 'join-event'
   WHEN title = 'イベント運営を手伝おう' THEN 'help-event-operation'
   WHEN title = '街頭演説に参加しよう' THEN 'join-street-speech'
-  WHEN title = 'チームみらいの機関誌をポスティングしよう' THEN 'posting-magazine'
-  WHEN title = 'チームみらいの政党ポスターを貼ろう' THEN 'put-up-poster'
+  WHEN title = 'チームはやまの機関誌をポスティングしよう' THEN 'posting-magazine'
+  WHEN title = 'チームはやまの政党ポスターを貼ろう' THEN 'put-up-poster'
   
   -- 開発・技術関連
   WHEN title = '開発者向け: GitHubでプルリクエストを出そう' THEN 'github-pull-request'
   
   -- クイズ関連
-  WHEN title = 'チームみらいクイズ（初級）に挑戦しよう' THEN 'quiz-teammirai-beginner'
+  WHEN title = 'チームはやまクイズ（初級）に挑戦しよう' THEN 'quiz-teammirai-beginner'
   WHEN title = '政策・マニフェストクイズ（中級）に挑戦しよう' THEN 'quiz-policy-intermediate'
   WHEN title = '政策・マニフェストクイズ（中級2）に挑戦しよう' THEN 'quiz-policy-intermediate-2'
   
   -- その他
-  WHEN title = 'チームみらいの仲間を増やそう' THEN 'referral'
+  WHEN title = 'チームはやまの仲間を増やそう' THEN 'referral'
   
   ELSE NULL
 END

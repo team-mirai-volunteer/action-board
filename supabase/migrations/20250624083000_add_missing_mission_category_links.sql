@@ -3,7 +3,7 @@
 -- DO $$
 -- BEGIN
 --     -- 「安野たかひろの公式Xをフォローしよう」を複数カテゴリに紐付け
---     -- 2. チームみらいをフォローしよう
+--     -- 2. チームはやまをフォローしよう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
 --         id,
@@ -23,7 +23,7 @@
 --     WHERE slug = 'follow-anno-x'
 --     ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
 
---     -- 「X でチームみらい投稿に♡をつけよう」を複数カテゴリに紐付け
+--     -- 「X でチームはやま投稿に♡をつけよう」を複数カテゴリに紐付け
 --     -- 4. いいねで応援しよう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
@@ -44,7 +44,7 @@
 --     WHERE slug = 'x-like'
 --     ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
 
---     -- 「note でチームみらい記事にスキ♡をつけよう」を複数カテゴリに紐付け
+--     -- 「note でチームはやま記事にスキ♡をつけよう」を複数カテゴリに紐付け
 --     -- 4. いいねで応援しよう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
@@ -66,7 +66,7 @@
 --     ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
 
 --     -- 「いどばた政策サイトでAIとチャットしよう」を複数カテゴリに紐付け
---     -- 1. チームみらいのことを知ろう
+--     -- 1. チームはやまのことを知ろう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
 --         id,
@@ -99,7 +99,7 @@
 --     ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
 
 --     -- 4. いいねで応援しよう
---     -- Instagram でチームみらい投稿に♡をつけよう
+--     -- Instagram でチームはやま投稿に♡をつけよう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
 --         id,
@@ -110,7 +110,7 @@
 --     ON CONFLICT (mission_id, category_id) DO UPDATE SET sort_no = EXCLUDED.sort_no;
 
 --     -- 6. 地域で活動しよう
---     -- チームみらいの政党ポスターを貼ろう
+--     -- チームはやまの政党ポスターを貼ろう
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
 --         id,

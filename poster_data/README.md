@@ -32,7 +32,7 @@ poster_data/
 
 3. Verify the path exists:
    ```bash
-   ls ~/Google\ Drive/Shared\ drives/チームみらい\(外部共有\)/
+   ls ~/Google\ Drive/Shared\ drives/チームはやま\(外部共有\)/
    ```
 
    If you see the folder contents, Google Drive is properly mounted.

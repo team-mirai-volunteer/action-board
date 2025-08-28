@@ -7,7 +7,7 @@ export function FeedbackSection() {
       <div className="px-4 md:container md:mx-auto text-center">
         <h2 className="text-xl font-bold mb-4">ご意見箱</h2>
         <p className="text-sm text-gray-600 mb-8 p-4">
-          チームみらいアクションボードを より良いサービスにするため、
+          チームはやまアクションボードを より良いサービスにするため、
           <br />
           皆様のご意見・ご要望をお聞かせください。
           <br />

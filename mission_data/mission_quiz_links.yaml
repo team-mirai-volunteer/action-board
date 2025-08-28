@@ -1,19 +1,19 @@
 mission_quiz_links:
   - mission_slug: quiz-teammirai-anno
     link: https://team-mir.ai/#leader
-    remark: チームみらいホームページの安野たかひろのセクション
+    remark: チームはやまホームページの安野たかひろのセクション
     display_order: 1
   - mission_slug: quiz-teammirai-vision
     link: https://team-mir.ai/#vision
-    remark: チームみらいホームページのビジョンのセクション
+    remark: チームはやまホームページのビジョンのセクション
     display_order: 1
   - mission_slug: quiz-teammirai-values
     link: https://team-mir.ai/#values
-    remark: チームみらいホームページの価値観のセクション
+    remark: チームはやまホームページの価値観のセクション
     display_order: 1
   - mission_slug: quiz-policy-vision
     link: https://policy.team-mir.ai/view/01_%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84%E3%81%AE%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3.md
-    remark: 政策マニフェストの「チームみらいのビジョン」のページ（未来をつくるための３ステップの箇所は除く）
+    remark: 政策マニフェストの「チームはやまのビジョン」のページ（未来をつくるための３ステップの箇所は除く）
     display_order: 1
   - mission_slug: quiz-policy-step1
     link: https://policy.team-mir.ai/view/10_%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%EF%BC%91%E3%80%8C%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E6%99%82%E4%BB%A3%E3%81%AE%E5%BD%93%E3%81%9F%E3%82%8A%E5%89%8D%E3%82%92%E3%82%84%E3%82%8A%E3%81%8D%E3%82%8B%E3%80%8D.md

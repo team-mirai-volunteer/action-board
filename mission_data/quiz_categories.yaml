@@ -1,12 +1,12 @@
 quiz_categories:
   - slug: teammirai
-    name: チームみらい
-    description: チームみらいの基本情報と活動に関する問題
+    name: チームはやま
+    description: チームはやまの基本情報と活動に関する問題
     display_order: 1
     is_active: true
   - slug: policy
     name: 政策・マニフェスト
-    description: チームみらいの政策とマニフェストに関する問題
+    description: チームはやまの政策とマニフェストに関する問題
     display_order: 2
     is_active: true
   - slug: electionlaw

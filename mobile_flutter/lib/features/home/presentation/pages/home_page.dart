@@ -33,7 +33,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                // チームみらいの活動状況
+                // チームはやまの活動状況
                 TeamStatsSection(),
                 // ミッションセクション
                 MissionSections(),

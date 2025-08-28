@@ -1,10 +1,10 @@
--- Xでチームみらいに関する投稿をしよう ミッションを追加
+-- Xでチームはやまに関する投稿をしよう ミッションを追加
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count, ogp_image_url, artifact_label, is_featured, is_hidden)
 VALUES (
   '8f923e4a-bc5d-4a7e-9e1f-2c8d7b6a4e9f',
-  'Xでチームみらいに関する投稿をしよう',
+  'Xでチームはやまに関する投稿をしよう',
   '/img/mission_fallback.svg',
-  'チームみらいの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームみらいへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！',
+  'チームはやまの活動について、あなたの声をXで発信してみよう！イベント参加の感想やチームはやまへの思い、何でも投稿してください。たとえば『共感した』だけでもうれしいです。政治をもっと身近に感じる第一歩を踏み出そう！',
   2,
   NULL,
   'LINK',

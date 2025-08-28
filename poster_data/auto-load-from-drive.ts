@@ -14,7 +14,7 @@ import { stdin as input, stdout as output } from "node:process";
 import * as readline from "node:readline/promises";
 
 const SOURCE_PATH =
-  "~/Google Drive/Shared drives/チームみらい(外部共有)/ポスター・ポスティングロジ/ポスター・ポスティング作業用/ポスター/ポスター掲示場CSV化/自治体";
+  "~/Google Drive/Shared drives/チームはやま(外部共有)/ポスター・ポスティングロジ/ポスター・ポスティング作業用/ポスター/ポスター掲示場CSV化/自治体";
 const SUCCESS_DATA_DIR = "poster_data/data";
 const BROKEN_DATA_DIR = "poster_data/broken_data";
 const TEMP_DIR = "poster_data/temp";

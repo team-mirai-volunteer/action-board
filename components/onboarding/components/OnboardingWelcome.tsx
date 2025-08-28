@@ -11,7 +11,7 @@ export const OnboardingWelcome: React.FC = () => {
       <div className="relative w-[40vw] h-[20vw] min-[390px]:w-[48vw] min-[390px]:h-[24vw] min-[430px]:w-[56vw] min-[430px]:h-[28vw] sm:w-[36vw] sm:h-[18vw] md:w-[20vw] md:h-[10vw] lg:w-[16vw] lg:h-[8vw] max-w-[12rem] max-h-[6rem]">
         <Image
           src="/img/logo.png"
-          alt="チームみらいロゴ"
+          alt="チームはやまロゴ"
           fill
           className="object-contain"
         />

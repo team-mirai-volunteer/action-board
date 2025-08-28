@@ -138,7 +138,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                   return FadeTransition(
                     opacity: _fadeAnimation,
                     child: const Text(
-                      'powered by チームみらい',
+                      'powered by チームはやま',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Noto Sans JP',

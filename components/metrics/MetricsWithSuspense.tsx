@@ -9,7 +9,7 @@ function MetricsSkeleton() {
       <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
         <div className="text-center mb-6">
           <h2 className="text-xl font-bold text-black mb-1">
-            チームみらいの活動状況🚀
+            チームはやまの活動状況🚀
           </h2>
           <output aria-live="polite">
             <span className="sr-only">メトリクスを読み込み中...</span>

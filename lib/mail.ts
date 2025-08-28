@@ -31,7 +31,7 @@ export async function sendMail({
 }) {
   await mg.messages
     .create(MAILGUN_DOMAIN, {
-      from: `"チームみらい" <noreply@${MAILGUN_DOMAIN}>`,
+      from: `"チームはやま" <noreply@${MAILGUN_DOMAIN}>`,
       to,
       subject,
       html,
@@ -61,7 +61,7 @@ export async function sendWelcomeMail(to: string) {
   await sendMail({
     to,
     subject:
-      "「チームみらい」アクションボードに登録いただきありがとうございます",
+      "「チームはやま」アクションボードに登録いただきありがとうございます",
     html,
   });
 }

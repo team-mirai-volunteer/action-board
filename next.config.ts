@@ -3,12 +3,23 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: process.env.STANDALONE_BUILD ? "standalone" : undefined,
+  output: process.env.STANDALONE_BUILD
+    ? "standalone"
+    : process.env.CLOUDFLARE_BUILD
+      ? "export"
+      : undefined,
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
     },
   },
+  // Cloudflare Pages compatibility
+  ...(process.env.CLOUDFLARE_BUILD && {
+    trailingSlash: true,
+    images: {
+      unoptimized: true,
+    },
+  }),
 };
 
 export default withSentryConfig(nextConfig, {

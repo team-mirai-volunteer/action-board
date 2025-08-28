@@ -34,7 +34,7 @@ export class MetricsErrorBoundary extends React.Component<
           <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
             <div className="text-center">
               <h2 className="text-xl font-bold text-black mb-2">
-                チームみらいの活動状況🚀
+                チームはやまの活動状況🚀
               </h2>
               <div role="alert" className="text-red-600 text-sm">
                 メトリクスの読み込みに失敗しました

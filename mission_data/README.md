@@ -44,7 +44,7 @@ npm run mission:sync
 ```yaml
 categories:
   - slug: "learn-about-teammirai"
-    title: "チームみらいのことを知ろう"
+    title: "チームはやまのことを知ろう"
     sort_no: 100
     category_kbn: "DEFAULT"
 ```
@@ -56,7 +56,7 @@ missions:
   - slug: "follow-anno-x"
     title: "安野たかひろの公式Xをフォローしよう"
     icon_url: "/img/mission_fallback.svg"
-    content: "新党チームみらい党首・..."
+    content: "新党チームはやま党首・..."
     difficulty: 1
     required_artifact_type: "TEXT"
     max_achievement_count: 1

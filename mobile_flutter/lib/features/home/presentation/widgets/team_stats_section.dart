@@ -32,7 +32,7 @@ class TeamStatsSection extends ConsumerWidget {
                       height: 28,
                       alignment: Alignment.center,
                       child: const Text(
-                        '🐘 チームみらいの活動状況',
+                        '🐘 チームはやまの活動状況',
                         style: TextStyle(
                           fontFamily: 'Noto Sans JP',
                           fontSize: 20,

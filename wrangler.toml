@@ -1,0 +1,34 @@
+# Cloudflare Pages Configuration for Action Board
+name = "action-board"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "out"
+
+[env.production]
+name = "action-board-production"
+
+[env.staging]
+name = "action-board-staging"
+
+# Build configuration
+[build]
+command = "npm run build:cloudflare"
+cwd = "."
+
+# Environment variables (these should be set in Cloudflare dashboard)
+# Required environment variables:
+# NEXT_PUBLIC_SUPABASE_URL
+# NEXT_PUBLIC_SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+# NEXT_PUBLIC_SENTRY_DSN
+# NEXT_PUBLIC_SENTRY_ENVIRONMENT
+# NEXT_PUBLIC_GA_ID
+# NEXT_PUBLIC_APP_ORIGIN
+# SITE_URL
+# ADDITIONAL_REDIRECT_URLS
+# LINE_CLIENT_SECRET
+# NEXT_PUBLIC_LINE_CLIENT_ID
+# MAILGUN_API_KEY
+# MAILGUN_DOMAIN
+# BATCH_ADMIN_KEY
+# HUBSPOT_API_KEY
+# HUBSPOT_CONTACT_LIST_ID

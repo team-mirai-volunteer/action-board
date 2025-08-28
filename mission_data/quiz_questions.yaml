@@ -1,5 +1,5 @@
 quiz_questions:
-  # チームみらい（安野編）
+  # チームはやま（安野編）
   - id: 95bdeea3-f6b4-41ff-a66b-3e627ec52af9
     category_slug: teammirai
     mission_slug: quiz-teammirai-anno
@@ -31,7 +31,7 @@ quiz_questions:
     option1: MNTSQ（モンテスキュー）
     option2: GovTech東京
     option3: BEDORE（現PKSHA Communication）
-    option4: チームみらい
+    option4: チームはやま
     correct_answer: 3
     explanation: 2016年にAIチャットボットの株式会社BEDORE（現PKSHA Communication）を創業。2018年にリーガルテックのMNTSQ株式会社を共同創業。
     question_order: 3
@@ -49,11 +49,11 @@ quiz_questions:
     question_order: 4
     is_active: true
 
-  # チームみらい（ビジョン編）
+  # チームはやま（ビジョン編）
   - id: d43afcb5-b902-4f94-9bb2-09a7f399b21c
     category_slug: teammirai
     mission_slug: quiz-teammirai-vision
-    question: チームみらいが考える「テクノロジーと政治」の理想的な関係はどれ？
+    question: チームはやまが考える「テクノロジーと政治」の理想的な関係はどれ？
     option1: テクノロジーの導入はコストがかかるので慎重にすべき
     option2: 民間は進んでいるが、政治は古いやり方を守るべき
     option3: 行政は人の手による手続きの方が信頼できる
@@ -65,33 +65,33 @@ quiz_questions:
   - id: 9c75c9fd-e3ef-4861-84b0-736d351d1b47
     category_slug: teammirai
     mission_slug: quiz-teammirai-vision
-    question: チームみらいが描く「日本の未来」に最も近いイメージは？
+    question: チームはやまが描く「日本の未来」に最も近いイメージは？
     option1: 過去の成功に学び、今の水準を維持すること
     option2: 再分配政策を最優先に、成長戦略は二の次にする
     option3: 科学・技術・文化に投資し、未来は明るいと信じられる国へ
     option4: 財政赤字に対応するために全世代で我慢する社会
     correct_answer: 3
-    explanation: チームみらいは、科学技術への投資、新産業の育成、文化の振興によって、未来は明るいと信じられる国を目指します。
+    explanation: チームはやまは、科学技術への投資、新産業の育成、文化の振興によって、未来は明るいと信じられる国を目指します。
     question_order: 2
     is_active: true
   - id: 4d3b0cf3-1a49-47a7-bcfc-9e6bc44e2a3d
     category_slug: teammirai
     mission_slug: quiz-teammirai-vision
-    question: チームみらいが目指す「変化に強い社会」の特徴は？
+    question: チームはやまが目指す「変化に強い社会」の特徴は？
     option1: 一度決めた制度を長く守り抜くこと
     option2: 柔軟に変化しながらも安心・安全を守る社会
     option3: 外部の変化をなるべく受け入れない姿勢
     option4: グローバル競争よりも国内優先の政策を徹底する
     correct_answer: 2
-    explanation: チームみらいは、私たちの暮らしが変わらず安心安全なものであるために、変わり続けることができるしなやかな社会づくりを目指します。
+    explanation: チームはやまは、私たちの暮らしが変わらず安心安全なものであるために、変わり続けることができるしなやかな社会づくりを目指します。
     question_order: 3
     is_active: true
 
-  # チームみらい（価値観編）
+  # チームはやま（価値観編）
   - id: f3a7269f-8eb0-4727-a9b0-5b1ffbdc1c29
     category_slug: teammirai
     mission_slug: quiz-teammirai-values
-    question: チームみらいが大切にしている「実行力」に関する価値観はどれ？
+    question: チームはやまが大切にしている「実行力」に関する価値観はどれ？
     option1: 指示を待ってから動く
     option2: 完璧に準備してから動く
     option3: 他人に任せて様子を見る
@@ -104,7 +104,7 @@ quiz_questions:
   - id: 6516e0f1-3b23-4b54-92e2-b35805dcd270
     category_slug: teammirai
     mission_slug: quiz-teammirai-values
-    question: チームみらいが重視する「透明性」に最も近い価値観はどれ？
+    question: チームはやまが重視する「透明性」に最も近い価値観はどれ？
     option1: 決定はトップだけで決める
     option2: 意思決定やプロセスをオープンにする
     option3: 内輪での話は外に出さない
@@ -117,7 +117,7 @@ quiz_questions:
   - id: 33d4e742-4ab4-4f5f-96d3-2cf56b9ae9c5
     category_slug: teammirai
     mission_slug: quiz-teammirai-values
-    question: チームみらいの姿勢として「他党や政治家との関わり方」で正しいのは？
+    question: チームはやまの姿勢として「他党や政治家との関わり方」で正しいのは？
     option1: ライバルとは距離を置く
     option2: 相手の弱点を突いて差別化する
     option3: 他の政党も未来をつくる仲間と捉える
@@ -130,7 +130,7 @@ quiz_questions:
   - id: 0a1c2454-cd2f-49e1-bb92-76cb3d1b709f
     category_slug: teammirai
     mission_slug: quiz-teammirai-values
-    question: チームみらいが避けたいコミュニケーションのあり方は？
+    question: チームはやまが避けたいコミュニケーションのあり方は？
     option1: 解決策を中心に提案する
     option2: 感情ではなくデータで語る
     option3: 分断を煽る
@@ -143,7 +143,7 @@ quiz_questions:
   - id: 10e51a96-74e3-4b58-9561-bac0a6b87b01
     category_slug: teammirai
     mission_slug: quiz-teammirai-values
-    question: チームみらいが意思決定する際に大切にしているスタンスは？
+    question: チームはやまが意思決定する際に大切にしているスタンスは？
     option1: 一度決めたら変えない
     option2: 多様な意見を聞いて柔軟に改善する
     option3: できるだけ早く一つの正解を選ぶ
@@ -468,7 +468,7 @@ quiz_questions:
     option3: "資料の封入作業を手伝う"
     option4: "事務所内の掃除をする"
     correct_answer: 1
-    explanation: "18歳未満は選挙運動（投票依頼を伴う行為）が禁止されているため。電話番など機械的労務は適法とされるが、チームみらいでは安全のため未成年者の参加はお断りしている。"
+    explanation: "18歳未満は選挙運動（投票依頼を伴う行為）が禁止されているため。電話番など機械的労務は適法とされるが、チームはやまでは安全のため未成年者の参加はお断りしている。"
     question_order: 3
     is_active: true
 
@@ -542,7 +542,7 @@ quiz_questions:
   - id: "6c4ceeb2-fad5-4adf-8c3b-9e1e02525d99"
     category_slug: "electionlaw"
     mission_slug: "quiz-electionlaw-electionday"
-    question: "投票日当日にサポーターが Instagram ストーリーで「#チームみらい必勝」と投票を促す投稿をすることは？"
+    question: "投票日当日にサポーターが Instagram ストーリーで「#チームはやま必勝」と投票を促す投稿をすることは？"
     option1: "投票日当日の選挙運動として禁止される"
     option2: "24時間で消える投稿なので問題ない"
     option3: "外国語で書けば合法"

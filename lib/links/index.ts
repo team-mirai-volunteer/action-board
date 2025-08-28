@@ -26,8 +26,8 @@ export const EXTERNAL_LINKS = {
   threads_anno_takahiro: "https://www.threads.com/@annotakahiro2024",
 
   // SNS指名検索
-  x_search_team_mirai: "https://x.com/search?q=%23チームみらい",
-  note_search_team_mirai: "https://note.com/search?q=チームみらい",
+  x_search_team_mirai: "https://x.com/search?q=%23チームはやま",
+  note_search_team_mirai: "https://note.com/search?q=チームはやま",
   youtube_search_team_mirai:
     "https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84",
 

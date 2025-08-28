@@ -1,0 +1,48 @@
+# Production Supabase Configuration for Action Board
+# This configuration should be used for production Supabase projects
+
+project_id = "action-board-production"
+
+[api]
+enabled = true
+# Production API configuration
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# Production database configuration
+major_version = 15
+
+[db.vault]
+# Production secrets configuration
+# These should be set in Supabase dashboard -> Settings -> Vault
+batch_admin_key = "vault(batch_admin_key)"
+line_client_secret = "vault(line_client_secret)"
+mailgun_api_key = "vault(mailgun_api_key)"
+sentry_auth_token = "vault(sentry_auth_token)"
+hubspot_api_key = "vault(hubspot_api_key)"
+
+[auth]
+enabled = true
+# Production auth configuration
+site_url = "https://your-domain.pages.dev"
+additional_redirect_urls = ["https://your-domain.pages.dev"]
+
+[auth.email]
+# Enable email confirmations in production
+enable_confirmations = true
+
+[auth.sms]
+# SMS configuration for production
+enable_confirmations = true
+
+# Production edge functions configuration
+[functions]
+verify_jwt = false
+
+# Storage configuration for production
+[storage]
+# Configure storage buckets and policies as needed
+file_size_limit = "50MB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/gif", "image/webp"]

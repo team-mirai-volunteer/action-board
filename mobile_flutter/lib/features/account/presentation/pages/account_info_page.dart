@@ -447,7 +447,7 @@ class AccountInfoPage extends ConsumerWidget {
                             child: _buildTimelineItem(
                               context,
                               avatarUrl: profile.avatarUrl,
-                              text: '「チームみらいの機関誌をポスティングしよう」を達成しました！',
+                              text: '「チームはやまの機関誌をポスティングしよう」を達成しました！',
                               timeAgo: timeAgo,
                             ),
                           );

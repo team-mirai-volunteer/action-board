@@ -67,3 +67,13 @@ temp
 
 # csv export
 users-prefecture-export.csv
+
+# Claude Code and temp directories
+.serena/
+.tmp/
+
+# Lock files (keeping only npm)
+bun.lock
+
+# Backup files
+~

@@ -14,7 +14,7 @@ WHERE id = 'b8f24e3d-1a9b-4c5d-8e2f-9a3b4c5d6e7f';
 -- DECLARE
 --     new_quiz_category_id UUID := '720b511c-8be3-8e0c-e2ae-d95be1613281';
 -- BEGIN
---     -- チームみらいクイズ（初級）
+--     -- チームはやまクイズ（初級）
 --     INSERT INTO mission_category_link (mission_id, category_id, sort_no)
 --     SELECT
 --         id,

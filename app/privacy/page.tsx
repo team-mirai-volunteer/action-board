@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
           プライバシーポリシー
         </h1>
         <p className="text-sm-custom font-normal text-black text-justify">
-          政治団体「チームみらい」（以下「当団体」といいます）は、当団体が提供するウェブサービス「アクションボード」（以下「本サービス」といいます）において取得する個人情報を、以下の方針に基づき適切に取り扱います。
+          政治団体「チームはやま」（以下「当団体」といいます）は、当団体が提供するウェブサービス「アクションボード」（以下「本サービス」といいます）において取得する個人情報を、以下の方針に基づき適切に取り扱います。
         </p>
       </div>
 
@@ -167,7 +167,7 @@ export default function PrivacyPolicy() {
               本ポリシーに関するお問い合わせは、以下の連絡先までお願いいたします。
             </p>
             <div className="space-y-1">
-              <p className="font-medium text-gray-900">チームみらい</p>
+              <p className="font-medium text-gray-900">チームはやま</p>
               <p className="text-gray-700">
                 <a
                   href="mailto:info@team-mir.ai"

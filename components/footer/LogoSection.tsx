@@ -9,7 +9,7 @@ export function LogoSection() {
         <Link href="/" className="inline-block">
           <Image
             src="/img/footer_logo.webp"
-            alt="チームみらい"
+            alt="チームはやま"
             width={FOOTER_IMAGE_SIZES.logo.width}
             height={FOOTER_IMAGE_SIZES.logo.height}
             className="mx-auto"

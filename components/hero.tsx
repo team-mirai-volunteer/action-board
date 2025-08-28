@@ -37,7 +37,7 @@ export default async function Hero() {
           <div className="flex justify-center mb-8">
             <Image
               src="/img/logo.png"
-              alt="チームみらい"
+              alt="チームはやま"
               width={143}
               height={120}
               sizes="100vw"
@@ -78,7 +78,7 @@ export default async function Hero() {
         <div className="relative w-full max-w-[1080px] h-[224px]">
           <Image
             src="/img/hero-people.svg"
-            alt="チームみらいの仲間たち"
+            alt="チームはやまの仲間たち"
             fill
             className="object-contain object-bottom"
             priority
