@@ -10,7 +10,6 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
 
-// オンボーディングミッションカードのProps
 export interface OnboardingMissionCardProps {
   mission: Omit<Tables<"missions">, "slug">;
   achievementsCount?: number;
