@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import type { OnboardingCharacterProps } from "@/features/onboarding/types/types";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -10,6 +9,13 @@ import {
 } from "../constants/constants";
 import { onboardingDialogues } from "../constants/onboarding-texts";
 import { getButtonText, isFinalScreen, sanitizeHtml } from "../utils/utils";
+
+export interface OnboardingCharacterProps {
+  currentDialogue: number;
+  isAnimating: boolean;
+  onNext: () => void;
+  onScrollDown: () => void;
+}
 
 /**
  * オンボーディングキャラクターコンポーネント（期日前投票専用）

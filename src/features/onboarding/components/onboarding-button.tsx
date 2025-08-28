@@ -1,10 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { OnboardingButtonProps } from "@/features/onboarding/types/types";
 import { Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { OnboardingModal } from "./onboarding-modal";
+
+export interface OnboardingButtonProps {
+  children?: ReactNode;
+  variant?: "default" | "outline" | "link";
+  className?: string;
+}
 
 export function OnboardingButton({
   children = "使い方を見る",

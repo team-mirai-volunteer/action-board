@@ -6,14 +6,17 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { onboardingDialogues } from "../constants/onboarding-texts";
-
-import type { OnboardingModalProps } from "@/features/onboarding/types/types";
 import { MOCK_MISSION } from "../constants/constants";
+import { onboardingDialogues } from "../constants/onboarding-texts";
 import { useOnboardingState } from "../hooks/use-onboarding-state";
 import { OnboardingCharacter } from "./onboarding-character";
 import { OnboardingMissionDetails } from "./onboarding-mission-details";
 import { OnboardingWelcome } from "./onboarding-welcome";
+
+export interface OnboardingModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
 /**
  * オンボーディングモーダルコンポーネント
