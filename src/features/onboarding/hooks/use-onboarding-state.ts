@@ -1,8 +1,10 @@
+"use client";
+
 import type {
   UseOnboardingActions,
   UseOnboardingState,
 } from "@/features/onboarding/types/types";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { ANIMATION_DURATION } from "../constants/constants";
 import { onboardingDialogues } from "../constants/onboarding-texts";
 import { calculateDefaultScrollPosition } from "../utils/utils";
