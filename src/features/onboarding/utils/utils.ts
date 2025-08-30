@@ -46,24 +46,6 @@ export const getButtonText = (
 };
 
 /**
- * スクロール位置を計算
- */
-export const calculateScrollPosition = (
-  container: HTMLElement,
-  targetElement: HTMLElement | null,
-  offset = 20,
-): number => {
-  if (!targetElement) return 0;
-
-  const cardBottom = targetElement.getBoundingClientRect().bottom;
-  const containerTop = container.getBoundingClientRect().top;
-  const scrollAmount =
-    cardBottom - containerTop - container.clientHeight + offset;
-
-  return Math.max(0, scrollAmount);
-};
-
-/**
  * デフォルトスクロール位置を計算
  */
 export const calculateDefaultScrollPosition = (

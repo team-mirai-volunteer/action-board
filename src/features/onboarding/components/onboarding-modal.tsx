@@ -10,10 +10,14 @@ import { onboardingDialogues } from "../constants/onboarding-texts";
 
 import { MOCK_MISSION } from "../constants/constants";
 import { useOnboardingState } from "../hooks/use-onboarding-state";
-import type { OnboardingModalProps } from "../types/types";
 import { OnboardingCharacter } from "./onboarding-character";
 import { OnboardingMissionDetails } from "./onboarding-mission-details";
 import { OnboardingWelcome } from "./onboarding-welcome";
+
+export interface OnboardingModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
 /**
  * オンボーディングモーダルコンポーネント

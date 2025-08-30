@@ -20,12 +20,6 @@ export interface MockMission {
   ogp_image_url: string | null;
 }
 
-// オンボーディングモーダルのProps
-export interface OnboardingModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
 // フック型
 export interface UseOnboardingState {
   currentDialogue: number;
@@ -39,4 +33,13 @@ export interface UseOnboardingActions {
   handleSubmit: () => void;
   handleScrollDown: () => void;
   handleOpenChange: (open: boolean) => void;
+}
+
+// オンボーディングダイアログの型
+export interface OnboardingDialogue {
+  id: number;
+  text: string;
+  isWelcome: boolean;
+  showMissionCard?: boolean;
+  showMissionDetails?: boolean;
 }
