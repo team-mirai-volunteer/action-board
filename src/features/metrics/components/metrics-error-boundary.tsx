@@ -1,10 +1,14 @@
 "use client";
 
-import type {
-  MetricsErrorBoundaryProps,
-  MetricsErrorBoundaryState,
-} from "@/features/metrics/types/metrics-types";
 import React from "react";
+
+interface MetricsErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface MetricsErrorBoundaryState {
+  hasError: boolean;
+}
 
 export class MetricsErrorBoundary extends React.Component<
   MetricsErrorBoundaryProps,
