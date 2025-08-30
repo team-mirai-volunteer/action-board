@@ -14,6 +14,8 @@
 - 初めての貢献に適したタスクには`good first issue`ラベルが付いています
 
 ## 必要な環境
+> [!TIP]
+> devcontainer を使用すると `cp .env.example .env.local` まで完了するので `supabase start` 実行するだけで立ち上がります。
 
 - Node.js
 - Docker
