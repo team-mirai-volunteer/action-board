@@ -1,5 +1,11 @@
-import type { AchievementMetricProps } from "@/features/metrics/types/metrics-types";
+import type { AchievementData } from "@/features/metrics/types/metrics-types";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
+
+interface AchievementMetricProps {
+  data: AchievementData | null;
+  fallbackTotal?: number;
+  fallbackToday?: number;
+}
 
 /**
  * アクション達成数表示コンポーネント
@@ -12,8 +18,8 @@ export function AchievementMetric({
   fallbackTotal = 0,
   fallbackToday = 0,
 }: AchievementMetricProps) {
-  const achievementCount = data.totalCount ?? fallbackTotal;
-  const todayAchievementCount = data.todayCount ?? fallbackToday;
+  const achievementCount = data?.totalCount ?? fallbackTotal;
+  const todayAchievementCount = data?.todayCount ?? fallbackToday;
 
   return (
     <div className="flex items-center justify-between py-6">

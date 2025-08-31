@@ -1,5 +1,10 @@
-import type { MetricsLayoutProps } from "@/features/metrics/types/metrics-types";
 import type React from "react";
+
+interface MetricsLayoutProps {
+  children: React.ReactNode;
+  title: string;
+  lastUpdated: string;
+}
 
 /**
  * メトリクス表示レイアウトコンポーネント
