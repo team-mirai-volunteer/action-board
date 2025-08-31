@@ -1,0 +1,28 @@
+# CodeRabbit公式サイトのQuick Start Templatesから引用
+# https://docs.coderabbit.ai/reference/yaml-template#quick-start-templates
+
+# Set the language for docstrings by using the corresponding ISO language code.
+language: "ja"
+# Settings related to reviews.
+reviews:
+  # Set the profile for reviews. Assertive profile yields more feedback, that may be considered nitpicky.
+  profile: "chill"
+  # Generate a high level summary of the changes in the PR/MR description.
+  high_level_summary: true
+  # Automatic Review | Automatic code review
+  auto_review:
+    enabled: true
+    # Review draft PRs/MRs.
+    drafts: true
+# Set the tone of reviews and chat. Example: 'You must use talk like Mr. T. I pity the fool who doesn't!'
+tone_instructions: |
+  - 建設的で丁寧なフィードバックを心がけてください
+# Configuration for knowledge base
+knowledge_base:
+  # CodeRabbit will analyse and learn from your organization's code guidelines, which you can mention in the file patterns section. These guidelines will then be used to conduct thorough code reviews.
+  code_guidelines:
+    # Enabled | Enable CodeRabbit to enforce your organization's coding standards during reviews.
+    enabled: true
+    # File Patterns | Specify files for your coding guideline documents in this section. CodeRabbit will scan these files to understand your team's standards and apply them during code reviews. Multiple files supported. File names are case-sensitive. Common files like: (**/.cursorrules, .github/copilot-instructions.md, .github/instructions/*.instructions.md, **/CLAUDE.md, **/GEMINI.md, **/.cursor/rules/*, **/.windsurfrules, **/.clinerules/*, **/.rules/*, **/AGENT.md) are included by default.
+    filePatterns:
+      - docs/*.md # docsディレクトリ配下のMarkdownファイルをガイドラインとして対象
