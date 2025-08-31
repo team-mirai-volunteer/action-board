@@ -1,7 +1,7 @@
 # Cloudflare Pages Configuration for Action Board
 name = "action-board"
 compatibility_date = "2024-09-23"
-pages_build_output_dir = "out"
+pages_build_output_dir = ".vercel/output/static"
 
 [env.production]
 name = "action-board-production"
@@ -11,7 +11,7 @@ name = "action-board-staging"
 
 # Build configuration
 [build]
-command = "npm run build:cloudflare"
+command = "npm run build:pages"
 cwd = "."
 
 # Environment variables (these should be set in Cloudflare dashboard)

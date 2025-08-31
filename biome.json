@@ -8,13 +8,15 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
+      "**/.vercel/**",
       "**/.next/**",
       "**/node_modules/**",
       "**/supabase/.temp/**",
       "**/playwright-report/**",
       "**/coverage/**",
       "**/mobile_flutter/**",
-      "**/tests/**"
+      "**/tests/**",
+      "**/bun/**"
     ]
   },
   "formatter": {
@@ -44,7 +46,6 @@
       }
     }
   ],
-
   "javascript": {
     "formatter": {
       "quoteStyle": "double"

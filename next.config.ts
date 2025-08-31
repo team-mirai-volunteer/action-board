@@ -12,12 +12,24 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+    // Disable client-side trace metadata for Cloudflare
+    clientTraceMetadata: process.env.CLOUDFLARE_BUILD
+      ? undefined
+      : ["function"],
   },
   // Cloudflare Pages compatibility
   ...(process.env.CLOUDFLARE_BUILD && {
     trailingSlash: true,
     images: {
       unoptimized: true,
+    },
+    // Skip type checking during Cloudflare build (handle separately)
+    typescript: {
+      ignoreBuildErrors: false,
+    },
+    // Skip ESLint during Cloudflare build (handle separately)
+    eslint: {
+      ignoreDuringBuilds: false,
     },
   }),
 };
