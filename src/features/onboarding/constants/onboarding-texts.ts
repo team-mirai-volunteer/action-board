@@ -1,4 +1,10 @@
-import type { OnboardingDialogue } from "@/features/onboarding/types/types";
+interface OnboardingDialogue {
+  id: number;
+  text: string;
+  isWelcome: boolean;
+  showMissionCard?: boolean;
+  showMissionDetails?: boolean;
+}
 
 export const onboardingDialogues: OnboardingDialogue[] = [
   {

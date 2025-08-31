@@ -34,12 +34,3 @@ export interface UseOnboardingActions {
   handleScrollDown: () => void;
   handleOpenChange: (open: boolean) => void;
 }
-
-// オンボーディングダイアログの型
-export interface OnboardingDialogue {
-  id: number;
-  text: string;
-  isWelcome: boolean;
-  showMissionCard?: boolean;
-  showMissionDetails?: boolean;
-}
