@@ -2,12 +2,11 @@ import type { Page } from "@playwright/test";
 import { assertAuthState, expect, test } from "../e2e-test-helpers";
 
 async function testPrefectureNavigation(page: Page, name: string, url: string) {
-  await expect(
-    page.locator("a").filter({ hasText: new RegExp(name) }),
-  ).toBeVisible({ timeout: 10000 });
-  await page.getByText(name).click();
-  const pattern = new RegExp(`${url.replace(/\/$/, "")}\/?`);
-  await expect(page).toHaveURL(pattern, { timeout: 10000 });
+  const link = page.getByRole("link", { name });
+  await expect(link).toBeVisible({ timeout: 10000 });
+  await link.click();
+
+  await expect(page).toHaveURL(url, { timeout: 10000 });
 }
 
 test.describe("ポスター掲示板マップのe2eテスト", () => {
@@ -25,18 +24,18 @@ test.describe("ポスター掲示板マップのe2eテスト", () => {
 
     // 各都道府県マップに遷移（簡潔化）
     const prefectureTests = [
-      { name: "北海道", url: "/map/poster/hokkaido/" },
-      { name: "宮城県", url: "/map/poster/miyagi/" },
-      { name: "埼玉県", url: "/map/poster/saitama/" },
-      { name: "千葉県", url: "/map/poster/chiba/" },
-      { name: "東京都", url: "/map/poster/tokyo/" },
-      { name: "神奈川県", url: "/map/poster/kanagawa/" },
-      { name: "長野県", url: "/map/poster/nagano/" },
-      { name: "愛知県", url: "/map/poster/aichi/" },
-      { name: "大阪府", url: "/map/poster/osaka/" },
-      { name: "兵庫県", url: "/map/poster/hyogo/" },
-      { name: "愛媛県", url: "/map/poster/ehime/" },
-      { name: "福岡県", url: "/map/poster/fukuoka/" },
+      { name: "北海道", url: "/map/poster/hokkaido" },
+      { name: "宮城県", url: "/map/poster/miyagi" },
+      { name: "埼玉県", url: "/map/poster/saitama" },
+      { name: "千葉県", url: "/map/poster/chiba" },
+      { name: "東京都", url: "/map/poster/tokyo" },
+      { name: "神奈川県", url: "/map/poster/kanagawa" },
+      { name: "長野県", url: "/map/poster/nagano" },
+      { name: "愛知県", url: "/map/poster/aichi" },
+      { name: "大阪府", url: "/map/poster/osaka" },
+      { name: "兵庫県", url: "/map/poster/hyogo" },
+      { name: "愛媛県", url: "/map/poster/ehime" },
+      { name: "福岡県", url: "/map/poster/fukuoka" },
     ];
 
     for (const { name, url } of prefectureTests) {
