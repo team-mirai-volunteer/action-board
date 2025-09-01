@@ -39,12 +39,12 @@ test.describe("ポスター掲示板マップのe2eテスト", () => {
     ];
 
     for (const { name, url } of prefectureTests) {
-      await signedInPage.goto("/map/poster", { waitUntil: "domcontentloaded" });
+      await signedInPage.goto("/map/poster");
       await testPrefectureNavigation(signedInPage, name, url);
     }
 
     // 一覧に戻って「ミッション一覧に戻る」を確認
-    await signedInPage.goto("/map/poster", { waitUntil: "domcontentloaded" });
+    await signedInPage.goto("/map/poster");
 
     // ミッション一覧に戻る
     await signedInPage
