@@ -12,7 +12,6 @@ import { UsersRound } from "lucide-react";
 
 interface OnboardingMissionCardProps {
   mission: Omit<Tables<"missions">, "slug">;
-  achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
   onCardClick?: () => void;
@@ -20,7 +19,6 @@ interface OnboardingMissionCardProps {
 
 export default function OnboardingMissionCard({
   mission,
-  achieved,
   achievementsCount,
   userAchievementCount = 0,
   onCardClick,

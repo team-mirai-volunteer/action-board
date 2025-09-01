@@ -1,4 +1,4 @@
-export interface OnboardingDialogue {
+interface OnboardingDialogue {
   id: number;
   text: string;
   isWelcome: boolean;
