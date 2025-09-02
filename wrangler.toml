@@ -6,13 +6,8 @@ pages_build_output_dir = ".vercel/output/static"
 [env.production]
 name = "action-board-production"
 
-[env.staging]
-name = "action-board-staging"
-
-# Build configuration
-[build]
-command = "npm run build:pages"
-cwd = "."
+[env.preview]
+name = "action-board-preview"
 
 # Environment variables (these should be set in Cloudflare dashboard)
 # Required environment variables:
