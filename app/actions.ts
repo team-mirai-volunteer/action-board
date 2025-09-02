@@ -1,6 +1,16 @@
 "use server";
 
-import { randomBytes } from "node:crypto";
+// Edge-compatible crypto utilities
+function generateRandomString(length: number): string {
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+  // Convert to base64 - Edge compatible approach
+  const binaryString = Array.from(array)
+    .map((byte) => String.fromCharCode(byte))
+    .join("");
+  return btoa(binaryString);
+}
+
 import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
@@ -678,7 +688,7 @@ export async function handleLineAuthAction(
     }
 
     // 5. 一時パスワードを設定
-    const tempPassword = randomBytes(32).toString("base64");
+    const tempPassword = generateRandomString(32);
 
     const { error: passwordError } = await supabase.auth.admin.updateUserById(
       userId,

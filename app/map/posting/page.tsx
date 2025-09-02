@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PostingPageClient from "./PostingPageClient";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "チームはやま機関誌配布マップ",
   description: "チームはやま機関誌配布マップ",

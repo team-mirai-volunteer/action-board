@@ -11,6 +11,8 @@ import { getUserPrefecturesRanking } from "@/lib/services/prefecturesRanking";
 import { getMyProfile } from "@/lib/services/users";
 import { createClient } from "@/lib/supabase/server";
 
+export const runtime = "edge";
+
 interface PageProps {
   searchParams: Promise<{
     prefecture?: string;

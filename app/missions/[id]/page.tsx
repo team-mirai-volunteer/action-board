@@ -30,6 +30,8 @@ import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissio
 import { getMissionPageData } from "./_lib/data";
 import { getQuizQuestionsAction } from "./actions";
 
+export const runtime = "edge";
+
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
   params: Promise<{ id: string }>;

@@ -4,6 +4,8 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+export const runtime = "edge";
+
 export default async function ResetPassword(props: {
   searchParams: Promise<Message>;
 }) {

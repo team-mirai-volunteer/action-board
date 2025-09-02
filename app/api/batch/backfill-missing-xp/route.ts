@@ -4,6 +4,8 @@ import { executeChunkedQuery } from "@/lib/utils/supabase-utils";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import { type NextRequest, NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 // 型定義を明示（Supabaseの!innerJOINが配列を返す可能性を考慮）
 type AchievementWithMission = {
   id: string;

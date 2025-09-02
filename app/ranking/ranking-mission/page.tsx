@@ -13,6 +13,8 @@ import {
 } from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
+export const runtime = "edge";
+
 interface PageProps {
   searchParams: Promise<{
     missionId?: string;

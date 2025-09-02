@@ -25,6 +25,8 @@ import { getUserRepeatableMissionAchievements } from "@/lib/services/userMission
 import { createClient } from "@/lib/supabase/server";
 import UserDetailActivities from "./user-detail-activities";
 
+export const runtime = "edge";
+
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
 

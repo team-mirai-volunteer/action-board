@@ -8,6 +8,8 @@ import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/server";
 
+export const runtime = "edge";
+
 interface PageProps {
   searchParams: Promise<{
     period?: RankingPeriod;

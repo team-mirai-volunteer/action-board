@@ -71,6 +71,19 @@ After deployment:
 3. Verify that data is loading from Supabase
 4. Check browser console for any errors
 
+## Edge Runtime Configuration
+
+All routes and API endpoints have been configured to use Edge Runtime for Cloudflare compatibility:
+- API routes include `export const runtime = 'edge'`
+- Dynamic pages include `export const runtime = 'edge'`
+- Node.js-specific modules have been replaced with Edge-compatible alternatives
+
+### Important Changes Made
+
+1. **Crypto Module**: Replaced `node:crypto` with Web Crypto API
+2. **File System**: Replaced file reads with inline templates
+3. **Static Files**: Moved icon files from `app/` to `public/`
+
 ## Troubleshooting
 
 ### Build Failures

@@ -1,10 +1,11 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+// Edge Runtime compatible - removed Node.js file system imports
 import { getMissionPageData } from "@/app/missions/[id]/_lib/data";
 import { sanitizeImageUrl } from "@/lib/metadata";
 import { Noto_Sans_JP } from "next/font/google";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
+
+export const runtime = "edge";
 
 // キャッシュ用Mapを定義（メモリキャッシュ）- completeタイプのみキャッシュ
 const MAX_CACHE_SIZE = 100;
@@ -78,25 +79,20 @@ export async function GET(
     }
   }
 
-  let baseImageBase64 = "";
+  // Use public URLs instead of file system for Edge Runtime compatibility
+  let baseImageUrl = "";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_ORIGIN || "https://action.team-hayama.jp";
 
-  try {
-    // ベース画像を読み込み
-    let baseImageFileName = "";
-    if (isVotingMission) {
-      baseImageFileName = "public/img/ogp_mission_vote.png";
-    } else if (type === "complete") {
-      baseImageFileName = "public/img/ogp_mission_complete_base.png";
-    } else {
-      baseImageFileName = "public/img/ogp_mission_base.png";
-    }
-    const baseImagePath = join(process.cwd(), baseImageFileName);
-    const baseImageBuffer = await readFile(baseImagePath);
-    baseImageBase64 = `data:image/png;base64,${baseImageBuffer.toString("base64")}`;
-  } catch (error) {
-    console.error("Base image loading failed:", error);
-    return new Response("Base image not found", { status: 500 });
+  if (isVotingMission) {
+    baseImageUrl = `${baseUrl}/img/ogp_mission_vote.png`;
+  } else if (type === "complete") {
+    baseImageUrl = `${baseUrl}/img/ogp_mission_complete_base.png`;
+  } else {
+    baseImageUrl = `${baseUrl}/img/ogp_mission_base.png`;
   }
+
+  const baseImageBase64 = baseImageUrl;
 
   // titleに()や（）が含まれる場合は(や（の手前で改行する
   const title = pageData?.mission.title ?? "ミッションが見つかりません";
@@ -117,7 +113,7 @@ export async function GET(
           width: "100%",
           height: "100%",
           display: "flex",
-          backgroundImage: `url(${baseImageBase64})`,
+          backgroundImage: `url(${baseImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -136,7 +132,7 @@ export async function GET(
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-end",
-          backgroundImage: `url(${baseImageBase64})`,
+          backgroundImage: `url(${baseImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -191,7 +187,7 @@ export async function GET(
           flexDirection: "column",
           alignItems: "flex-end",
           justifyContent: "center",
-          backgroundImage: `url(${baseImageBase64})`,
+          backgroundImage: `url(${baseImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

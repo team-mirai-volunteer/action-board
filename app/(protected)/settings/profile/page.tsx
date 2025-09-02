@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { AccountDeletionSection } from "./AccountDeletionSection";
 import ProfileForm from "./ProfileForm";
 
+export const runtime = "edge";
+
 type ProfileSettingsPageSearchParams = {
   new: string;
 } & Message;
