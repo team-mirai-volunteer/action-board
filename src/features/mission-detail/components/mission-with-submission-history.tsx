@@ -1,18 +1,18 @@
 "use client";
 
+import { CopyReferralButton } from "@/features/mission-detail/components/copy-referral-button";
+import { MissionFormWrapper } from "@/features/mission-detail/components/mission-form-wrapper";
+import QRCodeDisplay from "@/features/mission-detail/components/qr-code-display";
+import { SubmissionHistoryWrapper } from "@/features/mission-detail/components/submission-history-wrapper";
+import type { SubmissionData } from "@/features/mission-detail/types/detail-types";
 import { MissionGuidanceArrow } from "@/features/missions/components/mission-guidance-arrow";
+import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
-import { useMissionSubmission } from "../_hooks/useMissionSubmission";
-import type { SubmissionData } from "../_lib/types";
-import { CopyReferralButton } from "./CopyReferralButton";
-import { MissionFormWrapper } from "./MissionFormWrapper";
-import QRCodeDisplay from "./QRCodeDisplay";
-import { SubmissionHistoryWrapper } from "./SubmissionHistoryWrapper";
 
 type Props = {
   mission: Tables<"missions">;

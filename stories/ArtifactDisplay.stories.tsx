@@ -1,5 +1,5 @@
-import ArtifactDisplay from "@/app/missions/[id]/_components/ArtifactDisplay";
-import type { MissionArtifact } from "@/app/missions/[id]/_components/types";
+import ArtifactDisplay from "@/features/mission-detail/components/artifact-display";
+import type { MissionArtifact } from "@/features/mission-detail/types/detail-types";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

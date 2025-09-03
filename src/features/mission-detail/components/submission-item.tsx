@@ -2,10 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ArtifactDisplay from "@/features/mission-detail/components/artifact-display";
+import type { Submission } from "@/features/mission-detail/types/component-types";
 import { dateTimeFormatter } from "@/lib/formatter";
 import type React from "react";
-import ArtifactDisplay from "./ArtifactDisplay";
-import type { Submission } from "./types";
 
 interface SubmissionItemProps {
   submission: Submission;

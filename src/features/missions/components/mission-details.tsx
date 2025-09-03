@@ -1,11 +1,10 @@
 "use client";
 
-import { MainLinkButton } from "@/app/missions/[id]/_components/MainLinkButton";
-import { YouTubeSubscribeButton } from "@/app/missions/[id]/_components/YouTubeSubscribeButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { MissionIcon } from "@/components/ui/mission-icon";
+import { YouTubeSubscribeButton } from "@/features/mission-detail/components/youtube-subscribe-button";
 import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants";
 import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";

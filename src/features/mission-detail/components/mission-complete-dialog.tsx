@@ -9,12 +9,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShareButton } from "@/features/mission-detail/components/share-buttons/share-button";
+import { ShareFacebookButton } from "@/features/mission-detail/components/share-buttons/share-facebook-button";
+import { ShareLineButton } from "@/features/mission-detail/components/share-buttons/share-line-button";
+import { ShareTwitterButton } from "@/features/mission-detail/components/share-buttons/share-twitter-button";
+import { ShareUrlButton } from "@/features/mission-detail/components/share-buttons/share-url-button";
 import type { Tables } from "@/lib/types/supabase";
-import { ShareButton } from "./ShareButton";
-import { ShareFacebookButton } from "./ShareFacebookButton";
-import { ShareLineButton } from "./ShareLineButton";
-import { ShareTwitterButton } from "./ShareTwitterButton";
-import { ShareUrlButton } from "./ShareUrlButton";
 
 type Props = {
   isOpen: boolean;

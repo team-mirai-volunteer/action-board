@@ -1,13 +1,13 @@
 "use client";
 
-import { checkQuizAnswersAction } from "@/app/missions/[id]/actions";
-import {
-  type MissionLink,
-  getMissionLinksAction,
-} from "@/app/missions/[id]/quiz-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { checkQuizAnswersAction } from "@/features/mission-detail/actions/actions";
+import {
+  type MissionLink,
+  getMissionLinksAction,
+} from "@/features/mission-detail/actions/quiz-actions";
 import {
   AlertCircle,
   CheckCircle,

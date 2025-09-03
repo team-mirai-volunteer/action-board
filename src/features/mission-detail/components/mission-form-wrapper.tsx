@@ -3,8 +3,13 @@
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
+import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
+import { MainLinkButton } from "@/features/mission-detail/components/main-link-button";
+import { MissionCompleteDialog } from "@/features/mission-detail/components/mission-complete-dialog";
 import { ArtifactForm } from "@/features/missions/components/artifact-form";
 import QuizComponent from "@/features/missions/components/quiz-component";
+import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
+import { useQuizMission } from "@/features/missions/hooks/use-quiz-mission";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -12,11 +17,6 @@ import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { useMissionSubmission } from "../_hooks/useMissionSubmission";
-import { useQuizMission } from "../_hooks/useQuizMission";
-import { achieveMissionAction } from "../actions";
-import { MainLinkButton } from "./MainLinkButton";
-import { MissionCompleteDialog } from "./MissionCompleteDialog";
 
 type Props = {
   mission: Tables<"missions">;

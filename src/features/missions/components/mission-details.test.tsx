@@ -3,13 +3,18 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { MissionDetails } from "./mission-details";
 
-jest.mock("@/app/missions/[id]/_components/YouTubeSubscribeButton", () => ({
-  YouTubeSubscribeButton: function MockYouTubeSubscribeButton({
-    channelId,
-  }: { channelId: string }) {
-    return <div data-testid="youtube-button">YouTube Button: {channelId}</div>;
-  },
-}));
+jest.mock(
+  "@/features/mission-detail/components/youtube-subscribe-button",
+  () => ({
+    YouTubeSubscribeButton: function MockYouTubeSubscribeButton({
+      channelId,
+    }: { channelId: string }) {
+      return (
+        <div data-testid="youtube-button">YouTube Button: {channelId}</div>
+      );
+    },
+  }),
+);
 
 jest.mock("@/lib/constants", () => ({
   YOUTUBE_MISSION_CONFIG: {

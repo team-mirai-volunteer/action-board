@@ -1,7 +1,7 @@
 "use client";
 
+import { cancelSubmissionAction } from "@/features/mission-detail/actions/actions";
 import { useState } from "react";
-import { cancelSubmissionAction } from "../actions";
 
 export const useSubmissionCancel = (missionId: string) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
