@@ -1,9 +1,9 @@
 "use client";
 
-import MissionAchievementStatus from "@/components/mission/mission-achievement-status";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MissionIcon } from "@/components/ui/mission-icon";
+import MissionAchievementStatus from "@/features/missions/components/mission-achievement-status";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { PosterForm } from "./PosterForm";
+import { PosterForm } from "./poster-form";
 
 // Mock lucide-react icons
 jest.mock("lucide-react", () => ({

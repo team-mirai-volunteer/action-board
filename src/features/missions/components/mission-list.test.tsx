@@ -1,8 +1,8 @@
-import Missions from "@/components/mission/missions";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import Missions from "./mission-list";
 
-jest.mock("@/components/mission/mission", () => {
+jest.mock("@/features/missions/components/mission-card", () => {
   return function MockMission({
     mission,
     achieved,

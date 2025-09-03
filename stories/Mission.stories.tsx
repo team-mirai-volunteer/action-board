@@ -1,4 +1,4 @@
-import Mission from "@/components/mission/mission";
+import Mission from "@/features/missions/components/mission-card";
 import type { Tables } from "@/lib/types/supabase";
 import type { Meta, StoryObj } from "@storybook/react";
 

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import Mission from "./mission";
+import Mission from "./mission-card";
 
 export type MissionsProps = {
   userId?: string;

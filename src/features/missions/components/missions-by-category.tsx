@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
-import { HorizontalScrollContainer } from "./HorizontalScrollContainer";
-import Mission from "./mission";
-import type { MissionsProps } from "./missions";
+import { HorizontalScrollContainer } from "./horizontal-scroll-container";
+import Mission from "./mission-card";
+import type { MissionsProps } from "./mission-list";
 
 // View の型
 type MissionCategoryViewRow =

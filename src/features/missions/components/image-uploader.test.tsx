@@ -1,8 +1,8 @@
-import { ImageUploader } from "@/components/mission/ImageUploader";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { ImageUploader } from "./image-uploader";
 
 const mockUser: User = {
   id: "test-user-id",

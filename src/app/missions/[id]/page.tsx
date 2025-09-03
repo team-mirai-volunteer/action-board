@@ -1,4 +1,3 @@
-import { MissionDetails } from "@/components/mission/MissionDetails";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { MissionDetails } from "@/features/missions/components/mission-details";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {

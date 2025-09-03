@@ -1,4 +1,4 @@
-import Missions, { type MissionsProps } from "./missions";
+import Missions, { type MissionsProps } from "./mission-list";
 
 //コードの2重管理回避のためmissions.tsxを参照する
 export default function FeaturedMissions(

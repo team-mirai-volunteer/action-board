@@ -1,8 +1,8 @@
-import FeaturedMissions from "@/components/mission/FeaturedMissions";
 import { render } from "@testing-library/react";
 import React from "react";
+import FeaturedMissions from "./featured-missions";
 
-jest.mock("@/components/mission/missions", () => {
+jest.mock("./mission-list", () => {
   return function MockMissions(props: any) {
     return (
       <div data-testid="missions-component">

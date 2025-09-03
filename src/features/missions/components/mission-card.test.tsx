@@ -1,7 +1,7 @@
-import Mission from "@/components/mission/mission";
 import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
+import Mission from "./mission-card";
 
 jest.mock("next/link", () => {
   return ({ children, href }: { children: React.ReactNode; href: string }) => (
@@ -89,7 +89,7 @@ jest.mock("@/components/ui/mission-icon", () => ({
   ),
 }));
 
-jest.mock("@/components/mission/mission-achievement-status", () => {
+jest.mock("@/features/missions/components/mission-achievement-status", () => {
   return function MockMissionAchievementStatus({
     hasReachedMaxAchievements,
     userAchievementCount,

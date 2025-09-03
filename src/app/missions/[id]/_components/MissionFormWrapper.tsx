@@ -1,10 +1,10 @@
 "use client";
 
-import { ArtifactForm } from "@/components/mission/ArtifactForm";
-import QuizComponent from "@/components/mission/QuizComponent";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
+import { ArtifactForm } from "@/features/missions/components/artifact-form";
+import QuizComponent from "@/features/missions/components/quiz-component";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";

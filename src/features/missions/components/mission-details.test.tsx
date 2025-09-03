@@ -1,7 +1,7 @@
-import { MissionDetails } from "@/components/mission/MissionDetails";
 import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import React from "react";
+import { MissionDetails } from "./mission-details";
 
 jest.mock("@/app/missions/[id]/_components/YouTubeSubscribeButton", () => ({
   YouTubeSubscribeButton: function MockYouTubeSubscribeButton({

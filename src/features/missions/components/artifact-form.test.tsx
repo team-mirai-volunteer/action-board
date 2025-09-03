@@ -1,8 +1,8 @@
-import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
 import React from "react";
+import { ArtifactForm } from "./artifact-form";
 
 // Mock lucide-react icons
 jest.mock("lucide-react", () => ({

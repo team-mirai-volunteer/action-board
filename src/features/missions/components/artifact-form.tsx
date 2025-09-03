@@ -9,9 +9,9 @@ import { MAX_POSTING_COUNT, POSTING_POINTS_PER_UNIT } from "@/lib/constants";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { GeolocationInput } from "./GeolocationInput";
-import { ImageUploader } from "./ImageUploader";
-import { PosterForm } from "./PosterForm";
+import { GeolocationInput } from "./geolocation-input";
+import { ImageUploader } from "./image-uploader";
+import { PosterForm } from "./poster-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;

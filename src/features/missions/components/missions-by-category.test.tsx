@@ -1,8 +1,8 @@
-import MissionsByCategory from "@/components/mission/MissionsByCategory";
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import MissionsByCategory from "./missions-by-category";
 
-jest.mock("@/components/mission/mission", () => {
+jest.mock("./mission-card", () => {
   return function MockMission({
     mission,
     achieved,

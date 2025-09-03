@@ -1,6 +1,6 @@
-import { GeolocationInput } from "@/components/mission/GeolocationInput";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { GeolocationInput } from "./geolocation-input";
 
 const mockGeolocation = {
   getCurrentPosition: jest.fn(),

@@ -1,6 +1,6 @@
-import MissionAchievementStatus from "@/components/mission/mission-achievement-status";
 import { render, screen } from "@testing-library/react";
 import React from "react";
+import MissionAchievementStatus from "./mission-achievement-status";
 
 describe("MissionAchievementStatus", () => {
   it("最大達成回数に達していない場合は達成回数が表示される", () => {
