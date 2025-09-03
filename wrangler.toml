@@ -1,7 +1,10 @@
 # Cloudflare Pages Configuration for Action Board
 name = "action-board"
 compatibility_date = "2024-09-23"
-pages_build_output_dir = ".vercel/output/static"
+pages_build_output_dir = ".next"
+
+# Cloudflare Functions configuration for API routes
+compatibility_flags = ["nodejs_compat"]
 
 [env.production]
 name = "action-board-production"
