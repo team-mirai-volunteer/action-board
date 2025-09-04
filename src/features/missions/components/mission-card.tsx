@@ -3,26 +3,27 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MissionIcon } from "@/components/ui/mission-icon";
-import MissionAchievementStatus from "@/features/missions/components/mission-achievement-status";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
+import Link from "next/link";
+import MissionAchievementStatus from "./mission-achievement-status";
 
-interface OnboardingMissionCardProps {
+interface MissionProps {
   mission: Omit<Tables<"missions">, "slug">;
+  achieved: boolean;
   achievementsCount?: number;
   userAchievementCount?: number;
-  onCardClick?: () => void;
 }
 
-export default function OnboardingMissionCard({
+export default function Mission({
   mission,
+  achieved,
   achievementsCount,
   userAchievementCount = 0,
-  onCardClick,
-}: OnboardingMissionCardProps) {
+}: MissionProps) {
   // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
   const hasReachedMaxAchievements =
     mission.max_achievement_count !== null &&
@@ -85,26 +86,27 @@ export default function OnboardingMissionCard({
             </span>
           </div>
         </div>
-        <motion.div whileTap={{ scale: 0.95 }}>
-          <Button
-            variant="default"
-            className={clsx(
-              "w-full rounded-full py-6 text-base font-bold text-white",
-              hasReachedMaxAchievements
-                ? "bg-yellow-300 hover:bg-yellow-300/90 text-black"
+        <Link href={`/missions/${mission.id}`} className="block">
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="default"
+              className={clsx(
+                "w-full rounded-full py-6 text-base font-bold text-white",
+                hasReachedMaxAchievements
+                  ? "bg-yellow-300 hover:bg-yellow-300/90 text-black"
+                  : userAchievementCount === 0
+                    ? "bg-primary hover:bg-primary/90"
+                    : "bg-yellow-300 hover:bg-yellow-300/90 text-black",
+              )}
+            >
+              {hasReachedMaxAchievements
+                ? "ミッションクリア🎉"
                 : userAchievementCount === 0
-                  ? "bg-primary hover:bg-primary/90"
-                  : "bg-yellow-300 hover:bg-yellow-300/90 text-black",
-            )}
-            onClick={onCardClick}
-          >
-            {hasReachedMaxAchievements
-              ? "完了しました"
-              : userAchievementCount === 0
-                ? "チャレンジ"
-                : "再チャレンジ"}
-          </Button>
-        </motion.div>
+                  ? "今すぐチャレンジ🔥"
+                  : "もう一回チャレンジ🔥"}
+            </Button>
+          </motion.div>
+        </Link>
       </CardFooter>
     </Card>
   );
