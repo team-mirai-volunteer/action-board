@@ -8,6 +8,7 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
+      "**/.cloudflare-output/**",
       "**/.vercel/**",
       "**/.next/**",
       "**/node_modules/**",

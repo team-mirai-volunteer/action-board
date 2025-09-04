@@ -8,7 +8,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:cloudflare": "CLOUDFLARE_BUILD=true next build",
-    "build:pages": "node scripts/check-env.js && CLOUDFLARE_BUILD=true next build",
+    "build:pages": "node scripts/check-env.js && CLOUDFLARE_BUILD=true next build && node scripts/prepare-cloudflare.js",
     "start": "next start",
     "types": "npx supabase gen types typescript --local > lib/types/supabase.ts && biome check --write lib/types/supabase.ts",
     "biome:check:write": "biome check --write .",
