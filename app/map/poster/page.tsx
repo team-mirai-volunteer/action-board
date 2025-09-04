@@ -5,6 +5,10 @@ import {
 import type { Metadata } from "next";
 import PosterMapPageClientOptimized from "./PosterMapPageClientOptimized";
 
+// Force dynamic rendering for this page
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "ポスター掲示板マップ",
   description: "チームはやまのポスター掲示板の配置状況を確認できます",

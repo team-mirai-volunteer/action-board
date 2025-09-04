@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import PostingPageClient from "./PostingPageClient";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "チームはやま機関誌配布マップ",

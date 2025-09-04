@@ -13,6 +13,7 @@ import { redirect } from "next/navigation";
 import PrefecturePosterMapClient from "./PrefecturePosterMapClient";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
