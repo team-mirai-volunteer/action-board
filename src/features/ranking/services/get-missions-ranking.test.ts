@@ -3,7 +3,11 @@ import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import {
   getMissionRanking,
+  getTopUsersPostingCount,
+  getTopUsersPostingCountByMission,
   getUserMissionRanking,
+  getUserPostingCount,
+  getUserPostingCountByMission,
 } from "./get-missions-ranking";
 
 // Supabaseクライアントをモック
@@ -295,6 +299,176 @@ describe("missionsRanking service", () => {
 
       await expect(getUserMissionRanking(missionId, userId)).rejects.toThrow(
         "ユーザーのミッションランキングデータの取得に失敗しました: Database error",
+      );
+    });
+  });
+
+  describe("getUserPostingCount", () => {
+    it("RPCの数値を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: 7, error: null });
+      const r = await getUserPostingCount("user-1");
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("get_user_posting_count", {
+        target_user_id: "user-1",
+      });
+      expect(r).toBe(7);
+    });
+
+    it("dataがnullの場合は0を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
+      const r = await getUserPostingCount("user-1");
+      expect(r).toBe(0);
+    });
+
+    it("エラー時は0を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "DB error" },
+      });
+      const r = await getUserPostingCount("user-1");
+      expect(r).toBe(0);
+    });
+  });
+
+  describe("getUserPostingCountByMission", () => {
+    it("指定したseasonIdでRPCを呼び出し、数値を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: 3, error: null });
+      const r = await getUserPostingCountByMission(
+        "user-1",
+        "mission-1",
+        "season-X",
+      );
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        "get_user_posting_count_by_mission",
+        {
+          target_user_id: "user-1",
+          target_mission_id: "mission-1",
+          p_season_id: "season-X",
+        },
+      );
+      expect(r).toBe(3);
+    });
+
+    it("seasonId未指定で現在のシーズンを使用する", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: 2, error: null });
+      const r = await getUserPostingCountByMission("user-1", "mission-1");
+      expect(getCurrentSeasonId).toHaveBeenCalled();
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        "get_user_posting_count_by_mission",
+        {
+          target_user_id: "user-1",
+          target_mission_id: "mission-1",
+          p_season_id: "test-season-id",
+        },
+      );
+      expect(r).toBe(2);
+    });
+
+    it("dataがnullの場合は0を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
+      const r = await getUserPostingCountByMission(
+        "user-1",
+        "mission-1",
+        "season-X",
+      );
+      expect(r).toBe(0);
+    });
+
+    it("エラー時は0を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "DB error" },
+      });
+      const r = await getUserPostingCountByMission(
+        "user-1",
+        "mission-1",
+        "season-X",
+      );
+      expect(r).toBe(0);
+    });
+  });
+
+  describe("getTopUsersPostingCount", () => {
+    it("配列データをそのまま返す", async () => {
+      const data = [{ user_id: "u1", posting_count: 5 }];
+      mockSupabase.rpc.mockResolvedValue({ data, error: null });
+      const r = await getTopUsersPostingCount(["u1"]);
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        "get_top_users_posting_count",
+        { user_ids: ["u1"] },
+      );
+      expect(r).toEqual(data);
+    });
+
+    it("dataがnullの場合は[]を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
+      const r = await getTopUsersPostingCount(["u1"]);
+      expect(r).toEqual([]);
+    });
+
+    it("エラー時は例外を投げる", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "DB error" },
+      });
+      await expect(getTopUsersPostingCount(["u1"])).rejects.toThrow(
+        "ユーザーのポスティング枚数取得に失敗しました",
+      );
+    });
+  });
+
+  describe("getTopUsersPostingCountByMission", () => {
+    it("指定したseasonIdで配列データを返す", async () => {
+      const data = [{ user_id: "u1", posting_count: 9 }];
+      mockSupabase.rpc.mockResolvedValue({ data, error: null });
+      const r = await getTopUsersPostingCountByMission(
+        ["u1"],
+        "mission-1",
+        "season-X",
+      );
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        "get_top_users_posting_count_by_mission",
+        {
+          user_ids: ["u1"],
+          target_mission_id: "mission-1",
+          p_season_id: "season-X",
+        },
+      );
+      expect(r).toEqual(data);
+    });
+
+    it("seasonId未指定で現在のシーズンを使用する", async () => {
+      (getCurrentSeasonId as jest.Mock).mockResolvedValueOnce("season-1");
+      mockSupabase.rpc.mockResolvedValue({ data: [], error: null });
+      await getTopUsersPostingCountByMission(["u1"], "mission-1");
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        "get_top_users_posting_count_by_mission",
+        {
+          user_ids: ["u1"],
+          target_mission_id: "mission-1",
+          p_season_id: "season-1",
+        },
+      );
+    });
+
+    it("dataがnullの場合は[]を返す", async () => {
+      mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
+      const r = await getTopUsersPostingCountByMission(
+        ["u1"],
+        "mission-1",
+        "season-X",
+      );
+      expect(r).toEqual([]);
+    });
+
+    it("エラー時は例外を投げる", async () => {
+      mockSupabase.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "DB error" },
+      });
+      await expect(
+        getTopUsersPostingCountByMission(["u1"], "mission-1", "season-X"),
+      ).rejects.toThrow(
+        "ミッション別ユーザーのポスティング枚数取得に失敗しました",
       );
     });
   });
