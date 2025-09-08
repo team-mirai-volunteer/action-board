@@ -59,7 +59,7 @@ export default async function Hero() {
                   size="lg"
                   className="bg-[#FA5A77] hover:bg-[#E0425E] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-base whitespace-nowrap min-w-fit"
                 >
-                  サポーター登録する →
+                  アクションボードに登録する
                 </Button>
               </Link>
 

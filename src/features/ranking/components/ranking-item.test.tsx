@@ -213,4 +213,37 @@ describe("RankingItem", () => {
       expect(screen.getByText("Lv.")).toBeInTheDocument();
     });
   });
+
+  describe("レベルバッジの色分岐", () => {
+    const renderWithLevel = (level: number | null) =>
+      render(<RankingItem user={{ ...mockUserRanking, level }} />);
+
+    it("level>=40 の分岐を通る", () => {
+      renderWithLevel(40);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.40")).toBeInTheDocument();
+    });
+
+    it("level>=30 の分岐を通る", () => {
+      renderWithLevel(30);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.30")).toBeInTheDocument();
+    });
+
+    it("level>=20 の分岐を通る", () => {
+      renderWithLevel(20);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.20")).toBeInTheDocument();
+    });
+
+    it("level<10 の分岐を通る", () => {
+      renderWithLevel(5);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("text-emerald-700 bg-emerald-100");
+      expect(screen.getByText("Lv.5")).toBeInTheDocument();
+    });
+  });
 });

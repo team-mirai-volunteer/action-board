@@ -1,4 +1,3 @@
-import { MissionDetails } from "@/components/mission/MissionDetails";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,6 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
+import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
+import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
+import { MissionDetails } from "@/features/missions/components/mission-details";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
@@ -26,9 +29,6 @@ import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
-import { getMissionPageData } from "./_lib/data";
-import { getQuizQuestionsAction } from "./actions";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

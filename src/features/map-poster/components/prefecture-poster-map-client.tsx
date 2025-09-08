@@ -1,6 +1,5 @@
 "use client";
 
-import { achieveMissionAction } from "@/app/missions/[id]/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { createClient } from "@/lib/supabase/client";
 import { maskUsername } from "@/lib/utils/privacy";
 import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
