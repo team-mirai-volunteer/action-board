@@ -1,4 +1,8 @@
 categories:
+  - slug: learn-teammirai-supporter
+    title: サポーター活動について知ろう
+    sort_no: 50
+    category_kbn: DEFAULT
   - slug: follow-teammirai
     title: チームみらいをフォローしよう
     sort_no: 100
