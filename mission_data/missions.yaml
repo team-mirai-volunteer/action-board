@@ -1,4 +1,20 @@
 missions:
+  - slug: join-orientation
+    title: サポーター説明会に参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
+    content: |-
+      「サポーター登録はしてみたけど、何から始めたらいいか分からない…」
+      「ツールの使い方や活動の流れがまだよく掴めていない…」
+      そんな方に向けて、週1〜2回のペースで「新メンバー向け説明会」を開催しています！
+      ※サポーター登録時期は問いませんので、少し前に参加された方も大歓迎です！
+      日程や参加方法などの詳細は▶️<a href="https://team-mirai.notion.site/264f6f56bae180f4ba90f20cc307071a" target="_blank" rel="noopener noreferrer">こちら</a>からご確認ください。
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: 説明会で共有されたイベントコード
+    ogp_image_url: null
   - slug: link-official-site
     title: チームみらい公式サイトを見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
@@ -602,7 +618,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが作成した成果物のURL
     ogp_image_url: null
   - slug: early-vote
