@@ -1,0 +1,23 @@
+{
+  "name": "Node.js 22 with docker Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": ["biomejs.biome"]
+    }
+  },
+  "postCreateCommand": "npm install; cp .env.example .env.local",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "remoteUser": "node",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin"
+  }
+}
