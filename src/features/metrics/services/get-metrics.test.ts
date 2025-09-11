@@ -9,7 +9,7 @@ import type {
   SupporterData,
 } from "@/features/metrics/types/metrics-types";
 import { createClient } from "@/lib/supabase/client";
-
+jest.mock("@/lib/supabase/client");
 jest.mock("@/features/metrics/services/get-metrics", () =>
   jest.requireActual("@/features/metrics/services/get-metrics"),
 );
@@ -30,8 +30,7 @@ const setupMockSupabaseClient = (
   (createClient as jest.Mock).mockReturnValue({
     from: () => ({
       select: () => ({
-        then: (callback: (result: { count: number }) => void) =>
-          callback({ count: dataset.length }),
+        count: dataset.length,
         gte: (columnName: string, thresholdISO: string) => {
           capturedGteIsoRef.value = thresholdISO;
           const count = dataset.filter(
