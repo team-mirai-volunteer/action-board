@@ -3,6 +3,8 @@ import {
   fetchDonationData,
   fetchRegistrationData,
   fetchSupporterData,
+  validateDonationData,
+  validateSupporterData,
 } from "@/features/metrics/services/get-metrics";
 import type {
   DonationData,
@@ -14,6 +16,7 @@ jest.mock("@/features/metrics/services/get-metrics", () =>
   jest.requireActual("@/features/metrics/services/get-metrics"),
 );
 
+// fetchのモック設定
 const mockFetch = (data: SupporterData | DonationData) => {
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
@@ -23,6 +26,7 @@ const mockFetch = (data: SupporterData | DonationData) => {
   });
 };
 
+// Supabaseクライアントのモック設定
 const setupMockSupabaseClient = (
   dataset: { created_at: string }[],
   capturedGteIsoRef: { value: string | null },
@@ -43,7 +47,7 @@ const setupMockSupabaseClient = (
   });
 };
 
-describe("metrics service", () => {
+describe("get-metrics", () => {
   const originalFetch = global.fetch;
 
   afterEach(() => {
@@ -72,8 +76,71 @@ describe("metrics service", () => {
     return { thresholdISO, capturedGteIsoRef };
   };
 
+  // validation関数は独立しているため、単体でテスト実施。正常系はfetch系で確認されるため、異常系のみ確認
+  describe("validateDonationData / validateSupporterData", () => {
+    it("異常系: データがnullの場合、falseを返す", async () => {
+      const resultDonation = await validateDonationData(null);
+      expect(resultDonation).toBe(false);
+
+      const resultSupporter = await validateSupporterData(null);
+      expect(resultSupporter).toBe(false);
+    });
+
+    it("異常系: 必須フィールドが欠落している場合、falseを返す", async () => {
+      const invalidData = {
+        last24hCount: 2,
+        updatedAt: new Date().toISOString(),
+      };
+      const resultDonation = await validateDonationData(invalidData);
+      expect(resultDonation).toBe(false);
+
+      const resultSupporter = await validateSupporterData(invalidData);
+      expect(resultSupporter).toBe(false);
+    });
+
+    it("異常系: フィールドの型が不正な場合、falseを返す", async () => {
+      const invalidData = {
+        totalCount: "10", // 型が文字列
+        last24hCount: 2,
+        updatedAt: new Date().toISOString(),
+      };
+      const resultDonation = await validateDonationData(invalidData);
+      expect(resultDonation).toBe(false);
+
+      const resultSupporter = await validateSupporterData(invalidData);
+      expect(resultSupporter).toBe(false);
+    });
+
+    it("異常系: フィールドの値が負の値の場合、falseを返す", async () => {
+      const invalidData = {
+        totalCount: 2,
+        last24hCount: -10, // 負の値
+        updatedAt: new Date().toISOString(),
+      };
+      const resultDonation = await validateDonationData(invalidData);
+      expect(resultDonation).toBe(false);
+
+      const resultSupporter = await validateSupporterData(invalidData);
+      expect(resultSupporter).toBe(false);
+    });
+
+    it("異常系: updatedAtが無効な日付形式の場合、falseを返す", async () => {
+      const invalidData = {
+        totalCount: 10,
+        last24hCount: 2,
+        updatedAt: "invalid-date", // 無効な日付
+      };
+      const resultDonation = await validateDonationData(invalidData);
+      expect(resultDonation).toBe(false);
+
+      const resultSupporter = await validateSupporterData(invalidData);
+      expect(resultSupporter).toBe(false);
+    });
+  });
+
+  // fetch関数はシンプルなデータ取得処理であるため、正常系のみ確認する。
   describe("fetchSupporterData", () => {
-    it("JSONデータを返す", async () => {
+    it("正常系: JSONデータを返す", async () => {
       const data: SupporterData = {
         totalCount: 10,
         last24hCount: 2,
@@ -84,67 +151,67 @@ describe("metrics service", () => {
       const result = await fetchSupporterData();
       expect(result).toEqual(data);
     });
-  });
 
-  describe("fetchDonationData", () => {
-    it("JSONデータを返す", async () => {
-      const data: DonationData = {
-        totalAmount: 1000,
-        last24hAmount: 200,
-        updatedAt: new Date().toISOString(),
-      };
-      mockFetch(data);
+    describe("fetchDonationData", () => {
+      it("正常系: JSONデータを返す", async () => {
+        const data: DonationData = {
+          totalAmount: 1000,
+          last24hAmount: 200,
+          updatedAt: new Date().toISOString(),
+        };
+        mockFetch(data);
 
-      const result = await fetchDonationData();
-      expect(result).toEqual(data);
+        const result = await fetchDonationData();
+        expect(result).toEqual(data);
+      });
     });
-  });
 
-  describe("fetchAchievementData", () => {
-    it("24時間以内(created_at>=閾値)のみを集計する", async () => {
-      const now = "2025-01-02T12:00:00Z";
-      jest.useFakeTimers().setSystemTime(new Date(now));
+    describe("fetchAchievementData", () => {
+      it("正常系: 24時間以内(created_at>=閾値)のみを集計する", async () => {
+        const now = "2025-01-02T12:00:00Z";
+        jest.useFakeTimers().setSystemTime(new Date(now));
 
-      // 24時間前のISO8601形式の日時を計算
-      const dataset = createDataset(
-        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      );
-      const { thresholdISO, capturedGteIsoRef } = setupTestEnvironment(
-        now,
-        dataset,
-      );
+        // 24時間前のISO8601形式の日時を計算
+        const dataset = createDataset(
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        );
+        const { thresholdISO, capturedGteIsoRef } = setupTestEnvironment(
+          now,
+          dataset,
+        );
 
-      const result = await fetchAchievementData();
+        const result = await fetchAchievementData();
 
-      expect(result).toEqual({ totalCount: 3, todayCount: 2 });
-      expect(capturedGteIsoRef.value).toBe(thresholdISO);
+        expect(result).toEqual({ totalCount: 3, todayCount: 2 });
+        expect(capturedGteIsoRef.value).toBe(thresholdISO);
 
-      jest.useRealTimers();
+        jest.useRealTimers();
+      });
     });
-  });
 
-  describe("fetchRegistrationData", () => {
-    it("24時間以内(created_at>=閾値)のみを集計する", async () => {
-      const now = "2025-01-02T12:00:00Z";
-      jest.useFakeTimers().setSystemTime(new Date(now));
+    describe("fetchRegistrationData", () => {
+      it("正常系: 24時間以内(created_at>=閾値)のみを集計する", async () => {
+        const now = "2025-01-02T12:00:00Z";
+        jest.useFakeTimers().setSystemTime(new Date(now));
 
-      // 24時間前のISO8601形式の日時を計算
-      const dataset = createDataset(
-        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      );
-      const { thresholdISO, capturedGteIsoRef } = setupTestEnvironment(
-        now,
-        dataset,
-      );
+        // 24時間前のISO8601形式の日時を計算
+        const dataset = createDataset(
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        );
+        const { thresholdISO, capturedGteIsoRef } = setupTestEnvironment(
+          now,
+          dataset,
+        );
 
-      setupMockSupabaseClient(dataset, capturedGteIsoRef);
+        setupMockSupabaseClient(dataset, capturedGteIsoRef);
 
-      const result = await fetchRegistrationData();
+        const result = await fetchRegistrationData();
 
-      expect(result).toEqual({ totalCount: 3, todayCount: 2 });
-      expect(capturedGteIsoRef.value).toBe(thresholdISO);
+        expect(result).toEqual({ totalCount: 3, todayCount: 2 });
+        expect(capturedGteIsoRef.value).toBe(thresholdISO);
 
-      jest.useRealTimers();
+        jest.useRealTimers();
+      });
     });
   });
 });
