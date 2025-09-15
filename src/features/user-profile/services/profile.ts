@@ -88,7 +88,7 @@ export async function deleteAccount(): Promise<void> {
 
   // 現在のユーザー情報を取得
   const { data: authUser } = await supabaseClient.auth.getUser();
-  if (!authUser.user) {
+  if (!authUser?.user) {
     throw new Error("ユーザー（認証）が見つかりません");
   }
 
