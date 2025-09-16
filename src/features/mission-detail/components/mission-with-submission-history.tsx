@@ -13,6 +13,7 @@ import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
+import { MainLinkButton } from "./main-link-button";
 
 type Props = {
   mission: Tables<"missions">;
@@ -191,6 +192,15 @@ export function MissionWithSubmissionHistory({
 
   return (
     <>
+      {/* リンクアクセスのボタンは別で表示しているので、ここでは除外 */}
+      {mission.required_artifact_type !== ARTIFACT_TYPES.LINK_ACCESS.key &&
+        mainLink != null && (
+          <MainLinkButton
+            mission={mission}
+            mainLink={mainLink}
+            isDisabled={false}
+          />
+        )}
       {/* フォームと同じ条件で視覚的導線を表示 */}
       {shouldShowGuidanceArrow && <MissionGuidanceArrow />}
       {mission.required_artifact_type === "REFERRAL" &&

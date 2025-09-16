@@ -177,7 +177,7 @@ export default async function MissionPage({ params }: Props) {
                 ログインしてミッションを達成しよう
               </CardTitle>
               <CardDescription>
-                ミッションの達成を報告するには、アカウントにログインしてください。
+                ミッションを達成するには、アカウントにログインしてください。
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
