@@ -5,3 +5,16 @@ mission_main_links:
   - mission_slug: read-manifest
     label: チームみらいのマニフェスト(要約版)を読む
     link: https://team-mir.ai/pdf-viewer?url=https%3A%2F%2Ftibsocpjqvxxipszbwui.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fassets%2Fmanifestos%2Fteammirai_manifest_summary_v1.0.pdf
+  - mission_slug: add-supporter-line-friend
+    label: サポーター公式LINEアカウントはこちら
+    link: https://lin.ee/Qy6BukX
+  - mission_slug: join-orientation
+    label: 日程や参加方法はこちら
+    link: https://team-mirai.notion.site/264f6f56bae180f4ba90f20cc307071a
+  - mission_slug: join-prefecture-openchat
+    label: 都道府県別LINEオープンチャットはこちら
+    link: https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3
+  - mission_slug: join-slack
+    label: チームみらいサポーターSlackはこちら
+    link: https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b
+

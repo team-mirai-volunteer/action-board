@@ -7,7 +7,6 @@ missions:
       「ツールの使い方や活動の流れがまだよく掴めていない…」
       そんな方に向けて、週1〜2回のペースで「新メンバー向け説明会」を開催しています！
       ※サポーター登録時期は問いませんので、少し前に参加された方も大歓迎です！
-      日程や参加方法などの詳細は▶️<a href="https://team-mirai.notion.site/264f6f56bae180f4ba90f20cc307071a" target="_blank" rel="noopener noreferrer">こちら</a>からご確認ください。
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -62,7 +61,6 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_add-line-friend.svg
     content: |-
       全体向けのイベントの案内、協力依頼など、基本的にサポーター向け情報はサポーター公式LINEから発信しています。ぜひご登録ください。
-      <a href="https://lin.ee/Qy6BukX" target="_blank" rel="noopener noreferrer">サポーター公式LINEアカウント</a>
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -222,7 +220,7 @@ missions:
   - slug: join-prefecture-openchat
     title: 都道府県別LINEオープンチャットに入ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-prefecture-openchat.svg
-    content: <a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3" target="_blank" rel="noopener noreferrer">チームみらいの都道府県別LINEオープンチャット</a>に参加してあなたの地域で、政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。
+    content: チームみらいの都道府県別LINEオープンチャットに参加して、あなたの地域で政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -267,7 +265,9 @@ missions:
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-slack.svg
-    content: <a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: |-
+      チームみらいサポーターのSlackに参加しよう！
+      開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心がある方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1

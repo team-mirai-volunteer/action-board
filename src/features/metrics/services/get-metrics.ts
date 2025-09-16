@@ -15,7 +15,7 @@ import { createClient } from "@/lib/supabase/client";
  * @param data - 検証対象のデータ
  * @returns データが正しい形式の場合true、そうでなければfalse
  */
-function validateSupporterData(data: unknown): data is SupporterData {
+export function validateSupporterData(data: unknown): data is SupporterData {
   if (typeof data !== "object" || data === null) return false;
 
   const record = data as Record<string, unknown>;
@@ -38,7 +38,7 @@ function validateSupporterData(data: unknown): data is SupporterData {
  * @param data - 検証対象のデータ
  * @returns データが正しい形式の場合true、そうでなければfalse
  */
-function validateDonationData(data: unknown): data is DonationData {
+export function validateDonationData(data: unknown): data is DonationData {
   if (typeof data !== "object" || data === null) return false;
 
   const record = data as Record<string, unknown>;

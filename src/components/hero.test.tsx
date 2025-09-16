@@ -64,7 +64,7 @@ describe("Hero", () => {
       render(result);
 
       const startButton = screen.getByRole("button", {
-        name: /サポーター登録する/,
+        name: /アクションボードに登録する/,
       });
       expect(startButton).toBeInTheDocument();
     });

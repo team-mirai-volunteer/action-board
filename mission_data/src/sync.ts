@@ -3,7 +3,6 @@ import * as path from "node:path";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
-import { v4 as uuidv4 } from "uuid";
 import {
   getCategorySlugToIdMap,
   getMissionSlugToIdMap,
@@ -213,7 +212,7 @@ async function syncQuizCategories(
         .single();
 
       const categoryData = {
-        id: existing?.id || uuidv4(),
+        id: existing?.id || crypto.randomUUID(),
         slug: category.slug,
         name: category.name,
         description: category.description,
