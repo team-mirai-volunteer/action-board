@@ -131,7 +131,6 @@ missions:
     content: |-
       ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
       SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-      <a href="https://team-mirai.notion.site/255f6f56bae1804cbdecdd7b81f9e591" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
