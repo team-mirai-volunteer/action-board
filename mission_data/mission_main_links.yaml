@@ -17,4 +17,7 @@ mission_main_links:
   - mission_slug: join-slack
     label: チームみらいサポーターSlackはこちら
     link: https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b
+  - mission_slug: youtube-clip
+    label: 動画切り抜きガイドはこちら
+    link: https://team-mirai.notion.site/255f6f56bae1804cbdecdd7b81f9e591
 
