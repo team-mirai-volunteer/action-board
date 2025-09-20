@@ -41,7 +41,7 @@ describe("ミッション経験値計算", () => {
       expect(calculateMissionXp(-1)).toBe(50);
     });
 
-    it("should return default 50 XP for unknown difficulty", () => {
+    it("未知の難易度ではデフォルトの50XPを返す", () => {
       expect(calculateMissionXp(999)).toBe(50);
     });
   });
@@ -69,11 +69,11 @@ describe("XP差分計算", () => {
       expect(xpDelta(10)).toBe(175);
     });
 
-    it("should throw error for level less than 1", () => {
+    it("レベルが1未満の場合はエラーを投げる", () => {
       expect(() => xpDelta(0)).toThrow("Level must be at least 1");
     });
 
-    it("should throw error for negative level", () => {
+    it("負のレベルの場合はエラーを投げる", () => {
       expect(() => xpDelta(-1)).toThrow("Level must be at least 1");
     });
   });
@@ -103,11 +103,11 @@ describe("XP差分計算", () => {
       expect(totalXp(10)).toBe(totalXp(9) + 160);
     });
 
-    it("should throw error for level less than 1", () => {
+    it("レベルが1未満の場合はエラーを投げる", () => {
       expect(() => totalXp(0)).toThrow("Level must be at least 1");
     });
 
-    it("should throw error for negative level", () => {
+    it("負のレベルの場合はエラーを投げる", () => {
       expect(() => totalXp(-1)).toThrow("Level must be at least 1");
     });
   });
@@ -166,19 +166,19 @@ describe("XPからユーザーのレベルを計算", () => {
     expect(calculateLevel(-100)).toBe(1);
   });
 
-  it("should return level 1 for small XP amounts", () => {
+  it("少量のXPではレベル1を返す", () => {
     expect(calculateLevel(30)).toBe(1);
   });
 
-  it("should return level 2 for XP between level 2 and 3", () => {
+  it("レベル2と3の間のXPではレベル2を返す", () => {
     expect(calculateLevel(50)).toBe(2);
   });
 
-  it("should return maximum level for very high XP", () => {
+  it("非常に大きなXPでは最大レベルを返す", () => {
     expect(calculateLevel(999999999)).toBe(1000);
   });
 
-  it("should handle boundary cases correctly", () => {
+  it("境界値を正しく処理する", () => {
     expect(calculateLevel(40)).toBe(2);
     expect(calculateLevel(39)).toBe(1);
   });
@@ -217,17 +217,17 @@ describe("次のレベルまでのXP計算", () => {
     expect(getXpToNextLevel(750)).toBe(150);
   });
 
-  it("should return 0 when at maximum level", () => {
+  it("最大レベルに達している場合は0を返す", () => {
     const xpToNext = getXpToNextLevel(999999999);
     expect(xpToNext).toBe(0);
   });
 
-  it("should handle negative XP", () => {
+  it("負のXPでも処理できる", () => {
     const xpToNext = getXpToNextLevel(-10);
     expect(xpToNext).toBe(50);
   });
 
-  it("should handle partial progress through level", () => {
+  it("レベル途中の部分的な進捗も処理できる", () => {
     const xpToNext = getXpToNextLevel(50);
     expect(xpToNext).toBeGreaterThan(0);
     expect(xpToNext).toBeLessThan(80);
@@ -279,24 +279,24 @@ describe("レベル進捗率計算", () => {
     expect(getLevelProgress(76725)).toBe(0);
   });
 
-  it("should return progress between 0 and 1", () => {
+  it("進捗率は0から1の範囲で返す", () => {
     const progress = getLevelProgress(20);
     expect(progress).toBeGreaterThanOrEqual(0);
     expect(progress).toBeLessThanOrEqual(1);
   });
 
-  it("should handle negative XP", () => {
+  it("負のXPでも処理できる", () => {
     const progress = getLevelProgress(-10);
     expect(progress).toBe(0);
   });
 
-  it("should handle very high XP", () => {
+  it("非常に大きなXPでも処理できる", () => {
     const progress = getLevelProgress(999999999);
     expect(progress).toBeGreaterThanOrEqual(0);
     expect(progress).toBeLessThanOrEqual(1);
   });
 
-  it("should return consistent progress values", () => {
+  it("進捗率を一貫した値で返す", () => {
     const progress1 = getLevelProgress(20);
     const progress2 = getLevelProgress(30);
     expect(progress1).toBeLessThan(progress2);
