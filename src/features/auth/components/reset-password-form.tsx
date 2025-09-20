@@ -30,7 +30,7 @@ export function ResetPasswordForm({ message }: ResetPasswordFormProps) {
       <SubmitButton formAction={resetPasswordAction}>
         パスワードをリセット
       </SubmitButton>
-      <FormMessage message={message} />
+      {message && <FormMessage message={message} />}
     </>
   );
 }
