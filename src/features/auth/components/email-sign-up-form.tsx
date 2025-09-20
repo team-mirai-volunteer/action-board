@@ -1,10 +1,10 @@
 "use client";
 
+import { emailSignUpActionWithState } from "@/app/actions";
 import { FormMessage, type Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { emailSignUpActionWithState } from "@/features/auth/actions/auth-actions";
 import { passwordAlertlessSchema } from "@/lib/validation/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
