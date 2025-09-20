@@ -35,8 +35,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { PrefectureSelect } from "./PrefectureSelect";
-import { updateProfile } from "./actions";
+import { updateProfile } from "../actions/profile-actions";
+import { PrefectureSelect } from "./prefecture-select";
 
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 
