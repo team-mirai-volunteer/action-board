@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteAccountAction } from "@/app/(protected)/settings/profile/delete-account-action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { deleteAccountAction } from "@/features/user-settings/actions/delete-account-action";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

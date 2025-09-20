@@ -1,8 +1,5 @@
-import { forgotPasswordAction } from "@/app/actions";
-import { FormMessage, type Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import type { Message } from "@/components/form-message";
+import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
 import Image from "next/image";
 
 export default async function ForgotPassword(props: {
@@ -35,19 +32,7 @@ export default async function ForgotPassword(props: {
           <Image src="/img/logo_shiro.png" alt="logo" width={114} height={96} />
         </div>
         <h1 className="text-2xl font-medium">パスワードを忘れた方</h1>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">メールアドレス</Label>
-          <Input
-            name="email"
-            placeholder="you@example.com"
-            required
-            autoComplete="username"
-          />
-          <SubmitButton formAction={forgotPasswordAction}>
-            パスワードリセットメールを送信
-          </SubmitButton>
-          {message && <FormMessage message={message} />}
-        </div>
+        <ForgotPasswordForm message={message} />
       </form>
     </>
   );

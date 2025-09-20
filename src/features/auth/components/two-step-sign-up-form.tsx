@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { signInWithLine } from "@/lib/auth/line-auth";
+import { signInWithLine } from "@/features/auth/services/line-auth";
 import { calculateAge } from "@/lib/utils/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

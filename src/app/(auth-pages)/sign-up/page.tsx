@@ -1,6 +1,6 @@
 import type { Message } from "@/components/form-message";
+import TwoStepSignUpForm from "@/features/auth/components/two-step-sign-up-form";
 import Image from "next/image";
-import TwoStepSignUpForm from "./TwoStepSignUpForm";
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;

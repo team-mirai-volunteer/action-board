@@ -22,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateProfile } from "@/features/user-settings/actions/profile-actions";
+import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { getAvatarUrl } from "@/lib/avatar";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
@@ -35,8 +37,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { PrefectureSelect } from "./PrefectureSelect";
-import { updateProfile } from "./actions";
 
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 
