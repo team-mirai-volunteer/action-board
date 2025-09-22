@@ -1,4 +1,4 @@
-import NoticeBoardAlert from "@/components/NoticeBoardAlert";
+import NoticeBoardAlert from "@/components/common/notice-board-alert";
 import Hero from "@/components/top/hero";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";

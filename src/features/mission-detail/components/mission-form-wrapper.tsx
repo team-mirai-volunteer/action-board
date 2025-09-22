@@ -1,6 +1,6 @@
 "use client";
 
-import { SubmitButton } from "@/components/submit-button";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { MainLinkButton } from "@/features/mission-detail/components/main-link-button";

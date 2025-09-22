@@ -1,8 +1,8 @@
 "use client";
 
 import { signInActionWithState } from "@/app/actions";
-import { FormMessage } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import { FormMessage } from "@/components/common/form-message";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

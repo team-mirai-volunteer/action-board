@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/common/navbar";
 import { notoSansJP } from "@/lib/metadata";
 import { ThemeProvider } from "next-themes";
 import Footer from "./footer";

@@ -1,8 +1,8 @@
 "use client";
 
-import { CollapsibleInfo } from "@/components/collapsible-info";
-import { FormMessage, type Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import { CollapsibleInfo } from "@/components/common/collapsible-info";
+import { FormMessage, type Message } from "@/components/common/form-message";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
