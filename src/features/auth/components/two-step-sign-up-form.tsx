@@ -1,10 +1,10 @@
 "use client";
 
+import { CollapsibleInfo } from "@/components/collapsible-info";
 import { FormMessage, type Message } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CollapsibleInfo } from "@/components/ui/collapsible-info";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {

@@ -2,9 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DifficultyBadge } from "@/components/ui/difficulty-badge";
-import { MissionIcon } from "@/components/ui/mission-icon";
 import { YouTubeSubscribeButton } from "@/features/mission-detail/components/youtube-subscribe-button";
+import { DifficultyBadge } from "@/features/missions/components/difficulty-badge";
+import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants/mission-config";
 import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";

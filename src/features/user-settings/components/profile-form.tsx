@@ -1,5 +1,6 @@
 "use client";
 
+import { CollapsibleInfo } from "@/components/collapsible-info";
 import { FormMessage, type Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CollapsibleInfo } from "@/components/ui/collapsible-info";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
