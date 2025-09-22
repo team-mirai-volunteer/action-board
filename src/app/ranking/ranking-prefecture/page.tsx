@@ -8,7 +8,7 @@ import { RankingPrefecture } from "@/features/ranking/components/ranking-prefect
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { getMyProfile } from "@/features/user-profile/services/profile";
-import { PREFECTURES } from "@/lib/address";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 

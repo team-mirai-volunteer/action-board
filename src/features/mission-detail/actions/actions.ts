@@ -17,7 +17,7 @@ import {
   MAX_POSTING_COUNT,
   POSTER_POINTS_PER_UNIT,
   POSTING_POINTS_PER_UNIT,
-} from "@/lib/constants";
+} from "@/lib/constants/mission-config";
 import type { Database, TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 

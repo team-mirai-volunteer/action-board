@@ -1,8 +1,8 @@
 "use server";
 
 import { recordSignupActivity } from "@/features/user-activity/services/activity";
-import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import { sendWelcomeMail } from "@/lib/mail";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { createAdminClient } from "@/lib/supabase/adminClient";
