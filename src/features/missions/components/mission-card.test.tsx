@@ -79,7 +79,7 @@ jest.mock("@/components/ui/button", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/mission-icon", () => ({
+jest.mock("@/features/missions/components/mission-icon", () => ({
   MissionIcon: ({
     src,
     alt,

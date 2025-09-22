@@ -38,7 +38,7 @@ jest.mock("@/features/user-level/components/progress-bar-animated", () => ({
   },
 }));
 
-jest.mock("@/app/actions/level-up", () => ({
+jest.mock("@/app/actions", () => ({
   markLevelUpSeenAction: jest.fn(() => Promise.resolve({ success: true })),
 }));
 
@@ -175,7 +175,7 @@ describe("XpProgressToastContent", () => {
 
     it("レベルアップダイアログを閉じる処理", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/app/actions").markLevelUpSeenAction;
 
       await act(async () => {
         render(
@@ -251,7 +251,7 @@ describe("XpProgressToastContent", () => {
   describe("エラーハンドリング", () => {
     it("markLevelUpSeenActionが失敗した場合のエラーハンドリング", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/app/actions").markLevelUpSeenAction;
       mockMarkLevelUpSeen.mockResolvedValueOnce({
         success: false,
         error: "Test error",
@@ -294,7 +294,7 @@ describe("XpProgressToastContent", () => {
 
     it("markLevelUpSeenActionで例外が発生した場合のエラーハンドリング", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/app/actions").markLevelUpSeenAction;
       mockMarkLevelUpSeen.mockRejectedValueOnce(new Error("Network error"));
 
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
