@@ -1,13 +1,13 @@
-import { RankingTop } from "@/features/ranking/components/ranking-top";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "../ui/carousel";
+} from "@/components/ui/carousel";
+import { RankingTop } from "@/features/ranking/components/ranking-top";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default async function RankingSection() {
   return (

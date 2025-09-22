@@ -1,8 +1,8 @@
-import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { MissionSelect } from "@/features/ranking/components/mission-select";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,

@@ -1,8 +1,8 @@
-import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { getMyProfile } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";

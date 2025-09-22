@@ -1,9 +1,5 @@
 import { signOutAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
-import MyAvatar from "@/features/user-profile/components/my-avatar";
-import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
+import MyAvatar from "@/features/user-profile/components/my-avatar";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default async function AuthButton() {
   const supabase = createClient();
