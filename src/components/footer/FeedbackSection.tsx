@@ -1,4 +1,4 @@
-import { EXTERNAL_LINKS } from "@/lib/links";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import Link from "next/link";
 
 export function FeedbackSection() {

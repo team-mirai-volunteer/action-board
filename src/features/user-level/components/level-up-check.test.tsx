@@ -11,7 +11,7 @@ jest.mock("@/features/user-level/components/level-up-dialog", () => ({
     ) : null,
 }));
 
-jest.mock("@/app/actions/level-up", () => ({
+jest.mock("@/features/user-level/actions/level-up", () => ({
   markLevelUpSeenAction: jest.fn(() => Promise.resolve({ success: true })),
 }));
 

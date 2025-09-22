@@ -17,7 +17,7 @@ jest.mock("@/features/user-level/components/level-up-dialog", () => ({
     ) : null,
 }));
 
-jest.mock("@/components/ui/progress-bar-animated", () => ({
+jest.mock("@/features/user-level/components/progress-bar-animated", () => ({
   ProgressBarAnimated: ({ onAnimationComplete, className, ...props }: any) => {
     React.useEffect(() => {
       const timer = setTimeout(() => {
