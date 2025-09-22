@@ -10,7 +10,7 @@ import { ArtifactForm } from "@/features/missions/components/artifact-form";
 import QuizComponent from "@/features/missions/components/quiz-component";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { useQuizMission } from "@/features/missions/hooks/use-quiz-mission";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";

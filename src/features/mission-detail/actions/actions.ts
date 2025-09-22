@@ -8,9 +8,9 @@ import {
 } from "@/features/user-level/services/level";
 import type { UserLevel } from "@/features/user-level/types/level-types";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 
 import {
   MAX_POSTER_COUNT,

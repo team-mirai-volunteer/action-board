@@ -4,7 +4,7 @@ import {
   achieveMissionAction,
   getMissionQuizCategoryAction,
 } from "@/features/mission-detail/actions/actions";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

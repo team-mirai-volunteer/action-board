@@ -17,7 +17,6 @@ import {
   getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import {
   config,
   createDefaultMetadata,
@@ -25,6 +24,7 @@ import {
   notoSansJP,
 } from "@/lib/metadata";
 import { createClient } from "@/lib/supabase/client";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
