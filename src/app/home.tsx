@@ -1,5 +1,5 @@
 import NoticeBoardAlert from "@/components/NoticeBoardAlert";
-import Hero from "@/components/hero";
+import Hero from "@/components/top/hero";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
 import MissionsByCategory from "@/features/missions/components/missions-by-category";

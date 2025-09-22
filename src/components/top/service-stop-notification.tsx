@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import React from "react";
 
-const Fireworks = dynamic(() => import("../Fireworks"), {
+const Fireworks = dynamic(() => import("@/components/top/fireworks"), {
   ssr: false,
 });
 
