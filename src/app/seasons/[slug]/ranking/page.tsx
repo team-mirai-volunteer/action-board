@@ -10,7 +10,6 @@ import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {

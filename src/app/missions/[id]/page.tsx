@@ -14,7 +14,6 @@ import { CurrentUserCardMission } from "@/features/ranking/components/current-us
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
   getUserMissionRanking,
-  getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
 import {

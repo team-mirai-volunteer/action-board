@@ -1,4 +1,3 @@
-import type { Database } from "@/lib/types/supabase";
 import {
   adminClient,
   cleanupTestUser,

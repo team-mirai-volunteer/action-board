@@ -5,7 +5,6 @@ import {
   getXpToNextLevel,
 } from "@/features/user-level/utils/level-calculator";
 import { cn } from "@/lib/utils/utils";
-import React from "react";
 
 interface ProgressBarSimpleProps {
   currentXp: number;

@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/client";
-import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
