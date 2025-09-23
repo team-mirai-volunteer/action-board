@@ -5,9 +5,9 @@ import {
 } from "@/features/ranking/components/period-toggle";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
-import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 
 interface PageProps {
   searchParams: Promise<{

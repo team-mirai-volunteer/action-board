@@ -1,8 +1,8 @@
 import "server-only";
 
-import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { RankingPeriod, UserRanking } from "../types/ranking-types";
 
 export async function getRanking(

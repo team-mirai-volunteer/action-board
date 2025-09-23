@@ -1,8 +1,8 @@
-import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 
 // Mock dateUtils
-jest.mock("@/lib/dateUtils", () => ({
+jest.mock("@/lib/utils/date-utils", () => ({
   getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T00:00:00Z")),
 }));
 import { getCurrentSeasonId } from "@/lib/services/seasons";

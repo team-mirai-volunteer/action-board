@@ -6,9 +6,9 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
-import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
