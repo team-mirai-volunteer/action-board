@@ -1,9 +1,7 @@
-import {
-  CopyrightSection,
-  FeedbackSection,
-  LogoSection,
-  SeasonsList,
-} from "@/components/footer";
+import { CopyrightSection } from "@/components/footer/copyright-section";
+import { FeedbackSection } from "@/components/footer/feedback-section";
+import { LogoSection } from "@/components/footer/logo-section";
+import { SeasonsList } from "@/components/footer/seasons-list";
 import Image from "next/image";
 
 export default function Footer() {
