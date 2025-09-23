@@ -1,4 +1,3 @@
-import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { CurrentUserCard } from "@/features/ranking/components/current-user-card";
 import {
   PeriodToggle,
@@ -6,6 +5,7 @@ import {
 } from "@/features/ranking/components/period-toggle";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
+import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";

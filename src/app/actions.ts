@@ -98,7 +98,7 @@ export const signUpActionWithState = async (
       data: {
         date_of_birth, // 生年月日をユーザーデータに保存。プロフィール作成時に固定で設定される
       },
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${origin}/api/auth/callback`,
     },
   });
 
@@ -329,7 +329,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/reset-password`,
+    redirectTo: `${origin}/api/auth/callback?redirect_to=/reset-password`,
   });
 
   if (error) {
@@ -517,7 +517,7 @@ export async function handleLineAuthAction(
     }
 
     const origin = (await headers()).get("origin");
-    const redirectUri = `${origin || "http://localhost:3000"}/api/auth/callback/line`;
+    const redirectUri = `${origin || "http://localhost:3000"}/api/auth/line-callback`;
     const tokenParams = {
       grant_type: "authorization_code",
       code: validatedCode,

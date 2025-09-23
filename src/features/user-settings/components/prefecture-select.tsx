@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PREFECTURES } from "@/lib/address";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import type React from "react";
 
 type PrefectureSelectProps = {

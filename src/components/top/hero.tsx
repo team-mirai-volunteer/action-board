@@ -1,9 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import Levels from "@/features/user-level/components/levels";
 import { getUser } from "@/features/user-profile/services/profile";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
 
 export default async function Hero() {
   const user = await getUser();

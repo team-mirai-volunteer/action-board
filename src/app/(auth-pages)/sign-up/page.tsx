@@ -1,4 +1,4 @@
-import type { Message } from "@/components/form-message";
+import type { Message } from "@/components/common/form-message";
 import TwoStepSignUpForm from "@/features/auth/components/two-step-sign-up-form";
 import Image from "next/image";
 

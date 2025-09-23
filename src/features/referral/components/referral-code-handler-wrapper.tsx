@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { ReferralCodeHandler } from "./ReferralCodeHandler";
+import { ReferralCodeHandler } from "./referral-code-handler";
 
 export function ReferralCodeHandlerWrapper() {
   const searchParams = useSearchParams();

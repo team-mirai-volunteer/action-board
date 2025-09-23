@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { DonationData } from "@/features/metrics/types/metrics-types";
-import { EXTERNAL_LINKS } from "@/lib/links";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
 

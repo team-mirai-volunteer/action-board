@@ -1,4 +1,4 @@
-import type { Message } from "@/components/form-message";
+import type { Message } from "@/components/common/form-message";
 import { AccountDeletionSection } from "@/features/user-settings/components/account-deletion-section";
 import ProfileForm from "@/features/user-settings/components/profile-form";
 import { createClient } from "@/lib/supabase/client";

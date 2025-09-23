@@ -14,7 +14,7 @@ export async function signInWithLine(returnUrl?: string) {
     );
   }
 
-  const redirectUri = `${window.location.origin}/api/auth/callback/line`;
+  const redirectUri = `${window.location.origin}/api/auth/line-callback`;
   const state = crypto.randomUUID();
 
   // stateをローカルストレージに保存（CSRF対策、モバイル対応）

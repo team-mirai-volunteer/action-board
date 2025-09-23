@@ -8,7 +8,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
-import { MAX_ZOOM } from "@/lib/constants";
+import { MAX_ZOOM } from "@/lib/constants/mission-config";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";

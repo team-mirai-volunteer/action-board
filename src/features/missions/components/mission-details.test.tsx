@@ -16,7 +16,7 @@ jest.mock(
   }),
 );
 
-jest.mock("@/lib/constants", () => ({
+jest.mock("@/lib/constants/mission-config", () => ({
   YOUTUBE_MISSION_CONFIG: {
     SLUG: "youtube-subscribe",
     CHANNEL_ID: "test-channel-id",

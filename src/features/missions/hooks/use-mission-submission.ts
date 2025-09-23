@@ -1,6 +1,6 @@
 "use client";
 
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { useMemo } from "react";
 

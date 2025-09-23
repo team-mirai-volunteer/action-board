@@ -56,7 +56,7 @@ jest.mock("@/components/ui/card", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/difficulty-badge", () => ({
+jest.mock("@/features/missions/components/difficulty-badge", () => ({
   DifficultyBadge: ({
     difficulty,
     className,
@@ -79,7 +79,7 @@ jest.mock("@/components/ui/button", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/mission-icon", () => ({
+jest.mock("@/features/missions/components/mission-icon", () => ({
   MissionIcon: ({
     src,
     alt,

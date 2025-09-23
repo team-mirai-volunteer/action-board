@@ -1,4 +1,4 @@
-import { PREFECTURES } from "@/lib/address";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "../../lib/services/seasons";
 import { createAdminClient } from "../../lib/supabase/adminClient";
