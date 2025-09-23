@@ -10,9 +10,9 @@ import { BadgeNotificationCheck } from "@/features/user-badges-notification/comp
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
 import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
-import { generateRootMetadata } from "@/lib/metadata";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { generateRootMetadata } from "@/lib/utils/metadata";
 import { redirect } from "next/navigation";
 
 // メタデータ生成を外部関数に委譲

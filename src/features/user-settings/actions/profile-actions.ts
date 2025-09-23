@@ -2,9 +2,9 @@
 
 import { recordSignupActivity } from "@/features/user-activity/services/activity";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import { sendWelcomeMail } from "@/lib/mail";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/services/avatar";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
+import { sendWelcomeMail } from "@/lib/services/mail";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";
