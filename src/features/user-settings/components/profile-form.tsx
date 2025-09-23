@@ -24,8 +24,7 @@ import {
 } from "@/components/ui/select";
 import { updateProfile } from "@/features/user-settings/actions/profile-actions";
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
-import { getAvatarUrl } from "@/lib/avatar";
-import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
+import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { calculateAge } from "@/lib/utils/utils";
 import { X } from "lucide-react";
