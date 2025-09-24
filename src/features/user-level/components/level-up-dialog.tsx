@@ -3,7 +3,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Image from "next/image";
-import React from "react";
 
 interface LevelUpDialogProps {
   isOpen: boolean;

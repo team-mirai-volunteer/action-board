@@ -1,6 +1,5 @@
 import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import clsx from "clsx";
-import { CheckCircle, Info, XCircle } from "lucide-react";
 
 export type MessageType =
   | "success"

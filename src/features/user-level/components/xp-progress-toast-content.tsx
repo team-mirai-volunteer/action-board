@@ -8,7 +8,7 @@ import {
   getXpToNextLevel,
   totalXp,
 } from "@/features/user-level/utils/level-calculator";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface XpProgressToastContentProps {
   initialXp: number;

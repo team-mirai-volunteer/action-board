@@ -1,7 +1,6 @@
 // TOPページ用のランキングコンポーネント
 import { getPrefecturesRanking } from "../services/get-prefectures-ranking";
 import { BaseRanking } from "./base-ranking";
-import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
 interface RankingPrefectureProps {

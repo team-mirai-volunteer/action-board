@@ -27,7 +27,10 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "warn"
+      }
     }
   },
   "overrides": [
@@ -43,7 +46,6 @@
       }
     }
   ],
-
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
