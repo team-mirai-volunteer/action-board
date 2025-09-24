@@ -1,6 +1,6 @@
-import { getJSTMidnightToday } from "@/lib/dateUtils";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import {
   getMissionRanking,
   getTopUsersPostingCount,

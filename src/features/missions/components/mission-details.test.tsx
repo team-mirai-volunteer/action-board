@@ -22,7 +22,7 @@ jest.mock("@/lib/constants/mission-config", () => ({
   },
 }));
 
-jest.mock("@/lib/formatter", () => ({
+jest.mock("@/lib/utils/date-formatters", () => ({
   dateFormatter: jest.fn(
     (date: Date) =>
       `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`,

@@ -16,20 +16,12 @@ const config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   collectCoverage: true,
   collectCoverageFrom: [
-    "<rootDir>/src/{app,components,lib,features}/**/*.{ts,tsx}",
-    "!**/*.d.ts",
-    "!**/*.stories.{ts,tsx}",
+    "<rootDir>/src/features/**/{services,actions,utils}/*.{ts,tsx}",
+    "<rootDir>/src/lib/{services,utils}/*.{ts,tsx}",
   ],
   coverageReporters: ["html", "text", "lcov"],
   coverageDirectory: "<rootDir>/coverage",
-  coveragePathIgnorePatterns: [
-    "<rootDir>/src/app/privacy/",
-    "<rootDir>/src/app/terms/",
-    "<rootDir>/src/lib/types/",
-    "<rootDir>/src/lib/supabase/",
-    "<rootDir>/src/lib/address.ts",
-    "<rootDir>/src/lib/constants.ts",
-  ],
+  coveragePathIgnorePatterns: [],
   coverageProvider: "v8",
 };
 

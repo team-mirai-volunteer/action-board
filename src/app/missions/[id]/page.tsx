@@ -16,14 +16,14 @@ import {
   getUserMissionRanking,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
+import { createClient } from "@/lib/supabase/client";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
   config,
   createDefaultMetadata,
   defaultUrl,
   notoSansJP,
-} from "@/lib/metadata";
-import { createClient } from "@/lib/supabase/client";
-import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
+} from "@/lib/utils/metadata";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";

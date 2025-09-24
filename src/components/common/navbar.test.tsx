@@ -16,7 +16,7 @@ jest.mock("@/components/ui/button", () => ({
   ),
 }));
 
-jest.mock("@/features/auth/components/header-auth", () => {
+jest.mock("@/components/common/header-auth", () => {
   return function MockHeaderAuth() {
     return <div data-testid="header-auth">Header Auth</div>;
   };

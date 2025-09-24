@@ -6,8 +6,8 @@ import { YouTubeSubscribeButton } from "@/features/mission-detail/components/you
 import { DifficultyBadge } from "@/features/missions/components/difficulty-badge";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants/mission-config";
-import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";
+import { dateFormatter } from "@/lib/utils/date-formatters";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;

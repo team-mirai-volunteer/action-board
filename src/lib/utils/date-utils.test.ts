@@ -1,4 +1,4 @@
-import { getJSTMidnightToday } from "./dateUtils";
+import { getJSTMidnightToday } from "./date-utils";
 
 describe("getJSTMidnightToday の動作確認", () => {
   beforeEach(() => {
