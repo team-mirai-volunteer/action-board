@@ -96,7 +96,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `common/` - アプリケーション横断で使用される共通コンポーネント
 - `footer/` - フッター専用コンポーネント群
 - `top/` - トップページ専用コンポーネント
-- `typography/` - タイポグラフィコンポーネント
 
 #### `/src/lib` - 共有ライブラリ
 - `supabase/` - Supabaseクライアント設定
