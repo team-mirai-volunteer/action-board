@@ -1,4 +1,3 @@
-import type { Message } from "@/components/common/form-message";
 import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
 import Image from "next/image";
 

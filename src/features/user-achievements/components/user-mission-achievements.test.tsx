@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import React from "react";
 import { UserMissionAchievements } from "./user-mission-achievements";
 
 type MissionAchievementSummary = {

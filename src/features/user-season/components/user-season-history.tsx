@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UserSeasonHistoryProps } from "@/features/user-season/types/season-types";
 import Link from "next/link";

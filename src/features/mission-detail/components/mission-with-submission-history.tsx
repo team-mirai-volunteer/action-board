@@ -12,7 +12,6 @@ import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
 import { MainLinkButton } from "./main-link-button";
 
 type Props = {

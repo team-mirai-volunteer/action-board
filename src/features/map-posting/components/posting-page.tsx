@@ -3,7 +3,7 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   deleteShape as deleteMapShape,

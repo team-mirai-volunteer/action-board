@@ -1,8 +1,5 @@
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
-import {
-  PeriodToggle,
-  type RankingPeriod,
-} from "@/features/ranking/components/period-toggle";
+import type { RankingPeriod } from "@/features/ranking/components/period-toggle";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";

@@ -1,8 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
-import { sanitizeImageUrl } from "@/lib/utils/metadata";
-import { Noto_Sans_JP } from "next/font/google";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 

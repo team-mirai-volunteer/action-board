@@ -9,7 +9,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React from "react";
 
 const Fireworks = dynamic(() => import("@/components/top/fireworks"), {
   ssr: false,
