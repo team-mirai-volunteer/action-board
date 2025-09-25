@@ -1,7 +1,7 @@
 import type { Message } from "@/components/common/form-message";
 import { AccountDeletionSection } from "@/features/user-settings/components/account-deletion-section";
 import ProfileForm from "@/features/user-settings/components/profile-form";
-import { createClient } from "@/lib/supabase/client";
+import { getMyProfile, getProfile, getUser } from "@/lib/services/user";
 import { redirect } from "next/navigation";
 
 type ProfileSettingsPageSearchParams = {
@@ -14,28 +14,16 @@ export default async function ProfileSettingsPage({
   searchParams: Promise<ProfileSettingsPageSearchParams | undefined>;
 }) {
   const params = await searchParams;
-  const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return redirect("/sign-in");
   }
 
   // ユーザー情報を取得
-  const { data: privateUser } = await supabase
-    .from("private_users")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  const { data: publicUser } = await supabase
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const privateUser = await getMyProfile().catch(() => null);
+  const publicUser = await getProfile(user.id);
 
   // 新規ユーザーかどうか判定
   const isNew = Boolean(params?.new);

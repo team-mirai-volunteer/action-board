@@ -8,17 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
-import { createClient } from "@/lib/supabase/client";
+import { getUser } from "@/lib/services/user";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function Navbar() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   return (
     <nav className="sticky top-0 z-50 w-full flex justify-center bg-white border-b border-b-foreground/10 h-16">

@@ -6,7 +6,7 @@ import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { getMyProfile } from "@/lib/services/user";
+import { getMyProfile, getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
@@ -30,10 +30,7 @@ export default async function RankingPrefecturePage({
   }
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // 都道府県一覧を取得
   const prefectures = PREFECTURES;

@@ -8,6 +8,7 @@ import {
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
@@ -29,10 +30,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   }
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   const { data: missions, error: missionsError } = await supabase
     .from("missions")

@@ -6,7 +6,7 @@ import { SeasonRankingHeader } from "@/features/ranking/components/season-rankin
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { getMyProfile } from "@/lib/services/user";
+import { getMyProfile, getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -51,10 +51,7 @@ export default async function SeasonPrefectureRankingPage({
   const supabase = createClient();
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // 都道府県一覧を取得
   const prefectures = PREFECTURES;

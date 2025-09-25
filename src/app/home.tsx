@@ -11,7 +11,7 @@ import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotif
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
 import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
+import { getUser, hasPrivateProfile } from "@/lib/services/user";
 import { generateRootMetadata } from "@/lib/utils/metadata";
 import { redirect } from "next/navigation";
 
@@ -23,25 +23,18 @@ export default async function Home({
 }: {
   searchParams: Promise<{ ref?: string }>;
 }) {
-  const supabase = createClient();
   const params = await searchParams;
   const referralCode = params.ref;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // レベルアップ通知とバッジ通知をチェック
   let levelUpNotification = null;
   let badgeNotifications = null;
 
   if (user) {
-    const { data: privateUser } = await supabase
-      .from("private_users")
-      .select("id")
-      .eq("id", user.id)
-      .single();
-    if (!privateUser) {
+    const hasProfile = await hasPrivateProfile(user.id);
+    if (!hasProfile) {
       redirect("/settings/profile?new=true");
     }
 
