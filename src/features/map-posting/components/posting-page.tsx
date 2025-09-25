@@ -12,14 +12,12 @@ import {
   updateShape as updateMapShape,
 } from "../services/posting-shapes";
 import type {
-  PolygonProperties,
-  TextCoordinates,
-} from "../types/posting-types";
-import type {
   GeomanEvent,
   LeafletWindow,
   MapShape as MapShapeData,
+  PolygonProperties,
   PostingPageClientProps,
+  TextCoordinates,
 } from "../types/posting-types";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
