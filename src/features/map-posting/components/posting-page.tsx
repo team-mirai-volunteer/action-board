@@ -275,7 +275,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   `;
 
   function attachTextEvents(layer: Layer) {
-    if (!layer || !layer.pm) return;
+    if (!layer?.pm) return;
 
     layer._isTextLayer = true; // Mark as text layer
     textLayersRef.current.add(layer); // Add to tracking
@@ -356,7 +356,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   }
 
   function attachPersistenceEvents(layer: Layer) {
-    if (!layer || !layer.pm) return;
+    if (!layer?.pm) return;
 
     layer.off("pm:change", onLayerChange);
     layer.off("pm:dragend", onLayerChange);
