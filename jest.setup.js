@@ -255,7 +255,7 @@ jest.mock("@/features/user-level/services/level", () => ({
   ),
 }));
 
-jest.mock("@/features/user-profile/services/profile", () => ({
+jest.mock("@/lib/services/user", () => ({
   getPrivateUserData: jest.fn(() =>
     Promise.resolve({
       id: "test-user-id",
@@ -270,6 +270,21 @@ jest.mock("@/features/user-profile/services/profile", () => ({
       name: "テストユーザー",
       address_prefecture: "東京都",
       avatar_url: null,
+    }),
+  ),
+  getMyProfile: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+      avatar_url: null,
+      email: "test@example.com",
+    }),
+  ),
+  getUser: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      email: "test@example.com",
     }),
   ),
 }));
