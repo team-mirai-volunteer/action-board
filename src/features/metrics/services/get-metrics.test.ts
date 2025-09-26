@@ -78,62 +78,62 @@ describe("get-metrics", () => {
 
   // validation関数は独立しているため、単体でテスト実施。正常系はfetch系で確認されるため、異常系のみ確認
   describe("validateDonationData / validateSupporterData", () => {
-    it("異常系: データがnullの場合、falseを返す", async () => {
-      const resultDonation = await validateDonationData(null);
+    it("異常系: データがnullの場合、falseを返す", () => {
+      const resultDonation = validateDonationData(null);
       expect(resultDonation).toBe(false);
 
-      const resultSupporter = await validateSupporterData(null);
+      const resultSupporter = validateSupporterData(null);
       expect(resultSupporter).toBe(false);
     });
 
-    it("異常系: 必須フィールドが欠落している場合、falseを返す", async () => {
+    it("異常系: 必須フィールドが欠落している場合、falseを返す", () => {
       const invalidData = {
         last24hCount: 2,
         updatedAt: new Date().toISOString(),
       };
-      const resultDonation = await validateDonationData(invalidData);
+      const resultDonation = validateDonationData(invalidData);
       expect(resultDonation).toBe(false);
 
-      const resultSupporter = await validateSupporterData(invalidData);
+      const resultSupporter = validateSupporterData(invalidData);
       expect(resultSupporter).toBe(false);
     });
 
-    it("異常系: フィールドの型が不正な場合、falseを返す", async () => {
+    it("異常系: フィールドの型が不正な場合、falseを返す", () => {
       const invalidData = {
         totalCount: "10", // 型が文字列
         last24hCount: 2,
         updatedAt: new Date().toISOString(),
       };
-      const resultDonation = await validateDonationData(invalidData);
+      const resultDonation = validateDonationData(invalidData);
       expect(resultDonation).toBe(false);
 
-      const resultSupporter = await validateSupporterData(invalidData);
+      const resultSupporter = validateSupporterData(invalidData);
       expect(resultSupporter).toBe(false);
     });
 
-    it("異常系: フィールドの値が負の値の場合、falseを返す", async () => {
+    it("異常系: フィールドの値が負の値の場合、falseを返す", () => {
       const invalidData = {
         totalCount: 2,
         last24hCount: -10, // 負の値
         updatedAt: new Date().toISOString(),
       };
-      const resultDonation = await validateDonationData(invalidData);
+      const resultDonation = validateDonationData(invalidData);
       expect(resultDonation).toBe(false);
 
-      const resultSupporter = await validateSupporterData(invalidData);
+      const resultSupporter = validateSupporterData(invalidData);
       expect(resultSupporter).toBe(false);
     });
 
-    it("異常系: updatedAtが無効な日付形式の場合、falseを返す", async () => {
+    it("異常系: updatedAtが無効な日付形式の場合、falseを返す", () => {
       const invalidData = {
         totalCount: 10,
         last24hCount: 2,
         updatedAt: "invalid-date", // 無効な日付
       };
-      const resultDonation = await validateDonationData(invalidData);
+      const resultDonation = validateDonationData(invalidData);
       expect(resultDonation).toBe(false);
 
-      const resultSupporter = await validateSupporterData(invalidData);
+      const resultSupporter = validateSupporterData(invalidData);
       expect(resultSupporter).toBe(false);
     });
   });
