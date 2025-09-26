@@ -1,11 +1,10 @@
 import Navbar from "@/components/common/navbar";
-import { notoSansJP } from "@/lib/utils/metadata";
+import { generateRootMetadata, notoSansJP } from "@/lib/utils/metadata";
 import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
-import { generateRootMetadata } from "@/lib/utils/metadata";
 import Script from "next/script";
 import { Suspense } from "react";
 
