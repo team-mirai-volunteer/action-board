@@ -25,14 +25,12 @@ export default async function ForgotPassword(props: {
 
   const message = getMessage();
   return (
-    <>
-      <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-72 max-w-72 mx-auto">
-        <div className="flex justify-center items-center m-4">
-          <Image src="/img/logo_shiro.png" alt="logo" width={114} height={96} />
-        </div>
-        <h1 className="text-2xl font-medium">パスワードを忘れた方</h1>
-        <ForgotPasswordForm message={message} />
-      </form>
-    </>
+    <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-72 max-w-72 mx-auto">
+      <div className="flex justify-center items-center m-4">
+        <Image src="/img/logo_shiro.png" alt="logo" width={114} height={96} />
+      </div>
+      <h1 className="text-2xl font-medium">パスワードを忘れた方</h1>
+      <ForgotPasswordForm message={message} />
+    </form>
   );
 }

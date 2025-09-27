@@ -285,10 +285,8 @@ export function MissionFormWrapper({
         userAchievementCount > 0 && (
           <div className="rounded-lg border bg-muted/50 p-4 text-center mb-4">
             <p className="text-sm font-medium text-muted-foreground">
-              <>
-                復習用チャレンジ: {userAchievementCount} /{" "}
-                {mission.max_achievement_count}回
-              </>
+              復習用チャレンジ: {userAchievementCount} /{" "}
+              {mission.max_achievement_count}回
             </p>
           </div>
         )}
