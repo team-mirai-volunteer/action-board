@@ -27,7 +27,7 @@ import {
   getCurrentSeasonId,
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
+import { getProfile } from "@/lib/services/user";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -42,13 +42,8 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = createClient();
 
-  const { data: user } = await supabase
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const user = await getProfile(id);
 
   if (!user) return <div>ユーザーが見つかりません</div>;
 

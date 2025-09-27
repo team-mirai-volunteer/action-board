@@ -8,6 +8,7 @@ import {
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
 import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -52,10 +53,7 @@ export default async function SeasonMissionRankingPage({
   const supabase = createClient();
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // ミッション一覧をカテゴリ情報付きで取得（max_achievement_countがnullのもののみ）
   const { data: missions, error: missionsError } = await supabase

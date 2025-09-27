@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import Levels from "@/features/user-level/components/levels";
-import { getUser } from "@/features/user-profile/services/profile";
+import { getUser } from "@/lib/services/user";
 import Image from "next/image";
 import Link from "next/link";
 

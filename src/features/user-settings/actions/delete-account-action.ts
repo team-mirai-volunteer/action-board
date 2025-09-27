@@ -1,6 +1,6 @@
 "use server";
 
-import { deleteAccount } from "@/features/user-profile/services/profile";
+import { deleteAccount } from "@/lib/services/user";
 
 export async function deleteAccountAction() {
   try {

@@ -1,5 +1,5 @@
 import PostingPageClient from "@/features/map-posting/components/posting-page";
-import { createClient } from "@/lib/supabase/client";
+import { getUser } from "@/lib/services/user";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -9,11 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PostingPage() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return redirect("/sign-in");

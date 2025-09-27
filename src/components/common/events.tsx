@@ -1,16 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/client";
+import { getEvents } from "@/lib/services/events";
 import { dateTimeFormatter } from "@/lib/utils/date-formatters";
 
 export default async function Events() {
-  const supabase = createClient();
-
-  let { data: events } = await supabase
-    .from("events")
-    .select()
-    .order("created_at", { ascending: false });
-
-  events ??= [];
+  const events = await getEvents();
 
   return (
     <div className="flex flex-col px-5 py-6 gap-2">
