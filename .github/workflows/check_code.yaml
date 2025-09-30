@@ -1,0 +1,27 @@
+name: Check code with Biome and tsc
+
+on:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 1.9.4
+
+      - name: Run Biome
+        run: biome ci .
+
+      - name: Type check with TypeScript
+        run: npx run typecheck

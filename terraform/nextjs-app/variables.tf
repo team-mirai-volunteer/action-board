@@ -25,6 +25,12 @@ variable "max_instance_count" {
   default     = 2
 }
 
+variable "cloud_run_memory" {
+  description = "Memory limit for Cloud Run container"
+  type        = string
+  default     = "512Mi"
+}
+
 variable "github_repository_id" {
   description = "GitHub repository ID"
   type        = string

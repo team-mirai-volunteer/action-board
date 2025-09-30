@@ -8,6 +8,7 @@ module "nextjs_app" {
   environment          = var.environment
   min_instance_count   = var.min_instance_count
   max_instance_count   = var.max_instance_count
+  cloud_run_memory     = var.environment == "production" ? "2Gi" : "512Mi"
   github_repository_id = google_cloudbuildv2_repository.github_repository.id
   repository_name      = google_artifact_registry_repository.app.repository_id
   trigger_branch       = var.trigger_branch

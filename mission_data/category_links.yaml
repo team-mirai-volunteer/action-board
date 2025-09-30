@@ -1,6 +1,14 @@
 category_links:
+  - category_slug: learn-teammirai-supporter
+    missions:
+      - mission_slug: add-supporter-line-friend
+        sort_no: 100
+      - mission_slug: join-orientation
+        sort_no: 200
   - category_slug: follow-teammirai
     missions:
+      - mission_slug: add-supporter-line-friend
+        sort_no: 50
       - mission_slug: add-line-friend
         sort_no: 100
       - mission_slug: youtube-subscribe

@@ -122,8 +122,8 @@ const createMockSupabaseQuery = () => {
   return mockQuery;
 };
 
-jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(() => ({
+jest.mock("@/lib/supabase/adminClient", () => ({
+  createAdminClient: jest.fn(() => ({
     auth: {
       getUser: jest.fn(() =>
         Promise.resolve({ data: { user: null }, error: null }),
@@ -243,7 +243,7 @@ jest.mock("react-dom", () => ({
   useFormStatus: jest.fn(() => ({ pending: false })),
 }));
 
-jest.mock("@/lib/services/userLevel", () => ({
+jest.mock("@/features/user-level/services/level", () => ({
   getUserLevel: jest.fn(() =>
     Promise.resolve({
       user_id: "test-user-id",
@@ -255,7 +255,7 @@ jest.mock("@/lib/services/userLevel", () => ({
   ),
 }));
 
-jest.mock("@/lib/services/users", () => ({
+jest.mock("@/features/user-profile/services/profile", () => ({
   getPrivateUserData: jest.fn(() =>
     Promise.resolve({
       id: "test-user-id",
@@ -322,7 +322,7 @@ jest.mock("@radix-ui/react-dialog", () => {
   return mockComponents;
 });
 
-jest.mock("@/lib/services/metrics", () => ({
+jest.mock("@/features/metrics/services/get-metrics", () => ({
   fetchSupporterData: jest.fn(() =>
     Promise.resolve({
       totalCount: 75982,

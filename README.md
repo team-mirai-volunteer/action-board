@@ -38,6 +38,7 @@
    - WSL2のインストール `wsl --version` で確認
       - `cmd wsl --install` または `PowerShell wsl --install`
       - いずれも管理者権限が必要
+      - 詳細: [公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install)
 
    - Hyper-Vの有効化
       1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
@@ -135,7 +136,7 @@
    npm run mission:sync
    ```
 
-   `mission_data/README.md`を参照ください。
+   詳しくは [ミッションデータ README](mission_data/README.md) を参照ください。
 
 8. Next.js のローカル開発サーバーを起動:
 
@@ -210,7 +211,7 @@ supabase migration up
 
 migrationファイルの追加や編集で、テーブルの追加や更新を行った場合は、型定義を生成してください。
 
-```
+```bash
 npx supabase gen types typescript --local > lib/types/supabase.ts
 ```
 
@@ -240,12 +241,27 @@ npx supabase gen types typescript --local > lib/types/supabase.ts
 
 このプロジェクトでは、Playwrightを使用したE2Eテストを実装しています。テストは`tests/e2e`ディレクトリに配置されています。
 
+### テスト実行準備
+
+Playwright 実行に必要なソフトウェア・ツールをインストールする必要があります
+※ 環境によってはすでにインストールされている場合もあります
+
+テスト実行時、ブラウザや依存パッケージに関するエラーが出た場合は下記コマンドでインストールを行ってください
+
+```bash
+# テスト用ブラウザのインストール
+npx playwright install
+# 依存パッケージのインストール
+npx playwright install-deps
+```
+
 ### テストの実行方法
 
 1. テスト実行前に、ローカル開発環境が起動していることを確認してください:
 
    ```bash
    supabase start
+   npm run dev
    ```
 
 2. 以下のコマンドですべてのテストを実行できます:
@@ -349,13 +365,6 @@ RLSテストは以下のテーブルに対して実装されています:
 - テスト実行前にRLSが有効になっていることを確認してください
 - 各テストでは、成功ケースと失敗ケースの両方をテストすることが重要です
 
-## storybookの実行
-
-```bash
-npm run storybook
-```
-
-`stories`ディレクトリにstorybookのファイルを配置してください。
 
 ## HubSpot連携
 
@@ -408,9 +417,9 @@ HUBSPOT_CONTACT_LIST_ID=123456
 アクションボードのユーザー情報は以下のようにHubSpotのコンタクトプロパティにマッピングされます：
 
 | アプリケーション項目 | HubSpotプロパティ | HubSpot表示名 | データ型 | ステータス |
-|-------------|-----------------|--------------|----------|----------|
-| メールアドレス | `email` | Email | Email | ✅ 実装済み |
-| メールアドレス | `firstname` | 名 | Text | ✅ 実装済み |
+| -------------------- | ----------------- | ------------- | -------- | ---------- |
+| メールアドレス       | `email`           | Email         | Email    | ✅ 実装済み |
+| メールアドレス       | `firstname`       | 名            | Text     | ✅ 実装済み |
 
 ### 連携タイミング
 
@@ -473,15 +482,15 @@ HUBSPOT_CONTACT_LIST_ID=123456
 ### ミッション登録フロー変更のお知らせ
 
 #### 背景
-- **ISSUE（#398） の対応により、`missions` テーブルへ新規ミッションを登録する際、  
-  同時に `mission_category_link` テーブルへの登録が必須になりました。  
+- **ISSUE（#398） の対応により、`missions` テーブルへ新規ミッションを登録する際、
+  同時に `mission_category_link` テーブルへの登録が必須になりました。
   - もし `mission_category_link` への登録を忘れると、トップページにミッションが表示されません。
 
 #### 対応内容
-1. **新規ミッション登録**  
-   - `missions` テーブルへのデータ登録  
+1. **新規ミッション登録**
+   - `missions` テーブルへのデータ登録
    - **必ず** `mission_category_link` テーブルへカテゴリー紐づけデータを登録
-2. **カテゴリーの選定**  
+2. **カテゴリーの選定**
    - 登録するミッションを **どのカテゴリー** に紐づけるかは、PM（プロダクトマネージャー）と相談して決定してください。
    - カテゴリ管理は以下の Notion ページで一元管理しています。
 
