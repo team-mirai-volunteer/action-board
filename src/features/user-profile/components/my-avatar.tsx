@@ -1,6 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  getMyProfile,
+  getUser,
+} from "@/features/user-profile/services/profile";
 import { getAvatarUrl } from "@/lib/services/avatar";
-import { getMyProfile, getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 import type { HTMLProps } from "react";
 

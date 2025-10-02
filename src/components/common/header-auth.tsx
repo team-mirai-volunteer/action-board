@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import MyAvatar from "@/features/user-profile/components/my-avatar";
-import { getUser } from "@/lib/services/user";
+import { getUser } from "@/features/user-profile/services/profile";
 import Link from "next/link";
 
 export default async function AuthButton() {

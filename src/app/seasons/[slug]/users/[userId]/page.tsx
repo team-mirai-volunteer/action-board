@@ -24,10 +24,10 @@ import {
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import { SocialBadge } from "@/features/user-profile/components/social-badge";
+import { getProfile } from "@/features/user-profile/services/profile";
 import { UserSeasonHeader } from "@/features/user-season/components/user-season-header";
 import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
-import { getProfile } from "@/lib/services/user";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;

@@ -1,5 +1,5 @@
 import PostingPageClient from "@/features/map-posting/components/posting-page";
-import { getUser } from "@/lib/services/user";
+import { getUser } from "@/features/user-profile/services/profile";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 

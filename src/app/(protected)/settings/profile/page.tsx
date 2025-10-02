@@ -1,7 +1,11 @@
 import type { Message } from "@/components/common/form-message";
+import {
+  getMyProfile,
+  getProfile,
+  getUser,
+} from "@/features/user-profile/services/profile";
 import { AccountDeletionSection } from "@/features/user-settings/components/account-deletion-section";
 import ProfileForm from "@/features/user-settings/components/profile-form";
-import { getMyProfile, getProfile, getUser } from "@/lib/services/user";
 import { redirect } from "next/navigation";
 
 type ProfileSettingsPageSearchParams = {

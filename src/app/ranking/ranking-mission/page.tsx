@@ -7,8 +7,8 @@ import {
   getUserMissionRanking,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
+import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {

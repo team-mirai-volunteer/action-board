@@ -4,9 +4,12 @@ import { PrefectureSelect } from "@/features/ranking/components/prefecture-selec
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
+import {
+  getMyProfile,
+  getUser,
+} from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { getMyProfile, getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {

@@ -16,7 +16,7 @@ import {
   getUserMissionRanking,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
-import { getUser } from "@/lib/services/user";
+import { getUser } from "@/features/user-profile/services/profile";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
   config,

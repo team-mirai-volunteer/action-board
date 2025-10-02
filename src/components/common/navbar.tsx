@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
-import { getUser } from "@/lib/services/user";
+import { getUser } from "@/features/user-profile/services/profile";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

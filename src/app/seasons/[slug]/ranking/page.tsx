@@ -6,8 +6,8 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
+import { getUser } from "@/features/user-profile/services/profile";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { getUser } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { Metadata } from "next";

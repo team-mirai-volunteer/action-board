@@ -8,7 +8,7 @@ import {
   getPosterBoardStats,
   getPosterBoardTotalByPrefecture,
 } from "@/features/map-poster/services/poster-boards";
-import { getUser } from "@/lib/services/user";
+import { getUser } from "@/features/user-profile/services/profile";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
