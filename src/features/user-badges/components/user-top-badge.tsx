@@ -16,5 +16,5 @@ export async function UserTopBadge({ userId, seasonId }: UserTopBadgeProps) {
     return null;
   }
 
-  return <BadgeItem badge={topBadge} className="w-fit" />;
+  return <BadgeItem badge={topBadge} className="w-fit" clickable={false} />;
 }
