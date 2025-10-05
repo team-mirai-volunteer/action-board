@@ -2,40 +2,6 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { CurrentUserCardMission } from "./current-user-card-mission";
 
-type UserMissionRanking = {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  rank: number | null;
-  total_points: number | null;
-  user_achievement_count?: number;
-  level?: number;
-  updated_at?: string;
-  xp?: number;
-};
-
-type Mission = {
-  id: string;
-  title: string;
-  description: string;
-  artifact_label?: string | null;
-  content?: string | null;
-  created_at?: string;
-  difficulty?: number;
-  event_date?: string | null;
-  icon_url?: string | null;
-  is_featured?: boolean;
-  is_posting_mission?: boolean;
-  location?: string | null;
-  max_participants?: number | null;
-  name?: string;
-  updated_at?: string;
-  is_hidden?: boolean;
-  max_achievement_count?: number | null;
-  ogp_image_url?: string | null;
-  required_artifact_type?: string | null;
-};
-
 jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
@@ -88,7 +54,6 @@ const mockUser = {
   name: "テストユーザー",
   address_prefecture: "東京都",
   rank: 3,
-  total_points: 1500,
   user_achievement_count: 5,
   level: 10,
   updated_at: "2024-01-01T00:00:00Z",
@@ -115,8 +80,8 @@ describe("CurrentUserCardMission", () => {
 
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
       expect(screen.getByText("東京都")).toBeInTheDocument();
-      expect(screen.getByText("1,500pt")).toBeInTheDocument();
-      expect(screen.getByText("3")).toBeInTheDocument();
+      expect(screen.getByText("Lv.10")).toBeInTheDocument();
+      expect(screen.getByText("5回達成")).toBeInTheDocument();
     });
 
     it("タイトルが正しく表示される", () => {
@@ -172,8 +137,8 @@ describe("CurrentUserCardMission", () => {
       expect(screen.getByText("0")).toBeInTheDocument();
     });
 
-    it("total_pointsがnullの場合は0ptが表示される", () => {
-      const user = { ...mockUser, total_points: null };
+    it("レベルがnullの場合はLv.0が表示される", () => {
+      const user = { ...mockUser, level: null };
       render(
         <CurrentUserCardMission
           currentUser={user}
@@ -182,7 +147,7 @@ describe("CurrentUserCardMission", () => {
         />,
       );
 
-      expect(screen.getByText("0pt")).toBeInTheDocument();
+      expect(screen.getByText("Lv.0")).toBeInTheDocument();
     });
   });
 
@@ -199,34 +164,6 @@ describe("CurrentUserCardMission", () => {
       expect(screen.getByTestId("card-header")).toBeInTheDocument();
       expect(screen.getByTestId("card-content")).toBeInTheDocument();
       expect(screen.getByTestId("card-title")).toBeInTheDocument();
-    });
-  });
-
-  describe("データフォーマット", () => {
-    it("ポイントが正しくフォーマットされる", () => {
-      const user = { ...mockUser, total_points: 123456 };
-      render(
-        <CurrentUserCardMission
-          currentUser={user}
-          mission={mockMission}
-          badgeText="5回達成"
-        />,
-      );
-
-      expect(screen.getByText("123,456pt")).toBeInTheDocument();
-    });
-
-    it("大きな数値も正しくフォーマットされる", () => {
-      const user = { ...mockUser, total_points: 1000000 };
-      render(
-        <CurrentUserCardMission
-          currentUser={user}
-          mission={mockMission}
-          badgeText="100回達成"
-        />,
-      );
-
-      expect(screen.getByText("1,000,000pt")).toBeInTheDocument();
     });
   });
 
@@ -255,34 +192,6 @@ describe("CurrentUserCardMission", () => {
       );
 
       expect(screen.getByText("未設定")).toBeInTheDocument();
-    });
-
-    it("空のバッジテキストが処理される", () => {
-      render(
-        <CurrentUserCardMission
-          currentUser={mockUser}
-          mission={mockMission}
-          badgeText=""
-        />,
-      );
-
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveTextContent("");
-    });
-  });
-
-  describe("displayUserの変換", () => {
-    it("displayUserが正しく変換される", () => {
-      const user = { ...mockUser, rank: null };
-      render(
-        <CurrentUserCardMission
-          currentUser={user}
-          mission={mockMission}
-          badgeText="5回達成"
-        />,
-      );
-
-      expect(screen.getByText("0")).toBeInTheDocument();
     });
   });
 });

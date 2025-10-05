@@ -16,7 +16,6 @@ export interface UserRanking {
 
 export interface UserMissionRanking extends UserRanking {
   user_achievement_count: number | null;
-  total_points: number | null;
 }
 
 export interface PrefectureRanking {

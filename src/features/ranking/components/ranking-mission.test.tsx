@@ -7,7 +7,6 @@ type UserMissionRanking = {
   name: string;
   address_prefecture: string;
   rank: number | null;
-  total_points: number | null;
   user_achievement_count?: number;
 };
 
@@ -69,14 +68,12 @@ const mockRankings: UserMissionRanking[] = [
     name: "ユーザー1",
     address_prefecture: "東京都",
     rank: 1,
-    total_points: 1000,
   },
   {
     user_id: "user-2",
     name: "ユーザー2",
     address_prefecture: "大阪府",
     rank: 2,
-    total_points: 800,
   },
 ];
 
@@ -90,7 +87,6 @@ const mockCurrentUser: UserMissionRanking = {
   name: "現在のユーザー",
   address_prefecture: "愛知県",
   rank: 5,
-  total_points: 500,
 };
 
 describe("RankingMission", () => {

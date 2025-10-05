@@ -27,7 +27,6 @@ function getLevelBadgeColor(level: number | null) {
 
 export function RankingItem({
   user,
-  userWithMission,
   showDetailedInfo = false,
   mission,
   badgeText,
@@ -48,19 +47,15 @@ export function RankingItem({
         </div>
       </div>
       <div className="flex items-center gap-3">
-        {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
+        {/* ミッション別ランキングの場合は達成回数を表示 */}
         {mission ? (
           <>
             <Badge
-              className={
-                "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
-              }
+              className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full`}
             >
-              {badgeText}
+              Lv.{user.level}
             </Badge>
-            <span className="font-bold text-lg">
-              {(userWithMission?.total_points ?? 0).toLocaleString()}pt
-            </span>
+            <span className="font-bold text-lg">{badgeText ?? 0}</span>
           </>
         ) : (
           <>

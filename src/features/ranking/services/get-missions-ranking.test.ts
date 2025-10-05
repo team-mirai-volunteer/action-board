@@ -45,7 +45,6 @@ describe("missionsRanking service", () => {
             xp: 1000,
             updated_at: "2024-01-01T00:00:00Z",
             user_achievement_count: 5,
-            total_points: 500,
             rank: 1,
           },
           {
@@ -56,7 +55,6 @@ describe("missionsRanking service", () => {
             xp: 800,
             updated_at: "2024-01-01T00:00:00Z",
             user_achievement_count: 3,
-            total_points: 300,
             rank: 2,
           },
         ];
@@ -82,7 +80,6 @@ describe("missionsRanking service", () => {
           user_id: "user1",
           name: "テストユーザー1",
           user_achievement_count: 5,
-          total_points: 500,
         });
       });
 
@@ -115,7 +112,6 @@ describe("missionsRanking service", () => {
             user_name: "テストユーザー1",
             address_prefecture: "東京都",
             user_achievement_count: 2,
-            total_points: 100,
             rank: 1,
           },
         ];
@@ -142,7 +138,6 @@ describe("missionsRanking service", () => {
           user_achievement_count: 2,
           level: null,
           xp: null,
-          total_points: 100,
         });
       });
 
@@ -202,7 +197,6 @@ describe("missionsRanking service", () => {
             xp: 1000,
             updated_at: "2024-01-01T00:00:00Z",
             user_achievement_count: 5,
-            total_points: 500,
             rank: 3,
           },
         ];
@@ -241,7 +235,6 @@ describe("missionsRanking service", () => {
             user_name: "テストユーザー",
             address_prefecture: "東京都",
             user_achievement_count: 2,
-            total_points: 50,
             rank: 5,
             level: null,
             xp: null,
@@ -276,7 +269,6 @@ describe("missionsRanking service", () => {
           rank: 5,
           level: null,
           xp: null,
-          total_points: 50,
         });
       });
     });

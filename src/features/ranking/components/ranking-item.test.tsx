@@ -21,7 +21,6 @@ type UserMissionRanking = {
   xp: number | null;
   updated_at: string | null;
   user_achievement_count: number | null;
-  total_points: number | null;
 };
 
 jest.mock("next/link", () => {
@@ -72,7 +71,6 @@ const mockUserMissionRanking: UserMissionRanking = {
   xp: null,
   updated_at: null,
   user_achievement_count: null,
-  total_points: 2500,
 };
 
 describe("RankingItem", () => {
@@ -137,7 +135,7 @@ describe("RankingItem", () => {
       name: "テストミッション",
     };
 
-    it("ミッション別ランキングの場合はポイントが表示される", () => {
+    it("ミッション別ランキングの場合は達成回数が表示される", () => {
       render(
         <RankingItem
           user={mockUserRanking}
@@ -147,24 +145,11 @@ describe("RankingItem", () => {
         />,
       );
 
-      expect(screen.getByText("2,500pt")).toBeInTheDocument();
+      expect(screen.getByText("Lv.15")).toBeInTheDocument();
       expect(screen.getByText("5回達成")).toBeInTheDocument();
     });
 
-    it("ミッション別ランキングの場合はレベル表示されない", () => {
-      render(
-        <RankingItem
-          user={mockUserRanking}
-          userWithMission={mockUserMissionRanking}
-          mission={mission}
-          badgeText="3回達成"
-        />,
-      );
-
-      expect(screen.queryByText("Lv.15")).not.toBeInTheDocument();
-    });
-
-    it("userWithMissionがnullの場合は0ptが表示される", () => {
+    it("ミッション別ランキングの場合はポイントが表示されない", () => {
       render(
         <RankingItem
           user={mockUserRanking}
@@ -174,7 +159,7 @@ describe("RankingItem", () => {
         />,
       );
 
-      expect(screen.getByText("0pt")).toBeInTheDocument();
+      expect(screen.queryByText("1,500pt")).not.toBeInTheDocument();
     });
   });
 

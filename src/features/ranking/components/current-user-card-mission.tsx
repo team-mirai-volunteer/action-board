@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/lib/types/supabase";
 import type { UserMissionRanking } from "../types/ranking-types";
 import { BaseCurrentUserCard } from "./base-current-user-card";
+import { LevelBadge } from "./ranking-level-badge";
 
 interface CurrentUserCardProps {
   currentUser: UserMissionRanking | null;
@@ -18,6 +18,12 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
     return null;
   }
 
+  const displayUser = {
+    ...currentUser,
+    level: currentUser.level || 0,
+    xp: currentUser.xp || 0,
+  };
+
   const userForCard = {
     user_id: currentUser.user_id,
     name: currentUser.name,
@@ -28,14 +34,8 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
   return (
     <BaseCurrentUserCard currentUser={userForCard}>
       <div className="flex items-center gap-3">
-        <Badge
-          className={"bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"}
-        >
-          {badgeText}
-        </Badge>
-        <span className="font-bold text-lg">
-          {(currentUser.total_points ?? 0).toLocaleString()}pt
-        </span>
+        <LevelBadge level={displayUser.level} />
+        <div className="text-lg font-bold">{badgeText}</div>
       </div>
     </BaseCurrentUserCard>
   );

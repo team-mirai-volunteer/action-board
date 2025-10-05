@@ -69,7 +69,6 @@ export async function getMissionRanking(
             xp: ranking.xp,
             updated_at: ranking.updated_at,
             user_achievement_count: ranking.user_achievement_count,
-            total_points: ranking.total_points,
           }) as UserMissionRanking,
       );
     }
@@ -85,7 +84,6 @@ export async function getMissionRanking(
           xp: null, // 期間別では取得しない
           updated_at: null,
           user_achievement_count: ranking.user_achievement_count,
-          total_points: ranking.total_points,
         }) as UserMissionRanking,
     );
   } catch (error) {
@@ -156,7 +154,6 @@ export async function getUserMissionRanking(
       xp: ranking.xp,
       updated_at: ranking.updated_at,
       user_achievement_count: ranking.user_achievement_count,
-      total_points: ranking.total_points,
     } as UserMissionRanking;
   } catch (error) {
     console.error("User mission ranking service error:", error);
