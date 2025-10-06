@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { BaseRanking } from "./base-ranking";
+import "@testing-library/jest-dom";
 
 jest.mock("@/components/ui/card", () => ({
   Card: ({
@@ -32,7 +33,8 @@ describe("BaseRanking", () => {
     it("タイトルが正しく表示される", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test">
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -42,18 +44,22 @@ describe("BaseRanking", () => {
     it("子要素が正しくレンダリングされる", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test">
-          <div data-testid="child-content">子要素のコンテンツ</div>
+          <div data-testid="child-content1">子要素のコンテンツ1</div>
+          <div data-testid="child-content2">子要素のコンテンツ2</div>
         </BaseRanking>,
       );
 
-      expect(screen.getByTestId("child-content")).toBeInTheDocument();
-      expect(screen.getByText("子要素のコンテンツ")).toBeInTheDocument();
+      expect(screen.getByTestId("child-content1")).toBeInTheDocument();
+      expect(screen.getByTestId("child-content2")).toBeInTheDocument();
+      expect(screen.getByText("子要素のコンテンツ1")).toBeInTheDocument();
+      expect(screen.getByText("子要素のコンテンツ2")).toBeInTheDocument();
     });
 
     it("Cardコンポーネントがレンダリングされる", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test">
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -70,7 +76,8 @@ describe("BaseRanking", () => {
           detailsHref="/test-details"
           showDetailedInfo={true}
         >
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -88,7 +95,8 @@ describe("BaseRanking", () => {
           detailsHref="/test-details"
           showDetailedInfo={false}
         >
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -99,7 +107,8 @@ describe("BaseRanking", () => {
     it("detailsHrefがない場合、showDetailedInfoがtrueでもリンクが表示されない", () => {
       render(
         <BaseRanking title="テストランキング" showDetailedInfo={true}>
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -109,7 +118,8 @@ describe("BaseRanking", () => {
     it("showDetailedInfoのデフォルト値はfalse", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test-details">
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -124,7 +134,8 @@ describe("BaseRanking", () => {
           showDetailedInfo={true}
           detailsLinkText="すべて見る"
         >
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -141,12 +152,14 @@ describe("BaseRanking", () => {
           showDetailedInfo={true}
           detailsLinkText="もっと見る"
         >
-          <div data-testid="custom-child">カスタム子要素</div>
+          <div data-testid="custom-child1">カスタム子要素1</div>
+          <div data-testid="custom-child2">カスタム子要素2</div>
         </BaseRanking>,
       );
 
       expect(screen.getByText("カスタムタイトル")).toBeInTheDocument();
-      expect(screen.getByTestId("custom-child")).toBeInTheDocument();
+      expect(screen.getByTestId("custom-child1")).toBeInTheDocument();
+      expect(screen.getByTestId("custom-child2")).toBeInTheDocument();
       expect(screen.getByText("もっと見る")).toBeInTheDocument();
       expect(screen.getByTestId("link")).toHaveAttribute(
         "href",
@@ -157,19 +170,26 @@ describe("BaseRanking", () => {
     it("最小限のpropsのみ指定した場合", () => {
       render(
         <BaseRanking title="最小限のタイトル">
-          <div>最小限のコンテンツ</div>
+          <div>最小限のコンテンツ1</div>
+          <div>最小限のコンテンツ2</div>
         </BaseRanking>,
       );
 
       expect(screen.getByText("最小限のタイトル")).toBeInTheDocument();
-      expect(screen.getByText("最小限のコンテンツ")).toBeInTheDocument();
+      expect(screen.getByText("最小限のコンテンツ1")).toBeInTheDocument();
+      expect(screen.getByText("最小限のコンテンツ2")).toBeInTheDocument();
       expect(screen.queryByTestId("link")).not.toBeInTheDocument();
     });
   });
 
   describe("エッジケース", () => {
     it("空の子要素でもエラーにならない", () => {
-      render(<BaseRanking title="テストランキング">{null}</BaseRanking>);
+      render(
+        <BaseRanking title="テストランキング">
+          {null}
+          {null}
+        </BaseRanking>,
+      );
 
       expect(screen.getByText("テストランキング")).toBeInTheDocument();
     });
@@ -195,7 +215,8 @@ describe("BaseRanking", () => {
           detailsHref=""
           showDetailedInfo={true}
         >
-          <div>テストコンテンツ</div>
+          <div>テストコンテンツ1</div>
+          <div>テストコンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -207,7 +228,8 @@ describe("BaseRanking", () => {
     it("タイトルが見出しとして適切に設定される", () => {
       render(
         <BaseRanking title="アクセシブルなタイトル">
-          <div>コンテンツ</div>
+          <div>コンテンツ1</div>
+          <div>コンテンツ2</div>
         </BaseRanking>,
       );
 
@@ -222,7 +244,8 @@ describe("BaseRanking", () => {
           detailsHref="/test"
           showDetailedInfo={true}
         >
-          <div>コンテンツ</div>
+          <div>コンテンツ1</div>
+          <div>コンテンツ2</div>
         </BaseRanking>,
       );
 
