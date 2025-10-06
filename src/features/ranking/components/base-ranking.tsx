@@ -24,7 +24,7 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
         <h2 className="text-xl md:text-2xl text-gray-900 mb-6 text-center">
           {title}
         </h2>
-        {children?.length > 0 ? (
+        {children.length > 0 ? (
           children
         ) : (
           <div className="text-gray-500 text-center">まだ達成者がいません</div>
