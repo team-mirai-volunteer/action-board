@@ -26,7 +26,7 @@ export default async function ProfileSettingsPage({
   }
 
   // ユーザー情報を取得
-  const privateUser = await getMyProfile().catch(() => null);
+  const privateUser = await getMyProfile();
   const publicUser = await getProfile(user.id);
 
   // 新規ユーザーかどうか判定
