@@ -2,6 +2,7 @@ import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import {
+  calculateMissionTotalPoints,
   getMissionRanking,
   getTopUsersPostingCount,
   getTopUsersPostingCountByMission,
@@ -23,12 +24,37 @@ jest.mock("@/lib/services/seasons", () => ({
 describe("missionsRanking service", () => {
   const mockSupabase = {
     rpc: jest.fn(),
+    from: jest.fn(),
   };
+
+  const createMissionQueryMock = (
+    info: { difficulty: number; required_artifact_type: string } = {
+      difficulty: 2,
+      required_artifact_type: "POSTING",
+    },
+  ) => ({
+    select: () => ({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: info,
+            error: null,
+          }),
+      }),
+    }),
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
     (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
+    mockSupabase.from.mockReset();
+    mockSupabase.from.mockReturnValue(createMissionQueryMock());
+    mockSupabase.rpc.mockReset();
+    mockSupabase.rpc.mockResolvedValue({
+      data: [],
+      error: null,
+    });
   });
 
   describe("getMissionRanking", () => {
@@ -61,7 +87,7 @@ describe("missionsRanking service", () => {
           },
         ];
 
-        mockSupabase.rpc.mockResolvedValue({
+        mockSupabase.rpc.mockResolvedValueOnce({
           data: mockRankingData,
           error: null,
         });
@@ -86,8 +112,35 @@ describe("missionsRanking service", () => {
         });
       });
 
+      it("ポスティングミッションでボーナスを加算する", async () => {
+        mockSupabase.rpc.mockResolvedValueOnce({
+          data: [
+            {
+              mission_id: missionId,
+              user_id: "user1",
+              user_name: "テストユーザー1",
+              address_prefecture: "東京都",
+              user_achievement_count: 2,
+              posting_total: 30,
+              rank: 1,
+            },
+          ],
+          error: null,
+        });
+
+        const result = await getMissionRanking(missionId);
+
+        const expectedPoints = calculateMissionTotalPoints({
+          difficulty: 2,
+          requiredArtifactType: "POSTING",
+          achievementCount: 2,
+          postingCount: 30,
+        });
+        expect(result[0].total_points).toBe(expectedPoints);
+      });
+
       it("limitパラメータで取得件数を制限できる", async () => {
-        mockSupabase.rpc.mockResolvedValue({
+        mockSupabase.rpc.mockResolvedValueOnce({
           data: [],
           error: null,
         });
@@ -120,7 +173,7 @@ describe("missionsRanking service", () => {
           },
         ];
 
-        mockSupabase.rpc.mockResolvedValue({
+        mockSupabase.rpc.mockResolvedValueOnce({
           data: mockRankingData,
           error: null,
         });
@@ -142,12 +195,12 @@ describe("missionsRanking service", () => {
           user_achievement_count: 2,
           level: null,
           xp: null,
-          total_points: 100,
+          total_points: 200,
         });
       });
 
       it("日次ランキングを取得する（日付確認）", async () => {
-        mockSupabase.rpc.mockResolvedValue({
+        mockSupabase.rpc.mockResolvedValueOnce({
           data: [],
           error: null,
         });
@@ -166,7 +219,7 @@ describe("missionsRanking service", () => {
     });
 
     it("エラー時は例外をスローする", async () => {
-      mockSupabase.rpc.mockResolvedValue({
+      mockSupabase.rpc.mockResolvedValueOnce({
         data: null,
         error: { message: "Database error" },
       });
@@ -234,6 +287,12 @@ describe("missionsRanking service", () => {
 
     describe("期間別ユーザーミッションランキング取得", () => {
       it("日間のユーザーランキングを取得する", async () => {
+        mockSupabase.from.mockReturnValueOnce(
+          createMissionQueryMock({
+            difficulty: 1,
+            required_artifact_type: "POSTING",
+          }),
+        );
         const mockRankingData = [
           {
             mission_id: missionId,
@@ -276,7 +335,7 @@ describe("missionsRanking service", () => {
           rank: 5,
           level: null,
           xp: null,
-          total_points: 50,
+          total_points: 100,
         });
       });
     });
@@ -437,7 +496,7 @@ describe("missionsRanking service", () => {
     });
 
     it("seasonId未指定で現在のシーズンを使用する", async () => {
-      (getCurrentSeasonId as jest.Mock).mockResolvedValueOnce("season-1");
+      (getCurrentSeasonId as jest.Mock).mockResolvedValue("season-1");
       mockSupabase.rpc.mockResolvedValue({ data: [], error: null });
       await getTopUsersPostingCountByMission(["u1"], "mission-1");
       expect(mockSupabase.rpc).toHaveBeenCalledWith(

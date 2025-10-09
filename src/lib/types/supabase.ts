@@ -1494,7 +1494,6 @@ export type Database = {
           level: number;
           mission_id: string;
           rank: number;
-          total_points: number;
           updated_at: string;
           user_achievement_count: number;
           user_id: string;
@@ -1639,7 +1638,6 @@ export type Database = {
           level: number;
           mission_id: string;
           rank: number;
-          total_points: number;
           updated_at: string;
           user_achievement_count: number;
           user_id: string;

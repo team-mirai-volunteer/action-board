@@ -1,9 +1,41 @@
 import "server-only";
 
+import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
+import {
+  MAX_POSTER_COUNT,
+  POSTER_POINTS_PER_UNIT,
+  POSTING_POINTS_PER_UNIT,
+} from "@/lib/constants/mission-config";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
-import type { RankingPeriod, UserMissionRanking } from "../types/ranking-types";
+import type {
+  MissionPointCalculationInput,
+  RankingPeriod,
+  UserMissionRanking,
+} from "../types/ranking-types";
+
+// 計算ロジックはsrc/features/mission-detail/actions/actions.tsより参照
+export function calculateMissionTotalPoints({
+  difficulty,
+  requiredArtifactType,
+  achievementCount,
+  postingCount,
+}: MissionPointCalculationInput): number {
+  const basePoints = achievementCount * calculateMissionXp(difficulty ?? 1);
+
+  let bonusPoints = 0;
+
+  if (requiredArtifactType === "POSTING") {
+    bonusPoints += (postingCount ?? 0) * POSTING_POINTS_PER_UNIT;
+  }
+
+  if (requiredArtifactType === "POSTER") {
+    bonusPoints += achievementCount * MAX_POSTER_COUNT * POSTER_POINTS_PER_UNIT;
+  }
+
+  return basePoints + bonusPoints;
+}
 
 export async function getMissionRanking(
   missionId: string,
@@ -56,38 +88,88 @@ export async function getMissionRanking(
       return [];
     }
 
-    // ランキングデータを変換
-    if (period === "all") {
-      return rankings.map(
-        (ranking) =>
-          ({
-            user_id: ranking.user_id,
-            name: ranking.user_name,
-            address_prefecture: ranking.address_prefecture,
-            rank: ranking.rank,
-            level: ranking.level,
-            xp: ranking.xp,
-            updated_at: ranking.updated_at,
-            user_achievement_count: ranking.user_achievement_count,
-            total_points: ranking.total_points,
-          }) as UserMissionRanking,
+    const { data: missionInfo, error: missionError } = await supabase
+      .from("missions")
+      .select("difficulty, required_artifact_type")
+      .eq("id", missionId)
+      .single();
+
+    if (missionError) {
+      console.error("Failed to fetch mission info:", missionError);
+      throw new Error(
+        `ミッション情報の取得に失敗しました: ${missionError.message}`,
       );
     }
-    // 期間別の場合
-    return rankings.map(
-      (ranking) =>
-        ({
+
+    const missionDifficulty = missionInfo?.difficulty ?? null;
+    const missionArtifactType = missionInfo?.required_artifact_type ?? null;
+
+    const postingCountMap = new Map<string, number>();
+
+    if (missionArtifactType === "POSTING" && rankings.length > 0) {
+      const postingCounts = await getTopUsersPostingCountByMission(
+        rankings
+          .map((ranking) => ranking.user_id)
+          .filter((id): id is string => Boolean(id)),
+        missionId,
+        targetSeasonId,
+      );
+
+      for (const entry of postingCounts) {
+        postingCountMap.set(entry.user_id, entry.posting_count);
+      }
+    }
+
+    const computeRankingPoints = (ranking: Record<string, unknown>) => {
+      const achievementCount =
+        (ranking.user_achievement_count as number | null) ?? 0;
+
+      let postingCount = 0;
+      if (missionArtifactType === "POSTING") {
+        postingCount =
+          postingCountMap.get((ranking.user_id as string) ?? "") ??
+          (ranking.posting_total as number | null) ??
+          0;
+      }
+
+      return calculateMissionTotalPoints({
+        difficulty: missionDifficulty,
+        requiredArtifactType: missionArtifactType,
+        achievementCount,
+        postingCount,
+      });
+    };
+
+    // ランキングデータを変換
+    if (period === "all") {
+      return rankings.map((ranking) => {
+        return {
           user_id: ranking.user_id,
           name: ranking.user_name,
           address_prefecture: ranking.address_prefecture,
           rank: ranking.rank,
-          level: null, // 期間別では取得しない
-          xp: null, // 期間別では取得しない
-          updated_at: null,
+          level: ranking.level,
+          xp: ranking.xp,
+          updated_at: ranking.updated_at,
           user_achievement_count: ranking.user_achievement_count,
-          total_points: ranking.total_points,
-        }) as UserMissionRanking,
-    );
+          total_points: computeRankingPoints(ranking),
+        } as UserMissionRanking;
+      });
+    }
+    // 期間別の場合
+    return rankings.map((ranking) => {
+      return {
+        user_id: ranking.user_id,
+        name: ranking.user_name,
+        address_prefecture: ranking.address_prefecture,
+        rank: ranking.rank,
+        level: null, // 期間別では取得しない
+        xp: null, // 期間別では取得しない
+        updated_at: null,
+        user_achievement_count: ranking.user_achievement_count,
+        total_points: computeRankingPoints(ranking),
+      } as UserMissionRanking;
+    });
   } catch (error) {
     console.error("Mission ranking service error:", error);
     throw error;
@@ -147,6 +229,37 @@ export async function getUserMissionRanking(
 
     const ranking = rankings[0] as Record<string, unknown>;
 
+    const { data: missionInfo, error: missionError } = await supabase
+      .from("missions")
+      .select("difficulty, required_artifact_type")
+      .eq("id", missionId)
+      .single();
+
+    if (missionError) {
+      console.error("Failed to fetch mission info:", missionError);
+      throw new Error(
+        `ミッション情報の取得に失敗しました: ${missionError.message}`,
+      );
+    }
+
+    const missionDifficulty = missionInfo?.difficulty ?? null;
+    const missionArtifactType = missionInfo?.required_artifact_type ?? null;
+
+    const achievementCount =
+      (ranking.user_achievement_count as number | null) ?? 0;
+
+    const postingCount =
+      missionArtifactType === "POSTING"
+        ? await getUserPostingCountByMission(userId, missionId, targetSeasonId)
+        : 0;
+
+    const totalPoints = calculateMissionTotalPoints({
+      difficulty: missionDifficulty,
+      requiredArtifactType: missionArtifactType,
+      achievementCount,
+      postingCount,
+    });
+
     return {
       user_id: ranking.user_id,
       name: ranking.user_name,
@@ -156,7 +269,7 @@ export async function getUserMissionRanking(
       xp: ranking.xp,
       updated_at: ranking.updated_at,
       user_achievement_count: ranking.user_achievement_count,
-      total_points: ranking.total_points,
+      total_points: totalPoints,
     } as UserMissionRanking;
   } catch (error) {
     console.error("User mission ranking service error:", error);

@@ -34,3 +34,10 @@ export interface CurrentUserRanking {
   xp?: number | null;
   user_achievement_count?: number | null;
 }
+
+export type MissionPointCalculationInput = {
+  difficulty: number | null;
+  requiredArtifactType: string | null;
+  achievementCount: number;
+  postingCount: number | null;
+};
