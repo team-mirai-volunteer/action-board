@@ -32,6 +32,7 @@ export function calculateLevel(xp: number): number {
 
 /**
  * ミッションの難易度に基づいてXPを計算する
+ * SQLのget_period_mission_ranking関数において同じロジックを使用しているため、ポイント変更の際は注意
  */
 export function calculateMissionXp(difficulty: number): number {
   switch (difficulty) {

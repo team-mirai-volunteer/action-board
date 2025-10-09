@@ -1492,7 +1492,9 @@ export type Database = {
         Returns: {
           address_prefecture: string;
           level: number;
+          mission_difficulty: number;
           mission_id: string;
+          posting_total: number;
           rank: number;
           updated_at: string;
           user_achievement_count: number;
@@ -1636,7 +1638,9 @@ export type Database = {
         Returns: {
           address_prefecture: string;
           level: number;
+          mission_difficulty: number;
           mission_id: string;
+          posting_total: number;
           rank: number;
           updated_at: string;
           user_achievement_count: number;
