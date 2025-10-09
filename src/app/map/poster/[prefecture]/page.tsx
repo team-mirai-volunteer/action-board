@@ -8,7 +8,7 @@ import {
   getPosterBoardStats,
   getPosterBoardTotalByPrefecture,
 } from "@/features/map-poster/services/poster-boards";
-import { createClient } from "@/lib/supabase/client";
+import { getUser } from "@/features/user-profile/services/profile";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -36,12 +36,9 @@ export default async function PrefecturePosterMapPage({
 }: {
   params: Promise<{ prefecture: string }>;
 }) {
-  const supabase = createClient();
   const { prefecture } = await params;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // Validate prefecture parameter
   if (!validPrefectures.includes(prefecture as PosterPrefectureKey)) {

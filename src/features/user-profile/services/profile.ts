@@ -40,6 +40,22 @@ export const getProfile = cache(async (userId: string) => {
   return privateUser;
 });
 
+/**
+ * ユーザーのプライベート情報が存在するかチェック
+ * @param userId ユーザーID
+ * @returns プライベートユーザー情報が存在する場合true
+ */
+export async function hasPrivateProfile(userId: string): Promise<boolean> {
+  const supabaseClient = createClient();
+  const { data: privateUser } = await supabaseClient
+    .from("private_users")
+    .select("id")
+    .eq("id", userId)
+    .single();
+
+  return !!privateUser;
+}
+
 export async function updateProfile(
   user: Tables<"private_users">,
 ): Promise<Tables<"private_users"> | null> {

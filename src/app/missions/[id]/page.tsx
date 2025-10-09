@@ -16,7 +16,7 @@ import {
   getUserMissionRanking,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
-import { createClient } from "@/lib/supabase/client";
+import { getUser } from "@/features/user-profile/services/profile";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
   config,
@@ -75,10 +75,7 @@ export async function generateMetadata({
 }
 
 export default async function MissionPage({ params }: Props) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   const { id } = await params;
   const pageData = await getMissionPageData(id, user?.id);

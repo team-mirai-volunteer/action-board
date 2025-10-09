@@ -10,15 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import MyAvatar from "@/features/user-profile/components/my-avatar";
-import { createClient } from "@/lib/supabase/client";
+import { getUser } from "@/features/user-profile/services/profile";
 import Link from "next/link";
 
 export default async function AuthButton() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   return user /* && profile */ ? (
     <DropdownMenu>
