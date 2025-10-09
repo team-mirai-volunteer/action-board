@@ -183,7 +183,14 @@ describe("BaseRanking", () => {
   });
 
   describe("エッジケース", () => {
-    it("空の子要素でもエラーにならない", () => {
+    it("子要素が空の場合、空の状態メッセージが表示される", () => {
+      render(<BaseRanking title="テストランキング">{[]}</BaseRanking>);
+
+      expect(screen.getByText("まだ達成者がいません")).toBeInTheDocument();
+      expect(screen.queryByTestId("child-content1")).not.toBeInTheDocument();
+    });
+
+    it("子要素がすべてnullの場合、空の状態メッセージが表示される", () => {
       render(
         <BaseRanking title="テストランキング">
           {null}
