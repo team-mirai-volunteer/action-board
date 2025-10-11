@@ -175,7 +175,6 @@ export default async function MissionsByCategory({
                       <div key={missionId} className="flex-shrink-0 w-[300px]">
                         <Mission
                           mission={missionForComponent}
-                          achieved={achievedMissionIds.includes(missionId)}
                           achievementsCount={
                             achievementCountMap.get(missionId) ?? 0
                           }

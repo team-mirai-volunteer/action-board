@@ -90,7 +90,6 @@ export default async function Missions({
             <Mission
               key={mission.id}
               mission={mission}
-              achieved={achievedMissionIds.includes(mission.id)}
               achievementsCount={achievement_count_map.get(mission.id) ?? 0}
               userAchievementCount={
                 userAchievementCountMap.get(mission.id) ?? 0

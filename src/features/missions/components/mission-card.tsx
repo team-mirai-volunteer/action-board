@@ -13,15 +13,14 @@ import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
   mission: Omit<Tables<"missions">, "slug">;
-  achieved: boolean;
-  achievementsCount?: number;
-  userAchievementCount?: number;
+  achievementsCount: number;
+  userAchievementCount: number;
 }
 
 export default function Mission({
   mission,
   achievementsCount,
-  userAchievementCount = 0,
+  userAchievementCount,
 }: MissionProps) {
   // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
   const hasReachedMaxAchievements =
@@ -68,9 +67,7 @@ export default function Mission({
           <div className="flex items-center">
             <UsersRound className="size-4 mr-2" />
             <span className="text-sm font-medium text-gray-700">
-              {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "みんなで0回達成"}
+              みんなで{achievementsCount.toLocaleString()}回達成
             </span>
           </div>
           <div className="flex items-center">
