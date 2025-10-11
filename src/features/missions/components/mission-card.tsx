@@ -20,7 +20,6 @@ interface MissionProps {
 
 export default function Mission({
   mission,
-  achieved,
   achievementsCount,
   userAchievementCount = 0,
 }: MissionProps) {

@@ -5,6 +5,7 @@
     "quickfix.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
+  "files.insertFinalNewline": true,
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
