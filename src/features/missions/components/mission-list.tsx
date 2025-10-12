@@ -6,7 +6,7 @@ export type MissionsProps = {
   maxSize?: number;
   showAchievedMissions: boolean;
   filterFeatured?: boolean;
-  title?: string;
+  title: string;
   id?: string;
 };
 
@@ -15,7 +15,7 @@ export default async function Missions({
   maxSize,
   showAchievedMissions,
   filterFeatured,
-  title = "📈 ミッション",
+  title,
   id,
 }: MissionsProps) {
   const supabase = createClient();
