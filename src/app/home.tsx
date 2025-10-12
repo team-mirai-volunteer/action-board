@@ -103,7 +103,7 @@ export default async function Home({
         {/* ミッションセクション */}
       </div>
       <section className="py-12 md:py-16 bg-white">
-        <MissionsByCategory userId={user?.id} showAchievedMissions={true} />
+        <MissionsByCategory userId={user?.id} />
       </section>
 
       {/* アクティビティセクション */}
