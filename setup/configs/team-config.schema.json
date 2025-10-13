@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Team Configuration",
+  "description": "Configuration schema for team customization",
+  "type": "object",
+  "required": ["team", "colors"],
+  "properties": {
+    "team": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique team identifier (lowercase alphanumeric and hyphens)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Team display name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Team description (optional)"
+        }
+      }
+    },
+    "colors": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Primary brand color (HEX format)"
+        },
+        "secondary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Secondary color (optional, auto-generated if omitted)"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Accent color (optional, auto-generated if omitted)"
+        },
+        "accentLight": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Light accent color (optional, auto-generated if omitted)"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "missions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable missions feature"
+        },
+        "ranking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable ranking feature"
+        },
+        "achievements": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable achievements feature"
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Website URL (optional)"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Support email address (optional)"
+        }
+      }
+    }
+  }
+}

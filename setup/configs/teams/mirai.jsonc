@@ -1,0 +1,23 @@
+// Team Mirai configuration
+{
+  "team": {
+    "id": "mirai",
+    "name": "チームみらい",
+    "description": "未来を創るアクションボード"
+  },
+  "colors": {
+    "primary": "#00B7C4",
+    "secondary": "#33C6D1",
+    "accent": "#00C8D8",
+    "accentLight": "#4DD6E0"
+  },
+  "features": {
+    "missions": true,
+    "ranking": true,
+    "achievements": true
+  },
+  "site": {
+    "url": "https://action-board.example.com",
+    "email": "support@example.com"
+  }
+}
