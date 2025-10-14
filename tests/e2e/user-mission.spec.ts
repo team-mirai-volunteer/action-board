@@ -156,8 +156,9 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
 
     // ミッションページに遷移（ゴミ拾いミッションをクリック）
     await signedInPage
+      .getByRole("article")
+      .filter({ hasText: "(seed) ゴミ拾いをしよう (成果物不要)" })
       .getByRole("button", { name: "今すぐチャレンジ" })
-      .first()
       .click();
     await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, {
       timeout: 10000,

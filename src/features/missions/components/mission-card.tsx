@@ -36,7 +36,7 @@ export default function Mission({
     : null;
 
   return (
-    <Card className="@container/card">
+    <Card as="article" className="@container/card">
       <CardHeader className="relative">
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center justify-center">
