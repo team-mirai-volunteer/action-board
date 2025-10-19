@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground">
-        <NextTopLoader />
+        <NextTopLoader showSpinner={false} color="#2aa693" />
         {GA_ID && (
           <>
             <Script
