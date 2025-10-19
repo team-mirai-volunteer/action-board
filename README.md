@@ -1,7 +1,7 @@
-[![Check code with Biome](https://github.com/team-mirai/action-board/actions/workflows/check_biome.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/check_biome.yaml)
-[![Build & Test E2E/RLS](https://github.com/team-mirai/action-board/actions/workflows/build_test.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/build_test.yaml)
-
 # アクションボード
+
+[![Check code with Biome and tsc](https://github.com/team-mirai/action-board/actions/workflows/check_code.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/check_code.yaml)
+[![Build & Test E2E/RLS](https://github.com/team-mirai/action-board/actions/workflows/e2e_test.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/e2e_test.yaml)
 
 ## コントリビュートについて
 
