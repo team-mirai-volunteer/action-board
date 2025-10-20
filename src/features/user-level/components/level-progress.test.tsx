@@ -1,8 +1,7 @@
 import { render } from "@testing-library/react";
-import React from "react";
 import { LevelProgress } from "./level-progress";
 
-jest.mock("@/components/ui/progress-bar-simple", () => ({
+jest.mock("@/features/user-level/components/progress-bar-simple", () => ({
   ProgressBarSimple: ({ currentXp, className }: any) => (
     <div
       className={className}

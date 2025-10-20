@@ -2,12 +2,12 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DifficultyBadge } from "@/components/ui/difficulty-badge";
-import { MissionIcon } from "@/components/ui/mission-icon";
 import { YouTubeSubscribeButton } from "@/features/mission-detail/components/youtube-subscribe-button";
-import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants";
-import { dateFormatter } from "@/lib/formatter";
+import { DifficultyBadge } from "@/features/missions/components/difficulty-badge";
+import { MissionIcon } from "@/features/missions/components/mission-icon";
+import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants/mission-config";
 import type { Tables } from "@/lib/types/supabase";
+import { dateFormatter } from "@/lib/utils/date-formatters";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;

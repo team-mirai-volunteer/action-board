@@ -1,15 +1,17 @@
-import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
-import { getMyProfile } from "@/features/user-profile/services/profile";
-import { PREFECTURES } from "@/lib/address";
+import {
+  getMyProfile,
+  getUser,
+} from "@/features/user-profile/services/profile";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -52,10 +54,7 @@ export default async function SeasonPrefectureRankingPage({
   const supabase = createClient();
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // 都道府県一覧を取得
   const prefectures = PREFECTURES;

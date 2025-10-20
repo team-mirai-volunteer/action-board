@@ -1,16 +1,16 @@
-import { SeasonRankingHeader } from "@/components/season-ranking-header";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { MissionSelect } from "@/features/ranking/components/mission-select";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
+import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
+import { getUser } from "@/features/user-profile/services/profile";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -53,10 +53,7 @@ export default async function SeasonMissionRankingPage({
   const supabase = createClient();
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // ミッション一覧をカテゴリ情報付きで取得（max_achievement_countがnullのもののみ）
   const { data: missions, error: missionsError } = await supabase

@@ -1,6 +1,5 @@
 import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
-import React from "react";
 import { MissionDetails } from "./mission-details";
 
 jest.mock(
@@ -16,14 +15,14 @@ jest.mock(
   }),
 );
 
-jest.mock("@/lib/constants", () => ({
+jest.mock("@/lib/constants/mission-config", () => ({
   YOUTUBE_MISSION_CONFIG: {
     SLUG: "youtube-subscribe",
     CHANNEL_ID: "test-channel-id",
   },
 }));
 
-jest.mock("@/lib/formatter", () => ({
+jest.mock("@/lib/utils/date-formatters", () => ({
   dateFormatter: jest.fn(
     (date: Date) =>
       `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`,

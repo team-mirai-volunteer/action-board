@@ -11,7 +11,7 @@ export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
   currentUser,
   prefecture: _prefecture, // 将来の使用のために保持
 }) => {
-  if (!currentUser || !currentUser.user_id) {
+  if (!currentUser?.user_id) {
     return null;
   }
 

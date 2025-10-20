@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { MissionIcon } from "@/components/ui/mission-icon";
+import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
@@ -13,16 +13,14 @@ import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
   mission: Omit<Tables<"missions">, "slug">;
-  achieved: boolean;
-  achievementsCount?: number;
-  userAchievementCount?: number;
+  achievementsCount: number;
+  userAchievementCount: number;
 }
 
 export default function Mission({
   mission,
-  achieved,
   achievementsCount,
-  userAchievementCount = 0,
+  userAchievementCount,
 }: MissionProps) {
   // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
   const hasReachedMaxAchievements =
@@ -38,7 +36,7 @@ export default function Mission({
     : null;
 
   return (
-    <Card className="@container/card">
+    <Card as="article" className="@container/card">
       <CardHeader className="relative">
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center justify-center">
@@ -69,9 +67,7 @@ export default function Mission({
           <div className="flex items-center">
             <UsersRound className="size-4 mr-2" />
             <span className="text-sm font-medium text-gray-700">
-              {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "みんなで0回達成"}
+              みんなで{achievementsCount.toLocaleString()}回達成
             </span>
           </div>
           <div className="flex items-center">

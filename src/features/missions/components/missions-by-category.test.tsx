@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import React from "react";
 import MissionsByCategory from "./missions-by-category";
 
 jest.mock("./mission-card", () => {

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import UserAvatar from "@/features/user-profile/components/user-avatar";
+import type { Tables } from "@/lib/types/supabase";
 /**
  * 活動タイムライン表示コンポーネント
  *
@@ -15,8 +16,7 @@ import UserAvatar from "@/features/user-profile/components/user-avatar";
  * - ホームページの活動セクション
  * - ユーザー詳細ページの活動タイムライン
  */
-import { dateTimeFormatter } from "@/lib/formatter";
-import type { Tables } from "@/lib/types/supabase";
+import { dateTimeFormatter } from "@/lib/utils/date-formatters";
 import Link from "next/link";
 
 interface ActivityTimelineProps {

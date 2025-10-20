@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
@@ -24,10 +23,11 @@ import {
 } from "@/features/user-activity/services/timeline";
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
+import { SocialBadge } from "@/features/user-profile/components/social-badge";
+import { getProfile } from "@/features/user-profile/services/profile";
 import { UserSeasonHeader } from "@/features/user-season/components/user-season-header";
 import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -43,7 +43,6 @@ type Props = {
 
 export default async function SeasonUserDetailPage({ params }: Props) {
   const { slug, userId } = await params;
-  const supabase = createClient();
 
   // シーズン情報を取得
   const season = await getSeasonBySlug(slug);
@@ -52,11 +51,7 @@ export default async function SeasonUserDetailPage({ params }: Props) {
   }
 
   // ユーザー情報を取得
-  const { data: user } = await supabase
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  const user = await getProfile(userId);
 
   if (!user) return <div>ユーザーが見つかりません</div>;
 

@@ -1,5 +1,4 @@
 import { render } from "@testing-library/react";
-import React from "react";
 import FeaturedMissions from "./featured-missions";
 
 jest.mock("./mission-list", () => {

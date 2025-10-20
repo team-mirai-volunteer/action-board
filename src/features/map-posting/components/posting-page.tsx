@@ -3,7 +3,7 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   deleteShape as deleteMapShape,
@@ -12,14 +12,12 @@ import {
   updateShape as updateMapShape,
 } from "../services/posting-shapes";
 import type {
-  PolygonProperties,
-  TextCoordinates,
-} from "../types/posting-types";
-import type {
   GeomanEvent,
   LeafletWindow,
   MapShape as MapShapeData,
+  PolygonProperties,
   PostingPageClientProps,
+  TextCoordinates,
 } from "../types/posting-types";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
@@ -275,7 +273,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   `;
 
   function attachTextEvents(layer: Layer) {
-    if (!layer || !layer.pm) return;
+    if (!layer?.pm) return;
 
     layer._isTextLayer = true; // Mark as text layer
     textLayersRef.current.add(layer); // Add to tracking
@@ -356,7 +354,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   }
 
   function attachPersistenceEvents(layer: Layer) {
-    if (!layer || !layer.pm) return;
+    if (!layer?.pm) return;
 
     layer.off("pm:change", onLayerChange);
     layer.off("pm:dragend", onLayerChange);

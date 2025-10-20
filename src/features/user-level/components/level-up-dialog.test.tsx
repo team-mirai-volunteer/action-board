@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
 import { LevelUpDialog } from "./level-up-dialog";
 
 jest.mock("@/components/ui/dialog", () => ({

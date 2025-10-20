@@ -1,18 +1,21 @@
-import NoticeBoardAlert from "@/components/NoticeBoardAlert";
-import Hero from "@/components/hero";
-import RankingSection from "@/components/top/ranking-section";
+import NoticeBoardAlert from "@/components/common/notice-board-alert";
+import Hero from "@/components/top/hero";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
 import MissionsByCategory from "@/features/missions/components/missions-by-category";
 import { hasFeaturedMissions } from "@/features/missions/services/missions";
+import RankingSection from "@/features/ranking/components/ranking-section";
 import Activities from "@/features/user-activity/components/activities";
 import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
 import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
-import { generateRootMetadata } from "@/lib/metadata";
+import {
+  getUser,
+  hasPrivateProfile,
+} from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
+import { generateRootMetadata } from "@/lib/utils/metadata";
 import { redirect } from "next/navigation";
 
 // メタデータ生成を外部関数に委譲
@@ -23,25 +26,18 @@ export default async function Home({
 }: {
   searchParams: Promise<{ ref?: string }>;
 }) {
-  const supabase = createClient();
   const params = await searchParams;
   const referralCode = params.ref;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // レベルアップ通知とバッジ通知をチェック
   let levelUpNotification = null;
   let badgeNotifications = null;
 
   if (user) {
-    const { data: privateUser } = await supabase
-      .from("private_users")
-      .select("id")
-      .eq("id", user.id)
-      .single();
-    if (!privateUser) {
+    const hasProfile = await hasPrivateProfile(user.id);
+    if (!hasProfile) {
       redirect("/settings/profile?new=true");
     }
 

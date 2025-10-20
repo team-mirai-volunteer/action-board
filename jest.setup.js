@@ -272,6 +272,21 @@ jest.mock("@/features/user-profile/services/profile", () => ({
       avatar_url: null,
     }),
   ),
+  getMyProfile: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+      avatar_url: null,
+      email: "test@example.com",
+    }),
+  ),
+  getUser: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      email: "test@example.com",
+    }),
+  ),
 }));
 
 jest.mock("@radix-ui/react-dialog", () => {

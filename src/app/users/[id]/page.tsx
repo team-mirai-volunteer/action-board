@@ -1,13 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
-import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
-import {
-  getUserActivityTimeline,
-  getUserActivityTimelineCount,
-} from "@/features/user-activity/services/timeline";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
 /**
  * ユーザー詳細ページ
  *
@@ -21,13 +11,23 @@ import { UserBadges } from "@/features/user-badges/components/user-badges";
  * - Promise.allを使用した並列データ取得
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
+import { Card } from "@/components/ui/card";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
+import {
+  getUserActivityTimeline,
+  getUserActivityTimelineCount,
+} from "@/features/user-activity/services/timeline";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
+import { SocialBadge } from "@/features/user-profile/components/social-badge";
+import { getProfile } from "@/features/user-profile/services/profile";
 import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import {
   getCurrentSeasonId,
   getUserSeasonHistory,
 } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -42,13 +42,8 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = createClient();
 
-  const { data: user } = await supabase
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const user = await getProfile(id);
 
   if (!user) return <div>ユーザーが見つかりません</div>;
 

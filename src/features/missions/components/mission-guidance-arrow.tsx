@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import React from "react";
 
 export function MissionGuidanceArrow() {
   return (

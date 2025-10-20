@@ -1,16 +1,13 @@
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { MissionSelect } from "@/features/ranking/components/mission-select";
-import {
-  PeriodToggle,
-  type RankingPeriod,
-} from "@/features/ranking/components/period-toggle";
+import type { RankingPeriod } from "@/features/ranking/components/period-toggle";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import {
   getUserMissionRanking,
-  getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
+import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 
@@ -33,10 +30,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   }
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   const { data: missions, error: missionsError } = await supabase
     .from("missions")

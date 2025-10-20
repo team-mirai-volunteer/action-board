@@ -1,6 +1,5 @@
-import { ProgressBarSimple } from "@/components/ui/progress-bar-simple";
+import { ProgressBarSimple } from "@/features/user-level/components/progress-bar-simple";
 import type { UserLevel } from "@/features/user-level/types/level-types";
-import React from "react";
 
 interface LevelProgressProps {
   userLevel: UserLevel | null;

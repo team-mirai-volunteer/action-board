@@ -1,6 +1,6 @@
 "use client";
 
-import { markLevelUpSeenAction } from "@/app/actions/level-up";
+import { markLevelUpSeenAction } from "@/features/user-level/actions/level-up";
 import { LevelUpDialog } from "@/features/user-level/components/level-up-dialog";
 import { useEffect, useState } from "react";
 

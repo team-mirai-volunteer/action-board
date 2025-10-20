@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { MetricsErrorBoundary } from "./metrics-error-boundary";
 import { Metrics } from "./metrics-index";
 

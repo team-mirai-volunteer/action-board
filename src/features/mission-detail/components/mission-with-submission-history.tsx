@@ -7,12 +7,11 @@ import { SubmissionHistoryWrapper } from "@/features/mission-detail/components/s
 import type { SubmissionData } from "@/features/mission-detail/types/detail-types";
 import { MissionGuidanceArrow } from "@/features/missions/components/mission-guidance-arrow";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import { createClient } from "@/lib/supabase/client";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
 import { MainLinkButton } from "./main-link-button";
 
 type Props = {

@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/client";
-import type { Tables } from "@/lib/types/supabase";
 import type { Database } from "@/lib/types/supabase";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
@@ -12,7 +11,6 @@ type MissionCategoryViewRow =
 export default async function MissionsByCategory({
   userId,
   showAchievedMissions,
-  title = "📈 ミッション",
 }: MissionsProps) {
   const supabase = createClient();
 
@@ -123,105 +121,75 @@ export default async function MissionsByCategory({
   }
 
   return (
-    <div className="">
-      <div className="flex flex-col">
-        {/* タイトル */}
-        <div className="text-center py-8">
-          <h2 className="text-2xl md:text-4xl font-black text-gray-900">
-            {title}
-          </h2>
-        </div>
+    <div className="flex flex-col gap-11">
+      <h2 className="text-center md:text-4xl my-5">📈 ミッション</h2>
 
-        {Object.values(grouped).map((missionsInCategory) => {
-          const category = missionsInCategory[0];
-          return (
-            <section
-              key={category.category_id}
-              className="
+      {Object.values(grouped).map((missionsInCategory) => {
+        const category = missionsInCategory[0];
+        return (
+          <section
+            key={category.category_id}
+            className="
                 relative               /* オーバーレイ配置のため */
                 w-screen
                 md:pl-10
-                py-5
               "
-            >
-              {/* カテゴリ見出し */}
-              <h3 className="text-xl font-bold mb-4 px-4">
-                {category.category_title}
-              </h3>
+          >
+            {/* カテゴリ見出し */}
+            <h3 className="text-xl font-bold">{category.category_title}</h3>
 
-              {/* 横スクロール領域 */}
-              <HorizontalScrollContainer>
-                <div className="flex w-fit gap-4 px-4 pb-2">
-                  {missionsInCategory
-                    .filter(
-                      (m) =>
-                        m.mission_id &&
-                        (showAchievedMissions ||
-                          !achievedMissionIds.includes(m.mission_id)),
-                    )
-                    .map((m) => {
-                      // filterでmission_idがnullでないことを確認済み
-                      // mission_idが存在することが保証されているので、安全にアクセス
-                      const missionId = m.mission_id as string;
+            {/* 横スクロール領域 */}
+            <HorizontalScrollContainer>
+              <div className="flex w-fit gap-4 px-4 pb-2 pt-4">
+                {missionsInCategory
+                  .filter(
+                    (m) =>
+                      m.mission_id &&
+                      (showAchievedMissions ||
+                        !achievedMissionIds.includes(m.mission_id)),
+                  )
+                  .map((m) => {
+                    // filterでmission_idがnullでないことを確認済み
+                    // mission_idが存在することが保証されているので、安全にアクセス
+                    const missionId = m.mission_id as string;
 
-                      const missionForComponent = {
-                        id: missionId,
-                        title: m.title || "",
-                        icon_url: m.icon_url,
-                        difficulty: m.difficulty || 1,
-                        content: m.content || "",
-                        created_at: m.created_at || new Date().toISOString(),
-                        artifact_label: m.artifact_label,
-                        max_achievement_count: m.max_achievement_count,
-                        event_date: m.event_date,
-                        is_featured: m.is_featured || false,
-                        updated_at: m.updated_at || new Date().toISOString(),
-                        is_hidden: m.is_hidden || false,
-                        ogp_image_url: m.ogp_image_url,
-                        required_artifact_type: m.required_artifact_type || "",
-                        featured_importance: null,
-                      };
+                    const missionForComponent = {
+                      id: missionId,
+                      title: m.title || "",
+                      icon_url: m.icon_url,
+                      difficulty: m.difficulty || 1,
+                      content: m.content || "",
+                      created_at: m.created_at || new Date().toISOString(),
+                      artifact_label: m.artifact_label,
+                      max_achievement_count: m.max_achievement_count,
+                      event_date: m.event_date,
+                      is_featured: m.is_featured || false,
+                      updated_at: m.updated_at || new Date().toISOString(),
+                      is_hidden: m.is_hidden || false,
+                      ogp_image_url: m.ogp_image_url,
+                      required_artifact_type: m.required_artifact_type || "",
+                      featured_importance: null,
+                    };
 
-                      return (
-                        <div
-                          key={missionId}
-                          className="flex-shrink-0 w-[300px]"
-                        >
-                          <Mission
-                            mission={missionForComponent}
-                            achieved={achievedMissionIds.includes(missionId)}
-                            achievementsCount={
-                              achievementCountMap.get(missionId) ?? 0
-                            }
-                            userAchievementCount={
-                              userAchievementCountMap.get(missionId) ?? 0
-                            }
-                          />
-                        </div>
-                      );
-                    })}
-                </div>
-              </HorizontalScrollContainer>
-
-              {/* スクロール余白を示すグラデーション */}
-              {/* <div
-                className="
-                  pointer-events-none
-                  absolute inset-y-0 left-0 w-8
-                  bg-gradient-to-r from-gray-50 to-transparent
-                "
-              />
-              <div
-                className="
-                  pointer-events-none
-                  absolute inset-y-0 right-0 w-8
-                  bg-gradient-to-l from-gray-50 to-transparent
-                "
-              /> */}
-            </section>
-          );
-        })}
-      </div>
+                    return (
+                      <div key={missionId} className="flex-shrink-0 w-[300px]">
+                        <Mission
+                          mission={missionForComponent}
+                          achievementsCount={
+                            achievementCountMap.get(missionId) ?? 0
+                          }
+                          userAchievementCount={
+                            userAchievementCountMap.get(missionId) ?? 0
+                          }
+                        />
+                      </div>
+                    );
+                  })}
+              </div>
+            </HorizontalScrollContainer>
+          </section>
+        );
+      })}
     </div>
   );
 }

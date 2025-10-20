@@ -1,8 +1,7 @@
 "use client";
 
-import { SubmitButton } from "@/components/submit-button";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
-import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { MainLinkButton } from "@/features/mission-detail/components/main-link-button";
 import { MissionCompleteDialog } from "@/features/mission-detail/components/mission-complete-dialog";
@@ -10,7 +9,8 @@ import { ArtifactForm } from "@/features/missions/components/artifact-form";
 import QuizComponent from "@/features/missions/components/quiz-component";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { useQuizMission } from "@/features/missions/hooks/use-quiz-mission";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { XpProgressToastContent } from "@/features/user-level/components/xp-progress-toast-content";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
@@ -285,10 +285,8 @@ export function MissionFormWrapper({
         userAchievementCount > 0 && (
           <div className="rounded-lg border bg-muted/50 p-4 text-center mb-4">
             <p className="text-sm font-medium text-muted-foreground">
-              <>
-                復習用チャレンジ: {userAchievementCount} /{" "}
-                {mission.max_achievement_count}回
-              </>
+              復習用チャレンジ: {userAchievementCount} /{" "}
+              {mission.max_achievement_count}回
             </p>
           </div>
         )}

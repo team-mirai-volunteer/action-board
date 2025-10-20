@@ -1,5 +1,5 @@
-import { PREFECTURES } from "@/lib/address";
-import { getJSTMidnightToday } from "@/lib/dateUtils";
+import { PREFECTURES } from "@/lib/constants/prefectures";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import { getCurrentSeasonId } from "../../lib/services/seasons";
 import { createAdminClient } from "../../lib/supabase/adminClient";
 import type { BadgeUpdateParams } from "../user-badges/badge-types";

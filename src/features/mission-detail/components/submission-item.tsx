@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ArtifactDisplay from "@/features/mission-detail/components/artifact-display";
 import type { Submission } from "@/features/mission-detail/types/component-types";
-import { dateTimeFormatter } from "@/lib/formatter";
+import { dateTimeFormatter } from "@/lib/utils/date-formatters";
 import type React from "react";
 
 interface SubmissionItemProps {

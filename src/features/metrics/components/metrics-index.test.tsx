@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import React from "react";
 
 // メトリクスサービスのモック
 jest.mock("../services/get-metrics", () => ({
@@ -7,7 +6,7 @@ jest.mock("../services/get-metrics", () => ({
 }));
 
 import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
-import { EXTERNAL_LINKS } from "@/lib/links";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション

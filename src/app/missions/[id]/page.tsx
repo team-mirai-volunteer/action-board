@@ -14,17 +14,16 @@ import { CurrentUserCardMission } from "@/features/ranking/components/current-us
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
   getUserMissionRanking,
-  getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { getUser } from "@/features/user-profile/services/profile";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
   config,
   createDefaultMetadata,
   defaultUrl,
   notoSansJP,
-} from "@/lib/metadata";
-import { createClient } from "@/lib/supabase/client";
+} from "@/lib/utils/metadata";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -76,10 +75,7 @@ export async function generateMetadata({
 }
 
 export default async function MissionPage({ params }: Props) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   const { id } = await params;
   const pageData = await getMissionPageData(id, user?.id);

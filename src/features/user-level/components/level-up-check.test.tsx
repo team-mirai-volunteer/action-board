@@ -1,5 +1,4 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
-import React from "react";
 import { LevelUpCheck } from "./level-up-check";
 
 jest.mock("@/features/user-level/components/level-up-dialog", () => ({
@@ -11,7 +10,7 @@ jest.mock("@/features/user-level/components/level-up-dialog", () => ({
     ) : null,
 }));
 
-jest.mock("@/app/actions/level-up", () => ({
+jest.mock("@/features/user-level/actions/level-up", () => ({
   markLevelUpSeenAction: jest.fn(() => Promise.resolve({ success: true })),
 }));
 
@@ -44,7 +43,7 @@ describe("LevelUpCheck", () => {
   describe("ダイアログの閉じる処理", () => {
     it("ダイアログを閉じるとmarkLevelUpSeenActionが呼ばれる", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/features/user-level/actions/level-up").markLevelUpSeenAction;
       const levelUpData = {
         previousLevel: 1,
         newLevel: 2,
@@ -73,7 +72,7 @@ describe("LevelUpCheck", () => {
 
     it("markLevelUpSeenActionが失敗してもエラーハンドリングされる", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/features/user-level/actions/level-up").markLevelUpSeenAction;
       mockMarkLevelUpSeen.mockResolvedValueOnce({
         success: false,
         error: "Test error",
@@ -114,7 +113,7 @@ describe("LevelUpCheck", () => {
 
     it("markLevelUpSeenActionで例外が発生してもエラーハンドリングされる", async () => {
       const mockMarkLevelUpSeen =
-        require("@/app/actions/level-up").markLevelUpSeenAction;
+        require("@/features/user-level/actions/level-up").markLevelUpSeenAction;
       mockMarkLevelUpSeen.mockRejectedValueOnce(new Error("Network error"));
 
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();

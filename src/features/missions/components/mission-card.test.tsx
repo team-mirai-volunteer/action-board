@@ -56,7 +56,7 @@ jest.mock("@/components/ui/card", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/difficulty-badge", () => ({
+jest.mock("@/features/missions/components/difficulty-badge", () => ({
   DifficultyBadge: ({
     difficulty,
     className,
@@ -79,7 +79,7 @@ jest.mock("@/components/ui/button", () => ({
   ),
 }));
 
-jest.mock("@/components/ui/mission-icon", () => ({
+jest.mock("@/features/missions/components/mission-icon", () => ({
   MissionIcon: ({
     src,
     alt,
@@ -145,7 +145,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
         achievementsCount={10}
         userAchievementCount={0}
       />,
@@ -160,7 +159,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
         achievementsCount={5}
         userAchievementCount={0}
       />,
@@ -173,7 +171,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={true}
         achievementsCount={15}
         userAchievementCount={3}
       />,
@@ -188,7 +185,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutLimit}
-        achieved={false}
         achievementsCount={20}
         userAchievementCount={5}
       />,
@@ -203,7 +199,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutIcon}
-        achieved={false}
         achievementsCount={0}
         userAchievementCount={0}
       />,
@@ -217,8 +212,7 @@ describe("Mission", () => {
     render(
       <Mission
         mission={mockMission}
-        achieved={false}
-        achievementsCount={undefined}
+        achievementsCount={0}
         userAchievementCount={0}
       />,
     );
@@ -232,7 +226,6 @@ describe("Mission", () => {
     render(
       <Mission
         mission={missionWithoutDate}
-        achieved={false}
         achievementsCount={5}
         userAchievementCount={0}
       />,
