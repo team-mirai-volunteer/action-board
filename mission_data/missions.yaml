@@ -175,7 +175,7 @@ missions:
   - slug: follow-note
     title: 公式noteをフォローしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_follow-note.svg
-    content: <a href="https://note.com/annotakahiro24" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。
+    content: <a href="https://note.com/team_mirai_jp" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
