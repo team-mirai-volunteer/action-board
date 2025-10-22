@@ -1,0 +1,21 @@
+{
+  "name": "action-board-setup",
+  "version": "1.0.0",
+  "description": "Multi-team setup tool for Action Board",
+  "type": "module",
+  "scripts": {
+    "init": "tsx init-team.ts",
+    "build:css": "tsx build-team-css.ts",
+    "copy-libs": "tsx copy-libs.ts"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^3.0.0",
+    "ajv": "^8.12.0",
+    "chalk": "^5.3.0",
+    "tsx": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}

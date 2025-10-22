@@ -1,0 +1,17 @@
+// Example team configuration
+{
+  "team": {
+    "id": "example",
+    "name": "Example Team",
+    "description": "This is an example team configuration"
+  },
+  "colors": {
+    "primary": "#FF6600"
+    // Other colors will be auto-generated
+  },
+  "features": {
+    "missions": true,
+    "ranking": true,
+    "achievements": true
+  }
+}
