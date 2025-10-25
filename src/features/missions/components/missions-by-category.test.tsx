@@ -182,12 +182,47 @@ describe("MissionsByCategory", () => {
     expect(screen.getByTestId("mission-mission-2")).toBeInTheDocument();
   });
 
-  it("サーバー側で最大達成に到達したミッションが後ろに並ぶ", async () => {
+  it("サーバー側で最大達成に到達したミッションが後ろに並ぶ（3つ全て達成済み）", async () => {
+    // カテゴリ1にミッションを3つ用意（1,3,4）し、全て達成済みにする。
+    // うち「ミッション1」は最大達成に到達しているため最後に並ぶことを検証する。
+    const missionsCategory1WithThree = [
+      ...mockMissionCategoryViewData.map((m) =>
+        m.mission_id === "mission-1" ? { ...m, max_achievement_count: 1 } : m,
+      ),
+      {
+        category_id: "category-1",
+        category_title: "カテゴリ1",
+        category_kbn: "A",
+        category_sort_no: 1,
+        mission_id: "mission-4",
+        title: "ミッション4",
+        icon_url: "/icon4.svg",
+        difficulty: 1,
+        content: "ミッション4の内容",
+        created_at: "2025-06-24T00:00:00Z",
+        artifact_label: null,
+        max_achievement_count: null,
+        event_date: null,
+        is_featured: false,
+        updated_at: "2025-06-24T00:00:00Z",
+        is_hidden: false,
+        ogp_image_url: null,
+        required_artifact_type: "NONE",
+        link_sort_no: 3,
+      },
+    ];
+
     mockSupabase({
-      missions: mockMissionCategoryViewData,
-      achievements: [{ mission_id: "mission-3" }],
+      missions: missionsCategory1WithThree,
+      // 3つとも達成済み。mission-1のみ最大到達、mission-3は未到達(max=5中1回)。
+      achievements: [
+        { mission_id: "mission-1" },
+        { mission_id: "mission-3" },
+        { mission_id: "mission-4" },
+      ],
       achievementCounts: [],
     });
+
     const component = await MissionsByCategory({ userId: "test-user-id" });
     render(component);
 
@@ -196,9 +231,12 @@ describe("MissionsByCategory", () => {
       .getAllByTestId("mission-title")
       .map((el) => el.textContent);
 
-    // mission-3は最大達成(5回)に到達しているので後ろに
-    // mission-1は最大達成数がないので前に
-    const category1Missions = missionTitles.slice(0, 2);
-    expect(category1Missions).toEqual(["ミッション1", "ミッション3"]);
+    // 通常順: 1 -> 3 -> 4。最大達成の1が最後に送られ、3 -> 4 -> 1 になる。
+    const category1Missions = missionTitles.slice(0, 3);
+    expect(category1Missions).toEqual([
+      "ミッション3",
+      "ミッション4",
+      "ミッション1",
+    ]);
   });
 });
