@@ -1,13 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 
 interface SocialBadgeProps {
-  username: string;
-  platform: "x" | "github";
+  title: string;
   href: string;
   logoSrc: string;
   logoAlt: string;
-  logoSize: { width: number; height: number };
-  showAtSymbol?: boolean;
+  logoSize: number;
 }
 
 const isValidUrl = (url: string) => {
@@ -19,17 +17,13 @@ const isValidUrl = (url: string) => {
   }
 };
 
-function SocialBadge(props: SocialBadgeProps) {
-  const {
-    username,
-    platform,
-    href,
-    logoSrc,
-    logoAlt,
-    logoSize,
-    showAtSymbol = false,
-  } = props;
-
+function SocialBadge({
+  title,
+  href,
+  logoSrc,
+  logoAlt,
+  logoSize,
+}: SocialBadgeProps) {
   if (!isValidUrl(href)) {
     console.warn("Invalid URL provided to SocialBadge:", href);
     return null;
@@ -48,21 +42,17 @@ function SocialBadge(props: SocialBadgeProps) {
     >
       <Badge
         variant="outline"
-        className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 transition cursor-pointer"
+        className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 hover:text-emerald-600 transition cursor-pointer"
       >
         <img
           src={logoSrc}
           alt={logoAlt}
           style={{
-            width: logoSize.width,
-            height: logoSize.height,
-            display: "block",
+            width: logoSize,
+            height: logoSize,
           }}
         />
-        <span className="text-[#0F1419] hover:text-emerald-600">
-          {showAtSymbol ? "@" : ""}
-          {username}
-        </span>
+        {title}
       </Badge>
     </a>
   );
