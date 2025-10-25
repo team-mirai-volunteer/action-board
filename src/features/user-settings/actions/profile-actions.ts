@@ -289,7 +289,7 @@ export async function updateProfile(
       };
     }
 
-    const { error: publicUserError } = await supabaseServiceClient
+    const { error: publicUserError } = await supabaseClient
       .from("public_user_profiles")
       .update({
         name: validatedData.name,
