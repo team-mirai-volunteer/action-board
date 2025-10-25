@@ -1,11 +1,18 @@
-import { cleanupTestUser, createTestUser, getAnonClient } from "./utils";
+import {
+  adminClient,
+  cleanupTestUser,
+  createTestUser,
+  getAnonClient,
+} from "./utils";
 
 describe("public_user_profiles テーブルのRLSテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
+  let user2: Awaited<ReturnType<typeof createTestUser>>;
 
   beforeEach(async () => {
     // テストユーザーを作成
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
+    user2 = await createTestUser(`${crypto.randomUUID()}@example.com`);
   });
 
   afterEach(async () => {
@@ -21,8 +28,6 @@ describe("public_user_profiles テーブルのRLSテスト", () => {
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();
-    // public_user_profilesはトリガーでprivate_usersから同期されるため、
-    // テストユーザーのデータも含まれるはず
     expect(
       data?.some((profile) => profile.id === user1.user.userId),
     ).toBeTruthy();
@@ -69,26 +74,46 @@ describe("public_user_profiles テーブルのRLSテスト", () => {
     expect(data).toBeNull();
   });
 
-  test("private_usersの更新がpublic_user_profilesに反映される", async () => {
+  test("認証されたユーザーは自分自身のpublic_user_profilesレコードを更新できる", async () => {
     const newName = "Updated Public Profile Name";
 
-    // private_usersテーブルを更新
-    await user1.client
-      .from("private_users")
+    // ユーザー1が自分のデータを更新
+    const { data: updateData, error: updateError } = await user1.client
+      .from("public_user_profiles")
       .update({ name: newName })
-      .eq("id", user1.user.userId);
+      .eq("id", user1.user.userId)
+      .select()
+      .single();
 
-    // 少し待ってトリガーが実行されるのを待つ
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    expect(updateError).toBeNull();
+    expect(updateData?.name).toBe(newName);
 
-    // public_user_profilesテーブルで確認
-    const { data, error } = await getAnonClient()
+    // 更新が反映されたか確認
+    const { data: checkData } = await user1.client
       .from("public_user_profiles")
       .select("name")
       .eq("id", user1.user.userId)
       .single();
 
-    expect(error).toBeNull();
-    expect(data?.name).toBe(newName);
+    expect(checkData?.name).toBe(newName);
+  });
+
+  test("認証されたユーザーは他のユーザーのpublic_user_profilesレコードを更新できない", async () => {
+    // ユーザー1がユーザー2のデータを更新しようとする
+    const { data: updateData } = await user1.client
+      .from("public_user_profiles")
+      .update({ name: "編集したテストユーザー" })
+      .eq("id", user2.user.userId);
+
+    expect(updateData).toBeNull();
+
+    // ユーザー2のデータが変更されていないことを確認（管理者権限で確認）
+    const { data: checkData } = await adminClient
+      .from("public_user_profiles")
+      .select("name")
+      .eq("id", user2.user.userId)
+      .single();
+
+    expect(checkData?.name).toBe("テストユーザー");
   });
 });
