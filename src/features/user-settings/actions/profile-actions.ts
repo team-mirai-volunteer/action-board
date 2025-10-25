@@ -246,6 +246,7 @@ export async function updateProfile(
         id: user.id,
         name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
+        x_username: validatedData.x_username || null,
         github_username: validatedData.github_username || null,
         avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
@@ -294,6 +295,7 @@ export async function updateProfile(
       .update({
         name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
+        x_username: validatedData.x_username || null,
         github_username: validatedData.github_username || null,
         avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
