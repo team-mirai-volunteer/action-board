@@ -1,6 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -16,6 +13,9 @@ import { getUserRepeatableMissionAchievements } from "@/features/user-achievemen
  * - 活動タイムライン
  * - 全シーズン履歴
  */
+import { Card } from "@/components/ui/card";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
@@ -93,20 +93,14 @@ export default async function SeasonUserDetailPage({ params }: Props) {
           </Card>
         )}
 
-        {/* 活動タイムラインセクション */}
-        <Card className="w-full p-4 mt-4">
-          <div className="flex flex-row justify-between items-center mb-2">
-            <span className="text-lg font-bold">活動タイムライン</span>
-          </div>
-          {/* クライアントサイドページネーション付きの活動タイムライン */}
-          <UserDetailActivities
-            userId={userId}
-            initialTimeline={timeline}
-            pageSize={PAGE_SIZE}
-            totalCount={count}
-            seasonId={season.id}
-          />
-        </Card>
+        {/* クライアントサイドページネーション付きの活動タイムライン */}
+        <UserDetailActivities
+          userId={userId}
+          initialTimeline={timeline}
+          pageSize={PAGE_SIZE}
+          totalCount={count}
+          seasonId={season.id}
+        />
 
         {/* シーズン履歴セクション */}
         {seasonHistory.length > 0 && (

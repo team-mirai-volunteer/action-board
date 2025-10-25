@@ -87,20 +87,14 @@ export default async function UserDetailPage({ params }: Props) {
           </Card>
         )}
 
-        {/* 活動タイムラインセクション */}
-        <Card className="w-full p-4 mt-4">
-          <div className="flex flex-row justify-between items-center mb-2">
-            <span className="text-lg font-bold">活動タイムライン</span>
-          </div>
-          {/* クライアントサイドページネーション付きの活動タイムライン */}
-          <UserDetailActivities
-            userId={id}
-            initialTimeline={timeline}
-            pageSize={PAGE_SIZE}
-            totalCount={count}
-            seasonId={currentSeasonId ?? undefined}
-          />
-        </Card>
+        {/* クライアントサイドページネーション付きの活動タイムライン */}
+        <UserDetailActivities
+          userId={id}
+          initialTimeline={timeline}
+          pageSize={PAGE_SIZE}
+          totalCount={count}
+          seasonId={currentSeasonId}
+        />
 
         {/* シーズン履歴セクション */}
         {seasonHistory.length > 0 && (
