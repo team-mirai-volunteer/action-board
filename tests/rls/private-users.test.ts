@@ -52,34 +52,34 @@ describe("private_users テーブルのRLSテスト", () => {
   });
 
   test("認証されたユーザーは自分自身のprivate_usersレコードを更新できる", async () => {
-    const newName = "Updated Name";
+    const newPostcode = "1234567";
 
     // ユーザー1が自分のデータを更新
     const { data: updateData, error: updateError } = await user1.client
       .from("private_users")
-      .update({ name: newName })
+      .update({ postcode: newPostcode })
       .eq("id", user1.user.userId)
       .select()
       .single();
 
     expect(updateError).toBeNull();
-    expect(updateData?.name).toBe(newName);
+    expect(updateData?.postcode).toBe(newPostcode);
 
     // 更新が反映されたか確認
     const { data: checkData } = await user1.client
       .from("private_users")
-      .select("name")
+      .select("postcode")
       .eq("id", user1.user.userId)
       .single();
 
-    expect(checkData?.name).toBe(newName);
+    expect(checkData?.postcode).toBe(newPostcode);
   });
 
   test("認証されたユーザーは他のユーザーのprivate_usersレコードを更新できない", async () => {
     // ユーザー1がユーザー2のデータを更新しようとする
     const { data: updateData } = await user1.client
       .from("private_users")
-      .update({ name: "Hacked Name" })
+      .update({ postcode: "9876543" })
       .eq("id", user2.user.userId);
 
     expect(updateData).toBeNull();
@@ -87,10 +87,10 @@ describe("private_users テーブルのRLSテスト", () => {
     // ユーザー2のデータが変更されていないことを確認（管理者権限で確認）
     const { data: checkData } = await adminClient
       .from("private_users")
-      .select("name")
+      .select("postcode")
       .eq("id", user2.user.userId)
       .single();
 
-    expect(checkData?.name).toBe("テストユーザー");
+    expect(checkData?.postcode).toBe("1000001");
   });
 });

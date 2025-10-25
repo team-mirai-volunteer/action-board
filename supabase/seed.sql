@@ -21,21 +21,37 @@ VALUES
   ('00000000-0000-0000-0000-000000000000', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
   ('00000000-0000-0000-0000-000000000000', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
 
--- ユーザー
-INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
+-- private usersテーブルにデータを追加
+INSERT INTO private_users (id, date_of_birth, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', '1995-05-05', NULL, '5300001'),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', '1988-03-15', 'sato_taro', '1500012'),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', '1992-07-22', 'suzuki_misaki', '2200001'),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', '1985-11-08', 'takahashi_ken', '5600011'),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', '1993-04-30', 'ito_aiko', '4600001'),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', '1991-09-12', 'yamada_jiro', '8100001'),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', '1994-02-14', 'nakamura_sakura', '0600001'),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', '1987-06-05', 'kobayashi_naoto', '6020001'),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', '1996-12-25', 'kato_miyuki', '9800001'),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', '1989-08-18', 'watanabe_yuichi', '7300001'),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', '1998-01-03', 'matsumoto_kana', '9000001');
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '1990-12-01', '1000001'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '1995-05-05', '5300001'),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '1988-03-15', '1500012'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '1992-07-22', '2200001'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '1985-11-08', '5600011'),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '1993-04-30', '4600001'),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '1991-09-12', '8100001'),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '1994-02-14', '0600001'),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '1987-06-05', '6020001'),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '1996-12-25', '9800001'),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '1989-08-18', '7300001'),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '1998-01-03', '9000001');
+
+-- public_user_profilesテーブルにデータを追加
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', 'takahiroanno', 'takahiroanno'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, NULL),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', 'sato_taro', 'sato_taro'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', 'suzuki_misaki', 'suzuki_misaki'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', 'takahashi_ken', NULL),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', 'ito_aiko', NULL),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', 'yamada_jiro', NULL),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', 'nakamura_sakura', NULL),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', 'kobayashi_naoto', NULL),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', 'kato_miyuki', NULL),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', 'watanabe_yuichi', NULL),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', 'matsumoto_kana', NULL);
 
 -- ユーザーレベル情報（XPとレベル設定）
 -- season1のIDを取得してuser_levelsに使用

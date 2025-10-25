@@ -61,8 +61,6 @@ export async function createTestUser(
     .from("private_users")
     .insert({
       id: authId,
-      name: "テストユーザー",
-      address_prefecture: "東京都",
       date_of_birth: "1990-12-01",
       postcode: "1000001",
     });
@@ -70,6 +68,21 @@ export async function createTestUser(
   if (insertError) {
     throw new Error(
       `private_usersへのデータ挿入に失敗しました: ${insertError.message}`,
+    );
+  }
+
+  // public_user_profilesテーブルにデータを挿入（管理者権限で）
+  const { error: insertProfileError } = await adminClient
+    .from("public_user_profiles")
+    .insert({
+      id: authId,
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+    });
+
+  if (insertProfileError) {
+    throw new Error(
+      `public_user_profilesへのデータ挿入に失敗しました: ${insertProfileError.message}`,
     );
   }
 

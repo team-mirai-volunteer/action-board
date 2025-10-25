@@ -779,43 +779,31 @@ export type Database = {
       };
       private_users: {
         Row: {
-          address_prefecture: string;
-          avatar_url: string | null;
           created_at: string;
           date_of_birth: string;
           hubspot_contact_id: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at: string;
           updated_at: string;
-          x_username: string | null;
         };
         Insert: {
-          address_prefecture: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth: string;
           hubspot_contact_id?: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Update: {
-          address_prefecture?: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth?: string;
           hubspot_contact_id?: string | null;
           id?: string;
-          name?: string;
           postcode?: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Relationships: [];
       };
@@ -832,19 +820,20 @@ export type Database = {
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
-          created_at: string;
+          created_at?: string;
           github_username?: string | null;
           id: string;
           name: string;
+          updated_at?: string | null;
           x_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
           avatar_url?: string | null;
-          created_at?: string;
           github_username?: string | null;
           id?: string;
           name?: string;
+          updated_at?: string | null;
           x_username?: string | null;
         };
         Relationships: [];
