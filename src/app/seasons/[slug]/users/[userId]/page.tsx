@@ -21,7 +21,7 @@ import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
 } from "@/features/user-activity/services/timeline";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import UserBadges from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
 import { getProfile } from "@/features/user-profile/services/profile";
@@ -81,10 +81,7 @@ export default async function SeasonUserDetailPage({ params }: Props) {
         />
 
         {/* 獲得バッジセクション（そのシーズンのもののみ） */}
-        <Card className="w-full p-4 mt-4">
-          <h3 className="text-lg font-bold mb-4">獲得バッジ</h3>
-          <UserBadges userId={user.id} seasonId={season.id} />
-        </Card>
+        <UserBadges userId={user.id} seasonId={season.id} />
 
         {/* ミッション達成状況セクション（活動がある場合のみ表示） */}
         {(count || 0) > 0 && (
