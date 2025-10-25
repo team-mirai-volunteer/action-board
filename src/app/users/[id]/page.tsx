@@ -21,7 +21,7 @@ import {
 } from "@/features/user-activity/services/timeline";
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
-import { SocialBadge } from "@/features/user-profile/components/social-badge";
+import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
 import { getProfile } from "@/features/user-profile/services/profile";
 import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import {
@@ -69,29 +69,10 @@ export default async function UserDetailPage({ params }: Props) {
 
       <div className="px-4">
         {/* ソーシャルメディアリンク表示 */}
-        <div className="flex justify-center gap-2">
-          {user.x_username && (
-            <SocialBadge
-              username={user.x_username}
-              platform="x"
-              href={`https://x.com/${user.x_username}`}
-              logoSrc="/img/x_logo.png"
-              logoAlt="Xのロゴ"
-              logoSize={{ width: 16, height: 16 }}
-              showAtSymbol={true}
-            />
-          )}
-          {user.github_username && (
-            <SocialBadge
-              username={user.github_username}
-              platform="github"
-              href={`https://github.com/${user.github_username}`}
-              logoSrc="/img/github-logo.png"
-              logoAlt="GitHubのロゴ"
-              logoSize={{ width: 20, height: 20 }}
-            />
-          )}
-        </div>
+        <SocialBadgeSection
+          x_username={user.x_username}
+          github_username={user.github_username}
+        />
 
         {/* 獲得バッジセクション */}
         <Card className="w-full p-4 mt-4">
