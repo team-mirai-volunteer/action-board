@@ -110,6 +110,11 @@ export async function updateProfile(
     .select("*")
     .eq("id", user.id)
     .single();
+  const { data: publicProfile } = await supabaseClient
+    .from("public_user_profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   if (!authUser) {
     console.error("Public user not found");
@@ -120,7 +125,7 @@ export async function updateProfile(
   let avatar_path = formData.get("avatar_path") as string | null;
 
   // 以前の画像URL
-  const previousAvatarUrl = privateUser?.avatar_url || null;
+  const previousAvatarUrl = publicProfile?.avatar_url || null;
 
   // 画像ファイルが送信されているか確認
   const avatar_file = formData.get("avatar") as File | null;
@@ -222,17 +227,31 @@ export async function updateProfile(
       .from("private_users")
       .insert({
         id: user.id,
-        name: validatedData.name,
-        address_prefecture: validatedData.address_prefecture,
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
-        x_username: validatedData.x_username || null,
-        avatar_url: avatar_path,
         hubspot_contact_id: null, // 初期値はnull、HubSpot連携後に更新
         updated_at: new Date().toISOString(),
       });
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
+      return {
+        success: false,
+        error: "ユーザー情報の登録に失敗しました",
+      };
+    }
+
+    const { error: publicUserError } = await supabaseClient
+      .from("public_user_profiles")
+      .insert({
+        id: user.id,
+        name: validatedData.name,
+        address_prefecture: validatedData.address_prefecture,
+        github_username: validatedData.github_username || null,
+        avatar_url: avatar_path,
+        updated_at: new Date().toISOString(),
+      });
+    if (publicUserError) {
+      console.error("Error updating public_user_profiles:", publicUserError);
       return {
         success: false,
         error: "ユーザー情報の登録に失敗しました",
@@ -257,12 +276,8 @@ export async function updateProfile(
     const { error: privateUserError } = await supabaseClient
       .from("private_users")
       .update({
-        name: validatedData.name,
-        address_prefecture: validatedData.address_prefecture,
         date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
-        x_username: validatedData.x_username || null,
-        avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
@@ -277,7 +292,11 @@ export async function updateProfile(
     const { error: publicUserError } = await supabaseServiceClient
       .from("public_user_profiles")
       .update({
+        name: validatedData.name,
+        address_prefecture: validatedData.address_prefecture,
         github_username: validatedData.github_username || null,
+        avatar_url: avatar_path,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
     if (publicUserError) {
