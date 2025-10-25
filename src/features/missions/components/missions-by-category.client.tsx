@@ -37,7 +37,8 @@ export default function MissionsByCategoryClient({
   achievementCountList: [string, number][];
   userAchievementCounts: [string, number][];
 }) {
-  const [onlyUnAchieved, setOnlyUnAchieved] = useState(false);
+  type FilterMode = "all" | "unAchieved" | "achieved";
+  const [filterMode, setFilterMode] = useState<FilterMode>("all");
 
   const globalAchievementMap = useMemo(
     () => new Map(achievementCountList),
@@ -50,31 +51,50 @@ export default function MissionsByCategoryClient({
   );
 
   const filteredCategories = useMemo(() => {
-    if (!onlyUnAchieved) return categories;
+    if (filterMode === "all") return categories;
+
+    const predicate = (mission: MissionData) =>
+      filterMode === "unAchieved"
+        ? !userAchievementCountMap.has(mission.id)
+        : userAchievementCountMap.has(mission.id);
 
     return categories
       .map((category) => ({
         ...category,
-        missions: category.missions.filter(
-          (mission) => !userAchievementCountMap.has(mission.id),
-        ),
+        missions: category.missions.filter(predicate),
       }))
       .filter((category) => category.missions.length > 0);
-  }, [categories, onlyUnAchieved, userAchievementCountMap]);
+  }, [categories, filterMode, userAchievementCountMap]);
+
+  const filterCheckboxClassName =
+    "flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition";
 
   return (
     <div className="flex flex-col gap-11">
-      <h2 className="text-center md:text-4xl my-5">📈 ミッション</h2>
-
-      <div className="flex justify-center">
-        <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm cursor-pointer transition">
+      <h2 className="text-center md:text-4xl">📈 ミッション</h2>
+      {/* クリックをしたときにラベルの文字が選択されないように select-none を設定 */}
+      <div className="flex justify-center gap-2 font-medium select-none">
+        <label className={filterCheckboxClassName}>
           <input
             type="checkbox"
-            checked={onlyUnAchieved}
-            onChange={(e) => setOnlyUnAchieved(e.target.checked)}
+            checked={filterMode === "unAchieved"}
+            onChange={(e) =>
+              setFilterMode(e.target.checked ? "unAchieved" : "all")
+            }
             className="w-4 h-4 accent-blue-600 cursor-pointer"
           />
-          <span className="font-medium">未達成ミッションのみ表示</span>
+          未達成のみ
+        </label>
+        <label className={filterCheckboxClassName}>
+          <input
+            type="checkbox"
+            checked={filterMode === "achieved"}
+            onChange={(e) =>
+              setFilterMode(e.target.checked ? "achieved" : "all")
+            }
+            className="w-4 h-4 accent-blue-600 cursor-pointer"
+          />
+          達成済みのみ
         </label>
       </div>
 
