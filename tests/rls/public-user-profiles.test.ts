@@ -18,6 +18,7 @@ describe("public_user_profiles テーブルのRLSテスト", () => {
   afterEach(async () => {
     // テストユーザーをクリーンアップ
     await cleanupTestUser(user1.user.userId);
+    await cleanupTestUser(user2.user.userId);
   });
 
   test("匿名ユーザーはpublic_user_profilesテーブルを読み取れる", async () => {
