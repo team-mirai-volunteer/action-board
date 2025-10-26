@@ -12,7 +12,7 @@
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import { Card } from "@/components/ui/card";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import UserMissionAchievements from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
@@ -78,13 +78,11 @@ export default async function UserDetailPage({ params }: Props) {
         <UserBadges userId={user.id} seasonId={currentSeasonId} />
 
         {/* ミッション達成状況セクション（活動がある場合のみ表示） */}
-        {(count || 0) > 0 && (
-          <Card className="w-full p-4 mt-4">
-            <UserMissionAchievements
-              achievements={missionAchievements}
-              totalCount={count || 0}
-            />
-          </Card>
+        {count > 0 && (
+          <UserMissionAchievements
+            achievements={missionAchievements}
+            totalCount={count}
+          />
         )}
 
         {/* クライアントサイドページネーション付きの活動タイムライン */}
