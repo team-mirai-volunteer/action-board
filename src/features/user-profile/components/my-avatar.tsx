@@ -1,8 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  getMyProfile,
-  getUser,
-} from "@/features/user-profile/services/profile";
+import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { getAvatarUrl } from "@/lib/services/avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { HTMLProps } from "react";
@@ -26,7 +23,7 @@ export default async function MyAvatar({ className }: MyAvatarProps) {
     );
   }
 
-  const profile = await getMyProfile();
+  const profile = await getProfile(user.id);
 
   const avatarUrl = profile?.avatar_url
     ? getAvatarUrl(supabase, profile.avatar_url)
