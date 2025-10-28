@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { useMemo, useState } from "react";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
@@ -70,38 +71,38 @@ export default function MissionsByCategoryClient({
     "flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition";
 
   return (
-    <div className="flex flex-col gap-11">
-      <h2 className="text-center md:text-4xl">📈 ミッション</h2>
-      {/* クリックをしたときにラベルの文字が選択されないように select-none を設定 */}
-      <div className="flex justify-center gap-2 font-medium select-none">
-        <label className={filterCheckboxClassName}>
-          <input
-            type="checkbox"
-            checked={filterMode === "unAchieved"}
-            onChange={(e) =>
-              setFilterMode(e.target.checked ? "unAchieved" : "all")
-            }
-            className="w-4 h-4 accent-blue-600 cursor-pointer"
-          />
-          未達成のみ
-        </label>
-        <label className={filterCheckboxClassName}>
-          <input
-            type="checkbox"
-            checked={filterMode === "achieved"}
-            onChange={(e) =>
-              setFilterMode(e.target.checked ? "achieved" : "all")
-            }
-            className="w-4 h-4 accent-blue-600 cursor-pointer"
-          />
-          達成済みのみ
-        </label>
+    <div className="space-y-11">
+      <div className="flex flex-col items-center">
+        <h2 className="text-center md:text-4xl">📈 ミッション</h2>
+        {/* クリックをしたときにラベルの文字が選択されないように select-none を設定 */}
+        <div className="flex gap-2 font-medium select-none mt-4">
+          <label htmlFor="un-achieved" className={filterCheckboxClassName}>
+            <Checkbox
+              id="un-achieved"
+              checked={filterMode === "unAchieved"}
+              onCheckedChange={(checked) =>
+                setFilterMode(checked ? "unAchieved" : "all")
+              }
+            />
+            未達成のみ
+          </label>
+          <label htmlFor="achieved" className={filterCheckboxClassName}>
+            <Checkbox
+              id="achieved"
+              checked={filterMode === "achieved"}
+              onCheckedChange={(checked) =>
+                setFilterMode(checked ? "achieved" : "all")
+              }
+            />
+            達成済みのみ
+          </label>
+        </div>
       </div>
 
       {filteredCategories.map((category) => (
         <section
           key={category.category_id}
-          className="relative w-screen md:pl-10"
+          className="relative w-screen md:pl-10 mt-11"
         >
           <h3 className="text-xl font-bold">{category.category_title}</h3>
           <HorizontalScrollContainer>
