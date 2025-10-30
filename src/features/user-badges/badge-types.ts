@@ -1,4 +1,4 @@
-export type BadgeType = "DAILY" | "ALL" | "PREFECTURE" | "MISSION";
+type BadgeType = "DAILY" | "ALL" | "PREFECTURE" | "MISSION";
 
 export interface UserBadge {
   id: string;
@@ -22,12 +22,6 @@ export interface BadgeUpdateParams {
   badge_type: BadgeType;
   sub_type: string | null;
   rank: number;
-}
-
-export interface BadgeNotification {
-  badge: UserBadge;
-  badgeTitle: string;
-  badgeDescription: string;
 }
 
 export const getBadgeTitle = (badge: UserBadge): string => {

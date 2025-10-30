@@ -11,9 +11,9 @@ import {
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
-export type FilterStatus = BoardStatus;
+type FilterStatus = BoardStatus;
 
-export interface PosterBoardFilterState {
+interface PosterBoardFilterState {
   statuses: Set<FilterStatus>;
   showOnlyMine: boolean;
 }

@@ -1,6 +1,6 @@
 import type { Season } from "@/lib/services/seasons";
 
-export interface UserSeasonHistoryItem {
+interface UserSeasonHistoryItem {
   season: Season;
   userLevel: {
     level: number;

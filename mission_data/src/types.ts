@@ -64,13 +64,3 @@ export interface MissionMainLink {
   label: string;
   link: string;
 }
-
-export interface MissionData {
-  categories: Category[];
-  missions: Mission[];
-  category_links: CategoryLink[];
-  quiz_categories: QuizCategory[];
-  quiz_questions: QuizQuestion[];
-  mission_quiz_links: MissionQuizLink[];
-  mission_main_links?: MissionMainLink[];
-}

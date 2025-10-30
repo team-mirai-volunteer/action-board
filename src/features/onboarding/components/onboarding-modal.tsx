@@ -14,7 +14,7 @@ import { OnboardingCharacter } from "./onboarding-character";
 import { OnboardingMissionDetails } from "./onboarding-mission-details";
 import { OnboardingWelcome } from "./onboarding-welcome";
 
-export interface OnboardingModalProps {
+interface OnboardingModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

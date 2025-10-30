@@ -11,11 +11,3 @@ export interface ActivityTimelineItem {
   activity_type: string;
   party_membership?: PartyMembership | null;
 }
-
-export type ActivityType = "signup" | "mission_achievement" | "level_up";
-
-export interface UserActivityRecord {
-  userId: string;
-  activityType: string;
-  activityTitle: string;
-}

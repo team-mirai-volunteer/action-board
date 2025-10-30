@@ -13,14 +13,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export type UpdateProfileResult = {
+type UpdateProfileResult = {
   success: boolean;
-  error?: string;
-};
-
-export type UploadAvatarResult = {
-  success: boolean;
-  avatarPath?: string;
   error?: string;
 };
 
