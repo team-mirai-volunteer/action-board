@@ -2,6 +2,17 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import MissionsByCategoryClient from "./missions-by-category.client";
 
+// lucide-react's Check icon can cause invalid element type issues in Jest when toggled.
+// Mock it to a simple SVG to keep focus on behavior instead of icon rendering.
+jest.mock("lucide-react", () => {
+  const actual = jest.requireActual("lucide-react");
+  const React = require("react");
+  return {
+    ...actual,
+    Check: (props: any) => React.createElement("svg", { ...props }),
+  };
+});
+
 jest.mock("./mission-card", () => {
   return function MockMission({
     mission,
