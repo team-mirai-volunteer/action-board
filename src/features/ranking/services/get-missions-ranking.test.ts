@@ -1,3 +1,7 @@
+import {
+  getPartyMembership,
+  getPartyMembershipMap,
+} from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
@@ -20,6 +24,11 @@ jest.mock("@/lib/services/seasons", () => ({
   getCurrentSeasonId: jest.fn(),
 }));
 
+jest.mock("@/features/party-membership/services/memberships", () => ({
+  getPartyMembershipMap: jest.fn(),
+  getPartyMembership: jest.fn(),
+}));
+
 describe("missionsRanking service", () => {
   const mockSupabase = {
     rpc: jest.fn(),
@@ -29,6 +38,8 @@ describe("missionsRanking service", () => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
     (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
+    (getPartyMembershipMap as jest.Mock).mockResolvedValue({});
+    (getPartyMembership as jest.Mock).mockResolvedValue(null);
   });
 
   describe("getMissionRanking", () => {
@@ -61,9 +72,33 @@ describe("missionsRanking service", () => {
           },
         ];
 
+        const mockMembership = {
+          user_id: "user1",
+          plan: "starter",
+          badge_visibility: true,
+          synced_at: "2024-01-01T00:00:00Z",
+          metadata: {},
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-01-01T00:00:00Z",
+        };
+
         mockSupabase.rpc.mockResolvedValue({
           data: mockRankingData,
           error: null,
+        });
+        (getPartyMembershipMap as jest.Mock).mockResolvedValue({
+          user1: {
+            user_id: "user1",
+            plan: "starter",
+            badge_visibility: true,
+            synced_at: "2024-01-01T00:00:00Z",
+            metadata: {},
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z",
+          },
+        });
+        (getPartyMembershipMap as jest.Mock).mockResolvedValue({
+          user1: mockMembership,
         });
 
         const result = await getMissionRanking(missionId);
@@ -83,7 +118,9 @@ describe("missionsRanking service", () => {
           name: "テストユーザー1",
           user_achievement_count: 5,
           total_points: 500,
+          party_membership: mockMembership,
         });
+        expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1", "user2"]);
       });
 
       it("limitパラメータで取得件数を制限できる", async () => {
@@ -144,6 +181,7 @@ describe("missionsRanking service", () => {
           xp: null,
           total_points: 100,
         });
+        expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1"]);
       });
 
       it("日次ランキングを取得する（日付確認）", async () => {
@@ -207,6 +245,16 @@ describe("missionsRanking service", () => {
           },
         ];
 
+        (getPartyMembership as jest.Mock).mockResolvedValue({
+          user_id: userId,
+          plan: "premium",
+          badge_visibility: true,
+          synced_at: "2024-01-01T00:00:00Z",
+          metadata: {},
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-01-01T00:00:00Z",
+        });
+
         mockSupabase.rpc.mockResolvedValue({
           data: mockRankingData,
           error: null,
@@ -228,7 +276,13 @@ describe("missionsRanking service", () => {
           name: "テストユーザー",
           user_achievement_count: 5,
           rank: 3,
+          party_membership: {
+            user_id: userId,
+            plan: "premium",
+            badge_visibility: true,
+          },
         });
+        expect(getPartyMembership).toHaveBeenCalledWith(userId);
       });
     });
 

@@ -2,6 +2,25 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { BaseCurrentUserCard } from "./base-current-user-card";
 
+const mockUserNameWithBadge = jest.fn(
+  ({ name, membership }: { name: string; membership?: unknown }) => (
+    <span
+      data-testid="user-name-with-badge"
+      data-membership={JSON.stringify(membership)}
+    >
+      {name}
+    </span>
+  ),
+);
+
+jest.mock(
+  "@/features/party-membership/components/user-name-with-badge",
+  () => ({
+    UserNameWithBadge: (props: unknown) =>
+      mockUserNameWithBadge(props as { name: string; membership?: unknown }),
+  }),
+);
+
 jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
@@ -39,11 +58,24 @@ jest.mock("@/features/ranking/utils/ranking-utils", () => ({
 }));
 
 describe("BaseCurrentUserCard", () => {
+  beforeEach(() => {
+    mockUserNameWithBadge.mockClear();
+  });
+
   const mockCurrentUser = {
     user_id: "test-user-1",
     name: "テストユーザー",
     address_prefecture: "東京都",
     rank: 5,
+    party_membership: {
+      plan: "starter" as const,
+      badge_visibility: true,
+      user_id: "test-user-1",
+      synced_at: "2024-01-01T00:00:00Z",
+      metadata: {},
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    },
   };
 
   describe("基本的な表示", () => {
@@ -58,6 +90,13 @@ describe("BaseCurrentUserCard", () => {
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
       expect(screen.getByText("東京都")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
+      expect(mockUserNameWithBadge).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "テストユーザー",
+          membership: mockCurrentUser.party_membership,
+          badgeSize: 18,
+        }),
+      );
     });
 
     it("currentUserがnullの場合は何も表示されない", () => {

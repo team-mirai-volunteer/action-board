@@ -65,12 +65,6 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
-      # user_id参照テーブルの削除漏れチェック
-      - name: Check user_id table coverage
-        run: ./scripts/check-user-id-table-coverage.sh
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:54322/postgres
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 

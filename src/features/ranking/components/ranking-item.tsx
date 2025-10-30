@@ -1,5 +1,6 @@
-// TOPページ用のランキングコンポーネント
 import { Badge } from "@/components/ui/badge";
+// TOPページ用のランキングコンポーネント
+import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import Link from "next/link";
 import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
 import { getRankIcon } from "./ranking-icon";
@@ -40,7 +41,12 @@ export function RankingItem({
       <div className="flex items-center gap-4">
         {getRankIcon(user.rank ?? 0)}
         <div>
-          <div className="font-bold text-lg">{user.name}</div>
+          <UserNameWithBadge
+            name={user.name ?? ""}
+            membership={user.party_membership ?? null}
+            nameClassName="font-bold text-lg"
+            badgeSize={20}
+          />
           <div className="text-sm text-gray-600">{user.address_prefecture}</div>
           {showDetailedInfo && (
             <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>

@@ -1,4 +1,6 @@
 import type { Message } from "@/components/common/form-message";
+import { PartyBadgeVisibilityToggle } from "@/features/party-membership/components/party-badge-visibility-toggle";
+import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import {
   getMyProfile,
   getProfile,
@@ -28,6 +30,7 @@ export default async function ProfileSettingsPage({
   // ユーザー情報を取得
   const privateUser = await getMyProfile();
   const publicUser = await getProfile(user.id);
+  const partyMembership = await getPartyMembership(user.id);
 
   // 新規ユーザーかどうか判定
   const isNew = Boolean(params?.new);
@@ -47,7 +50,14 @@ export default async function ProfileSettingsPage({
           avatar_url: publicUser?.avatar_url || null,
         }}
         initialPrivateUser={privateUser}
+        partyMembership={partyMembership}
       />
+
+      {partyMembership && (
+        <div className="pt-4 border-gray-200 space-y-3">
+          <PartyBadgeVisibilityToggle membership={partyMembership} />
+        </div>
+      )}
       {!isNew && <AccountDeletionSection />}
     </div>
   );

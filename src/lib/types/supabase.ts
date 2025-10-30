@@ -507,6 +507,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      party_memberships: {
+        Row: {
+          badge_visibility: boolean;
+          created_at: string;
+          metadata: Json;
+          plan: string;
+          synced_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan?: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "party_memberships_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "public_user_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       poster_activities: {
         Row: {
           address: string | null;
@@ -815,6 +853,7 @@ export type Database = {
           github_username: string | null;
           id: string;
           name: string;
+          updated_at: string;
           x_username: string | null;
         };
         Insert: {
@@ -824,16 +863,17 @@ export type Database = {
           github_username?: string | null;
           id: string;
           name: string;
-          updated_at?: string | null;
+          updated_at?: string;
           x_username?: string | null;
         };
         Update: {
           address_prefecture?: string;
           avatar_url?: string | null;
+          created_at?: string;
           github_username?: string | null;
           id?: string;
           name?: string;
-          updated_at?: string | null;
+          updated_at?: string;
           x_username?: string | null;
         };
         Relationships: [];
@@ -1526,7 +1566,7 @@ export type Database = {
         }[];
       };
       get_poster_board_stats: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           count: number;
           prefecture: string;

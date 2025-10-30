@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { createClient } from "@/lib/supabase/client";
 
@@ -65,6 +66,7 @@ export async function getUserActivityTimeline(
   }
 
   const userProfile = userProfileResult.data;
+  const partyMembership = await getPartyMembership(userId);
 
   // ミッション達成データを活動タイムライン形式に変換
   const achievements = (achievementsResult.data || []).map((a) => ({
@@ -76,6 +78,7 @@ export async function getUserActivityTimeline(
     title: a.missions.title,
     created_at: a.created_at,
     activity_type: "mission_achievement",
+    party_membership: partyMembership,
   }));
 
   // ユーザーアクティビティデータを活動タイムライン形式に変換
@@ -88,6 +91,7 @@ export async function getUserActivityTimeline(
     title: a.activity_title,
     created_at: a.created_at,
     activity_type: a.activity_type,
+    party_membership: partyMembership,
   }));
 
   // 両方のデータを統合し、作成日時の降順でソートして指定件数まで取得

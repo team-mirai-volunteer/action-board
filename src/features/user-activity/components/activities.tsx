@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,6 +11,20 @@ export default async function Activities() {
     .select()
     .order("created_at", { ascending: false })
     .limit(10);
+
+  const membershipMap = await getPartyMembershipMap(
+    (activityTimelines ?? [])
+      .map((item) => item.user_id)
+      .filter((id): id is string => typeof id === "string" && id.length > 0),
+  );
+
+  const timelineWithMembership = (activityTimelines ?? []).map((item) => ({
+    ...item,
+    party_membership:
+      item.user_id && membershipMap[item.user_id]
+        ? membershipMap[item.user_id]
+        : null,
+  }));
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -26,7 +41,7 @@ export default async function Activities() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <ActivityTimeline
-                timeline={activityTimelines ?? []}
+                timeline={timelineWithMembership}
                 hasNext={false}
               />
             </div>
