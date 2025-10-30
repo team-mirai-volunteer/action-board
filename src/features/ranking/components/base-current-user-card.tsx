@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
+import type { PartyMembership } from "@/features/party-membership/types";
 import { User } from "lucide-react";
 import type React from "react";
 import {
@@ -12,6 +14,7 @@ interface BaseCurrentUserCardProps {
     name: string | null;
     address_prefecture: string | null;
     rank: number | null;
+    party_membership?: PartyMembership | null;
   } | null;
   title?: string;
   children: React.ReactNode;
@@ -49,9 +52,12 @@ export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
                 {displayUser.rank}
               </div>
               <div>
-                <div className="font-semibold text-gray-900">
-                  {displayUser.name}
-                </div>
+                <UserNameWithBadge
+                  name={displayUser.name}
+                  membership={currentUser.party_membership ?? null}
+                  nameClassName="font-semibold text-gray-900"
+                  badgeSize={18}
+                />
                 <div className="text-sm text-gray-600">
                   {displayUser.address_prefecture}
                 </div>

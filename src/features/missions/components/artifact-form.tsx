@@ -12,7 +12,6 @@ import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { GeolocationInput } from "./geolocation-input";
 import { ImageUploader } from "./image-uploader";
 import { PosterForm } from "./poster-form";
 
@@ -199,50 +198,6 @@ export function ArtifactForm({
                   className="w-24 h-24 object-cover rounded border"
                 />
               </div>
-            )}
-
-            {/* 位置情報入力 */}
-            {artifactConfig.key ===
-              ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key && (
-              <>
-                <GeolocationInput
-                  disabled={disabled}
-                  onGeolocationChange={setGeolocation}
-                />
-                {/* 位置情報用の隠しフィールド */}
-                {geolocation && (
-                  <>
-                    <Input
-                      type="hidden"
-                      name="latitude"
-                      value={geolocation.lat}
-                    />
-                    <Input
-                      type="hidden"
-                      name="longitude"
-                      value={geolocation.lon}
-                    />
-                    {geolocation.accuracy ? (
-                      <Input
-                        type="hidden"
-                        name="accuracy"
-                        value={geolocation.accuracy}
-                      />
-                    ) : (
-                      ""
-                    )}
-                    {geolocation.altitude ? (
-                      <Input
-                        type="hidden"
-                        name="altitude"
-                        value={geolocation.altitude}
-                      />
-                    ) : (
-                      ""
-                    )}
-                  </>
-                )}
-              </>
             )}
           </div>
         )}

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
@@ -51,7 +52,20 @@ export async function getRanking(
       );
     }
 
-    return periodRankingData || [];
+    const rankings = periodRankingData || [];
+    const membershipMap = await getPartyMembershipMap(
+      rankings
+        .map((ranking) => ranking.user_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
+    );
+
+    return rankings.map((ranking) => ({
+      ...ranking,
+      party_membership:
+        ranking.user_id && membershipMap[ranking.user_id]
+          ? membershipMap[ranking.user_id]
+          : null,
+    }));
   } catch (error) {
     console.error("Ranking service error:", error);
     throw error;

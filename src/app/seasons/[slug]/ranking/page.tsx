@@ -1,3 +1,4 @@
+import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import { CurrentUserCard } from "@/features/ranking/components/current-user-card";
 import {
   PeriodToggle,
@@ -73,6 +74,7 @@ export default async function SeasonRankingPage({
     });
 
     if (data && data.length > 0) {
+      const partyMembership = await getPartyMembership(user.id);
       userRanking = {
         user_id: data[0].user_id,
         address_prefecture: data[0].address_prefecture,
@@ -81,6 +83,7 @@ export default async function SeasonRankingPage({
         rank: data[0].rank,
         updated_at: data[0].updated_at,
         xp: data[0].xp,
+        party_membership: partyMembership,
       };
     }
   }
