@@ -60,9 +60,7 @@ export function ActivityTimeline({
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center text-sm">
               {activity.address_prefecture ? (
-                <span className="text-gray-600">
-                  {activity.address_prefecture}の
-                </span>
+                <span>{activity.address_prefecture}の</span>
               ) : null}
               <UserNameWithBadge
                 name={`${activity.name ?? ""}さん`}
@@ -73,14 +71,13 @@ export function ActivityTimeline({
                 }
                 badgeSize={16}
                 className="gap-0.5 mr-1"
-                nameClassName="font-normal text-gray-900"
               />
-              <div className="text-sm text-gray-800">
+              <span>
                 {/* 活動タイプに応じたメッセージ表示 */}
                 {activity.activity_type === "signup"
                   ? activity.title // サインアップの場合はタイトルのみ
                   : `が「${activity.title}」を達成しました！`}
-              </div>
+              </span>
             </div>
 
             {/* 活動日時の表示 */}
