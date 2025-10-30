@@ -58,53 +58,6 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   return allBoards;
 }
 
-// 全データ取得（既存の関数名を維持）
-export async function getPosterBoards(prefecture?: string) {
-  const supabase = createClient();
-
-  // Fetch all boards with pagination to bypass Supabase's default limit
-  let allBoards: PosterBoard[] = [];
-  let page = 0;
-  const pageSize = 1000;
-
-  while (true) {
-    let query = supabase
-      .from("poster_boards")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .order("id", { ascending: false })
-      .range(page * pageSize, (page + 1) * pageSize - 1);
-
-    if (prefecture) {
-      query = query.eq(
-        "prefecture",
-        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
-      );
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error fetching poster boards:", error);
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-      break;
-    }
-
-    allBoards = [...allBoards, ...data];
-
-    if (data.length < pageSize) {
-      break;
-    }
-
-    page++;
-  }
-
-  return allBoards;
-}
-
 // 個別の掲示板の詳細を取得
 export async function getPosterBoardDetail(
   boardId: string,
@@ -181,51 +134,6 @@ export async function updateBoardStatus(
   }
 
   return { success: true };
-}
-
-// Get unique prefectures that have poster boards
-export async function getPrefecturesWithBoards() {
-  const supabase = createClient();
-
-  // Fetch all records with pagination to get all prefectures
-  let allPrefectures: string[] = [];
-  let page = 0;
-  const pageSize = 1000;
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("poster_boards")
-      .select("prefecture")
-      .not("prefecture", "is", null)
-      .order("prefecture")
-      .order("id", { ascending: true })
-      .range(page * pageSize, (page + 1) * pageSize - 1);
-
-    if (error) {
-      console.error("Error fetching prefectures:", error);
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-      break;
-    }
-
-    allPrefectures = [
-      ...allPrefectures,
-      ...data.map((item) => item.prefecture).filter(Boolean),
-    ];
-
-    if (data.length < pageSize) {
-      break;
-    }
-
-    page++;
-  }
-
-  // Get unique prefectures
-  const uniquePrefectures = Array.from(new Set(allPrefectures));
-
-  return uniquePrefectures;
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）

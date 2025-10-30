@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
 
-export async function getMissionData(
+async function getMissionData(
   missionId: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = createClient();
@@ -27,9 +27,7 @@ export async function getMissionData(
   return missionData;
 }
 
-export async function getTotalAchievementCount(
-  missionId: string,
-): Promise<number> {
+async function getTotalAchievementCount(missionId: string): Promise<number> {
   const supabase = createClient();
 
   const { data: countData, error } = await supabase
@@ -46,7 +44,7 @@ export async function getTotalAchievementCount(
   return countData?.achievement_count || 0;
 }
 
-export async function getUserAchievements(
+async function getUserAchievements(
   userId: string,
   missionId: string,
 ): Promise<{ achievements: Achievement[]; count: number }> {
@@ -70,7 +68,7 @@ export async function getUserAchievements(
   };
 }
 
-export async function getSubmissionHistory(
+async function getSubmissionHistory(
   userId: string,
   missionId: string,
 ): Promise<SubmissionData[]> {
@@ -185,7 +183,7 @@ export async function getSubmissionHistory(
   return validSubmissions;
 }
 
-export async function getMissionMainLink(
+async function getMissionMainLink(
   missionId: string,
 ): Promise<Tables<"mission_main_links"> | null> {
   const supabase = createClient();
@@ -247,7 +245,7 @@ export async function getMissionPageData(
 }
 
 // ログインユーザーに紐づくリファラルコードの取得
-export async function getReferralCode(userId: string): Promise<string> {
+async function getReferralCode(userId: string): Promise<string> {
   const supabase = createClient();
 
   const { data, error } = await supabase

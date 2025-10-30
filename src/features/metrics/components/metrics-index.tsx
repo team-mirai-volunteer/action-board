@@ -7,9 +7,6 @@ import { DonationMetric } from "./donation-metric";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 
-export { MetricsErrorBoundary } from "./metrics-error-boundary";
-export { MetricsWithSuspense } from "./metrics-with-suspense";
-
 /**
  * メトリクス表示コンポーネント
  *

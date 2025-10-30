@@ -1,16 +1,14 @@
 "use client";
 
-import {
-  achieveMissionAction,
-  getMissionQuizCategoryAction,
-} from "@/features/mission-detail/actions/actions";
+import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
+import { getMissionQuizCategoryAction } from "@/features/mission-detail/actions/quiz-actions";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 // クイズ結果の型定義
-export interface QuizResults {
+interface QuizResults {
   score: number;
   passed: boolean;
   correctAnswers: number;

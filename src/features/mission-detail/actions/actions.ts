@@ -22,20 +22,10 @@ import type { Database, TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
 // Quiz関連のServer ActionsとQuizQuestion型をインポート
-import {
-  type QuizQuestion,
-  checkQuizAnswersAction,
-  getMissionQuizCategoryAction,
-  getQuizQuestionsAction,
-} from "./quiz-actions";
+import { checkQuizAnswersAction } from "./quiz-actions";
 
 // Quiz関連のServer Actionsを再エクスポート
-export {
-  getMissionQuizCategoryAction,
-  getQuizQuestionsAction,
-  checkQuizAnswersAction,
-  type QuizQuestion,
-};
+export { checkQuizAnswersAction };
 
 // 基本スキーマ（共通項目）
 const baseMissionFormSchema = z.object({
