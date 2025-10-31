@@ -4,6 +4,9 @@ import crypto from "node:crypto";
 
 import type { PartyPlan } from "@/features/party-membership/types";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import type { Tables } from "@/lib/types/supabase";
+
+type PartyMembershipRow = Tables<"party_memberships">;
 
 type SheetRow = {
   email: string;
@@ -35,7 +38,6 @@ type ExistingContext = {
 type SyncSummary = {
   upserted: number;
   removed: number;
-  skipped: number;
 };
 
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -244,38 +246,49 @@ async function getExistingMembershipContext(
   return context;
 }
 
-async function resolveSheetRows(
-  rows: SheetRow[],
+async function fetchUserIdMap(
   adminClient: Awaited<ReturnType<typeof createAdminClient>>,
-): Promise<{ normalized: NormalizedRow[]; skipped: number }> {
+  rows: SheetRow[],
+): Promise<Map<string, string>> {
+  const uniqueEmails = Array.from(
+    new Set(rows.map((row) => row.email.toLowerCase())),
+  );
+
+  if (uniqueEmails.length === 0) {
+    return new Map();
+  }
+
+  const { data, error } = await adminClient.rpc("get_users_by_emails", {
+    email_list: uniqueEmails,
+  });
+
+  if (error) {
+    throw new Error(`Failed to fetch user IDs from Supabase: ${error.message}`);
+  }
+
+  const map = new Map<string, string>();
+  for (const row of data) {
+    const email = row.email?.toLowerCase();
+    const id = row.id;
+    if (email && id) {
+      map.set(email, id);
+    }
+  }
+
+  return map;
+}
+
+function resolveSheetRows(
+  rows: SheetRow[],
+  userIdMap: Map<string, string>,
+): { normalized: NormalizedRow[]; skipped: number } {
   const normalized: NormalizedRow[] = [];
   let skipped = 0;
 
   for (const row of rows) {
-    const { data, error } = await adminClient.rpc("get_user_by_email", {
-      user_email: row.email,
-    });
-
-    if (error) {
-      console.error(
-        `Failed to lookup user. Skipping row ${row.rowNumber}`,
-        error.message,
-      );
-      skipped += 1;
-      continue;
-    }
-
-    if (!data || data.length === 0) {
-      console.warn(`No Supabase user found. Skipping row ${row.rowNumber}.`);
-      skipped += 1;
-      continue;
-    }
-
-    const userId = data[0]?.id as string | undefined;
+    const userId = userIdMap.get(row.email.toLowerCase());
     if (!userId) {
-      console.warn(
-        `User lookup returned no ID. Skipping row ${row.rowNumber}.`,
-      );
+      console.warn(`No Supabase user found. Skipping row ${row.rowNumber}.`);
       skipped += 1;
       continue;
     }
@@ -308,7 +321,7 @@ async function applyMembershipDiff(
         rawPlan: raw.rawPlan,
         rowNumber: raw.rowNumber,
       },
-    };
+    } satisfies Partial<PartyMembershipRow>;
   });
 
   if (upsertPayload.length > 0) {
@@ -343,7 +356,6 @@ async function applyMembershipDiff(
   return {
     upserted: upsertPayload.length,
     removed: staleUserIds.length,
-    skipped: 0,
   };
 }
 
@@ -368,10 +380,15 @@ async function main() {
 
     const adminClient = await createAdminClient();
     const existingContext = await getExistingMembershipContext(adminClient);
-    const { normalized, skipped } = await resolveSheetRows(
-      sheetRows,
-      adminClient,
-    );
+    const userIdMap = await fetchUserIdMap(adminClient, sheetRows);
+    const { normalized, skipped } = resolveSheetRows(sheetRows, userIdMap);
+
+    if (normalized.length === 0) {
+      console.warn(
+        `No valid membership rows found after user lookup. Skipped ${skipped} rows.`,
+      );
+      return;
+    }
 
     const summary = await applyMembershipDiff(
       adminClient,
@@ -380,10 +397,8 @@ async function main() {
       config.sheetName,
     );
 
-    const totalSkipped = skipped + summary.skipped;
-
     console.log(
-      `Synced ${summary.upserted} memberships. Removed ${summary.removed} stale memberships.${totalSkipped ? ` Skipped ${totalSkipped} rows.` : ""}`,
+      `Synced ${summary.upserted} memberships. Removed ${summary.removed} stale memberships.${skipped ? ` Skipped ${skipped} rows.` : ""}`,
     );
   } catch (error) {
     console.error("Failed to sync party memberships:", error);

@@ -1733,6 +1733,13 @@ export type Database = {
           xp: number;
         }[];
       };
+      get_users_by_emails: {
+        Args: { email_list: string[] };
+        Returns: {
+          email: string;
+          id: string;
+        }[];
+      };
     };
     Enums: {
       poster_board_status:
