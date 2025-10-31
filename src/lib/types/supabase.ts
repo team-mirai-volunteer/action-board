@@ -535,15 +535,7 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "party_memberships_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "public_user_profiles";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       poster_activities: {
         Row: {
