@@ -17,7 +17,12 @@ export function PartyBadge({
   className,
   showLabel = false,
 }: PartyBadgeProps) {
-  const { label, imageSrc } = getPartyPlanConfig(plan);
+  const config = getPartyPlanConfig(plan);
+  if (!config) {
+    return null;
+  }
+
+  const { label, imageSrc } = config;
 
   return (
     <span className={cn("inline-flex items-center gap-1", className)}>

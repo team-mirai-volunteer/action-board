@@ -13,9 +13,9 @@ export const PARTY_PLAN_CONFIG: Record<PartyPlan, PlanConfig> = {
     label: "スタータープラン",
     imageSrc: "/img/party-member-badge/starter.svg",
   },
-  basic: {
+  regular: {
     label: "レギュラープラン",
-    imageSrc: "/img/party-member-badge/basic.svg",
+    imageSrc: "/img/party-member-badge/regular.svg",
   },
   premium: {
     label: "プレミアムプラン",
@@ -23,6 +23,6 @@ export const PARTY_PLAN_CONFIG: Record<PartyPlan, PlanConfig> = {
   },
 } as const;
 
-export function getPartyPlanConfig(plan: PartyPlan): PlanConfig {
+export function getPartyPlanConfig(plan: PartyPlan): PlanConfig | undefined {
   return PARTY_PLAN_CONFIG[plan];
 }
