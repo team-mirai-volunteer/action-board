@@ -182,4 +182,41 @@ describe("MissionsByCategoryClient", () => {
     );
     expect(screen.getByTestId("user-achievement-count")).toHaveTextContent("2");
   });
+
+  it("チェックで0件になった場合は空メッセージを表示", async () => {
+    const categories = [
+      {
+        category_id: "cat-1",
+        category_title: "カテゴリ",
+        missions: [
+          {
+            ...baseMission,
+            id: "m1",
+            title: "達成済",
+            max_achievement_count: 1,
+          },
+        ],
+      },
+    ];
+
+    render(
+      <MissionsByCategoryClient
+        categories={categories as any}
+        achievementCountList={[["m1", 10]]}
+        userAchievementCounts={[["m1", 1]]}
+      />,
+    );
+
+    // 初期状態ではミッションが表示されている
+    expect(await screen.findByTestId("mission-m1")).toBeInTheDocument();
+
+    // 未達成のみをONにして、0件になるケースを作る
+    await userEvent.click(screen.getByLabelText("未達成のみ"));
+
+    // ミッションがなくなり、空メッセージが表示される
+    expect(screen.queryByTestId("mission-m1")).toBeNull();
+    expect(
+      screen.getByText("表示できるミッションがありません"),
+    ).toBeInTheDocument();
+  });
 });

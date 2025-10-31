@@ -98,32 +98,37 @@ export default function MissionsByCategoryClient({
           </label>
         </div>
       </div>
-
-      {filteredCategories.map((category) => (
-        <section
-          key={category.category_id}
-          className="relative w-screen md:pl-10 mt-11"
-        >
-          <h3 className="text-xl font-bold">{category.category_title}</h3>
-          <HorizontalScrollContainer>
-            <div className="flex w-fit gap-4 px-4 pb-2 pt-4">
-              {category.missions.map((mission) => (
-                <div key={mission.id} className="flex-shrink-0 w-[300px]">
-                  <Mission
-                    mission={mission}
-                    achievementsCount={
-                      globalAchievementMap.get(mission.id) ?? 0
-                    }
-                    userAchievementCount={
-                      userAchievementCountMap.get(mission.id) ?? 0
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </HorizontalScrollContainer>
-        </section>
-      ))}
+      {filteredCategories.length > 0 ? (
+        filteredCategories.map((category) => (
+          <section
+            key={category.category_id}
+            className="relative w-screen md:pl-10 mt-11"
+          >
+            <h3 className="text-xl font-bold">{category.category_title}</h3>
+            <HorizontalScrollContainer>
+              <div className="flex w-fit gap-4 px-4 pb-2 pt-4">
+                {category.missions.map((mission) => (
+                  <div key={mission.id} className="flex-shrink-0 w-[300px]">
+                    <Mission
+                      mission={mission}
+                      achievementsCount={
+                        globalAchievementMap.get(mission.id) ?? 0
+                      }
+                      userAchievementCount={
+                        userAchievementCountMap.get(mission.id) ?? 0
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </HorizontalScrollContainer>
+          </section>
+        ))
+      ) : (
+        <div className="text-gray-600 text-center">
+          表示できるミッションがありません
+        </div>
+      )}
     </div>
   );
 }
