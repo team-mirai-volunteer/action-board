@@ -1,5 +1,9 @@
 import "server-only";
 
+import {
+  getPartyMembership,
+  getPartyMembershipMap,
+} from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
@@ -56,19 +60,25 @@ export async function getPrefecturesRanking(
       return [];
     }
 
-    // ランキングデータを変換（period_prefecture_rankingの結果形式）
-    return rankings.map(
-      (ranking: Record<string, unknown>) =>
-        ({
-          user_id: ranking.user_id,
-          name: ranking.name,
-          address_prefecture: prefecture,
-          rank: ranking.rank,
-          level: ranking.level,
-          xp: ranking.xp,
-          updated_at: ranking.updated_at,
-        }) as UserRanking,
+    const membershipMap = await getPartyMembershipMap(
+      rankings
+        .map((ranking) => ranking.user_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
     );
+
+    // ランキングデータを変換（period_prefecture_rankingの結果形式）
+    return rankings.map((ranking: Record<string, unknown>) => {
+      return {
+        user_id: ranking.user_id,
+        name: ranking.name,
+        address_prefecture: prefecture,
+        rank: ranking.rank,
+        level: ranking.level,
+        xp: ranking.xp,
+        updated_at: ranking.updated_at,
+        party_membership: membershipMap[ranking.user_id as string],
+      } as UserRanking;
+    });
   } catch (error) {
     console.error("Prefecture ranking service error:", error);
     throw error;
@@ -128,14 +138,17 @@ export async function getUserPrefecturesRanking(
 
     const ranking = rankings[0] as Record<string, unknown>;
 
+    const membership = await getPartyMembership(userId);
+
     return {
-      user_id: ranking.user_id,
+      user_id: userId,
       name: ranking.name,
       address_prefecture: ranking.address_prefecture,
       rank: ranking.rank,
       level: ranking.level,
       xp: ranking.xp,
       updated_at: ranking.updated_at,
+      party_membership: membership,
     } as UserRanking;
   } catch (error) {
     console.error("User prefecture ranking service error:", error);

@@ -1,3 +1,5 @@
+import type { PartyMembership } from "@/features/party-membership/types";
+
 export interface ActivityTimelineItem {
   id: string;
   user_id: string;
@@ -7,6 +9,7 @@ export interface ActivityTimelineItem {
   title: string;
   created_at: string;
   activity_type: string;
+  party_membership?: PartyMembership | null;
 }
 
 export type ActivityType = "signup" | "mission_achievement" | "level_up";

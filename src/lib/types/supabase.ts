@@ -507,6 +507,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      party_memberships: {
+        Row: {
+          badge_visibility: boolean;
+          created_at: string;
+          metadata: Json;
+          plan: string;
+          synced_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan?: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       poster_activities: {
         Row: {
           address: string | null;
@@ -779,43 +809,31 @@ export type Database = {
       };
       private_users: {
         Row: {
-          address_prefecture: string;
-          avatar_url: string | null;
           created_at: string;
           date_of_birth: string;
           hubspot_contact_id: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at: string;
           updated_at: string;
-          x_username: string | null;
         };
         Insert: {
-          address_prefecture: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth: string;
           hubspot_contact_id?: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Update: {
-          address_prefecture?: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth?: string;
           hubspot_contact_id?: string | null;
           id?: string;
-          name?: string;
           postcode?: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Relationships: [];
       };
@@ -827,15 +845,17 @@ export type Database = {
           github_username: string | null;
           id: string;
           name: string;
+          updated_at: string;
           x_username: string | null;
         };
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
-          created_at: string;
+          created_at?: string;
           github_username?: string | null;
           id: string;
           name: string;
+          updated_at?: string;
           x_username?: string | null;
         };
         Update: {
@@ -845,6 +865,7 @@ export type Database = {
           github_username?: string | null;
           id?: string;
           name?: string;
+          updated_at?: string;
           x_username?: string | null;
         };
         Relationships: [];
@@ -1537,7 +1558,7 @@ export type Database = {
         }[];
       };
       get_poster_board_stats: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           count: number;
           prefecture: string;
@@ -1702,6 +1723,13 @@ export type Database = {
           user_id: string;
           user_name: string;
           xp: number;
+        }[];
+      };
+      get_users_by_emails: {
+        Args: { email_list: string[] };
+        Returns: {
+          email: string;
+          id: string;
         }[];
       };
     };

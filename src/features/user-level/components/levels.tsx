@@ -1,3 +1,5 @@
+import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
+import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import { UserTopBadge } from "@/features/user-badges/components/user-top-badge";
 import { LevelProgress } from "@/features/user-level/components/level-progress";
 import { getUserLevel } from "@/features/user-level/services/level";
@@ -14,6 +16,7 @@ interface LevelsProps {
   seasonId?: string;
 }
 
+// TODO: UserProfileCardにリネーム
 export default async function Levels({
   userId,
   hideProgress = false,
@@ -28,6 +31,7 @@ export default async function Levels({
   }
 
   const userLevel = await getUserLevel(userId, seasonId);
+  const partyMembership = await getPartyMembership(userId);
 
   const cardContent = (
     <div
@@ -36,7 +40,12 @@ export default async function Levels({
       <div className="flex items-center">
         <UserAvatar userProfile={profile} size="lg" />
         <div className="flex flex-col ml-6">
-          <div className="text-lg font-bold leading-none">{profile.name}</div>
+          <UserNameWithBadge
+            name={profile.name}
+            membership={partyMembership}
+            nameClassName="text-lg font-bold leading-none"
+            badgeSize={22}
+          />
           <div className="flex items-center mt-2">
             <div className="flex items-baseline">
               <div className="text-sm font-bold">LV.</div>

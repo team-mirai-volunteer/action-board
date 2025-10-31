@@ -16,7 +16,7 @@ export function AccountDeletionSection() {
           className="w-full"
           onClick={() => setIsDeleteModalOpen(true)}
         >
-          退会する
+          アクションボードを退会する
         </Button>
       </div>
       <DeleteAccountModal

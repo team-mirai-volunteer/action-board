@@ -195,7 +195,7 @@ mainブランチはリリース可能な状態に保ちましょう。
 下記コマンドで `supabase/migrations/` ディレクトリに `20250612123456_{名前}.sql` という名前の空ファイルが作成されます。このファイルに SQL を記述してください。
 
 ```bash
-supabase migration new {名前}
+npx supabase migration new {名前}
 ```
 
 ※ `{名前}` はmigrationの内容を表す英語名（例: `add_mission_join_slack` ）
@@ -205,7 +205,7 @@ supabase migration new {名前}
 作成したmigrationファイルがまだ適用されていない場合、下記コマンドでローカルDBに反映できます。
 
 ```bash
-supabase migration up
+npx supabase migration up
 ```
 
 ### migrationファイル追加後の型定義生成
@@ -213,7 +213,7 @@ supabase migration up
 migrationファイルの追加や編集で、テーブルの追加や更新を行った場合は、型定義を生成してください。
 
 ```bash
-npx supabase gen types typescript --local > lib/types/supabase.ts
+npx supabase gen types typescript --local > src/lib/types/supabase.ts
 ```
 
 ## 単体テスト

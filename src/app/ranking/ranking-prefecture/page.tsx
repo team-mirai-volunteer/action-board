@@ -4,10 +4,7 @@ import { PrefectureSelect } from "@/features/ranking/components/prefecture-selec
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
-import {
-  getMyProfile,
-  getUser,
-} from "@/features/user-profile/services/profile";
+import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
@@ -41,7 +38,7 @@ export default async function RankingPrefecturePage({
   // ユーザーのプロフィール情報を取得
   let userProfile = null;
   if (user) {
-    userProfile = await getMyProfile();
+    userProfile = await getProfile(user.id);
   }
 
   // 選択された都道府県を取得（URLパラメータをデコード）

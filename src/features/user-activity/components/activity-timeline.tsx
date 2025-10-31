@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import UserAvatar from "@/features/user-profile/components/user-avatar";
 import type { Tables } from "@/lib/types/supabase";
@@ -56,12 +57,27 @@ export function ActivityTimeline({
           </Link>
 
           {/* 活動内容の表示 */}
-          <div>
-            <div className="text-sm">
-              {/* 活動タイプに応じたメッセージ表示 */}
-              {activity.activity_type === "signup"
-                ? activity.title // サインアップの場合はタイトルのみ
-                : `${activity.address_prefecture}の${activity.name}さんが「${activity.title}」を達成しました！`}
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap items-center text-sm">
+              {activity.address_prefecture ? (
+                <span>{activity.address_prefecture}の</span>
+              ) : null}
+              <UserNameWithBadge
+                name={`${activity.name ?? ""}さん`}
+                membership={
+                  "party_membership" in activity
+                    ? (activity.party_membership ?? null)
+                    : null
+                }
+                badgeSize={16}
+                className="gap-0.5 mr-1"
+              />
+              <span>
+                {/* 活動タイプに応じたメッセージ表示 */}
+                {activity.activity_type === "signup"
+                  ? activity.title // サインアップの場合はタイトルのみ
+                  : `が「${activity.title}」を達成しました！`}
+              </span>
             </div>
 
             {/* 活動日時の表示 */}

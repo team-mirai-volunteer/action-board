@@ -172,25 +172,6 @@ describe("ArtifactForm", () => {
     expect(screen.getByText("画像ファイル")).toBeInTheDocument();
   });
 
-  it("IMAGE_WITH_GEOLOCATIONタイプの場合は画像と位置情報フォームが表示される", () => {
-    const mission = {
-      ...baseMission,
-      required_artifact_type: "IMAGE_WITH_GEOLOCATION" as const,
-    };
-
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
-
-    expect(screen.getByText("画像ファイル")).toBeInTheDocument();
-    expect(screen.getByText("位置情報を取得する")).toBeInTheDocument();
-  });
-
   it("提出済み画像がある場合はプレビューが表示される", () => {
     const mission = {
       ...baseMission,

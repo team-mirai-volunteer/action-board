@@ -8,7 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "types": "npx supabase gen types typescript --local > lib/types/supabase.ts && biome check --write lib/types/supabase.ts",
+    "types": "npx supabase gen types typescript --local > src/lib/types/supabase.ts && biome check --write src/lib/types/supabase.ts",
+    "db:migrate": "npx supabase migration up --local && npm run types",
     "biome:check:write": "biome check --write .",
     "test": "jest && playwright test",
     "test:ci:unit": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns=tests/rls/",
@@ -28,7 +29,8 @@
     "poster:clear": "./poster_data/clear.sh",
     "poster:mask-names": "tsx poster_data/mask-names.ts",
     "calculate-badges": "tsx scripts/calculate-badges.ts",
-    "export-users-prefecture": "tsx scripts/export-users-prefecture.ts"
+    "export-users-prefecture": "tsx scripts/export-users-prefecture.ts",
+    "sync-party-memberships": "tsx src/scripts/sync-party-memberships.ts"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
@@ -49,8 +51,6 @@
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/preset-fireworks": "^3.2.0",
     "@tsparticles/react": "^3.0.0",
-    "@types/leaflet": "^1.9.18",
-    "@types/leaflet.markercluster": "^1.5.5",
     "autoprefixer": "^10.4.21",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.0",
@@ -90,6 +90,8 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
+    "@types/leaflet": "^1.9.18",
+    "@types/leaflet.markercluster": "^1.5.5",
     "@types/node": "^22.15.21",
     "@types/pg": "^8.15.4",
     "@types/pg-copy-streams": "^1.2.5",

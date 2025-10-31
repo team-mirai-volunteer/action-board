@@ -26,9 +26,7 @@ describe("ActivityTimeline", () => {
       render(<ActivityTimeline timeline={mockTimeline} hasNext={false} />);
 
       expect(
-        screen.getByText(
-          "東京都のテストユーザーさんが「テストミッション」を達成しました！",
-        ),
+        screen.getByText("が「テストミッション」を達成しました！"),
       ).toBeInTheDocument();
     });
 
@@ -65,9 +63,7 @@ describe("ActivityTimeline", () => {
       expect(screen.getByText("新規登録しました")).toBeInTheDocument();
 
       expect(
-        screen.getByText(
-          "神奈川県の既存ユーザーさんが「テストミッション」を達成しました！",
-        ),
+        screen.getByText("が「テストミッション」を達成しました！"),
       ).toBeInTheDocument();
     });
 
