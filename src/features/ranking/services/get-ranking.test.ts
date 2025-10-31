@@ -61,7 +61,7 @@ describe("ranking service", () => {
         (getPartyMembershipMap as jest.Mock).mockResolvedValue({
           user1: {
             user_id: "user1",
-            plan: "basic",
+            plan: "regular",
             badge_visibility: false,
             synced_at: "2024-01-01T00:00:00Z",
             metadata: {},
@@ -83,7 +83,7 @@ describe("ranking service", () => {
             ...mockRankingData[0],
             party_membership: {
               user_id: "user1",
-              plan: "basic",
+              plan: "regular",
               badge_visibility: false,
               synced_at: "2024-01-01T00:00:00Z",
               metadata: {},

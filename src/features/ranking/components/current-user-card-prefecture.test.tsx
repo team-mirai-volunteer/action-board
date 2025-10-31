@@ -67,7 +67,7 @@ const mockUser: UserRanking = {
   xp: 3000,
   updated_at: "2024-01-01T00:00:00Z",
   party_membership: {
-    plan: "basic",
+    plan: "regular",
     badge_visibility: true,
     user_id: "test-user-1",
     synced_at: "2024-01-01T00:00:00Z",
