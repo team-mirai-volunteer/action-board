@@ -1,4 +1,4 @@
-name: Daily Party Membership Sync
+name: Daily Party Membership Sync (Staging)
 
 on:
   schedule:
