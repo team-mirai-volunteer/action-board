@@ -383,13 +383,6 @@ async function main() {
     const userIdMap = await fetchUserIdMap(adminClient, sheetRows);
     const { normalized, skipped } = resolveSheetRows(sheetRows, userIdMap);
 
-    if (normalized.length === 0) {
-      console.warn(
-        `No valid membership rows found after user lookup. Skipped ${skipped} rows.`,
-      );
-      return;
-    }
-
     const summary = await applyMembershipDiff(
       adminClient,
       normalized,
