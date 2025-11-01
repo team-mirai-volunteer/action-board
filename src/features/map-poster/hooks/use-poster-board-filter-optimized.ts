@@ -11,10 +11,8 @@ import {
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 
-type FilterStatus = BoardStatus;
-
 interface PosterBoardFilterState {
-  statuses: Set<FilterStatus>;
+  statuses: Set<BoardStatus>;
   showOnlyMine: boolean;
 }
 
@@ -24,7 +22,7 @@ interface UsePosterBoardFilterProps {
   userEditedBoardIds?: Set<string>;
 }
 
-const ALL_STATUSES: FilterStatus[] = [
+const ALL_STATUSES: BoardStatus[] = [
   "not_yet",
   "not_yet_dangerous",
   "reserved",
@@ -36,7 +34,7 @@ const ALL_STATUSES: FilterStatus[] = [
 ];
 
 const defaultFilterState: PosterBoardFilterState = {
-  statuses: new Set<FilterStatus>(ALL_STATUSES),
+  statuses: new Set<BoardStatus>(ALL_STATUSES),
   showOnlyMine: false,
 };
 
@@ -159,7 +157,7 @@ export function usePosterBoardFilterOptimized({
     performFiltering();
   }, [performFiltering]);
 
-  const toggleStatus = useCallback((status: FilterStatus) => {
+  const toggleStatus = useCallback((status: BoardStatus) => {
     setFilterState((prev) => {
       const newStatuses = new Set(prev.statuses);
       if (newStatuses.has(status)) {
@@ -184,14 +182,14 @@ export function usePosterBoardFilterOptimized({
 
   const selectAll = useCallback(() => {
     setFilterState((prev) => ({
-      statuses: new Set<FilterStatus>(ALL_STATUSES),
+      statuses: new Set<BoardStatus>(ALL_STATUSES),
       showOnlyMine: prev.showOnlyMine,
     }));
   }, []);
 
   const deselectAll = useCallback(() => {
     setFilterState((prev) => ({
-      statuses: new Set<FilterStatus>(),
+      statuses: new Set<BoardStatus>(),
       showOnlyMine: prev.showOnlyMine,
     }));
   }, []);
