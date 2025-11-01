@@ -1,7 +1,9 @@
 "use client";
 
-import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { getMissionQuizCategoryAction } from "@/features/mission-detail/actions/quiz-actions";
+import {
+  achieveMissionAction,
+  getMissionQuizCategoryAction,
+} from "@/features/mission-detail/actions/actions";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";

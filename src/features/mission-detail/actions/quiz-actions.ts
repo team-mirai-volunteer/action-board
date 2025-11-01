@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 
 // クイズ用の型定義
-interface QuizQuestion {
+export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
