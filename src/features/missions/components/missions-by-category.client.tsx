@@ -4,29 +4,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useMemo, useState } from "react";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
-
-type MissionData = {
-  id: string;
-  title: string;
-  icon_url: string | null;
-  difficulty: number;
-  content: string;
-  created_at: string;
-  artifact_label: string | null;
-  max_achievement_count: number | null;
-  event_date: string | null;
-  is_featured: boolean;
-  updated_at: string;
-  is_hidden: boolean;
-  ogp_image_url: string | null;
-  required_artifact_type: string;
-  featured_importance: number | null;
-};
+import type { MissionWithoutSlug } from "./missions-by-category";
 
 type CategoryData = {
   category_id: string;
   category_title: string;
-  missions: MissionData[];
+  missions: MissionWithoutSlug[];
 };
 
 export default function MissionsByCategoryClient({
@@ -54,7 +37,7 @@ export default function MissionsByCategoryClient({
   const filteredCategories = useMemo(() => {
     if (filterMode === "all") return categories;
 
-    const predicate = (mission: MissionData) =>
+    const predicate = (mission: MissionWithoutSlug) =>
       filterMode === "unAchieved"
         ? !userAchievementCountMap.has(mission.id)
         : userAchievementCountMap.has(mission.id);

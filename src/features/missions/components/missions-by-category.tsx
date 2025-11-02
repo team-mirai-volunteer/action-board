@@ -1,30 +1,16 @@
 import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/lib/types/supabase";
 import type { MissionsProps } from "./mission-list";
 import MissionsByCategoryClient from "./missions-by-category.client";
 
-type MissionData = {
-  id: string;
-  title: string;
-  icon_url: string | null;
-  difficulty: number;
-  content: string;
-  created_at: string;
-  artifact_label: string | null;
-  max_achievement_count: number | null;
-  event_date: string | null;
-  is_featured: boolean;
-  updated_at: string;
-  is_hidden: boolean;
-  ogp_image_url: string | null;
-  required_artifact_type: string;
-  featured_importance: number | null;
-};
+type MissionRow = Database["public"]["Tables"]["missions"]["Row"];
+export type MissionWithoutSlug = Omit<MissionRow, "slug">;
 
 type CategoryGroup = {
   category_id: string;
   category_title: string;
   category_sort_no: number;
-  missions: MissionData[];
+  missions: MissionWithoutSlug[];
 };
 
 export default async function MissionsByCategory({
