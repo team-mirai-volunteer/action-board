@@ -8,8 +8,6 @@ import { describe, expect, it } from "@jest/globals";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
-type PosterBoardTotal =
-  Database["public"]["Tables"]["poster_board_totals"]["Row"];
 
 describe("Poster Board Progress Calculation", () => {
   describe("calculateProgressRate関数", () => {
