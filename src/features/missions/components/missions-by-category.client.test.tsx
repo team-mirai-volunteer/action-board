@@ -40,19 +40,19 @@ describe("MissionsByCategoryClient", () => {
   const baseMission = {
     id: "m1",
     title: "ミッション1",
-    icon_url: null as string | null,
+    icon_url: null,
     difficulty: 1,
     content: "",
     created_at: new Date().toISOString(),
-    artifact_label: null as string | null,
-    max_achievement_count: null as number | null,
-    event_date: null as string | null,
+    artifact_label: null,
+    max_achievement_count: null,
+    event_date: null,
     is_featured: false,
     updated_at: new Date().toISOString(),
     is_hidden: false,
-    ogp_image_url: null as string | null,
-    required_artifact_type: "NONE" as string,
-    featured_importance: null as number | null,
+    ogp_image_url: null,
+    required_artifact_type: "NONE",
+    featured_importance: null,
   };
 
   it("チェックONで未達成のみ表示される", async () => {
@@ -79,7 +79,7 @@ describe("MissionsByCategoryClient", () => {
 
     render(
       <MissionsByCategoryClient
-        categories={categories as any}
+        categories={categories}
         achievementCountList={[
           ["m1", 10],
           ["m2", 5],
@@ -126,7 +126,7 @@ describe("MissionsByCategoryClient", () => {
 
     render(
       <MissionsByCategoryClient
-        categories={categories as any}
+        categories={categories}
         achievementCountList={[
           ["m1", 10],
           ["m2", 5],
@@ -171,7 +171,7 @@ describe("MissionsByCategoryClient", () => {
 
     render(
       <MissionsByCategoryClient
-        categories={categories as any}
+        categories={categories}
         achievementCountList={[["m1", 42]]}
         userAchievementCounts={[["m1", 2]]}
       />,
@@ -201,7 +201,7 @@ describe("MissionsByCategoryClient", () => {
 
     render(
       <MissionsByCategoryClient
-        categories={categories as any}
+        categories={categories}
         achievementCountList={[["m1", 10]]}
         userAchievementCounts={[["m1", 1]]}
       />,
