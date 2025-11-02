@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { PartyMembership } from "@/features/party-membership/types";
 import { updateProfile } from "@/features/user-settings/actions/profile-actions";
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
@@ -55,7 +54,6 @@ interface ProfileFormProps {
     id?: string;
     postcode?: string;
   } | null;
-  partyMembership: PartyMembership | null;
 }
 
 export default function ProfileForm({
@@ -63,7 +61,6 @@ export default function ProfileForm({
   isNew,
   initialProfile,
   initialPrivateUser,
-  partyMembership,
 }: ProfileFormProps) {
   const supabase = createClient();
   const [queryMessage, setQueryMessage] = useState<Message | undefined>(

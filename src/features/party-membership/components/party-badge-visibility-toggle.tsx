@@ -6,8 +6,7 @@ import { cn } from "@/lib/utils/styles";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { updateBadgeVisibility } from "../actions/update-badge-visibility";
-import { getPartyPlanConfig } from "../constants/plans";
-import type { PartyMembership, PartyPlan } from "../types";
+import type { PartyMembership } from "../types";
 import { PartyBadge } from "./party-badge";
 
 type PartyBadgeVisibilityToggleProps = {
@@ -23,8 +22,6 @@ export function PartyBadgeVisibilityToggle({
     membership.badge_visibility ?? true,
   );
   const [isPending, startTransition] = useTransition();
-
-  const planConfig = getPartyPlanConfig(membership.plan as PartyPlan);
 
   const handleChange = (checked: boolean | "indeterminate") => {
     if (checked === "indeterminate") {
