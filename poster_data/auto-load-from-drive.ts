@@ -46,7 +46,7 @@ function loadProcessedFiles(): Record<string, { mtime: number; size: number }> {
   if (existsSync(PROCESSED_FILES_LOG)) {
     try {
       return JSON.parse(readFileSync(PROCESSED_FILES_LOG, "utf-8"));
-    } catch (e) {
+    } catch {
       console.warn("⚠️  Could not read processed files log, starting fresh");
     }
   }
@@ -75,7 +75,7 @@ function hasFileChanged(
     return (
       processed[filepath].mtime !== mtime || processed[filepath].size !== size
     );
-  } catch (e) {
+  } catch {
     return true; // If we can't stat it, assume it changed
   }
 }
@@ -112,7 +112,7 @@ function findCsvFiles(dir: string): CsvFiles {
 
         try {
           stat = statSync(fullPath);
-        } catch (e) {
+        } catch {
           console.warn(`⚠️  Could not stat ${entry}, skipping`);
           continue;
         }
@@ -291,11 +291,7 @@ async function logFileSelection(
 }
 
 // Log append files
-async function logAppendFiles(
-  files: string[],
-  prefecture: string,
-  city: string,
-): Promise<void> {
+async function logAppendFiles(files: string[]): Promise<void> {
   if (files.length === 0) return;
 
   let logEntry = "\n📎 Append files to be loaded:\n";
@@ -478,7 +474,7 @@ async function main() {
     );
 
     // Log append files if any
-    await logAppendFiles(appendResult.all, group.prefecture, group.city);
+    await logAppendFiles(appendResult.all);
 
     // Combine all files to process
     const allFiles = [...normalizedResult.all, ...appendResult.all];

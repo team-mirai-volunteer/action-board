@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (state) redirectUrl.searchParams.set("state", state);
 
     return NextResponse.redirect(redirectUrl);
-  } catch (error) {
+  } catch {
     // Error handling: redirect to sign-in page with error
     return NextResponse.redirect(
       new URL("/sign-in?error=callback_failed", baseUrl),

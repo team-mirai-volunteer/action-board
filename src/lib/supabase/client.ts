@@ -40,7 +40,7 @@ export function createClient(): SupabaseClient<Database> {
               for (const { name, value, options } of cookiesToSet) {
                 cookieStore.set(name, value, options);
               }
-            } catch (error) {
+            } catch {
               // The `set` method was called from a Server Component.
               // This can be ignored if you have middleware refreshing
               // user sessions.
@@ -48,7 +48,7 @@ export function createClient(): SupabaseClient<Database> {
           },
         },
       });
-    } catch (error) {
+    } catch {
       // next/headersが利用できない場合（テスト環境など）はシンプルなServerClientを返す
       return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
         cookies: {

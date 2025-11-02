@@ -99,7 +99,7 @@ export default function PosterMap({
         if (isMounted) {
           setCurrentUserId(user?.id);
         }
-      } catch (error) {
+      } catch {
         // エラーは静かに処理
       }
     };

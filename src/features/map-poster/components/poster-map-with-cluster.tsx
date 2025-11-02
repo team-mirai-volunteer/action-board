@@ -296,7 +296,7 @@ export default function PosterMapWithCluster({
         if (isMounted && !userIdFromProps) {
           setCurrentUserId(user?.id);
         }
-      } catch (error) {
+      } catch {
         // エラーは静かに処理
       }
     };

@@ -182,7 +182,7 @@ export default function PrefecturePosterMapClient({
     try {
       await navigator.clipboard.writeText(text);
       toast.success("住所をコピーしました");
-    } catch (error) {
+    } catch {
       toast.error("コピーに失敗しました");
     }
   };
@@ -207,7 +207,7 @@ export default function PrefecturePosterMapClient({
         );
         setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
       }
-    } catch (error) {
+    } catch {
       toast.error("ポスター掲示板の読み込みに失敗しました");
     } finally {
       setLoading(false);
@@ -246,7 +246,7 @@ export default function PrefecturePosterMapClient({
     try {
       const data = await getBoardStatusHistoryAction(selectedBoard.id);
       setHistory(data as unknown as StatusHistory[]);
-    } catch (error) {
+    } catch {
       toast.error("履歴の読み込みに失敗しました");
     } finally {
       setLoadingHistory(false);
@@ -361,7 +361,7 @@ export default function PrefecturePosterMapClient({
       // Clear history so it's fresh next time
       setHistory([]);
       setShowHistory(false);
-    } catch (error) {
+    } catch {
       toast.error("ステータスの更新に失敗しました");
     } finally {
       setIsUpdating(false);
