@@ -51,6 +51,12 @@ const PLAN_MAP: Record<string, PartyPlan | null> = {
   donation: null,
 };
 
+const PLAN_PRIORITY: Record<PartyPlan, number> = {
+  starter: 1,
+  regular: 2,
+  premium: 3,
+};
+
 function assertEnv(value: string | undefined, name: string): string {
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
@@ -210,6 +216,37 @@ async function fetchSheetRows(
   });
 
   return results;
+}
+
+function dedupeSheetRows(rows: SheetRow[]): {
+  uniqueRows: SheetRow[];
+  duplicateCount: number;
+} {
+  const bestRowByEmail = new Map<string, SheetRow>();
+  let duplicateCount = 0;
+
+  for (const row of rows) {
+    const existing = bestRowByEmail.get(row.email);
+    if (!existing) {
+      bestRowByEmail.set(row.email, row);
+      continue;
+    }
+
+    if (
+      PLAN_PRIORITY[row.plan] > PLAN_PRIORITY[existing.plan] ||
+      (PLAN_PRIORITY[row.plan] === PLAN_PRIORITY[existing.plan] &&
+        row.rowNumber < existing.rowNumber)
+    ) {
+      bestRowByEmail.set(row.email, row);
+    } else {
+      duplicateCount += 1;
+    }
+  }
+
+  return {
+    uniqueRows: Array.from(bestRowByEmail.values()),
+    duplicateCount,
+  };
 }
 
 async function getExistingMembershipContext(
@@ -378,10 +415,12 @@ async function main() {
       return;
     }
 
+    const { uniqueRows, duplicateCount } = dedupeSheetRows(sheetRows);
+
     const adminClient = await createAdminClient();
     const existingContext = await getExistingMembershipContext(adminClient);
-    const userIdMap = await fetchUserIdMap(adminClient, sheetRows);
-    const { normalized, skipped } = resolveSheetRows(sheetRows, userIdMap);
+    const userIdMap = await fetchUserIdMap(adminClient, uniqueRows);
+    const { normalized, skipped } = resolveSheetRows(uniqueRows, userIdMap);
 
     const summary = await applyMembershipDiff(
       adminClient,
@@ -391,7 +430,7 @@ async function main() {
     );
 
     console.log(
-      `Synced ${summary.upserted} memberships. Removed ${summary.removed} stale memberships.${skipped ? ` Skipped ${skipped} rows.` : ""}`,
+      `Synced ${summary.upserted} memberships. Removed ${summary.removed} stale memberships.${duplicateCount ? ` Deduplicated ${duplicateCount} rows.` : ""}${skipped ? ` Skipped ${skipped} rows.` : ""}`,
     );
   } catch (error) {
     console.error("Failed to sync party memberships:", error);
