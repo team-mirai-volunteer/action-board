@@ -11,15 +11,9 @@ import { dateFormatter } from "@/lib/utils/date-formatters";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;
-  mainLink?: Tables<"mission_main_links"> | null;
-  onMainLinkClick?: () => Promise<{ success: boolean; error?: string }>;
 };
 
-export function MissionDetails({
-  mission,
-  mainLink,
-  onMainLinkClick,
-}: MissionDetailsProps) {
+export function MissionDetails({ mission }: MissionDetailsProps) {
   return (
     <Card>
       <CardHeader>

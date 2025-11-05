@@ -21,14 +21,7 @@ import { redirect } from "next/navigation";
 // メタデータ生成を外部関数に委譲
 export const generateMetadata = generateRootMetadata;
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ ref?: string }>;
-}) {
-  const params = await searchParams;
-  const referralCode = params.ref;
-
+export default async function Home() {
   const user = await getUser();
 
   // レベルアップ通知とバッジ通知をチェック

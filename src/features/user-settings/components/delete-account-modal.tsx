@@ -38,7 +38,7 @@ export function DeleteAccountModal({
       if (result?.success) {
         toast.success("退会処理が完了しました");
       }
-    } catch (err) {
+    } catch {
       setIsDeleting(false);
       onClose();
       toast.error("退会処理でエラーが発生しました。もう一度お試しください。");

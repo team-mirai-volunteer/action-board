@@ -1,6 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -16,6 +13,9 @@ import { getUserRepeatableMissionAchievements } from "@/features/user-achievemen
  * - 活動タイムライン
  * - 全シーズン履歴
  */
+import { Card } from "@/components/ui/card";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
@@ -67,7 +67,7 @@ export default async function SeasonUserDetailPage({ params }: Props) {
     <div className="flex flex-col items-stretch w-full max-w-xl gap-4">
       {/* シーズン情報ヘッダー */}
       <div className="mx-4 mt-4">
-        <UserSeasonHeader season={season} userId={userId} />
+        <UserSeasonHeader season={season} />
       </div>
 
       {/* ユーザーレベル表示（プログレスバーは非表示） - シーズン用 */}

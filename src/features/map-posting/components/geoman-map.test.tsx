@@ -141,7 +141,7 @@ describe("GeomanMap", () => {
         const initializeMap = async () => {
           try {
             throw new Error("Failed to load Leaflet");
-          } catch (error) {
+          } catch {
             act(() => {
               setError("地図ライブラリの読み込みに失敗しました");
               setIsLoading(false);
@@ -213,7 +213,7 @@ describe("GeomanMap", () => {
           try {
             await Promise.resolve(); // Leaflet loads fine
             throw new Error("Failed to load Geoman");
-          } catch (error) {
+          } catch {
             act(() => {
               setError("地図編集ツールの読み込みに失敗しました");
               setIsLoading(false);

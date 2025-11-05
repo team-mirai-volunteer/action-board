@@ -1,18 +1,11 @@
 "use client";
 
 type Props = {
-  children?: React.ReactNode;
   missionId: string;
-  className?: string;
   url?: string;
 };
 
-export function ShareFacebookButton({
-  children,
-  missionId,
-  className,
-  url,
-}: Props) {
+export function ShareFacebookButton({ missionId, url }: Props) {
   // SNSシェア用のハンドラ関数
   const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
   const handleShare = () => {

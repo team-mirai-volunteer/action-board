@@ -11,14 +11,12 @@ interface SubmissionHistoryProps {
   submissions: Submission[];
   missionId: string;
   userId?: string | null;
-  maxAchievementCount: number;
 }
 
 const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
   submissions,
   missionId,
   userId,
-  maxAchievementCount,
 }) => {
   const {
     isDialogOpen,

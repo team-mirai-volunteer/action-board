@@ -12,7 +12,7 @@ export function DifficultyBadge({
   showLabel = true,
   className,
 }: DifficultyBadgeProps) {
-  const getDifficultyStyles = (difficulty: number) => {
+  const getDifficultyStyles = () => {
     return "text-gray-700 border-gray-400 hover:bg-gray-50";
   };
 
@@ -30,7 +30,7 @@ export function DifficultyBadge({
   return (
     <Badge
       variant="outline"
-      className={cn(getDifficultyStyles(difficulty), "border", className)}
+      className={cn(getDifficultyStyles(), "border", className)}
     >
       {showLabel ? `難易度: ${label}` : label}
     </Badge>

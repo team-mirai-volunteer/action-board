@@ -22,13 +22,6 @@ type ArtifactFormProps = {
   submittedArtifactImagePath: string | null;
 };
 
-type GeolocationData = {
-  lat: number;
-  lon: number;
-  accuracy?: number;
-  altitude?: number;
-};
-
 export function ArtifactForm({
   mission,
   authUser,
@@ -38,7 +31,6 @@ export function ArtifactForm({
   const [artifactImagePath, setArtifactImagePath] = useState<
     string | undefined
   >(undefined);
-  const [geolocation, setGeolocation] = useState<GeolocationData | null>(null);
 
   const artifactConfig = mission
     ? getArtifactConfig(mission.required_artifact_type)

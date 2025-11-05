@@ -106,19 +106,6 @@ export default function PrefecturePosterMapClient({
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [stats, setStats] = useState(initialStats);
-  const [filters, setFilters] = useState({
-    selectedStatuses: [
-      "not_yet",
-      "not_yet_dangerous",
-      "reserved",
-      "done",
-      "error_wrong_place",
-      "error_damaged",
-      "error_wrong_poster",
-      "other",
-    ] as BoardStatus[],
-    showOnlyMine: false,
-  });
   const [userEditedBoardIdsSet, setUserEditedBoardIdsSet] = useState<
     Set<string>
   >(() => {
@@ -182,7 +169,7 @@ export default function PrefecturePosterMapClient({
     try {
       await navigator.clipboard.writeText(text);
       toast.success("住所をコピーしました");
-    } catch (error) {
+    } catch {
       toast.error("コピーに失敗しました");
     }
   };
@@ -207,7 +194,7 @@ export default function PrefecturePosterMapClient({
         );
         setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
       }
-    } catch (error) {
+    } catch {
       toast.error("ポスター掲示板の読み込みに失敗しました");
     } finally {
       setLoading(false);
@@ -246,7 +233,7 @@ export default function PrefecturePosterMapClient({
     try {
       const data = await getBoardStatusHistoryAction(selectedBoard.id);
       setHistory(data as unknown as StatusHistory[]);
-    } catch (error) {
+    } catch {
       toast.error("履歴の読み込みに失敗しました");
     } finally {
       setLoadingHistory(false);
@@ -361,7 +348,7 @@ export default function PrefecturePosterMapClient({
       // Clear history so it's fresh next time
       setHistory([]);
       setShowHistory(false);
-    } catch (error) {
+    } catch {
       toast.error("ステータスの更新に失敗しました");
     } finally {
       setIsUpdating(false);
@@ -434,7 +421,6 @@ export default function PrefecturePosterMapClient({
           prefectureKey={
             JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
           }
-          onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
         />

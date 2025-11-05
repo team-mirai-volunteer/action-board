@@ -31,7 +31,7 @@ export default function SignInForm({ returnUrl }: SignInFormProps) {
     try {
       setIsLineLoading(true);
       await signInWithLine(returnUrl);
-    } catch (error) {
+    } catch {
       setIsLineLoading(false);
     }
   };

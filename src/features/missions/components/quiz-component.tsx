@@ -47,41 +47,23 @@ interface QuizResult {
 
 interface QuizComponentProps {
   missionId: string;
-  isCompleted?: boolean;
   preloadedQuestions?: QuizQuestion[];
   onQuizComplete?: (results: QuizResult) => void;
   onSubmitAchievement?: () => void;
   isSubmittingAchievement?: boolean;
   buttonLabel?: string;
-  onAchievementSuccess?: () => void;
   category?: string; // カテゴリー名を追加
 }
 
 export default function QuizComponent({
   missionId,
-  isCompleted = false,
   preloadedQuestions,
   onQuizComplete,
   onSubmitAchievement,
   isSubmittingAchievement = false,
   buttonLabel,
-  onAchievementSuccess,
   category,
 }: QuizComponentProps) {
-  // カテゴリーによる達成メッセージを生成する関数
-  const getAchievementMessage = (categoryName?: string) => {
-    switch (categoryName) {
-      case "政策・マニフェスト":
-        return "ミッション達成！政策・マニフェストマスターですね！";
-      case "チームみらい":
-        return "ミッション達成！チームみらいマスターですね！";
-      case "公職選挙法":
-        return "ミッション達成！公職選挙法マスターですね！";
-      default:
-        return "ミッション達成！クイズマスターですね！";
-    }
-  };
-
   // クライアントサイドかどうかを判定
   const [isClient, setIsClient] = useState(false);
 
@@ -436,7 +418,7 @@ export default function QuizComponent({
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
-            {missionLinks.map((link, index) => (
+            {missionLinks.map((link) => (
               <a
                 key={link.link}
                 href={link.link}

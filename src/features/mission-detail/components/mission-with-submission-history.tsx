@@ -235,7 +235,6 @@ export function MissionWithSubmissionHistory({
           submissions={submissions}
           missionId={missionId}
           userId={authUser.id}
-          maxAchievementCount={mission.max_achievement_count || 0}
         />
       )}
     </>
