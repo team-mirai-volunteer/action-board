@@ -296,7 +296,7 @@ export default function PosterMap({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 bottom-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{ zIndex: 1000 }}
           aria-label="フルスクリーン表示"
           title="フルスクリーン表示"
@@ -310,7 +310,7 @@ export default function PosterMap({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 bottom-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{ zIndex: 1000 }}
           aria-label="フルスクリーン解除"
           title="フルスクリーン解除 (ESC)"

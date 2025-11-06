@@ -18,7 +18,7 @@ export function FeedbackSection() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="ポスターマップへのご意見フォーム（新しいタブで開きます）"
-          className="inline-flex items-center justify-center md:mr-4 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-10 px-8 max-w-xs rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 mb-8"
+          className="inline-flex items-center justify-center md:mr-4 ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-10 px-8 max-w-xs rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 mb-8"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@ export function FeedbackSection() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="アクションボードへのご意見フォーム（新しいタブで開きます）"
-          className="inline-flex items-center justify-center whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-10 px-8 max-w-xs rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+          className="inline-flex items-center justify-center whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-10 px-8 max-w-xs rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

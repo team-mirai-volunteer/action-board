@@ -9,7 +9,7 @@ export async function SeasonsList() {
   }
 
   return (
-    <div className="px-6 py-4 bg-emerald-50/80 backdrop-blur-sm border-t border-emerald-100">
+    <div className="px-6 py-4 bg-emerald-50/80 backdrop-blur-xs border-t border-emerald-100">
       <div className="max-w-6xl mx-auto">
         <h3 className="text-sm font-medium text-gray-700 mb-3">過去シーズン</h3>
         <div className="flex flex-wrap gap-2">

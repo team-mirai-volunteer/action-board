@@ -140,7 +140,7 @@ export function FormMessage({
               <div
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
                 dangerouslySetInnerHTML={{ __html: message.success }}
-                className="[&_a]:inline-block [&_a]:break-words"
+                className="[&_a]:inline-block [&_a]:wrap-break-word"
               />
             ) : (
               message.success
@@ -155,7 +155,7 @@ export function FormMessage({
               <div
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
                 dangerouslySetInnerHTML={{ __html: message.error }}
-                className="[&_a]:inline-block [&_a]:break-words"
+                className="[&_a]:inline-block [&_a]:wrap-break-word"
               />
             ) : (
               message.error
@@ -170,7 +170,7 @@ export function FormMessage({
               <div
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
                 dangerouslySetInnerHTML={{ __html: message.message }}
-                className="[&_a]:inline-block [&_a]:break-words"
+                className="[&_a]:inline-block [&_a]:wrap-break-word"
               />
             ) : (
               message.message
