@@ -1,49 +1,57 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { HorizontalScrollContainer } from "./horizontal-scroll-container";
-import Mission from "./mission-card";
 import type { MissionsProps } from "./mission-list";
+import MissionsByCategoryClient from "./missions-by-category.client";
 
-// View の型
-type MissionCategoryViewRow =
-  Database["public"]["Views"]["mission_category_view"]["Row"];
+type MissionRow = Database["public"]["Tables"]["missions"]["Row"];
+export type MissionWithoutSlug = Omit<MissionRow, "slug">;
+
+type CategoryGroup = {
+  category_id: string;
+  category_title: string;
+  category_sort_no: number;
+  missions: MissionWithoutSlug[];
+};
 
 export default async function MissionsByCategory({
   userId,
-  showAchievedMissions,
-}: MissionsProps) {
+}: Pick<MissionsProps, "userId">) {
   const supabase = createClient();
 
-  // ユーザーの達成状況取得
-  let achievedMissionIds: string[] = [];
-  let userAchievementCountMap = new Map<string, number>();
-  if (userId) {
-    const { data: achievements } = await supabase
-      .from("achievements")
-      .select("mission_id")
-      .eq("user_id", userId);
+  // ユーザー達成状況（アプリ側集計）
+  const { data: achievements } = userId
+    ? await supabase
+        .from("achievements")
+        .select("mission_id")
+        .eq("user_id", userId)
+    : { data: [] };
 
-    achievedMissionIds = achievements?.map((a) => a.mission_id ?? "") ?? [];
-    if (achievements) {
-      userAchievementCountMap = achievements.reduce((map, a) => {
-        if (a.mission_id) {
-          map.set(a.mission_id, (map.get(a.mission_id) || 0) + 1);
-        }
-        return map;
-      }, new Map<string, number>());
-    }
-  }
+  // ユーザー達成回数を集計してtuple配列に変換
+  const userAchievementCountMap = (achievements ?? [])
+    .filter((a): a is { mission_id: string } => a.mission_id != null)
+    .reduce<Map<string, number>>((map, a) => {
+      map.set(a.mission_id, (map.get(a.mission_id) ?? 0) + 1);
+      return map;
+    }, new Map());
 
-  // 全体の達成数取得
+  const userAchievementCounts: [string, number][] = Array.from(
+    userAchievementCountMap.entries(),
+  );
+
+  // 全体達成人数
   const { data: achievementCounts } = await supabase
     .from("mission_achievement_count_view")
     .select("mission_id, achievement_count");
 
-  const achievementCountMap = new Map(
-    achievementCounts?.map((a) => [a.mission_id, a.achievement_count]) ?? [],
-  );
+  // null除外してフィルタリング
+  const achievementCountList: [string, number][] = (achievementCounts ?? [])
+    .filter(
+      (a): a is { mission_id: string; achievement_count: number } =>
+        a.mission_id != null && a.achievement_count != null,
+    )
+    .map((a) => [a.mission_id, a.achievement_count]);
 
-  // View からミッションデータ取得
+  // ミッション一覧（カテゴリ付き）
   const { data, error } = await supabase
     .from("mission_category_view")
     .select(`
@@ -70,7 +78,7 @@ export default async function MissionsByCategory({
     .order("category_sort_no", { ascending: true })
     .order("link_sort_no", { ascending: true });
 
-  if (error || !data || data.length === 0) {
+  if (error || !data?.length) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">
@@ -80,116 +88,75 @@ export default async function MissionsByCategory({
     );
   }
 
-  // カテゴリごとにグループ化
-  const grouped = data.reduce<Record<string, MissionCategoryViewRow[]>>(
-    (acc, row) => {
-      // category_idがnullの場合はスキップ
-      if (!row.category_id) return acc;
+  // カテゴリー別にグルーピング
+  const grouped = data
+    .filter(
+      (row): row is typeof row & { category_id: string; mission_id: string } =>
+        row.category_id != null && row.mission_id != null,
+    )
+    .reduce<Record<string, CategoryGroup>>((acc, row) => {
+      const categoryId = row.category_id;
+      const missionId = row.mission_id;
 
-      if (!acc[row.category_id]) acc[row.category_id] = [];
-      acc[row.category_id].push(row);
+      if (!acc[categoryId]) {
+        acc[categoryId] = {
+          category_id: categoryId,
+          category_title: row.category_title || "",
+          category_sort_no: row.category_sort_no || 0,
+          missions: [],
+        };
+      }
+
+      acc[categoryId].missions.push({
+        id: missionId,
+        title: row.title || "",
+        icon_url: row.icon_url,
+        difficulty: row.difficulty || 1,
+        content: row.content || "",
+        created_at: row.created_at || new Date().toISOString(),
+        artifact_label: row.artifact_label,
+        max_achievement_count: row.max_achievement_count,
+        event_date: row.event_date,
+        is_featured: row.is_featured || false,
+        updated_at: row.updated_at || new Date().toISOString(),
+        is_hidden: row.is_hidden || false,
+        ogp_image_url: row.ogp_image_url,
+        required_artifact_type: row.required_artifact_type || "",
+        featured_importance: null,
+      });
+
       return acc;
-    },
-    {},
-  );
+    }, {});
 
-  // カテゴリ内のミッションをソート
-  for (const categoryId in grouped) {
-    grouped[categoryId].sort((a, b) => {
-      // mission_idがnullの場合の処理
-      if (!a.mission_id || !b.mission_id) return 0;
+  // 各カテゴリー内でミッションをソート（既に作成済みのMapを使用）
+  for (const category of Object.values(grouped)) {
+    category.missions.sort((a, b) => {
+      const aCount = userAchievementCountMap.get(a.id) ?? 0;
+      const bCount = userAchievementCountMap.get(b.id) ?? 0;
+      const aMax = a.max_achievement_count;
+      const bMax = b.max_achievement_count;
+      const aIsMaxAchieved = aMax && aCount >= aMax;
+      const bIsMaxAchieved = bMax && bCount >= bMax;
 
-      // 上限まで達成済みのミッションを後ろに移動
-      const aAchievementCount = userAchievementCountMap.get(a.mission_id) ?? 0;
-      const bAchievementCount = userAchievementCountMap.get(b.mission_id) ?? 0;
+      // 最大達成済みは後ろに
+      if (aIsMaxAchieved && !bIsMaxAchieved) return 1;
+      if (!aIsMaxAchieved && bIsMaxAchieved) return -1;
 
-      const aIsMaxAchieved =
-        a.max_achievement_count && aAchievementCount >= a.max_achievement_count;
-      const bIsMaxAchieved =
-        b.max_achievement_count && bAchievementCount >= b.max_achievement_count;
-
-      if (aIsMaxAchieved && !bIsMaxAchieved) {
-        return 1; // a を後ろに
-      }
-      if (!aIsMaxAchieved && bIsMaxAchieved) {
-        return -1; // b を後ろに
-      }
-
-      // それ以外はリンクのソート順で比較
-      return (a.link_sort_no ?? 0) - (b.link_sort_no ?? 0);
+      // それ以外はlink_sort_no順（既にorderされているのでそのままの順序を保持）
+      return 0;
     });
   }
 
+  // カテゴリーをcategory_sort_no順に並べて配列化
+  const categories = Object.values(grouped).sort(
+    (a, b) => a.category_sort_no - b.category_sort_no,
+  );
+
   return (
-    <div className="flex flex-col gap-11">
-      <h2 className="text-center md:text-4xl my-5">📈 ミッション</h2>
-
-      {Object.values(grouped).map((missionsInCategory) => {
-        const category = missionsInCategory[0];
-        return (
-          <section
-            key={category.category_id}
-            className="
-                relative               /* オーバーレイ配置のため */
-                w-screen
-                md:pl-10
-              "
-          >
-            {/* カテゴリ見出し */}
-            <h3 className="text-xl font-bold">{category.category_title}</h3>
-
-            {/* 横スクロール領域 */}
-            <HorizontalScrollContainer>
-              <div className="flex w-fit gap-4 px-4 pb-2 pt-4">
-                {missionsInCategory
-                  .filter(
-                    (m) =>
-                      m.mission_id &&
-                      (showAchievedMissions ||
-                        !achievedMissionIds.includes(m.mission_id)),
-                  )
-                  .map((m) => {
-                    // filterでmission_idがnullでないことを確認済み
-                    // mission_idが存在することが保証されているので、安全にアクセス
-                    const missionId = m.mission_id as string;
-
-                    const missionForComponent = {
-                      id: missionId,
-                      title: m.title || "",
-                      icon_url: m.icon_url,
-                      difficulty: m.difficulty || 1,
-                      content: m.content || "",
-                      created_at: m.created_at || new Date().toISOString(),
-                      artifact_label: m.artifact_label,
-                      max_achievement_count: m.max_achievement_count,
-                      event_date: m.event_date,
-                      is_featured: m.is_featured || false,
-                      updated_at: m.updated_at || new Date().toISOString(),
-                      is_hidden: m.is_hidden || false,
-                      ogp_image_url: m.ogp_image_url,
-                      required_artifact_type: m.required_artifact_type || "",
-                      featured_importance: null,
-                    };
-
-                    return (
-                      <div key={missionId} className="flex-shrink-0 w-[300px]">
-                        <Mission
-                          mission={missionForComponent}
-                          achievementsCount={
-                            achievementCountMap.get(missionId) ?? 0
-                          }
-                          userAchievementCount={
-                            userAchievementCountMap.get(missionId) ?? 0
-                          }
-                        />
-                      </div>
-                    );
-                  })}
-              </div>
-            </HorizontalScrollContainer>
-          </section>
-        );
-      })}
-    </div>
+    <MissionsByCategoryClient
+      categories={categories}
+      achievementCountList={achievementCountList}
+      userAchievementCounts={userAchievementCounts}
+    />
   );
 }
