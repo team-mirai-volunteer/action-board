@@ -12,14 +12,14 @@
  * - 初期データをクライアントコンポーネントに渡してSSR最適化
  */
 import { Card } from "@/components/ui/card";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import UserMissionAchievements from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
 } from "@/features/user-activity/services/timeline";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import UserBadges from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
 import { getProfile } from "@/features/user-profile/services/profile";
@@ -75,38 +75,24 @@ export default async function UserDetailPage({ params }: Props) {
         />
 
         {/* 獲得バッジセクション */}
-        <Card className="w-full p-4 mt-4">
-          <h3 className="text-lg font-bold mb-4">獲得バッジ</h3>
-          <UserBadges
-            userId={user.id}
-            seasonId={currentSeasonId ?? undefined}
-          />
-        </Card>
+        <UserBadges userId={user.id} seasonId={currentSeasonId} />
 
         {/* ミッション達成状況セクション（活動がある場合のみ表示） */}
-        {(count || 0) > 0 && (
-          <Card className="w-full p-4 mt-4">
-            <UserMissionAchievements
-              achievements={missionAchievements}
-              totalCount={count || 0}
-            />
-          </Card>
+        {count > 0 && (
+          <UserMissionAchievements
+            achievements={missionAchievements}
+            totalCount={count}
+          />
         )}
 
-        {/* 活動タイムラインセクション */}
-        <Card className="w-full p-4 mt-4">
-          <div className="flex flex-row justify-between items-center mb-2">
-            <span className="text-lg font-bold">活動タイムライン</span>
-          </div>
-          {/* クライアントサイドページネーション付きの活動タイムライン */}
-          <UserDetailActivities
-            userId={id}
-            initialTimeline={timeline}
-            pageSize={PAGE_SIZE}
-            totalCount={count}
-            seasonId={currentSeasonId ?? undefined}
-          />
-        </Card>
+        {/* クライアントサイドページネーション付きの活動タイムライン */}
+        <UserDetailActivities
+          userId={id}
+          initialTimeline={timeline}
+          pageSize={PAGE_SIZE}
+          totalCount={count}
+          seasonId={currentSeasonId}
+        />
 
         {/* シーズン履歴セクション */}
         {seasonHistory.length > 0 && (

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UserSeasonHeaderProps } from "@/features/user-season/types/season-types";
+import { localeDateFormatter } from "@/lib/utils/date-formatters";
 
 export function UserSeasonHeader({ season, userId }: UserSeasonHeaderProps) {
   return (
@@ -24,19 +25,8 @@ export function UserSeasonHeader({ season, userId }: UserSeasonHeaderProps) {
             )}
           </div>
           <p className="text-sm text-gray-600">
-            {new Date(season.start_date).toLocaleDateString("ja-JP", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}{" "}
-            〜{" "}
-            {season.end_date
-              ? new Date(season.end_date).toLocaleDateString("ja-JP", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "進行中"}
+            {localeDateFormatter(season.start_date)} {" 〜 "}
+            {season.end_date ? localeDateFormatter(season.end_date) : "進行中"}
           </p>
         </div>
       </div>

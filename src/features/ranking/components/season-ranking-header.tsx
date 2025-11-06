@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { Tables } from "@/lib/types/supabase";
+import { localeDateFormatter } from "@/lib/utils/date-formatters";
 import Link from "next/link";
 
 type Season = Tables<"seasons">;
@@ -36,18 +37,10 @@ export function SeasonRankingHeader({
               )}
             </div>
             <p className="text-sm text-gray-600">
-              {new Date(season.start_date).toLocaleDateString("ja-JP", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}{" "}
-              〜{" "}
+              {localeDateFormatter(season.start_date)}
+              {" 〜 "}
               {season.end_date
-                ? new Date(season.end_date).toLocaleDateString("ja-JP", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
+                ? localeDateFormatter(season.end_date)
                 : "進行中"}
             </p>
           </div>

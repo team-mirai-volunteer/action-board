@@ -1,6 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -16,12 +13,15 @@ import { getUserRepeatableMissionAchievements } from "@/features/user-achievemen
  * - 活動タイムライン
  * - 全シーズン履歴
  */
+import { Card } from "@/components/ui/card";
+import UserMissionAchievements from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
 } from "@/features/user-activity/services/timeline";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import UserBadges from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
 import { getProfile } from "@/features/user-profile/services/profile";
@@ -81,35 +81,24 @@ export default async function SeasonUserDetailPage({ params }: Props) {
         />
 
         {/* 獲得バッジセクション（そのシーズンのもののみ） */}
-        <Card className="w-full p-4 mt-4">
-          <h3 className="text-lg font-bold mb-4">獲得バッジ</h3>
-          <UserBadges userId={user.id} seasonId={season.id} />
-        </Card>
+        <UserBadges userId={user.id} seasonId={season.id} />
 
         {/* ミッション達成状況セクション（活動がある場合のみ表示） */}
-        {(count || 0) > 0 && (
-          <Card className="w-full p-4 mt-4">
-            <UserMissionAchievements
-              achievements={missionAchievements}
-              totalCount={count || 0}
-            />
-          </Card>
+        {count > 0 && (
+          <UserMissionAchievements
+            achievements={missionAchievements}
+            totalCount={count}
+          />
         )}
 
-        {/* 活動タイムラインセクション */}
-        <Card className="w-full p-4 mt-4">
-          <div className="flex flex-row justify-between items-center mb-2">
-            <span className="text-lg font-bold">活動タイムライン</span>
-          </div>
-          {/* クライアントサイドページネーション付きの活動タイムライン */}
-          <UserDetailActivities
-            userId={userId}
-            initialTimeline={timeline}
-            pageSize={PAGE_SIZE}
-            totalCount={count}
-            seasonId={season.id}
-          />
-        </Card>
+        {/* クライアントサイドページネーション付きの活動タイムライン */}
+        <UserDetailActivities
+          userId={userId}
+          initialTimeline={timeline}
+          pageSize={PAGE_SIZE}
+          totalCount={count}
+          seasonId={season.id}
+        />
 
         {/* シーズン履歴セクション */}
         {seasonHistory.length > 0 && (

@@ -14,6 +14,7 @@
  */
 "use client";
 
+import { Card, CardTitle } from "@/components/ui/card";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { useState } from "react";
@@ -28,17 +29,20 @@ interface UserDetailActivitiesProps {
   /** 対象ユーザーのID */
   userId: string;
   /** 特定シーズンの活動のみ表示する場合のシーズンID（オプション） */
-  seasonId?: string;
+  seasonId: string | null;
 }
 
-export default function UserDetailActivities(props: UserDetailActivitiesProps) {
-  const [timeline, setTimeline] = useState<ActivityTimelineItem[]>(
-    props.initialTimeline,
-  );
+export default function UserDetailActivities({
+  initialTimeline,
+  totalCount,
+  pageSize,
+  userId,
+  seasonId,
+}: UserDetailActivitiesProps) {
+  const [timeline, setTimeline] =
+    useState<ActivityTimelineItem[]>(initialTimeline);
 
-  const [hasNext, setHasNext] = useState(
-    props.totalCount > props.initialTimeline.length,
-  );
+  const [hasNext, setHasNext] = useState(totalCount > initialTimeline.length);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,9 +56,9 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
     setIsLoading(true);
 
     try {
-      const seasonParam = props.seasonId ? `&seasonId=${props.seasonId}` : "";
+      const seasonParam = seasonId ? `&seasonId=${seasonId}` : "";
       const response = await fetch(
-        `/api/users/${props.userId}/activity-timeline?limit=${props.pageSize}&offset=${timeline.length}${seasonParam}`,
+        `/api/users/${userId}/activity-timeline?limit=${pageSize}&offset=${timeline.length}${seasonParam}`,
       );
 
       if (!response.ok) {
@@ -68,7 +72,7 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
       if (newTimeline.length > 0) {
         const updatedTimeline = [...timeline, ...newTimeline];
         setTimeline(updatedTimeline);
-        setHasNext(updatedTimeline.length < props.totalCount);
+        setHasNext(updatedTimeline.length < totalCount);
       } else {
         setHasNext(false);
       }
@@ -80,7 +84,8 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
   };
 
   return (
-    <div>
+    <Card className="p-4 mt-4">
+      <CardTitle className="text-lg mb-2">活動タイムライン</CardTitle>
       <ActivityTimeline
         timeline={timeline || []}
         hasNext={hasNext}
@@ -93,6 +98,6 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
           読み込み中...
         </div>
       )}
-    </div>
+    </Card>
   );
 }

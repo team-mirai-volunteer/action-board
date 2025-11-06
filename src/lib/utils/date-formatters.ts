@@ -25,3 +25,11 @@ export function dateFormatter(date: Date) {
     day: "2-digit",
   });
 }
+
+export const localeDateFormatter = (date: string) => {
+  return new Date(date).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
