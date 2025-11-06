@@ -14,7 +14,7 @@ interface BadgeDisplayProps {
   clickable?: boolean;
 }
 
-export function getGradientClass(rank: number): string {
+function getGradientClass(rank: number): string {
   return "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0";
 }
 

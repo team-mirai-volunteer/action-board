@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 // クイズ結果の型定義
-export interface QuizResults {
+interface QuizResults {
   score: number;
   passed: boolean;
   correctAnswers: number;

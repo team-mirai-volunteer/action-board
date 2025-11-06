@@ -9,12 +9,6 @@ export const ANIMATION_DURATION = {
   SCROLL_ANIMATION: 1500,
 } as const;
 
-// スクロール関連の定数
-export const SCROLL_OFFSET = {
-  DEFAULT: 300,
-  CARD_MARGIN: 20,
-} as const;
-
 // モックミッション（チームみらい公式サイト専用）
 export const MOCK_MISSION = {
   id: "3",
@@ -46,11 +40,6 @@ export const BUTTON_TEXT = {
 
 // スクロールテキスト
 export const SCROLL_TEXT = "下にスクロール";
-
-// Z-index層の定義
-export const Z_INDEX = {
-  ONBOARDING_MODAL: 60, // 他のモーダル(z-50)より上に表示
-} as const;
 
 // スタイルクラス名
 export const STYLE_CLASSES = {

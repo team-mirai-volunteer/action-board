@@ -1,13 +1,13 @@
 // 政令指定都市の区マスターデータ
 // Looker Studioのcity_masterクエリと同じデータ構造
 
-export interface DesignatedCityWard {
+interface DesignatedCityWard {
   prefecture: string;
   city: string;
   ward: string;
 }
 
-export const designatedCityWards: DesignatedCityWard[] = [
+const designatedCityWards: DesignatedCityWard[] = [
   // 北海道
   { prefecture: "北海道", city: "札幌市", ward: "中央区" },
   { prefecture: "北海道", city: "札幌市", ward: "北区" },

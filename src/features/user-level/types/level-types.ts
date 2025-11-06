@@ -1,8 +1,7 @@
-import type { Tables, TablesInsert } from "@/lib/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 
 export type UserLevel = Tables<"user_levels">;
 export type XpTransaction = Tables<"xp_transactions">;
-export type XpTransactionInsert = TablesInsert<"xp_transactions">;
 
 export type XpSourceType =
   | "MISSION_COMPLETION"

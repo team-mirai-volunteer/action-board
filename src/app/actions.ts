@@ -27,7 +27,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
-export const signUpActionWithState = async (
+const signUpActionWithState = async (
   prevState: {
     error?: string;
     success?: string;

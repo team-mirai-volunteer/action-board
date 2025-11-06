@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
  * @param activityType アクティビティタイプ（signup, level_up など）
  * @param activityTitle アクティビティのタイトル
  */
-export async function recordUserActivity(
+async function recordUserActivity(
   userId: string,
   activityType: string,
   activityTitle: string,

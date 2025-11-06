@@ -1,6 +1,6 @@
 import type { Tables } from "@/lib/types/supabase";
 
-export type MissionArtifact = Tables<"mission_artifacts"> & {
+type MissionArtifact = Tables<"mission_artifacts"> & {
   geolocations?: Tables<"mission_artifact_geolocations">[];
 };
 

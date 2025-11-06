@@ -1,5 +1,4 @@
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
 
 export type MissionArtifact = Tables<"mission_artifacts"> & {
   geolocations?: Tables<"mission_artifact_geolocations">[];
@@ -29,11 +28,4 @@ export type MissionPageData = {
   totalAchievementCount: number;
   referralCode: string | null;
   mainLink: Tables<"mission_main_links"> | null;
-};
-
-export type ButtonLabelProps = {
-  authUser: User | null;
-  achievement: Achievement | null;
-  userAchievementCount: number;
-  maxAchievementCount: number | null;
 };

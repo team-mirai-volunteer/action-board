@@ -1,7 +1,7 @@
 import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import clsx from "clsx";
 
-export type MessageType =
+type MessageType =
   | "success"
   | "error"
   | "message"

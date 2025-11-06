@@ -78,11 +78,6 @@ export const VALID_JP_PREFECTURES = Object.values(POSTER_PREFECTURE_MAP).map(
   (p) => p.jp,
 );
 
-// Get all valid English prefecture keys
-export const VALID_EN_PREFECTURES = Object.keys(
-  POSTER_PREFECTURE_MAP,
-) as PosterPrefectureKey[];
-
 // Helper function to get default zoom for a prefecture
 export function getPrefectureDefaultZoom(
   prefectureKey: PosterPrefectureKey,

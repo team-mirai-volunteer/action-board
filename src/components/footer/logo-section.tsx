@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FOOTER_IMAGE_SIZES } from "./footer";
+
+const FOOTER_IMAGE_SIZES = {
+  socialIcon: { width: 48, height: 48 },
+  logo: { width: 80, height: 71 },
+} as const;
 
 export function LogoSection() {
   return (
