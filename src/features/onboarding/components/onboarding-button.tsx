@@ -8,7 +8,7 @@ import { OnboardingModal } from "./onboarding-modal";
 
 interface OnboardingButtonProps {
   children?: ReactNode;
-  variant?: "default" | "outline-solid" | "link";
+  variant?: "default" | "outline" | "link";
   className?: string;
 }
 
@@ -41,7 +41,7 @@ export function OnboardingButton({
         className={className || "gap-2 bg-white shadow-md hover:shadow-lg"}
         variant={variant}
       >
-        {variant === "outline-solid" && <Sparkles className="h-4 w-4" />}
+        {variant === "outline" && <Sparkles className="h-4 w-4" />}
         {children}
       </Button>
       <OnboardingModal open={showModal} onOpenChange={setShowModal} />
