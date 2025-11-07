@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "チームみらい Action Board",
   "license": "AGPL-3.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
