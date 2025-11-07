@@ -13,7 +13,7 @@ interface MainLinkButtonProps {
   isDisabled?: boolean;
   variant?:
     | "default"
-    | "outline-solid"
+    | "outline"
     | "secondary"
     | "ghost"
     | "link"
