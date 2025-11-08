@@ -56,7 +56,7 @@ export const Z_INDEX = {
 export const STYLE_CLASSES = {
   MODAL_OVERLAY:
     "fixed inset-4 md:inset-6 lg:inset-12 z-60 duration-200 lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
-  BACKGROUND_GRADIENT: "bg-gradient-to-b from-[#A8E6CF] to-[#7FCDCD]",
+  BACKGROUND_GRADIENT: "bg-linear-to-b from-[#A8E6CF] to-[#7FCDCD]",
   CHARACTER_COMMENT:
     "text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium px-4 py-2",
   BUTTON_PRIMARY:
