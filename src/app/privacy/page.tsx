@@ -130,7 +130,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-lg-custom font-bold text-black mb-4">
             10. 非公式サービスへの注意
           </h2>
-          <div className="bg-[var(--TM-secondary)] border border-[var(--TM-accent-light)] rounded-xl p-4">
+          <div className="bg-[--TM-secondary] border border-[--TM-accent-light] rounded-xl p-4">
             <p className="text-sm-custom font-normal text-black text-justify">
               当団体は、本サービスの一部のソースコードをOSSとして公開する場合があります。そのため、当団体以外の者による非公式サービスが存在する可能性があります。公式のサービスは、公式ドメイン（
               <a

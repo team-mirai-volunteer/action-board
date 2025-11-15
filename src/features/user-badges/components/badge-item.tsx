@@ -15,7 +15,7 @@ interface BadgeDisplayProps {
 }
 
 export function getGradientClass(rank: number): string {
-  return "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0";
+  return "bg-linear-to-r from-emerald-500 to-emerald-600 text-white border-0";
 }
 
 export function BadgeItem({
@@ -30,7 +30,7 @@ export function BadgeItem({
 
   const badgeContent = (
     <Badge
-      className={`flex items-center gap-1 shadow-sm ${getGradientClass(badge.rank)} ${
+      className={`flex items-center gap-1 shadow-xs ${getGradientClass(badge.rank)} ${
         clickable && url
           ? "cursor-pointer hover:opacity-80 transition-opacity"
           : ""

@@ -478,7 +478,7 @@ export default function PrefecturePosterMapClient({
               return (
                 <div key={status} className="flex items-center gap-1">
                   <div
-                    className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${config.color}`}
+                    className={`h-2.5 w-2.5 rounded-full shrink-0 ${config.color}`}
                   />
                   <span className="text-xs whitespace-nowrap">
                     {config.shortLabel || config.label}
@@ -640,7 +640,7 @@ export default function PrefecturePosterMapClient({
                     <SelectItem key={status} value={status}>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`h-2 w-2 rounded-full flex-shrink-0 ${config.color}`}
+                          className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
                         />
                         <span>{config.label}</span>
                       </div>
@@ -838,7 +838,7 @@ export default function PrefecturePosterMapClient({
                 {Object.entries(statusConfig).map(([status, config]) => (
                   <div key={status} className="flex items-start gap-2">
                     <div
-                      className={`h-3 w-3 rounded-full flex-shrink-0 mt-0.5 ${config.color}`}
+                      className={`h-3 w-3 rounded-full shrink-0 mt-0.5 ${config.color}`}
                     />
                     <span className="text-xs">{config.label}</span>
                   </div>

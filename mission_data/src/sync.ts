@@ -34,7 +34,7 @@ program
 const options = program.opts();
 
 async function loadYamlFile<T>(filename: string): Promise<T> {
-  const filePath = path.join(__dirname, "..", filename);
+  const filePath = path.join(import.meta.dirname, "..", filename);
   const content = fs.readFileSync(filePath, "utf8");
   return yaml.load(content) as T;
 }
