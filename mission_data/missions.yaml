@@ -14,6 +14,19 @@ missions:
     is_hidden: false
     artifact_label: 説明会で共有されたイベントコード
     ogp_image_url: null
+  - slug: join-local-organization-briefing
+    title: 地域組織の説明会に参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
+    content: |-
+      「自分の地域でもっと活動をしたい」「地域サポーターとして何か手伝いたい」そんなサポーターの皆さまに向けて、今後の地域での活動についての説明会を開催します！
+      「ちょっと話を聞いてみたい」という方も大歓迎です。
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: 2
+    is_featured: false
+    is_hidden: false
+    artifact_label: 説明会で共有されたコード
+    ogp_image_url: null
   - slug: link-official-site
     title: チームみらい公式サイトを見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
