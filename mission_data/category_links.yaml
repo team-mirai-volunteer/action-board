@@ -5,6 +5,8 @@ category_links:
         sort_no: 100
       - mission_slug: join-orientation
         sort_no: 200
+      - mission_slug: join-local-organization-briefing
+        sort_no: 300
   - category_slug: follow-teammirai
     missions:
       - mission_slug: add-supporter-line-friend

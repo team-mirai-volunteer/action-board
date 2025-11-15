@@ -11,6 +11,9 @@ mission_main_links:
   - mission_slug: join-orientation
     label: 日程や参加方法はこちら
     link: https://team-mirai.notion.site/264f6f56bae180f4ba90f20cc307071a
+  - mission_slug: join-local-organization-briefing
+    label: 日程や参加方法はこちら
+    link: https://team-mirai.notion.site/274f6f56bae180f39bf1c777739b674c
   - mission_slug: join-prefecture-openchat
     label: 都道府県別LINEオープンチャットはこちら
     link: https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3
@@ -20,4 +23,3 @@ mission_main_links:
   - mission_slug: youtube-clip
     label: 動画切り抜きガイドはこちら
     link: https://team-mirai.notion.site/255f6f56bae1804cbdecdd7b81f9e591
-
