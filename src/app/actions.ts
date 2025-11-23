@@ -324,7 +324,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/forgot-password",
-      "パスワードリセットに失敗しました",
+      "LINEで登録されたユーザーのパスワードリセットはできません",
     );
   }
 
@@ -574,11 +574,9 @@ export async function handleLineAuthAction(
     let userId: string;
     let isNewUser = false;
 
-    // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
-    // listUsers()の全件取得 (O(n)) から大幅な性能改善
     const { data: userResults, error: userFetchError } = await supabase.rpc(
-      "get_user_by_email",
-      { user_email: email },
+      "get_user_by_line_id",
+      { line_user_id: lineUserId },
     );
 
     if (userFetchError) {
@@ -697,12 +695,13 @@ export async function handleLineAuthAction(
     const clientSupabase = createClient();
     const { error: signInError } = await clientSupabase.auth.signInWithPassword(
       {
-        email,
+        email: userWithEmail?.email || email,
         password: tempPassword,
       },
     );
 
     if (signInError) {
+      console.error("Failed to sign in with temporary password:", signInError);
       throw new Error("Supabaseログインに失敗しました");
     }
 

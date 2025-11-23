@@ -1612,6 +1612,14 @@ export type Database = {
           user_metadata: Json;
         }[];
       };
+      get_user_by_line_id: {
+        Args: { line_user_id: string };
+        Returns: {
+          email: string;
+          id: string;
+          user_metadata: Json;
+        }[];
+      };
       get_user_edited_boards_by_prefecture: {
         Args: {
           target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
