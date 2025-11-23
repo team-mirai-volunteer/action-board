@@ -324,7 +324,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/forgot-password",
-      "パスワードリセットに失敗しました",
+      "LINEで登録されたユーザーのパスワードリセットはできません",
     );
   }
 
