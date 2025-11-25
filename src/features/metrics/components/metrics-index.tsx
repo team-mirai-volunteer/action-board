@@ -3,7 +3,6 @@ import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
 import type { MetricsData } from "@/features/metrics/types/metrics-types";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { AchievementMetric } from "./achievement-metric";
-import { DonationMetric } from "./donation-metric";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 
@@ -74,16 +73,6 @@ export async function Metrics() {
         }
         fallbackTotal={fallbackAchievementCount}
         fallbackToday={fallbackTodayAchievementCount}
-      />
-
-      {/* 水平セパレーター */}
-      <Separator orientation="horizontal" className="my-4" />
-
-      {/* 寄付金額 */}
-      <DonationMetric
-        data={metricsData.donation}
-        fallbackAmount={fallbackDonationAmount}
-        fallbackIncrease={fallbackDonationIncrease}
       />
 
       {/* 水平セパレーター */}
