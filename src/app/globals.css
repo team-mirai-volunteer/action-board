@@ -1,69 +1,6 @@
-@import "tailwindcss";
-
-@config '../../tailwind.config.ts';
-
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
-@utility text-gradient {
-  @apply text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-600;
-}
-
-@utility bg-gradient-primary {
-  @apply bg-linear-to-r from-emerald-600 to-teal-600;
-}
-
-@utility bg-gradient-secondary {
-  @apply bg-linear-to-r from-teal-600 to-emerald-600;
-}
-
-@utility bg-gradient-hero {
-  background: linear-gradient(90deg, #91e3cd, #b2ead2);
-}
-
-@utility bg-gradient-level {
-  background: linear-gradient(90deg, #30baa7, #47c991);
-}
-
-@utility bg-gradient-radial {
-  /* 放射状グラデーション */
-  background: radial-gradient(circle, var(--tw-gradient-stops));
-}
-
-@utility shadow-soft {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px
-    rgba(0, 0, 0, 0.03);
-}
-
-@utility shadow-soft-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px
-    rgba(0, 0, 0, 0.03);
-}
-
-@utility shadow-custom {
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-@utility mission-content {
-  & a {
-    @apply text-primary underline transition-colors duration-200;
-  }
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -96,7 +33,7 @@
     --TM-secondary: #e2f6f3;
   }
 
-  .dark-unused {
+  .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -143,5 +80,50 @@
   h5,
   h6 {
     @apply font-extrabold;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600;
+  }
+
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-emerald-600 to-teal-600;
+  }
+
+  .bg-gradient-secondary {
+    @apply bg-gradient-to-r from-teal-600 to-emerald-600;
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(90deg, #91e3cd, #b2ead2);
+  }
+
+  .bg-gradient-level {
+    background: linear-gradient(90deg, #30baa7, #47c991);
+  }
+
+  /* 放射状グラデーション */
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px
+      rgba(0, 0, 0, 0.03);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px
+      rgba(0, 0, 0, 0.03);
+  }
+
+  .shadow-custom {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .mission-content a {
+    @apply text-primary underline transition-colors duration-200;
   }
 }

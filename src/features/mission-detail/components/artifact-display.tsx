@@ -12,7 +12,7 @@ const ImageArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
   <div className="flex flex-row gap-2">
-    <div className="w-24 h-24 shrink-0 relative mb-2">
+    <div className="w-24 h-24 flex-shrink-0 relative mb-2">
       {artifact.image_storage_path && (
         <img
           src={artifact.image_storage_path}
@@ -31,7 +31,7 @@ const ImageWithGeolocationArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
   <div className="flex flex-row gap-2">
-    <div className="w-24 h-24 shrink-0 relative mb-2">
+    <div className="w-24 h-24 flex-shrink-0 relative mb-2">
       {artifact.image_storage_path && (
         <img
           src={artifact.image_storage_path}

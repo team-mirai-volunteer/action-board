@@ -9,7 +9,7 @@ export default function NoticeBoardAlert() {
       >
         <div className="flex items-center gap-3">
           <svg
-            className="w-6 h-6 text-yellow-500 shrink-0"
+            className="w-6 h-6 text-yellow-500 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -33,7 +33,7 @@ export default function NoticeBoardAlert() {
             />
           </svg>
           <div className="flex-1 min-w-0">
-            <span className="wrap-break-word text-sm">
+            <span className="break-words text-sm">
               新シーズンが開始しました！ <br />
               レベルやランキングはシーズンごとにリセットされます。
               過去のランキングは

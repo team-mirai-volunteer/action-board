@@ -33,7 +33,7 @@ export function ProgressBarSimple({
       )}
       <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
         <div
-          className="bg-linear-to-r from-[#30baa7] to-[#47c991] h-3 rounded-full shadow-xs"
+          className="bg-gradient-to-r from-[#30baa7] to-[#47c991] h-3 rounded-full shadow-sm"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>

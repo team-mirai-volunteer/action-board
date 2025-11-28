@@ -179,7 +179,7 @@ export function MissionFormWrapper({
 
           {errorMessage && (
             <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2 shrink-0" />
+              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
               {errorMessage}
             </div>
           )}
@@ -232,7 +232,7 @@ export function MissionFormWrapper({
 
           {errorMessage && (
             <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2 shrink-0" />
+              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
               {errorMessage}
             </div>
           )}
@@ -270,7 +270,7 @@ export function MissionFormWrapper({
         </p>
         {errorMessage && (
           <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
-            <AlertCircle className="h-4 w-4 mr-2 shrink-0" />
+            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
             {errorMessage}
           </div>
         )}

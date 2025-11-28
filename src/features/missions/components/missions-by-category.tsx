@@ -172,7 +172,7 @@ export default async function MissionsByCategory({
                     };
 
                     return (
-                      <div key={missionId} className="shrink-0 w-[300px]">
+                      <div key={missionId} className="flex-shrink-0 w-[300px]">
                         <Mission
                           mission={missionForComponent}
                           achievementsCount={

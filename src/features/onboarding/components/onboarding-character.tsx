@@ -54,7 +54,7 @@ export const OnboardingCharacter: React.FC<OnboardingCharacterProps> = ({
 
       {/* キャラクター画像とボタン */}
       <div className="absolute top-[40vh] left-1/2 transform -translate-x-1/2">
-        <div className="relative w-[55vw] h-[55vw] min-[390px]:w-[78vw] min-[390px]:h-[78vw] min-[430px]:w-screen min-[430px]:h-[100vw] sm:w-[45vw] sm:h-[45vw] md:w-[25vw] md:h-[25vw] lg:w-[20vw] lg:h-[20vw] max-w-[16rem] max-h-64">
+        <div className="relative w-[55vw] h-[55vw] min-[390px]:w-[78vw] min-[390px]:h-[78vw] min-[430px]:w-[100vw] min-[430px]:h-[100vw] sm:w-[45vw] sm:h-[45vw] md:w-[25vw] md:h-[25vw] lg:w-[20vw] lg:h-[20vw] max-w-[16rem] max-h-[16rem]">
           <Image
             src="/img/onboarding/character.svg"
             alt="ガイドキャラクター"

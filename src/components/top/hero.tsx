@@ -17,7 +17,7 @@ export default async function Hero() {
   }
 
   return (
-    <section className="relative w-full h-[640px] bg-linear-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
+    <section className="relative w-full h-[640px] bg-gradient-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
       <div className="absolute inset-0 w-full h-full flex justify-center items-end">
         <div className="relative w-[1080px] min-w-[1080px] h-[560px]">
           <Image

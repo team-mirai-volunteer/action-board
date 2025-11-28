@@ -47,7 +47,7 @@ export function BadgeNotificationDialog({
             />
           ))}
         </div>
-        <DialogFooter className="shrink-0">
+        <DialogFooter className="flex-shrink-0">
           <Button onClick={onClose} className="w-full">
             確認しました
           </Button>
