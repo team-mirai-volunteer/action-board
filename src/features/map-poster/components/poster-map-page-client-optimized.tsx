@@ -149,7 +149,7 @@ export default function PosterMapPageClientOptimized({
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
-                className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
+                className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
                 style={{ width: `${totalStats.percentage}%` }}
               />
             </div>
@@ -239,7 +239,7 @@ export default function PosterMapPageClientOptimized({
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
                           <div
-                            className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
+                            className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
                             style={{ width: `${completionRate}%` }}
                           />
                         </div>

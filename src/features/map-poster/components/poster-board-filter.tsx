@@ -77,7 +77,7 @@ export function PosterBoardFilter({
 
   return (
     <div
-      className={`absolute z-1000 bg-white rounded-lg shadow-lg border border-gray-200 ${
+      className={`absolute z-[1000] bg-white rounded-lg shadow-lg border border-gray-200 ${
         isMobile ? "poster-filter-mobile" : "right-4 top-4 max-w-xs"
       }`}
       data-expanded={isExpanded}
@@ -164,7 +164,7 @@ export function PosterBoardFilter({
                       className="flex items-center gap-2 cursor-pointer text-xs"
                     >
                       <span
-                        className="w-2.5 h-2.5 rounded-full border border-white shadow-xs shrink-0"
+                        className="w-2.5 h-2.5 rounded-full border border-white shadow-sm flex-shrink-0"
                         style={{ backgroundColor: color }}
                       />
                       <span className="select-none">{label}</span>
@@ -186,7 +186,7 @@ export function PosterBoardFilter({
                     className="flex items-center gap-2 cursor-pointer text-xs"
                   >
                     <span
-                      className="w-2.5 h-2.5 rounded-full border border-white shadow-xs shrink-0"
+                      className="w-2.5 h-2.5 rounded-full border border-white shadow-sm flex-shrink-0"
                       style={{ backgroundColor: reservedConfig.color }}
                     />
                     <span className="select-none">{reservedConfig.label}</span>
@@ -213,7 +213,7 @@ export function PosterBoardFilter({
                       className="flex items-center gap-2 cursor-pointer text-xs"
                     >
                       <span
-                        className="w-2.5 h-2.5 rounded-full border border-white shadow-xs shrink-0"
+                        className="w-2.5 h-2.5 rounded-full border border-white shadow-sm flex-shrink-0"
                         style={{ backgroundColor: color }}
                       />
                       <span className="select-none">{label}</span>
@@ -236,7 +236,7 @@ export function PosterBoardFilter({
                   className="flex items-center gap-2 cursor-pointer text-xs"
                 >
                   <span
-                    className="w-2.5 h-2.5 rounded-full border border-white shadow-xs shrink-0"
+                    className="w-2.5 h-2.5 rounded-full border border-white shadow-sm flex-shrink-0"
                     style={{ backgroundColor: otherConfig.color }}
                   />
                   <span className="select-none">{otherConfig.label}</span>

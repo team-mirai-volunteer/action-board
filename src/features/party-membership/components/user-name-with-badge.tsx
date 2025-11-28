@@ -88,7 +88,7 @@ export function UserNameWithBadge({
             <button
               type="button"
               className={cn(
-                "inline-flex items-center focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                "inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 badgeClassName,
               )}
               aria-label={

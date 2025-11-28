@@ -70,7 +70,7 @@ export function ProgressBarAnimated({
       <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
         <div
           className={cn(
-            "bg-linear-to-r from-[#30baa7] to-[#47c991] h-3 rounded-full transition-all duration-300 shadow-xs",
+            "bg-gradient-to-r from-[#30baa7] to-[#47c991] h-3 rounded-full transition-all duration-300 shadow-sm",
           )}
           style={{
             width: `${percentage}%`,
