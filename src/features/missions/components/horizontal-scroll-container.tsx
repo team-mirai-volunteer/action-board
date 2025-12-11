@@ -137,13 +137,14 @@ export function HorizontalScrollContainer({
     handleDragEnd();
   }, [handleDragEnd, isDesktop]);
 
-  const button_style = (
-    side: "left" | "right",
-  ) => `absolute top-1/2 -translate-y-1/2 z-10
+  const button_style = (side: "left" | "right") =>
+    cn(
+      `absolute top-1/2 -translate-y-1/2 z-10
       flex items-center justify-center
       w-12 h-12 rounded-full bg-white shadow-lg border-2
-      hover:bg-gray-50 transition-colors
-      ${side}-2`;
+      hover:bg-gray-50 transition-colors`,
+      side === "left" ? "left-2" : "right-2",
+    );
 
   return (
     <div className="relative">
