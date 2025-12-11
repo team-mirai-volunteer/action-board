@@ -137,12 +137,13 @@ export function HorizontalScrollContainer({
     handleDragEnd();
   }, [handleDragEnd, isDesktop]);
 
-  const button_style = (side: "left-2" | "right-2") =>
+  const button_style = (side: "left" | "right") =>
     cn(
-      side,
-      "absolute top-1/2 -translate-y-1/2 z-10",
-      "flex items-center justify-center w-12 h-12 rounded-full",
-      "bg-white shadow-lg border-2 hover:bg-gray-50 transition-colors",
+      `absolute top-1/2 -translate-y-1/2 z-10
+      flex items-center justify-center
+      w-12 h-12 rounded-full bg-white shadow-lg border-2
+      hover:bg-gray-50 transition-colors`,
+      side === "left" ? "left-2" : "right-2",
     );
 
   return (
@@ -151,7 +152,7 @@ export function HorizontalScrollContainer({
         <button
           type="button"
           onClick={scrollLeftButton}
-          className={button_style("left-2")}
+          className={button_style("left")}
           aria-label="前のミッションを表示"
         >
           <ChevronLeft />
@@ -185,7 +186,7 @@ export function HorizontalScrollContainer({
         <button
           type="button"
           onClick={scrollRight}
-          className={button_style("right-2")}
+          className={button_style("right")}
           aria-label="次のミッションを表示"
         >
           <ChevronRight />
