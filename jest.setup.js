@@ -78,20 +78,6 @@ jest.mock("lucide-react", () => ({
       className,
     });
   },
-  ChevronLeft: ({ className }) => {
-    const mockReact = require("react");
-    return mockReact.createElement("div", {
-      "data-testid": "chevron-left-icon",
-      className,
-    });
-  },
-  ChevronRight: ({ className }) => {
-    const mockReact = require("react");
-    return mockReact.createElement("div", {
-      "data-testid": "chevron-right-icon",
-      className,
-    });
-  },
 }));
 
 const createMockSupabaseQuery = () => {
