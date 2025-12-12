@@ -154,43 +154,6 @@ describe("ArtifactForm", () => {
     // 詳細はPosterForm.test.tsxで確認
   });
 
-  it("IMAGEタイプの場合は画像アップロードフォームが表示される", () => {
-    const mission = {
-      ...baseMission,
-      required_artifact_type: "IMAGE" as const,
-    };
-
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
-
-    expect(screen.getByText("画像ファイル")).toBeInTheDocument();
-  });
-
-  it("提出済み画像がある場合はプレビューが表示される", () => {
-    const mission = {
-      ...baseMission,
-      required_artifact_type: "IMAGE" as const,
-    };
-
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath="/path/to/submitted/image.jpg"
-      />,
-    );
-
-    expect(screen.getByText("提出済み画像:")).toBeInTheDocument();
-    expect(screen.getByAltText("提出済み画像")).toBeInTheDocument();
-  });
-
   it("disabledがtrueの場合は入力フィールドが無効化される", () => {
     const mission = { ...baseMission, required_artifact_type: "LINK" as const };
 

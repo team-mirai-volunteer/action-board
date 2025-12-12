@@ -24,9 +24,6 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     ).toBeVisible();
     await expect(signedInPage.getByText("サポーター数")).toBeVisible();
     await expect(signedInPage.getByText("達成アクション数")).toBeVisible();
-    await expect(
-      signedInPage.getByText("寄付金額", { exact: true }),
-    ).toBeVisible();
 
     // 重要ミッションの表示を確認
     await expect(

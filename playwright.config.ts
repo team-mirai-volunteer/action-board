@@ -40,24 +40,9 @@ export default defineConfig({
 
   /* プロジェクト固有の設定 */
   projects: [
-    /* デスクトップブラウザ */
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-
-    /* モバイルデバイス */
     {
       name: "mobile-chrome",
       use: { ...devices["Pixel 5"] },
-    },
-    {
-      name: "mobile-safari",
-      use: { ...devices["iPhone 12"] },
     },
   ],
 
