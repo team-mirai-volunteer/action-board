@@ -11,7 +11,7 @@
     "types": "npx supabase gen types typescript --local > src/lib/types/supabase.ts && biome check --write src/lib/types/supabase.ts",
     "db:migrate": "npx supabase migration up --local && npm run types",
     "biome:check:write": "biome check --write .",
-    "test": "jest && playwright test",
+    "test": "npm run test:unit && npm run test:rls && npm run test:e2e",
     "test:ci:unit": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns=tests/rls/",
     "test:ci:e2e": "jest --ci --reporters=default --reporters=jest-junit --testMatch='**/tests/rls/**/*.test.ts' --testEnvironment=node --coverage=false && CI=true playwright test",
     "test:e2e": "playwright test",

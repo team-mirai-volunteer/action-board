@@ -12,7 +12,6 @@ import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { ImageUploader } from "./image-uploader";
 import { PosterForm } from "./poster-form";
 
 type ArtifactFormProps = {
@@ -164,42 +163,6 @@ export function ArtifactForm({
         {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
           <PosterForm disabled={disabled} />
-        )}
-
-        {/* 画像アップロードフォーム */}
-        {(artifactConfig.key === ARTIFACT_TYPES.IMAGE.key ||
-          artifactConfig.key === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key) && (
-          <div className="space-y-4">
-            <ImageUploader
-              mission={mission}
-              authUser={authUser}
-              disabled={disabled}
-              onImagePathChange={setArtifactImagePath}
-              allowedMimeTypes={
-                artifactConfig.allowedMimeTypes
-                  ? [...artifactConfig.allowedMimeTypes]
-                  : undefined
-              }
-              maxFileSizeMB={artifactConfig.maxFileSizeMB}
-            />
-            <Input
-              type="hidden"
-              name="artifactImagePath"
-              value={artifactImagePath || ""}
-            />
-
-            {/* 提出済みタスク時のプレビュー表示 */}
-            {submittedArtifactImagePath && (
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">提出済み画像:</p>
-                <img
-                  src={submittedArtifactImagePath}
-                  alt="提出済み画像"
-                  className="w-24 h-24 object-cover rounded border"
-                />
-              </div>
-            )}
-          </div>
         )}
 
         {/* 補足説明テキストエリア */}
