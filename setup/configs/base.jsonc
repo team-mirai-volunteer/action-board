@@ -1,0 +1,23 @@
+// Base configuration template
+{
+  "team": {
+    "id": "default",
+    "name": "Default Team",
+    "description": "Default team configuration"
+  },
+  "colors": {
+    "primary": "#0066CC",
+    "secondary": "#3385DB",
+    "accent": "#0077DD",
+    "accentLight": "#4D9FE6"
+  },
+  "features": {
+    "missions": true,
+    "ranking": true,
+    "achievements": true
+  },
+  "site": {
+    "url": "https://example.com",
+    "email": "support@example.com"
+  }
+}

@@ -72,3 +72,17 @@ users-prefecture-export.csv
 
 # serena mcp
 /.serena
+
+users-prefecture-export.csv
+
+# setup directory excludes
+/setup/node_modules
+/setup/dist
+/setup/~
+/setup/public
+/~/.bun
+
+# backup files
+*.backup
+*.backup.*
+.env*.backup.*
