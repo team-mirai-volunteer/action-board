@@ -109,7 +109,6 @@ describe("Poster Board Progress Calculation", () => {
         error_wrong_place: 1,
         error_damaged: 2,
         error_wrong_poster: 3,
-        not_yet_dangerous: 0,
         other: 1,
       };
       expect(getRegisteredCount(statusCounts)).toBe(34);
