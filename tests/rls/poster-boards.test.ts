@@ -46,7 +46,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
   describe("NULL coordinates handling", () => {
     it("should handle boards with NULL coordinates", async () => {
       let testNullBoardId: string | null = null;
-      
+
       try {
         const { data, error } = await adminClient
           .from("poster_boards")
@@ -72,7 +72,10 @@ describe("poster_boards テーブルのRLSテスト", () => {
         }
       } finally {
         if (testNullBoardId) {
-          await adminClient.from("poster_boards").delete().eq("id", testNullBoardId);
+          await adminClient
+            .from("poster_boards")
+            .delete()
+            .eq("id", testNullBoardId);
         }
       }
     });
@@ -88,7 +91,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
 
       expect(error).toBeNull();
       expect(data).toHaveLength(1);
-      expect(data![0].id).toBe(testBoardId);
+      expect(data?.[0].id).toBe(testBoardId);
     });
 
     it("認証済みユーザーはボードを閲覧できる", async () => {
@@ -99,28 +102,29 @@ describe("poster_boards テーブルのRLSテスト", () => {
 
       expect(error).toBeNull();
       expect(data).toHaveLength(1);
-      expect(data![0].id).toBe(testBoardId);
+      expect(data?.[0].id).toBe(testBoardId);
     });
   });
 
   describe("UPDATE操作", () => {
-    it("認証済みユーザーはボードのステータスを更新できる", async () => {
-      const { error } = await testUser.client
-        .from("poster_boards")
-        .update({ status: "done" })
-        .eq("id", testBoardId);
+    // 選挙終了後、ボードのステータス更新は止めている
+    // it("認証済みユーザーはボードのステータスを更新できる", async () => {
+    //   const { error } = await testUser.client
+    //     .from("poster_boards")
+    //     .update({ status: "done" })
+    //     .eq("id", testBoardId);
 
-      expect(error).toBeNull();
+    //   expect(error).toBeNull();
 
-      // Verify the update
-      const { data } = await adminClient
-        .from("poster_boards")
-        .select("status")
-        .eq("id", testBoardId)
-        .single();
+    //   // Verify the update
+    //   const { data } = await adminClient
+    //     .from("poster_boards")
+    //     .select("status")
+    //     .eq("id", testBoardId)
+    //     .single();
 
-      expect(data?.status).toBe("done");
-    });
+    //   expect(data?.status).toBe("done");
+    // });
 
     it("匿名ユーザーはボードを更新できない", async () => {
       const anonClient = getAnonClient();
@@ -133,7 +137,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
       // RLS should block the update and return empty data
       expect(error).toBeNull();
       expect(data).toEqual([]);
-      
+
       // Verify the update did not happen
       const { data: verifyData } = await adminClient
         .from("poster_boards")
@@ -147,18 +151,16 @@ describe("poster_boards テーブルのRLSテスト", () => {
 
   describe("INSERT操作", () => {
     it("ユーザーは新しいボードを作成できない（管理者のみ）", async () => {
-      const { error } = await testUser.client
-        .from("poster_boards")
-        .insert({
-          name: "Unauthorized Board",
-          lat: 35.0,
-          long: 139.0,
-          prefecture: "東京都",
-          status: "not_yet",
-          number: "TEST-002",
-          address: "テストアドレス2-2-2",
-          city: "テスト市2",
-        });
+      const { error } = await testUser.client.from("poster_boards").insert({
+        name: "Unauthorized Board",
+        lat: 35.0,
+        long: 139.0,
+        prefecture: "東京都",
+        status: "not_yet",
+        number: "TEST-002",
+        address: "テストアドレス2-2-2",
+        city: "テスト市2",
+      });
 
       expect(error).not.toBeNull();
     });
@@ -175,13 +177,13 @@ describe("poster_boards テーブルのRLSテスト", () => {
 
       // When RLS blocks the operation, Supabase returns empty data array
       expect(data).toEqual([]);
-      
+
       // Verify the board still exists
       const { data: afterData } = await adminClient
         .from("poster_boards")
         .select("id")
         .eq("id", testBoardId);
-      
+
       expect(afterData).toHaveLength(1);
     });
   });
@@ -213,18 +215,16 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
       .select()
       .single();
 
-    testBoardId = boardData!.id;
+    testBoardId = boardData?.id ?? "";
 
     // Create test history entry
-    await adminClient
-      .from("poster_board_status_history")
-      .insert({
-        board_id: testBoardId,
-        user_id: testUser1.user.userId,
-        previous_status: "not_yet",
-        new_status: "done",
-        note: "Test note",
-      });
+    await adminClient.from("poster_board_status_history").insert({
+      board_id: testBoardId,
+      user_id: testUser1.user.userId,
+      previous_status: "not_yet",
+      new_status: "done",
+      note: "Test note",
+    });
   });
 
   afterEach(async () => {
@@ -234,7 +234,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
       .delete()
       .eq("board_id", testBoardId);
     await adminClient.from("poster_boards").delete().eq("id", testBoardId);
-    
+
     if (testUser1) {
       await cleanupTestUser(testUser1.user.userId);
     }
@@ -282,7 +282,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
 
       expect(error).toBeNull();
       expect(data).not.toBeNull();
-      expect(data!.user_id).toBe(testUser1.user.userId);
+      expect(data?.user_id).toBe(testUser1.user.userId);
 
       // Cleanup
       if (data) {

@@ -10,8 +10,6 @@ import {
 } from "node:fs";
 import { appendFile, copyFile, mkdir, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
-import { stdin as input, stdout as output } from "node:process";
-import * as readline from "node:readline/promises";
 
 const SOURCE_PATH =
   "~/Google Drive/Shared drives/チームはやま(外部共有)/ポスター・ポスティングロジ/ポスター・ポスティング作業用/ポスター/ポスター掲示場CSV化/自治体";

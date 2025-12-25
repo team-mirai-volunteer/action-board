@@ -1,4 +1,8 @@
 categories:
+  - slug: learn-teammirai-supporter
+    title: サポーター活動について知ろう
+    sort_no: 50
+    category_kbn: DEFAULT
   - slug: follow-teammirai
     title: チームはやまをフォローしよう
     sort_no: 100
@@ -28,7 +32,7 @@ categories:
     sort_no: 700
     category_kbn: DEFAULT
   - slug: improve-policies
-    title: 政策を改善しよう
+    title: 政策を見てみよう
     sort_no: 800
     category_kbn: DEFAULT
   - slug: support-on-youtube

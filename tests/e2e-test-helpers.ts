@@ -1,5 +1,5 @@
 import { type Page, test as base, expect } from "@playwright/test";
-import { createTestUser, cleanupTestUser, type TestUser } from "./rls/utils";
+import { type TestUser, cleanupTestUser, createTestUser } from "./rls/utils";
 
 // カスタムテストフィクスチャを定義
 type TestFixtures = {
@@ -9,12 +9,13 @@ type TestFixtures = {
 
 // テストヘルパー関数を拡張したテストオブジェクト
 export const test = base.extend<TestFixtures>({
+  // biome-ignore lint/correctness/noEmptyPattern: playwrightで First argument must use the object destructuring pattern とでるのを防ぐため.
   testUser: async ({}, use) => {
     const { user } = await createTestUser();
     await use(user);
     await cleanupTestUser(user.userId);
   },
-  
+
   signedInPage: async ({ page, testUser }, use) => {
     await page.goto("/sign-in");
     await page.fill('input[name="email"]', testUser.email);

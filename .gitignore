@@ -37,9 +37,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-# cloudflare
-.cloudflare-output
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -71,12 +68,7 @@ temp
 # csv export
 users-prefecture-export.csv
 
-# Claude Code and temp directories
-.serena/
-.tmp/
+.mcp.json
 
-# Lock files (keeping only npm)
-bun.lock
-
-# Backup files
-~
+# serena mcp
+/.serena

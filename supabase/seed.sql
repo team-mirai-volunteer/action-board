@@ -1,3 +1,10 @@
+-- シーズンデータを作成（user_levelsで参照するため先に作成）
+INSERT INTO seasons (slug, name, start_date, end_date, is_active)
+VALUES 
+  ('season1', 'シーズン１', '2025-06-01 00:00:00+09', '2025-07-19 23:59:59+09', false),
+  ('season2', 'シーズン２', '2025-07-20 00:00:00+09', NULL, true)
+ON CONFLICT (slug) DO NOTHING;
+
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
@@ -14,25 +21,48 @@ VALUES
   ('00000000-0000-0000-0000-000000000000', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
   ('00000000-0000-0000-0000-000000000000', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
 
--- ユーザー
-INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
+-- private usersテーブルにデータを追加
+INSERT INTO private_users (id, date_of_birth, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', '1995-05-05', NULL, '5300001'),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', '1988-03-15', 'sato_taro', '1500012'),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', '1992-07-22', 'suzuki_misaki', '2200001'),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', '1985-11-08', 'takahashi_ken', '5600011'),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', '1993-04-30', 'ito_aiko', '4600001'),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', '1991-09-12', 'yamada_jiro', '8100001'),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', '1994-02-14', 'nakamura_sakura', '0600001'),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', '1987-06-05', 'kobayashi_naoto', '6020001'),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', '1996-12-25', 'kato_miyuki', '9800001'),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', '1989-08-18', 'watanabe_yuichi', '7300001'),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', '1998-01-03', 'matsumoto_kana', '9000001');
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '1990-12-01', '1000001'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '1995-05-05', '5300001'),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '1988-03-15', '1500012'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '1992-07-22', '2200001'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '1985-11-08', '5600011'),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '1993-04-30', '4600001'),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '1991-09-12', '8100001'),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '1994-02-14', '0600001'),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '1987-06-05', '6020001'),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '1996-12-25', '9800001'),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '1989-08-18', '7300001'),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '1998-01-03', '9000001');
+
+-- public_user_profilesテーブルにデータを追加
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', 'takahiroanno', 'takahiroanno'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, NULL),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', 'sato_taro', 'sato_taro'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', 'suzuki_misaki', 'suzuki_misaki'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', 'takahashi_ken', NULL),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', 'ito_aiko', NULL),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', 'yamada_jiro', NULL),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', 'nakamura_sakura', NULL),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', 'kobayashi_naoto', NULL),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', 'kato_miyuki', NULL),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', 'watanabe_yuichi', NULL),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', 'matsumoto_kana', NULL);
 
 -- ユーザーレベル情報（XPとレベル設定）
-INSERT INTO user_levels (user_id, xp, level, updated_at)
-VALUES
+-- season1のIDを取得してuser_levelsに使用
+INSERT INTO user_levels (user_id, xp, level, season_id, updated_at)
+SELECT 
+  ul.user_id::uuid,
+  ul.xp,
+  ul.level,
+  s.id as season_id,
+  ul.updated_at::timestamptz
+FROM (VALUES
   -- 1位: 安野たかひろ（レベル20）
   ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 3325, 20, '2025-06-04T10:00:00Z'),
   -- 2位: 佐藤太郎（レベル10）
@@ -56,7 +86,10 @@ VALUES
   -- 11位: 渡辺雄一（レベル1）
   ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T05:00:00Z'),
   -- 12位: 松本かな（レベル1、新規参加者）
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T04:30:00Z');
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T04:30:00Z')
+) AS ul(user_id, xp, level, updated_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season2';
 
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count, slug)
@@ -68,58 +101,146 @@ VALUES
   ('5546205f-933f-4a86-83af-dbf6bb6cde93', '(seed) 日付付きミッション１ (成果物不要, 上限1回)', '/img/mission_fallback.svg', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01', 'NONE', 1, 'seed-date-mission-1'),
   ('e5348472-d054-4ef4-81af-772c6323b669', '(seed) Xのニックネームを入力しよう(テキスト提出)', NULL, 'Xのニックネームを入力しよう', 1, NULL, 'TEXT', NULL, 'seed-x-nickname');
 
---★#278対応にて、achievementsとmission_artifactsのuser_idのFKをpublic_user_profileからauth.usersへ変更
---★seed.sql実行時点でauth.usersデータを作れず、上記2テーブルがFK違反になることから、INSERT処理はコメントアウト
 
--- (オプション) mission_artifacts と mission_artifact_geolocations のサンプルデータ
--- これらはアプリケーションロジック経由で作成されるのが主だが、テスト用に直接挿入も可能
---INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) VALUES ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです');
 
--- ミッション達成（複数ユーザーの多様な達成パターン）
---INSERT INTO achievements (id, mission_id, user_id)
---VALUES
-  -- 安野たかひろの達成（トップユーザーらしく多数達成）
---  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
---  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
---  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
+-- シーズン1用のミッション達成データ（過去のシーズン）
+INSERT INTO achievements (id, mission_id, user_id, season_id, created_at)
+SELECT 
+  a.id::uuid,
+  a.mission_id::uuid,
+  a.user_id::uuid,
+  s.id as season_id,
+  a.created_at::timestamptz
+FROM (VALUES
+  -- 安野たかひろの達成（シーズン1でも活躍）
+  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a000001', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-05T10:00:00Z'),
+  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a000002', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-06-10T14:30:00Z'),
   
   -- 田中花子の達成
--- ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f'),
+  ('953bcc49-56c4-4913-8ce4-f6d721e00001', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '2025-06-08T15:00:00Z'),
+  
+  -- 佐藤太郎の達成
+  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a000003', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-06-06T11:00:00Z')
+) AS a(id, mission_id, user_id, created_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season1';
+
+-- シーズン1用のXPトランザクション履歴
+INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at, season_id)
+SELECT 
+  xt.id::uuid,
+  xt.user_id::uuid,
+  xt.xp_amount,
+  xt.source_type,
+  xt.source_id::uuid,
+  xt.description,
+  xt.created_at::timestamptz,
+  s.id as season_id
+FROM (VALUES
+  -- 安野たかひろのXP履歴（シーズン1）
+  ('11ea2e6e-9ccf-4d2d-a3b4-f34d1a000001', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a000001', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-05T10:00:00Z'),
+  ('22ea2e6e-9ccf-4d2d-a3b4-f34d1a000002', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', '27ea2e6e-9ccf-4d2d-a3b4-f34d1a000002', 'ミッション「活動ブログを書こう」達成', '2025-06-10T14:30:00Z'),
+  ('44ea2e6e-9ccf-4d2d-a3b4-f34d1a000003', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 1000, 'BONUS', NULL, 'シーズン1初期ボーナスXP', '2025-06-01T09:00:00Z'),
+  
+  -- 佐藤太郎のXP履歴（シーズン1）
+  ('55ea2e6e-9ccf-4d2d-a3b4-f34d1a000004', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '47ea2e6e-9ccf-4d2d-a3b4-f34d1a000003', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-06T11:00:00Z'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a000005', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 500, 'BONUS', NULL, 'シーズン1初期ボーナスXP', '2025-06-01T10:00:00Z'),
+  
+  -- 田中花子のXP履歴（シーズン1）
+  ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a000006', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e00001', 'ミッション「活動ブログを書こう」達成', '2025-06-08T15:00:00Z'),
+  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a000007', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 200, 'BONUS', NULL, 'シーズン1初期ボーナスXP', '2025-06-01T12:00:00Z')
+) AS xt(id, user_id, xp_amount, source_type, source_id, description, created_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season1';
+
+-- シーズン1用のユーザーレベル情報（過去のシーズン記録）
+INSERT INTO user_levels (user_id, xp, level, season_id, updated_at)
+SELECT 
+  ul.user_id::uuid,
+  ul.xp,
+  ul.level,
+  s.id as season_id,
+  ul.updated_at::timestamptz
+FROM (VALUES
+  -- シーズン1終了時のレベル
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 1150, 11, '2025-07-19T23:59:59Z'),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 550, 7, '2025-07-19T23:59:59Z'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 300, 5, '2025-07-19T23:59:59Z'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 200, 4, '2025-07-19T23:59:59Z'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 100, 3, '2025-07-19T23:59:59Z'),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 50, 2, '2025-07-19T23:59:59Z'),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z'),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z'),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z'),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z'),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z'),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-07-19T23:59:59Z')
+) AS ul(user_id, xp, level, updated_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season1';
+
+-- シーズン2用のミッション達成データ
+INSERT INTO achievements (id, mission_id, user_id, season_id, created_at)
+SELECT 
+  a.id::uuid,
+  a.mission_id::uuid,
+  a.user_id::uuid,
+  s.id as season_id,
+  a.created_at::timestamptz
+FROM (VALUES
+  -- 安野たかひろの達成（トップユーザーらしく多数達成）
+  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-21T10:00:00Z'),
+  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-22T14:30:00Z'),
+  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '2025-07-23T16:45:00Z'),
+  
+  -- 田中花子の達成
+  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '2025-07-21T15:00:00Z'),
   
   -- 佐藤太郎の達成（2位らしく積極的）
---  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
---  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
+  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-21T11:00:00Z'),
+  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', '2025-07-22T13:00:00Z'),
   
   -- 鈴木美咲の達成
---  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
---  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
-  
-  -- 高橋健一の達成
---  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'),
-  
-  -- 山田次郎の達成
---  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8'),
-  
-  -- 小林直人の達成
---  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8');
+  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-07-21T12:00:00Z'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '2025-07-22T09:00:00Z')
+) AS a(id, mission_id, user_id, created_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season2';
 
--- XPトランザクション履歴（ミッション達成に対応）
-INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at)
-VALUES
-  -- 安野たかひろのXP履歴（合計3325 XP）
-  ('11ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T10:00:00Z'),
-  ('22ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', '27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', 'ミッション「活動ブログを書こう」達成', '2025-06-02T14:30:00Z'),
-  ('33ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 200, 'MISSION_COMPLETION', '37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', 'ミッション「今日のベストショット」達成', '2025-06-03T16:45:00Z'),
-  ('44ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 2975, 'BONUS', NULL, '初期ボーナスXP', '2025-05-15T09:00:00Z'),
+-- XPトランザクション履歴（シーズン2のミッション達成に対応）
+INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at, season_id)
+SELECT 
+  xt.id::uuid,
+  xt.user_id::uuid,
+  xt.xp_amount,
+  xt.source_type,
+  xt.source_id::uuid,
+  xt.description,
+  xt.created_at::timestamptz,
+  s.id as season_id
+FROM (VALUES
+  -- 安野たかひろのXP履歴（シーズン2で合計3325 XP）
+  ('11ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 50, 'MISSION_COMPLETION', '17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'ミッション「ゴミ拾いをしよう」達成', '2025-07-21T10:00:00Z'),
+  ('22ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 100, 'MISSION_COMPLETION', '27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', 'ミッション「活動ブログを書こう」達成', '2025-07-22T14:30:00Z'),
+  ('33ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 200, 'MISSION_COMPLETION', '37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', 'ミッション「今日のベストショット」達成', '2025-07-23T16:45:00Z'),
+  ('44ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 2975, 'BONUS', NULL, '初期ボーナスXP', '2025-07-20T09:00:00Z'),
   
-  -- 佐藤太郎のXP履歴（合計900 XP）
-  ('55ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'ミッション「ゴミ拾いをしよう」達成', '2025-06-01T11:00:00Z'),
-  ('66ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'ミッション「Xのニックネーム」達成', '2025-06-02T13:00:00Z'),
-  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 800, 'BONUS', NULL, '初期ボーナスXP', '2025-05-16T10:00:00Z'),
+  -- 佐藤太郎のXP履歴（シーズン2で合計900 XP）
+  ('55ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'ミッション「ゴミ拾いをしよう」達成', '2025-07-21T11:00:00Z'),
+  ('66ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 50, 'MISSION_COMPLETION', '57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'ミッション「Xのニックネーム」達成', '2025-07-22T13:00:00Z'),
+  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 800, 'BONUS', NULL, '初期ボーナスXP', '2025-07-20T10:00:00Z'),
   
-  -- 田中花子のXP履歴（合計95 XP）
-  ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', '2025-06-01T15:00:00Z'),
-  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 5, 'BONUS', NULL, '調整', '2025-05-20T12:00:00Z');
+  -- 田中花子のXP履歴（シーズン2で合計95 XP）
+  ('88ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 100, 'MISSION_COMPLETION', '953bcc49-56c4-4913-8ce4-f6d721e3c4ef', 'ミッション「活動ブログを書こう」達成', '2025-07-21T15:00:00Z'),
+  ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', -5, 'BONUS', NULL, '調整', '2025-07-20T12:00:00Z'),
+  
+  -- 鈴木美咲のXP履歴（シーズン2で合計740 XP）
+  ('aa2e2e6e-9ccf-4d2d-a3b4-f34d1a612450', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 50, 'MISSION_COMPLETION', '67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'ミッション「ゴミ拾いをしよう」達成', '2025-07-21T12:00:00Z'),
+  ('bb2e2e6e-9ccf-4d2d-a3b4-f34d1a612451', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 200, 'MISSION_COMPLETION', '77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', 'ミッション「今日のベストショット」達成', '2025-07-22T09:00:00Z'),
+  ('cc2e2e6e-9ccf-4d2d-a3b4-f34d1a612452', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 490, 'BONUS', NULL, '初期ボーナスXP', '2025-07-20T08:00:00Z')
+) AS xt(id, user_id, xp_amount, source_type, source_id, description, created_at)
+CROSS JOIN seasons s
+WHERE s.slug = 'season2';
   
 -- ミッション成果物のサンプルデータ
 --INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
@@ -239,3 +360,79 @@ INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address,
 ('博多駅前掲示板', 33.5903, 130.4208, '福岡県', 'done', '40-1', '博多区博多駅中央街1-1', '福岡市博多区'),
 ('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区')
 ON CONFLICT DO NOTHING;
+
+-- バッジデータ（各シーズンごとにバッジを付与）
+INSERT INTO user_badges (user_id, badge_type, sub_type, rank, season_id, achieved_at, is_notified)
+SELECT 
+  b.user_id::uuid,
+  b.badge_type,
+  b.sub_type,
+  b.rank,
+  s.id as season_id,
+  b.achieved_at::timestamptz,
+  b.is_notified
+FROM (VALUES
+  -- シーズン1のバッジ（過去シーズン）
+  -- 安野たかひろ - 総合1位、デイリー1位、東京都1位
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'ALL', NULL, 1, 'season1', '2025-07-18T10:00:00Z', true),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'DAILY', NULL, 1, 'season1', '2025-07-18T10:00:00Z', true),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'PREFECTURE', '東京都', 1, 'season1', '2025-07-18T10:00:00Z', true),
+  
+  -- 佐藤太郎 - 総合2位、東京都2位
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'ALL', NULL, 2, 'season1', '2025-07-18T09:30:00Z', true),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'PREFECTURE', '東京都', 2, 'season1', '2025-07-18T09:30:00Z', true),
+  
+  -- 田中花子 - 大阪府1位
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'PREFECTURE', '大阪府', 1, 'season1', '2025-07-18T06:00:00Z', true),
+  
+  -- 鈴木美咲 - 総合3位、神奈川県1位
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 3, 'season1', '2025-07-18T09:00:00Z', true),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '神奈川県', 1, 'season1', '2025-07-18T09:00:00Z', true),
+
+  -- シーズン2のバッジ（現在のシーズン）
+  -- 安野たかひろ - 総合1位、デイリー3位、東京都1位、ミッション「ゴミ拾い」1位
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'ALL', NULL, 1, 'season2', '2025-08-10T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'DAILY', NULL, 3, 'season2', '2025-08-12T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'PREFECTURE', '東京都', 1, 'season2', '2025-08-10T10:00:00Z', false),
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'MISSION', 'seed-cleanup', 1, 'season2', '2025-08-11T10:00:00Z', false),
+  
+  -- 佐藤太郎 - 総合2位、デイリー1位、東京都2位
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'ALL', NULL, 2, 'season2', '2025-08-10T09:30:00Z', false),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'DAILY', NULL, 1, 'season2', '2025-08-13T09:30:00Z', false),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'PREFECTURE', '東京都', 2, 'season2', '2025-08-10T09:30:00Z', false),
+  
+  -- 鈴木美咲 - 総合3位、神奈川県1位、ミッション「活動ブログ」2位
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 3, 'season2', '2025-08-10T09:00:00Z', false),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '神奈川県', 1, 'season2', '2025-08-10T09:00:00Z', false),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'MISSION', 'seed-activity-blog', 2, 'season2', '2025-08-11T09:00:00Z', false),
+  
+  -- 高橋健一 - 総合4位、大阪府1位
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 4, 'season2', '2025-08-10T08:30:00Z', false),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '大阪府', 1, 'season2', '2025-08-10T08:30:00Z', false),
+  
+  -- 伊藤愛子 - 総合5位、愛知県1位、デイリー2位
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'ALL', NULL, 5, 'season2', '2025-08-10T08:00:00Z', false),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '愛知県', 1, 'season2', '2025-08-10T08:00:00Z', false),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'DAILY', NULL, 2, 'season2', '2025-08-13T08:00:00Z', false),
+  
+  -- 田中花子 - 大阪府2位、ミッション「ベストショット」3位
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'PREFECTURE', '大阪府', 2, 'season2', '2025-08-10T06:00:00Z', false),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'MISSION', 'seed-best-shot', 3, 'season2', '2025-08-11T06:00:00Z', false),
+  
+  -- 山田次郎 - 福岡県1位
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '福岡県', 1, 'season2', '2025-08-10T07:30:00Z', false),
+  
+  -- 中村さくら - 北海道1位
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '北海道', 1, 'season2', '2025-08-10T07:00:00Z', false),
+  
+  -- 小林直人 - 京都府1位
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '京都府', 1, 'season2', '2025-08-10T06:30:00Z', false),
+  
+  -- 渡辺雄一 - 広島県1位
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '広島県', 1, 'season2', '2025-08-10T05:00:00Z', false),
+  
+  -- 松本かな - 沖縄県1位
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'PREFECTURE', '沖縄県', 1, 'season2', '2025-08-10T04:30:00Z', false)
+) AS b(user_id, badge_type, sub_type, rank, slug, achieved_at, is_notified)
+CROSS JOIN seasons s
+WHERE s.slug = b.slug;

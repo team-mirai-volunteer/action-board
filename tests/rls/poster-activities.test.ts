@@ -75,7 +75,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 5,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "渋谷区",
       number: "10-3",
       name: "渋谷駅前掲示板",
@@ -151,7 +152,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 3,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "新宿区",
       number: "1-5",
       name: "新宿駅西口掲示板",
@@ -218,7 +220,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user2.user.userId, // user2のIDを使用（RLSで弾かれるはず）
       mission_artifact_id: user2ArtifactData.id,
       poster_count: 2,
-      prefecture: "大阪府" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "大阪府" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "大阪市",
       number: "1-10",
     };
@@ -282,7 +285,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 2,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "10-3",
       name: "品川駅前掲示板",
@@ -325,7 +329,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 0, // 無効な値
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "10-3",
     };
@@ -342,7 +347,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: null as any, // null値でNOT NULL制約をテスト
       number: "1-2",
     };
@@ -359,7 +365,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: null as any, // null値でNOT NULL制約をテスト
     };
@@ -379,7 +386,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: longCity,
       number: "1-1",
     };
@@ -397,7 +405,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: longNumber,
     };
@@ -415,7 +424,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "2-3",
       name: longName,
@@ -434,7 +444,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "18-4",
       note: longNote,
@@ -453,7 +464,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "5-8",
       address: longAddress,
@@ -472,7 +484,8 @@ describe("poster_activities テーブルのRLSテスト", () => {
       user_id: user1.user.userId,
       mission_artifact_id: missionArtifactId,
       poster_count: 1,
-      prefecture: "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
+      prefecture:
+        "東京都" as Database["public"]["Enums"]["poster_prefecture_enum"],
       city: "港区",
       number: "10-3",
       // name, note, address, lat, longはnull

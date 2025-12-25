@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
 
@@ -17,7 +17,7 @@ const options = program.opts();
 
 async function exportCategories() {
   console.log("\n📁 Exporting categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_category")
@@ -44,7 +44,7 @@ async function exportCategories() {
 
 async function exportMissions() {
   console.log("\n📋 Exporting missions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("missions")
@@ -79,7 +79,7 @@ async function exportMissions() {
 
 async function exportCategoryLinks() {
   console.log("\n🔗 Exporting category links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_category_link")
@@ -132,7 +132,7 @@ async function exportCategoryLinks() {
 
 async function exportQuizCategories() {
   console.log("\n📚 Exporting quiz categories...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("quiz_categories")
@@ -163,7 +163,7 @@ async function exportQuizCategories() {
 
 async function exportQuizQuestions() {
   console.log("\n❓ Exporting quiz questions...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("quiz_questions")
@@ -205,7 +205,7 @@ async function exportQuizQuestions() {
 
 async function exportMissionQuizLinks() {
   console.log("\n🔗 Exporting mission quiz links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_quiz_links")
@@ -238,7 +238,7 @@ async function exportMissionQuizLinks() {
 
 async function exportMissionMainLinks() {
   console.log("\n🔗 Exporting mission main links...");
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_main_links")

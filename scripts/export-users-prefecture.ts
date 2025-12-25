@@ -2,7 +2,7 @@
 
 import { createWriteStream } from "node:fs";
 import { join } from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 interface UserData {
   id: string;
@@ -11,7 +11,7 @@ interface UserData {
 }
 
 async function getAllUsers(): Promise<UserData[]> {
-  const supabase = await createServiceClient();
+  const supabase = await createAdminClient();
   const allUsers: UserData[] = [];
   let hasMore = true;
   let offset = 0;
@@ -55,34 +55,34 @@ async function getAllUsers(): Promise<UserData[]> {
 
   console.log(`認証ユーザー取得完了: ${allAuthUsers.size} 件`);
 
-  // 次にprivate_usersを取得してマッピング
+  // 次にpublic_user_profilesを取得してマッピング
   while (hasMore) {
-    const { data: privateUsers, error: privateError } = await supabase
-      .from("private_users")
+    const { data: publicUserProfiles, error: publicError } = await supabase
+      .from("public_user_profiles")
       .select("id, address_prefecture")
       .range(offset, offset + limit - 1);
 
-    if (privateError) {
+    if (publicError) {
       console.error(
-        "private_usersテーブルからのデータ取得エラー:",
-        privateError,
+        "public_user_profilesテーブルからのデータ取得エラー:",
+        publicError,
       );
-      throw privateError;
+      throw publicError;
     }
 
-    if (!privateUsers || privateUsers.length === 0) {
+    if (!publicUserProfiles || publicUserProfiles.length === 0) {
       hasMore = false;
       break;
     }
 
     // データを結合
-    const usersWithEmail = privateUsers
-      .map((privateUser) => {
-        const email = allAuthUsers.get(privateUser.id);
+    const usersWithEmail = publicUserProfiles
+      .map((publicUserProfile) => {
+        const email = allAuthUsers.get(publicUserProfile.id);
         return {
-          id: privateUser.id,
+          id: publicUserProfile.id,
           email: email || "",
-          address_prefecture: privateUser.address_prefecture,
+          address_prefecture: publicUserProfile.address_prefecture,
         };
       })
       .filter((user) => user.email); // メールアドレスがあるユーザーのみ
@@ -93,7 +93,7 @@ async function getAllUsers(): Promise<UserData[]> {
 
     // 次のページへ
     offset += limit;
-    hasMore = privateUsers.length === limit;
+    hasMore = publicUserProfiles.length === limit;
   }
 
   console.log(`全ユーザーデータ取得完了: ${allUsers.length} 件`);

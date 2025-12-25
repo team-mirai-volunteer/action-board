@@ -1,16 +1,16 @@
 import * as path from "node:path";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import * as dotenv from "dotenv";
 
 // Load .env from project root
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(import.meta.dirname, "../../.env") });
 
 // Helper functions for slug to ID mapping
 export async function getCategorySlugToIdMap(): Promise<
   Record<string, string>
 > {
-  const supabase = await createServiceClient();
-  const { data, error } = await supabase
+  const supabaseAdmin = await createAdminClient();
+  const { data, error } = await supabaseAdmin
     .from("mission_category")
     .select("id, slug");
 
@@ -25,8 +25,10 @@ export async function getCategorySlugToIdMap(): Promise<
 }
 
 export async function getMissionSlugToIdMap(): Promise<Record<string, string>> {
-  const supabase = await createServiceClient();
-  const { data, error } = await supabase.from("missions").select("id, slug");
+  const supabaseAdmin = await createAdminClient();
+  const { data, error } = await supabaseAdmin
+    .from("missions")
+    .select("id, slug");
 
   if (error) throw error;
 
@@ -41,8 +43,8 @@ export async function getMissionSlugToIdMap(): Promise<Record<string, string>> {
 export async function getQuizCategorySlugToIdMap(): Promise<
   Record<string, string>
 > {
-  const supabase = await createServiceClient();
-  const { data, error } = await supabase
+  const supabaseAdmin = await createAdminClient();
+  const { data, error } = await supabaseAdmin
     .from("quiz_categories")
     .select("id, slug");
 

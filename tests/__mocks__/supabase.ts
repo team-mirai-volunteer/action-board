@@ -31,9 +31,9 @@ const createMockQuery = (data: unknown[] = []) => {
   return query;
 };
 
-export const mockUpload = jest.fn().mockResolvedValue({ 
-  data: { path: "test-path/test-file.jpg" }, 
-  error: null 
+export const mockUpload = jest.fn().mockResolvedValue({
+  data: { path: "test-path/test-file.jpg" },
+  error: null,
 });
 
 export const mockSupabaseClient = {
