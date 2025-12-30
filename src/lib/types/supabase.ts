@@ -144,6 +144,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      elections: {
+        Row: {
+          created_at: string;
+          end_date: string;
+          id: string;
+          municipal_codes: string[];
+          season_id: string;
+          start_date: string;
+          subject: Database["public"]["Enums"]["election_subject"];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          end_date: string;
+          id?: string;
+          municipal_codes?: string[];
+          season_id: string;
+          start_date: string;
+          subject: Database["public"]["Enums"]["election_subject"];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          end_date?: string;
+          id?: string;
+          municipal_codes?: string[];
+          season_id?: string;
+          start_date?: string;
+          subject?: Database["public"]["Enums"]["election_subject"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elections_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       events: {
         Row: {
           created_at: string;
@@ -617,6 +658,7 @@ export type Database = {
         Row: {
           board_id: string;
           created_at: string;
+          election_id: string | null;
           id: string;
           new_status: Database["public"]["Enums"]["poster_board_status"];
           note: string | null;
@@ -628,6 +670,7 @@ export type Database = {
         Insert: {
           board_id: string;
           created_at?: string;
+          election_id?: string | null;
           id?: string;
           new_status: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
@@ -639,6 +682,7 @@ export type Database = {
         Update: {
           board_id?: string;
           created_at?: string;
+          election_id?: string | null;
           id?: string;
           new_status?: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
@@ -660,6 +704,13 @@ export type Database = {
             columns: ["board_id"];
             isOneToOne: false;
             referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "poster_board_status_history_election_id_fkey";
+            columns: ["election_id"];
+            isOneToOne: false;
+            referencedRelation: "elections";
             referencedColumns: ["id"];
           },
         ];
@@ -1783,6 +1834,11 @@ export type Database = {
       };
     };
     Enums: {
+      election_subject:
+        | "衆院選"
+        | "参院選"
+        | "都道府県首長選"
+        | "市区町村首長選";
       poster_board_status:
         | "not_yet"
         | "reserved"

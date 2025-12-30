@@ -1,0 +1,88 @@
+-- Create enum type for election subject
+CREATE TYPE election_subject AS ENUM (
+  '衆院選',
+  '参院選',
+  '都道府県首長選',
+  '市区町村首長選'
+);
+
+-- Create elections table
+CREATE TABLE elections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  season_id UUID NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  subject election_subject NOT NULL,
+  municipal_codes TEXT[] NOT NULL DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create indexes for better performance
+CREATE INDEX idx_elections_season_id ON elections(season_id);
+CREATE INDEX idx_elections_dates ON elections(start_date, end_date);
+
+-- Enable RLS
+ALTER TABLE elections ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for elections
+-- Anyone can view elections
+CREATE POLICY "elections_select_policy" ON elections
+  FOR SELECT
+  USING (true);
+
+-- Only admins can manage elections
+CREATE POLICY "elections_insert_policy" ON elections
+  FOR INSERT
+  WITH CHECK (false);
+
+CREATE POLICY "elections_update_policy" ON elections
+  FOR UPDATE
+  USING (false);
+
+CREATE POLICY "elections_delete_policy" ON elections
+  FOR DELETE
+  USING (false);
+
+-- Add election_id column to poster_board_status_history
+ALTER TABLE poster_board_status_history 
+ADD COLUMN election_id UUID REFERENCES elections(id) ON DELETE SET NULL;
+
+-- Create index for better query performance
+CREATE INDEX idx_poster_board_status_history_election_id ON poster_board_status_history(election_id);
+
+-- Add comment for documentation
+COMMENT ON COLUMN poster_board_status_history.election_id IS 'Reference to the election during which this status change occurred';
+
+-- Trigger to update updated_at on elections
+CREATE TRIGGER update_elections_updated_at 
+BEFORE UPDATE ON elections
+FOR EACH ROW 
+EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert 2025 Upper House Election record
+DO $$
+DECLARE
+  season1_id UUID;
+  election_2025_id UUID;
+BEGIN
+  -- Get season1 ID
+  SELECT id INTO season1_id FROM seasons WHERE slug = 'season1';
+  
+  -- Insert 2025 Upper House Election
+  INSERT INTO elections (season_id, start_date, end_date, subject, municipal_codes)
+  VALUES (
+    season1_id,
+    '2025-06-24 00:00:00+09',  -- Election period start
+    '2025-07-13 20:00:00+09',  -- Election period end (voting day 8pm)
+    '参院選',
+    '{}'  -- All Japan, no specific municipal codes
+  )
+  RETURNING id INTO election_2025_id;
+  
+  -- Update existing poster_board_status_history records to reference this election
+  UPDATE poster_board_status_history
+  SET election_id = election_2025_id
+  WHERE election_id IS NULL;
+  
+END $$;
