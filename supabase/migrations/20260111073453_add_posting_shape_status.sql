@@ -31,7 +31,7 @@ ADD COLUMN IF NOT EXISTS posting_count INTEGER DEFAULT NULL;
 ALTER TABLE public.posting_shapes
 ADD CONSTRAINT posting_count_required_when_completed
 CHECK (
-  (status = 'completed' AND posting_count IS NOT NULL AND posting_count >= 0)
+  (status = 'completed' AND posting_count IS NOT NULL AND posting_count > 0)
   OR status != 'completed'
 );
 

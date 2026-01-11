@@ -64,7 +64,7 @@ export function ShapeStatusDialog({
 
     const count =
       selectedStatus === "completed"
-        ? Number.parseInt(postingCount) || 0
+        ? Number.parseInt(postingCount) || 1
         : null;
     await onStatusUpdate(shape.id, selectedStatus, count);
   };
@@ -72,7 +72,7 @@ export function ShapeStatusDialog({
   const isPostingCountRequired = selectedStatus === "completed";
   const isPostingCountValid =
     !isPostingCountRequired ||
-    (postingCount !== "" && Number.parseInt(postingCount) >= 0);
+    (postingCount !== "" && Number.parseInt(postingCount) > 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -118,14 +118,14 @@ export function ShapeStatusDialog({
               <Input
                 id="posting-count"
                 type="number"
-                min="0"
+                min="1"
                 value={postingCount}
                 onChange={(e) => setPostingCount(e.target.value)}
                 placeholder="配布数を入力"
               />
               {!isPostingCountValid && (
                 <p className="text-sm text-red-500">
-                  配布完了の場合、配布数を入力してください。
+                  配布完了の場合、1以上の配布数を入力してください。
                 </p>
               )}
             </div>
