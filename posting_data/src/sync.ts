@@ -3,7 +3,8 @@ import * as path from "node:path";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
-import type { PostingEvent, PostingEventData } from "./types";
+import type { z } from "zod";
+import { type PostingEvent, PostingEventDataSchema } from "./types";
 
 const program = new Command();
 
@@ -16,10 +17,21 @@ program
 
 const options = program.opts();
 
-async function loadYamlFile<T>(filename: string): Promise<T> {
+function loadYamlFile<T>(filename: string, schema: z.ZodType<T>): T {
   const filePath = path.join(__dirname, "..", filename);
   const content = fs.readFileSync(filePath, "utf8");
-  return yaml.load(content) as T;
+  const parsed = yaml.load(content);
+
+  const result = schema.safeParse(parsed);
+  if (!result.success) {
+    console.error(`❌ Validation error in ${filename}:`);
+    for (const issue of result.error.issues) {
+      console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+    }
+    throw new Error(`Invalid YAML structure in ${filename}`);
+  }
+
+  return result.data;
 }
 
 async function syncPostingEvents(events: PostingEvent[], dryRun: boolean) {
@@ -68,8 +80,9 @@ async function main() {
     console.log("🚀 Starting posting event data sync...");
     console.log(`Mode: ${options.dryRun ? "DRY RUN" : "LIVE"}`);
 
-    const { posting_events } = await loadYamlFile<PostingEventData>(
+    const { posting_events } = loadYamlFile(
       "posting_events.yaml",
+      PostingEventDataSchema,
     );
     await syncPostingEvents(posting_events, options.dryRun);
 
