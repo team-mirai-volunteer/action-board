@@ -39,6 +39,18 @@ export interface PolygonProperties {
 export type MapCoordinates = TextCoordinates | PolygonCoordinates;
 export type MapProperties = TextProperties | PolygonProperties;
 
+// === Activity Types ===
+// NOTE: shape_id column is added by migration 20260111000002
+export interface PostingActivity {
+  id: string;
+  mission_artifact_id: string;
+  posting_count: number;
+  location_text: string;
+  shape_id?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // === Component Types ===
 export interface PostingPageClientProps {
   userId: string;

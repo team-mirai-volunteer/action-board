@@ -4,26 +4,13 @@ import type * as L from "leaflet";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
 
-// Leafletの型拡張
-declare module "leaflet" {
-  interface Layer {
-    _shapeId?: string;
-    _shapeStatus?: string;
-    _isTextLayer?: boolean;
-    _textDirty?: boolean;
-    _url?: string;
-    pm?: {
-      getShape?: () => string;
-      getText?: () => string;
-    };
-    getLatLng?: () => { lat: number; lng: number };
-    toGeoJSON?: () => GeoJSON.Feature;
-    getLayers?: () => Layer[];
-    feature?: {
-      properties?: Record<string, unknown>;
-    };
-    options?: Record<string, unknown>;
-  }
+// カスタムプロパティを持つレイヤーの型
+interface ExtendedLayer extends Layer {
+  _shapeId?: string;
+  _shapeStatus?: string;
+  _isTextLayer?: boolean;
+  _textDirty?: boolean;
+  _url?: string;
 }
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -156,7 +143,7 @@ export default function PostingPageClient({
             ? e.layer.pm.getShape()
             : undefined;
           if (shapeName === "Text") {
-            e.layer._isTextLayer = true;
+            (e.layer as ExtendedLayer)._isTextLayer = true;
             textLayersRef.current.add(e.layer);
             // Hide if text is toggled off
             if (!showTextRef.current && e.layer) {
@@ -176,7 +163,7 @@ export default function PostingPageClient({
         const layer = e.layer;
         if (layer) {
           // Remove from text layers tracking if it's a text layer
-          if (layer._isTextLayer) {
+          if ((layer as ExtendedLayer)._isTextLayer) {
             textLayersRef.current.delete(layer);
           }
 
@@ -217,7 +204,9 @@ export default function PostingPageClient({
 
     const loadExistingShapes = async () => {
       try {
-        const savedShapes = await loadMapShapes(eventId);
+        // NOTE: Cast to MapShapeData[] since loadMapShapes returns raw Supabase data
+        // which may not include status field until migration is applied
+        const savedShapes = (await loadMapShapes(eventId)) as MapShapeData[];
 
         let L: typeof import("leaflet");
         try {
@@ -240,13 +229,12 @@ export default function PostingPageClient({
                 textMarker: true,
                 text,
               } as L.MarkerOptions) as unknown as Layer;
-              layer._shapeId = shape.id; // preserve id
-              layer._isTextLayer = true; // Mark as text layer for toggle
+              (layer as ExtendedLayer)._shapeId = shape.id; // preserve id
+              (layer as ExtendedLayer)._isTextLayer = true; // Mark as text layer for toggle
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
               // ステータスに応じた色を適用
-              const shapeStatus =
-                (shape.status as PostingShapeStatus) || "planned";
+              const shapeStatus = shape.status || "planned";
               const config = statusConfig[shapeStatus];
 
               layer = L.geoJSON(
@@ -260,8 +248,8 @@ export default function PostingPageClient({
                   },
                 },
               ) as unknown as Layer;
-              layer._shapeId = shape.id; // preserve id
-              layer._shapeStatus = shapeStatus; // preserve status
+              (layer as ExtendedLayer)._shapeId = shape.id; // preserve id
+              (layer as ExtendedLayer)._shapeStatus = shapeStatus; // preserve status
 
               // シェイプデータを保存
               if (shape.id) {
@@ -287,7 +275,7 @@ export default function PostingPageClient({
               layer.addTo(mapInstance);
 
               // Track text layers
-              if (layer._isTextLayer) {
+              if ((layer as ExtendedLayer)._isTextLayer) {
                 textLayersRef.current.add(layer);
                 // Apply initial text visibility state
                 if (!showTextRef.current) {
@@ -295,7 +283,9 @@ export default function PostingPageClient({
                 }
               }
 
-              propagateShapeId(layer, shape.id);
+              if (shape.id) {
+                propagateShapeId(layer, shape.id);
+              }
 
               if (
                 shape.type === "text" ||
@@ -333,7 +323,7 @@ export default function PostingPageClient({
 
     mapInstance.eachLayer((layer: Layer) => {
       if (layer instanceof L.Path || layer instanceof L.Marker) {
-        if (layer.pm && !layer._url) {
+        if (layer.pm && !(layer as ExtendedLayer)._url) {
           allLayers.push(layer);
         }
       }
@@ -358,20 +348,20 @@ export default function PostingPageClient({
   function attachTextEvents(layer: Layer) {
     if (!layer?.pm) return;
 
-    layer._isTextLayer = true; // Mark as text layer
+    (layer as ExtendedLayer)._isTextLayer = true; // Mark as text layer
     textLayersRef.current.add(layer); // Add to tracking
 
     layer.off("pm:textchange");
     layer.off("pm:textblur");
 
     layer.on("pm:textchange", () => {
-      layer._textDirty = true;
+      (layer as ExtendedLayer)._textDirty = true;
     });
 
     layer.on("pm:textblur", () => {
-      if (layer._textDirty) {
+      if ((layer as ExtendedLayer)._textDirty) {
         console.log("Text layer changed -> saving");
-        layer._textDirty = false;
+        (layer as ExtendedLayer)._textDirty = false;
         if (autoSave) saveOrUpdateLayer(layer);
       }
     });
@@ -421,7 +411,7 @@ export default function PostingPageClient({
 
   function propagateShapeId(layer: Layer, id: string) {
     if (!layer) return;
-    layer._shapeId = id;
+    (layer as ExtendedLayer)._shapeId = id;
     if (layer.options) (layer.options as Record<string, unknown>).shapeId = id;
     if (layer.feature?.properties) {
       layer.feature.properties._shapeId = id;
@@ -455,7 +445,7 @@ export default function PostingPageClient({
 
   const getShapeId = (layer: Layer): string | undefined => {
     return (
-      layer._shapeId ||
+      (layer as ExtendedLayer)._shapeId ||
       ((layer?.options as Record<string, unknown>)?.shapeId as
         | string
         | undefined) ||
