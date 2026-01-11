@@ -66,10 +66,9 @@ export async function completePostingMissionAction(
         .single();
 
       if (latestActivity) {
-        // NOTE: shape_id column is added by migration 20260111000002
         await supabase
           .from("posting_activities")
-          .update({ shape_id: shape.id } as Record<string, unknown>)
+          .update({ shape_id: shape.id })
           .eq("id", latestActivity.id);
       }
     }
@@ -78,30 +77,16 @@ export async function completePostingMissionAction(
   return result;
 }
 
-// ステータス履歴のクエリ結果の型
-interface StatusHistoryQueryResult {
-  id: string;
-  shape_id: string;
-  user_id: string;
-  previous_status: string | null;
-  new_status: string;
-  note: string | null;
-  created_at: string;
-  public_user_profiles: { name: string | null } | null;
-}
-
 /**
  * シェイプのステータス履歴を取得（Server Action版）
- * NOTE: posting_shape_status_history table is created by migration 20260111000002
  */
 export async function getShapeStatusHistoryAction(shapeId: string) {
   const supabase = createClient();
 
-  // Use type assertion since the table is created by migration
   const { data, error } = await supabase
-    .from("posting_shape_status_history" as "posting_activities")
+    .from("posting_shape_status_history")
     .select("*")
-    .eq("shape_id" as "id", shapeId)
+    .eq("shape_id", shapeId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -110,22 +95,19 @@ export async function getShapeStatusHistoryAction(shapeId: string) {
   }
 
   return (data || []).map((item) => ({
-    id: (item as Record<string, unknown>).id as string,
-    shape_id: (item as Record<string, unknown>).shape_id as string,
-    user_id: (item as Record<string, unknown>).user_id as string,
-    previous_status: (item as Record<string, unknown>).previous_status as
-      | string
-      | null,
-    new_status: (item as Record<string, unknown>).new_status as string,
-    note: (item as Record<string, unknown>).note as string | null,
-    created_at: (item as Record<string, unknown>).created_at as string,
-    user: null, // User info will be loaded separately if needed
+    id: item.id,
+    shape_id: item.shape_id,
+    user_id: item.user_id,
+    previous_status: item.previous_status,
+    new_status: item.new_status,
+    note: item.note,
+    created_at: item.created_at,
+    user: undefined,
   }));
 }
 
 /**
  * シェイプに対するユーザーのミッション達成状況をチェック（Server Action版）
- * NOTE: shape_id column on posting_activities is added by migration 20260111000002
  */
 export async function checkShapeMissionCompletedAction(
   shapeId: string,
@@ -143,7 +125,6 @@ export async function checkShapeMissionCompletedAction(
   if (!mission) return false;
 
   // このシェイプで既にミッション達成しているかチェック
-  // NOTE: shape_id column is added by migration, so we use type assertion
   const { data: activities } = await supabase
     .from("posting_activities")
     .select(`
@@ -155,7 +136,7 @@ export async function checkShapeMissionCompletedAction(
         )
       )
     `)
-    .eq("shape_id" as "id", shapeId)
+    .eq("shape_id", shapeId)
     .eq("mission_artifacts.achievements.user_id", userId)
     .eq("mission_artifacts.achievements.mission_id", mission.id);
 
@@ -164,7 +145,6 @@ export async function checkShapeMissionCompletedAction(
 
 /**
  * イベント内のシェイプのステータス別統計を取得
- * NOTE: status column on posting_shapes is added by migration 20260111000002
  */
 export async function getShapeStatsAction(eventId: string): Promise<{
   totalCount: number;
@@ -172,7 +152,6 @@ export async function getShapeStatsAction(eventId: string): Promise<{
 }> {
   const supabase = createClient();
 
-  // NOTE: status column is added by migration
   const { data, error } = await supabase
     .from("posting_shapes")
     .select("*")
@@ -200,9 +179,7 @@ export async function getShapeStatsAction(eventId: string): Promise<{
   };
 
   for (const shape of data || []) {
-    const status =
-      ((shape as Record<string, unknown>).status as PostingShapeStatus) ||
-      "planned";
+    const status = shape.status || "planned";
     statusCounts[status]++;
   }
 

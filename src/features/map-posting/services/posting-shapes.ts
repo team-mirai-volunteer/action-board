@@ -29,7 +29,7 @@ export async function saveShape(shape: MapShape) {
 
   const { data, error } = await supabase
     .from("posting_shapes")
-    .insert([shapeWithMeta as never])
+    .insert([shapeWithMeta])
     .select()
     .single();
 
@@ -126,14 +126,13 @@ export async function updateShapeStatus(
   }
 
   // シェイプのステータスとuser_idを更新
-  // NOTE: status, user_id columns are added by migration 20260111000002
   const { error: updateError } = await supabase
     .from("posting_shapes")
     .update({
       status: newStatus,
       user_id: user.id,
       updated_at: new Date().toISOString(),
-    } as Record<string, unknown>)
+    })
     .eq("id", shapeId);
 
   if (updateError) {
@@ -142,20 +141,17 @@ export async function updateShapeStatus(
   }
 
   // ステータス履歴を追加
-  // NOTE: posting_shape_status_history table is created by migration 20260111000002
   const { error: historyError } = await supabase
-    .from("posting_shape_status_history" as "posting_activities")
+    .from("posting_shape_status_history")
     .insert([
       {
         shape_id: shapeId,
         user_id: user.id,
-        previous_status: (currentShape as Record<string, unknown>).status as
-          | string
-          | null,
+        previous_status: currentShape.status,
         new_status: newStatus,
         note: note || null,
       },
-    ] as never);
+    ]);
 
   if (historyError) {
     console.error("Error inserting status history:", historyError);
@@ -165,32 +161,18 @@ export async function updateShapeStatus(
   return { success: true };
 }
 
-// ステータス履歴のクエリ結果の型
-interface StatusHistoryQueryResult {
-  id: string;
-  shape_id: string;
-  user_id: string;
-  previous_status: PostingShapeStatus | null;
-  new_status: PostingShapeStatus;
-  note: string | null;
-  created_at: string;
-  public_user_profiles: { name: string | null } | null;
-}
-
 /**
  * シェイプのステータス履歴を取得する
- * NOTE: posting_shape_status_history table is created by migration 20260111000002
  */
 export async function getShapeStatusHistory(
   shapeId: string,
 ): Promise<StatusHistory[]> {
   const supabase = createClient();
 
-  // Use type assertion since the table is created by migration
   const { data, error } = await supabase
-    .from("posting_shape_status_history" as "posting_activities")
+    .from("posting_shape_status_history")
     .select("*")
-    .eq("shape_id" as "id", shapeId)
+    .eq("shape_id", shapeId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -199,22 +181,19 @@ export async function getShapeStatusHistory(
   }
 
   return (data || []).map((item) => ({
-    id: (item as Record<string, unknown>).id as string,
-    shape_id: (item as Record<string, unknown>).shape_id as string,
-    user_id: (item as Record<string, unknown>).user_id as string,
-    previous_status: (item as Record<string, unknown>)
-      .previous_status as PostingShapeStatus | null,
-    new_status: (item as Record<string, unknown>)
-      .new_status as PostingShapeStatus,
-    note: (item as Record<string, unknown>).note as string | null,
-    created_at: (item as Record<string, unknown>).created_at as string,
-    user: undefined, // User info will be loaded separately if needed
-  })) as StatusHistory[];
+    id: item.id,
+    shape_id: item.shape_id,
+    user_id: item.user_id,
+    previous_status: item.previous_status,
+    new_status: item.new_status,
+    note: item.note,
+    created_at: item.created_at,
+    user: undefined,
+  }));
 }
 
 /**
  * シェイプに対してユーザーがミッションを達成済みかどうかをチェック
- * NOTE: shape_id column on posting_activities is added by migration 20260111000002
  */
 export async function checkShapeMissionCompleted(
   shapeId: string,
@@ -232,7 +211,6 @@ export async function checkShapeMissionCompleted(
   if (!mission) return false;
 
   // このシェイプで既にミッション達成しているかチェック
-  // NOTE: shape_id column is added by migration, so we use type assertion
   const { data: activities } = await supabase
     .from("posting_activities")
     .select(`
@@ -244,7 +222,7 @@ export async function checkShapeMissionCompleted(
         )
       )
     `)
-    .eq("shape_id" as "id", shapeId)
+    .eq("shape_id", shapeId)
     .eq("mission_artifacts.achievements.user_id", userId)
     .eq("mission_artifacts.achievements.mission_id", mission.id);
 
