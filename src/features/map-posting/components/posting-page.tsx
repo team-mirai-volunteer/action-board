@@ -1,6 +1,4 @@
 "use client";
-
-import { createClient } from "@/lib/supabase/client";
 import type { Json } from "@/lib/types/supabase";
 import type * as L from "leaflet";
 import type { Layer, Map as LeafletMap } from "leaflet";
@@ -29,15 +27,10 @@ declare module "leaflet" {
 }
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { completePostingMissionAction } from "../actions/posting-shapes";
+import { type PostingShapeStatus, statusConfig } from "../config/status-config";
 import {
-  completePostingMissionAction,
-  getShapeStatusHistoryAction,
-} from "../actions/posting-shapes";
-import {
-  type PostingShapeStatus,
-  statusConfig,
-} from "../config/status-config";
-import {
+  type StatusHistory,
   checkShapeMissionCompleted,
   deleteShape as deleteMapShape,
   getShapeStatusHistory,
@@ -45,7 +38,6 @@ import {
   saveShape as saveMapShape,
   updateShape as updateMapShape,
   updateShapeStatus,
-  type StatusHistory,
 } from "../services/posting-shapes";
 import type {
   GeomanEvent,
@@ -82,10 +74,18 @@ export default function PostingPageClient({
   const shapeLayerMapRef = useRef<Map<string, Layer>>(new Map());
   const shapesDataRef = useRef<Map<string, MapShapeData>>(new Map());
 
+  // userIdのref（クリックハンドラ内で使用）
+  const userIdRef = useRef(userId);
+
   // Keep ref in sync with state
   useEffect(() => {
     showTextRef.current = showText;
   }, [showText]);
+
+  // userIdが変わったらrefを更新
+  useEffect(() => {
+    userIdRef.current = userId;
+  }, [userId]);
 
   useEffect(() => {
     if (!mapInstance) return;
@@ -245,17 +245,21 @@ export default function PostingPageClient({
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
               // ステータスに応じた色を適用
-              const shapeStatus = (shape.status as PostingShapeStatus) || "planned";
+              const shapeStatus =
+                (shape.status as PostingShapeStatus) || "planned";
               const config = statusConfig[shapeStatus];
 
-              layer = L.geoJSON(shape.coordinates as unknown as GeoJSON.Polygon, {
-                style: {
-                  fillColor: config.fillColor,
-                  fillOpacity: config.fillOpacity,
-                  color: config.fillColor,
-                  weight: 2,
+              layer = L.geoJSON(
+                shape.coordinates as unknown as GeoJSON.Polygon,
+                {
+                  style: {
+                    fillColor: config.fillColor,
+                    fillOpacity: config.fillOpacity,
+                    color: config.fillColor,
+                    weight: 2,
+                  },
                 },
-              }) as unknown as Layer;
+              ) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
               layer._shapeStatus = shapeStatus; // preserve status
 
@@ -267,13 +271,13 @@ export default function PostingPageClient({
 
               // ポリゴンクリック時にダイアログを開く
               layer.on("click", () => {
-                if (shape.id && userId) {
+                if (shape.id && userIdRef.current) {
                   const shapeData = shapesDataRef.current.get(shape.id);
                   if (shapeData) {
                     setSelectedShape(shapeData);
                     setIsStatusDialogOpen(true);
                   }
-                } else if (!userId) {
+                } else if (!userIdRef.current) {
                   toast.info("ログインすると配布状況を報告できます");
                 }
               });
@@ -508,7 +512,9 @@ export default function PostingPageClient({
           const shapeData = shapesDataRef.current.get(shapeId);
           if (shapeData) {
             // 場所のテキストを生成
-            const props = shapeData.properties as Record<string, unknown> | undefined;
+            const props = shapeData.properties as
+              | Record<string, unknown>
+              | undefined;
             const locationText = props?.text
               ? String(props.text)
               : props?.name
@@ -566,7 +572,9 @@ export default function PostingPageClient({
   };
 
   // 履歴読み込みハンドラー
-  const handleLoadHistory = async (shapeId: string): Promise<StatusHistory[]> => {
+  const handleLoadHistory = async (
+    shapeId: string,
+  ): Promise<StatusHistory[]> => {
     try {
       return await getShapeStatusHistory(shapeId);
     } catch (error) {

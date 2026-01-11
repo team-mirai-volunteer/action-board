@@ -1,10 +1,20 @@
 // ポスティングシェイプのステータス設定
 
-export type PostingShapeStatus = "planned" | "completed" | "unavailable" | "other";
+export type PostingShapeStatus =
+  | "planned"
+  | "completed"
+  | "unavailable"
+  | "other";
 
 export const statusConfig: Record<
   PostingShapeStatus,
-  { label: string; shortLabel?: string; color: string; fillColor: string; fillOpacity: number }
+  {
+    label: string;
+    shortLabel?: string;
+    color: string;
+    fillColor: string;
+    fillOpacity: number;
+  }
 > = {
   planned: {
     label: "予定",
@@ -34,7 +44,12 @@ export const statusConfig: Record<
 };
 
 // ステータスの表示順序
-export const statusOrder: PostingShapeStatus[] = ["planned", "completed", "unavailable", "other"];
+export const statusOrder: PostingShapeStatus[] = [
+  "planned",
+  "completed",
+  "unavailable",
+  "other",
+];
 
 // デフォルトステータス
 export const defaultStatus: PostingShapeStatus = "planned";

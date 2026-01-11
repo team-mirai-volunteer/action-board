@@ -158,7 +158,9 @@ export function ShapeStatusDialog({
                 max={1000}
                 value={postingCount}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPostingCount(Math.max(1, Number.parseInt(e.target.value) || 1))
+                  setPostingCount(
+                    Math.max(1, Number.parseInt(e.target.value) || 1),
+                  )
                 }
                 placeholder="配布した枚数を入力"
               />
@@ -174,7 +176,9 @@ export function ShapeStatusDialog({
             <Textarea
               id="note"
               value={updateNote}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setUpdateNote(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setUpdateNote(e.target.value)
+              }
               placeholder="配布状況や気づいたことなど"
               rows={3}
             />
@@ -197,11 +201,13 @@ export function ShapeStatusDialog({
                   <div key={item.id} className="text-sm">
                     <div className="text-muted-foreground">
                       {item.previous_status
-                        ? statusConfig[item.previous_status as PostingShapeStatus]?.label ||
-                          item.previous_status
+                        ? statusConfig[
+                            item.previous_status as PostingShapeStatus
+                          ]?.label || item.previous_status
                         : "新規"}
                       →
-                      {statusConfig[item.new_status as PostingShapeStatus]?.label || item.new_status}
+                      {statusConfig[item.new_status as PostingShapeStatus]
+                        ?.label || item.new_status}
                     </div>
                     <div className="text-muted-foreground text-xs">
                       {new Date(item.created_at).toLocaleString("ja-JP")}

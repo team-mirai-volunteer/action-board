@@ -174,7 +174,9 @@ interface StatusHistoryQueryResult {
 /**
  * シェイプのステータス履歴を取得する
  */
-export async function getShapeStatusHistory(shapeId: string): Promise<StatusHistory[]> {
+export async function getShapeStatusHistory(
+  shapeId: string,
+): Promise<StatusHistory[]> {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -243,7 +245,9 @@ export async function checkShapeMissionCompleted(
 /**
  * シェイプの詳細情報を取得する
  */
-export async function getShapeDetail(shapeId: string): Promise<MapShape | null> {
+export async function getShapeDetail(
+  shapeId: string,
+): Promise<MapShape | null> {
   const supabase = createClient();
 
   const { data, error } = await supabase
