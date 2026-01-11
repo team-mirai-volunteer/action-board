@@ -752,6 +752,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -760,6 +761,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -768,6 +770,7 @@ export type Database = {
           location_text?: string;
           mission_artifact_id?: string;
           posting_count?: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -776,6 +779,13 @@ export type Database = {
             columns: ["mission_artifact_id"];
             isOneToOne: false;
             referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "posting_activities_shape_id_fkey";
+            columns: ["shape_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_shapes";
             referencedColumns: ["id"];
           },
         ];
@@ -817,8 +827,10 @@ export type Database = {
           event_id: string;
           id: string;
           properties: Json | null;
+          status: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
           updated_at: string | null;
+          user_id: string | null;
         };
         Insert: {
           coordinates: Json;
@@ -826,8 +838,10 @@ export type Database = {
           event_id: string;
           id?: string;
           properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
           updated_at?: string | null;
+          user_id?: string | null;
         };
         Update: {
           coordinates?: Json;
@@ -835,8 +849,10 @@ export type Database = {
           event_id?: string;
           id?: string;
           properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
           type?: string;
           updated_at?: string | null;
+          user_id?: string | null;
         };
         Relationships: [
           {
@@ -844,6 +860,50 @@ export type Database = {
             columns: ["event_id"];
             isOneToOne: false;
             referencedRelation: "posting_events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      posting_shape_status_history: {
+        Row: {
+          created_at: string;
+          id: string;
+          new_status: Database["public"]["Enums"]["posting_shape_status"];
+          note: string | null;
+          previous_status:
+            | Database["public"]["Enums"]["posting_shape_status"]
+            | null;
+          shape_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          new_status: Database["public"]["Enums"]["posting_shape_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["posting_shape_status"]
+            | null;
+          shape_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          new_status?: Database["public"]["Enums"]["posting_shape_status"];
+          note?: string | null;
+          previous_status?:
+            | Database["public"]["Enums"]["posting_shape_status"]
+            | null;
+          shape_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posting_shape_status_history_shape_id_fkey";
+            columns: ["shape_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_shapes";
             referencedColumns: ["id"];
           },
         ];
@@ -1792,6 +1852,7 @@ export type Database = {
         | "error_wrong_poster"
         | "other"
         | "not_yet_dangerous";
+      posting_shape_status: "planned" | "completed" | "unavailable" | "other";
       poster_prefecture_enum:
         | "北海道"
         | "宮城県"
@@ -1948,6 +2009,7 @@ export const Constants = {
         "other",
         "not_yet_dangerous",
       ],
+      posting_shape_status: ["planned", "completed", "unavailable", "other"],
       poster_prefecture_enum: [
         "北海道",
         "宮城県",
