@@ -121,6 +121,7 @@ const postingArtifactSchema = baseMissionFormSchema.extend({
       message: `ポスティング枚数は${MAX_POSTING_COUNT}枚以下で入力してください`,
     }),
   locationText: z.string().optional(),
+  shapeId: z.string().uuid().optional(), // マップからの場合のシェイプID
 });
 
 // POSTERタイプ用スキーマ
@@ -233,6 +234,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   // ポスティング用データの取得
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
+  const shapeId = formData.get("shapeId")?.toString();
   // ポスター用データの取得
   const prefecture = formData.get("prefecture")?.toString();
   const city = formData.get("city")?.toString();
@@ -258,6 +260,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     altitude,
     postingCount,
     locationText,
+    shapeId,
     prefecture,
     city,
     boardNumber,
@@ -626,6 +629,7 @@ export const achieveMissionAction = async (formData: FormData) => {
           mission_artifact_id: newArtifact.id,
           posting_count: validatedData.postingCount,
           location_text: validatedData.locationText ?? "",
+          shape_id: validatedData.shapeId ?? null, // マップからの場合のシェイプID
         });
 
       if (postingError) {

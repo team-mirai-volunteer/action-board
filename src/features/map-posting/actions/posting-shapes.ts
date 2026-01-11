@@ -2,8 +2,15 @@
 
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { createClient } from "@/lib/supabase/client";
+import { z } from "zod";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape } from "../types/posting-types";
+
+// completePostingMissionAction用のバリデーションスキーマ
+const completePostingMissionSchema = z.object({
+  postingCount: z.number().min(1).max(1000),
+  locationText: z.string().min(1).max(500),
+});
 
 /**
  * ポスティングマップからミッションを達成する
@@ -16,63 +23,49 @@ export async function completePostingMissionAction(
   postingCount: number,
   locationText: string,
 ): Promise<{ success: boolean; xpGranted?: number; error?: string }> {
+  // 入力バリデーション
+  const validationResult = completePostingMissionSchema.safeParse({
+    postingCount,
+    locationText,
+  });
+
+  if (!validationResult.success) {
+    return {
+      success: false,
+      error: validationResult.error.errors.map((e) => e.message).join(", "),
+    };
+  }
+
   const supabase = createClient();
 
   // posting-magazineミッションのIDを取得
-  const { data: mission } = await supabase
+  const { data: mission, error: missionError } = await supabase
     .from("missions")
     .select("id")
     .eq("slug", "posting-magazine")
     .single();
+
+  if (missionError) {
+    console.error("Mission fetch error:", missionError);
+    return { success: false, error: "ミッション情報の取得に失敗しました" };
+  }
 
   if (!mission) {
     return { success: false, error: "ミッションが見つかりません" };
   }
 
   // achieveMissionActionを呼び出してミッション達成を記録
+  // shape_idはFormDataで渡し、achieveMissionActionで直接posting_activitiesに保存される
   const formData = new FormData();
   formData.append("missionId", mission.id);
   formData.append("requiredArtifactType", "POSTING");
   formData.append("postingCount", postingCount.toString());
   formData.append("locationText", locationText);
-  // shape_idはachieveMissionAction内で処理される必要がある
-  // 現在の実装ではshape_idは直接サポートされていないので、
-  // ここで追加のposting_activities更新が必要
+  if (shape.id) {
+    formData.append("shapeId", shape.id);
+  }
 
   const result = await achieveMissionAction(formData);
-
-  if (result.success && shape.id) {
-    // posting_activitiesにshape_idを追加する
-    // achieveMissionActionで作成されたposting_activityを取得して更新
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      // 最新のposting_activityを取得してshape_idを更新
-      const { data: latestActivity } = await supabase
-        .from("posting_activities")
-        .select(`
-          id,
-          mission_artifacts!inner(
-            achievements!inner(
-              user_id
-            )
-          )
-        `)
-        .eq("mission_artifacts.achievements.user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (latestActivity) {
-        await supabase
-          .from("posting_activities")
-          .update({ shape_id: shape.id })
-          .eq("id", latestActivity.id);
-      }
-    }
-  }
 
   return result;
 }
@@ -116,16 +109,21 @@ export async function checkShapeMissionCompletedAction(
   const supabase = createClient();
 
   // posting-magazineミッションのIDを取得
-  const { data: mission } = await supabase
+  const { data: mission, error: missionError } = await supabase
     .from("missions")
     .select("id")
     .eq("slug", "posting-magazine")
     .single();
 
+  if (missionError) {
+    console.error("Mission fetch error:", missionError);
+    return false;
+  }
+
   if (!mission) return false;
 
   // このシェイプで既にミッション達成しているかチェック
-  const { data: activities } = await supabase
+  const { data: activities, error: activitiesError } = await supabase
     .from("posting_activities")
     .select(`
       id,
@@ -139,6 +137,11 @@ export async function checkShapeMissionCompletedAction(
     .eq("shape_id", shapeId)
     .eq("mission_artifacts.achievements.user_id", userId)
     .eq("mission_artifacts.achievements.mission_id", mission.id);
+
+  if (activitiesError) {
+    console.error("Activities fetch error:", activitiesError);
+    return false;
+  }
 
   return !!(activities && activities.length > 0);
 }

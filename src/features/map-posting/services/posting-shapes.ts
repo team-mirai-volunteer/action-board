@@ -2,8 +2,6 @@ import { createClient } from "@/lib/supabase/client";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape } from "../types/posting-types";
 
-const supabase = createClient();
-
 // ステータス履歴の型
 export interface StatusHistory {
   id: string;
@@ -18,7 +16,19 @@ export interface StatusHistory {
   };
 }
 
+/**
+ * Supabaseクライアントを取得する
+ * クライアントサイドでは毎回新しいインスタンスを作成する必要がある場合があるため関数として提供
+ */
+function getSupabaseClient() {
+  return createClient();
+}
+
+/**
+ * シェイプを保存する
+ */
 export async function saveShape(shape: MapShape) {
+  const supabase = getSupabaseClient();
   const nowISO = new Date().toISOString();
 
   const shapeWithMeta = {
@@ -41,7 +51,11 @@ export async function saveShape(shape: MapShape) {
   return data;
 }
 
+/**
+ * シェイプを削除する
+ */
 export async function deleteShape(id: string) {
+  const supabase = getSupabaseClient();
   const { error } = await supabase.from("posting_shapes").delete().eq("id", id);
 
   if (error) {
@@ -50,7 +64,11 @@ export async function deleteShape(id: string) {
   }
 }
 
+/**
+ * イベントに紐づくシェイプ一覧を取得する
+ */
 export async function loadShapes(eventId: string) {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posting_shapes")
     .select("*")
@@ -65,7 +83,11 @@ export async function loadShapes(eventId: string) {
   return data || [];
 }
 
+/**
+ * シェイプを更新する
+ */
 export async function updateShape(id: string, data: Partial<MapShape>) {
+  const supabase = getSupabaseClient();
   // Exclude protected fields that should not be updated
   const {
     id: _id,
@@ -102,7 +124,7 @@ export async function updateShapeStatus(
   newStatus: PostingShapeStatus,
   note?: string,
 ) {
-  const supabase = createClient();
+  const supabase = getSupabaseClient();
 
   // 現在のシェイプステータスを取得
   const { data: currentShape, error: fetchError } = await supabase
@@ -167,7 +189,7 @@ export async function updateShapeStatus(
 export async function getShapeStatusHistory(
   shapeId: string,
 ): Promise<StatusHistory[]> {
-  const supabase = createClient();
+  const supabase = getSupabaseClient();
 
   const { data, error } = await supabase
     .from("posting_shape_status_history")
@@ -199,19 +221,24 @@ export async function checkShapeMissionCompleted(
   shapeId: string,
   userId: string,
 ): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = getSupabaseClient();
 
   // posting-magazineミッションのIDを取得
-  const { data: mission } = await supabase
+  const { data: mission, error: missionError } = await supabase
     .from("missions")
     .select("id")
     .eq("slug", "posting-magazine")
     .single();
 
+  if (missionError) {
+    console.error("Mission fetch error:", missionError);
+    return false;
+  }
+
   if (!mission) return false;
 
   // このシェイプで既にミッション達成しているかチェック
-  const { data: activities } = await supabase
+  const { data: activities, error: activitiesError } = await supabase
     .from("posting_activities")
     .select(`
       id,
@@ -226,6 +253,11 @@ export async function checkShapeMissionCompleted(
     .eq("mission_artifacts.achievements.user_id", userId)
     .eq("mission_artifacts.achievements.mission_id", mission.id);
 
+  if (activitiesError) {
+    console.error("Activities fetch error:", activitiesError);
+    return false;
+  }
+
   return !!(activities && activities.length > 0);
 }
 
@@ -235,7 +267,7 @@ export async function checkShapeMissionCompleted(
 export async function getShapeDetail(
   shapeId: string,
 ): Promise<MapShape | null> {
-  const supabase = createClient();
+  const supabase = getSupabaseClient();
 
   const { data, error } = await supabase
     .from("posting_shapes")
