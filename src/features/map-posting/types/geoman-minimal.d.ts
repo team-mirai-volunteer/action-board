@@ -4,9 +4,11 @@ declare module "leaflet" {
   // Custom properties added to layers
   interface Layer {
     _shapeId?: string;
+    _shapeStatus?: import("./posting-types").PostingShapeStatus;
     _isTextLayer?: boolean;
     _textDirty?: boolean;
     _url?: string;
+    setStyle?(style: Record<string, unknown>): void;
     toGeoJSON(): GeoJSON.Feature | GeoJSON.FeatureCollection;
     getLatLng(): L.LatLng;
     getLayers?(): Layer[];

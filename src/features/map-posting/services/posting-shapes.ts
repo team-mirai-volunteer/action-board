@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import type { MapShape } from "../types/posting-types";
+import type { MapShape, PostingShapeStatus } from "../types/posting-types";
 
 const supabase = createClient();
 
@@ -77,4 +77,40 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
   }
 
   return rows;
+}
+
+export async function updateShapeStatus(
+  id: string,
+  status: PostingShapeStatus,
+  postingCount?: number | null,
+) {
+  const updateData: {
+    status: PostingShapeStatus;
+    posting_count?: number | null;
+    updated_at: string;
+  } = {
+    status,
+    updated_at: new Date().toISOString(),
+  };
+
+  // posting_count is required when status is 'completed', otherwise null
+  if (status === "completed") {
+    updateData.posting_count = postingCount ?? 0;
+  } else {
+    updateData.posting_count = null;
+  }
+
+  const { data, error } = await supabase
+    .from("posting_shapes")
+    .update(updateData)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating shape status:", error);
+    throw error;
+  }
+
+  return data;
 }

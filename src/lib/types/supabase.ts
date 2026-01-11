@@ -816,7 +816,9 @@ export type Database = {
           created_at: string | null;
           event_id: string;
           id: string;
+          posting_count: number | null;
           properties: Json | null;
+          status: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
           updated_at: string | null;
         };
@@ -825,7 +827,9 @@ export type Database = {
           created_at?: string | null;
           event_id: string;
           id?: string;
+          posting_count?: number | null;
           properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
           updated_at?: string | null;
         };
@@ -834,7 +838,9 @@ export type Database = {
           created_at?: string | null;
           event_id?: string;
           id?: string;
+          posting_count?: number | null;
           properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
           type?: string;
           updated_at?: string | null;
         };
@@ -1805,6 +1811,7 @@ export type Database = {
         | "兵庫県"
         | "愛媛県"
         | "福岡県";
+      posting_shape_status: "planned" | "completed" | "unavailable" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;

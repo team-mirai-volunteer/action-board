@@ -3,13 +3,15 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { statusConfig } from "../config/status-config";
 import {
   deleteShape as deleteMapShape,
   loadShapes as loadMapShapes,
   saveShape as saveMapShape,
   updateShape as updateMapShape,
+  updateShapeStatus as updateMapShapeStatus,
 } from "../services/posting-shapes";
 import type {
   GeomanEvent,
@@ -17,8 +19,10 @@ import type {
   MapShape as MapShapeData,
   PolygonProperties,
   PostingPageClientProps,
+  PostingShapeStatus,
   TextCoordinates,
 } from "../types/posting-types";
+import { ShapeStatusDialog } from "./shape-status-dialog";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
   ssr: false,
@@ -31,7 +35,12 @@ export default function PostingPageClient({
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
   const [showText, setShowText] = useState(true);
+  const [shapesData, setShapesData] = useState<MapShapeData[]>([]);
+  const [selectedShape, setSelectedShape] = useState<MapShapeData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const textLayersRef = useRef<Set<Layer>>(new Set());
+  const polygonLayersRef = useRef<Map<string, Layer>>(new Map());
   const showTextRef = useRef(showText);
   const autoSave = true;
 
@@ -171,6 +180,7 @@ export default function PostingPageClient({
     const loadExistingShapes = async () => {
       try {
         const savedShapes = await loadMapShapes(eventId);
+        setShapesData(savedShapes as MapShapeData[]);
 
         let L: typeof import("leaflet");
         try {
@@ -180,6 +190,9 @@ export default function PostingPageClient({
           toast.error("保存された図形の読み込みに失敗しました。");
           return;
         }
+
+        // Clear existing polygon layers ref
+        polygonLayersRef.current.clear();
 
         for (const shape of savedShapes) {
           try {
@@ -197,10 +210,37 @@ export default function PostingPageClient({
               layer._isTextLayer = true; // Mark as text layer for toggle
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
+              // Get status color
+              const status = (shape.status as PostingShapeStatus) || "planned";
+              const color = statusConfig[status].color;
+
               layer = L.geoJSON(
                 shape.coordinates as unknown as GeoJSON.Polygon,
+                {
+                  style: {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.3,
+                    weight: 2,
+                  },
+                },
               ) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
+              layer._shapeStatus = status; // Store status on layer
+
+              // Store layer reference for status updates
+              if (shape.id) {
+                polygonLayersRef.current.set(shape.id, layer);
+              }
+
+              // Add click handler for polygon shapes
+              layer.on("click", () => {
+                const shapeData = savedShapes.find((s) => s.id === shape.id);
+                if (shapeData) {
+                  setSelectedShape(shapeData as MapShapeData);
+                  setIsDialogOpen(true);
+                }
+              });
             }
 
             if (layer) {
@@ -405,6 +445,78 @@ export default function PostingPageClient({
     }
   };
 
+  const handleStatusUpdate = useCallback(
+    async (
+      shapeId: string,
+      status: PostingShapeStatus,
+      postingCount?: number | null,
+    ) => {
+      setIsUpdating(true);
+      try {
+        await updateMapShapeStatus(shapeId, status, postingCount);
+
+        // Update the layer style
+        const layer = polygonLayersRef.current.get(shapeId);
+        if (layer) {
+          const color = statusConfig[status].color;
+          // Update style for GeoJSON layer
+          if (layer.setStyle) {
+            layer.setStyle({
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.3,
+              weight: 2,
+            });
+          } else if (layer.getLayers) {
+            // For layer groups, update each sublayer
+            const layers = layer.getLayers();
+            for (const subLayer of layers) {
+              if (subLayer.setStyle) {
+                subLayer.setStyle({
+                  color: color,
+                  fillColor: color,
+                  fillOpacity: 0.3,
+                  weight: 2,
+                });
+              }
+            }
+          }
+          layer._shapeStatus = status;
+        }
+
+        // Update shapes data state
+        setShapesData((prev) =>
+          prev.map((s) =>
+            s.id === shapeId
+              ? { ...s, status, posting_count: postingCount }
+              : s,
+          ),
+        );
+
+        // Update selected shape if it's the one being updated
+        if (selectedShape?.id === shapeId) {
+          setSelectedShape((prev) =>
+            prev ? { ...prev, status, posting_count: postingCount } : null,
+          );
+        }
+
+        toast.success("ステータスを更新しました");
+        setIsDialogOpen(false);
+      } catch (error) {
+        console.error("Failed to update shape status:", error);
+        toast.error("ステータスの更新に失敗しました");
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [selectedShape],
+  );
+
+  const handleDialogClose = useCallback(() => {
+    setIsDialogOpen(false);
+    setSelectedShape(null);
+  }, []);
+
   return (
     <>
       <link
@@ -484,6 +596,14 @@ export default function PostingPageClient({
       `}</style>
 
       <GeomanMap onMapReady={setMapInstance} />
+
+      <ShapeStatusDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        shape={selectedShape}
+        onStatusUpdate={handleStatusUpdate}
+        isUpdating={isUpdating}
+      />
     </>
   );
 }

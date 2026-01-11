@@ -1,6 +1,13 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer } from "leaflet";
 
+// === Status Types ===
+export type PostingShapeStatus =
+  | "planned"
+  | "completed"
+  | "unavailable"
+  | "other";
+
 // === Database Types ===
 export interface MapShape {
   id?: string;
@@ -8,6 +15,8 @@ export interface MapShape {
   coordinates: Json;
   properties?: Json;
   event_id: string;
+  status?: PostingShapeStatus;
+  posting_count?: number | null;
   created_at?: string;
   updated_at?: string;
 }
