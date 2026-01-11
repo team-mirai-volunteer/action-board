@@ -59,8 +59,8 @@ CREATE INDEX idx_posting_shapes_event_id ON public.posting_shapes(event_id);
 -- ============================================
 -- 4. Insert default event and migrate existing data
 -- ============================================
-INSERT INTO public.posting_events (slug, title, description, is_active)
-VALUES ('default', 'デフォルトイベント', '初期イベント', true);
+INSERT INTO public.posting_events (id, slug, title, description, is_active)
+VALUES ('a0000000-0000-0000-0000-000000000001', 'default', 'デフォルトイベント', '初期イベント', true);
 
 -- Migrate existing shapes to default event
 UPDATE public.posting_shapes
