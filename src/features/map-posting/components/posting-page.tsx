@@ -1,15 +1,51 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import type { Json } from "@/lib/types/supabase";
+import type * as L from "leaflet";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
+
+// Leafletの型拡張
+declare module "leaflet" {
+  interface Layer {
+    _shapeId?: string;
+    _shapeStatus?: string;
+    _isTextLayer?: boolean;
+    _textDirty?: boolean;
+    _url?: string;
+    pm?: {
+      getShape?: () => string;
+      getText?: () => string;
+    };
+    getLatLng?: () => { lat: number; lng: number };
+    toGeoJSON?: () => GeoJSON.Feature;
+    getLayers?: () => Layer[];
+    feature?: {
+      properties?: Record<string, unknown>;
+    };
+    options?: Record<string, unknown>;
+  }
+}
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+  completePostingMissionAction,
+  getShapeStatusHistoryAction,
+} from "../actions/posting-shapes";
+import {
+  type PostingShapeStatus,
+  statusConfig,
+} from "../config/status-config";
+import {
+  checkShapeMissionCompleted,
   deleteShape as deleteMapShape,
+  getShapeStatusHistory,
   loadShapes as loadMapShapes,
   saveShape as saveMapShape,
   updateShape as updateMapShape,
+  updateShapeStatus,
+  type StatusHistory,
 } from "../services/posting-shapes";
 import type {
   GeomanEvent,
@@ -19,12 +55,14 @@ import type {
   PostingPageClientProps,
   TextCoordinates,
 } from "../types/posting-types";
+import { ShapeStatusDialog } from "./shape-status-dialog";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
   ssr: false,
 });
 
 export default function PostingPageClient({
+  userId,
   eventId,
   eventTitle,
 }: PostingPageClientProps) {
@@ -34,6 +72,15 @@ export default function PostingPageClient({
   const textLayersRef = useRef<Set<Layer>>(new Set());
   const showTextRef = useRef(showText);
   const autoSave = true;
+
+  // ステータス変更ダイアログ用のstate
+  const [selectedShape, setSelectedShape] = useState<MapShapeData | null>(null);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // シェイプとレイヤーのマッピング
+  const shapeLayerMapRef = useRef<Map<string, Layer>>(new Map());
+  const shapesDataRef = useRef<Map<string, MapShapeData>>(new Map());
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -197,10 +244,39 @@ export default function PostingPageClient({
               layer._isTextLayer = true; // Mark as text layer for toggle
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
-              layer = L.geoJSON(
-                shape.coordinates as unknown as GeoJSON.Polygon,
-              ) as unknown as Layer;
+              // ステータスに応じた色を適用
+              const shapeStatus = (shape.status as PostingShapeStatus) || "planned";
+              const config = statusConfig[shapeStatus];
+
+              layer = L.geoJSON(shape.coordinates as unknown as GeoJSON.Polygon, {
+                style: {
+                  fillColor: config.fillColor,
+                  fillOpacity: config.fillOpacity,
+                  color: config.fillColor,
+                  weight: 2,
+                },
+              }) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
+              layer._shapeStatus = shapeStatus; // preserve status
+
+              // シェイプデータを保存
+              if (shape.id) {
+                shapesDataRef.current.set(shape.id, shape as MapShapeData);
+                shapeLayerMapRef.current.set(shape.id, layer);
+              }
+
+              // ポリゴンクリック時にダイアログを開く
+              layer.on("click", () => {
+                if (shape.id && userId) {
+                  const shapeData = shapesDataRef.current.get(shape.id);
+                  if (shapeData) {
+                    setSelectedShape(shapeData);
+                    setIsStatusDialogOpen(true);
+                  }
+                } else if (!userId) {
+                  toast.info("ログインすると配布状況を報告できます");
+                }
+              });
             }
 
             if (layer) {
@@ -405,6 +481,100 @@ export default function PostingPageClient({
     }
   };
 
+  // ステータス更新ハンドラー
+  const handleStatusUpdate = async (
+    shapeId: string,
+    status: PostingShapeStatus,
+    postingCount: number,
+    note: string,
+  ) => {
+    if (!userId) {
+      toast.error("ログインが必要です");
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      // ステータスを更新
+      await updateShapeStatus(shapeId, status, note);
+
+      // 「完了」の場合はミッション達成処理
+      if (status === "completed") {
+        // このシェイプで既にミッション達成済みかチェック
+        const hasCompleted = await checkShapeMissionCompleted(shapeId, userId);
+
+        if (!hasCompleted) {
+          // シェイプデータを取得
+          const shapeData = shapesDataRef.current.get(shapeId);
+          if (shapeData) {
+            // 場所のテキストを生成
+            const props = shapeData.properties as Record<string, unknown> | undefined;
+            const locationText = props?.text
+              ? String(props.text)
+              : props?.name
+                ? String(props.name)
+                : `エリア ${shapeId.substring(0, 8)}`;
+
+            // ミッション達成処理
+            const result = await completePostingMissionAction(
+              shapeData,
+              postingCount,
+              locationText,
+            );
+
+            if (result.success) {
+              toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
+            } else if (result.error) {
+              toast.error(result.error);
+            }
+          }
+        }
+      }
+
+      // マップ上のシェイプの色を更新
+      const layer = shapeLayerMapRef.current.get(shapeId);
+      if (layer && mapInstance) {
+        const config = statusConfig[status];
+        // GeoJSONレイヤーの場合はsetStyleを使用
+        if ("setStyle" in layer) {
+          (layer as L.Path).setStyle({
+            fillColor: config.fillColor,
+            fillOpacity: config.fillOpacity,
+            color: config.fillColor,
+          });
+        }
+      }
+
+      // シェイプデータを更新
+      const shapeData = shapesDataRef.current.get(shapeId);
+      if (shapeData) {
+        shapesDataRef.current.set(shapeId, {
+          ...shapeData,
+          status,
+          user_id: userId,
+        });
+      }
+
+      toast.success("ステータスを更新しました");
+      setIsStatusDialogOpen(false);
+    } catch (error) {
+      console.error("Status update error:", error);
+      toast.error("ステータスの更新に失敗しました");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // 履歴読み込みハンドラー
+  const handleLoadHistory = async (shapeId: string): Promise<StatusHistory[]> => {
+    try {
+      return await getShapeStatusHistory(shapeId);
+    } catch (error) {
+      console.error("History load error:", error);
+      return [];
+    }
+  };
+
   return (
     <>
       <link
@@ -484,6 +654,16 @@ export default function PostingPageClient({
       `}</style>
 
       <GeomanMap onMapReady={setMapInstance} />
+
+      {/* ステータス変更ダイアログ */}
+      <ShapeStatusDialog
+        isOpen={isStatusDialogOpen}
+        onOpenChange={setIsStatusDialogOpen}
+        shape={selectedShape}
+        onStatusUpdate={handleStatusUpdate}
+        onLoadHistory={handleLoadHistory}
+        isUpdating={isUpdating}
+      />
     </>
   );
 }

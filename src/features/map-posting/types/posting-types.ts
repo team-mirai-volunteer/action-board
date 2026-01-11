@@ -1,5 +1,6 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer } from "leaflet";
+import type { PostingShapeStatus } from "../config/status-config";
 
 // === Database Types ===
 export interface MapShape {
@@ -8,6 +9,8 @@ export interface MapShape {
   coordinates: Json;
   properties?: Json;
   event_id: string;
+  status?: PostingShapeStatus;
+  user_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }
