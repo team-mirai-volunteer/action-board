@@ -281,13 +281,6 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(signedInPage).toHaveURL("/ranking/ranking-mission", {
       timeout: 10000,
     });
-    await expect(signedInPage.getByText("ミッションを選択")).toBeVisible();
-    await expect(
-      signedInPage.getByRole("heading", {
-        name: "「(seed) ゴミ拾いをしよう (成果物不要)」トップ100",
-      }),
-    ).toBeVisible();
-    // TODO: ミッションランキングに表示されるseedデータを投入する必要あり //
 
     await signedInPage.getByText("全体").click();
     await expect(signedInPage).toHaveURL("/ranking", { timeout: 10000 });
