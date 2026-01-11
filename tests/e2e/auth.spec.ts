@@ -183,8 +183,11 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // 18歳未満の年齢を選択（現在から計算して18歳未満になる年を選択）
     const year = page.getByTestId("year_select");
     await year.press("Enter");
-    // 18歳未満になる年を選択（利用可能な最新の年である2007年を選択）
-    const selectedYear = page.getByRole("option", { name: "2007年" });
+    // 18歳未満になる年を選択（利用可能な最新の年である年を動的に選択）
+    // e.g. 2008年12月31日生まれは2026年現在まだ17歳
+    const selectedYear = page.getByRole("option", {
+      name: `${new Date().getFullYear() - 18}年`,
+    });
     await selectedYear.click();
 
     const month = page.getByTestId("month_select");
@@ -200,9 +203,9 @@ test.describe("新しい認証フロー (Two-Step Signup)", () => {
     // 利用規約・プライバシーポリシーに同意する
     await page.locator("#terms").click();
 
-    // 年齢制限エラーメッセージが表示されることを確認
+    // 年齢制限エラーメッセージが表示されることを確認（部分一致）
     await expect(
-      page.getByText("18歳以上の方のみご登録いただけます"),
+      page.getByText("18歳以上の方のみご登録いただけます", { exact: false }),
     ).toBeVisible();
 
     // 次へ進むボタンが無効化されていることを確認
