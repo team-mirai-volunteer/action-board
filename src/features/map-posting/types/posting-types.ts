@@ -7,6 +7,7 @@ export interface MapShape {
   type: "polygon" | "text";
   coordinates: Json;
   properties?: Json;
+  event_id: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -38,6 +39,8 @@ export type MapProperties = TextProperties | PolygonProperties;
 // === Component Types ===
 export interface PostingPageClientProps {
   userId: string;
+  eventId: string;
+  eventTitle: string;
 }
 
 // === Leaflet and Geoman Types ===
