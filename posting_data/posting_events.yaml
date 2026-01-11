@@ -1,0 +1,5 @@
+posting_events:
+  - slug: default
+    title: デフォルトイベント
+    description: 初期イベント
+    is_active: true
