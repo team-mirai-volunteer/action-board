@@ -24,7 +24,10 @@ const GeomanMap = dynamic(() => import("./geoman-map"), {
   ssr: false,
 });
 
-export default function PostingPageClient(_props: PostingPageClientProps) {
+export default function PostingPageClient({
+  eventId,
+  eventTitle,
+}: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
   const [showText, setShowText] = useState(true);
@@ -167,7 +170,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
     const loadExistingShapes = async () => {
       try {
-        const savedShapes = await loadMapShapes();
+        const savedShapes = await loadMapShapes(eventId);
 
         let L: typeof import("leaflet");
         try {
@@ -240,7 +243,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     };
 
     initializePostingMap();
-  }, [mapInstance]);
+  }, [mapInstance, eventId]);
 
   const getAllDrawnLayers = () => {
     if (!mapInstance) return [];
@@ -307,6 +310,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           coordinates: [center.lng, center.lat],
         },
         properties: { text: textContent },
+        event_id: eventId,
       };
     }
 
@@ -316,6 +320,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
       type: "polygon",
       coordinates: geoJSON.geometry as unknown as Json,
       properties: geoJSON.properties || {},
+      event_id: eventId,
     };
   };
 
@@ -427,6 +432,9 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           gap: "8px",
         }}
       >
+        <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
+          {eventTitle}
+        </div>
         <div style={{ fontSize: "12px", color: "#666" }}>
           Shapes: {shapeCount}
         </div>

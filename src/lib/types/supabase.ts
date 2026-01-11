@@ -780,10 +780,41 @@ export type Database = {
           },
         ];
       };
+      posting_events: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          id: string;
+          is_active: boolean;
+          slug: string;
+          title: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          is_active?: boolean;
+          slug: string;
+          title: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          is_active?: boolean;
+          slug?: string;
+          title?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       posting_shapes: {
         Row: {
           coordinates: Json;
           created_at: string | null;
+          event_id: string;
           id: string;
           properties: Json | null;
           type: string;
@@ -792,6 +823,7 @@ export type Database = {
         Insert: {
           coordinates: Json;
           created_at?: string | null;
+          event_id: string;
           id?: string;
           properties?: Json | null;
           type: string;
@@ -800,12 +832,21 @@ export type Database = {
         Update: {
           coordinates?: Json;
           created_at?: string | null;
+          event_id?: string;
           id?: string;
           properties?: Json | null;
           type?: string;
           updated_at?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "posting_shapes_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       private_users: {
         Row: {
