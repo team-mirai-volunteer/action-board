@@ -24,4 +24,4 @@ jobs:
         run: biome ci .
 
       - name: Type check with TypeScript
-        run: npx run typecheck
+        run: npm run typecheck

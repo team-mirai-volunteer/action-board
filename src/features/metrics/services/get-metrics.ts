@@ -235,17 +235,14 @@ export async function fetchRegistrationData(): Promise<RegistrationData> {
  * @returns Promise<MetricsData> - 統合されたメトリクスデータ
  */
 export async function fetchAllMetricsData(): Promise<MetricsData> {
-  const [supporterData, donationData, achievementData, registrationData] =
-    await Promise.all([
-      fetchSupporterData(),
-      fetchDonationData(),
-      fetchAchievementData(),
-      fetchRegistrationData(),
-    ]);
+  const [supporterData, achievementData, registrationData] = await Promise.all([
+    fetchSupporterData(),
+    fetchAchievementData(),
+    fetchRegistrationData(),
+  ]);
 
   return {
     supporter: supporterData,
-    donation: donationData,
     achievement: achievementData,
     registration: registrationData,
   };

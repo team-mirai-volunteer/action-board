@@ -28,7 +28,6 @@ export async function Metrics() {
     // エラー時はnullデータでフォールバック値を使用
     metricsData = {
       supporter: null,
-      donation: null,
       achievement: null,
       registration: null,
     };
