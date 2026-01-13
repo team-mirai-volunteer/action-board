@@ -700,8 +700,10 @@ export type Database = {
       poster_boards: {
         Row: {
           address: string | null;
+          archived: boolean | null;
           city: string;
           created_at: string;
+          district: string | null;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -715,8 +717,10 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
+          archived?: boolean | null;
           city: string;
           created_at?: string;
+          district?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -730,8 +734,10 @@ export type Database = {
         };
         Update: {
           address?: string | null;
+          archived?: boolean | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -1062,6 +1068,7 @@ export type Database = {
           address: string | null;
           city: string;
           created_at: string;
+          district: string | null;
           file_name: string | null;
           id: string | null;
           lat: number | null;
@@ -1077,6 +1084,7 @@ export type Database = {
           address?: string | null;
           city: string;
           created_at?: string;
+          district?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1092,6 +1100,7 @@ export type Database = {
           address?: string | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;

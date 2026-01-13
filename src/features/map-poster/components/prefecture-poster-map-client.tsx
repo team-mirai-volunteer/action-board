@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../config/status-config";
+import { JP_TO_EN_DISTRICT } from "../constants/poster-districts";
 import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
@@ -41,6 +42,7 @@ import {
 import {
   getPosterBoardDetail,
   getPosterBoardsMinimal,
+  getPosterBoardsMinimalByDistrict,
   updateBoardStatus,
 } from "../services/poster-boards";
 import type {
@@ -68,7 +70,9 @@ const PosterMap = dynamic(() => import("./poster-map-with-cluster"), {
 import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
+  getPosterBoardStatsByDistrictAction,
   getUserEditedBoardIdsAction,
+  getUserEditedBoardIdsByDistrictAction,
 } from "../actions/poster-boards";
 
 interface PrefecturePosterMapClientProps {
@@ -79,6 +83,8 @@ interface PrefecturePosterMapClientProps {
   initialStats?: BoardStats;
   boardTotal?: PosterBoardTotal | null;
   userEditedBoardIds?: string[];
+  defaultZoom?: number;
+  isDistrict?: boolean;
 }
 
 export default function PrefecturePosterMapClient({
@@ -89,6 +95,8 @@ export default function PrefecturePosterMapClient({
   initialStats,
   boardTotal,
   userEditedBoardIds,
+  defaultZoom,
+  isDistrict = false,
 }: PrefecturePosterMapClientProps) {
   const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
@@ -190,21 +198,27 @@ export default function PrefecturePosterMapClient({
   const loadBoards = async () => {
     try {
       // 最小限のデータのみ取得
-      const data = await getPosterBoardsMinimal(prefecture);
+      const data = isDistrict
+        ? await getPosterBoardsMinimalByDistrict(prefecture)
+        : await getPosterBoardsMinimal(prefecture);
       setBoards(data as PosterBoard[]);
 
       // 統計情報も更新
-      const newStats = await getPosterBoardStatsAction(
-        prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
-      );
+      const newStats = isDistrict
+        ? await getPosterBoardStatsByDistrictAction(prefecture)
+        : await getPosterBoardStatsAction(
+            prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
+          );
       setStats(newStats);
 
       // ユーザーがログインしている場合は、編集した掲示板IDも再取得
       if (userId) {
-        const updatedUserEditedBoardIds = await getUserEditedBoardIdsAction(
-          prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
-          userId,
-        );
+        const updatedUserEditedBoardIds = isDistrict
+          ? await getUserEditedBoardIdsByDistrictAction(prefecture, userId)
+          : await getUserEditedBoardIdsAction(
+              prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
+              userId,
+            );
         setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
       }
     } catch (error) {
@@ -432,11 +446,14 @@ export default function PrefecturePosterMapClient({
           onBoardClick={handleBoardSelect}
           center={center}
           prefectureKey={
-            JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
+            isDistrict
+              ? (JP_TO_EN_DISTRICT[prefectureName] as PosterPrefectureKey)
+              : (JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey)
           }
           onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
+          defaultZoom={defaultZoom}
         />
       </div>
 
@@ -782,10 +799,11 @@ export default function PrefecturePosterMapClient({
             </Button>
             <Button
               onClick={() => {
-                const prefectureKey = JP_TO_EN_PREFECTURE[
-                  prefectureName
-                ] as PosterPrefectureKey;
-                const returnUrl = `/map/poster/${prefectureKey}`;
+                const key = isDistrict
+                  ? JP_TO_EN_DISTRICT[prefectureName] ||
+                    prefectureName.toLowerCase().replace(/[^a-z0-9]/g, "-")
+                  : JP_TO_EN_PREFECTURE[prefectureName];
+                const returnUrl = `/map/poster/${key}`;
                 router.push(
                   `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
                 );
