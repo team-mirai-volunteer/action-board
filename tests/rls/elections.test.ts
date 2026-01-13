@@ -33,7 +33,7 @@ describe("elections テーブルのRLSテスト", () => {
       start_date: "2025-06-24T00:00:00+09:00",
       end_date: "2025-07-13T20:00:00+09:00",
       subject: "参院選" as const,
-      municipal_codes: [],
+      lgcodes: [],
     };
 
     const { error } = await adminClient.from("elections").insert(electionData);
@@ -75,7 +75,7 @@ describe("elections テーブルのRLSテスト", () => {
       start_date: "2026-01-01T00:00:00+09:00",
       end_date: "2026-01-31T23:59:59+09:00",
       subject: "衆院選",
-      municipal_codes: [],
+      lgcodes: [],
     });
 
     expect(error).toBeTruthy();
@@ -91,7 +91,7 @@ describe("elections テーブルのRLSテスト", () => {
       start_date: "2026-01-01T00:00:00+09:00",
       end_date: "2026-01-31T23:59:59+09:00",
       subject: "衆院選",
-      municipal_codes: [],
+      lgcodes: [],
     });
 
     expect(error).toBeTruthy();
@@ -126,24 +126,5 @@ describe("elections テーブルのRLSテスト", () => {
       .select("*")
       .eq("id", electionId);
     expect(remainingData).toBeTruthy();
-  });
-
-  test("管理者は選挙を作成できる（確認用）", async () => {
-    const adminElectionId = crypto.randomUUID();
-
-    const { data, error } = await adminClient.from("elections").insert({
-      id: adminElectionId,
-      season_id: seasonId,
-      start_date: "2026-02-01T00:00:00+09:00",
-      end_date: "2026-02-28T23:59:59+09:00",
-      subject: "都道府県首長選",
-      municipal_codes: ["13000"], // 東京都
-    });
-
-    expect(error).toBeNull();
-    expect(data).toBeTruthy();
-
-    // クリーンアップ
-    await adminClient.from("elections").delete().eq("id", adminElectionId);
   });
 });

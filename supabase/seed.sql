@@ -5,8 +5,8 @@ VALUES
   ('season2', 'シーズン２', '2025-07-20 00:00:00+09', NULL, true)
 ON CONFLICT (slug) DO NOTHING;
 
--- 選挙データ
-INSERT INTO elections (season_id, start_date, end_date, subject, municipal_codes)
+-- ダミー選挙データ
+INSERT INTO elections (season_id, start_date, end_date, subject, lgcodes)
 SELECT 
   s.id,
   '2025-10-01 00:00:00+09'::timestamptz,

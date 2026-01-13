@@ -149,7 +149,7 @@ export type Database = {
           created_at: string;
           end_date: string;
           id: string;
-          municipal_codes: string[];
+          lgcodes: string[];
           season_id: string;
           start_date: string;
           subject: Database["public"]["Enums"]["election_subject"];
@@ -159,7 +159,7 @@ export type Database = {
           created_at?: string;
           end_date: string;
           id?: string;
-          municipal_codes?: string[];
+          lgcodes?: string[];
           season_id: string;
           start_date: string;
           subject: Database["public"]["Enums"]["election_subject"];
@@ -169,7 +169,7 @@ export type Database = {
           created_at?: string;
           end_date?: string;
           id?: string;
-          municipal_codes?: string[];
+          lgcodes?: string[];
           season_id?: string;
           start_date?: string;
           subject?: Database["public"]["Enums"]["election_subject"];
