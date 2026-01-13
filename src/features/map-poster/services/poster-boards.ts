@@ -240,7 +240,9 @@ export async function getPosterBoardStats(prefecture: string): Promise<{
 }
 
 // 選挙管理委員会から提供された掲示板総数を取得
-export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
+export async function getPosterBoardTotals(
+  electionId?: string,
+): Promise<PosterBoardTotal[]> {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -257,7 +259,9 @@ export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
 }
 
 // 都道府県別の統計情報のみを取得（集計済みデータ）
-export async function getPosterBoardSummaryByPrefecture(): Promise<
+export async function getPosterBoardSummaryByPrefecture(
+  electionId?: string,
+): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
   const supabase = createClient();
@@ -265,6 +269,7 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
   // RPC関数を使用してデータベース側で集計
   const { data: aggregatedData, error: rpcError } = await supabase.rpc(
     "get_poster_board_stats",
+    { election_id_param: electionId || undefined },
   );
 
   if (rpcError) {

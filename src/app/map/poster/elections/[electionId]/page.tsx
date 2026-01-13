@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getElectionById } from "@/features/elections/services/elections";
 import PosterMapPageClientOptimized from "@/features/map-poster/components/poster-map-page-client-optimized";
 import {
   getPosterBoardSummaryByPrefecture,
   getPosterBoardTotals,
 } from "@/features/map-poster/services/poster-boards";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -41,8 +41,8 @@ export default async function ElectionPosterMapPage({
 
   // サーバーサイドで統計データのみを取得
   const [summary, totals] = await Promise.all([
-    getPosterBoardSummaryByPrefecture(),
-    getPosterBoardTotals(),
+    getPosterBoardSummaryByPrefecture(electionId),
+    getPosterBoardTotals(electionId),
   ]);
 
   return (
@@ -51,8 +51,8 @@ export default async function ElectionPosterMapPage({
         <div className="container mx-auto">
           <h1 className="text-xl font-bold">{election.subject}</h1>
           <p className="text-sm text-gray-600">
-            {new Date(election.start_date).toLocaleDateString()} -{" "}
-            {new Date(election.end_date).toLocaleDateString()}
+            {new Date(election.start_date).toLocaleDateString("ja-JP")} -{" "}
+            {new Date(election.end_date).toLocaleDateString("ja-JP")}
           </p>
         </div>
       </div>

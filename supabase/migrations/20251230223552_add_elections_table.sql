@@ -73,10 +73,10 @@ BEGIN
   INSERT INTO elections (season_id, start_date, end_date, subject, municipal_codes)
   VALUES (
     season1_id,
-    '2025-06-24 00:00:00+09',  -- Election period start
-    '2025-07-13 20:00:00+09',  -- Election period end (voting day 8pm)
+    '2025-07-03 00:00:00+09',  -- Election period start
+    '2025-07-20 20:00:00+09',  -- Election period end (voting day 8pm)
     '参院選',
-    '{}'  -- All Japan, no specific municipal codes
+    '{01, 04, 11, 12, 13, 14, 20, 23, 27, 28, 38, 40}'  -- 北海道, 宮城県, 埼玉、千葉、東京, 神奈川, 長野, 愛知,大阪、兵庫、愛媛、福岡
   )
   RETURNING id INTO election_2025_id;
   

@@ -5,6 +5,26 @@ VALUES
   ('season2', 'シーズン２', '2025-07-20 00:00:00+09', NULL, true)
 ON CONFLICT (slug) DO NOTHING;
 
+-- 選挙データ
+INSERT INTO elections (season_id, start_date, end_date, subject, municipal_codes)
+SELECT 
+  s.id,
+  '2025-10-01 00:00:00+09'::timestamptz,
+  '2025-10-31 23:59:59+09'::timestamptz,
+  '衆院選'::election_subject,
+  ARRAY['13', '27', '01']  -- 東京都、大阪府、北海道
+FROM seasons s
+WHERE s.slug = 'season2'
+UNION ALL
+SELECT 
+  s.id,
+  '2025-11-15 00:00:00+09'::timestamptz,
+  '2025-12-15 23:59:59+09'::timestamptz,
+  '市区町村首長選'::election_subject,
+  ARRAY['13101', '27128']  -- 千代田区、大阪市
+FROM seasons s
+WHERE s.slug = 'season2';
+
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
@@ -374,6 +394,33 @@ INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address,
 ('博多駅前掲示板', 33.5903, 130.4208, '福岡県', 'done', '40-1', '博多区博多駅中央街1-1', '福岡市博多区'),
 ('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区')
 ON CONFLICT DO NOTHING;
+
+--ポスター掲示板ステータス履歴のダミーデータ（ローカル開発用）
+-- 2025参院選に関連付けて各ポスター掲示板の現在のステータスを記録
+DO $$
+DECLARE
+  inserted_count INTEGER;
+BEGIN
+  WITH inserted_rows AS (
+    INSERT INTO poster_board_status_history (board_id, user_id, previous_status, new_status, election_id, note, created_at)
+    SELECT 
+      pb.id,
+      '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', -- 安野たかひろのユーザーID
+      NULL, -- 初期レコードなので previous_status は NULL
+      pb.status,
+      e.id,
+      'Initial status for ' || e.subject,
+      now() - interval '10 days' -- 10日前に作成されたことにする
+    FROM poster_boards pb
+    CROSS JOIN elections e
+    WHERE e.subject = '参院選'
+    ON CONFLICT DO NOTHING
+    RETURNING *
+  )
+  SELECT COUNT(*) INTO inserted_count FROM inserted_rows;
+  
+  RAISE NOTICE 'Inserted % poster_board_status_history records for 参院選', inserted_count;
+END $$;
 
 -- バッジデータ（各シーズンごとにバッジを付与）
 INSERT INTO user_badges (user_id, badge_type, sub_type, rank, season_id, achieved_at, is_notified)

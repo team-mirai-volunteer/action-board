@@ -1,6 +1,6 @@
+import { getAllElections } from "@/features/elections/services/elections";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllElections } from "@/features/elections/services/elections";
 
 export const metadata: Metadata = {
   title: "選挙一覧 - ポスター掲示板マップ",
@@ -30,8 +30,9 @@ export default async function ElectionsListPage() {
                     {election.subject}
                   </h2>
                   <p className="text-gray-600">
-                    期間: {new Date(election.start_date).toLocaleDateString()} -{" "}
-                    {new Date(election.end_date).toLocaleDateString()}
+                    期間:{" "}
+                    {new Date(election.start_date).toLocaleDateString("ja-JP")}{" "}
+                    - {new Date(election.end_date).toLocaleDateString("ja-JP")}
                   </p>
                 </div>
                 <span className="text-blue-600 hover:text-blue-800">

@@ -1,6 +1,6 @@
+import { getCurrentElection } from "@/features/elections/services/elections";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCurrentElection } from "@/features/elections/services/elections";
 
 export async function generateMetadata({
   params,

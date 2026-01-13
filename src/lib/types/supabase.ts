@@ -1649,23 +1649,43 @@ export type Database = {
           xp: number;
         }[];
       };
-      get_poster_board_stats: {
-        Args: never;
-        Returns: {
-          count: number;
-          prefecture: string;
-          status: Database["public"]["Enums"]["poster_board_status"];
-        }[];
-      };
-      get_poster_board_stats_optimized: {
-        Args: {
-          target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
-        };
-        Returns: {
-          status_counts: Json;
-          total_count: number;
-        }[];
-      };
+      get_poster_board_stats:
+        | {
+            Args: never;
+            Returns: {
+              count: number;
+              prefecture: string;
+              status: Database["public"]["Enums"]["poster_board_status"];
+            }[];
+          }
+        | {
+            Args: { election_id_param?: string };
+            Returns: {
+              count: number;
+              prefecture: string;
+              status: Database["public"]["Enums"]["poster_board_status"];
+            }[];
+          };
+      get_poster_board_stats_optimized:
+        | {
+            Args: {
+              target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+            };
+            Returns: {
+              status_counts: Json;
+              total_count: number;
+            }[];
+          }
+        | {
+            Args: {
+              election_id_param?: string;
+              target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+            };
+            Returns: {
+              status_counts: Json;
+              total_count: number;
+            }[];
+          };
       get_prefecture_ranking: {
         Args: { limit_count?: number; prefecture: string };
         Returns: {
@@ -1994,6 +2014,12 @@ export const Constants = {
   },
   public: {
     Enums: {
+      election_subject: [
+        "衆院選",
+        "参院選",
+        "都道府県首長選",
+        "市区町村首長選",
+      ],
       poster_board_status: [
         "not_yet",
         "reserved",

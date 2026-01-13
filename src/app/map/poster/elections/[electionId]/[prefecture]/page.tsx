@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
 import { getElectionById } from "@/features/elections/services/elections";
 import { getUserEditedBoardIdsAction } from "@/features/map-poster/actions/poster-boards";
 import PrefecturePosterMapClient from "@/features/map-poster/components/prefecture-poster-map-client";
@@ -12,6 +10,8 @@ import {
   getPosterBoardTotalByPrefecture,
 } from "@/features/map-poster/services/poster-boards";
 import { getUser } from "@/features/user-profile/services/profile";
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
 
 export async function generateMetadata({
   params,
