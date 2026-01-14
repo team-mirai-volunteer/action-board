@@ -94,7 +94,7 @@ All active data queries filter by:
 - Displays overall progress statistics
 - Archive link at bottom: "過去の選挙データを見る（参議院選挙 2025）"
 
-**District map** (`src/app/map/poster/[prefecture]/page.tsx`):
+**District map** (`src/app/map/poster/[district]/page.tsx`):
 - Validates district from `POSTER_DISTRICT_MAP` or DB
 - Shows map with status update functionality
 - Back link goes to `/map/poster`

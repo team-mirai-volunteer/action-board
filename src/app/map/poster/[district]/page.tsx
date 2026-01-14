@@ -16,9 +16,9 @@ import { redirect } from "next/navigation";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ prefecture: string }>;
+  params: Promise<{ district: string }>;
 }): Promise<Metadata> {
-  const { prefecture: districtKey } = await params;
+  const { district: districtKey } = await params;
 
   // 静的に定義された区割りをチェック
   if (isValidDistrict(districtKey)) {
@@ -51,9 +51,9 @@ export async function generateMetadata({
 export default async function DistrictPosterMapPage({
   params,
 }: {
-  params: Promise<{ prefecture: string }>;
+  params: Promise<{ district: string }>;
 }) {
-  const { prefecture: districtKey } = await params;
+  const { district: districtKey } = await params;
 
   const user = await getUser();
 
