@@ -1,216 +1,197 @@
-# 区割り (Electoral Districts) Implementation Plan for Poster Map
+# 区割り (Electoral Districts) Implementation for Poster Map
 
 ## Overview
-Add support for 衆議院議員選挙 electoral districts (区割り) like 東京1区, 神奈川5区 to the poster map feature. The old prefecture-based data will be archived, and the new district-based system will take over.
+Support for 衆議院議員選挙 electoral districts (区割り) like 東京1区, 神奈川5区 has been added to the poster map feature. The old prefecture-based data (参議院2025) is archived and accessible via `/map/poster/archive/sangin-2025/[prefecture]`, while the new district-based system (衆議院2026) is the main view.
 
-## Key Decisions
-- **Data Format**: New `district` column in CSV (e.g., "東京1区", "神奈川5区")
-- **Archive Strategy**: Archive old prefecture data, show only new district data
-- **URL Structure**: Flat structure `/map/poster/tokyo-1`, `/map/poster/kanagawa-5`
+## Implementation Status: ✅ Complete
 
 ---
 
-## Implementation Steps
+## What Was Implemented
 
-### Step 1: Database Schema Changes
+### 1. Database Schema Changes
 
-**File**: Create new migration `supabase/migrations/YYYYMMDD_add_district_to_poster_boards.sql`
+**Migration**: `supabase/migrations/20260113000000_add_district_to_poster_boards.sql`
 
-```sql
--- Add district column to poster_boards
-ALTER TABLE poster_boards
-ADD COLUMN district text;
+- Added `district` column to `poster_boards` and `staging_poster_boards`
+- Added `archived` boolean column with default `false`
+- Created index for district filtering
+- Auto-archived existing data where district is NULL
 
--- Add district column to staging_poster_boards
-ALTER TABLE staging_poster_boards
-ADD COLUMN district text;
+**Migration**: `supabase/migrations/20260114000000_add_election_term.sql`
 
--- Add index for district filtering
-CREATE INDEX idx_poster_boards_district ON poster_boards(district);
+- Added `election_term` column to `poster_boards` and `staging_poster_boards`
+- Created index for election_term filtering
+- Set `sangin-2025` for archived data, `shugin-2026` for active data
 
--- Add archived flag for old data
-ALTER TABLE poster_boards
-ADD COLUMN archived boolean DEFAULT false;
+### 2. Data Folder Structure
 
--- Archive existing data (run this after migration)
-UPDATE poster_boards SET archived = true WHERE district IS NULL;
+```
+poster_data/data/
+├── sangin-2025/          # Archived 参議院選挙 2025 data (prefecture-based)
+│   ├── 東京都/
+│   ├── 神奈川県/
+│   └── ...
+└── shugin-2026/          # Active 衆議院選挙 2026 data (district-based)
+    └── 東京都/
+        └── 千代田区_normalized.csv  # Contains 東京1区 data
 ```
 
-### Step 2: Update TypeScript Types
+### 3. CSV Format
 
-**File**: [src/features/map-poster/types/poster-types.ts](src/features/map-poster/types/poster-types.ts)
+**New format with district column**:
+```csv
+prefecture,city,district,number,address,name,lat,long
+東京都,千代田区,東京1区,1,千代田区〇〇1-1,掲示板A,35.6895,139.6917
+```
 
-- Run `npm run types` after migration to regenerate Supabase types
-- Types will auto-update with new `district` and `archived` columns
+The `load-csv.ts` script handles:
+- 8 columns: prefecture, city, district, number, address, name, lat, long
+- 9 columns: Same as above + note (ignored)
+- 7 columns (legacy): prefecture, city, number, address, name, lat, long
 
-### Step 3: Add District Constants
+### 4. Constants
 
-**File**: Create `src/features/map-poster/constants/poster-districts.ts`
+**File**: `src/features/map-poster/constants/poster-districts.ts`
 
 ```typescript
-// Map district keys to display data
 export const POSTER_DISTRICT_MAP = {
-  "tokyo-1": { jp: "東京1区", prefecture: "東京都", center: [...], defaultZoom: 13 },
-  "tokyo-2": { jp: "東京2区", ... },
-  "kanagawa-5": { jp: "神奈川5区", ... },
-  // Add up to ~20 districts initially
+  "tokyo-1": { jp: "東京1区", prefecture: "東京都", center: [35.6895, 139.7536], defaultZoom: 14 },
+  // More districts can be added as needed
 } as const;
 
-// Reverse lookup: "東京1区" -> "tokyo-1"
-export const JP_TO_EN_DISTRICT: Record<string, string>;
-
-// Valid district keys for routing
-export const VALID_DISTRICTS: string[];
+export const JP_TO_EN_DISTRICT: Record<string, string> = {
+  "東京1区": "tokyo-1",
+};
 ```
 
-### Step 4: Update CSV Loading Script
+### 5. Service Layer Updates
 
-**File**: [poster_data/load-csv.ts](poster_data/load-csv.ts)
+**File**: `src/features/map-poster/services/poster-boards.ts`
 
-**Current CSV format**: `prefecture, city, number, address, name, lat, long, [note]`
-**New CSV format**: `prefecture, city, district, number, address, name, lat, long, [note]`
+New functions added:
+- `getDistrictsWithBoards()` - Get unique districts from DB
+- `getPosterBoardsMinimalByDistrict(district)` - Fetch boards for a district
+- `getPosterBoardSummaryByDistrict()` - Summary stats by district
+- `getArchivedElectionTerms()` - Get available archive terms
+- `getArchivedPosterBoardSummary(term)` - Archive summary by prefecture
+- `getArchivedPosterBoardsMinimal(term, prefecture)` - Archive boards
+- `getArchivedPosterBoardStats(term, prefecture)` - Archive stats
 
-Changes needed:
-1. Update temp table creation to include `district` column
-2. Update COPY statement to include `district` column
-3. Update INSERT statement to map `district` to staging/production tables
-4. Update upsert ON CONFLICT to include `district` in update clause
+All active data queries filter by:
+- `archived = false`
+- `district IS NOT NULL`
 
-Key changes in the script:
+### 6. Route Structure
+
+```
+/map/poster                           # Main page - shows district cards (東京1区, etc.)
+/map/poster/tokyo-1                   # District map (東京1区)
+/map/poster/archive/sangin-2025       # Archive overview - shows prefecture cards
+/map/poster/archive/sangin-2025/tokyo # Archive prefecture map (東京都)
+```
+
+### 7. UI Changes
+
+**Main page** (`src/app/map/poster/page.tsx`):
+- Shows district cards instead of prefecture cards
+- Displays overall progress statistics
+- Archive link at bottom: "過去の選挙データを見る（参議院選挙 2025）"
+
+**District map** (`src/app/map/poster/[prefecture]/page.tsx`):
+- Validates district from `POSTER_DISTRICT_MAP` or DB
+- Shows map with status update functionality
+- Back link goes to `/map/poster`
+
+**Archive pages**:
+- Read-only mode with amber warning banner
+- Clicking boards shows toast: "アーカイブデータは読み取り専用です"
+- Back link goes to archive overview
+
+### 8. CSV Loading Script
+
+**File**: `poster_data/load-csv.ts`
+
+- `ACTIVE_DATA_FOLDER = "shugin-2026"` determines which folder to load
+- Automatically sets `election_term` based on folder name
+- Sets `archived = true` for data without district, `false` for data with district
+
+---
+
+## How to Add New Districts
+
+### 1. Prepare CSV Data
+
+Create CSV file in `poster_data/data/shugin-2026/[都道府県]/[区市町村]_normalized.csv`:
+
+```csv
+prefecture,city,district,number,address,name,lat,long
+東京都,中央区,東京2区,1,中央区〇〇1-1,掲示板A,35.6839,139.7744
+```
+
+### 2. Add District Constants (optional)
+
+If you want custom center/zoom, add to `src/features/map-poster/constants/poster-districts.ts`:
+
 ```typescript
-// Update temp table creation (around line 142)
-CREATE TEMP TABLE ${tempTable} (
-  row_num SERIAL,
-  prefecture TEXT,
-  city TEXT,
-  district TEXT,  // NEW
-  number TEXT,
-  name TEXT,
-  address TEXT,
-  lat TEXT,
-  long TEXT
-)
+export const POSTER_DISTRICT_MAP = {
+  "tokyo-1": { jp: "東京1区", ... },
+  "tokyo-2": { jp: "東京2区", prefecture: "東京都", center: [35.6839, 139.7744], defaultZoom: 14 },
+} as const;
 
-// Update COPY statement (around line 155)
-COPY ${tempTable} (prefecture, city, district, number, address, name, lat, long) FROM STDIN...
-
-// Update INSERT statement (around line 162)
-INSERT INTO ${STAGING_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name)
-SELECT prefecture::poster_prefecture_enum, city, district, number, name, address, ...
-
-// Update final upsert (around line 265)
-INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name)
-...ON CONFLICT ... DO UPDATE SET district = EXCLUDED.district, ...
+export const JP_TO_EN_DISTRICT: Record<string, string> = {
+  "東京1区": "tokyo-1",
+  "東京2区": "tokyo-2",
+};
 ```
 
-### Step 5: Update Service Layer
+### 3. Load Data
 
-**File**: [src/features/map-poster/services/poster-boards.ts](src/features/map-poster/services/poster-boards.ts)
+```bash
+npm run poster:load-csv
+```
 
-Changes:
-1. Add `archived = false` filter to all queries
-2. Add new functions:
-   - `getPosterBoardsByDistrict(district: string)`
-   - `getDistrictsWithBoards()`
-   - `getPosterBoardStatsByDistrict(district: string)`
-3. Update `getPosterBoardSummaryByPrefecture` → `getPosterBoardSummaryByDistrict`
+### 4. Verify
 
-### Step 6: Update Actions
-
-**File**: [src/features/map-poster/actions/poster-boards.ts](src/features/map-poster/actions/poster-boards.ts)
-
-- Add district-based stats action
-- Update RPC calls or create new ones for district aggregation
-
-### Step 7: Update Main Poster Map Page
-
-**File**: [src/app/map/poster/page.tsx](src/app/map/poster/page.tsx)
-
-Changes:
-1. Fetch district summary instead of prefecture summary
-2. Display district cards (東京1区, 東京2区, ...) instead of prefecture cards
-3. Update links to `/map/poster/tokyo-1` format
-
-### Step 8: Update Dynamic Route Page
-
-**File**: [src/app/map/poster/[prefecture]/page.tsx](src/app/map/poster/[prefecture]/page.tsx)
-
-Changes:
-1. Rename to `[district]` or handle both district and legacy prefecture params
-2. Validate against `POSTER_DISTRICT_MAP` instead of `POSTER_PREFECTURE_MAP`
-3. Fetch boards by district instead of prefecture
-4. Update center coordinates and zoom from district config
-
-### Step 9: Update Client Components
-
-**Files**:
-- [src/features/map-poster/components/poster-map-page-client-optimized.tsx](src/features/map-poster/components/poster-map-page-client-optimized.tsx)
-- [src/features/map-poster/components/prefecture-poster-map-client.tsx](src/features/map-poster/components/prefecture-poster-map-client.tsx)
-
-Changes:
-1. Update props to use district instead of prefecture
-2. Update display labels (東京1区 instead of 東京都)
-3. Adjust default zoom levels for smaller district areas
-
-### Step 10: Update poster_board_totals (if needed)
-
-If official board counts are tracked per district, update:
-- Database table to store district-level totals
-- Service function to fetch district totals
+Visit `/map/poster` - new district should appear automatically.
 
 ---
 
-## Files to Modify (Summary)
+## Commands
 
-| File | Change Type |
-|------|-------------|
-| `supabase/migrations/new_migration.sql` | Create |
-| `src/features/map-poster/constants/poster-districts.ts` | Create |
-| `src/features/map-poster/types/poster-types.ts` | Regenerate |
-| `poster_data/load-csv.ts` | Modify |
-| `src/features/map-poster/services/poster-boards.ts` | Modify |
-| `src/features/map-poster/actions/poster-boards.ts` | Modify |
-| `src/app/map/poster/page.tsx` | Modify |
-| `src/app/map/poster/[prefecture]/page.tsx` | Modify/Rename |
-| `src/features/map-poster/components/poster-map-page-client-optimized.tsx` | Modify |
-| `src/features/map-poster/components/prefecture-poster-map-client.tsx` | Modify |
+```bash
+# Load CSV data from active folder (shugin-2026)
+npm run poster:load-csv
 
----
+# Load specific file
+npm run poster:load-csv poster_data/data/shugin-2026/東京都/千代田区_normalized.csv
 
-## Minimum Viable Implementation (東京1区 Only)
+# Load with verbose output (generates data-changes.md)
+npm run poster:load-csv -v
 
-To get a minimum working version with just 東京1区:
+# Regenerate TypeScript types after migration
+npm run types
 
-### Phase 1: Database & Types
-1. Create migration with `district` and `archived` columns
-2. Run `supabase migration up` locally
-3. Run `npm run types` to regenerate TypeScript types
+# Run typecheck
+npm run typecheck
 
-### Phase 2: Data Loading
-4. Update `load-csv.ts` to parse new CSV format with district column
-5. Prepare test CSV file with 東京1区 data
-6. Run `npm run poster:load-csv` to load test data
-
-### Phase 3: Constants & Services
-7. Create `poster-districts.ts` with tokyo-1 entry
-8. Add `getPosterBoardsByDistrict()` function to services
-9. Add `archived = false` filter to existing queries
-
-### Phase 4: UI Updates
-10. Update `[prefecture]/page.tsx` to handle district param
-11. Update main `page.tsx` to show district cards
-12. Test the full flow in browser
+# Run linter
+npm run biome:check:write
+```
 
 ---
 
-## Verification Steps
+## Verification Checklist
 
-1. Run migration: `supabase migration up`
-2. Regenerate types: `npm run types`
-3. Load test CSV with district data: `npm run poster:load-csv`
-4. Start dev server: `npm run dev`
-5. Navigate to `/map/poster` - should show 東京1区 card
-6. Click 東京1区 - should show map with boards
-7. Verify board status update still works
-8. Run typecheck: `npm run typecheck`
-9. Run linter: `npm run biome:check:write`
+- [x] Migration applied: `district`, `archived`, `election_term` columns exist
+- [x] Types regenerated: `npm run types` completed
+- [x] CSV loading works: 106 records loaded for 東京1区
+- [x] Main page shows district cards (東京1区)
+- [x] District map works: `/map/poster/tokyo-1` displays correctly
+- [x] Status updates work on district map
+- [x] Archive link visible at bottom of main page
+- [x] Archive overview works: `/map/poster/archive/sangin-2025`
+- [x] Archive prefecture map works (read-only mode)
+- [x] Typecheck passes: `npm run typecheck`
+- [x] Linter passes: `npm run biome:check:write`
+- [x] E2E tests updated for district-based UI
