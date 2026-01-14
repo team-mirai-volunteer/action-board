@@ -704,6 +704,7 @@ export type Database = {
           city: string;
           created_at: string;
           district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -721,6 +722,7 @@ export type Database = {
           city: string;
           created_at?: string;
           district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -738,6 +740,7 @@ export type Database = {
           city?: string;
           created_at?: string;
           district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -1069,6 +1072,7 @@ export type Database = {
           city: string;
           created_at: string;
           district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string | null;
           lat: number | null;
@@ -1085,6 +1089,7 @@ export type Database = {
           city: string;
           created_at?: string;
           district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1101,6 +1106,7 @@ export type Database = {
           city?: string;
           created_at?: string;
           district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;

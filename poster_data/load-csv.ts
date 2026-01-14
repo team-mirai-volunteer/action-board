@@ -326,11 +326,14 @@ async function main() {
     }
 
     // Insert from staging to production table using the full unique constraint
+    // Set election_term based on ACTIVE_DATA_FOLDER
     console.log("\nInserting data into production table...");
-    const result = await db.query(`
-      INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name, archived)
+    const result = await db.query(
+      `
+      INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name, archived, election_term)
       SELECT prefecture, city, district, number, name, address, lat, long, row_number, file_name,
-        CASE WHEN district IS NULL THEN true ELSE false END as archived
+        CASE WHEN district IS NULL THEN true ELSE false END as archived,
+        $1 as election_term
       FROM ${STAGING_TABLE}
       ON CONFLICT (row_number, file_name, prefecture)
       DO UPDATE SET
@@ -342,6 +345,7 @@ async function main() {
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         archived = CASE WHEN EXCLUDED.district IS NULL THEN true ELSE false END,
+        election_term = EXCLUDED.election_term,
         updated_at = timezone('utc'::text, now())
       WHERE
         ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
@@ -350,13 +354,16 @@ async function main() {
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
-        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long OR
+        ${TARGET_TABLE}.election_term IS DISTINCT FROM EXCLUDED.election_term
       RETURNING id, prefecture, city, district, number, name, address, lat, long, file_name,
         CASE
           WHEN xmax = 0 THEN 'inserted'
           ELSE 'updated'
         END as action
-    `);
+    `,
+      [ACTIVE_DATA_FOLDER],
+    );
 
     // Count inserts vs updates
     const insertedRows = result.rows.filter(

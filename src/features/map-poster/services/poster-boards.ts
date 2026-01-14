@@ -557,3 +557,180 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
 
   return { totalCount, statusCounts };
 }
+
+// ===== Archive Functions =====
+
+// Get available archived election terms
+export async function getArchivedElectionTerms(): Promise<string[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("election_term")
+    .eq("archived", true)
+    .not("election_term", "is", null);
+
+  if (error) {
+    console.error("Error fetching archived election terms:", error);
+    throw error;
+  }
+
+  // Get unique election terms
+  const uniqueTerms = Array.from(
+    new Set(
+      data
+        ?.map((item) => item.election_term)
+        .filter((t): t is string => t !== null) || [],
+    ),
+  );
+
+  return uniqueTerms;
+}
+
+// Get archived data summary by prefecture for a specific election term
+export async function getArchivedPosterBoardSummary(
+  electionTerm: string,
+): Promise<
+  Record<string, { total: number; statuses: Record<BoardStatus, number> }>
+> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("prefecture, status")
+    .eq("election_term", electionTerm)
+    .eq("archived", true);
+
+  if (error) {
+    console.error("Error fetching archived summary:", error);
+    throw error;
+  }
+
+  if (!data) {
+    return {};
+  }
+
+  // データを整形
+  const summary: Record<
+    string,
+    { total: number; statuses: Record<BoardStatus, number> }
+  > = {};
+
+  for (const row of data) {
+    const prefecture = row.prefecture;
+    if (!prefecture) continue;
+
+    if (!summary[prefecture]) {
+      summary[prefecture] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          not_yet_dangerous: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
+    summary[prefecture].statuses[row.status] += 1;
+    summary[prefecture].total += 1;
+  }
+
+  return summary;
+}
+
+// Get archived poster boards minimal data for a specific election term and prefecture
+export async function getArchivedPosterBoardsMinimal(
+  electionTerm: string,
+  prefecture: string,
+) {
+  const supabase = createClient();
+
+  const allBoards: Pick<
+    PosterBoard,
+    "id" | "lat" | "long" | "status" | "name" | "address" | "city" | "number"
+  >[] = [];
+  let hasMore = true;
+  let rangeStart = 0;
+  const pageSize = 5000;
+
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("id,lat,long,status,name,address,city,number")
+      .eq("election_term", electionTerm)
+      .eq(
+        "prefecture",
+        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+      )
+      .eq("archived", true)
+      .range(rangeStart, rangeStart + pageSize - 1)
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching archived poster boards:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      hasMore = false;
+    } else {
+      allBoards.push(...data);
+      if (data.length < pageSize) {
+        hasMore = false;
+      } else {
+        rangeStart += pageSize;
+      }
+    }
+  }
+
+  return allBoards;
+}
+
+// Get archived poster board stats for a specific election term and prefecture
+export async function getArchivedPosterBoardStats(
+  electionTerm: string,
+  prefecture: string,
+): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("status")
+    .eq("election_term", electionTerm)
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .eq("archived", true);
+
+  if (error) {
+    console.error("Error fetching archived stats:", error);
+    throw error;
+  }
+
+  const statusCounts: Record<BoardStatus, number> = {
+    not_yet: 0,
+    not_yet_dangerous: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+
+  for (const row of data || []) {
+    statusCounts[row.status] += 1;
+  }
+
+  const totalCount = data?.length || 0;
+
+  return { totalCount, statusCounts };
+}
