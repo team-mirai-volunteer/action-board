@@ -7,7 +7,6 @@ import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefe
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -47,8 +46,6 @@ export default async function SeasonPrefectureRankingPage({
   if (!season) {
     notFound();
   }
-
-  const supabase = createClient();
 
   // ユーザー情報取得
   const user = await getUser();
