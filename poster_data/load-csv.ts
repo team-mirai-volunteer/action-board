@@ -13,6 +13,10 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   dotenv.config({ path: ".env.local", override: true });
 }
 
+// Active election data folder - change this when switching to a new election
+// Available folders: sangin-2025 (参議院2025), shugin-2026 (衆議院2026)
+const ACTIVE_DATA_FOLDER = "shugin-2026";
+
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
@@ -115,12 +119,12 @@ async function main() {
         `Loading specific file: ${specificFile}${verbose ? " (verbose mode)" : ""}`,
       );
     } else {
-      // Find all CSV files in poster_data/data directory
-      csvFiles = await glob("poster_data/data/**/*.csv", {
+      // Find all CSV files in the active election data folder
+      csvFiles = await glob(`poster_data/data/${ACTIVE_DATA_FOLDER}/**/*.csv`, {
         ignore: ["**/node_modules/**", "**/.*"],
       });
       console.log(
-        `Found ${csvFiles.length} CSV files to load${verbose ? " (verbose mode)" : ""}`,
+        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_DATA_FOLDER}${verbose ? " (verbose mode)" : ""}`,
       );
     }
 
