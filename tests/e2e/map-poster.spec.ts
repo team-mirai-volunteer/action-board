@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { assertAuthState, expect, test } from "../e2e-test-helpers";
 
-async function testPrefectureNavigation(page: Page, name: string, url: string) {
+async function testPrefectureNavigation(page: Page, name: string, url: RegExp) {
   const link = page.getByRole("link", { name });
   await expect(link).toBeVisible({ timeout: 10000 });
   await link.click();
@@ -16,35 +16,41 @@ test.describe("ポスター掲示板マップのe2eテスト", () => {
     // ポスター掲示板マップに遷移
     await signedInPage.getByTestId("usermenubutton").click();
     await signedInPage.getByText("ポスター掲示板マップ").click();
-    await expect(signedInPage).toHaveURL(/\/map\/poster/, { timeout: 10000 });
+    await expect(signedInPage).toHaveURL(/\/map\/poster\/elections/, {
+      timeout: 10000,
+    });
     await expect(
-      signedInPage.locator("h1").getByText("ポスター掲示板マップ"),
+      signedInPage.locator("h1").getByText("選挙一覧"),
     ).toBeVisible();
-    await expect(signedInPage.getByText("都道府県から選択")).toBeVisible();
+    await signedInPage
+      .getByRole("link", { name: "参院選 期間: 2025/7/2 - 2025/7/20" })
+      .click();
+    await expect(signedInPage).toHaveURL(/\/map\/poster\/elections\//, {
+      timeout: 10000,
+    });
 
     // 各都道府県マップに遷移（簡潔化）
     const prefectureTests = [
-      { name: "北海道", url: "/map/poster/hokkaido" },
-      { name: "宮城県", url: "/map/poster/miyagi" },
-      { name: "埼玉県", url: "/map/poster/saitama" },
-      { name: "千葉県", url: "/map/poster/chiba" },
-      { name: "東京都", url: "/map/poster/tokyo" },
-      { name: "神奈川県", url: "/map/poster/kanagawa" },
-      { name: "長野県", url: "/map/poster/nagano" },
-      { name: "愛知県", url: "/map/poster/aichi" },
-      { name: "大阪府", url: "/map/poster/osaka" },
-      { name: "兵庫県", url: "/map/poster/hyogo" },
-      { name: "愛媛県", url: "/map/poster/ehime" },
-      { name: "福岡県", url: "/map/poster/fukuoka" },
+      { name: "北海道", url: /\/hokkaido$/ },
+      { name: "宮城県", url: /\/miyagi$/ },
+      { name: "埼玉県", url: /\/saitama$/ },
+      { name: "千葉県", url: /\/chiba$/ },
+      { name: "東京都", url: /\/tokyo$/ },
+      { name: "神奈川県", url: /\/kanagawa$/ },
+      { name: "長野県", url: /\/nagano$/ },
+      { name: "愛知県", url: /\/aichi$/ },
+      { name: "大阪府", url: /\/osaka$/ },
+      { name: "兵庫県", url: /\/hyogo$/ },
+      { name: "愛媛県", url: /\/ehime$/ },
+      { name: "福岡県", url: /\/fukuoka$/ },
     ];
 
+    const electionUrl = signedInPage.url();
     for (const { name, url } of prefectureTests) {
-      await signedInPage.goto("/map/poster");
       await testPrefectureNavigation(signedInPage, name, url);
+      await signedInPage.goto(electionUrl);
+      await expect(signedInPage).toHaveURL(electionUrl, { timeout: 10000 });
     }
-
-    // 一覧に戻って「ミッション一覧に戻る」を確認
-    await signedInPage.goto("/map/poster");
 
     // ミッション一覧に戻る
     await signedInPage
