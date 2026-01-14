@@ -546,12 +546,6 @@ export default function PrefecturePosterMapClient({
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
-          {/* アーカイブ版の説明 */}
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-sm text-yellow-800">
-              現在アーカイブ版のため、ステータスの更新はできません。
-            </p>
-          </div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm text-muted-foreground">
               {selectedBoard?.name ||
@@ -756,12 +750,7 @@ export default function PrefecturePosterMapClient({
               >
                 キャンセル
               </Button>
-              <Button
-                onClick={handleStatusUpdate}
-                // disabled={isUpdating}
-                // アーカイブ版のため、常に無効化
-                disabled={true}
-              >
+              <Button onClick={handleStatusUpdate} disabled={isUpdating}>
                 {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
