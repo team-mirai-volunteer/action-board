@@ -34,10 +34,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../config/status-config";
-import {
-  JP_TO_EN_PREFECTURE,
-  type PosterPrefectureKey,
-} from "../constants/poster-prefectures";
+import { POSTER_PREFECTURE_MAP } from "../constants/poster-prefectures";
 import {
   getPosterBoardDetail,
   getPosterBoardsMinimal,
@@ -65,6 +62,11 @@ const PosterMap = dynamic(() => import("./poster-map-with-cluster"), {
   ),
 });
 
+import type { Election } from "@/features/elections/services/elections";
+import {
+  type PREFECTURE_KEY,
+  PRERECTURE_CODES,
+} from "@/lib/constants/prefectures";
 import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
@@ -73,9 +75,8 @@ import {
 
 interface PrefecturePosterMapClientProps {
   userId?: string;
-  prefecture: string;
-  prefectureName: string;
-  center: [number, number];
+  election: Election;
+  prefectureKey: PREFECTURE_KEY;
   initialStats?: BoardStats;
   boardTotal?: PosterBoardTotal | null;
   userEditedBoardIds?: string[];
@@ -83,9 +84,8 @@ interface PrefecturePosterMapClientProps {
 
 export default function PrefecturePosterMapClient({
   userId,
-  prefecture,
-  prefectureName,
-  center,
+  election,
+  prefectureKey,
   initialStats,
   boardTotal,
   userEditedBoardIds,
@@ -152,13 +152,15 @@ export default function PrefecturePosterMapClient({
     loadBoards();
   }, []);
 
+  const prefectureData = PRERECTURE_CODES.find((x) => x.key === prefectureKey);
+  if (!prefectureData) throw new Error("無効な都道府県キーです");
   // ログイン後に選択した掲示板を復元
   useEffect(() => {
     if (userId && boards.length > 0) {
       const savedBoardId = localStorage.getItem("selectedBoardId");
       const savedPrefecture = localStorage.getItem("selectedBoardPrefecture");
 
-      if (savedBoardId && savedPrefecture === prefecture) {
+      if (savedBoardId && savedPrefecture === prefectureData.ja) {
         const savedBoard = boards.find((board) => board.id === savedBoardId);
         if (savedBoard) {
           // 保存された掲示板を選択してダイアログを開く
@@ -175,7 +177,7 @@ export default function PrefecturePosterMapClient({
         }
       }
     }
-  }, [userId, boards, prefecture]);
+  }, [userId, boards, prefectureData.ja]);
 
   // 住所をクリップボードにコピー
   const copyToClipboard = async (text: string) => {
@@ -190,19 +192,20 @@ export default function PrefecturePosterMapClient({
   const loadBoards = async () => {
     try {
       // 最小限のデータのみ取得
-      const data = await getPosterBoardsMinimal(prefecture);
+      const data = await getPosterBoardsMinimal(prefectureData.ja);
       setBoards(data as PosterBoard[]);
 
       // 統計情報も更新
       const newStats = await getPosterBoardStatsAction(
-        prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
+        prefectureData.ja,
+        election.id,
       );
       setStats(newStats);
 
       // ユーザーがログインしている場合は、編集した掲示板IDも再取得
       if (userId) {
         const updatedUserEditedBoardIds = await getUserEditedBoardIdsAction(
-          prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
+          prefectureData.ja,
           userId,
         );
         setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
@@ -218,7 +221,7 @@ export default function PrefecturePosterMapClient({
     if (!userId) {
       // ログイン後に戻ってきた時のために選択した掲示板情報を保存
       localStorage.setItem("selectedBoardId", board.id);
-      localStorage.setItem("selectedBoardPrefecture", prefecture);
+      localStorage.setItem("selectedBoardPrefecture", prefectureData.ja);
       setSelectedBoardForLogin(board);
       setIsLoginDialogOpen(true);
       return;
@@ -406,7 +409,7 @@ export default function PrefecturePosterMapClient({
         </Link>
         <div className="flex items-center gap-2 flex-1">
           <h1 className="text-lg font-bold">
-            {prefectureName}のポスター掲示板
+            {prefectureData.ja}のポスター掲示板
           </h1>
           <p className="text-xs text-muted-foreground hidden sm:block">
             {userId
@@ -430,10 +433,8 @@ export default function PrefecturePosterMapClient({
         <PosterMap
           boards={boards}
           onBoardClick={handleBoardSelect}
-          center={center}
-          prefectureKey={
-            JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
-          }
+          center={POSTER_PREFECTURE_MAP[prefectureKey].center}
+          prefectureKey={prefectureKey}
           onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
@@ -782,10 +783,7 @@ export default function PrefecturePosterMapClient({
             </Button>
             <Button
               onClick={() => {
-                const prefectureKey = JP_TO_EN_PREFECTURE[
-                  prefectureName
-                ] as PosterPrefectureKey;
-                const returnUrl = `/map/poster/${prefectureKey}`;
+                const returnUrl = `/map/poster/elections/${election.id}/${prefectureKey}`;
                 router.push(
                   `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
                 );

@@ -60,11 +60,12 @@ export default async function ElectionPrefecturePosterMapPage({
   }
 
   const prefectureKey = prefecture as PosterPrefectureKey;
-  const { jp: prefectureNameJp, center } = POSTER_PREFECTURE_MAP[prefectureKey];
+  const { jp: prefectureNameJp } = POSTER_PREFECTURE_MAP[prefectureKey];
 
   // 統計情報を取得
   const stats = await getPosterBoardStats(
     prefectureNameJp as Parameters<typeof getPosterBoardStats>[0],
+    electionId,
   );
 
   // 選管データから実際の掲示板総数を取得
@@ -92,9 +93,8 @@ export default async function ElectionPrefecturePosterMapPage({
       </div>
       <PrefecturePosterMapClient
         userId={user?.id}
-        prefecture={prefectureNameJp}
-        prefectureName={prefectureNameJp}
-        center={center}
+        election={election}
+        prefectureKey={prefectureKey}
         initialStats={stats}
         boardTotal={boardTotal}
         userEditedBoardIds={userEditedBoardIds}

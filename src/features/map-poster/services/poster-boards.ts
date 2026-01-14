@@ -23,7 +23,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   while (hasMore) {
     let query = supabase
       .from("poster_boards")
-      .select("id,lat,long,status,name,address,city,number")
+      .select("id,lat,long,name,address,city,number")
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -44,7 +44,38 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
     if (!data || data.length === 0) {
       hasMore = false;
     } else {
-      allBoards.push(...data);
+      // この batch の board_id を取得
+      const boardIds = data.map((b) => b.id);
+
+      // poster_board_status_history から最新の status を取得
+      const { data: statusData, error: statusError } = await supabase
+        .from("poster_board_status_history")
+        .select("board_id, new_status, created_at")
+        .in("board_id", boardIds)
+        .order("created_at", { ascending: false });
+
+      if (statusError) {
+        console.error("Error fetching status history:", statusError);
+        throw statusError;
+      }
+
+      // 各 board_id の最新 status をマップに格納
+      const latestStatusMap = new Map<string, BoardStatus>();
+      if (statusData) {
+        for (const record of statusData) {
+          if (!latestStatusMap.has(record.board_id)) {
+            latestStatusMap.set(record.board_id, record.new_status);
+          }
+        }
+      }
+
+      // status をマージして allBoards に追加
+      const boardsWithStatus = data.map((board) => ({
+        ...board,
+        status: latestStatusMap.get(board.id) || ("not_yet" as BoardStatus),
+      }));
+
+      allBoards.push(...boardsWithStatus);
 
       // 取得したデータが pageSize より少ない場合は最後のページ
       if (data.length < pageSize) {
@@ -229,13 +260,17 @@ export async function getPrefecturesWithBoards() {
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）
-export async function getPosterBoardStats(prefecture: string): Promise<{
+export async function getPosterBoardStats(
+  prefecture: string,
+  electionId: string,
+): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
   // RPC関数を使用した最適化された実装を呼び出す
   return getPosterBoardStatsAction(
     prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    electionId,
   );
 }
 

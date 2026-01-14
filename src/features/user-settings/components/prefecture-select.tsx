@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PREFECTURES } from "@/lib/constants/prefectures";
+import { USER_PROF_PREFECTURES } from "@/lib/constants/prefectures";
 import type React from "react";
 
 type PrefectureSelectProps = {
@@ -41,7 +41,7 @@ export const PrefectureSelect: React.FC<PrefectureSelectProps> = ({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {PREFECTURES.map((pref) => (
+        {USER_PROF_PREFECTURES.map((pref) => (
           <SelectItem value={pref} key={pref}>
             {pref}
           </SelectItem>

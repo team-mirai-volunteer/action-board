@@ -1,7 +1,7 @@
 "use server";
 
 import { recordSignupActivity } from "@/features/user-activity/services/activity";
-import { PREFECTURES } from "@/lib/constants/prefectures";
+import { USER_PROF_PREFECTURES } from "@/lib/constants/prefectures";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/services/avatar";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { sendWelcomeMail } from "@/lib/services/mail";
@@ -32,7 +32,7 @@ const updateProfileFormSchema = z.object({
   address_prefecture: z
     .string()
     .nonempty({ message: "都道府県を選択してください" })
-    .refine((val) => PREFECTURES.includes(val), {
+    .refine((val) => USER_PROF_PREFECTURES.includes(val), {
       message: "有効な都道府県を選択してください",
     }),
   date_of_birth: z

@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Election } from "@/features/elections/services/elections";
+import { PRERECTURE_CODES } from "@/lib/constants/prefectures";
 import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -20,11 +22,13 @@ interface Props {
     { total: number; statuses: Record<BoardStatus, number> }
   >;
   initialTotals: PosterBoardTotal[];
+  election: Election;
 }
 
 export default function PosterMapPageClientOptimized({
   initialSummary,
   initialTotals,
+  election,
 }: Props) {
   // 都道府県別の選管データをマップに変換
   const totalsByPrefecture = useMemo(() => {
@@ -100,6 +104,28 @@ export default function PosterMapPageClientOptimized({
     const completed = getCompletedCount(stats);
     return calculateProgressRate(completed, registeredTotal);
   };
+
+  //
+  const prefectureList = useMemo(() => {
+    const prefectureCodeMap = new Map(
+      PRERECTURE_CODES.map((p) => [p.code as string, p]),
+    );
+    const lgcodes =
+      election.lgcodes.length > 0
+        ? election.lgcodes
+        : PRERECTURE_CODES.map((p) => p.code);
+    return lgcodes.map((code) => {
+      const data = prefectureCodeMap.get(code);
+      if (!data) throw new Error(`Invalid prefecture code: ${code}`);
+      const posterData = POSTER_PREFECTURE_MAP[data.key];
+      return {
+        key: data.key,
+        ja: data.ja,
+        // en: (data.key as string).capitalize(),
+        ...posterData,
+      };
+    });
+  }, [election]);
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
@@ -179,96 +205,90 @@ export default function PosterMapPageClientOptimized({
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">都道府県から選択</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(POSTER_PREFECTURE_MAP).map(
-            ([prefectureKey, prefectureData]) => {
-              const stats = boardStats[prefectureData.jp] || {
-                not_yet: 0,
-                not_yet_dangerous: 0,
-                reserved: 0,
-                done: 0,
-                error_wrong_place: 0,
-                error_damaged: 0,
-                error_wrong_poster: 0,
-                other: 0,
-              };
-              const registeredInPrefecture = Object.values(stats).reduce(
-                (sum, count) => sum + count,
-                0,
-              );
-              const actualTotalInPrefecture =
-                totalsByPrefecture[prefectureData.jp] || 0;
-              const completionRate = getCompletionRate(
-                prefectureData.jp,
-                stats,
-              );
+          {prefectureList.map((posterData) => {
+            const stats = boardStats[posterData.ja] || {
+              not_yet: 0,
+              not_yet_dangerous: 0,
+              reserved: 0,
+              done: 0,
+              error_wrong_place: 0,
+              error_damaged: 0,
+              error_wrong_poster: 0,
+              other: 0,
+            };
+            const registeredInPrefecture = Object.values(stats).reduce(
+              (sum, count) => sum + count,
+              0,
+            );
+            const actualTotalInPrefecture =
+              totalsByPrefecture[posterData.ja] || 0;
+            const completionRate = getCompletionRate(posterData.ja, stats);
 
-              return (
-                <Link
-                  key={prefectureKey}
-                  href={`/map/poster/${prefectureKey}`}
-                  className="block"
-                >
-                  <Card className="transition-all hover:shadow-lg">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-5 w-5 text-muted-foreground" />
-                          <div>
-                            <CardTitle className="text-lg">
-                              {prefectureData.jp}
-                            </CardTitle>
-                          </div>
+            return (
+              <Link
+                key={posterData.key}
+                href={`/map/poster/elections/${election.id}/${posterData.key}`}
+                className="block"
+              >
+                <Card className="transition-all hover:shadow-lg">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <CardTitle className="text-lg">
+                            {posterData.ja}
+                          </CardTitle>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">
-                            掲示板数: {registeredInPrefecture.toLocaleString()}
-                            {actualTotalInPrefecture > 0 && (
-                              <span className="text-xs">
-                                {" "}
-                                (公表:{" "}
-                                {actualTotalInPrefecture.toLocaleString()})
-                              </span>
-                            )}
-                          </span>
-                          <span className="font-medium">{completionRate}%</span>
-                        </div>
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-                          <div
-                            className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
-                            style={{ width: `${completionRate}%` }}
-                          />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {Object.entries(stats).map(([status, count]) => {
-                            if (count === 0) return null;
-                            const config = statusConfig[status as BoardStatus];
-                            return (
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          掲示板数: {registeredInPrefecture.toLocaleString()}
+                          {actualTotalInPrefecture > 0 && (
+                            <span className="text-xs">
+                              {" "}
+                              (公表: {actualTotalInPrefecture.toLocaleString()})
+                            </span>
+                          )}
+                        </span>
+                        <span className="font-medium">{completionRate}%</span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                        <div
+                          className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
+                          style={{ width: `${completionRate}%` }}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(stats).map(([status, count]) => {
+                          if (count === 0) return null;
+                          const config = statusConfig[status as BoardStatus];
+                          return (
+                            <div
+                              key={status}
+                              className="flex items-center gap-1"
+                            >
                               <div
-                                key={status}
-                                className="flex items-center gap-1"
-                              >
-                                <div
-                                  className={`h-2 w-2 rounded-full ${config.color}`}
-                                />
-                                <span className="text-xs text-muted-foreground">
-                                  {config.label}: {count.toLocaleString()}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
+                                className={`h-2 w-2 rounded-full ${config.color}`}
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {config.label}: {count.toLocaleString()}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            },
-          )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

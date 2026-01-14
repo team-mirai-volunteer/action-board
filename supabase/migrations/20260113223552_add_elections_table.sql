@@ -6,6 +6,55 @@ CREATE TYPE election_subject AS ENUM (
   '市区町村首長選'
 );
 
+-- Extend poster_prefecture_enum to include all 47 prefectures
+-- Add missing prefectures in order
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '青森県' AFTER '北海道';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '岩手県' AFTER '青森県';
+-- 宮城県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '秋田県' AFTER '宮城県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '山形県' AFTER '秋田県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '福島県' AFTER '山形県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '茨城県' AFTER '福島県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '栃木県' AFTER '茨城県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '群馬県' AFTER '栃木県';
+-- 埼玉県 already exists
+-- 千葉県 already exists
+-- 東京都 already exists
+-- 神奈川県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '新潟県' AFTER '神奈川県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '富山県' AFTER '新潟県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '石川県' AFTER '富山県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '福井県' AFTER '石川県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '山梨県' AFTER '福井県';
+-- 長野県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '岐阜県' AFTER '長野県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '静岡県' AFTER '岐阜県';
+-- 愛知県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '三重県' AFTER '愛知県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '滋賀県' AFTER '三重県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '京都府' AFTER '滋賀県';
+-- 大阪府 already exists
+-- 兵庫県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '奈良県' AFTER '兵庫県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '和歌山県' AFTER '奈良県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '鳥取県' AFTER '和歌山県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '島根県' AFTER '鳥取県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '岡山県' AFTER '島根県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '広島県' AFTER '岡山県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '山口県' AFTER '広島県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '徳島県' AFTER '山口県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '香川県' AFTER '徳島県';
+-- 愛媛県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '高知県' AFTER '愛媛県';
+-- 福岡県 already exists
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '佐賀県' AFTER '福岡県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '長崎県' AFTER '佐賀県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '熊本県' AFTER '長崎県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '大分県' AFTER '熊本県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '宮崎県' AFTER '大分県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '鹿児島県' AFTER '宮崎県';
+ALTER TYPE poster_prefecture_enum ADD VALUE IF NOT EXISTS '沖縄県' AFTER '鹿児島県';
+
 -- Create elections table
 CREATE TABLE elections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -124,7 +173,7 @@ $$;
 -- Update get_poster_board_stats_optimized to support election filtering
 CREATE OR REPLACE FUNCTION get_poster_board_stats_optimized(
   target_prefecture poster_prefecture_enum,
-  election_id_param uuid DEFAULT NULL
+  election_id_param uuid
 )
 RETURNS TABLE(
   total_count bigint,

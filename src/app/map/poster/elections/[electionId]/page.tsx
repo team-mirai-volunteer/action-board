@@ -59,6 +59,7 @@ export default async function ElectionPosterMapPage({
       <PosterMapPageClientOptimized
         initialSummary={summary}
         initialTotals={totals}
+        election={election}
       />
     </div>
   );

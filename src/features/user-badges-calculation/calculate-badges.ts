@@ -1,4 +1,4 @@
-import { PREFECTURES } from "@/lib/constants/prefectures";
+import { USER_PROF_PREFECTURES } from "@/lib/constants/prefectures";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import { getCurrentSeasonId } from "../../lib/services/seasons";
 import { createAdminClient } from "../../lib/supabase/adminClient";
@@ -200,7 +200,7 @@ async function calculatePrefectureRankingBadges(seasonId?: string): Promise<{
     }
 
     // 各都道府県ごとに処理
-    for (const prefecture of PREFECTURES) {
+    for (const prefecture of USER_PROF_PREFECTURES) {
       const { data: prefectureRanking, error } = await supabase.rpc(
         "get_period_prefecture_ranking",
         {
