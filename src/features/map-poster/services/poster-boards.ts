@@ -8,7 +8,10 @@ import type {
 } from "../types/poster-types";
 
 // 最小限のデータのみ取得（マップ表示用）
-export async function getPosterBoardsMinimal(prefecture?: string) {
+export async function getPosterBoardsMinimal(
+  prefecture: string,
+  electionId: string,
+) {
   const supabase = createClient();
 
   // 全データを取得するためページネーションを使用
@@ -51,6 +54,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
       const { data: statusData, error: statusError } = await supabase
         .from("poster_board_status_history")
         .select("board_id, new_status, created_at")
+        .eq("election_id", electionId)
         .in("board_id", boardIds)
         .order("created_at", { ascending: false });
 

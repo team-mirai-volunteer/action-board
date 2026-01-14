@@ -192,7 +192,7 @@ export default function PrefecturePosterMapClient({
   const loadBoards = async () => {
     try {
       // 最小限のデータのみ取得
-      const data = await getPosterBoardsMinimal(prefectureData.ja);
+      const data = await getPosterBoardsMinimal(prefectureData.ja, election.id);
       setBoards(data as PosterBoard[]);
 
       // 統計情報も更新
