@@ -15,13 +15,9 @@ Support for 衆議院議員選挙 electoral districts (区割り) like 東京1�
 
 - Added `district` column to `poster_boards` and `staging_poster_boards`
 - Added `archived` boolean column with default `false`
-- Created index for district filtering
-- Auto-archived existing data where district is NULL
-
-**Migration**: `supabase/migrations/20260114000000_add_election_term.sql`
-
 - Added `election_term` column to `poster_boards` and `staging_poster_boards`
-- Created index for election_term filtering
+- Created indexes for district and election_term filtering
+- Auto-archived existing data where district is NULL
 - Set `sangin-2025` for archived data, `shugin-2026` for active data
 
 ### 2. Data Folder Structure
