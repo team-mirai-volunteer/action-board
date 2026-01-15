@@ -327,7 +327,7 @@ missions:
     title: チームみらいの機関誌をポスティングしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
     content: |-
-      チームみらいの機関誌を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき10ポイントを獲得できます。
+      チームみらいの機関誌を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
 
       詳しいポスティングの方法や注意点については、こちらのページをご確認ください：
       <a target="_blank" href="https://team-mirai.notion.site/206f6f56bae18049a2c2f989bc183a53">機関誌ポスティング</a>
@@ -340,6 +340,23 @@ missions:
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
+  - slug: posting-activity-magazine
+    title: チームみらいの活動報告をポスティングしよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    content: |-
+      チームみらいの活動報告を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
+
+      詳しいポスティングの方法や注意点については、こちらのページをご確認ください：
+      <a target="_blank" href="https://docs.google.com/document/d/1TKgZ-J7quZ4hp9PapjWUnV3cTrqMmOAzsy64wLESLL8/edit?tab=t.0">ポスティング活動ガイドライン</a>
+
+      活動前に必ずガイドラインをお読みいただき、適切な方法でポスティングを行ってください。
+    difficulty: 2
+    required_artifact_type: POSTING
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: ポスティング情報
+    ogp_image_url: null
   - slug: posting-flyer
     title: 確認団体ビラを配布しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-proportional-representation-poster.svg

@@ -2,9 +2,13 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
+import * as dotenv from "dotenv";
 import * as yaml from "js-yaml";
 import type { z } from "zod";
 import { type PostingEvent, PostingEventDataSchema } from "./types";
+
+// Load .env from project root
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const program = new Command();
 
