@@ -592,7 +592,7 @@ export default function PostingPageClient({
       <div
         style={{
           position: "fixed",
-          top: "10px",
+          top: "80px",
           right: "10px",
           zIndex: 1000,
           background: "white",
@@ -607,26 +607,6 @@ export default function PostingPageClient({
         <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
           {eventTitle}
         </div>
-        <div style={{ fontSize: "12px", color: "#666" }}>
-          Shapes: {shapeCount}
-        </div>
-
-        <button
-          type="button"
-          onClick={toggleTextVisibility}
-          style={{
-            padding: "6px 12px",
-            fontSize: "12px",
-            background: showText ? "#4CAF50" : "#666",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            transition: "background-color 0.3s",
-          }}
-        >
-          {showText ? "テキストを非表示" : "テキストを表示"}
-        </button>
 
         {/* Auto-save is always on; checkbox removed */}
       </div>
