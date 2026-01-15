@@ -1519,6 +1519,14 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: undefined;
       };
+      get_archived_poster_board_stats: {
+        Args: { p_election_term: string };
+        Returns: {
+          count: number;
+          prefecture: string;
+          status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
+      };
       get_mission_links: {
         Args: { p_mission_id: string };
         Returns: {
