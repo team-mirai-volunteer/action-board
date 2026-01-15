@@ -15,6 +15,14 @@ export interface MapShape {
   event_id?: string;
   created_at?: string;
   updated_at?: string;
+  // 住所情報（逆ジオコーディングで自動取得）
+  prefecture?: string | null;
+  city?: string | null;
+  address?: string | null;
+  postcode?: string | null;
+  // ポリゴン中心座標
+  lat?: number | null;
+  lng?: number | null;
 }
 
 // ミッション達成チェック用（posting_activitiesから取得）
