@@ -38,7 +38,7 @@ export default async function AuthButton() {
             <Link href={`/users/${user.id}`}>マイページ</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/map/posting">機関誌配布マップ</Link>
+            <Link href="/map/posting">ポスティングマップ</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/map/poster">ポスター掲示板マップ</Link>

@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "チームみらい機関誌配布マップ",
-  description: "チームみらい機関誌配布マップ",
+  title: "チームみらいポスティングマップ",
+  description: "チームみらいポスティングマップ",
 };
 
 export default async function PostingPage() {

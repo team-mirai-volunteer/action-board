@@ -21,8 +21,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${event.title} - チームみらい機関誌配布マップ`,
-    description: event.description || `${event.title}の機関誌配布マップ`,
+    title: `${event.title} - チームみらいポスティングマップ`,
+    description: event.description || `${event.title}のポスティングマップ`,
   };
 }
 
