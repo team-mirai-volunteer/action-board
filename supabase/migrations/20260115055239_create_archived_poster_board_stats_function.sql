@@ -23,3 +23,9 @@ $$;
 -- Grant execute permission to authenticated users
 GRANT EXECUTE ON FUNCTION get_archived_poster_board_stats(text) TO authenticated;
 GRANT EXECUTE ON FUNCTION get_archived_poster_board_stats(text) TO anon;
+
+-- Add composite index for archived poster boards queries
+-- This index improves performance for the above RPC function
+-- which filters by archived = true AND election_term = X
+CREATE INDEX idx_poster_boards_archived_election_term ON poster_boards(archived, election_term)
+WHERE archived = true;
