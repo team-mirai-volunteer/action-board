@@ -161,12 +161,24 @@ export default function PostingPageClient({
         console.log("Shape removed:", e.layer);
         const layer = e.layer;
         if (layer) {
+          const sid = getShapeId(layer);
+
+          // 削除確認ダイアログを表示
+          const confirmed = window.confirm(
+            "この図形を削除しますか？\n削除すると元に戻せません。",
+          );
+
+          if (!confirmed) {
+            // キャンセルされた場合はレイヤーを復元
+            layer.addTo(mapInstance);
+            return;
+          }
+
           // Remove from text layers tracking if it's a text layer
           if (layer._isTextLayer) {
             textLayersRef.current.delete(layer);
           }
 
-          const sid = getShapeId(layer);
           if (sid) {
             await deleteMapShape(sid);
             // Clean up tracking refs
@@ -174,6 +186,7 @@ export default function PostingPageClient({
             polygonLayersRef.current.delete(sid);
           }
           updateShapeCount();
+          toast.success("図形を削除しました");
         }
       });
 
