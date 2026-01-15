@@ -1,10 +1,70 @@
 import "server-only";
 
-import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
+import {
+  getPartyMembership,
+  getPartyMembershipMap,
+} from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { RankingPeriod, UserRanking } from "../types/ranking-types";
+
+export interface UserPeriodRanking {
+  user_id: string;
+  address_prefecture: string | null;
+  level: number;
+  name: string;
+  rank: number;
+  updated_at: string | null;
+  xp: number;
+  party_membership: Awaited<ReturnType<typeof getPartyMembership>>;
+}
+
+/**
+ * 現在のユーザーの期間別ランキング情報を取得
+ */
+export async function getUserPeriodRanking(
+  userId: string,
+  seasonId: string,
+  period: RankingPeriod = "all",
+): Promise<UserPeriodRanking | null> {
+  const supabase = createClient();
+
+  // 期間フィルター計算
+  let dateFilter: Date | null = null;
+  if (period === "daily") {
+    dateFilter = getJSTMidnightToday();
+  }
+
+  const { data, error } = await supabase.rpc("get_user_period_ranking", {
+    target_user_id: userId,
+    start_date: dateFilter?.toISOString() || undefined,
+    p_season_id: seasonId,
+  });
+
+  if (error) {
+    console.error("Error fetching user period ranking:", error);
+    return null;
+  }
+
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  // パーティメンバーシップ情報を取得
+  const partyMembership = await getPartyMembership(userId);
+
+  return {
+    user_id: data[0].user_id,
+    address_prefecture: data[0].address_prefecture,
+    level: data[0].level,
+    name: data[0].name,
+    rank: data[0].rank,
+    updated_at: data[0].updated_at,
+    xp: data[0].xp,
+    party_membership: partyMembership,
+  };
+}
 
 export async function getRanking(
   limit = 10,
