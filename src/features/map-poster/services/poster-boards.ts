@@ -8,7 +8,10 @@ import type {
 } from "../types/poster-types";
 
 // 最小限のデータのみ取得（マップ表示用）
-export async function getPosterBoardsMinimal(prefecture?: string) {
+export async function getPosterBoardsMinimal(
+  prefecture: string,
+  electionId: string,
+) {
   const supabase = createClient();
 
   // 全データを取得するためページネーションを使用
@@ -23,7 +26,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   while (hasMore) {
     let query = supabase
       .from("poster_boards")
-      .select("id,lat,long,status,name,address,city,number")
+      .select("id,lat,long,name,address,city,number")
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -44,7 +47,39 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
     if (!data || data.length === 0) {
       hasMore = false;
     } else {
-      allBoards.push(...data);
+      // この batch の board_id を取得
+      const boardIds = data.map((b) => b.id);
+
+      // poster_board_status_history から最新の status を取得
+      const { data: statusData, error: statusError } = await supabase
+        .from("poster_board_status_history")
+        .select("board_id, new_status, created_at")
+        .eq("election_id", electionId)
+        .in("board_id", boardIds)
+        .order("created_at", { ascending: false });
+
+      if (statusError) {
+        console.error("Error fetching status history:", statusError);
+        throw statusError;
+      }
+
+      // 各 board_id の最新 status をマップに格納
+      const latestStatusMap = new Map<string, BoardStatus>();
+      if (statusData) {
+        for (const record of statusData) {
+          if (!latestStatusMap.has(record.board_id)) {
+            latestStatusMap.set(record.board_id, record.new_status);
+          }
+        }
+      }
+
+      // status をマージして allBoards に追加
+      const boardsWithStatus = data.map((board) => ({
+        ...board,
+        status: latestStatusMap.get(board.id) || ("not_yet" as BoardStatus),
+      }));
+
+      allBoards.push(...boardsWithStatus);
 
       // 取得したデータが pageSize より少ない場合は最後のページ
       if (data.length < pageSize) {
@@ -229,18 +264,24 @@ export async function getPrefecturesWithBoards() {
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）
-export async function getPosterBoardStats(prefecture: string): Promise<{
+export async function getPosterBoardStats(
+  prefecture: string,
+  electionId: string,
+): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
   // RPC関数を使用した最適化された実装を呼び出す
   return getPosterBoardStatsAction(
     prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    electionId,
   );
 }
 
 // 選挙管理委員会から提供された掲示板総数を取得
-export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
+export async function getPosterBoardTotals(
+  electionId?: string,
+): Promise<PosterBoardTotal[]> {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -257,7 +298,9 @@ export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
 }
 
 // 都道府県別の統計情報のみを取得（集計済みデータ）
-export async function getPosterBoardSummaryByPrefecture(): Promise<
+export async function getPosterBoardSummaryByPrefecture(
+  electionId?: string,
+): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
   const supabase = createClient();
@@ -265,6 +308,7 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
   // RPC関数を使用してデータベース側で集計
   const { data: aggregatedData, error: rpcError } = await supabase.rpc(
     "get_poster_board_stats",
+    { election_id_param: electionId || undefined },
   );
 
   if (rpcError) {

@@ -11,6 +11,7 @@ type PrefectureName = NonNullable<
 // 統計情報を取得するServer Action
 export async function getPosterBoardStatsAction(
   prefecture: PrefectureName,
+  electionId: string,
 ): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
@@ -23,6 +24,7 @@ export async function getPosterBoardStatsAction(
       "get_poster_board_stats_optimized",
       {
         target_prefecture: prefecture,
+        election_id_param: electionId,
       },
     );
 

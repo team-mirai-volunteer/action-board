@@ -9,13 +9,11 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
 import { MAX_ZOOM } from "@/lib/constants/mission-config";
+import type { PREFECTURE_KEY } from "@/lib/constants/prefectures";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
-import {
-  type PosterPrefectureKey,
-  getPrefectureDefaultZoom,
-} from "../constants/poster-prefectures";
+import { getPrefectureDefaultZoom } from "../constants/poster-prefectures";
 import { usePosterBoardFilterOptimized } from "../hooks/use-poster-board-filter-optimized";
 import { PosterBoardFilter } from "./poster-board-filter";
 
@@ -36,7 +34,7 @@ interface PosterMapWithClusterProps {
   boards: PosterBoard[];
   onBoardClick: (board: PosterBoard) => void;
   center: [number, number];
-  prefectureKey?: PosterPrefectureKey;
+  prefectureKey?: PREFECTURE_KEY;
   onFilterChange?: (filters: {
     selectedStatuses: BoardStatus[];
     showOnlyMine: boolean;
@@ -369,7 +367,7 @@ export default function PosterMapWithCluster({
 
       // Add cluster events for tooltips
       markerClusterRef.current.on("clustermouseover", (e) => {
-        const cluster = e.propagatedFrom;
+        const cluster: L.MarkerCluster = e.propagatedFrom;
         const markers = cluster.getAllChildMarkers() as MarkerWithBoard[];
         const statusCounts: Record<BoardStatus, number> = {
           not_yet: 0,

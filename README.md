@@ -98,15 +98,10 @@
 3. `.env.local` ファイルの、以下の値を更新:
 
    ```
-   NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
-
-   # `supabase start` 実行時に表示される値を指定します。
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-   # SentryのDSNを指定します。開発時は空でもかまいません。
-   NEXT_PUBLIC_SENTRY_DSN=
-   NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
+   # `supabase start` 実行時に "🔑 Authentication Keys" に表示される値を指定します。
+   # すでに実行済みの場合は `supabase status` で再表示されます。
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
+   SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
    ```
 
 4. ローカルデータベースの初期化:
@@ -115,7 +110,7 @@
    supabase db reset
    ```
 
-  `supabase/migrations`配下にあるマイグレーションを実行し、`supabase/seed.sql`にあるシードデータをローカルデータベースに流し込みます。
+  `supabase/migrations` 配下にあるマイグレーションを実行し、`supabase/seed.sql`にあるダミーデータをローカルデータベースに流し込みます。
 
 5. 必要なパッケージをインストール:
 

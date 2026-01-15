@@ -144,6 +144,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      elections: {
+        Row: {
+          created_at: string;
+          end_date: string;
+          id: string;
+          lgcodes: string[];
+          season_id: string;
+          start_date: string;
+          subject: Database["public"]["Enums"]["election_subject"];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          end_date: string;
+          id?: string;
+          lgcodes?: string[];
+          season_id: string;
+          start_date: string;
+          subject: Database["public"]["Enums"]["election_subject"];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          end_date?: string;
+          id?: string;
+          lgcodes?: string[];
+          season_id?: string;
+          start_date?: string;
+          subject?: Database["public"]["Enums"]["election_subject"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elections_season_id_fkey";
+            columns: ["season_id"];
+            isOneToOne: false;
+            referencedRelation: "seasons";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       events: {
         Row: {
           created_at: string;
@@ -617,6 +658,7 @@ export type Database = {
         Row: {
           board_id: string;
           created_at: string;
+          election_id: string | null;
           id: string;
           new_status: Database["public"]["Enums"]["poster_board_status"];
           note: string | null;
@@ -628,6 +670,7 @@ export type Database = {
         Insert: {
           board_id: string;
           created_at?: string;
+          election_id?: string | null;
           id?: string;
           new_status: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
@@ -639,6 +682,7 @@ export type Database = {
         Update: {
           board_id?: string;
           created_at?: string;
+          election_id?: string | null;
           id?: string;
           new_status?: Database["public"]["Enums"]["poster_board_status"];
           note?: string | null;
@@ -660,6 +704,13 @@ export type Database = {
             columns: ["board_id"];
             isOneToOne: false;
             referencedRelation: "poster_boards";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "poster_board_status_history_election_id_fkey";
+            columns: ["election_id"];
+            isOneToOne: false;
+            referencedRelation: "elections";
             referencedColumns: ["id"];
           },
         ];
@@ -1598,23 +1649,43 @@ export type Database = {
           xp: number;
         }[];
       };
-      get_poster_board_stats: {
-        Args: never;
-        Returns: {
-          count: number;
-          prefecture: string;
-          status: Database["public"]["Enums"]["poster_board_status"];
-        }[];
-      };
-      get_poster_board_stats_optimized: {
-        Args: {
-          target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
-        };
-        Returns: {
-          status_counts: Json;
-          total_count: number;
-        }[];
-      };
+      get_poster_board_stats:
+        | {
+            Args: never;
+            Returns: {
+              count: number;
+              prefecture: string;
+              status: Database["public"]["Enums"]["poster_board_status"];
+            }[];
+          }
+        | {
+            Args: { election_id_param?: string };
+            Returns: {
+              count: number;
+              prefecture: string;
+              status: Database["public"]["Enums"]["poster_board_status"];
+            }[];
+          };
+      get_poster_board_stats_optimized:
+        | {
+            Args: {
+              target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+            };
+            Returns: {
+              status_counts: Json;
+              total_count: number;
+            }[];
+          }
+        | {
+            Args: {
+              election_id_param: string;
+              target_prefecture: Database["public"]["Enums"]["poster_prefecture_enum"];
+            };
+            Returns: {
+              status_counts: Json;
+              total_count: number;
+            }[];
+          };
       get_prefecture_ranking: {
         Args: { limit_count?: number; prefecture: string };
         Returns: {
@@ -1783,6 +1854,11 @@ export type Database = {
       };
     };
     Enums: {
+      election_subject:
+        | "衆院選"
+        | "参院選"
+        | "都道府県首長選"
+        | "市区町村首長選";
       poster_board_status:
         | "not_yet"
         | "reserved"
@@ -1794,17 +1870,52 @@ export type Database = {
         | "not_yet_dangerous";
       poster_prefecture_enum:
         | "北海道"
+        | "青森県"
+        | "岩手県"
         | "宮城県"
+        | "秋田県"
+        | "山形県"
+        | "福島県"
+        | "茨城県"
+        | "栃木県"
+        | "群馬県"
         | "埼玉県"
         | "千葉県"
         | "東京都"
         | "神奈川県"
+        | "新潟県"
+        | "富山県"
+        | "石川県"
+        | "福井県"
+        | "山梨県"
         | "長野県"
+        | "岐阜県"
+        | "静岡県"
         | "愛知県"
+        | "三重県"
+        | "滋賀県"
+        | "京都府"
         | "大阪府"
         | "兵庫県"
+        | "奈良県"
+        | "和歌山県"
+        | "鳥取県"
+        | "島根県"
+        | "岡山県"
+        | "広島県"
+        | "山口県"
+        | "徳島県"
+        | "香川県"
         | "愛媛県"
-        | "福岡県";
+        | "高知県"
+        | "福岡県"
+        | "佐賀県"
+        | "長崎県"
+        | "熊本県"
+        | "大分県"
+        | "宮崎県"
+        | "鹿児島県"
+        | "沖縄県";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1938,6 +2049,12 @@ export const Constants = {
   },
   public: {
     Enums: {
+      election_subject: [
+        "衆院選",
+        "参院選",
+        "都道府県首長選",
+        "市区町村首長選",
+      ],
       poster_board_status: [
         "not_yet",
         "reserved",
@@ -1950,17 +2067,52 @@ export const Constants = {
       ],
       poster_prefecture_enum: [
         "北海道",
+        "青森県",
+        "岩手県",
         "宮城県",
+        "秋田県",
+        "山形県",
+        "福島県",
+        "茨城県",
+        "栃木県",
+        "群馬県",
         "埼玉県",
         "千葉県",
         "東京都",
         "神奈川県",
+        "新潟県",
+        "富山県",
+        "石川県",
+        "福井県",
+        "山梨県",
         "長野県",
+        "岐阜県",
+        "静岡県",
         "愛知県",
+        "三重県",
+        "滋賀県",
+        "京都府",
         "大阪府",
         "兵庫県",
+        "奈良県",
+        "和歌山県",
+        "鳥取県",
+        "島根県",
+        "岡山県",
+        "広島県",
+        "山口県",
+        "徳島県",
+        "香川県",
         "愛媛県",
+        "高知県",
         "福岡県",
+        "佐賀県",
+        "長崎県",
+        "熊本県",
+        "大分県",
+        "宮崎県",
+        "鹿児島県",
+        "沖縄県",
       ],
     },
   },

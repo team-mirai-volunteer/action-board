@@ -5,7 +5,7 @@ import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
-import { PREFECTURES } from "@/lib/constants/prefectures";
+import { USER_PROF_PREFECTURES } from "@/lib/constants/prefectures";
 import { getSeasonBySlug } from "@/lib/services/seasons";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -51,7 +51,7 @@ export default async function SeasonPrefectureRankingPage({
   const user = await getUser();
 
   // 都道府県一覧を取得
-  const prefectures = PREFECTURES;
+  const prefectures = USER_PROF_PREFECTURES;
 
   // ユーザーのプロフィール情報を取得
   let userProfile = null;
