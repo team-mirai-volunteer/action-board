@@ -342,7 +342,7 @@ missions:
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
   - slug: posting-activity-magazine
     title: チームみらいの活動報告をポスティングしよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_posting-magazine.svg
     content: |-
       チームみらいの活動報告を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
 
