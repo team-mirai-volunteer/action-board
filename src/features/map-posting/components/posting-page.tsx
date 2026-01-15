@@ -522,13 +522,30 @@ export default function PostingPageClient({
   );
 
   // Handle polygon click to open status dialog
-  const handlePolygonClick = useCallback((shapeId: string) => {
-    const shapeData = shapesDataRef.current.get(shapeId);
-    if (shapeData) {
-      setSelectedShape(shapeData);
-      setIsStatusDialogOpen(true);
-    }
-  }, []);
+  const handlePolygonClick = useCallback(
+    (shapeId: string) => {
+      // Don't open dialog if any Geoman tool/mode is active
+      if (mapInstance?.pm) {
+        // biome-ignore lint/suspicious/noExplicitAny: Geoman methods not in type definitions
+        const pm = mapInstance.pm as any;
+        if (
+          pm.globalEditModeEnabled?.() ||
+          pm.globalDragModeEnabled?.() ||
+          pm.globalRemovalModeEnabled?.() ||
+          pm.globalDrawModeEnabled?.()
+        ) {
+          return;
+        }
+      }
+
+      const shapeData = shapesDataRef.current.get(shapeId);
+      if (shapeData) {
+        setSelectedShape(shapeData);
+        setIsStatusDialogOpen(true);
+      }
+    },
+    [mapInstance],
+  );
 
   // Handle status update from dialog
   const handleStatusUpdated = useCallback(
