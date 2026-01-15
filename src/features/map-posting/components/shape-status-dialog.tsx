@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -58,11 +59,13 @@ export function ShapeStatusDialog({
   const [completedPostingCount, setCompletedPostingCount] = useState<
     number | null
   >(null);
+  const [memo, setMemo] = useState<string>("");
 
   // ダイアログ開時にミッション達成状況を取得
   useEffect(() => {
     if (shape?.id && isOpen) {
       setSelectedStatus(shape.status || "planned");
+      setMemo(shape.memo || "");
       setPostingCount(null);
       setIsLoading(true);
 
@@ -95,8 +98,8 @@ export function ShapeStatusDialog({
 
     setIsUpdating(true);
     try {
-      // 1. ステータスを更新
-      await updateShapeStatus(shape.id, selectedStatus);
+      // 1. ステータスとメモを更新
+      await updateShapeStatus(shape.id, selectedStatus, memo || null);
 
       // 2. 配布完了 & 未達成の場合、ミッション達成処理
       if (
@@ -183,6 +186,18 @@ export function ShapeStatusDialog({
                   )}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="memo">メモ</Label>
+              <Textarea
+                id="memo"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="地域の特性などを記録"
+                rows={3}
+                disabled={!isOwner}
+              />
             </div>
 
             {selectedStatus === "completed" && !isMissionCompleted && (

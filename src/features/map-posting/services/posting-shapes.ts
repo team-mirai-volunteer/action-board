@@ -119,11 +119,13 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
 export async function updateShapeStatus(
   id: string,
   status: PostingShapeStatus,
+  memo?: string | null,
 ) {
   const { data, error } = await supabase
     .from("posting_shapes")
     .update({
       status,
+      memo,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

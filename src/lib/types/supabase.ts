@@ -835,6 +835,7 @@ export type Database = {
           created_at: string | null;
           event_id: string;
           id: string;
+          memo: string | null;
           properties: Json | null;
           status: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
@@ -846,6 +847,7 @@ export type Database = {
           created_at?: string | null;
           event_id: string;
           id?: string;
+          memo?: string | null;
           properties?: Json | null;
           status?: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
@@ -857,6 +859,7 @@ export type Database = {
           created_at?: string | null;
           event_id?: string;
           id?: string;
+          memo?: string | null;
           properties?: Json | null;
           status?: Database["public"]["Enums"]["posting_shape_status"];
           type?: string;

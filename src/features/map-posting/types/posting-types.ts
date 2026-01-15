@@ -9,6 +9,7 @@ export interface MapShape {
   coordinates: Json;
   properties?: Json;
   status?: PostingShapeStatus;
+  memo?: string | null;
   user_id?: string;
   user_display_name?: string;
   event_id?: string;
