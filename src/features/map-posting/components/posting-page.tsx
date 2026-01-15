@@ -662,6 +662,7 @@ export default function PostingPageClient({
         isOpen={isStatusDialogOpen}
         onOpenChange={setIsStatusDialogOpen}
         shape={selectedShape}
+        currentUserId={userId}
         onStatusUpdated={handleStatusUpdated}
       />
     </>

@@ -36,6 +36,7 @@ interface ShapeStatusDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   shape: MapShape | null;
+  currentUserId: string;
   onStatusUpdated: (id: string, newStatus: PostingShapeStatus) => void;
 }
 
@@ -43,8 +44,11 @@ export function ShapeStatusDialog({
   isOpen,
   onOpenChange,
   shape,
+  currentUserId,
   onStatusUpdated,
 }: ShapeStatusDialogProps) {
+  // Check if the current user owns this shape
+  const isOwner = shape?.user_id === currentUserId || !shape?.user_id;
   const [selectedStatus, setSelectedStatus] =
     useState<PostingShapeStatus>("planned");
   const [postingCount, setPostingCount] = useState<number | null>(null);
@@ -128,9 +132,11 @@ export function ShapeStatusDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>配布ステータスの変更</DialogTitle>
+          <DialogTitle>配布ステータス{isOwner ? "の変更" : ""}</DialogTitle>
           <DialogDescription>
-            選択した図形の配布ステータスを変更します
+            {isOwner
+              ? "選択した図形の配布ステータスを変更します"
+              : "この図形は他のユーザーが作成したため、変更できません"}
             {isMissionCompleted && (
               <span className="mt-1 block text-green-600">
                 ミッション達成済み
@@ -138,6 +144,12 @@ export function ShapeStatusDialog({
             )}
           </DialogDescription>
         </DialogHeader>
+        {/* 作成者情報 */}
+        {shape?.user_display_name && (
+          <div className="text-muted-foreground text-sm">
+            作成者: {shape.user_display_name}
+          </div>
+        )}
         {isLoading ? (
           <div className="py-4 text-center text-muted-foreground">
             読み込み中...
@@ -151,6 +163,7 @@ export function ShapeStatusDialog({
                 onValueChange={(value) =>
                   setSelectedStatus(value as PostingShapeStatus)
                 }
+                disabled={!isOwner}
               >
                 <SelectTrigger id="status">
                   <SelectValue />
@@ -188,6 +201,7 @@ export function ShapeStatusDialog({
                     )
                   }
                   placeholder="配布した枚数を入力"
+                  disabled={!isOwner}
                 />
                 <p className="text-muted-foreground text-sm">
                   配布完了を保存すると、ミッションが自動で達成されます
@@ -208,14 +222,16 @@ export function ShapeStatusDialog({
             onClick={() => onOpenChange(false)}
             disabled={isUpdating}
           >
-            キャンセル
+            {isOwner ? "キャンセル" : "閉じる"}
           </Button>
-          <Button
-            onClick={handleStatusUpdate}
-            disabled={isUpdating || isLoading || !canSubmit}
-          >
-            {isUpdating ? "更新中..." : "更新する"}
-          </Button>
+          {isOwner && (
+            <Button
+              onClick={handleStatusUpdate}
+              disabled={isUpdating || isLoading || !canSubmit}
+            >
+              {isUpdating ? "更新中..." : "更新する"}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

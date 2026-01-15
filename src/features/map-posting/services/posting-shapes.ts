@@ -48,7 +48,43 @@ export async function loadShapes(eventId: string) {
     throw error;
   }
 
-  return data || [];
+  if (!data || data.length === 0) {
+    return [];
+  }
+
+  // Get unique user IDs
+  const userIds = Array.from(
+    new Set(data.map((s) => s.user_id).filter((id): id is string => !!id)),
+  );
+
+  // Fetch display names for all users
+  let userDisplayNames: Record<string, string> = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("public_user_profiles")
+      .select("id, name")
+      .in("id", userIds);
+
+    if (profiles) {
+      userDisplayNames = profiles.reduce(
+        (acc, p) => {
+          if (p.id && p.name) {
+            acc[p.id] = p.name;
+          }
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+    }
+  }
+
+  // Merge display names into shapes
+  return data.map((shape) => ({
+    ...shape,
+    user_display_name: shape.user_id
+      ? userDisplayNames[shape.user_id]
+      : undefined,
+  }));
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
