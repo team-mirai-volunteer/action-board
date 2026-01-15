@@ -74,6 +74,13 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       // Create map
       if (!mapRef.current) return;
 
+      // Check if container already has a map (can happen with React StrictMode)
+      // biome-ignore lint/suspicious/noExplicitAny: Leaflet adds _leaflet_id to container
+      if ((mapRef.current as any)._leaflet_id) {
+        console.log("Map container already initialized, skipping");
+        return;
+      }
+
       try {
         const map = L.map(mapRef.current).setView([35.6762, 139.6503], 10);
         mapInstanceRef.current = map;

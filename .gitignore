@@ -65,6 +65,7 @@ poster_data/processed-files.json
 /supabase/archive/
 
 temp
+docs/qa-reports
 
 # csv export
 users-prefecture-export.csv

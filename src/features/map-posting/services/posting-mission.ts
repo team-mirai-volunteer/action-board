@@ -48,6 +48,6 @@ export async function completePostingMission(
   return {
     success: result.success,
     xpGranted: result.xpGranted,
-    error: result.success ? undefined : result.message,
+    error: result.success ? undefined : result.error,
   };
 }
