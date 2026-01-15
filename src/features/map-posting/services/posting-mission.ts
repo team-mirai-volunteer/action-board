@@ -24,11 +24,11 @@ export async function completePostingMission(
     return { success: false, error: "この図形は既にミッション達成済みです" };
   }
 
-  // posting-magazine ミッションを取得
+  // posting-activity-magazine ミッションを取得
   const { data: mission } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", "posting-magazine")
+    .eq("slug", "posting-activity-magazine")
     .single();
 
   if (!mission) {
