@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
-import type { MapShape } from "../types/posting-types";
+import type { PostingShapeStatus } from "../config/status-config";
+import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
 
 const supabase = createClient();
 
@@ -77,4 +78,48 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
   }
 
   return rows;
+}
+
+export async function updateShapeStatus(
+  id: string,
+  status: PostingShapeStatus,
+) {
+  const { data, error } = await supabase
+    .from("posting_shapes")
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating shape status:", error);
+    throw error;
+  }
+
+  return data;
+}
+
+// 図形に紐づくミッション達成状況を取得
+export async function getShapeMissionStatus(
+  shapeId: string,
+): Promise<ShapeMissionStatus> {
+  const { data, error } = await supabase
+    .from("posting_activities")
+    .select("id, posting_count, mission_artifact_id")
+    .eq("shape_id", shapeId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching shape mission status:", error);
+    throw error;
+  }
+
+  return {
+    isCompleted: !!data,
+    postingCount: data?.posting_count,
+    missionArtifactId: data?.mission_artifact_id,
+  };
 }

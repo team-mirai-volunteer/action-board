@@ -3,8 +3,12 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap } from "leaflet";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  type PostingShapeStatus,
+  postingStatusConfig,
+} from "../config/status-config";
 import {
   deleteShape as deleteMapShape,
   loadShapes as loadMapShapes,
@@ -19,12 +23,14 @@ import type {
   PostingPageClientProps,
   TextCoordinates,
 } from "../types/posting-types";
+import { ShapeStatusDialog } from "./shape-status-dialog";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
   ssr: false,
 });
 
 export default function PostingPageClient({
+  userId,
   eventId,
   eventTitle,
 }: PostingPageClientProps) {
@@ -34,6 +40,14 @@ export default function PostingPageClient({
   const textLayersRef = useRef<Set<Layer>>(new Set());
   const showTextRef = useRef(showText);
   const autoSave = true;
+
+  // Dialog state for status change
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [selectedShape, setSelectedShape] = useState<MapShapeData | null>(null);
+  // Track shapes data for status updates
+  const shapesDataRef = useRef<Map<string, MapShapeData>>(new Map());
+  // Track polygon layers for status color updates
+  const polygonLayersRef = useRef<Map<string, Layer>>(new Map());
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -118,9 +132,28 @@ export default function PostingPageClient({
             }
           }
 
-          await saveOrUpdateLayer(e.layer);
+          const saved = await saveOrUpdateLayer(e.layer);
           attachTextEvents(e.layer);
           updateShapeCount();
+
+          // For polygon shapes, track and attach click event
+          if (shapeName !== "Text" && saved?.id) {
+            // Store shape data for status dialog
+            const shapeData = extractShapeData(e.layer);
+            shapeData.id = saved.id;
+            shapesDataRef.current.set(saved.id, shapeData);
+
+            // Track polygon layer
+            polygonLayersRef.current.set(saved.id, e.layer);
+
+            // Apply default status style
+            applyStatusStyle(e.layer, "planned");
+
+            // Attach click event for status dialog
+            e.layer.on("click", () => {
+              handlePolygonClick(saved.id as string);
+            });
+          }
         }
       });
 
@@ -136,6 +169,9 @@ export default function PostingPageClient({
           const sid = getShapeId(layer);
           if (sid) {
             await deleteMapShape(sid);
+            // Clean up tracking refs
+            shapesDataRef.current.delete(sid);
+            polygonLayersRef.current.delete(sid);
           }
           updateShapeCount();
         }
@@ -185,6 +221,11 @@ export default function PostingPageClient({
           try {
             let layer: Layer | undefined;
 
+            // Store shape data for status dialog
+            if (shape.id) {
+              shapesDataRef.current.set(shape.id, shape as MapShapeData);
+            }
+
             if (shape.type === "text") {
               const coords = shape.coordinates as unknown as TextCoordinates;
               const [lng, lat] = coords.coordinates;
@@ -197,10 +238,26 @@ export default function PostingPageClient({
               layer._isTextLayer = true; // Mark as text layer for toggle
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
+              // Get status config for styling
+              const status = (shape.status as PostingShapeStatus) || "planned";
+              const statusConfig = postingStatusConfig[status];
+
               layer = L.geoJSON(
                 shape.coordinates as unknown as GeoJSON.Polygon,
+                {
+                  style: {
+                    color: statusConfig.color,
+                    fillColor: statusConfig.fillColor,
+                    fillOpacity: statusConfig.fillOpacity,
+                  },
+                },
               ) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
+
+              // Track polygon layer for status updates
+              if (shape.id) {
+                polygonLayersRef.current.set(shape.id, layer);
+              }
             }
 
             if (layer) {
@@ -224,7 +281,26 @@ export default function PostingPageClient({
                 attachTextEvents(layer);
               }
 
-              console.log("Loaded shape:", shape.type);
+              // Attach click event for polygon shapes to open status dialog
+              if (shape.type === "polygon" && shape.id) {
+                // Need to access the actual path layer inside GeoJSON layer group
+                if (
+                  "eachLayer" in layer &&
+                  typeof layer.eachLayer === "function"
+                ) {
+                  (
+                    layer as Layer & {
+                      eachLayer: (fn: (l: Layer) => void) => void;
+                    }
+                  ).eachLayer((subLayer: Layer) => {
+                    subLayer.on("click", () => {
+                      handlePolygonClick(shape.id as string);
+                    });
+                  });
+                }
+              }
+
+              console.log("Loaded shape:", shape.type, "status:", shape.status);
             }
           } catch (layerError) {
             console.error(
@@ -311,6 +387,7 @@ export default function PostingPageClient({
         },
         properties: { text: textContent },
         event_id: eventId,
+        user_id: userId,
       };
     }
 
@@ -321,6 +398,8 @@ export default function PostingPageClient({
       coordinates: geoJSON.geometry as unknown as Json,
       properties: geoJSON.properties || {},
       event_id: eventId,
+      user_id: userId,
+      status: "planned", // Default status for new shapes
     };
   };
 
@@ -405,6 +484,82 @@ export default function PostingPageClient({
     }
   };
 
+  // Apply status-based styling to a polygon layer
+  const applyStatusStyle = useCallback(
+    (layer: Layer, status: PostingShapeStatus = "planned") => {
+      const config = postingStatusConfig[status];
+      // Check if layer has setStyle method (Path layers) or iterate sublayers (GeoJSON LayerGroup)
+      if ("setStyle" in layer && typeof layer.setStyle === "function") {
+        (layer as Layer & { setStyle: (style: object) => void }).setStyle({
+          color: config.color,
+          fillColor: config.fillColor,
+          fillOpacity: config.fillOpacity,
+        });
+      } else if (
+        "eachLayer" in layer &&
+        typeof layer.eachLayer === "function"
+      ) {
+        // For GeoJSON layers which are LayerGroups
+        (
+          layer as Layer & { eachLayer: (fn: (l: Layer) => void) => void }
+        ).eachLayer((subLayer) => {
+          if (
+            "setStyle" in subLayer &&
+            typeof subLayer.setStyle === "function"
+          ) {
+            (
+              subLayer as Layer & { setStyle: (style: object) => void }
+            ).setStyle({
+              color: config.color,
+              fillColor: config.fillColor,
+              fillOpacity: config.fillOpacity,
+            });
+          }
+        });
+      }
+    },
+    [],
+  );
+
+  // Handle polygon click to open status dialog
+  const handlePolygonClick = useCallback((shapeId: string) => {
+    const shapeData = shapesDataRef.current.get(shapeId);
+    if (shapeData) {
+      setSelectedShape(shapeData);
+      setIsStatusDialogOpen(true);
+    }
+  }, []);
+
+  // Handle status update from dialog
+  const handleStatusUpdated = useCallback(
+    (shapeId: string, newStatus: PostingShapeStatus) => {
+      // Update the shapes data ref
+      const shapeData = shapesDataRef.current.get(shapeId);
+      if (shapeData) {
+        shapeData.status = newStatus;
+        shapesDataRef.current.set(shapeId, shapeData);
+      }
+
+      // Update the layer style
+      const layer = polygonLayersRef.current.get(shapeId);
+      if (layer) {
+        applyStatusStyle(layer, newStatus);
+      }
+    },
+    [applyStatusStyle],
+  );
+
+  // Attach click event to polygon layer for status dialog
+  const attachPolygonClickEvent = useCallback(
+    (layer: Layer, shapeId: string) => {
+      layer.off("click");
+      layer.on("click", () => {
+        handlePolygonClick(shapeId);
+      });
+    },
+    [handlePolygonClick],
+  );
+
   return (
     <>
       <link
@@ -484,6 +639,14 @@ export default function PostingPageClient({
       `}</style>
 
       <GeomanMap onMapReady={setMapInstance} />
+
+      {/* Status Change Dialog */}
+      <ShapeStatusDialog
+        isOpen={isStatusDialogOpen}
+        onOpenChange={setIsStatusDialogOpen}
+        shape={selectedShape}
+        onStatusUpdated={handleStatusUpdated}
+      />
     </>
   );
 }

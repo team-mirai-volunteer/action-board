@@ -1,5 +1,6 @@
 import type { Json } from "@/lib/types/supabase";
 import type { Layer } from "leaflet";
+import type { PostingShapeStatus } from "../config/status-config";
 
 // === Database Types ===
 export interface MapShape {
@@ -7,9 +8,18 @@ export interface MapShape {
   type: "polygon" | "text";
   coordinates: Json;
   properties?: Json;
-  event_id: string;
+  status?: PostingShapeStatus;
+  user_id?: string;
+  event_id?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+// ミッション達成チェック用（posting_activitiesから取得）
+export interface ShapeMissionStatus {
+  isCompleted: boolean;
+  postingCount?: number;
+  missionArtifactId?: string;
 }
 
 // === GeoJSON Types ===
