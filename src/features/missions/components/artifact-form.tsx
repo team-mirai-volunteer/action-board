@@ -4,15 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  MAX_POSTING_COUNT,
-  POSTING_POINTS_PER_UNIT,
-} from "@/lib/constants/mission-config";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { PosterForm } from "./poster-form";
+import { PostingForm } from "./posting-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
@@ -118,46 +115,7 @@ export function ArtifactForm({
 
         {/* ポスティング入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTING.key && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="postingCount">
-                ポスティング・配布枚数 <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                type="number"
-                name="postingCount"
-                id="postingCount"
-                min="1"
-                max={MAX_POSTING_COUNT}
-                required
-                disabled={disabled}
-                placeholder="例：50"
-              />
-              <p className="text-xs text-gray-500">
-                配布した枚数を入力してください（1枚＝{POSTING_POINTS_PER_UNIT}
-                ポイント）
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="locationText">
-                ポスティング・配布場所の郵便番号（ハイフンなし）
-                {/* <span className="text-red-500">*</span> */}
-              </Label>
-              <Input
-                type="text"
-                name="locationText"
-                id="locationText"
-                // required
-                maxLength={100}
-                disabled={disabled}
-                placeholder="例：1540017"
-              />
-              <p className="text-xs text-gray-500">
-                対象エリアの郵便番号をご入力ください
-              </p>
-            </div>
-          </div>
+          <PostingForm disabled={disabled} />
         )}
 
         {/* ポスター入力フォーム */}
