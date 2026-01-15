@@ -595,19 +595,17 @@ export async function getArchivedPosterBoardSummary(
 > {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("poster_boards")
-    .select("prefecture, status")
-    .eq("election_term", electionTerm)
-    .eq("archived", true);
+  // Use RPC function to avoid 10,000 row limit by doing server-side aggregation
+  const { data, error } = await supabase.rpc(
+    "get_archived_poster_board_stats",
+    {
+      p_election_term: electionTerm,
+    },
+  );
 
   if (error) {
     console.error("Error fetching archived summary:", error);
     throw error;
-  }
-
-  if (!data) {
-    return {};
   }
 
   // データを整形
@@ -616,27 +614,29 @@ export async function getArchivedPosterBoardSummary(
     { total: number; statuses: Record<BoardStatus, number> }
   > = {};
 
-  for (const row of data) {
-    const prefecture = row.prefecture;
-    if (!prefecture) continue;
+  if (data && Array.isArray(data)) {
+    for (const row of data) {
+      const prefecture = row.prefecture;
+      if (!prefecture) continue;
 
-    if (!summary[prefecture]) {
-      summary[prefecture] = {
-        total: 0,
-        statuses: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
-      };
+      if (!summary[prefecture]) {
+        summary[prefecture] = {
+          total: 0,
+          statuses: {
+            not_yet: 0,
+            not_yet_dangerous: 0,
+            reserved: 0,
+            done: 0,
+            error_wrong_place: 0,
+            error_damaged: 0,
+            error_wrong_poster: 0,
+            other: 0,
+          },
+        };
+      }
+      summary[prefecture].statuses[row.status as BoardStatus] = row.count;
+      summary[prefecture].total += row.count;
     }
-    summary[prefecture].statuses[row.status] += 1;
-    summary[prefecture].total += 1;
   }
 
   return summary;
