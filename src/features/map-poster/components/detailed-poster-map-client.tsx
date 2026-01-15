@@ -41,7 +41,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../config/status-config";
-import { JP_TO_EN_DISTRICT } from "../constants/poster-districts";
+import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
 import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
@@ -83,7 +83,7 @@ import {
   getUserEditedBoardIdsByDistrictAction,
 } from "../actions/poster-boards";
 
-interface PrefecturePosterMapClientProps {
+interface DetailedPosterMapClientProps {
   userId?: string;
   prefecture: string;
   prefectureName: string;
@@ -98,7 +98,7 @@ interface PrefecturePosterMapClientProps {
   archiveTermName?: string;
 }
 
-export default function PrefecturePosterMapClient({
+export default function DetailedPosterMapClient({
   userId,
   prefecture,
   prefectureName,
@@ -111,7 +111,7 @@ export default function PrefecturePosterMapClient({
   isArchive = false,
   archiveElectionTerm,
   archiveTermName,
-}: PrefecturePosterMapClientProps) {
+}: DetailedPosterMapClientProps) {
   const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);

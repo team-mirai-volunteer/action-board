@@ -2,12 +2,12 @@ import {
   getPosterBoardStatsByDistrictAction,
   getUserEditedBoardIdsByDistrictAction,
 } from "@/features/map-poster/actions/poster-boards";
-import PrefecturePosterMapClient from "@/features/map-poster/components/prefecture-poster-map-client";
+import DetailedPosterMapClient from "@/features/map-poster/components/detailed-poster-map-client";
 import {
   POSTER_DISTRICT_MAP,
   type PosterDistrictKey,
   isValidDistrict,
-} from "@/features/map-poster/constants/poster-districts";
+} from "@/features/map-poster/constants/poster-district-shugin-2026";
 import { getDistrictsWithBoards } from "@/features/map-poster/services/poster-boards";
 import { getUser } from "@/features/user-profile/services/profile";
 import type { Metadata } from "next";
@@ -97,7 +97,7 @@ export default async function DistrictPosterMapPage({
   }
 
   return (
-    <PrefecturePosterMapClient
+    <DetailedPosterMapClient
       userId={user?.id}
       prefecture={districtJp}
       prefectureName={districtJp}

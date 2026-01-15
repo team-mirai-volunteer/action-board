@@ -1,4 +1,4 @@
-import PrefecturePosterMapClient from "@/features/map-poster/components/prefecture-poster-map-client";
+import DetailedPosterMapClient from "@/features/map-poster/components/detailed-poster-map-client";
 import {
   POSTER_PREFECTURE_MAP,
   type PosterPrefectureKey,
@@ -65,7 +65,7 @@ export default async function ArchivePrefecturePage({
   const stats = await getArchivedPosterBoardStats(electionTerm, prefectureJp);
 
   return (
-    <PrefecturePosterMapClient
+    <DetailedPosterMapClient
       userId={undefined}
       prefecture={prefectureJp}
       prefectureName={prefectureJp}

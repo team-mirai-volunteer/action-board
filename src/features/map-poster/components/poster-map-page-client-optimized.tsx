@@ -6,7 +6,7 @@ import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { statusConfig } from "../config/status-config";
-import { JP_TO_EN_DISTRICT } from "../constants/poster-districts";
+import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
 import type { BoardStatus, PosterBoardTotal } from "../types/poster-types";
 import {
   calculateProgressRate,
