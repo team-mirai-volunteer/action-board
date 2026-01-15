@@ -10,6 +10,7 @@ export interface MapShape {
   properties?: Json;
   status?: PostingShapeStatus;
   user_id?: string;
+  user_display_name?: string;
   event_id?: string;
   created_at?: string;
   updated_at?: string;
