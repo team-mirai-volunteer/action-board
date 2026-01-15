@@ -356,7 +356,7 @@ missions:
     is_featured: false
     is_hidden: false
     artifact_label: ポスティング情報
-    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
+    ogp_image_url: null
   - slug: posting-flyer
     title: 確認団体ビラを配布しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-proportional-representation-poster.svg
