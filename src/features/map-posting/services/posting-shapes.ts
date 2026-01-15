@@ -1,14 +1,67 @@
 import { createClient } from "@/lib/supabase/client";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
+import { calculatePolygonCentroid } from "../utils/polygon-utils";
+import { reverseGeocode } from "./reverse-geocoding";
 
 const supabase = createClient();
+
+/**
+ * 図形の座標から住所情報と中心座標を取得
+ * ポリゴンの場合は中心座標を使用
+ */
+async function getAddressForShape(shape: MapShape): Promise<{
+  prefecture: string | null;
+  city: string | null;
+  address: string | null;
+  postcode: string | null;
+  lat: number | null;
+  lng: number | null;
+}> {
+  // テキストタイプは住所取得不要
+  if (shape.type === "text") {
+    return {
+      prefecture: null,
+      city: null,
+      address: null,
+      postcode: null,
+      lat: null,
+      lng: null,
+    };
+  }
+
+  const centroid = calculatePolygonCentroid(shape.coordinates);
+
+  if (!centroid) {
+    console.warn("Could not calculate centroid for shape");
+    return {
+      prefecture: null,
+      city: null,
+      address: null,
+      postcode: null,
+      lat: null,
+      lng: null,
+    };
+  }
+
+  const geocodeResult = await reverseGeocode(centroid.lat, centroid.lng);
+
+  return {
+    ...geocodeResult,
+    lat: centroid.lat,
+    lng: centroid.lng,
+  };
+}
 
 export async function saveShape(shape: MapShape) {
   const nowISO = new Date().toISOString();
 
+  // ポリゴンの場合、住所情報を取得
+  const addressInfo = await getAddressForShape(shape);
+
   const shapeWithMeta = {
     ...shape,
+    ...addressInfo, // prefecture, city, address, postcode, lat, lng を追加
     created_at: shape.created_at ?? nowISO,
     updated_at: shape.updated_at ?? nowISO,
   };
@@ -96,8 +149,30 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
     ...allowedFields
   } = data;
 
+  // coordinates が更新される場合は住所と中心座標も再取得
+  let addressInfo: {
+    prefecture?: string | null;
+    city?: string | null;
+    address?: string | null;
+    postcode?: string | null;
+    lat?: number | null;
+    lng?: number | null;
+  } = {};
+  if (allowedFields.coordinates && allowedFields.type !== "text") {
+    const centroid = calculatePolygonCentroid(allowedFields.coordinates);
+    if (centroid) {
+      const geocodeResult = await reverseGeocode(centroid.lat, centroid.lng);
+      addressInfo = {
+        ...geocodeResult,
+        lat: centroid.lat,
+        lng: centroid.lng,
+      };
+    }
+  }
+
   const updateData = {
     ...allowedFields,
+    ...addressInfo,
     updated_at: new Date().toISOString(),
   };
 

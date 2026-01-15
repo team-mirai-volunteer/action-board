@@ -831,11 +831,17 @@ export type Database = {
       };
       posting_shapes: {
         Row: {
+          address: string | null;
+          city: string | null;
           coordinates: Json;
           created_at: string | null;
           event_id: string;
           id: string;
+          lat: number | null;
+          lng: number | null;
           memo: string | null;
+          postcode: string | null;
+          prefecture: string | null;
           properties: Json | null;
           status: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
@@ -843,11 +849,17 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
+          address?: string | null;
+          city?: string | null;
           coordinates: Json;
           created_at?: string | null;
           event_id: string;
           id?: string;
+          lat?: number | null;
+          lng?: number | null;
           memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
           properties?: Json | null;
           status?: Database["public"]["Enums"]["posting_shape_status"];
           type: string;
@@ -855,11 +867,17 @@ export type Database = {
           user_id?: string | null;
         };
         Update: {
+          address?: string | null;
+          city?: string | null;
           coordinates?: Json;
           created_at?: string | null;
           event_id?: string;
           id?: string;
+          lat?: number | null;
+          lng?: number | null;
           memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
           properties?: Json | null;
           status?: Database["public"]["Enums"]["posting_shape_status"];
           type?: string;
