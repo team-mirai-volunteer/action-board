@@ -65,6 +65,13 @@ jobs:
           SMTP_ENABLED: false
           BQ_USER_PASSWORD: bq_user_password
 
+      # ポスターデータをロード
+      - name: Load poster CSV data
+        run: |
+          echo "Loading poster CSV data..."
+          npm run poster:load-csv
+          echo "Poster CSV data loaded."
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 

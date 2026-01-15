@@ -72,3 +72,6 @@ users-prefecture-export.csv
 
 # serena mcp
 /.serena
+
+# claude
+.claude

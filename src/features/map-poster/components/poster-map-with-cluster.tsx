@@ -43,6 +43,7 @@ interface PosterMapWithClusterProps {
   }) => void;
   currentUserId?: string;
   userEditedBoardIds?: Set<string>;
+  defaultZoom?: number;
 }
 
 // Status colors for markers
@@ -267,6 +268,7 @@ export default function PosterMapWithCluster({
   onFilterChange,
   currentUserId: userIdFromProps,
   userEditedBoardIds,
+  defaultZoom: defaultZoomProp,
 }: PosterMapWithClusterProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -334,10 +336,10 @@ export default function PosterMapWithCluster({
   }, [filterState, onFilterChange]);
 
   useEffect(() => {
-    // Get zoom level for the prefecture
-    const zoomLevel = prefectureKey
-      ? getPrefectureDefaultZoom(prefectureKey)
-      : 12;
+    // Get zoom level: use prop if provided, otherwise get from prefecture config
+    const zoomLevel =
+      defaultZoomProp ??
+      (prefectureKey ? getPrefectureDefaultZoom(prefectureKey) : 12);
 
     if (!mapRef.current) {
       // Initialize map with calculated zoom
@@ -432,7 +434,7 @@ export default function PosterMapWithCluster({
     if (mapRef.current) {
       mapRef.current.setView(center, zoomLevel);
     }
-  }, [center, prefectureKey]);
+  }, [center, prefectureKey, defaultZoomProp]);
 
   useEffect(() => {
     if (!markerClusterRef.current) return;

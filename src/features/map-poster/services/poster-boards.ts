@@ -7,7 +7,51 @@ import type {
   PosterBoardTotal,
 } from "../types/poster-types";
 
-// 最小限のデータのみ取得（マップ表示用）
+// 最小限のデータのみ取得（マップ表示用）- 区割り対応版
+export async function getPosterBoardsMinimalByDistrict(district: string) {
+  const supabase = createClient();
+
+  // 全データを取得するためページネーションを使用
+  const allBoards: Pick<
+    PosterBoard,
+    "id" | "lat" | "long" | "status" | "name" | "address" | "city" | "number"
+  >[] = [];
+  let hasMore = true;
+  let rangeStart = 0;
+  const pageSize = 5000; // 5000件ずつ取得
+
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("id,lat,long,status,name,address,city,number")
+      .eq("district", district)
+      .eq("archived", false)
+      .range(rangeStart, rangeStart + pageSize - 1)
+      .order("id", { ascending: true }); // 一貫した順序を保証
+
+    if (error) {
+      console.error("Error fetching poster boards by district:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      hasMore = false;
+    } else {
+      allBoards.push(...data);
+
+      // 取得したデータが pageSize より少ない場合は最後のページ
+      if (data.length < pageSize) {
+        hasMore = false;
+      } else {
+        rangeStart += pageSize;
+      }
+    }
+  }
+
+  return allBoards;
+}
+
+// 最小限のデータのみ取得（マップ表示用）- レガシー都道府県版
 export async function getPosterBoardsMinimal(prefecture?: string) {
   const supabase = createClient();
 
@@ -24,6 +68,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
     let query = supabase
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
+      .eq("archived", false)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -58,7 +103,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
   return allBoards;
 }
 
-// 全データ取得（既存の関数名を維持）
+// 全データ取得（既存の関数名を維持）- レガシー都道府県版
 export async function getPosterBoards(prefecture?: string) {
   const supabase = createClient();
 
@@ -71,6 +116,7 @@ export async function getPosterBoards(prefecture?: string) {
     let query = supabase
       .from("poster_boards")
       .select("*")
+      .eq("archived", false)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -86,6 +132,46 @@ export async function getPosterBoards(prefecture?: string) {
 
     if (error) {
       console.error("Error fetching poster boards:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      break;
+    }
+
+    allBoards = [...allBoards, ...data];
+
+    if (data.length < pageSize) {
+      break;
+    }
+
+    page++;
+  }
+
+  return allBoards;
+}
+
+// 全データ取得 - 区割り対応版
+export async function getPosterBoardsByDistrict(district: string) {
+  const supabase = createClient();
+
+  // Fetch all boards with pagination to bypass Supabase's default limit
+  let allBoards: PosterBoard[] = [];
+  let page = 0;
+  const pageSize = 1000;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("*")
+      .eq("district", district)
+      .eq("archived", false)
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (error) {
+      console.error("Error fetching poster boards by district:", error);
       throw error;
     }
 
@@ -183,7 +269,7 @@ export async function updateBoardStatus(
   return { success: true };
 }
 
-// Get unique prefectures that have poster boards
+// Get unique prefectures that have poster boards (legacy)
 export async function getPrefecturesWithBoards() {
   const supabase = createClient();
 
@@ -197,6 +283,7 @@ export async function getPrefecturesWithBoards() {
       .from("poster_boards")
       .select("prefecture")
       .not("prefecture", "is", null)
+      .eq("archived", false)
       .order("prefecture")
       .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -226,6 +313,54 @@ export async function getPrefecturesWithBoards() {
   const uniquePrefectures = Array.from(new Set(allPrefectures));
 
   return uniquePrefectures;
+}
+
+// Get unique districts that have poster boards (区割り対応版)
+export async function getDistrictsWithBoards(): Promise<string[]> {
+  const supabase = createClient();
+
+  // Fetch all records with pagination to get all districts
+  let allDistricts: string[] = [];
+  let page = 0;
+  const pageSize = 1000;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("district")
+      .not("district", "is", null)
+      .eq("archived", false)
+      .order("district")
+      .order("id", { ascending: true })
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (error) {
+      console.error("Error fetching districts:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      break;
+    }
+
+    allDistricts = [
+      ...allDistricts,
+      ...data
+        .map((item) => item.district)
+        .filter((d): d is string => d !== null),
+    ];
+
+    if (data.length < pageSize) {
+      break;
+    }
+
+    page++;
+  }
+
+  // Get unique districts
+  const uniqueDistricts = Array.from(new Set(allDistricts));
+
+  return uniqueDistricts;
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）
@@ -328,4 +463,274 @@ export async function getPosterBoardTotalByPrefecture(
   }
 
   return data;
+}
+
+// 区割り別の統計情報を取得（集計済みデータ）
+export async function getPosterBoardSummaryByDistrict(): Promise<
+  Record<string, { total: number; statuses: Record<BoardStatus, number> }>
+> {
+  const supabase = createClient();
+
+  // 区割りでグループ化して集計
+  // archived=false のデータのみを対象
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("district, status")
+    .not("district", "is", null)
+    .eq("archived", false);
+
+  if (error) {
+    console.error("Error fetching district summary:", error);
+    throw error;
+  }
+
+  if (!data) {
+    return {};
+  }
+
+  // データを整形
+  const summary: Record<
+    string,
+    { total: number; statuses: Record<BoardStatus, number> }
+  > = {};
+
+  for (const row of data) {
+    const district = row.district;
+    if (!district) continue;
+
+    if (!summary[district]) {
+      summary[district] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          not_yet_dangerous: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
+    summary[district].statuses[row.status] += 1;
+    summary[district].total += 1;
+  }
+
+  return summary;
+}
+
+// 区割り別の統計情報を取得（特定の区割り）
+export async function getPosterBoardStatsByDistrict(district: string): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("status")
+    .eq("district", district)
+    .eq("archived", false);
+
+  if (error) {
+    console.error("Error fetching district stats:", error);
+    throw error;
+  }
+
+  const statusCounts: Record<BoardStatus, number> = {
+    not_yet: 0,
+    not_yet_dangerous: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+
+  for (const row of data || []) {
+    statusCounts[row.status] += 1;
+  }
+
+  const totalCount = data?.length || 0;
+
+  return { totalCount, statusCounts };
+}
+
+// ===== Archive Functions =====
+
+// Get available archived election terms
+export async function getArchivedElectionTerms(): Promise<string[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("election_term")
+    .eq("archived", true)
+    .not("election_term", "is", null);
+
+  if (error) {
+    console.error("Error fetching archived election terms:", error);
+    throw error;
+  }
+
+  // Get unique election terms
+  const uniqueTerms = Array.from(
+    new Set(
+      data
+        ?.map((item) => item.election_term)
+        .filter((t): t is string => t !== null) || [],
+    ),
+  );
+
+  return uniqueTerms;
+}
+
+// Get archived data summary by prefecture for a specific election term
+export async function getArchivedPosterBoardSummary(
+  electionTerm: string,
+): Promise<
+  Record<string, { total: number; statuses: Record<BoardStatus, number> }>
+> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("prefecture, status")
+    .eq("election_term", electionTerm)
+    .eq("archived", true);
+
+  if (error) {
+    console.error("Error fetching archived summary:", error);
+    throw error;
+  }
+
+  if (!data) {
+    return {};
+  }
+
+  // データを整形
+  const summary: Record<
+    string,
+    { total: number; statuses: Record<BoardStatus, number> }
+  > = {};
+
+  for (const row of data) {
+    const prefecture = row.prefecture;
+    if (!prefecture) continue;
+
+    if (!summary[prefecture]) {
+      summary[prefecture] = {
+        total: 0,
+        statuses: {
+          not_yet: 0,
+          not_yet_dangerous: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
+    summary[prefecture].statuses[row.status] += 1;
+    summary[prefecture].total += 1;
+  }
+
+  return summary;
+}
+
+// Get archived poster boards minimal data for a specific election term and prefecture
+export async function getArchivedPosterBoardsMinimal(
+  electionTerm: string,
+  prefecture: string,
+) {
+  const supabase = createClient();
+
+  const allBoards: Pick<
+    PosterBoard,
+    "id" | "lat" | "long" | "status" | "name" | "address" | "city" | "number"
+  >[] = [];
+  let hasMore = true;
+  let rangeStart = 0;
+  const pageSize = 5000;
+
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("id,lat,long,status,name,address,city,number")
+      .eq("election_term", electionTerm)
+      .eq(
+        "prefecture",
+        prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+      )
+      .eq("archived", true)
+      .range(rangeStart, rangeStart + pageSize - 1)
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching archived poster boards:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      hasMore = false;
+    } else {
+      allBoards.push(...data);
+      if (data.length < pageSize) {
+        hasMore = false;
+      } else {
+        rangeStart += pageSize;
+      }
+    }
+  }
+
+  return allBoards;
+}
+
+// Get archived poster board stats for a specific election term and prefecture
+export async function getArchivedPosterBoardStats(
+  electionTerm: string,
+  prefecture: string,
+): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("poster_boards")
+    .select("status")
+    .eq("election_term", electionTerm)
+    .eq(
+      "prefecture",
+      prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
+    )
+    .eq("archived", true);
+
+  if (error) {
+    console.error("Error fetching archived stats:", error);
+    throw error;
+  }
+
+  const statusCounts: Record<BoardStatus, number> = {
+    not_yet: 0,
+    not_yet_dangerous: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+
+  for (const row of data || []) {
+    statusCounts[row.status] += 1;
+  }
+
+  const totalCount = data?.length || 0;
+
+  return { totalCount, statusCounts };
 }

@@ -1,97 +1,109 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, MapPin } from "lucide-react";
-import Link from "next/link";
-import { useMemo } from "react";
-import { statusConfig } from "../config/status-config";
-import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
-import type { BoardStatus, PosterBoardTotal } from "../types/poster-types";
+import { statusConfig } from "@/features/map-poster/config/status-config";
+import { JP_TO_EN_PREFECTURE } from "@/features/map-poster/constants/poster-prefectures";
+import { getArchivedPosterBoardSummary } from "@/features/map-poster/services/poster-boards";
+import type { BoardStatus } from "@/features/map-poster/types/poster-types";
 import {
   calculateProgressRate,
   getCompletedCount,
   getRegisteredCount,
-} from "../utils/poster-progress";
+} from "@/features/map-poster/utils/poster-progress";
+import { Archive, ChevronRight, MapPin } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-interface Props {
-  initialSummary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  >;
-  initialTotals: PosterBoardTotal[];
+// Election term display names
+const ELECTION_TERM_NAMES: Record<string, string> = {
+  "sangin-2025": "参議院選挙 2025",
+  "shugin-2026": "衆議院選挙 2026",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ electionTerm: string }>;
+}): Promise<Metadata> {
+  const { electionTerm } = await params;
+  const termName = ELECTION_TERM_NAMES[electionTerm] || electionTerm;
+
+  return {
+    title: `${termName} - ポスター掲示板マップ アーカイブ`,
+    description: `${termName}のポスター掲示板の配置状況（アーカイブ）`,
+  };
 }
 
-export default function PosterMapPageClientOptimized({
-  initialSummary,
-  initialTotals,
-}: Props) {
-  // 区割り別の統計を使用
-  const boardStats = useMemo(() => {
-    const stats: Record<string, Record<BoardStatus, number>> = {};
-    for (const [district, data] of Object.entries(initialSummary)) {
-      stats[district] = data.statuses;
+export default async function ArchiveElectionTermPage({
+  params,
+}: {
+  params: Promise<{ electionTerm: string }>;
+}) {
+  const { electionTerm } = await params;
+
+  // Validate election term
+  const termName = ELECTION_TERM_NAMES[electionTerm];
+  if (!termName) {
+    return notFound();
+  }
+
+  // Get archived summary for this election term
+  const summary = await getArchivedPosterBoardSummary(electionTerm);
+
+  // Calculate total stats
+  let registeredTotal = 0;
+  let completed = 0;
+  const allStatuses: Record<BoardStatus, number> = {
+    not_yet: 0,
+    not_yet_dangerous: 0,
+    reserved: 0,
+    done: 0,
+    error_wrong_place: 0,
+    error_damaged: 0,
+    error_wrong_poster: 0,
+    other: 0,
+  };
+
+  for (const data of Object.values(summary)) {
+    registeredTotal += data.total;
+    completed += data.statuses.done || 0;
+    for (const [status, count] of Object.entries(data.statuses)) {
+      allStatuses[status as BoardStatus] += count;
     }
-    return stats;
-  }, [initialSummary]);
+  }
 
-  // 全体の統計を計算（登録済み掲示板数基準）
-  const totalStats = useMemo(() => {
-    // 全区割りの統計を集計
-    let registeredTotal = 0;
-    let completed = 0;
-    const allStatuses: Record<BoardStatus, number> = {
-      not_yet: 0,
-      not_yet_dangerous: 0,
-      reserved: 0,
-      done: 0,
-      error_wrong_place: 0,
-      error_damaged: 0,
-      error_wrong_poster: 0,
-      other: 0,
-    };
+  const percentage = calculateProgressRate(completed, registeredTotal);
 
-    for (const data of Object.values(initialSummary)) {
-      registeredTotal += data.total;
-      completed += data.statuses.done || 0;
+  // Sort prefectures
+  const sortedPrefectures = Object.keys(summary).sort((a, b) =>
+    a.localeCompare(b, "ja"),
+  );
 
-      // 各ステータスの数を集計
-      for (const [status, count] of Object.entries(data.statuses)) {
-        allStatuses[status as BoardStatus] += count;
-      }
-    }
-
-    // 進捗率は登録済み掲示板数を基準に計算
-    const percentage = calculateProgressRate(completed, registeredTotal);
-
-    return {
-      registeredTotal, // DB登録数
-      completed,
-      percentage,
-      statuses: allStatuses, // 各ステータスの合計
-    };
-  }, [initialSummary]);
-
-  // 区割り別の完了率を計算（登録済み掲示板数基準）
   const getCompletionRate = (stats: Record<BoardStatus, number>) => {
     const registeredTotal = getRegisteredCount(stats);
     const completed = getCompletedCount(stats);
     return calculateProgressRate(completed, registeredTotal);
   };
 
-  // DB から取得した区割りをソート（データがある区割りのみ表示）
-  const sortedDistricts = useMemo(() => {
-    // initialSummary のキー（区割り名）を取得してソート
-    return Object.keys(initialSummary).sort((a, b) => a.localeCompare(b, "ja"));
-  }, [initialSummary]);
-
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold">ポスター掲示板マップ</h1>
+        <div className="flex items-center gap-2">
+          <Archive className="h-6 w-6 text-muted-foreground" />
+          <h1 className="text-2xl font-bold">
+            ポスター掲示板マップ アーカイブ
+          </h1>
+        </div>
         <p className="text-muted-foreground">
-          選挙区を選択して、各地域のポスター掲示板の状況を確認できます
+          {termName}のデータ（読み取り専用）
+        </p>
+      </div>
+
+      {/* Archive Notice */}
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <p className="text-sm text-amber-800">
+          このページはアーカイブデータです。ステータスの更新はできません。
         </p>
       </div>
 
@@ -104,19 +116,19 @@ export default function PosterMapPageClientOptimized({
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold">
-                {totalStats.registeredTotal.toLocaleString()}
+                {registeredTotal.toLocaleString()}
               </div>
               <div className="text-sm text-muted-foreground">総掲示板数</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-green-600">
-                {totalStats.completed.toLocaleString()}
+                {completed.toLocaleString()}
               </div>
               <div className="text-sm text-muted-foreground">完了</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-blue-600">
-                {totalStats.percentage}%
+                {percentage}%
               </div>
               <div className="text-sm text-muted-foreground">達成率</div>
             </div>
@@ -124,20 +136,20 @@ export default function PosterMapPageClientOptimized({
           <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span>進捗</span>
-              <span className="font-medium">{totalStats.percentage}%</span>
+              <span className="font-medium">{percentage}%</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
                 className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
-                style={{ width: `${totalStats.percentage}%` }}
+                style={{ width: `${percentage}%` }}
               />
             </div>
           </div>
           {/* ステータス詳細 */}
-          <div className="mt-4 pt-4 border-t">
-            <div className="text-sm font-medium mb-2">ステータス内訳</div>
+          <div className="mt-4 border-t pt-4">
+            <div className="mb-2 text-sm font-medium">ステータス内訳</div>
             <div className="flex flex-wrap gap-2">
-              {Object.entries(totalStats.statuses).map(([status, count]) => {
+              {Object.entries(allStatuses).map(([status, count]) => {
                 if (count === 0) return null;
                 const config = statusConfig[status as BoardStatus];
                 return (
@@ -154,23 +166,22 @@ export default function PosterMapPageClientOptimized({
         </CardContent>
       </Card>
 
-      {/* District List */}
+      {/* Prefecture List */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">選挙区から選択</h2>
-        {sortedDistricts.length === 0 ? (
+        <h2 className="text-xl font-semibold">都道府県から選択</h2>
+        {sortedPrefectures.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
-              現在表示できる選挙区がありません
+              このアーカイブにはデータがありません
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {sortedDistricts.map((districtJp) => {
-              // 区割り名からURLキーを取得（DB のデータを優先）
-              const districtKey =
-                JP_TO_EN_DISTRICT[districtJp] ||
-                districtJp.toLowerCase().replace(/[^a-z0-9]/g, "-");
-              const stats = boardStats[districtJp] || {
+            {sortedPrefectures.map((prefectureJp) => {
+              const prefectureKey =
+                JP_TO_EN_PREFECTURE[prefectureJp] ||
+                prefectureJp.toLowerCase().replace(/[^a-z0-9]/g, "-");
+              const stats = summary[prefectureJp]?.statuses || {
                 not_yet: 0,
                 not_yet_dangerous: 0,
                 reserved: 0,
@@ -180,7 +191,7 @@ export default function PosterMapPageClientOptimized({
                 error_wrong_poster: 0,
                 other: 0,
               };
-              const registeredInDistrict = Object.values(stats).reduce(
+              const registeredInPrefecture = Object.values(stats).reduce(
                 (sum, count) => sum + count,
                 0,
               );
@@ -188,8 +199,8 @@ export default function PosterMapPageClientOptimized({
 
               return (
                 <Link
-                  key={districtJp}
-                  href={`/map/poster/${districtKey}`}
+                  key={prefectureJp}
+                  href={`/map/poster/archive/${electionTerm}/${prefectureKey}`}
                   className="block"
                 >
                   <Card className="transition-all hover:shadow-lg">
@@ -199,7 +210,7 @@ export default function PosterMapPageClientOptimized({
                           <MapPin className="h-5 w-5 text-muted-foreground" />
                           <div>
                             <CardTitle className="text-lg">
-                              {districtJp}
+                              {prefectureJp}
                             </CardTitle>
                           </div>
                         </div>
@@ -210,7 +221,7 @@ export default function PosterMapPageClientOptimized({
                       <div className="space-y-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">
-                            掲示板数: {registeredInDistrict.toLocaleString()}
+                            掲示板数: {registeredInPrefecture.toLocaleString()}
                           </span>
                           <span className="font-medium">{completionRate}%</span>
                         </div>
@@ -249,24 +260,14 @@ export default function PosterMapPageClientOptimized({
         )}
       </div>
 
-      {/* Action Button */}
-      <div className="flex justify-center pt-4">
-        <Button size="lg" asChild>
-          <Link href="/#featured-missions">
-            ミッション一覧に戻る
+      {/* Action Buttons */}
+      <div className="flex flex-col items-center gap-4 pt-4">
+        <Button size="lg" variant="outline" asChild>
+          <Link href="/map/poster">
+            現在のポスター掲示板マップに戻る
             <ChevronRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
-      </div>
-
-      {/* Archive Link */}
-      <div className="flex justify-center pt-2 pb-4">
-        <Link
-          href="/map/poster/archive/sangin-2025"
-          className="text-sm text-muted-foreground hover:text-foreground hover:underline"
-        >
-          過去の選挙データを見る（参議院選挙 2025）
-        </Link>
       </div>
     </div>
   );
