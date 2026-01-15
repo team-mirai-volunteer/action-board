@@ -562,11 +562,16 @@ export default function PostingPageClient({
 
   // Handle status update from dialog
   const handleStatusUpdated = useCallback(
-    (shapeId: string, newStatus: PostingShapeStatus) => {
+    (
+      shapeId: string,
+      newStatus: PostingShapeStatus,
+      newMemo: string | null,
+    ) => {
       // Update the shapes data ref
       const shapeData = shapesDataRef.current.get(shapeId);
       if (shapeData) {
         shapeData.status = newStatus;
+        shapeData.memo = newMemo;
         shapesDataRef.current.set(shapeId, shapeData);
       }
 

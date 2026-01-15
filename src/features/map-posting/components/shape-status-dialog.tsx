@@ -38,7 +38,11 @@ interface ShapeStatusDialogProps {
   onOpenChange: (open: boolean) => void;
   shape: MapShape | null;
   currentUserId: string;
-  onStatusUpdated: (id: string, newStatus: PostingShapeStatus) => void;
+  onStatusUpdated: (
+    id: string,
+    newStatus: PostingShapeStatus,
+    newMemo: string | null,
+  ) => void;
 }
 
 export function ShapeStatusDialog({
@@ -121,7 +125,7 @@ export function ShapeStatusDialog({
         toast.success("ステータスを更新しました");
       }
 
-      onStatusUpdated(shape.id, selectedStatus);
+      onStatusUpdated(shape.id, selectedStatus, memo || null);
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to update status:", error);
@@ -188,18 +192,6 @@ export function ShapeStatusDialog({
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="memo">メモ</Label>
-              <Textarea
-                id="memo"
-                value={memo}
-                onChange={(e) => setMemo(e.target.value)}
-                placeholder="地域の特性などを記録"
-                rows={3}
-                disabled={!isOwner}
-              />
-            </div>
-
             {selectedStatus === "completed" && !isMissionCompleted && (
               <div className="space-y-2">
                 <Label htmlFor="postingCount">
@@ -229,6 +221,18 @@ export function ShapeStatusDialog({
                 配布枚数: {completedPostingCount}枚（ミッション達成済み）
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="memo">メモ</Label>
+              <Textarea
+                id="memo"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="地域の特性などを記録"
+                rows={3}
+                disabled={!isOwner}
+              />
+            </div>
           </div>
         )}
         <DialogFooter>
