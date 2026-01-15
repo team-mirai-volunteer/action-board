@@ -94,7 +94,7 @@
 - `seasons/[slug]/` - シーズン別ランキング
 - `map/` - マップ機能
   - `poster/` - ポスター掲示板マップ
-  - `posting/` - 機関誌配布マップ
+  - `posting/` - ポスティングマップ
 - `api/` - API Routes
   - `auth/callback/line/` - LINE Login コールバック
   - `batch/` - バッチ処理エンドポイント
