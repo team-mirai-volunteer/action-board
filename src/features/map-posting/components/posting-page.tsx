@@ -35,7 +35,6 @@ export default function PostingPageClient({
   eventTitle,
 }: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
-  const [shapeCount, setShapeCount] = useState(0);
   const [showText, setShowText] = useState(true);
   const textLayersRef = useRef<Set<Layer>>(new Set());
   const showTextRef = useRef(showText);
@@ -98,12 +97,12 @@ export default function PostingPageClient({
         drawRectangle: false,
         drawPolygon: true, // Enable polygon drawing
         drawCircle: false,
-        drawText: true, // Enable text drawing
+        drawText: false, // Enable text drawing
         // modes
-        editMode: true,
-        dragMode: true,
+        editMode: false,
+        dragMode: false,
         cutPolygon: false,
-        removalMode: true,
+        removalMode: false, // 削除はモーダルから行う
         rotateMode: false,
         oneBlock: false,
         // controls
@@ -134,7 +133,6 @@ export default function PostingPageClient({
 
           const saved = await saveOrUpdateLayer(e.layer);
           attachTextEvents(e.layer);
-          updateShapeCount();
 
           // For polygon shapes, track and attach click event
           if (shapeName !== "Text" && saved?.id) {
@@ -180,12 +178,8 @@ export default function PostingPageClient({
           }
 
           if (sid) {
-            await deleteMapShape(sid);
-            // Clean up tracking refs
-            shapesDataRef.current.delete(sid);
-            polygonLayersRef.current.delete(sid);
+            await handleDeleteShape(sid);
           }
-          updateShapeCount();
           toast.success("図形を削除しました");
         }
       });
@@ -325,7 +319,6 @@ export default function PostingPageClient({
         }
 
         console.log("Loaded existing shapes:", savedShapes.length);
-        updateShapeCount();
       } catch (error) {
         console.error("Failed to load existing shapes:", error);
       }
@@ -351,18 +344,32 @@ export default function PostingPageClient({
     return allLayers;
   };
 
-  const updateShapeCount = () => {
-    const drawnLayers = getAllDrawnLayers();
-    setShapeCount(drawnLayers.length);
-    console.log("Shape count updated:", drawnLayers.length);
-  };
-
   const textMarkerStyles = `
     .pm-text {
       font-size:14px;
       color:#000;
     }
   `;
+
+  // 図形削除の共通処理
+  const handleDeleteShape = async (
+    shapeId: string,
+    options?: { layer?: Layer; removeFromMap?: boolean },
+  ) => {
+    await deleteMapShape(shapeId);
+
+    // モーダルからの削除の場合はマップからレイヤーを削除
+    if (options?.removeFromMap) {
+      const layer = options.layer || polygonLayersRef.current.get(shapeId);
+      if (layer && mapInstance) {
+        mapInstance.removeLayer(layer);
+      }
+    }
+
+    // Clean up tracking refs
+    shapesDataRef.current.delete(shapeId);
+    polygonLayersRef.current.delete(shapeId);
+  };
 
   function attachTextEvents(layer: Layer) {
     if (!layer?.pm) return;
@@ -662,6 +669,9 @@ export default function PostingPageClient({
         shape={selectedShape}
         currentUserId={userId}
         onStatusUpdated={handleStatusUpdated}
+        onDelete={async (id) => {
+          await handleDeleteShape(id, { removeFromMap: true });
+        }}
       />
     </>
   );
