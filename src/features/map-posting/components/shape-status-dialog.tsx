@@ -102,7 +102,8 @@ export function ShapeStatusDialog({
   }, [shape, isOpen]);
 
   const canSubmit = useMemo(() => {
-    if (selectedStatus === "completed" && !isMissionCompleted) {
+    // 自分のshapeで配布完了かつ未達成の場合のみ、配布枚数が必須
+    if (isOwner && selectedStatus === "completed" && !isMissionCompleted) {
       return (
         postingCount !== null &&
         postingCount > 0 &&
@@ -110,7 +111,7 @@ export function ShapeStatusDialog({
       );
     }
     return true;
-  }, [selectedStatus, postingCount, isMissionCompleted]);
+  }, [isOwner, selectedStatus, postingCount, isMissionCompleted]);
 
   const handleStatusUpdate = async () => {
     if (!shape?.id) return;
@@ -190,15 +191,20 @@ export function ShapeStatusDialog({
             {canEdit
               ? "選択した図形の配布ステータスを変更します"
               : "この図形は他のユーザーが作成したため、変更できません"}
-            {isMissionCompleted && (
+            {isOwner && isMissionCompleted && (
               <span className="mt-1 block text-green-600">
                 ミッション達成済み
               </span>
             )}
+            {isAdmin && !isOwner && (
+              <span className="mt-1 block text-orange-400">
+                管理者として編集中
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
-        {/* 作成者情報（自分のshapeのみ表示） */}
-        {isOwner && shape?.user_display_name && (
+        {/* 作成者情報 */}
+        {(isOwner || isAdmin) && shape?.user_display_name && (
           <div className="text-muted-foreground text-sm">
             作成者: {shape.user_display_name}
           </div>
@@ -238,39 +244,42 @@ export function ShapeStatusDialog({
               </Select>
             </div>
 
-            {selectedStatus === "completed" && !isMissionCompleted && (
-              <div className="space-y-2">
-                <Label htmlFor="postingCount">
-                  配布枚数 <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="postingCount"
-                  type="number"
-                  min={1}
-                  max={MAX_POSTING_COUNT}
-                  value={postingCount || ""}
-                  onChange={(e) =>
-                    setPostingCount(
-                      e.target.value ? Number(e.target.value) : null,
-                    )
-                  }
-                  placeholder="配布した枚数を入力"
-                  disabled={!canEdit}
-                />
-                {postingCount !== null && postingCount > MAX_POSTING_COUNT && (
-                  <p className="text-sm text-red-500">
-                    配布枚数は{MAX_POSTING_COUNT}枚以下で入力してください
+            {isOwner &&
+              selectedStatus === "completed" &&
+              !isMissionCompleted && (
+                <div className="space-y-2">
+                  <Label htmlFor="postingCount">
+                    配布枚数 <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="postingCount"
+                    type="number"
+                    min={1}
+                    max={MAX_POSTING_COUNT}
+                    value={postingCount || ""}
+                    onChange={(e) =>
+                      setPostingCount(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    placeholder="配布した枚数を入力"
+                    disabled={!canEdit}
+                  />
+                  {postingCount !== null &&
+                    postingCount > MAX_POSTING_COUNT && (
+                      <p className="text-sm text-red-500">
+                        配布枚数は{MAX_POSTING_COUNT}枚以下で入力してください
+                      </p>
+                    )}
+                  <p className="text-muted-foreground text-sm">
+                    配布完了を保存すると、ミッションが自動で達成されます
                   </p>
-                )}
-                <p className="text-muted-foreground text-sm">
-                  配布完了を保存すると、ミッションが自動で達成されます
-                </p>
-              </div>
-            )}
+                </div>
+              )}
 
-            {selectedStatus === "completed" && isMissionCompleted && (
+            {selectedStatus === "completed" && completedPostingCount && (
               <div className="text-muted-foreground text-sm">
-                配布枚数: {completedPostingCount}枚（ミッション達成済み）
+                配布枚数: {completedPostingCount}枚
               </div>
             )}
 
