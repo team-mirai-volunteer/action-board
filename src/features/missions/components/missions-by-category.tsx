@@ -122,7 +122,7 @@ export default async function MissionsByCategory({
 
   return (
     <div className="flex flex-col gap-11">
-      <h2 className="text-center md:text-4xl my-5">📈 ミッション</h2>
+      <h2 className="text-center text-2xl md:text-4xl my-5">📈 ミッション</h2>
 
       {Object.values(grouped).map((missionsInCategory) => {
         const category = missionsInCategory[0];
@@ -136,11 +136,13 @@ export default async function MissionsByCategory({
               "
           >
             {/* カテゴリ見出し */}
-            <h3 className="text-xl font-bold">{category.category_title}</h3>
+            <h3 className="text-xl font-bold pl-4 md:pl-0">
+              {category.category_title}
+            </h3>
 
             {/* 横スクロール領域 */}
             <HorizontalScrollContainer>
-              <div className="flex w-fit gap-4 px-4 pb-2 pt-4">
+              <div className="flex w-fit gap-4 pl-4 md:pl-0 pr-4 pb-2 pt-4">
                 {missionsInCategory
                   .filter(
                     (m) =>
