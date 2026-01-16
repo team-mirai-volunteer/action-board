@@ -158,6 +158,21 @@
 
    停止しないまま PC を再起動すると Docker コンテナが常駐し、ポート衝突やリソース消費が発生します。
 
+## Adminユーザーの作成
+
+1. Supabase Studio上で Authentication > Add User からユーザーを作成
+2. Supabase Studio上で以下のSQLを実行
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"roles": ["admin"]}'::jsonb
+WHERE email = '<1で作成したユーザーのemail>';
+```
+
+> [!NOTE]
+> 開発環境では、seedデータによって、`email: admin@example.com, password: admin123456` のAdminユーザーが作成されます。
+
+
 ## 開発ガイドライン
 
 ### ブランチ
