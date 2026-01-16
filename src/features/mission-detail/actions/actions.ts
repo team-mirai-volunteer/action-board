@@ -270,6 +270,8 @@ export const achieveMissionAction = async (formData: FormData) => {
 
   // ポスティングボーナスXP + ミッション達成XP 用の変数
   let totalXpGranted = 0;
+  // 作成された成果物のID（ポスティングマップ等で使用）
+  let createdArtifactId: string | undefined;
 
   if (!validatedFields.success) {
     return {
@@ -579,6 +581,9 @@ export const achieveMissionAction = async (formData: FormData) => {
       };
     }
 
+    // 作成された成果物IDを保持（戻り値で使用）
+    createdArtifactId = newArtifact.id;
+
     // 位置情報がある場合は mission_artifact_geolocations に記録
     if (
       validatedRequiredArtifactType ===
@@ -620,12 +625,16 @@ export const achieveMissionAction = async (formData: FormData) => {
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key &&
       validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key
     ) {
+      // shapeIdが渡された場合は紐付ける（ポスティングマップから）
+      const shapeId = formData.get("shapeId") as string | null;
+
       const { error: postingError } = await supabase
         .from("posting_activities")
         .insert({
           mission_artifact_id: newArtifact.id,
           posting_count: validatedData.postingCount,
           location_text: validatedData.locationText ?? "",
+          shape_id: shapeId || null,
         });
 
       if (postingError) {
@@ -762,6 +771,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     message: "ミッションを達成しました！",
     xpGranted: totalXpGranted,
     userLevel: xpResult.userLevel,
+    artifactId: createdArtifactId,
   };
 };
 

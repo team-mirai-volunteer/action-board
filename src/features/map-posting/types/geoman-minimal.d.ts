@@ -73,6 +73,48 @@ declare module "leaflet" {
         snappable?: boolean;
         snapDistance?: number;
       }): void;
+
+      // Localization
+      setLang(
+        lang: string,
+        customTranslations?: {
+          tooltips?: {
+            placeMarker?: string;
+            firstVertex?: string;
+            continueLine?: string;
+            finishLine?: string;
+            finishPoly?: string;
+            finishRect?: string;
+            startCircle?: string;
+            finishCircle?: string;
+            placeCircleMarker?: string;
+            placeText?: string;
+          };
+          actions?: {
+            finish?: string;
+            cancel?: string;
+            removeLastVertex?: string;
+          };
+          buttonTitles?: {
+            drawMarkerButton?: string;
+            drawPolyButton?: string;
+            drawLineButton?: string;
+            drawCircleButton?: string;
+            drawRectButton?: string;
+            editButton?: string;
+            dragButton?: string;
+            cutButton?: string;
+            deleteButton?: string;
+            drawCircleMarkerButton?: string;
+            snappingButton?: string;
+            pinningButton?: string;
+            rotateButton?: string;
+            drawTextButton?: string;
+            scaleButton?: string;
+            autoTracingButton?: string;
+          };
+        },
+      ): void;
     };
   }
 

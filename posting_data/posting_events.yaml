@@ -1,0 +1,9 @@
+posting_events:
+  - slug: default
+    title: デフォルトイベント
+    description: 初期イベント
+    is_active: false
+  - slug: 2026-01
+    title: 2026年1月~
+    description: 2026年1月からのポスティングイベント
+    is_active: true

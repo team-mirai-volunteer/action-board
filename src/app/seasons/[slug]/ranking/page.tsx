@@ -1,4 +1,3 @@
-import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import { CurrentUserCard } from "@/features/ranking/components/current-user-card";
 import {
   PeriodToggle,
@@ -7,10 +6,9 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
+import { getUserPeriodRanking } from "@/features/ranking/services/get-ranking";
 import { getUser } from "@/features/user-profile/services/profile";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
-import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -52,41 +50,13 @@ export default async function SeasonRankingPage({
     notFound();
   }
 
-  const supabase = createClient();
-
   // ユーザー情報取得
   const user = await getUser();
 
-  let userRanking = null;
-
-  if (user) {
-    // 期間別の場合は関数を使用（シーズン対応）
-    let dateFilter: Date | null = null;
-    if (period === "daily") {
-      // 日本時間の今日の0時0分を基準にする
-      dateFilter = getJSTMidnightToday();
-    }
-
-    const { data } = await supabase.rpc("get_user_period_ranking", {
-      target_user_id: user.id,
-      start_date: dateFilter?.toISOString() || undefined,
-      p_season_id: season.id,
-    });
-
-    if (data && data.length > 0) {
-      const partyMembership = await getPartyMembership(user.id);
-      userRanking = {
-        user_id: data[0].user_id,
-        address_prefecture: data[0].address_prefecture,
-        level: data[0].level,
-        name: data[0].name,
-        rank: data[0].rank,
-        updated_at: data[0].updated_at,
-        xp: data[0].xp,
-        party_membership: partyMembership,
-      };
-    }
-  }
+  // ユーザーランキング取得
+  const userRanking = user
+    ? await getUserPeriodRanking(user.id, season.id, period)
+    : null;
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4 w-full">

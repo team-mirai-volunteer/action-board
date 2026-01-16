@@ -6,7 +6,6 @@ jest.mock("../services/get-metrics", () => ({
 }));
 
 import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
-import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション
@@ -19,11 +18,6 @@ const defaultMockData = {
   supporter: {
     totalCount: 75982,
     last24hCount: 1710,
-    updatedAt: "2025-07-03T02:20:00Z",
-  },
-  donation: {
-    totalAmount: 1000000,
-    last24hAmount: 25000,
     updatedAt: "2025-07-03T02:20:00Z",
   },
   achievement: {
@@ -61,7 +55,6 @@ describe("Metrics", () => {
       render(await Metrics());
 
       expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("寄付金額")).toBeInTheDocument();
       expect(screen.getByText("達成アクション数")).toBeInTheDocument();
       expect(screen.getByText("サポーター数")).toBeInTheDocument();
     });
@@ -73,10 +66,6 @@ describe("Metrics", () => {
         // サポーター数の確認
         expect(screen.getByText("75,982")).toBeInTheDocument();
         expect(screen.getByText("人")).toBeInTheDocument();
-
-        // 寄付金額の確認（100万円 = 100万円）
-        expect(screen.getByText("100")).toBeInTheDocument();
-        expect(screen.getByText("万円")).toBeInTheDocument();
 
         // アクション達成数の確認
         expect(screen.getByText("18,605")).toBeInTheDocument();
@@ -108,11 +97,6 @@ describe("Metrics", () => {
           last24hCount: 1000,
           updatedAt: "2025-07-04T10:30:00Z",
         },
-        donation: {
-          totalAmount: 2000000, // 200万円
-          last24hAmount: 50000, // 5万円
-          updatedAt: "2025-07-04T10:30:00Z",
-        },
       };
 
       mockFetchAllMetricsData.mockResolvedValueOnce(customData);
@@ -121,47 +105,6 @@ describe("Metrics", () => {
 
       await waitFor(() => {
         expect(screen.getByText("50,000")).toBeInTheDocument();
-        expect(screen.getByText("200")).toBeInTheDocument(); // 200万円
-      });
-    });
-
-    it("億単位の寄付金額が正しく表示される", async () => {
-      const billionYenData = {
-        ...defaultMockData,
-        donation: {
-          totalAmount: 100000000, // 1億円
-          last24hAmount: 1000000, // 100万円
-          updatedAt: "2025-07-04T10:30:00Z",
-        },
-      };
-
-      mockFetchAllMetricsData.mockResolvedValueOnce(billionYenData);
-
-      render(await Metrics());
-
-      await waitFor(() => {
-        expect(screen.getByText("1")).toBeInTheDocument(); // 1億円の「1」
-        expect(screen.getByText("億円")).toBeInTheDocument(); // 億円単位
-      });
-    });
-
-    it("億万単位の寄付金額が正しく表示される", async () => {
-      const billionManYenData = {
-        ...defaultMockData,
-        donation: {
-          totalAmount: 145690000, // 1億4569万円
-          last24hAmount: 2000000, // 200万円
-          updatedAt: "2025-07-04T10:30:00Z",
-        },
-      };
-
-      mockFetchAllMetricsData.mockResolvedValueOnce(billionManYenData);
-
-      render(await Metrics());
-
-      await waitFor(() => {
-        expect(screen.getByText("1億4569")).toBeInTheDocument(); // 1億4569万円の「1億4569」
-        expect(screen.getByText("万円")).toBeInTheDocument(); // 万円単位
       });
     });
   });
@@ -176,7 +119,6 @@ describe("Metrics", () => {
       process.env = {
         ...originalEnv,
         FALLBACK_SUPPORTER_COUNT: "50000",
-        FALLBACK_DONATION_AMOUNT: "1500000", // 150万円
         FALLBACK_ACHIEVEMENT_COUNT: "10000",
       };
 
@@ -185,55 +127,15 @@ describe("Metrics", () => {
       // フォールバック値が表示されることを確認
       await waitFor(() => {
         expect(screen.getByText("50,000")).toBeInTheDocument(); // フォールバックサポーター数
-        expect(screen.getByText("150")).toBeInTheDocument(); // フォールバック寄付金額
         expect(screen.getByText("10,000")).toBeInTheDocument(); // フォールバック達成数
       });
 
       // 環境変数を元に戻す
       process.env = originalEnv;
     });
-
-    it("部分的なデータ欠損時に適切にフォールバックする", async () => {
-      const partialData = {
-        supporter: null, // データなし
-        donation: {
-          totalAmount: 1000000,
-          last24hAmount: 25000,
-          updatedAt: "2025-07-03T02:20:00Z",
-        },
-        achievement: {
-          totalCount: 18605,
-          todayCount: 245,
-        },
-        registration: {
-          totalCount: 1000,
-          todayCount: 50,
-        },
-      };
-
-      mockFetchAllMetricsData.mockResolvedValueOnce(partialData);
-
-      render(await Metrics());
-
-      await waitFor(() => {
-        // 寄付金額は正常表示
-        expect(screen.getByText("100")).toBeInTheDocument();
-        // 達成アクション数は正常表示
-        expect(screen.getByText("18,605")).toBeInTheDocument();
-        // サポーター数はnullなのでフォールバック値（0人）が表示される
-        expect(screen.getByText("0")).toBeInTheDocument();
-      });
-    });
   });
 
   describe("レイアウト", () => {
-    it("Separatorコンポーネントが正しい数表示される", async () => {
-      render(await Metrics());
-
-      // メトリクス間のセパレーター（3個）
-      expect(screen.getAllByTestId("separator")).toHaveLength(3);
-    });
-
     it("外部リンクが正しく表示される", async () => {
       render(await Metrics());
 
@@ -244,38 +146,20 @@ describe("Metrics", () => {
         "href",
         expect.stringContaining("lookerstudio.google.com"),
       );
-
-      // 寄付リンク
-      const donationLink = screen.getByText("チームみらいを寄付で応援する");
-      expect(donationLink).toBeInTheDocument();
-      expect(donationLink.closest("a")).toHaveAttribute(
-        "href",
-        EXTERNAL_LINKS.team_mirai_donation,
-      );
     });
 
     it("メトリクスの順序が正しい", async () => {
       render(await Metrics());
 
-      const metrics =
-        screen.getAllByText(/達成アクション数|サポーター数|寄付金額/);
+      const metrics = screen.getAllByText(/達成アクション数|サポーター数/);
 
-      // 期待される順序: サポーター数 → 達成アクション数 → 寄付金額
+      // 期待される順序: サポーター数 → 達成アクション数
       expect(metrics[0]).toHaveTextContent("サポーター数");
       expect(metrics[1]).toHaveTextContent("達成アクション数");
-      expect(metrics[2]).toHaveTextContent("寄付金額");
     });
   });
 
   describe("アクセシビリティ", () => {
-    it("適切なaria-labelが設定されている", async () => {
-      render(await Metrics());
-
-      // 寄付金額の詳細情報ボタン
-      const infoButton = screen.getByLabelText("寄付金額の詳細情報");
-      expect(infoButton).toBeInTheDocument();
-    });
-
     it("外部リンクに適切な属性が設定されている", async () => {
       render(await Metrics());
 

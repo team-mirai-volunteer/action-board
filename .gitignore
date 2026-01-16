@@ -30,6 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env.production
 .env*.local
 .env*.test
 .env
@@ -64,6 +65,7 @@ poster_data/processed-files.json
 /supabase/archive/
 
 temp
+docs/qa-reports
 
 # csv export
 users-prefecture-export.csv
@@ -72,3 +74,6 @@ users-prefecture-export.csv
 
 # serena mcp
 /.serena
+
+# claude
+.claude

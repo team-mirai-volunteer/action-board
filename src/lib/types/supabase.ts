@@ -700,8 +700,11 @@ export type Database = {
       poster_boards: {
         Row: {
           address: string | null;
+          archived: boolean | null;
           city: string;
           created_at: string;
+          district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -715,8 +718,11 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
+          archived?: boolean | null;
           city: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -730,8 +736,11 @@ export type Database = {
         };
         Update: {
           address?: string | null;
+          archived?: boolean | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -752,6 +761,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -760,6 +770,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -768,6 +779,7 @@ export type Database = {
           location_text?: string;
           mission_artifact_id?: string;
           posting_count?: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -778,34 +790,109 @@ export type Database = {
             referencedRelation: "mission_artifacts";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "posting_activities_shape_id_fkey";
+            columns: ["shape_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_shapes";
+            referencedColumns: ["id"];
+          },
         ];
       };
-      posting_shapes: {
+      posting_events: {
         Row: {
-          coordinates: Json;
           created_at: string | null;
+          description: string | null;
           id: string;
-          properties: Json | null;
-          type: string;
+          is_active: boolean;
+          slug: string;
+          title: string;
           updated_at: string | null;
         };
         Insert: {
-          coordinates: Json;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
-          properties?: Json | null;
-          type: string;
+          is_active?: boolean;
+          slug: string;
+          title: string;
           updated_at?: string | null;
         };
         Update: {
-          coordinates?: Json;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
-          properties?: Json | null;
-          type?: string;
+          is_active?: boolean;
+          slug?: string;
+          title?: string;
           updated_at?: string | null;
         };
         Relationships: [];
+      };
+      posting_shapes: {
+        Row: {
+          address: string | null;
+          city: string | null;
+          coordinates: Json;
+          created_at: string | null;
+          event_id: string;
+          id: string;
+          lat: number | null;
+          lng: number | null;
+          memo: string | null;
+          postcode: string | null;
+          prefecture: string | null;
+          properties: Json | null;
+          status: Database["public"]["Enums"]["posting_shape_status"];
+          type: string;
+          updated_at: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          address?: string | null;
+          city?: string | null;
+          coordinates: Json;
+          created_at?: string | null;
+          event_id: string;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
+          type: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          address?: string | null;
+          city?: string | null;
+          coordinates?: Json;
+          created_at?: string | null;
+          event_id?: string;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
+          type?: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posting_shapes_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       private_users: {
         Row: {
@@ -1021,6 +1108,8 @@ export type Database = {
           address: string | null;
           city: string;
           created_at: string;
+          district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string | null;
           lat: number | null;
@@ -1036,6 +1125,8 @@ export type Database = {
           address?: string | null;
           city: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1051,6 +1142,8 @@ export type Database = {
           address?: string | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1463,6 +1556,14 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: undefined;
       };
+      get_archived_poster_board_stats: {
+        Args: { p_election_term: string };
+        Returns: {
+          count: number;
+          prefecture: string;
+          status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
+      };
       get_mission_links: {
         Args: { p_mission_id: string };
         Returns: {
@@ -1764,6 +1865,7 @@ export type Database = {
         | "兵庫県"
         | "愛媛県"
         | "福岡県";
+      posting_shape_status: "planned" | "completed" | "unavailable" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1921,6 +2023,7 @@ export const Constants = {
         "愛媛県",
         "福岡県",
       ],
+      posting_shape_status: ["planned", "completed", "unavailable", "other"],
     },
   },
 } as const;

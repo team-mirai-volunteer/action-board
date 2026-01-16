@@ -27,20 +27,30 @@ import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { createClient } from "@/lib/supabase/client";
 import { maskUsername } from "@/lib/utils/privacy";
-import { ArrowLeft, Copy, HelpCircle, History, MapPin } from "lucide-react";
+import {
+  Archive,
+  ArrowLeft,
+  Copy,
+  HelpCircle,
+  History,
+  MapPin,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { statusConfig } from "../config/status-config";
+import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
 import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
+  getArchivedPosterBoardsMinimal,
   getPosterBoardDetail,
   getPosterBoardsMinimal,
+  getPosterBoardsMinimalByDistrict,
   updateBoardStatus,
 } from "../services/poster-boards";
 import type {
@@ -68,10 +78,12 @@ const PosterMap = dynamic(() => import("./poster-map-with-cluster"), {
 import {
   getBoardStatusHistoryAction,
   getPosterBoardStatsAction,
+  getPosterBoardStatsByDistrictAction,
   getUserEditedBoardIdsAction,
+  getUserEditedBoardIdsByDistrictAction,
 } from "../actions/poster-boards";
 
-interface PrefecturePosterMapClientProps {
+interface DetailedPosterMapClientProps {
   userId?: string;
   prefecture: string;
   prefectureName: string;
@@ -79,9 +91,14 @@ interface PrefecturePosterMapClientProps {
   initialStats?: BoardStats;
   boardTotal?: PosterBoardTotal | null;
   userEditedBoardIds?: string[];
+  defaultZoom?: number;
+  isDistrict?: boolean;
+  isArchive?: boolean;
+  archiveElectionTerm?: string;
+  archiveTermName?: string;
 }
 
-export default function PrefecturePosterMapClient({
+export default function DetailedPosterMapClient({
   userId,
   prefecture,
   prefectureName,
@@ -89,7 +106,12 @@ export default function PrefecturePosterMapClient({
   initialStats,
   boardTotal,
   userEditedBoardIds,
-}: PrefecturePosterMapClientProps) {
+  defaultZoom,
+  isDistrict = false,
+  isArchive = false,
+  archiveElectionTerm,
+  archiveTermName,
+}: DetailedPosterMapClientProps) {
   const router = useRouter();
   const [boards, setBoards] = useState<PosterBoard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -190,22 +212,50 @@ export default function PrefecturePosterMapClient({
   const loadBoards = async () => {
     try {
       // 最小限のデータのみ取得
-      const data = await getPosterBoardsMinimal(prefecture);
+      let data: Pick<
+        PosterBoard,
+        | "id"
+        | "lat"
+        | "long"
+        | "status"
+        | "name"
+        | "address"
+        | "city"
+        | "number"
+      >[];
+      if (isArchive && archiveElectionTerm) {
+        // アーカイブモードの場合
+        data = await getArchivedPosterBoardsMinimal(
+          archiveElectionTerm,
+          prefecture,
+        );
+      } else if (isDistrict) {
+        data = await getPosterBoardsMinimalByDistrict(prefecture);
+      } else {
+        data = await getPosterBoardsMinimal(prefecture);
+      }
       setBoards(data as PosterBoard[]);
 
-      // 統計情報も更新
-      const newStats = await getPosterBoardStatsAction(
-        prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
-      );
-      setStats(newStats);
+      // アーカイブモードでは統計情報は初期値のみ使用（再取得しない）
+      if (!isArchive) {
+        // 統計情報も更新
+        const newStats = isDistrict
+          ? await getPosterBoardStatsByDistrictAction(prefecture)
+          : await getPosterBoardStatsAction(
+              prefecture as Parameters<typeof getPosterBoardStatsAction>[0],
+            );
+        setStats(newStats);
 
-      // ユーザーがログインしている場合は、編集した掲示板IDも再取得
-      if (userId) {
-        const updatedUserEditedBoardIds = await getUserEditedBoardIdsAction(
-          prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
-          userId,
-        );
-        setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
+        // ユーザーがログインしている場合は、編集した掲示板IDも再取得
+        if (userId) {
+          const updatedUserEditedBoardIds = isDistrict
+            ? await getUserEditedBoardIdsByDistrictAction(prefecture, userId)
+            : await getUserEditedBoardIdsAction(
+                prefecture as Parameters<typeof getUserEditedBoardIdsAction>[0],
+                userId,
+              );
+          setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
+        }
       }
     } catch (error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
@@ -215,6 +265,12 @@ export default function PrefecturePosterMapClient({
   };
 
   const handleBoardSelect = async (board: PosterBoard) => {
+    // アーカイブモードの場合はクリックを無視
+    if (isArchive) {
+      toast.info("アーカイブデータは読み取り専用です");
+      return;
+    }
+
     if (!userId) {
       // ログイン後に戻ってきた時のために選択した掲示板情報を保存
       localStorage.setItem("selectedBoardId", board.id);
@@ -395,11 +451,32 @@ export default function PrefecturePosterMapClient({
   const completedCount = getCompletedCount(statusCounts);
   const completionRate = calculateProgressRate(completedCount, registeredCount);
 
+  // アーカイブモードの場合のバックリンク先
+  const backLink =
+    isArchive && archiveElectionTerm
+      ? `/map/poster/archive/${archiveElectionTerm}`
+      : "/map/poster";
+
   return (
     <div className="container mx-auto max-w-7xl space-y-3 p-3">
+      {/* Archive Notice */}
+      {isArchive && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
+          <Archive className="h-5 w-5 text-amber-600" />
+          <div>
+            <p className="text-sm font-medium text-amber-800">
+              アーカイブデータ{archiveTermName && ` - ${archiveTermName}`}
+            </p>
+            <p className="text-xs text-amber-700">
+              このデータは読み取り専用です。ステータスの更新はできません。
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header - コンパクト化 */}
       <div className="flex items-center gap-3">
-        <Link href="/map/poster">
+        <Link href={backLink}>
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -409,19 +486,23 @@ export default function PrefecturePosterMapClient({
             {prefectureName}のポスター掲示板
           </h1>
           <p className="text-xs text-muted-foreground hidden sm:block">
-            {userId
-              ? "掲示板をクリックしてステータスを更新"
-              : "ログインするとステータスを更新できます"}
+            {isArchive
+              ? "アーカイブデータ（読み取り専用）"
+              : userId
+                ? "掲示板をクリックしてステータスを更新"
+                : "ログインするとステータスを更新できます"}
           </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => setShowHelpDialog(true)}
-            title="使い方を見る"
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
+          {!isArchive && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setShowHelpDialog(true)}
+              title="使い方を見る"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -432,11 +513,14 @@ export default function PrefecturePosterMapClient({
           onBoardClick={handleBoardSelect}
           center={center}
           prefectureKey={
-            JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey
+            isDistrict
+              ? (JP_TO_EN_DISTRICT[prefectureName] as PosterPrefectureKey)
+              : (JP_TO_EN_PREFECTURE[prefectureName] as PosterPrefectureKey)
           }
           onFilterChange={setFilters}
           currentUserId={userId}
           userEditedBoardIds={userEditedBoardIdsSet}
+          defaultZoom={defaultZoom}
         />
       </div>
 
@@ -529,12 +613,6 @@ export default function PrefecturePosterMapClient({
               の状況を教えてください
             </DialogDescription>
           </DialogHeader>
-          {/* アーカイブ版の説明 */}
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-sm text-yellow-800">
-              現在アーカイブ版のため、ステータスの更新はできません。
-            </p>
-          </div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm text-muted-foreground">
               {selectedBoard?.name ||
@@ -739,12 +817,7 @@ export default function PrefecturePosterMapClient({
               >
                 キャンセル
               </Button>
-              <Button
-                onClick={handleStatusUpdate}
-                // disabled={isUpdating}
-                // アーカイブ版のため、常に無効化
-                disabled={true}
-              >
+              <Button onClick={handleStatusUpdate} disabled={isUpdating}>
                 {isUpdating ? "報告中..." : "報告する"}
               </Button>
             </div>
@@ -782,10 +855,11 @@ export default function PrefecturePosterMapClient({
             </Button>
             <Button
               onClick={() => {
-                const prefectureKey = JP_TO_EN_PREFECTURE[
-                  prefectureName
-                ] as PosterPrefectureKey;
-                const returnUrl = `/map/poster/${prefectureKey}`;
+                const key = isDistrict
+                  ? JP_TO_EN_DISTRICT[prefectureName] ||
+                    prefectureName.toLowerCase().replace(/[^a-z0-9]/g, "-")
+                  : JP_TO_EN_PREFECTURE[prefectureName];
+                const returnUrl = `/map/poster/${key}`;
                 router.push(
                   `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`,
                 );

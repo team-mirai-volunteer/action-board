@@ -94,7 +94,7 @@
 - `seasons/[slug]/` - シーズン別ランキング
 - `map/` - マップ機能
   - `poster/` - ポスター掲示板マップ
-  - `posting/` - 機関誌配布マップ
+  - `posting/` - ポスティングマップ
 - `api/` - API Routes
   - `auth/callback/line/` - LINE Login コールバック
   - `batch/` - バッチ処理エンドポイント
@@ -291,3 +291,18 @@
 - **RLSポリシーは必ずテストを書く**
 - **環境変数の追加時は `.env.example` も更新**
 - **CI/CDではCloud Buildでミッションデータが自動同期される**
+
+## GitHub Issue作成ルール
+GitHub Issueを作成する際は、以下のルールに従うこと：
+
+- プラン内容を簡略化せず、そのままissueに記載する
+- コード例、SQL、型定義などの詳細な実装内容を含める
+- 検証方法を具体的に記載する
+
+## Pull Request作成ルール
+Pull Requestを作成する際は、以下のルールに従うこと：
+
+- PRの説明文に `Resolves #issue番号` を必ず記載し、マージ時に対応するissueが自動的にクローズされるようにする
+  - 例: `Resolves #123`
+  - 複数のissueをクローズする場合は、それぞれ別の行に記載する
+    - 例: `Resolves #123`、`Resolves #456`

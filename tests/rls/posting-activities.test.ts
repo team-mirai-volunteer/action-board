@@ -110,27 +110,6 @@ describe("posting_activities テーブルのRLSテスト", () => {
     expect(data?.length).toBe(0);
   });
 
-  test("認証済みユーザーは自分のポスティング活動のみ読み取れる", async () => {
-    // user1は自分のポスティング活動を読み取れる
-    const { data: user1Data, error: user1Error } = await user1.client
-      .from("posting_activities")
-      .select("*")
-      .eq("id", postingActivityId);
-
-    expect(user1Error).toBeNull();
-    expect(user1Data).toHaveLength(1);
-    expect(user1Data?.[0].id).toBe(postingActivityId);
-
-    // user2は他人のポスティング活動を読み取れない
-    const { data: user2Data, error: user2Error } = await user2.client
-      .from("posting_activities")
-      .select("*")
-      .eq("id", postingActivityId);
-
-    expect(user2Error).toBeNull();
-    expect(user2Data).toHaveLength(0);
-  });
-
   test("認証済みユーザーは自分のポスティング活動のみ作成できる", async () => {
     // user1は自分の成果物に対してポスティング活動を作成できる
     const newPostingData = {

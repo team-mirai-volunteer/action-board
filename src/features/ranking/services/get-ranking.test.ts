@@ -116,14 +116,14 @@ describe("ranking service", () => {
       });
 
       it("エラー時は例外をスローする", async () => {
-        const mockError = { message: "Database error" };
+        const mockError = { message: "Test Database error" };
         mockSupabase.rpc.mockResolvedValue({
           data: null,
           error: mockError,
         });
 
         await expect(getRanking()).rejects.toThrow(
-          "シーズンランキングの取得に失敗しました: Database error",
+          "シーズンランキングの取得に失敗しました: Test Database error",
         );
       });
     });
@@ -223,11 +223,11 @@ describe("ranking service", () => {
       it("RPC取得エラー時は例外をスローする", async () => {
         mockSupabase.rpc.mockResolvedValue({
           data: null,
-          error: { message: "RPC fetch error" },
+          error: { message: "Test RPC fetch error" },
         });
 
         await expect(getRanking(10, "daily")).rejects.toThrow(
-          "シーズンランキングの取得に失敗しました: RPC fetch error",
+          "シーズンランキングの取得に失敗しました: Test RPC fetch error",
         );
       });
     });

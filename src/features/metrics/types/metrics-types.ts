@@ -46,7 +46,6 @@ export interface RegistrationData {
  */
 export interface MetricsData {
   supporter: SupporterData | null;
-  donation: DonationData | null;
   achievement: AchievementData | null;
   registration: RegistrationData | null;
 }

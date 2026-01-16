@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 import * as dotenv from "dotenv";
 
 // Load .env from project root
-dotenv.config({ path: path.resolve(import.meta.dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 // Helper functions for slug to ID mapping
 export async function getCategorySlugToIdMap(): Promise<
