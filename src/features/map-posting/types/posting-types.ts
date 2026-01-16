@@ -1,6 +1,21 @@
 import type { Json } from "@/lib/types/supabase";
-import type { Layer } from "leaflet";
+import type { Layer, Marker } from "leaflet";
 import type { PostingShapeStatus } from "../config/status-config";
+
+// === Cluster/Marker Types ===
+// マーカーにシェイプデータを紐付けるための拡張型
+export interface MarkerWithShape extends Marker {
+  shapeData?: {
+    id: string;
+    status: PostingShapeStatus;
+    posting_count?: number | null;
+    lat: number;
+    lng: number;
+  };
+}
+
+// ステータス別カウント型
+export type StatusCounts = Record<PostingShapeStatus, number>;
 
 // === Database Types ===
 export interface MapShape {
