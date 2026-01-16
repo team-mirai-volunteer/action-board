@@ -27,6 +27,13 @@ jest.mock("next/link", () => {
 });
 
 jest.mock("lucide-react", () => ({
+  ChevronRight: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "chevron-right-icon",
+      className,
+    });
+  },
   CheckIcon: ({ size, className }) => {
     const mockReact = require("react");
     return mockReact.createElement("div", {

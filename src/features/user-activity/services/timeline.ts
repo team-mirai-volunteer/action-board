@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
 import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { createClient } from "@/lib/supabase/client";
@@ -134,4 +135,59 @@ export async function getUserActivityTimelineCount(
   ]);
 
   return (achievementsCount.count || 0) + (activitiesCount.count || 0);
+}
+
+/**
+ * 全体の活動タイムラインを取得する（全ユーザー対象）
+ * @param limit - 取得する最大件数
+ * @param offset - 取得開始位置（デフォルト: 0）
+ * @returns パーティメンバーシップ付きの活動タイムラインアイテムの配列
+ */
+export async function getGlobalActivityTimeline(
+  limit: number,
+  offset = 0,
+): Promise<ActivityTimelineItem[]> {
+  const supabase = createClient();
+
+  const { data: activityTimelines } = await supabase
+    .from("activity_timeline_view")
+    .select()
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  const membershipMap = await getPartyMembershipMap(
+    (activityTimelines ?? [])
+      .map((item) => item.user_id)
+      .filter((id): id is string => typeof id === "string" && id.length > 0),
+  );
+
+  return (activityTimelines ?? []).map((item) => ({
+    id: item.id ?? "",
+    user_id: item.user_id ?? "",
+    name: item.name ?? "",
+    address_prefecture: item.address_prefecture,
+    avatar_url: item.avatar_url,
+    title: item.title ?? "",
+    mission_id: item.mission_id,
+    created_at: item.created_at ?? "",
+    activity_type: item.activity_type ?? "",
+    party_membership:
+      item.user_id && membershipMap[item.user_id]
+        ? membershipMap[item.user_id]
+        : null,
+  }));
+}
+
+/**
+ * 全体の活動タイムラインの総数を取得する
+ * @returns 活動タイムラインの総数
+ */
+export async function getGlobalActivityTimelineCount(): Promise<number> {
+  const supabase = createClient();
+
+  const { count } = await supabase
+    .from("activity_timeline_view")
+    .select("*", { count: "exact", head: true });
+
+  return count || 0;
 }

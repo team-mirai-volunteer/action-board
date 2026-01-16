@@ -80,7 +80,7 @@ export default async function Missions({
 
   return (
     <div className="flex flex-col gap-6 px-4 md:px-0">
-      <h2 id={id} className="text-center text-2xl md:text-4xl">
+      <h2 id={id} className="text-center text-2xl md:text-3xl">
         {title}
       </h2>
 
