@@ -255,6 +255,8 @@ export default function PostingPageClient({
   // Current location state and ref
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<CircleMarker | null>(null);
+  // Total posting count
+  const [totalPostingCount, setTotalPostingCount] = useState(0);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -912,6 +914,12 @@ export default function PostingPageClient({
         const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
         toggleDisplayMode(initialClusterMode);
 
+        // Calculate total posting count
+        const total = savedShapes.reduce((sum, shape) => {
+          return sum + (shape.posting_count || 0);
+        }, 0);
+        setTotalPostingCount(total);
+
         console.log("Loaded existing shapes:", savedShapes.length);
       } catch (error) {
         console.error("Failed to load existing shapes:", error);
@@ -1260,6 +1268,13 @@ export default function PostingPageClient({
           labelMarker.addTo(mapInstance);
         }
       }
+
+      // Recalculate total posting count
+      let total = 0;
+      for (const shape of Array.from(shapesDataRef.current.values())) {
+        total += shape.posting_count || 0;
+      }
+      setTotalPostingCount(total);
     },
     [applyStatusStyle, mapInstance, isClusterMode],
   );
@@ -1313,8 +1328,24 @@ export default function PostingPageClient({
         <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
           {eventTitle}
         </div>
-
-        {/* Auto-save is always on; checkbox removed */}
+        <div
+          style={{
+            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+          }}
+        >
+          <span>現在の配布枚数</span>
+          <span
+            style={{
+              fontSize: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            {totalPostingCount.toLocaleString()}枚
+          </span>
+        </div>
       </div>
 
       <style jsx global>{`
