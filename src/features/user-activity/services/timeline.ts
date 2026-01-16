@@ -27,14 +27,18 @@ export async function getUserActivityTimeline(
       seasonId
         ? supabase
             .from("achievements")
-            .select("id, created_at, user_id, missions!inner(title)")
+            .select(
+              "id, created_at, user_id, mission_id, missions!inner(title)",
+            )
             .eq("user_id", userId)
             .eq("season_id", seasonId)
             .order("created_at", { ascending: false })
             .range(offset, offset + Math.ceil(limit / 2) - 1)
         : supabase
             .from("achievements")
-            .select("id, created_at, user_id, missions!inner(title)")
+            .select(
+              "id, created_at, user_id, mission_id, missions!inner(title)",
+            )
             .eq("user_id", userId)
             .order("created_at", { ascending: false })
             .range(offset, offset + Math.ceil(limit / 2) - 1),
@@ -76,6 +80,7 @@ export async function getUserActivityTimeline(
     address_prefecture: userProfile?.address_prefecture || null,
     avatar_url: userProfile?.avatar_url || null,
     title: a.missions.title,
+    mission_id: a.mission_id,
     created_at: a.created_at,
     activity_type: "mission_achievement",
     party_membership: partyMembership,
@@ -89,6 +94,7 @@ export async function getUserActivityTimeline(
     address_prefecture: userProfile?.address_prefecture || null,
     avatar_url: userProfile?.avatar_url || null,
     title: a.activity_title,
+    mission_id: null,
     created_at: a.created_at,
     activity_type: a.activity_type,
     party_membership: partyMembership,

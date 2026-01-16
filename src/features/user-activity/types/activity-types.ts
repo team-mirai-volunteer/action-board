@@ -7,6 +7,7 @@ export interface ActivityTimelineItem {
   address_prefecture: string | null;
   avatar_url: string | null;
   title: string;
+  mission_id: string | null;
   created_at: string;
   activity_type: string;
   party_membership?: PartyMembership | null;

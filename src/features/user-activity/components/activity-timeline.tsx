@@ -74,9 +74,24 @@ export function ActivityTimeline({
               />
               <span>
                 {/* 活動タイプに応じたメッセージ表示 */}
-                {activity.activity_type === "signup"
-                  ? activity.title // サインアップの場合はタイトルのみ
-                  : `が「${activity.title}」を達成しました！`}
+                {activity.activity_type === "signup" ? (
+                  activity.title // サインアップの場合はタイトルのみ
+                ) : (
+                  <>
+                    が「
+                    {activity.mission_id ? (
+                      <Link
+                        href={`/missions/${activity.mission_id}`}
+                        className="text-black font-bold hover:underline"
+                      >
+                        {activity.title}
+                      </Link>
+                    ) : (
+                      activity.title
+                    )}
+                    」を達成しました！
+                  </>
+                )}
               </span>
             </div>
 
