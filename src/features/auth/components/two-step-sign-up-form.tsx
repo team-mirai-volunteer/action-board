@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { signInWithLine } from "@/features/auth/services/line-auth";
+import { getClientCookie } from "@/lib/utils/cookies";
 import { calculateAge } from "@/lib/utils/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -218,10 +219,13 @@ function LoginSelectionPhase({
       setIsLoading(true);
       setError(null);
       // ローカルストレージにサインアップデータを保存（モバイル対応）
+      // 紹介コードもcookieから取得して保存
+      const referralCode = getClientCookie("referral_code");
       localStorage.setItem(
         "lineLoginData",
         JSON.stringify({
           dateOfBirth: formattedDate,
+          referralCode: referralCode || undefined,
         }),
       );
 
@@ -270,10 +274,13 @@ function LoginSelectionPhase({
         className="w-full h-12"
         onClick={() => {
           // sessionStorageにデータを保存
+          // 紹介コードもcookieから取得して保存
+          const referralCode = getClientCookie("referral_code");
           sessionStorage.setItem(
             "signupData",
             JSON.stringify({
               dateOfBirth: formattedDate,
+              referralCode: referralCode || undefined,
             }),
           );
           router.push("/sign-up-email");
