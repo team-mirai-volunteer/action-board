@@ -152,6 +152,29 @@ export default function PostingPageClient({
         customControls: false,
       });
 
+      // ツールバーボタンにラベルを追加
+      const addButtonLabel = (selector: string, text: string) => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+
+        el.setAttribute("title", text);
+        el.setAttribute("aria-label", text);
+
+        // 二重追加防止
+        if (el.querySelector(".pm-btn-label")) return;
+
+        const span = document.createElement("span");
+        span.className = "pm-btn-label";
+        span.textContent = text;
+        el.appendChild(span);
+      };
+
+      // Geomanのボタンにラベルを追加
+      addButtonLabel(
+        ".leaflet-pm-draw .leaflet-buttons-control-button",
+        "エリア選択",
+      );
+
       console.log("Geoman controls added successfully");
 
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
@@ -712,6 +735,29 @@ export default function PostingPageClient({
         .leaflet-pm-icon {
           background-color: white !important;
           border: 1px solid #ccc !important;
+        }
+
+        /* ツールバーボタンにテキストラベルを追加 */
+        .leaflet-pm-toolbar .leaflet-buttons-control-button {
+          width: auto !important;
+          padding: 0 10px !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 6px;
+        }
+        .leaflet-pm-toolbar .leaflet-buttons-control-button .pm-btn-label {
+          font-size: 12px;
+          font-weight: 900;
+          line-height: 1;
+          white-space: nowrap;
+          color: #333;
+        }
+        .leaflet-pm-toolbar .leaflet-pm-icon {
+          flex-shrink: 0;
+        }
+        .leaflet-pm-icon-polygon {
+          width: 16px !important;
+          height: 16px !important;
         }
 
         ${textMarkerStyles}
