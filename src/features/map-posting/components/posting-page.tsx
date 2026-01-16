@@ -1,7 +1,7 @@
 "use client";
 
 import type { Json } from "@/lib/types/supabase";
-import type { Layer, Map as LeafletMap, Marker } from "leaflet";
+import type { CircleMarker, Layer, Map as LeafletMap, Marker } from "leaflet";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -252,6 +252,9 @@ export default function PostingPageClient({
   const [isClusterMode, setIsClusterMode] = useState(true);
   // Ref to track isClusterMode for use in event handlers
   const isClusterModeRef = useRef(isClusterMode);
+  // Current location state and ref
+  const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
+  const currentMarkerRef = useRef<CircleMarker | null>(null);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -261,6 +264,54 @@ export default function PostingPageClient({
   useEffect(() => {
     isClusterModeRef.current = isClusterMode;
   }, [isClusterMode]);
+
+  // Watch current location
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      return;
+    }
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
+      },
+      () => {
+        // 位置情報の取得に失敗した場合は静かに処理
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+    );
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  // Manage current location marker
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    const L = (window as LeafletWindow).L;
+    if (!L) return;
+
+    // Remove existing current location marker
+    if (currentMarkerRef.current) {
+      currentMarkerRef.current.remove();
+      currentMarkerRef.current = null;
+    }
+
+    // Add marker if current position is available
+    if (currentPos) {
+      const marker = L.circleMarker(currentPos, {
+        radius: 12,
+        color: "#2563eb",
+        fillColor: "#60a5fa",
+        fillOpacity: 0.7,
+        weight: 3,
+      })
+        .addTo(mapInstance)
+        .bindTooltip("あなたの現在地", { permanent: false, direction: "top" });
+
+      currentMarkerRef.current = marker;
+    }
+  }, [currentPos, mapInstance]);
 
   useEffect(() => {
     if (!mapInstance) return;
@@ -1075,6 +1126,16 @@ export default function PostingPageClient({
     }
   };
 
+  // Handle locate button click
+  const handleLocate = () => {
+    if (currentPos && mapInstance) {
+      mapInstance.flyTo(currentPos, mapInstance.getZoom(), {
+        animate: true,
+        duration: 0.8,
+      });
+    }
+  };
+
   // Apply status-based styling to a polygon layer
   const applyStatusStyle = useCallback(
     (layer: Layer, status: PostingShapeStatus = "planned") => {
@@ -1334,6 +1395,22 @@ export default function PostingPageClient({
       `}</style>
 
       <GeomanMap onMapReady={setMapInstance} />
+
+      {/* Current location button */}
+      <button
+        type="button"
+        onClick={handleLocate}
+        disabled={!currentPos}
+        className={`fixed right-4 bottom-4 rounded-full shadow px-4 py-2 font-bold border transition-colors ${
+          currentPos
+            ? "bg-white border-blue-500 text-blue-600 hover:bg-blue-50"
+            : "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+        }`}
+        style={{ zIndex: 1000 }}
+        aria-label="現在地を表示"
+      >
+        📍 現在地
+      </button>
 
       {/* Status Change Dialog */}
       <ShapeStatusDialog
