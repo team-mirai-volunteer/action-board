@@ -43,6 +43,7 @@ interface ShapeStatusDialogProps {
     newStatus: PostingShapeStatus,
     newMemo: string | null,
   ) => void;
+  onDelete?: (id: string) => Promise<void>;
 }
 
 export function ShapeStatusDialog({
@@ -51,6 +52,7 @@ export function ShapeStatusDialog({
   shape,
   currentUserId,
   onStatusUpdated,
+  onDelete,
 }: ShapeStatusDialogProps) {
   // Check if the current user owns this shape
   const isOwner = shape?.user_id === currentUserId || !shape?.user_id;
@@ -64,6 +66,7 @@ export function ShapeStatusDialog({
     number | null
   >(null);
   const [memo, setMemo] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // ダイアログ開時にミッション達成状況を取得
   useEffect(() => {
@@ -132,6 +135,27 @@ export function ShapeStatusDialog({
       toast.error("更新に失敗しました");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!shape?.id || !onDelete) return;
+
+    const confirmed = window.confirm(
+      "この図形を削除しますか？\n削除すると元に戻せません。",
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      await onDelete(shape.id);
+      toast.success("図形を削除しました");
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Failed to delete shape:", error);
+      toast.error("削除に失敗しました");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -235,22 +259,36 @@ export function ShapeStatusDialog({
             </div>
           </div>
         )}
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isUpdating}
-          >
-            {isOwner ? "キャンセル" : "閉じる"}
-          </Button>
-          {isOwner && (
+        <DialogFooter className="flex-row justify-between sm:justify-between">
+          {isOwner && onDelete ? (
             <Button
-              onClick={handleStatusUpdate}
-              disabled={isUpdating || isLoading || !canSubmit}
+              variant="link"
+              onClick={handleDelete}
+              disabled={isUpdating || isDeleting || isLoading}
+              className="text-gray-600 hover:text-red-600"
             >
-              {isUpdating ? "更新中..." : "更新する"}
+              {isDeleting ? "削除中..." : "削除"}
             </Button>
+          ) : (
+            <div />
           )}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isUpdating || isDeleting}
+            >
+              {isOwner ? "キャンセル" : "閉じる"}
+            </Button>
+            {isOwner && (
+              <Button
+                onClick={handleStatusUpdate}
+                disabled={isUpdating || isDeleting || isLoading || !canSubmit}
+              >
+                {isUpdating ? "更新中..." : "更新する"}
+              </Button>
+            )}
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
