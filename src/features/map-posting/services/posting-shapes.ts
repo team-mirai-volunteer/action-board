@@ -131,12 +131,35 @@ export async function loadShapes(eventId: string) {
     }
   }
 
-  // Merge display names into shapes
+  // Fetch posting_count for all shapes from posting_activities
+  const shapeIds = data.map((s) => s.id).filter((id): id is string => !!id);
+  let postingCounts: Record<string, number> = {};
+  if (shapeIds.length > 0) {
+    const { data: activities } = await supabase
+      .from("posting_activities")
+      .select("shape_id, posting_count")
+      .in("shape_id", shapeIds);
+
+    if (activities) {
+      postingCounts = activities.reduce(
+        (acc, a) => {
+          if (a.shape_id && a.posting_count) {
+            acc[a.shape_id] = a.posting_count;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+    }
+  }
+
+  // Merge display names and posting counts into shapes
   return data.map((shape) => ({
     ...shape,
     user_display_name: shape.user_id
       ? userDisplayNames[shape.user_id]
       : undefined,
+    posting_count: shape.id ? postingCounts[shape.id] : undefined,
   }));
 }
 

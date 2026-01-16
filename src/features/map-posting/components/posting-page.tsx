@@ -1,7 +1,7 @@
 "use client";
 
 import type { Json } from "@/lib/types/supabase";
-import type { Layer, Map as LeafletMap } from "leaflet";
+import type { Layer, Map as LeafletMap, Marker } from "leaflet";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,198 @@ import {
   type PostingShapeStatus,
   postingStatusConfig,
 } from "../config/status-config";
+
+// クラスタリングのしきい値ズームレベル（これ以上でポリゴン表示、未満でクラスター表示）
+const CLUSTER_THRESHOLD_ZOOM = 13;
+
+// ステータス別の色（クラスターアイコン用）
+const statusColors: Record<PostingShapeStatus, string> = {
+  planned: "#3B82F6", // blue
+  completed: "#10B981", // green
+  unavailable: "#EF4444", // red
+  other: "#8B5CF6", // purple
+};
+
+// マーカーにシェイプデータを紐付けるための拡張型
+interface MarkerWithShape extends Marker {
+  shapeData?: {
+    id: string;
+    status: PostingShapeStatus;
+    posting_count?: number | null;
+    lat: number;
+    lng: number;
+  };
+}
+
+// Create custom marker icon with status color
+function createMarkerIcon(
+  L: typeof import("leaflet"),
+  status: PostingShapeStatus,
+  postingCount?: number | null,
+) {
+  const color = statusColors[status];
+  const showCount = status === "completed" && postingCount;
+
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: ${color};
+        width: ${showCount ? "auto" : "16px"};
+        min-width: 16px;
+        height: 16px;
+        border-radius: ${showCount ? "8px" : "50%"};
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: ${showCount ? "0 4px" : "0"};
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+      ">${showCount ? `${postingCount}枚` : ""}</div>
+    `,
+    className: "posting-marker",
+    iconSize: [showCount ? 40 : 16, 16],
+    iconAnchor: [showCount ? 20 : 8, 8],
+  });
+}
+
+// Create custom cluster icon with pie chart
+// biome-ignore lint/suspicious/noExplicitAny: MarkerCluster type not available
+function createClusterIcon(cluster: any) {
+  const count = cluster.getChildCount();
+  const markers = cluster.getAllChildMarkers() as MarkerWithShape[];
+
+  // Count by status
+  const statusCounts: Record<PostingShapeStatus, number> = {
+    planned: 0,
+    completed: 0,
+    unavailable: 0,
+    other: 0,
+  };
+  let totalPostingCount = 0;
+
+  for (const marker of markers) {
+    const shape = marker.shapeData;
+    if (shape) {
+      statusCounts[shape.status]++;
+      if (shape.posting_count) {
+        totalPostingCount += shape.posting_count;
+      }
+    }
+  }
+
+  const size = count < 10 ? 35 : count < 100 ? 45 : 55;
+  const fontSize = size < 40 ? "11px" : size < 50 ? "13px" : "15px";
+
+  // Count non-zero statuses
+  const nonZeroStatuses = Object.entries(statusCounts).filter(([, c]) => c > 0);
+
+  let backgroundContent: string;
+  if (nonZeroStatuses.length > 1) {
+    // Create pie chart segments
+    const segments: string[] = [];
+    const radius = (size - 6) / 2;
+    const center = size / 2;
+    let cumulativePercentage = 0;
+
+    const statusOrder: PostingShapeStatus[] = [
+      "completed",
+      "planned",
+      "unavailable",
+      "other",
+    ];
+
+    for (const status of statusOrder) {
+      const statusCount = statusCounts[status];
+      if (statusCount === 0) continue;
+
+      const percentage = statusCount / count;
+
+      if (percentage >= 1) {
+        segments.push(
+          `<circle cx="${center}" cy="${center}" r="${radius}" fill="${statusColors[status]}" />`,
+        );
+        break;
+      }
+
+      const circumference = 2 * Math.PI * radius;
+      const strokeLength = circumference * percentage;
+      const gapLength = circumference - strokeLength;
+      const rotation = cumulativePercentage * 360 - 90;
+
+      segments.push(`
+        <circle
+          cx="${center}"
+          cy="${center}"
+          r="${radius}"
+          fill="none"
+          stroke="${statusColors[status]}"
+          stroke-width="${radius * 2}"
+          stroke-dasharray="${strokeLength} ${gapLength}"
+          stroke-dashoffset="0"
+          transform="rotate(${rotation} ${center} ${center})"
+        />
+      `);
+
+      cumulativePercentage += percentage;
+    }
+
+    backgroundContent = `
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="position: absolute; top: -3px; left: -3px;">
+        ${segments.join("")}
+        <text x="${size / 2}" y="${size / 2}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="${fontSize}" font-weight="bold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+          ${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}
+        </text>
+      </svg>
+    `;
+  } else {
+    // Single status - use solid color
+    const dominantStatus =
+      (nonZeroStatuses[0]?.[0] as PostingShapeStatus) || "planned";
+    const color = statusColors[dominantStatus];
+    backgroundContent = `
+      <div style="
+        background-color: ${color};
+        width: calc(100% + 6px);
+        height: calc(100% + 6px);
+        border-radius: 50%;
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: ${fontSize};
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      ">${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}</div>
+    `;
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: Leaflet global
+  return (window as any).L.divIcon({
+    html: `
+      <div style="
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        position: relative;
+        overflow: hidden;
+      ">
+        ${backgroundContent}
+      </div>
+    `,
+    className: "posting-cluster",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
 import {
   deleteShape as deleteMapShape,
   loadShapes as loadMapShapes,
@@ -48,11 +240,27 @@ export default function PostingPageClient({
   const shapesDataRef = useRef<Map<string, MapShapeData>>(new Map());
   // Track polygon layers for status color updates
   const polygonLayersRef = useRef<Map<string, Layer>>(new Map());
+  // Track posting count label layers
+  const postingLabelLayersRef = useRef<Map<string, Layer>>(new Map());
+  // Track marker cluster group
+  // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type not available
+  const markerClusterRef = useRef<any>(null);
+  // Track polygon layer group for visibility toggle
+  // biome-ignore lint/suspicious/noExplicitAny: LayerGroup type from dynamic import
+  const polygonLayerGroupRef = useRef<any>(null);
+  // Track current zoom level for display mode
+  const [isClusterMode, setIsClusterMode] = useState(true);
+  // Ref to track isClusterMode for use in event handlers
+  const isClusterModeRef = useRef(isClusterMode);
 
-  // Keep ref in sync with state
+  // Keep refs in sync with state
   useEffect(() => {
     showTextRef.current = showText;
   }, [showText]);
+
+  useEffect(() => {
+    isClusterModeRef.current = isClusterMode;
+  }, [isClusterMode]);
 
   useEffect(() => {
     if (!mapInstance) return;
@@ -62,6 +270,8 @@ export default function PostingPageClient({
 
       try {
         L = (await import("leaflet")).default;
+        // Load markercluster plugin
+        await import("leaflet.markercluster");
       } catch (error) {
         console.error("Failed to load Leaflet in PostingPageClient:", error);
         toast.error(
@@ -69,6 +279,101 @@ export default function PostingPageClient({
         );
         return;
       }
+
+      // Initialize polygon layer group
+      polygonLayerGroupRef.current = L.layerGroup();
+
+      // Initialize marker cluster group
+      markerClusterRef.current = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        iconCreateFunction: createClusterIcon,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        chunkedLoading: true,
+        removeOutsideVisibleBounds: true,
+        spiderfyOnMaxZoom: true,
+        spiderfyDistanceMultiplier: 2,
+      });
+
+      // Add cluster tooltip events
+      markerClusterRef.current.on(
+        "clustermouseover",
+        // biome-ignore lint/suspicious/noExplicitAny: Leaflet cluster event type
+        (e: any) => {
+          const cluster = e.propagatedFrom;
+          const markers = cluster.getAllChildMarkers() as MarkerWithShape[];
+
+          const statusCounts: Record<PostingShapeStatus, number> = {
+            planned: 0,
+            completed: 0,
+            unavailable: 0,
+            other: 0,
+          };
+          let totalPostingCount = 0;
+
+          for (const marker of markers) {
+            const shape = marker.shapeData;
+            if (shape) {
+              statusCounts[shape.status]++;
+              if (shape.posting_count) {
+                totalPostingCount += shape.posting_count;
+              }
+            }
+          }
+
+          const statusLabels: Record<PostingShapeStatus, string> = {
+            planned: "配布予定",
+            completed: "配布完了",
+            unavailable: "配布不可",
+            other: "その他",
+          };
+
+          const tooltipLines = Object.entries(statusCounts)
+            .filter(([, count]) => count > 0)
+            .map(
+              ([status, count]) =>
+                `${statusLabels[status as PostingShapeStatus]}: ${count}`,
+            );
+
+          if (totalPostingCount > 0) {
+            tooltipLines.push(`合計配布枚数: ${totalPostingCount}枚`);
+          }
+
+          cluster
+            .bindTooltip(
+              `エリア数: ${cluster.getChildCount()}<br>${tooltipLines.join("<br>")}`,
+              { permanent: false, direction: "top" },
+            )
+            .openTooltip();
+        },
+      );
+
+      markerClusterRef.current.on(
+        "clustermouseout",
+        // biome-ignore lint/suspicious/noExplicitAny: Leaflet cluster event type
+        (e: any) => {
+          e.propagatedFrom.closeTooltip();
+        },
+      );
+
+      // Add cluster group to map (initially visible)
+      mapInstance.addLayer(markerClusterRef.current);
+
+      // Set up zoom event listener for display mode toggle
+      mapInstance.on("zoomend", () => {
+        const zoom = mapInstance.getZoom();
+        const shouldBeClusterMode = zoom < CLUSTER_THRESHOLD_ZOOM;
+
+        if (shouldBeClusterMode !== isClusterModeRef.current) {
+          setIsClusterMode(shouldBeClusterMode);
+          toggleDisplayMode(shouldBeClusterMode);
+        }
+      });
+
+      // Check initial zoom level
+      const initialZoom = mapInstance.getZoom();
+      const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
+      setIsClusterMode(initialClusterMode);
 
       console.log("Map instance received, pm available:", !!mapInstance.pm);
 
@@ -203,6 +508,11 @@ export default function PostingPageClient({
             // Store shape data for status dialog
             const shapeData = extractShapeData(e.layer);
             shapeData.id = saved.id;
+            // Get center coordinates from saved data
+            if (saved.lat && saved.lng) {
+              shapeData.lat = saved.lat;
+              shapeData.lng = saved.lng;
+            }
             shapesDataRef.current.set(saved.id, shapeData);
 
             // Track polygon layer
@@ -210,6 +520,40 @@ export default function PostingPageClient({
 
             // Apply default status style
             applyStatusStyle(e.layer, "planned");
+
+            // Add to polygon layer group
+            if (polygonLayerGroupRef.current) {
+              // Remove from map and add to layer group
+              mapInstance.removeLayer(e.layer);
+              polygonLayerGroupRef.current.addLayer(e.layer);
+              // If in polygon mode, show it
+              if (!isClusterModeRef.current) {
+                e.layer.addTo(mapInstance);
+              }
+            }
+
+            // Create marker for clustering
+            if (saved.lat && saved.lng && markerClusterRef.current) {
+              const marker = L.marker([saved.lat, saved.lng], {
+                icon: createMarkerIcon(L, "planned"),
+              }) as MarkerWithShape;
+              marker.shapeData = {
+                id: saved.id,
+                status: "planned",
+                posting_count: null,
+                lat: saved.lat,
+                lng: saved.lng,
+              };
+              marker.on("click", () => {
+                if (saved.lat !== null && saved.lng !== null) {
+                  mapInstance.setView(
+                    [saved.lat, saved.lng],
+                    CLUSTER_THRESHOLD_ZOOM,
+                  );
+                }
+              });
+              markerClusterRef.current.addLayer(marker);
+            }
 
             // Attach click event for status dialog
             e.layer.on("click", () => {
@@ -275,6 +619,79 @@ export default function PostingPageClient({
       loadExistingShapes();
     };
 
+    // Toggle display mode between cluster and polygon
+    const toggleDisplayMode = (clusterMode: boolean) => {
+      if (
+        !mapInstance ||
+        !polygonLayerGroupRef.current ||
+        !markerClusterRef.current
+      )
+        return;
+
+      if (clusterMode) {
+        // Show cluster markers, hide polygons
+        if (mapInstance.hasLayer(polygonLayerGroupRef.current)) {
+          mapInstance.removeLayer(polygonLayerGroupRef.current);
+        }
+        // Hide posting count labels
+        for (const label of Array.from(
+          postingLabelLayersRef.current.values(),
+        )) {
+          if (mapInstance.hasLayer(label)) {
+            mapInstance.removeLayer(label);
+          }
+        }
+        if (!mapInstance.hasLayer(markerClusterRef.current)) {
+          mapInstance.addLayer(markerClusterRef.current);
+        }
+      } else {
+        // Show polygons, hide cluster markers
+        if (mapInstance.hasLayer(markerClusterRef.current)) {
+          mapInstance.removeLayer(markerClusterRef.current);
+        }
+        if (!mapInstance.hasLayer(polygonLayerGroupRef.current)) {
+          mapInstance.addLayer(polygonLayerGroupRef.current);
+        }
+        // Show posting count labels for completed shapes
+        for (const label of Array.from(
+          postingLabelLayersRef.current.values(),
+        )) {
+          if (!mapInstance.hasLayer(label)) {
+            label.addTo(mapInstance);
+          }
+        }
+      }
+    };
+
+    // Add posting count label for completed polygon
+    const addPostingCountLabel = (
+      L: typeof import("leaflet"),
+      shapeId: string,
+      lat: number,
+      lng: number,
+      postingCount: number,
+    ) => {
+      const icon = L.divIcon({
+        html: `<div class="posting-count-label">${postingCount}枚</div>`,
+        className: "posting-count-marker",
+        iconSize: [50, 20],
+        iconAnchor: [25, 10],
+      });
+
+      const labelMarker = L.marker([lat, lng], { icon, interactive: false });
+      postingLabelLayersRef.current.set(shapeId, labelMarker);
+      return labelMarker;
+    };
+
+    // Remove posting count label
+    const removePostingCountLabel = (shapeId: string) => {
+      const label = postingLabelLayersRef.current.get(shapeId);
+      if (label && mapInstance) {
+        mapInstance.removeLayer(label);
+        postingLabelLayersRef.current.delete(shapeId);
+      }
+    };
+
     const loadExistingShapes = async () => {
       try {
         const savedShapes = await loadMapShapes(eventId);
@@ -287,6 +704,8 @@ export default function PostingPageClient({
           toast.error("保存された図形の読み込みに失敗しました。");
           return;
         }
+
+        const markers: Marker[] = [];
 
         for (const shape of savedShapes) {
           try {
@@ -329,13 +748,56 @@ export default function PostingPageClient({
               if (shape.id) {
                 polygonLayersRef.current.set(shape.id, layer);
               }
+
+              // Add to polygon layer group instead of directly to map
+              if (polygonLayerGroupRef.current) {
+                polygonLayerGroupRef.current.addLayer(layer);
+              }
+
+              // Create marker for clustering (using center coordinates)
+              if (shape.lat && shape.lng && shape.id) {
+                const marker = L.marker([shape.lat, shape.lng], {
+                  icon: createMarkerIcon(L, status, shape.posting_count),
+                }) as MarkerWithShape;
+                marker.shapeData = {
+                  id: shape.id,
+                  status,
+                  posting_count: shape.posting_count,
+                  lat: shape.lat,
+                  lng: shape.lng,
+                };
+                // Click to zoom in and show polygon
+                marker.on("click", () => {
+                  if (mapInstance) {
+                    mapInstance.setView(
+                      [shape.lat as number, shape.lng as number],
+                      CLUSTER_THRESHOLD_ZOOM,
+                    );
+                  }
+                });
+                markers.push(marker);
+
+                // Add posting count label for completed polygons
+                if (
+                  status === "completed" &&
+                  shape.posting_count &&
+                  shape.posting_count > 0
+                ) {
+                  addPostingCountLabel(
+                    L,
+                    shape.id,
+                    shape.lat,
+                    shape.lng,
+                    shape.posting_count,
+                  );
+                }
+              }
             }
 
             if (layer) {
-              layer.addTo(mapInstance);
-
-              // Track text layers
+              // For text layers, add directly to map
               if (layer._isTextLayer) {
+                layer.addTo(mapInstance);
                 textLayersRef.current.add(layer);
                 // Apply initial text visibility state
                 if (!showTextRef.current) {
@@ -371,7 +833,14 @@ export default function PostingPageClient({
                 }
               }
 
-              console.log("Loaded shape:", shape.type, "status:", shape.status);
+              console.log(
+                "Loaded shape:",
+                shape.type,
+                "status:",
+                shape.status,
+                "posting_count:",
+                shape.posting_count,
+              );
             }
           } catch (layerError) {
             console.error(
@@ -381,6 +850,16 @@ export default function PostingPageClient({
             );
           }
         }
+
+        // Add all markers to cluster group
+        if (markerClusterRef.current && markers.length > 0) {
+          markerClusterRef.current.addLayers(markers);
+        }
+
+        // Set initial display mode based on zoom level
+        const initialZoom = mapInstance.getZoom();
+        const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
+        toggleDisplayMode(initialClusterMode);
 
         console.log("Loaded existing shapes:", savedShapes.length);
       } catch (error) {
@@ -444,7 +923,18 @@ export default function PostingPageClient({
       const layer = options.layer || polygonLayersRef.current.get(shapeId);
       if (layer && mapInstance) {
         mapInstance.removeLayer(layer);
+        // Also remove from polygon layer group
+        if (polygonLayerGroupRef.current) {
+          polygonLayerGroupRef.current.removeLayer(layer);
+        }
       }
+    }
+
+    // Remove posting count label if exists
+    const label = postingLabelLayersRef.current.get(shapeId);
+    if (label && mapInstance) {
+      mapInstance.removeLayer(label);
+      postingLabelLayersRef.current.delete(shapeId);
     }
 
     // Clean up tracking refs
@@ -654,12 +1144,14 @@ export default function PostingPageClient({
       shapeId: string,
       newStatus: PostingShapeStatus,
       newMemo: string | null,
+      postingCount?: number | null,
     ) => {
       // Update the shapes data ref
       const shapeData = shapesDataRef.current.get(shapeId);
       if (shapeData) {
         shapeData.status = newStatus;
         shapeData.memo = newMemo;
+        shapeData.posting_count = postingCount;
         shapesDataRef.current.set(shapeId, shapeData);
       }
 
@@ -668,8 +1160,47 @@ export default function PostingPageClient({
       if (layer) {
         applyStatusStyle(layer, newStatus);
       }
+
+      // Update posting count label
+      // biome-ignore lint/suspicious/noExplicitAny: window.L type
+      const L = (window as any).L;
+      if (!L) return;
+
+      // Remove existing label if any
+      const existingLabel = postingLabelLayersRef.current.get(shapeId);
+      if (existingLabel && mapInstance) {
+        mapInstance.removeLayer(existingLabel);
+        postingLabelLayersRef.current.delete(shapeId);
+      }
+
+      // Add new label if completed with posting count
+      if (
+        newStatus === "completed" &&
+        postingCount &&
+        postingCount > 0 &&
+        shapeData?.lat &&
+        shapeData?.lng
+      ) {
+        const icon = L.divIcon({
+          html: `<div class="posting-count-label">${postingCount}枚</div>`,
+          className: "posting-count-marker",
+          iconSize: [50, 20],
+          iconAnchor: [25, 10],
+        });
+
+        const labelMarker = L.marker([shapeData.lat, shapeData.lng], {
+          icon,
+          interactive: false,
+        });
+        postingLabelLayersRef.current.set(shapeId, labelMarker);
+
+        // Only add to map if not in cluster mode
+        if (!isClusterMode && mapInstance) {
+          labelMarker.addTo(mapInstance);
+        }
+      }
     },
-    [applyStatusStyle],
+    [applyStatusStyle, mapInstance, isClusterMode],
   );
 
   // Attach click event to polygon layer for status dialog
@@ -692,6 +1223,14 @@ export default function PostingPageClient({
       <link
         rel="stylesheet"
         href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.18.3/dist/leaflet-geoman.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
       />
 
       {/* Control Panel */}
@@ -759,6 +1298,36 @@ export default function PostingPageClient({
         .leaflet-pm-icon-polygon {
           width: 16px !important;
           height: 16px !important;
+        }
+
+        /* Posting count label styles */
+        .posting-count-label {
+          background: rgba(16, 185, 129, 0.95);
+          color: white;
+          font-size: 12px;
+          font-weight: bold;
+          padding: 2px 8px;
+          border-radius: 10px;
+          white-space: nowrap;
+          text-align: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          border: 2px solid white;
+        }
+        .posting-count-marker {
+          z-index: 600 !important;
+        }
+
+        /* Cluster and marker styles */
+        .posting-marker {
+          z-index: 500 !important;
+        }
+        .posting-cluster {
+          z-index: 400 !important;
+        }
+        .leaflet-marker-icon.posting-marker,
+        .leaflet-marker-icon.posting-cluster {
+          background: transparent !important;
+          border: none !important;
         }
 
         ${textMarkerStyles}

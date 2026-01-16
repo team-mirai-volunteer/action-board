@@ -23,6 +23,8 @@ export interface MapShape {
   // ポリゴン中心座標
   lat?: number | null;
   lng?: number | null;
+  // 配布枚数（posting_activitiesから取得）
+  posting_count?: number | null;
 }
 
 // ミッション達成チェック用（posting_activitiesから取得）
