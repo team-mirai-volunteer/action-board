@@ -88,8 +88,13 @@ export default async function Home({
         {/* メトリクスセクション */}
         <MetricsWithSuspense />
 
-        {/* ランキングセクション */}
+        {/* アクティビティセクション */}
         <section className="py-12 md:py-16 bg-white">
+          <Activities />
+        </section>
+
+        {/* ランキングセクション */}
+        <section className="md:py-16 bg-white">
           <RankingSection />
         </section>
 
@@ -108,11 +113,6 @@ export default async function Home({
           showAchievedMissions={true}
           id="missions"
         />
-      </section>
-
-      {/* アクティビティセクション */}
-      <section className="py-12 md:py-16 bg-white">
-        <Activities />
       </section>
     </div>
   );
