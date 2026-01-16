@@ -88,6 +88,46 @@ export default function PostingPageClient({
         // Continue without tiles - the map will still be functional for drawing
       }
 
+      // Geoman ツールチップの日本語化
+      mapInstance.pm.setLang("ja", {
+        tooltips: {
+          placeMarker: "クリックしてマーカーを配置",
+          firstVertex: "クリックして最初の点を配置",
+          continueLine: "クリックして続ける",
+          finishLine: "既存のマーカーをクリックして終了",
+          finishPoly: "最初のマーカーをクリックして終了",
+          finishRect: "クリックして終了",
+          startCircle: "クリックして円の中心を配置",
+          finishCircle: "クリックして円を終了",
+          placeCircleMarker: "クリックして円マーカーを配置",
+          placeText: "クリックしてテキストを配置",
+        },
+        actions: {
+          finish: "完了",
+          cancel: "キャンセル",
+          removeLastVertex: "最後の点を削除",
+        },
+        buttonTitles: {
+          drawMarkerButton: "マーカーを描画",
+          drawPolyButton: "ポリゴンを描画",
+          drawLineButton: "ラインを描画",
+          drawCircleButton: "円を描画",
+          drawRectButton: "四角形を描画",
+          editButton: "レイヤーを編集",
+          dragButton: "レイヤーを移動",
+          cutButton: "レイヤーを切り取り",
+          deleteButton: "レイヤーを削除",
+          drawCircleMarkerButton: "円マーカーを描画",
+          snappingButton: "スナップ",
+          pinningButton: "ピン留め",
+          rotateButton: "レイヤーを回転",
+          drawTextButton: "テキストを描画",
+          scaleButton: "レイヤーを拡大縮小",
+          autoTracingButton: "自動トレース",
+        },
+      });
+      mapInstance.pm.setLang("ja");
+
       mapInstance.pm.addControls({
         position: "topleft",
         // Only enable polygon and text drawing
@@ -325,6 +365,18 @@ export default function PostingPageClient({
     };
 
     initializePostingMap();
+
+    // Esc キーで描画モードをキャンセル
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        mapInstance.pm.disableDraw();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [mapInstance, eventId]);
 
   const getAllDrawnLayers = () => {
@@ -348,6 +400,11 @@ export default function PostingPageClient({
     .pm-text {
       font-size:14px;
       color:#000;
+    }
+    /* Geoman アクションボタンを非表示 */
+    .leaflet-pm-action.action-finish,
+    .leaflet-pm-action.action-removeLastVertex {
+      display: none !important;
     }
   `;
 
