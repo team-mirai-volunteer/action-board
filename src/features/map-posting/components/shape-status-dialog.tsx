@@ -43,6 +43,7 @@ interface ShapeStatusDialogProps {
     id: string,
     newStatus: PostingShapeStatus,
     newMemo: string | null,
+    postingCount?: number | null,
   ) => void;
   onDelete?: (id: string) => Promise<void>;
 }
@@ -132,7 +133,17 @@ export function ShapeStatusDialog({
         toast.success("ステータスを更新しました");
       }
 
-      onStatusUpdated(shape.id, selectedStatus, memo || null);
+      // Determine the posting count to pass
+      const finalPostingCount =
+        selectedStatus === "completed"
+          ? postingCount || completedPostingCount
+          : null;
+      onStatusUpdated(
+        shape.id,
+        selectedStatus,
+        memo || null,
+        finalPostingCount,
+      );
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to update status:", error);
