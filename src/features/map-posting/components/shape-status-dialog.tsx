@@ -33,6 +33,9 @@ import {
 } from "../services/posting-shapes";
 import type { MapShape } from "../types/posting-types";
 
+// 配布枚数の上限
+const MAX_POSTING_COUNT = 2000;
+
 interface ShapeStatusDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -100,7 +103,11 @@ export function ShapeStatusDialog({
 
   const canSubmit = useMemo(() => {
     if (selectedStatus === "completed" && !isMissionCompleted) {
-      return postingCount !== null && postingCount > 0;
+      return (
+        postingCount !== null &&
+        postingCount > 0 &&
+        postingCount <= MAX_POSTING_COUNT
+      );
     }
     return true;
   }, [selectedStatus, postingCount, isMissionCompleted]);
@@ -240,6 +247,7 @@ export function ShapeStatusDialog({
                   id="postingCount"
                   type="number"
                   min={1}
+                  max={MAX_POSTING_COUNT}
                   value={postingCount || ""}
                   onChange={(e) =>
                     setPostingCount(
@@ -249,6 +257,11 @@ export function ShapeStatusDialog({
                   placeholder="配布した枚数を入力"
                   disabled={!canEdit}
                 />
+                {postingCount !== null && postingCount > MAX_POSTING_COUNT && (
+                  <p className="text-sm text-red-500">
+                    配布枚数は{MAX_POSTING_COUNT}枚以下で入力してください
+                  </p>
+                )}
                 <p className="text-muted-foreground text-sm">
                   配布完了を保存すると、ミッションが自動で達成されます
                 </p>
