@@ -39,3 +39,23 @@ export const postingStatusBadgeColors: Record<PostingShapeStatus, string> = {
   unavailable: "bg-red-500",
   other: "bg-purple-500",
 };
+
+// クラスターアイコン用のステータス色
+export const postingStatusColors: Record<PostingShapeStatus, string> = {
+  planned: "#3B82F6", // blue
+  completed: "#10B981", // green
+  unavailable: "#EF4444", // red
+  other: "#8B5CF6", // purple
+};
+
+// クラスタリングのしきい値ズームレベル
+// これ以上でポリゴン表示、未満でクラスター表示
+export const CLUSTER_THRESHOLD_ZOOM = 13;
+
+// ステータスラベル（ツールチップ等で使用）
+export const postingStatusLabels: Record<PostingShapeStatus, string> = {
+  planned: "配布予定",
+  completed: "配布完了",
+  unavailable: "配布不可",
+  other: "その他",
+};

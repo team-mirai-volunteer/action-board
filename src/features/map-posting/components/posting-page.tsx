@@ -1,212 +1,30 @@
 "use client";
 
 import type { Json } from "@/lib/types/supabase";
-import type { CircleMarker, Layer, Map as LeafletMap, Marker } from "leaflet";
+import type { Layer, Map as LeafletMap, Marker } from "leaflet";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+  addButtonLabel,
+  geomanJaLang,
+  geomanPathOptions,
+  postingGeomanControls,
+} from "../config/geoman-config";
+import {
+  CLUSTER_THRESHOLD_ZOOM,
   type PostingShapeStatus,
   postingStatusConfig,
+  postingStatusLabels,
 } from "../config/status-config";
-
-// クラスタリングのしきい値ズームレベル（これ以上でポリゴン表示、未満でクラスター表示）
-const CLUSTER_THRESHOLD_ZOOM = 13;
-
-// ステータス別の色（クラスターアイコン用）
-const statusColors: Record<PostingShapeStatus, string> = {
-  planned: "#3B82F6", // blue
-  completed: "#10B981", // green
-  unavailable: "#EF4444", // red
-  other: "#8B5CF6", // purple
-};
-
-// マーカーにシェイプデータを紐付けるための拡張型
-interface MarkerWithShape extends Marker {
-  shapeData?: {
-    id: string;
-    status: PostingShapeStatus;
-    posting_count?: number | null;
-    lat: number;
-    lng: number;
-  };
-}
-
-// Create custom marker icon with status color
-function createMarkerIcon(
-  L: typeof import("leaflet"),
-  status: PostingShapeStatus,
-  postingCount?: number | null,
-) {
-  const color = statusColors[status];
-  const showCount = status === "completed" && postingCount;
-
-  return L.divIcon({
-    html: `
-      <div style="
-        background-color: ${color};
-        width: ${showCount ? "auto" : "16px"};
-        min-width: 16px;
-        height: 16px;
-        border-radius: ${showCount ? "8px" : "50%"};
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: ${showCount ? "0 4px" : "0"};
-        color: white;
-        font-size: 10px;
-        font-weight: bold;
-      ">${showCount ? `${postingCount}枚` : ""}</div>
-    `,
-    className: "posting-marker",
-    iconSize: [showCount ? 40 : 16, 16],
-    iconAnchor: [showCount ? 20 : 8, 8],
-  });
-}
-
-// Create custom cluster icon with pie chart
-// biome-ignore lint/suspicious/noExplicitAny: MarkerCluster type not available
-function createClusterIcon(cluster: any) {
-  const count = cluster.getChildCount();
-  const markers = cluster.getAllChildMarkers() as MarkerWithShape[];
-
-  // Count by status
-  const statusCounts: Record<PostingShapeStatus, number> = {
-    planned: 0,
-    completed: 0,
-    unavailable: 0,
-    other: 0,
-  };
-  let totalPostingCount = 0;
-
-  for (const marker of markers) {
-    const shape = marker.shapeData;
-    if (shape) {
-      statusCounts[shape.status]++;
-      if (shape.posting_count) {
-        totalPostingCount += shape.posting_count;
-      }
-    }
-  }
-
-  const size = count < 10 ? 35 : count < 100 ? 45 : 55;
-  const fontSize = size < 40 ? "11px" : size < 50 ? "13px" : "15px";
-
-  // Count non-zero statuses
-  const nonZeroStatuses = Object.entries(statusCounts).filter(([, c]) => c > 0);
-
-  let backgroundContent: string;
-  if (nonZeroStatuses.length > 1) {
-    // Create pie chart segments
-    const segments: string[] = [];
-    const radius = (size - 6) / 2;
-    const center = size / 2;
-    let cumulativePercentage = 0;
-
-    const statusOrder: PostingShapeStatus[] = [
-      "completed",
-      "planned",
-      "unavailable",
-      "other",
-    ];
-
-    for (const status of statusOrder) {
-      const statusCount = statusCounts[status];
-      if (statusCount === 0) continue;
-
-      const percentage = statusCount / count;
-
-      if (percentage >= 1) {
-        segments.push(
-          `<circle cx="${center}" cy="${center}" r="${radius}" fill="${statusColors[status]}" />`,
-        );
-        break;
-      }
-
-      const circumference = 2 * Math.PI * radius;
-      const strokeLength = circumference * percentage;
-      const gapLength = circumference - strokeLength;
-      const rotation = cumulativePercentage * 360 - 90;
-
-      segments.push(`
-        <circle
-          cx="${center}"
-          cy="${center}"
-          r="${radius}"
-          fill="none"
-          stroke="${statusColors[status]}"
-          stroke-width="${radius * 2}"
-          stroke-dasharray="${strokeLength} ${gapLength}"
-          stroke-dashoffset="0"
-          transform="rotate(${rotation} ${center} ${center})"
-        />
-      `);
-
-      cumulativePercentage += percentage;
-    }
-
-    backgroundContent = `
-      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="position: absolute; top: -3px; left: -3px;">
-        ${segments.join("")}
-        <text x="${size / 2}" y="${size / 2}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="${fontSize}" font-weight="bold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-          ${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}
-        </text>
-      </svg>
-    `;
-  } else {
-    // Single status - use solid color
-    const dominantStatus =
-      (nonZeroStatuses[0]?.[0] as PostingShapeStatus) || "planned";
-    const color = statusColors[dominantStatus];
-    backgroundContent = `
-      <div style="
-        background-color: ${color};
-        width: calc(100% + 6px);
-        height: calc(100% + 6px);
-        border-radius: 50%;
-        position: absolute;
-        top: -3px;
-        left: -3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: ${fontSize};
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-      ">${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}</div>
-    `;
-  }
-
-  // biome-ignore lint/suspicious/noExplicitAny: Leaflet global
-  return (window as any).L.divIcon({
-    html: `
-      <div style="
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        position: relative;
-        overflow: hidden;
-      ">
-        ${backgroundContent}
-      </div>
-    `,
-    className: "posting-cluster",
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-  });
-}
-
+import { useCurrentLocation } from "../hooks/use-current-location";
 import {
   deleteShape as deleteMapShape,
   loadShapes as loadMapShapes,
   saveShape as saveMapShape,
   updateShape as updateMapShape,
 } from "../services/posting-shapes";
+import type { MarkerWithShape } from "../types/posting-types";
 import type {
   GeomanEvent,
   LeafletWindow,
@@ -215,6 +33,15 @@ import type {
   PostingPageClientProps,
   TextCoordinates,
 } from "../types/posting-types";
+import {
+  countStatusesFromMarkers,
+  createClusterIcon,
+  createMarkerIcon,
+} from "../utils/cluster-icon";
+import { toggleDisplayMode } from "../utils/display-mode";
+import { createPostingLabelIcon } from "../utils/posting-label";
+import { applyStatusStyle, getShapeId } from "../utils/shape-layer-utils";
+import { PostingControlPanel } from "./posting-control-panel";
 import { ShapeStatusDialog } from "./shape-status-dialog";
 
 const GeomanMap = dynamic(() => import("./geoman-map"), {
@@ -254,9 +81,8 @@ export default function PostingPageClient({
   const [isClusterMode, setIsClusterMode] = useState(true);
   // Ref to track isClusterMode for use in event handlers
   const isClusterModeRef = useRef(isClusterMode);
-  // Current location state and ref
-  const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
-  const currentMarkerRef = useRef<CircleMarker | null>(null);
+  // Current location hook
+  const { currentPos, handleLocate } = useCurrentLocation(mapInstance);
   // Total posting count
   const [totalPostingCount, setTotalPostingCount] = useState<number>();
   // Filter: show only my shapes
@@ -270,54 +96,6 @@ export default function PostingPageClient({
   useEffect(() => {
     isClusterModeRef.current = isClusterMode;
   }, [isClusterMode]);
-
-  // Watch current location
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      return;
-    }
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        setCurrentPos([pos.coords.latitude, pos.coords.longitude]);
-      },
-      () => {
-        // 位置情報の取得に失敗した場合は静かに処理
-      },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
-    );
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, []);
-
-  // Manage current location marker
-  useEffect(() => {
-    if (!mapInstance) return;
-
-    const L = (window as LeafletWindow).L;
-    if (!L) return;
-
-    // Remove existing current location marker
-    if (currentMarkerRef.current) {
-      currentMarkerRef.current.remove();
-      currentMarkerRef.current = null;
-    }
-
-    // Add marker if current position is available
-    if (currentPos) {
-      const marker = L.circleMarker(currentPos, {
-        radius: 12,
-        color: "#2563eb",
-        fillColor: "#60a5fa",
-        fillOpacity: 0.7,
-        weight: 3,
-      })
-        .addTo(mapInstance)
-        .bindTooltip("あなたの現在地", { permanent: false, direction: "top" });
-
-      currentMarkerRef.current = marker;
-    }
-  }, [currentPos, mapInstance]);
 
   // Apply filter when showOnlyMine changes
   useEffect(() => {
@@ -395,6 +173,13 @@ export default function PostingPageClient({
   useEffect(() => {
     if (!mapInstance) return;
 
+    // Refs for display mode toggle (defined at useEffect level for access by nested functions)
+    const displayModeRefs = {
+      polygonLayerGroupRef,
+      markerClusterRef,
+      postingLabelLayersRef,
+    };
+
     const initializePostingMap = async () => {
       let L: typeof import("leaflet");
 
@@ -432,37 +217,14 @@ export default function PostingPageClient({
         (e: any) => {
           const cluster = e.propagatedFrom;
           const markers = cluster.getAllChildMarkers() as MarkerWithShape[];
-
-          const statusCounts: Record<PostingShapeStatus, number> = {
-            planned: 0,
-            completed: 0,
-            unavailable: 0,
-            other: 0,
-          };
-          let totalPostingCount = 0;
-
-          for (const marker of markers) {
-            const shape = marker.shapeData;
-            if (shape) {
-              statusCounts[shape.status]++;
-              if (shape.posting_count) {
-                totalPostingCount += shape.posting_count;
-              }
-            }
-          }
-
-          const statusLabels: Record<PostingShapeStatus, string> = {
-            planned: "配布予定",
-            completed: "配布完了",
-            unavailable: "配布不可",
-            other: "その他",
-          };
+          const { statusCounts, totalPostingCount } =
+            countStatusesFromMarkers(markers);
 
           const tooltipLines = Object.entries(statusCounts)
             .filter(([, count]) => count > 0)
             .map(
               ([status, count]) =>
-                `${statusLabels[status as PostingShapeStatus]}: ${count}`,
+                `${postingStatusLabels[status as PostingShapeStatus]}: ${count}`,
             );
 
           if (totalPostingCount > 0) {
@@ -496,7 +258,7 @@ export default function PostingPageClient({
 
         if (shouldBeClusterMode !== isClusterModeRef.current) {
           setIsClusterMode(shouldBeClusterMode);
-          toggleDisplayMode(shouldBeClusterMode);
+          toggleDisplayMode(mapInstance, shouldBeClusterMode, displayModeRefs);
         }
       });
 
@@ -504,8 +266,6 @@ export default function PostingPageClient({
       const initialZoom = mapInstance.getZoom();
       const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
       setIsClusterMode(initialClusterMode);
-
-      console.log("Map instance received, pm available:", !!mapInstance.pm);
 
       try {
         L.tileLayer(
@@ -525,96 +285,18 @@ export default function PostingPageClient({
       }
 
       // Geoman ツールチップの日本語化
-      mapInstance.pm.setLang("ja", {
-        tooltips: {
-          placeMarker: "クリックしてマーカーを配置",
-          firstVertex: "クリックして最初の点を配置",
-          continueLine: "クリックして続ける",
-          finishLine: "既存のマーカーをクリックして終了",
-          finishPoly: "最初のマーカーをクリックして終了",
-          finishRect: "クリックして終了",
-          startCircle: "クリックして円の中心を配置",
-          finishCircle: "クリックして円を終了",
-          placeCircleMarker: "クリックして円マーカーを配置",
-          placeText: "クリックしてテキストを配置",
-        },
-        actions: {
-          finish: "完了",
-          cancel: "キャンセル",
-          removeLastVertex: "最後の点を削除",
-        },
-        buttonTitles: {
-          drawMarkerButton: "マーカーを描画",
-          drawPolyButton: "ポリゴンを描画",
-          drawLineButton: "ラインを描画",
-          drawCircleButton: "円を描画",
-          drawRectButton: "四角形を描画",
-          editButton: "レイヤーを編集",
-          dragButton: "レイヤーを移動",
-          cutButton: "レイヤーを切り取り",
-          deleteButton: "レイヤーを削除",
-          drawCircleMarkerButton: "円マーカーを描画",
-          snappingButton: "スナップ",
-          pinningButton: "ピン留め",
-          rotateButton: "レイヤーを回転",
-          drawTextButton: "テキストを描画",
-          scaleButton: "レイヤーを拡大縮小",
-          autoTracingButton: "自動トレース",
-        },
-      });
+      mapInstance.pm.setLang("ja", geomanJaLang);
       mapInstance.pm.setLang("ja");
 
-      mapInstance.pm.addControls({
-        position: "topleft",
-        // Only enable polygon and text drawing
-        drawMarker: false,
-        drawCircleMarker: false,
-        drawPolyline: false,
-        drawRectangle: false,
-        drawPolygon: true, // Enable polygon drawing
-        drawCircle: false,
-        drawText: false, // Enable text drawing
-        // modes
-        editMode: false,
-        dragMode: false,
-        cutPolygon: false,
-        removalMode: false, // 削除はモーダルから行う
-        rotateMode: false,
-        oneBlock: false,
-        // controls
-        drawControls: true,
-        editControls: true,
-        optionsControls: false,
-        customControls: false,
-      });
+      mapInstance.pm.addControls(postingGeomanControls);
 
       // ツールバーボタンにラベルを追加
-      const addButtonLabel = (selector: string, text: string) => {
-        const el = document.querySelector(selector);
-        if (!el) return;
-
-        el.setAttribute("title", text);
-        el.setAttribute("aria-label", text);
-
-        // 二重追加防止
-        if (el.querySelector(".pm-btn-label")) return;
-
-        const span = document.createElement("span");
-        span.className = "pm-btn-label";
-        span.textContent = text;
-        el.appendChild(span);
-      };
-
-      // Geomanのボタンにラベルを追加
       addButtonLabel(
         ".leaflet-pm-draw .leaflet-buttons-control-button",
         "エリア選択",
       );
 
-      console.log("Geoman controls added successfully");
-
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
-        console.log("Shape created:", e.layer);
         if (e.layer) {
           // Check if it's a text layer
           const shapeName = e.layer.pm?.getShape
@@ -696,7 +378,6 @@ export default function PostingPageClient({
       });
 
       mapInstance.on("pm:remove", async (e: GeomanEvent) => {
-        console.log("Shape removed:", e.layer);
         const layer = e.layer;
         if (layer) {
           const sid = getShapeId(layer);
@@ -725,74 +406,14 @@ export default function PostingPageClient({
       });
 
       mapInstance.on("pm:update", async (e: GeomanEvent) => {
-        console.log("Shape updated:", e.layer);
         if (e.layer) {
           await saveOrUpdateLayer(e.layer);
         }
       });
 
-      mapInstance.on("pm:cut", (e: GeomanEvent) => {
-        console.log("Shape cut:", e);
-      });
-
-      mapInstance.on("pm:undo", (e: GeomanEvent) => {
-        console.log("Undo action:", e);
-      });
-
-      mapInstance.on("pm:redo", (e: GeomanEvent) => {
-        console.log("Redo action:", e);
-      });
-
-      mapInstance.pm.setPathOptions({
-        snappable: true,
-        snapDistance: 20,
-      });
+      mapInstance.pm.setPathOptions(geomanPathOptions);
 
       loadExistingShapes();
-    };
-
-    // Toggle display mode between cluster and polygon
-    const toggleDisplayMode = (clusterMode: boolean) => {
-      if (
-        !mapInstance ||
-        !polygonLayerGroupRef.current ||
-        !markerClusterRef.current
-      )
-        return;
-
-      if (clusterMode) {
-        // Show cluster markers, hide polygons
-        if (mapInstance.hasLayer(polygonLayerGroupRef.current)) {
-          mapInstance.removeLayer(polygonLayerGroupRef.current);
-        }
-        // Hide posting count labels
-        for (const label of Array.from(
-          postingLabelLayersRef.current.values(),
-        )) {
-          if (mapInstance.hasLayer(label)) {
-            mapInstance.removeLayer(label);
-          }
-        }
-        if (!mapInstance.hasLayer(markerClusterRef.current)) {
-          mapInstance.addLayer(markerClusterRef.current);
-        }
-      } else {
-        // Show polygons, hide cluster markers
-        if (mapInstance.hasLayer(markerClusterRef.current)) {
-          mapInstance.removeLayer(markerClusterRef.current);
-        }
-        if (!mapInstance.hasLayer(polygonLayerGroupRef.current)) {
-          mapInstance.addLayer(polygonLayerGroupRef.current);
-        }
-        // Show posting count labels for completed shapes
-        for (const label of Array.from(
-          postingLabelLayersRef.current.values(),
-        )) {
-          if (!mapInstance.hasLayer(label)) {
-            label.addTo(mapInstance);
-          }
-        }
-      }
     };
 
     // Add posting count label for completed polygon
@@ -803,25 +424,10 @@ export default function PostingPageClient({
       lng: number,
       postingCount: number,
     ) => {
-      const icon = L.divIcon({
-        html: `<div class="posting-count-label">${postingCount}枚</div>`,
-        className: "posting-count-marker",
-        iconSize: [50, 20],
-        iconAnchor: [25, 10],
-      });
-
+      const icon = createPostingLabelIcon(L, postingCount);
       const labelMarker = L.marker([lat, lng], { icon, interactive: false });
       postingLabelLayersRef.current.set(shapeId, labelMarker);
       return labelMarker;
-    };
-
-    // Remove posting count label
-    const removePostingCountLabel = (shapeId: string) => {
-      const label = postingLabelLayersRef.current.get(shapeId);
-      if (label && mapInstance) {
-        mapInstance.removeLayer(label);
-        postingLabelLayersRef.current.delete(shapeId);
-      }
     };
 
     const loadExistingShapes = async () => {
@@ -966,15 +572,6 @@ export default function PostingPageClient({
                   });
                 }
               }
-
-              console.log(
-                "Loaded shape:",
-                shape.type,
-                "status:",
-                shape.status,
-                "posting_count:",
-                shape.posting_count,
-              );
             }
           } catch (layerError) {
             console.error(
@@ -993,15 +590,13 @@ export default function PostingPageClient({
         // Set initial display mode based on zoom level
         const initialZoom = mapInstance.getZoom();
         const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
-        toggleDisplayMode(initialClusterMode);
+        toggleDisplayMode(mapInstance, initialClusterMode, displayModeRefs);
 
         // Calculate total posting count
         const total = savedShapes.reduce((sum, shape) => {
           return sum + (shape.posting_count || 0);
         }, 0);
         setTotalPostingCount(total);
-
-        console.log("Loaded existing shapes:", savedShapes.length);
       } catch (error) {
         console.error("Failed to load existing shapes:", error);
       }
@@ -1021,23 +616,6 @@ export default function PostingPageClient({
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [mapInstance, eventId]);
-
-  const getAllDrawnLayers = () => {
-    if (!mapInstance) return [];
-
-    const L = (window as LeafletWindow).L;
-    const allLayers: Layer[] = [];
-
-    mapInstance.eachLayer((layer: Layer) => {
-      if (layer instanceof L.Path || layer instanceof L.Marker) {
-        if (layer.pm && !layer._url) {
-          allLayers.push(layer);
-        }
-      }
-    });
-
-    return allLayers;
-  };
 
   const textMarkerStyles = `
     .pm-text {
@@ -1097,7 +675,6 @@ export default function PostingPageClient({
 
     layer.on("pm:textblur", () => {
       if (layer._textDirty) {
-        console.log("Text layer changed -> saving");
         layer._textDirty = false;
         if (autoSave) saveOrUpdateLayer(layer);
       }
@@ -1183,85 +760,6 @@ export default function PostingPageClient({
     if (layer) await saveOrUpdateLayer(layer);
   };
 
-  const getShapeId = (layer: Layer): string | undefined => {
-    return (
-      layer._shapeId ||
-      ((layer?.options as Record<string, unknown>)?.shapeId as
-        | string
-        | undefined) ||
-      (layer?.feature?.properties?._shapeId as string | undefined)
-    );
-  };
-
-  const toggleTextVisibility = () => {
-    if (!mapInstance) return;
-
-    const newShowText = !showText;
-    setShowText(newShowText);
-
-    // Toggle visibility of all text layers from our ref
-    for (const layer of Array.from(textLayersRef.current)) {
-      if (newShowText) {
-        // Show text layer if it's not already on the map
-        if (!mapInstance.hasLayer(layer)) {
-          layer.addTo(mapInstance);
-        }
-      } else {
-        // Hide text layer
-        if (mapInstance.hasLayer(layer)) {
-          mapInstance.removeLayer(layer);
-        }
-      }
-    }
-  };
-
-  // Handle locate button click
-  const handleLocate = () => {
-    if (currentPos && mapInstance) {
-      mapInstance.flyTo(currentPos, mapInstance.getZoom(), {
-        animate: true,
-        duration: 0.8,
-      });
-    }
-  };
-
-  // Apply status-based styling to a polygon layer
-  const applyStatusStyle = useCallback(
-    (layer: Layer, status: PostingShapeStatus = "planned") => {
-      const config = postingStatusConfig[status];
-      // Check if layer has setStyle method (Path layers) or iterate sublayers (GeoJSON LayerGroup)
-      if ("setStyle" in layer && typeof layer.setStyle === "function") {
-        (layer as Layer & { setStyle: (style: object) => void }).setStyle({
-          color: config.color,
-          fillColor: config.fillColor,
-          fillOpacity: config.fillOpacity,
-        });
-      } else if (
-        "eachLayer" in layer &&
-        typeof layer.eachLayer === "function"
-      ) {
-        // For GeoJSON layers which are LayerGroups
-        (
-          layer as Layer & { eachLayer: (fn: (l: Layer) => void) => void }
-        ).eachLayer((subLayer) => {
-          if (
-            "setStyle" in subLayer &&
-            typeof subLayer.setStyle === "function"
-          ) {
-            (
-              subLayer as Layer & { setStyle: (style: object) => void }
-            ).setStyle({
-              color: config.color,
-              fillColor: config.fillColor,
-              fillOpacity: config.fillOpacity,
-            });
-          }
-        });
-      }
-    },
-    [],
-  );
-
   // Handle polygon click to open status dialog
   const handlePolygonClick = useCallback(
     (shapeId: string) => {
@@ -1331,13 +829,7 @@ export default function PostingPageClient({
         shapeData?.lat &&
         shapeData?.lng
       ) {
-        const icon = L.divIcon({
-          html: `<div class="posting-count-label">${postingCount}枚</div>`,
-          className: "posting-count-marker",
-          iconSize: [50, 20],
-          iconAnchor: [25, 10],
-        });
-
+        const icon = createPostingLabelIcon(L, postingCount);
         const labelMarker = L.marker([shapeData.lat, shapeData.lng], {
           icon,
           interactive: false,
@@ -1357,18 +849,7 @@ export default function PostingPageClient({
       }
       setTotalPostingCount(total);
     },
-    [applyStatusStyle, mapInstance, isClusterMode],
-  );
-
-  // Attach click event to polygon layer for status dialog
-  const attachPolygonClickEvent = useCallback(
-    (layer: Layer, shapeId: string) => {
-      layer.off("click");
-      layer.on("click", () => {
-        handlePolygonClick(shapeId);
-      });
-    },
-    [handlePolygonClick],
+    [mapInstance, isClusterMode],
   );
 
   return (
@@ -1390,65 +871,12 @@ export default function PostingPageClient({
         href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
       />
 
-      {/* Control Panel */}
-      <div
-        style={{
-          position: "fixed",
-          top: "80px",
-          right: "10px",
-          zIndex: 1000,
-          background: "white",
-          padding: "10px",
-          borderRadius: "5px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-        }}
-      >
-        <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
-          {eventTitle}
-        </div>
-        {totalPostingCount !== undefined && (
-          <div
-            style={{
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            <span>現在の配布枚数</span>
-            <span
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-              }}
-            >
-              {totalPostingCount.toLocaleString()}枚
-            </span>
-          </div>
-        )}
-        <label
-          style={{
-            fontSize: "12px",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            cursor: "pointer",
-            color: showOnlyMine ? "#2563eb" : "#666",
-            fontWeight: showOnlyMine ? "bold" : "normal",
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={showOnlyMine}
-            onChange={(e) => setShowOnlyMine(e.target.checked)}
-            style={{ cursor: "pointer" }}
-          />
-          自分のエリアのみ表示
-        </label>
-      </div>
+      <PostingControlPanel
+        eventTitle={eventTitle}
+        totalPostingCount={totalPostingCount}
+        showOnlyMine={showOnlyMine}
+        onShowOnlyMineChange={setShowOnlyMine}
+      />
 
       <style jsx global>{`
         body {
