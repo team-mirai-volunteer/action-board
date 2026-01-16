@@ -248,6 +248,8 @@ export default function PostingPageClient({
   // Track polygon layer group for visibility toggle
   // biome-ignore lint/suspicious/noExplicitAny: LayerGroup type from dynamic import
   const polygonLayerGroupRef = useRef<any>(null);
+  // Track all cluster markers for filtering
+  const clusterMarkersRef = useRef<Map<string, MarkerWithShape>>(new Map());
   // Track current zoom level for display mode
   const [isClusterMode, setIsClusterMode] = useState(true);
   // Ref to track isClusterMode for use in event handlers
@@ -256,7 +258,9 @@ export default function PostingPageClient({
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<CircleMarker | null>(null);
   // Total posting count
-  const [totalPostingCount, setTotalPostingCount] = useState(0);
+  const [totalPostingCount, setTotalPostingCount] = useState<number>();
+  // Filter: show only my shapes
+  const [showOnlyMine, setShowOnlyMine] = useState(false);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -314,6 +318,79 @@ export default function PostingPageClient({
       currentMarkerRef.current = marker;
     }
   }, [currentPos, mapInstance]);
+
+  // Apply filter when showOnlyMine changes
+  useEffect(() => {
+    if (!mapInstance || !markerClusterRef.current) return;
+
+    const L = (window as LeafletWindow).L;
+    if (!L) return;
+
+    // Update polygon visibility
+    for (const [shapeId, layer] of Array.from(
+      polygonLayersRef.current.entries(),
+    )) {
+      const shapeData = shapesDataRef.current.get(shapeId);
+      const isOwner = shapeData?.user_id === userId;
+      const shouldShow = !showOnlyMine || isOwner;
+
+      if (shouldShow) {
+        if (
+          polygonLayerGroupRef.current &&
+          !polygonLayerGroupRef.current.hasLayer(layer)
+        ) {
+          polygonLayerGroupRef.current.addLayer(layer);
+        }
+      } else {
+        if (polygonLayerGroupRef.current?.hasLayer(layer)) {
+          polygonLayerGroupRef.current.removeLayer(layer);
+        }
+      }
+
+      // Update posting count label visibility
+      const label = postingLabelLayersRef.current.get(shapeId);
+      if (label) {
+        if (shouldShow && !isClusterMode) {
+          if (!mapInstance.hasLayer(label)) {
+            label.addTo(mapInstance);
+          }
+        } else {
+          if (mapInstance.hasLayer(label)) {
+            mapInstance.removeLayer(label);
+          }
+        }
+      }
+    }
+
+    // Update cluster markers by adding/removing from cluster group
+    for (const [shapeId, marker] of Array.from(
+      clusterMarkersRef.current.entries(),
+    )) {
+      const shapeData = shapesDataRef.current.get(shapeId);
+      const isOwner = shapeData?.user_id === userId;
+      const shouldShow = !showOnlyMine || isOwner;
+
+      if (shouldShow) {
+        if (!markerClusterRef.current.hasLayer(marker)) {
+          markerClusterRef.current.addLayer(marker);
+        }
+      } else {
+        if (markerClusterRef.current.hasLayer(marker)) {
+          markerClusterRef.current.removeLayer(marker);
+        }
+      }
+    }
+
+    // Recalculate total posting count based on filter
+    let total = 0;
+    for (const shape of Array.from(shapesDataRef.current.values())) {
+      const isOwner = shape.user_id === userId;
+      if (!showOnlyMine || isOwner) {
+        total += shape.posting_count || 0;
+      }
+    }
+    setTotalPostingCount(total);
+  }, [showOnlyMine, mapInstance, userId, isClusterMode]);
 
   useEffect(() => {
     if (!mapInstance) return;
@@ -606,6 +683,8 @@ export default function PostingPageClient({
                 }
               });
               markerClusterRef.current.addLayer(marker);
+              // Track marker for filtering
+              clusterMarkersRef.current.set(saved.id, marker);
             }
 
             // Attach click event for status dialog
@@ -829,6 +908,8 @@ export default function PostingPageClient({
                   }
                 });
                 markers.push(marker);
+                // Track marker for filtering
+                clusterMarkersRef.current.set(shape.id, marker);
 
                 // Add posting count label for completed polygons
                 if (
@@ -1328,24 +1409,45 @@ export default function PostingPageClient({
         <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
           {eventTitle}
         </div>
-        <div
-          style={{
-            fontSize: "13px",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-          }}
-        >
-          <span>現在の配布枚数</span>
-          <span
+        {totalPostingCount !== undefined && (
+          <div
             style={{
-              fontSize: "16px",
-              fontWeight: "bold",
+              fontSize: "13px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
             }}
           >
-            {totalPostingCount.toLocaleString()}枚
-          </span>
-        </div>
+            <span>現在の配布枚数</span>
+            <span
+              style={{
+                fontSize: "16px",
+                fontWeight: "bold",
+              }}
+            >
+              {totalPostingCount.toLocaleString()}枚
+            </span>
+          </div>
+        )}
+        <label
+          style={{
+            fontSize: "12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            cursor: "pointer",
+            color: showOnlyMine ? "#2563eb" : "#666",
+            fontWeight: showOnlyMine ? "bold" : "normal",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showOnlyMine}
+            onChange={(e) => setShowOnlyMine(e.target.checked)}
+            style={{ cursor: "pointer" }}
+          />
+          自分のエリアのみ表示
+        </label>
       </div>
 
       <style jsx global>{`
