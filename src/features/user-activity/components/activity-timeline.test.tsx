@@ -20,14 +20,18 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "mission_achievement",
+          mission_id: "mission-1",
         },
       ];
 
       render(<ActivityTimeline timeline={mockTimeline} hasNext={false} />);
 
-      expect(
-        screen.getByText("が「テストミッション」を達成しました！"),
-      ).toBeInTheDocument();
+      // ミッション名がリンクとして表示されていることを確認
+      const missionLink = screen.getByRole("link", {
+        name: "テストミッション",
+      });
+      expect(missionLink).toBeInTheDocument();
+      expect(missionLink).toHaveAttribute("href", "/missions/mission-1");
     });
 
     it("activity_type別に正しい表示形式を使用", () => {
@@ -40,6 +44,7 @@ describe("ActivityTimeline", () => {
         address_prefecture: "大阪府",
         avatar_url: null,
         activity_type: "signup",
+        mission_id: null,
       };
 
       const missionActivity = {
@@ -51,6 +56,7 @@ describe("ActivityTimeline", () => {
         address_prefecture: "神奈川県",
         avatar_url: null,
         activity_type: "mission_achievement",
+        mission_id: "mission-abc",
       };
 
       render(
@@ -62,9 +68,12 @@ describe("ActivityTimeline", () => {
 
       expect(screen.getByText("新規登録しました")).toBeInTheDocument();
 
-      expect(
-        screen.getByText("が「テストミッション」を達成しました！"),
-      ).toBeInTheDocument();
+      // ミッション名がリンクとして表示されていることを確認
+      const missionLink = screen.getByRole("link", {
+        name: "テストミッション",
+      });
+      expect(missionLink).toBeInTheDocument();
+      expect(missionLink).toHaveAttribute("href", "/missions/mission-abc");
     });
 
     it("ユーザーアバターとリンクが正しく表示される", () => {
@@ -78,13 +87,14 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: "https://example.com/avatar.jpg",
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
       render(<ActivityTimeline timeline={mockTimeline} hasNext={false} />);
 
-      const userLink = screen.getByRole("link");
-      expect(userLink).toHaveAttribute("href", "/users/user-123");
+      const userLinks = screen.getAllByRole("link");
+      expect(userLinks[0]).toHaveAttribute("href", "/users/user-123");
     });
   });
 
@@ -100,6 +110,7 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
@@ -119,6 +130,7 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
@@ -139,6 +151,7 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
@@ -169,6 +182,7 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
@@ -189,6 +203,7 @@ describe("ActivityTimeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           activity_type: "signup",
+          mission_id: null,
         },
       ];
 
