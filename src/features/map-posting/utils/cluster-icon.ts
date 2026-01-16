@@ -42,6 +42,16 @@ export function createMarkerIcon(
   const color = postingStatusColors[status];
   const showCount = status === "completed" && postingCount;
 
+  // Calculate width based on digit count for proper display
+  const getIconWidth = (count: number | null | undefined): number => {
+    if (!count) return 16;
+    const digits = count.toString().length;
+    // Base width + extra per digit + padding for "枚"
+    return Math.max(40, 20 + digits * 8);
+  };
+
+  const iconWidth = showCount ? getIconWidth(postingCount) : 16;
+
   return L.divIcon({
     html: `
       <div style="
@@ -55,16 +65,45 @@ export function createMarkerIcon(
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: ${showCount ? "0 4px" : "0"};
+        padding: ${showCount ? "0 6px" : "0"};
         color: white;
         font-size: 10px;
         font-weight: bold;
+        white-space: nowrap;
       ">${showCount ? `${postingCount}枚` : ""}</div>
     `,
     className: "posting-marker",
-    iconSize: [showCount ? 40 : 16, 16],
-    iconAnchor: [showCount ? 20 : 8, 8],
+    iconSize: [iconWidth, 16],
+    iconAnchor: [iconWidth / 2, 8],
   });
+}
+
+// Calculate display text and appropriate size for cluster icon
+function getClusterDisplayInfo(count: number, totalPostingCount: number) {
+  const displayText =
+    totalPostingCount > 0 ? `${totalPostingCount}枚` : String(count);
+  const digits = displayText.length;
+
+  // Base size from marker count
+  let baseSize = count < 10 ? 35 : count < 100 ? 45 : 55;
+
+  // Increase size for longer text (4+ digits need more space)
+  if (digits >= 5) {
+    baseSize = Math.max(baseSize, 60);
+  } else if (digits >= 4) {
+    baseSize = Math.max(baseSize, 50);
+  }
+
+  const fontSize =
+    baseSize < 40
+      ? "11px"
+      : baseSize < 50
+        ? "12px"
+        : baseSize < 60
+          ? "13px"
+          : "14px";
+
+  return { displayText, size: baseSize, fontSize };
 }
 
 // Create custom cluster icon with pie chart
@@ -75,8 +114,10 @@ export function createClusterIcon(cluster: any) {
 
   const { statusCounts, totalPostingCount } = countStatusesFromMarkers(markers);
 
-  const size = count < 10 ? 35 : count < 100 ? 45 : 55;
-  const fontSize = size < 40 ? "11px" : size < 50 ? "13px" : "15px";
+  const { displayText, size, fontSize } = getClusterDisplayInfo(
+    count,
+    totalPostingCount,
+  );
 
   // Count non-zero statuses
   const nonZeroStatuses = Object.entries(statusCounts).filter(([, c]) => c > 0);
@@ -135,7 +176,7 @@ export function createClusterIcon(cluster: any) {
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="position: absolute; top: -3px; left: -3px;">
         ${segments.join("")}
         <text x="${size / 2}" y="${size / 2}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="${fontSize}" font-weight="bold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-          ${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}
+          ${displayText}
         </text>
       </svg>
     `;
@@ -160,7 +201,7 @@ export function createClusterIcon(cluster: any) {
         font-weight: bold;
         font-size: ${fontSize};
         text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-      ">${totalPostingCount > 0 ? `${totalPostingCount}枚` : count}</div>
+      ">${displayText}</div>
     `;
   }
 
