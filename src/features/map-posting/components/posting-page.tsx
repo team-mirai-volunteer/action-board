@@ -33,6 +33,7 @@ export default function PostingPageClient({
   userId,
   eventId,
   eventTitle,
+  isAdmin,
 }: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [showText, setShowText] = useState(true);
@@ -771,6 +772,7 @@ export default function PostingPageClient({
         onOpenChange={setIsStatusDialogOpen}
         shape={selectedShape}
         currentUserId={userId}
+        isAdmin={isAdmin}
         onStatusUpdated={handleStatusUpdated}
         onDelete={async (id) => {
           await handleDeleteShape(id, { removeFromMap: true });

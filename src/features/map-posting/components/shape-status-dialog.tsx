@@ -38,6 +38,7 @@ interface ShapeStatusDialogProps {
   onOpenChange: (open: boolean) => void;
   shape: MapShape | null;
   currentUserId: string;
+  isAdmin: boolean;
   onStatusUpdated: (
     id: string,
     newStatus: PostingShapeStatus,
@@ -51,11 +52,14 @@ export function ShapeStatusDialog({
   onOpenChange,
   shape,
   currentUserId,
+  isAdmin,
   onStatusUpdated,
   onDelete,
 }: ShapeStatusDialogProps) {
   // Check if the current user owns this shape
   const isOwner = shape?.user_id === currentUserId || !shape?.user_id;
+  // Allow edit if user is owner or admin
+  const canEdit = isOwner || isAdmin;
   const [selectedStatus, setSelectedStatus] =
     useState<PostingShapeStatus>("planned");
   const [postingCount, setPostingCount] = useState<number | null>(null);
@@ -163,9 +167,9 @@ export function ShapeStatusDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>配布ステータス{isOwner ? "の変更" : ""}</DialogTitle>
+          <DialogTitle>配布ステータス{canEdit ? "の変更" : ""}</DialogTitle>
           <DialogDescription>
-            {isOwner
+            {canEdit
               ? "選択した図形の配布ステータスを変更します"
               : "この図形は他のユーザーが作成したため、変更できません"}
             {isMissionCompleted && (
@@ -194,7 +198,7 @@ export function ShapeStatusDialog({
                 onValueChange={(value) =>
                   setSelectedStatus(value as PostingShapeStatus)
                 }
-                disabled={!isOwner}
+                disabled={!canEdit}
               >
                 <SelectTrigger id="status">
                   <SelectValue />
@@ -232,7 +236,7 @@ export function ShapeStatusDialog({
                     )
                   }
                   placeholder="配布した枚数を入力"
-                  disabled={!isOwner}
+                  disabled={!canEdit}
                 />
                 <p className="text-muted-foreground text-sm">
                   配布完了を保存すると、ミッションが自動で達成されます
@@ -254,13 +258,13 @@ export function ShapeStatusDialog({
                 onChange={(e) => setMemo(e.target.value)}
                 placeholder="地域の特性などを記録"
                 rows={3}
-                disabled={!isOwner}
+                disabled={!canEdit}
               />
             </div>
           </div>
         )}
         <DialogFooter className="flex-row justify-between sm:justify-between">
-          {isOwner && onDelete ? (
+          {canEdit && onDelete ? (
             <Button
               variant="link"
               onClick={handleDelete}
@@ -278,9 +282,9 @@ export function ShapeStatusDialog({
               onClick={() => onOpenChange(false)}
               disabled={isUpdating || isDeleting}
             >
-              {isOwner ? "キャンセル" : "閉じる"}
+              {canEdit ? "キャンセル" : "閉じる"}
             </Button>
-            {isOwner && (
+            {canEdit && (
               <Button
                 onClick={handleStatusUpdate}
                 disabled={isUpdating || isDeleting || isLoading || !canSubmit}
