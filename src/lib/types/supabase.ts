@@ -1384,6 +1384,7 @@ export type Database = {
           avatar_url: string | null;
           created_at: string | null;
           id: string | null;
+          mission_id: string | null;
           name: string | null;
           title: string | null;
           user_id: string | null;
@@ -1841,6 +1842,7 @@ export type Database = {
           id: string;
         }[];
       };
+      is_admin: { Args: never; Returns: boolean };
     };
     Enums: {
       poster_board_status:

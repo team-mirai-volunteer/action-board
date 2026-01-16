@@ -79,8 +79,8 @@ export default async function Missions({
   const { data: missions } = maxSize ? await query.limit(maxSize) : await query;
 
   return (
-    <div className="flex flex-col gap-6">
-      <h2 id={id} className="text-center md:text-4xl">
+    <div className="flex flex-col gap-6 px-4 md:px-0">
+      <h2 id={id} className="text-center text-2xl md:text-3xl">
         {title}
       </h2>
 

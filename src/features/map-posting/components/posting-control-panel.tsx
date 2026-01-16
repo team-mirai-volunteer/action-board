@@ -19,7 +19,7 @@ export function PostingControlPanel({
         position: "fixed",
         top: "80px",
         right: "10px",
-        zIndex: 1000,
+        zIndex: 45,
         background: "white",
         padding: "10px",
         borderRadius: "5px",
