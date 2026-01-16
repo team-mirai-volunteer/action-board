@@ -367,6 +367,8 @@ export default function PostingPageClient({
               markerClusterRef.current.addLayer(marker);
               // Track marker for filtering
               clusterMarkersRef.current.set(saved.id, marker);
+              // Refresh cluster to show the new marker immediately
+              markerClusterRef.current.refreshClusters();
             }
 
             // Attach click event for status dialog
@@ -809,10 +811,21 @@ export default function PostingPageClient({
         applyStatusStyle(layer, newStatus);
       }
 
-      // Update posting count label
+      // Update cluster marker icon
       // biome-ignore lint/suspicious/noExplicitAny: window.L type
       const L = (window as any).L;
       if (!L) return;
+
+      const clusterMarker = clusterMarkersRef.current.get(shapeId);
+      if (clusterMarker?.shapeData && markerClusterRef.current) {
+        // Update marker data
+        clusterMarker.shapeData.status = newStatus;
+        clusterMarker.shapeData.posting_count = postingCount;
+        // Update marker icon
+        clusterMarker.setIcon(createMarkerIcon(L, newStatus, postingCount));
+        // Refresh cluster to reflect the change
+        markerClusterRef.current.refreshClusters();
+      }
 
       // Remove existing label if any
       const existingLabel = postingLabelLayersRef.current.get(shapeId);
