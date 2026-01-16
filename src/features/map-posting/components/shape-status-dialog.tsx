@@ -190,8 +190,8 @@ export function ShapeStatusDialog({
             )}
           </DialogDescription>
         </DialogHeader>
-        {/* 作成者情報 */}
-        {shape?.user_display_name && (
+        {/* 作成者情報（自分のshapeのみ表示） */}
+        {isOwner && shape?.user_display_name && (
           <div className="text-muted-foreground text-sm">
             作成者: {shape.user_display_name}
           </div>
