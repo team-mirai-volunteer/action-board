@@ -832,6 +832,7 @@ export type Database = {
       posting_shapes: {
         Row: {
           address: string | null;
+          area_m2: number | null;
           city: string | null;
           coordinates: Json;
           created_at: string | null;
@@ -850,6 +851,7 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
+          area_m2?: number | null;
           city?: string | null;
           coordinates: Json;
           created_at?: string | null;
@@ -868,6 +870,7 @@ export type Database = {
         };
         Update: {
           address?: string | null;
+          area_m2?: number | null;
           city?: string | null;
           coordinates?: Json;
           created_at?: string | null;

@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/client";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
-import { calculatePolygonCentroid } from "../utils/polygon-utils";
+import {
+  calculatePolygonArea,
+  calculatePolygonCentroid,
+} from "../utils/polygon-utils";
 import { reverseGeocode } from "./reverse-geocoding";
 
 const supabase = createClient();
@@ -59,9 +62,14 @@ export async function saveShape(shape: MapShape) {
   // ポリゴンの場合、住所情報を取得
   const addressInfo = await getAddressForShape(shape);
 
+  // ポリゴンの場合、面積を計算
+  const areaM2 =
+    shape.type === "polygon" ? calculatePolygonArea(shape.coordinates) : null;
+
   const shapeWithMeta = {
     ...shape,
     ...addressInfo, // prefecture, city, address, postcode, lat, lng を追加
+    area_m2: areaM2,
     created_at: shape.created_at ?? nowISO,
     updated_at: shape.updated_at ?? nowISO,
   };
@@ -179,7 +187,7 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
     ...allowedFields
   } = data;
 
-  // coordinates が更新される場合は住所と中心座標も再取得
+  // coordinates が更新される場合は住所と中心座標、面積も再取得
   let addressInfo: {
     prefecture?: string | null;
     city?: string | null;
@@ -187,6 +195,7 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
     postcode?: string | null;
     lat?: number | null;
     lng?: number | null;
+    area_m2?: number | null;
   } = {};
   if (allowedFields.coordinates && allowedFields.type !== "text") {
     const centroid = calculatePolygonCentroid(allowedFields.coordinates);
@@ -196,6 +205,7 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
         ...geocodeResult,
         lat: centroid.lat,
         lng: centroid.lng,
+        area_m2: calculatePolygonArea(allowedFields.coordinates),
       };
     }
   }

@@ -38,6 +38,8 @@ export interface MapShape {
   // ポリゴン中心座標
   lat?: number | null;
   lng?: number | null;
+  // ポリゴンの面積（平方メートル）
+  area_m2?: number | null;
   // 配布枚数（posting_activitiesから取得）
   posting_count?: number | null;
 }
