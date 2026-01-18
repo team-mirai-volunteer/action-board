@@ -1,7 +1,7 @@
 import PostingPageClient from "@/features/map-posting/components/posting-page";
 import { getEventBySlug } from "@/features/map-posting/services/posting-events.server";
 import { getUser } from "@/features/user-profile/services/profile";
-import { isAdmin } from "@/lib/utils/admin";
+import { isAdmin, isPostingAdmin } from "@/lib/utils/admin";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -48,7 +48,7 @@ export default async function PostingEventPage({
       userId={user.id}
       eventId={event.id}
       eventTitle={event.title}
-      isAdmin={isAdmin(user)}
+      isAdmin={isAdmin(user) || isPostingAdmin(user)}
     />
   );
 }
