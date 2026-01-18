@@ -102,6 +102,9 @@ export function updateDisplayModeByArea(
   )
     return;
 
+  // 表示するポリゴンを収集（後でz-order調整用）
+  const visiblePolygons: Array<{ layer: Layer; area_m2: number | null }> = [];
+
   // 各shapeについて、面積に応じた閾値と現在のズームを比較
   for (const { id, area_m2 } of shapesAreaInfo) {
     const threshold = getClusterThresholdForArea(area_m2);
@@ -118,6 +121,9 @@ export function updateDisplayModeByArea(
         !polygonLayerGroupRef.current.hasLayer(polygonLayer)
       ) {
         polygonLayerGroupRef.current.addLayer(polygonLayer);
+      }
+      if (polygonLayer) {
+        visiblePolygons.push({ layer: polygonLayer, area_m2 });
       }
       if (marker && markerClusterRef.current.hasLayer(marker)) {
         markerClusterRef.current.removeLayer(marker);
@@ -138,6 +144,19 @@ export function updateDisplayModeByArea(
       if (label && mapInstance.hasLayer(label)) {
         mapInstance.removeLayer(label);
       }
+    }
+  }
+
+  // 面積が小さいポリゴンを前面に表示（クリック優先）
+  // 面積の大きい順にソートして、大きい方から順にbringToFrontを呼ぶと、最終的に小さい方が前面になる
+  const sortedPolygons = visiblePolygons.sort(
+    (a, b) =>
+      (b.area_m2 ?? Number.POSITIVE_INFINITY) -
+      (a.area_m2 ?? Number.POSITIVE_INFINITY),
+  );
+  for (const { layer } of sortedPolygons) {
+    if ("bringToFront" in layer && typeof layer.bringToFront === "function") {
+      layer.bringToFront();
     }
   }
 
