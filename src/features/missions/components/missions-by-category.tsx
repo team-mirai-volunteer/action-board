@@ -1,3 +1,4 @@
+import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
@@ -14,25 +15,13 @@ export default async function MissionsByCategory({
 }: MissionsProps) {
   const supabase = createClient();
 
-  // ユーザーの達成状況取得
-  let achievedMissionIds: string[] = [];
-  let userAchievementCountMap = new Map<string, number>();
-  if (userId) {
-    const { data: achievements } = await supabase
-      .from("achievements")
-      .select("mission_id")
-      .eq("user_id", userId);
+  // ユーザーの各ミッションに対する達成回数のマップ
+  const userAchievementCountMap = userId
+    ? await getUserMissionAchievements(userId)
+    : new Map<string, number>();
 
-    achievedMissionIds = achievements?.map((a) => a.mission_id ?? "") ?? [];
-    if (achievements) {
-      userAchievementCountMap = achievements.reduce((map, a) => {
-        if (a.mission_id) {
-          map.set(a.mission_id, (map.get(a.mission_id) || 0) + 1);
-        }
-        return map;
-      }, new Map<string, number>());
-    }
-  }
+  // ユーザーが達成したミッションIDのリスト
+  const achievedMissionIds = Array.from(userAchievementCountMap.keys());
 
   // 全体の達成数取得
   const { data: achievementCounts } = await supabase
