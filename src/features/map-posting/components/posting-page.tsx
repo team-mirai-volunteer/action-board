@@ -916,6 +916,7 @@ export default function PostingPageClient({
       />
 
       <PostingControlPanel
+        eventId={eventId}
         eventTitle={eventTitle}
         totalPostingCount={totalPostingCount}
         showOnlyMine={showOnlyMine}
