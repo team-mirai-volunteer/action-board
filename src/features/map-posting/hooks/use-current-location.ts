@@ -4,12 +4,22 @@ import type { CircleMarker, Map as LeafletMap } from "leaflet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { LeafletWindow } from "../types/posting-types";
 
+interface UseCurrentLocationOptions {
+  /** 初回の現在地取得時に自動で現在地に移動するか (default: false) */
+  flyToOnFirstLocation?: boolean;
+}
+
 /**
  * 現在地の監視とマーカー表示を管理するhook
  */
-export function useCurrentLocation(mapInstance: LeafletMap | null) {
+export function useCurrentLocation(
+  mapInstance: LeafletMap | null,
+  options: UseCurrentLocationOptions = {},
+) {
+  const { flyToOnFirstLocation = false } = options;
   const [currentPos, setCurrentPos] = useState<[number, number] | null>(null);
   const currentMarkerRef = useRef<CircleMarker | null>(null);
+  const hasFlownToLocationRef = useRef(false);
 
   // Watch current location
   useEffect(() => {
@@ -29,6 +39,21 @@ export function useCurrentLocation(mapInstance: LeafletMap | null) {
       navigator.geolocation.clearWatch(watchId);
     };
   }, []);
+
+  // 初回の現在地取得時に自動で飛ぶ
+  useEffect(() => {
+    if (
+      flyToOnFirstLocation &&
+      mapInstance &&
+      currentPos &&
+      !hasFlownToLocationRef.current
+    ) {
+      hasFlownToLocationRef.current = true;
+      mapInstance.flyTo(currentPos, mapInstance.getZoom(), {
+        animate: false,
+      });
+    }
+  }, [flyToOnFirstLocation, mapInstance, currentPos]);
 
   // Manage current location marker
   useEffect(() => {
