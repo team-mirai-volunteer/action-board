@@ -82,7 +82,9 @@ export default function PostingPageClient({
   // Ref to track isClusterMode for use in event handlers
   const isClusterModeRef = useRef(isClusterMode);
   // Current location hook
-  const { currentPos, handleLocate } = useCurrentLocation(mapInstance);
+  const { currentPos, handleLocate } = useCurrentLocation(mapInstance, {
+    flyToOnFirstLocation: true,
+  });
   // Total posting count
   const [totalPostingCount, setTotalPostingCount] = useState<number>();
   // Filter: show only my shapes
