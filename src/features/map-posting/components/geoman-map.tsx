@@ -84,7 +84,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       try {
         const map = L.map(mapRef.current, { maxZoom: 18 }).setView(
           [35.6762, 139.6503],
-          10,
+          16,
         );
         mapInstanceRef.current = map;
 
