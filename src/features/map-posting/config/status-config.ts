@@ -48,9 +48,27 @@ export const postingStatusColors: Record<PostingShapeStatus, string> = {
   other: "#8B5CF6", // purple
 };
 
-// クラスタリングのしきい値ズームレベル
+// デフォルトのクラスタリングしきい値ズームレベル
 // これ以上でポリゴン表示、未満でクラスター表示
 export const CLUSTER_THRESHOLD_ZOOM = 13;
+
+/**
+ * 面積に応じたクラスタリング閾値ズームレベルを計算
+ * 大きいshape → 低い閾値（広域でポリゴン表示）
+ * 小さいshape → 高い閾値（ズームしてからポリゴン表示）
+ *
+ * @param areaM2 ポリゴンの面積（平方メートル）
+ * @returns 閾値ズームレベル
+ */
+export function getClusterThresholdForArea(areaM2: number | null): number {
+  if (!areaM2) return CLUSTER_THRESHOLD_ZOOM;
+
+  // 面積による閾値の段階分け
+  if (areaM2 >= 100_000_000) return 8; // 100km²以上: ズーム8からポリゴン
+  if (areaM2 >= 10_000_000) return 10; // 10km²以上: ズーム10からポリゴン
+  if (areaM2 >= 1_000_000) return 12; // 1km²以上: ズーム12からポリゴン
+  return CLUSTER_THRESHOLD_ZOOM;
+}
 
 // ステータスラベル（ツールチップ等で使用）
 export const postingStatusLabels: Record<PostingShapeStatus, string> = {

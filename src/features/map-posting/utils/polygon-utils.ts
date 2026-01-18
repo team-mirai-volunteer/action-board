@@ -1,4 +1,6 @@
 import type { Json } from "@/lib/types/supabase";
+import { area } from "@turf/area";
+import { polygon } from "@turf/helpers";
 
 interface GeoJSONPolygon {
   type: "Polygon";
@@ -59,6 +61,32 @@ export function calculatePolygonCentroid(
     };
   } catch (error) {
     console.error("Failed to calculate polygon centroid:", error);
+    return null;
+  }
+}
+
+/**
+ * ポリゴンの面積を計算（平方メートル）
+ *
+ * GeoJSON Polygon の coordinates は [[[lng, lat], [lng, lat], ...]] 形式
+ * Turf.jsを使用して球面幾何学による正確な面積を計算
+ */
+export function calculatePolygonArea(coordinates: Json): number | null {
+  try {
+    const geojson = coordinates as unknown as GeoJSONPolygon;
+
+    if (
+      geojson.type !== "Polygon" ||
+      !geojson.coordinates ||
+      !geojson.coordinates[0]
+    ) {
+      return null;
+    }
+
+    const poly = polygon(geojson.coordinates);
+    return area(poly); // m²
+  } catch (error) {
+    console.error("Failed to calculate polygon area:", error);
     return null;
   }
 }
