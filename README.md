@@ -160,17 +160,31 @@
 
 ## Adminユーザーの作成
 
-1. Supabase Studio上で Authentication > Add User からユーザーを作成
-2. Supabase Studio上で以下のSQLを実行
+Supabase Studio上で以下のSQLを実行
 
 ```sql
 UPDATE auth.users
 SET raw_app_meta_data = raw_app_meta_data || '{"roles": ["admin"]}'::jsonb
-WHERE email = '<1で作成したユーザーのemail>';
+WHERE email = '<対象ユーザーのemail>';
 ```
 
 > [!NOTE]
 > 開発環境では、seedデータによって、`email: admin@example.com, password: admin123456` のAdminユーザーが作成されます。
+
+## Posting Adminユーザーの作成
+
+ポスティングマップのみで管理者権限を持つユーザーを作成できます。
+
+Supabase Studio上で以下のSQLを実行
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"roles": ["posting-admin"]}'::jsonb
+WHERE email = '<対象ユーザーのemail>';
+```
+
+> [!NOTE]
+> 開発環境では、seedデータによって、`email: posting-admin@example.com, password: postingadmin123456` のPosting Adminユーザーが作成されます。
 
 
 ## 開発ガイドライン

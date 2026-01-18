@@ -12,6 +12,12 @@ VALUES
   ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-0000-0000-000000000001', 'authenticated', 'authenticated', 'admin@example.com', crypt('admin123456', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"], "roles": ["admin"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now())
 ON CONFLICT (id) DO NOTHING;
 
+-- ポスティング管理者ユーザー（posting-admin@example.com / postingadmin123456）
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
+VALUES
+  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-0000-0000-000000000002', 'authenticated', 'authenticated', 'posting-admin@example.com', crypt('postingadmin123456', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"], "roles": ["posting-admin"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now())
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
   ('00000000-0000-0000-0000-000000000000', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'authenticated', 'authenticated', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
@@ -34,6 +40,12 @@ VALUES
   ('a0000000-0000-0000-0000-000000000001', '1985-01-01', '1000000')
 ON CONFLICT (id) DO NOTHING;
 
+-- ポスティング管理者ユーザー
+INSERT INTO private_users (id, date_of_birth, postcode)
+VALUES
+  ('a0000000-0000-0000-0000-000000000002', '1990-06-15', '1000001')
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO private_users (id, date_of_birth, postcode)
 VALUES
   ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '1990-12-01', '1000001'),
@@ -54,6 +66,12 @@ VALUES
 INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
 VALUES
   ('a0000000-0000-0000-0000-000000000001', '管理者', '東京都', NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+
+-- ポスティング管理者ユーザー
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('a0000000-0000-0000-0000-000000000002', 'ポスティング管理者', '東京都', NULL, NULL)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)

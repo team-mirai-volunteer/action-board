@@ -81,7 +81,14 @@ export async function saveShape(shape: MapShape) {
 }
 
 export async function deleteShape(id: string) {
-  const { error } = await supabase.from("posting_shapes").delete().eq("id", id);
+  const { count, error } = await supabase
+    .from("posting_shapes")
+    .delete({ count: "exact" })
+    .eq("id", id);
+
+  if (count == null || count === 0) {
+    throw new Error("No shape deleted");
+  }
 
   if (error) {
     console.error("Error deleting shape:", error);
