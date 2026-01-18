@@ -1,6 +1,7 @@
 "use client";
 
 import type { Json } from "@/lib/types/supabase";
+import { logger } from "@/lib/utils/logger";
 import type { Layer, Map as LeafletMap, Marker } from "leaflet";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -12,8 +13,8 @@ import {
   postingGeomanControls,
 } from "../config/geoman-config";
 import {
-  CLUSTER_THRESHOLD_ZOOM,
   type PostingShapeStatus,
+  getClusterThresholdForArea,
   postingStatusConfig,
   postingStatusLabels,
 } from "../config/status-config";
@@ -38,7 +39,7 @@ import {
   createClusterIcon,
   createMarkerIcon,
 } from "../utils/cluster-icon";
-import { toggleDisplayMode } from "../utils/display-mode";
+import { updateDisplayModeByArea } from "../utils/display-mode";
 import { createPostingLabelIcon } from "../utils/posting-label";
 import { applyStatusStyle, getShapeId } from "../utils/shape-layer-utils";
 import { PostingControlPanel } from "./posting-control-panel";
@@ -77,6 +78,10 @@ export default function PostingPageClient({
   const polygonLayerGroupRef = useRef<any>(null);
   // Track all cluster markers for filtering
   const clusterMarkersRef = useRef<Map<string, MarkerWithShape>>(new Map());
+  // Track shapes area info for area-based display mode
+  const shapesAreaInfoRef = useRef<
+    Array<{ id: string; area_m2: number | null }>
+  >([]);
   // Track current zoom level for display mode
   const [isClusterMode, setIsClusterMode] = useState(true);
   // Ref to track isClusterMode for use in event handlers
@@ -253,21 +258,21 @@ export default function PostingPageClient({
       // Add cluster group to map (initially visible)
       mapInstance.addLayer(markerClusterRef.current);
 
-      // Set up zoom event listener for display mode toggle
+      // Set up zoom event listener for area-based display mode toggle
       mapInstance.on("zoomend", () => {
         const zoom = mapInstance.getZoom();
-        const shouldBeClusterMode = zoom < CLUSTER_THRESHOLD_ZOOM;
-
-        if (shouldBeClusterMode !== isClusterModeRef.current) {
-          setIsClusterMode(shouldBeClusterMode);
-          toggleDisplayMode(mapInstance, shouldBeClusterMode, displayModeRefs);
-        }
+        logger.debug(
+          "Zoom changed:",
+          zoom,
+          "shapes:",
+          shapesAreaInfoRef.current.length,
+        );
+        updateDisplayModeByArea(mapInstance, zoom, shapesAreaInfoRef.current, {
+          ...displayModeRefs,
+          polygonLayersRef,
+          clusterMarkersRef,
+        });
       });
-
-      // Check initial zoom level
-      const initialZoom = mapInstance.getZoom();
-      const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
-      setIsClusterMode(initialClusterMode);
 
       try {
         L.tileLayer(
@@ -335,19 +340,13 @@ export default function PostingPageClient({
             // Apply default status style
             applyStatusStyle(e.layer, "planned");
 
-            // Add to polygon layer group
-            if (polygonLayerGroupRef.current) {
-              // Remove from map and add to layer group
-              mapInstance.removeLayer(e.layer);
-              polygonLayerGroupRef.current.addLayer(e.layer);
-              // If in polygon mode, show it
-              if (!isClusterModeRef.current) {
-                e.layer.addTo(mapInstance);
-              }
-            }
+            // Remove layer from map (will be managed by layer groups)
+            mapInstance.removeLayer(e.layer);
 
-            // Create marker for clustering
+            // Create marker for clustering and set up area-based display
             if (saved.lat && saved.lng && markerClusterRef.current) {
+              const areaM2 = saved.area_m2 ?? null;
+              const threshold = getClusterThresholdForArea(areaM2);
               const marker = L.marker([saved.lat, saved.lng], {
                 icon: createMarkerIcon(L, "planned"),
               }) as MarkerWithShape;
@@ -360,17 +359,30 @@ export default function PostingPageClient({
               };
               marker.on("click", () => {
                 if (saved.lat !== null && saved.lng !== null) {
-                  mapInstance.setView(
-                    [saved.lat, saved.lng],
-                    CLUSTER_THRESHOLD_ZOOM,
-                  );
+                  mapInstance.setView([saved.lat, saved.lng], threshold);
                 }
               });
-              markerClusterRef.current.addLayer(marker);
               // Track marker for filtering
               clusterMarkersRef.current.set(saved.id, marker);
-              // Refresh cluster to show the new marker immediately
-              markerClusterRef.current.refreshClusters();
+
+              // Add to shapesAreaInfoRef
+              shapesAreaInfoRef.current.push({
+                id: saved.id,
+                area_m2: areaM2,
+              });
+
+              // Set display mode based on area and current zoom
+              const currentZoom = mapInstance.getZoom();
+              if (currentZoom >= threshold) {
+                // Show polygon, don't add marker to cluster
+                if (polygonLayerGroupRef.current) {
+                  polygonLayerGroupRef.current.addLayer(e.layer);
+                }
+              } else {
+                // Show marker in cluster, don't show polygon
+                markerClusterRef.current.addLayer(marker);
+                markerClusterRef.current.refreshClusters();
+              }
             }
 
             // Attach click event for status dialog
@@ -498,6 +510,7 @@ export default function PostingPageClient({
 
               // Create marker for clustering (using center coordinates)
               if (shape.lat && shape.lng && shape.id) {
+                const threshold = getClusterThresholdForArea(shape.area_m2);
                 const marker = L.marker([shape.lat, shape.lng], {
                   icon: createMarkerIcon(L, status, shape.posting_count),
                 }) as MarkerWithShape;
@@ -508,12 +521,12 @@ export default function PostingPageClient({
                   lat: shape.lat,
                   lng: shape.lng,
                 };
-                // Click to zoom in and show polygon
+                // Click to zoom in and show polygon (zoom to area-based threshold)
                 marker.on("click", () => {
                   if (mapInstance) {
                     mapInstance.setView(
                       [shape.lat as number, shape.lng as number],
-                      CLUSTER_THRESHOLD_ZOOM,
+                      threshold,
                     );
                   }
                 });
@@ -591,10 +604,26 @@ export default function PostingPageClient({
           markerClusterRef.current.addLayers(markers);
         }
 
-        // Set initial display mode based on zoom level
+        // Collect shapes area info for area-based display mode
+        shapesAreaInfoRef.current = savedShapes
+          .filter((s) => s.id && s.type === "polygon")
+          .map((s) => ({
+            id: s.id as string,
+            area_m2: s.area_m2 ?? null,
+          }));
+
+        // Set initial display mode based on area and zoom level
         const initialZoom = mapInstance.getZoom();
-        const initialClusterMode = initialZoom < CLUSTER_THRESHOLD_ZOOM;
-        toggleDisplayMode(mapInstance, initialClusterMode, displayModeRefs);
+        updateDisplayModeByArea(
+          mapInstance,
+          initialZoom,
+          shapesAreaInfoRef.current,
+          {
+            ...displayModeRefs,
+            polygonLayersRef,
+            clusterMarkersRef,
+          },
+        );
 
         // Calculate total posting count
         const total = savedShapes.reduce((sum, shape) => {
@@ -887,6 +916,7 @@ export default function PostingPageClient({
       />
 
       <PostingControlPanel
+        eventId={eventId}
         eventTitle={eventTitle}
         totalPostingCount={totalPostingCount}
         showOnlyMine={showOnlyMine}

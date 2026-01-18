@@ -1,4 +1,5 @@
 import type { Layer, Map as LeafletMap } from "leaflet";
+import { getClusterThresholdForArea } from "../config/status-config";
 
 interface DisplayModeRefs {
   // biome-ignore lint/suspicious/noExplicitAny: LayerGroup type from dynamic import
@@ -6,6 +7,11 @@ interface DisplayModeRefs {
   // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type not available
   markerClusterRef: { current: any };
   postingLabelLayersRef: { current: Map<string, Layer> };
+}
+
+interface ShapeAreaInfo {
+  id: string;
+  area_m2: number | null;
 }
 
 /**
@@ -57,5 +63,108 @@ export function toggleDisplayMode(
         label.addTo(mapInstance);
       }
     }
+  }
+}
+
+interface AreaBasedDisplayModeRefs extends DisplayModeRefs {
+  polygonLayersRef: { current: Map<string, Layer> };
+  // biome-ignore lint/suspicious/noExplicitAny: Marker type with custom properties
+  clusterMarkersRef: { current: Map<string, any> };
+}
+
+/**
+ * 面積ベースで各shapeの表示モードを切り替える
+ * 大きいshapeは低ズームでもポリゴン表示、小さいshapeは高ズームからポリゴン表示
+ *
+ * @param mapInstance - Leafletマップインスタンス
+ * @param currentZoom - 現在のズームレベル
+ * @param shapesAreaInfo - 各shapeの面積情報
+ * @param refs - レイヤーへの参照
+ */
+export function updateDisplayModeByArea(
+  mapInstance: LeafletMap | null,
+  currentZoom: number,
+  shapesAreaInfo: ShapeAreaInfo[],
+  refs: AreaBasedDisplayModeRefs,
+): void {
+  const {
+    polygonLayerGroupRef,
+    markerClusterRef,
+    postingLabelLayersRef,
+    polygonLayersRef,
+    clusterMarkersRef,
+  } = refs;
+
+  if (
+    !mapInstance ||
+    !polygonLayerGroupRef.current ||
+    !markerClusterRef.current
+  )
+    return;
+
+  // 表示するポリゴンを収集（後でz-order調整用）
+  const visiblePolygons: Array<{ layer: Layer; area_m2: number | null }> = [];
+
+  // 各shapeについて、面積に応じた閾値と現在のズームを比較
+  for (const { id, area_m2 } of shapesAreaInfo) {
+    const threshold = getClusterThresholdForArea(area_m2);
+    const shouldShowPolygon = currentZoom >= threshold;
+
+    const polygonLayer = polygonLayersRef.current.get(id);
+    const marker = clusterMarkersRef.current.get(id);
+    const label = postingLabelLayersRef.current.get(id);
+
+    if (shouldShowPolygon) {
+      // ポリゴン表示、マーカー非表示
+      if (
+        polygonLayer &&
+        !polygonLayerGroupRef.current.hasLayer(polygonLayer)
+      ) {
+        polygonLayerGroupRef.current.addLayer(polygonLayer);
+      }
+      if (polygonLayer) {
+        visiblePolygons.push({ layer: polygonLayer, area_m2 });
+      }
+      if (marker && markerClusterRef.current.hasLayer(marker)) {
+        markerClusterRef.current.removeLayer(marker);
+      }
+      // ラベル表示
+      if (label && !mapInstance.hasLayer(label)) {
+        label.addTo(mapInstance);
+      }
+    } else {
+      // マーカー表示、ポリゴン非表示
+      if (polygonLayer && polygonLayerGroupRef.current.hasLayer(polygonLayer)) {
+        polygonLayerGroupRef.current.removeLayer(polygonLayer);
+      }
+      if (marker && !markerClusterRef.current.hasLayer(marker)) {
+        markerClusterRef.current.addLayer(marker);
+      }
+      // ラベル非表示
+      if (label && mapInstance.hasLayer(label)) {
+        mapInstance.removeLayer(label);
+      }
+    }
+  }
+
+  // 面積が小さいポリゴンを前面に表示（クリック優先）
+  // 面積の大きい順にソートして、大きい方から順にbringToFrontを呼ぶと、最終的に小さい方が前面になる
+  const sortedPolygons = visiblePolygons.sort(
+    (a, b) =>
+      (b.area_m2 ?? Number.POSITIVE_INFINITY) -
+      (a.area_m2 ?? Number.POSITIVE_INFINITY),
+  );
+  for (const { layer } of sortedPolygons) {
+    if ("bringToFront" in layer && typeof layer.bringToFront === "function") {
+      layer.bringToFront();
+    }
+  }
+
+  // ポリゴンレイヤーグループとマーカークラスターの可視性を確保
+  if (!mapInstance.hasLayer(polygonLayerGroupRef.current)) {
+    mapInstance.addLayer(polygonLayerGroupRef.current);
+  }
+  if (!mapInstance.hasLayer(markerClusterRef.current)) {
+    mapInstance.addLayer(markerClusterRef.current);
   }
 }

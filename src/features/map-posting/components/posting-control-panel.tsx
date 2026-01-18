@@ -1,6 +1,12 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { type PostingEvent, getAllEvents } from "../services/posting-events";
+
 interface PostingControlPanelProps {
+  eventId: string;
   eventTitle: string;
   totalPostingCount?: number;
   showOnlyMine: boolean;
@@ -8,11 +14,41 @@ interface PostingControlPanelProps {
 }
 
 export function PostingControlPanel({
+  eventId,
   eventTitle,
   totalPostingCount,
   showOnlyMine,
   onShowOnlyMineChange,
 }: PostingControlPanelProps) {
+  const router = useRouter();
+  const [events, setEvents] = useState<PostingEvent[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // イベント一覧を取得
+  useEffect(() => {
+    getAllEvents().then(setEvents).catch(console.error);
+  }, []);
+
+  // ドロップダウン外クリックで閉じる
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleEventSelect = (slug: string) => {
+    setIsDropdownOpen(false);
+    router.push(`/map/posting/${slug}`);
+  };
+
   return (
     <div
       style={{
@@ -29,8 +65,98 @@ export function PostingControlPanel({
         gap: "8px",
       }}
     >
-      <div style={{ fontSize: "14px", fontWeight: "bold", color: "#333" }}>
-        {eventTitle}
+      <div ref={dropdownRef} style={{ position: "relative" }}>
+        <button
+          type="button"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          style={{
+            fontSize: "14px",
+            fontWeight: "bold",
+            color: "#333",
+            background: "none",
+            border: "none",
+            cursor: events.length > 1 ? "pointer" : "default",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            padding: 0,
+          }}
+        >
+          {eventTitle}
+          {events.length > 1 && (
+            <ChevronDown
+              size={16}
+              style={{
+                transform: isDropdownOpen ? "rotate(180deg)" : "none",
+                transition: "transform 0.2s",
+              }}
+            />
+          )}
+        </button>
+        {isDropdownOpen && events.length > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: "100%",
+              right: 0,
+              marginTop: "4px",
+              background: "white",
+              borderRadius: "5px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+              minWidth: "250px",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                padding: "8px 12px",
+                fontSize: "11px",
+                color: "#666",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              表示するポスティングイベントを切り替える
+            </div>
+            {events.map((event) => {
+              const isCurrent = event.id === eventId;
+              return (
+                <button
+                  key={event.id}
+                  type="button"
+                  disabled={isCurrent}
+                  onClick={() => !isCurrent && handleEventSelect(event.slug)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    fontSize: "13px",
+                    textAlign: "left",
+                    background: isCurrent ? "#f3f4f6" : "none",
+                    border: "none",
+                    cursor: isCurrent ? "default" : "pointer",
+                    color: isCurrent ? "#999" : "#333",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isCurrent) {
+                      e.currentTarget.style.background = "#f3f4f6";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isCurrent) {
+                      e.currentTarget.style.background = "none";
+                    }
+                  }}
+                >
+                  {event.title}
+                  {isCurrent && (
+                    <span style={{ marginLeft: "8px", fontSize: "11px" }}>
+                      (現在表示中)
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
       {totalPostingCount !== undefined && (
         <div

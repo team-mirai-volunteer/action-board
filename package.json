@@ -32,7 +32,9 @@
     "export-users-prefecture": "tsx scripts/export-users-prefecture.ts",
     "sync-party-memberships": "tsx src/scripts/sync-party-memberships.ts",
     "posting:sync": "tsx posting_data/src/sync.ts",
-    "posting:sync:dry": "tsx posting_data/src/sync.ts --dry-run"
+    "posting:sync:dry": "tsx posting_data/src/sync.ts --dry-run",
+    "posting:backfill-area": "tsx scripts/backfill-posting-shapes-area.ts",
+    "posting:backfill-area:dry": "tsx scripts/backfill-posting-shapes-area.ts --dry-run"
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
@@ -53,6 +55,8 @@
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/preset-fireworks": "^3.2.0",
     "@tsparticles/react": "^3.0.0",
+    "@turf/area": "^7.3.2",
+    "@turf/helpers": "^7.3.2",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
