@@ -1843,6 +1843,7 @@ export type Database = {
         }[];
       };
       is_admin: { Args: never; Returns: boolean };
+      is_posting_admin: { Args: never; Returns: boolean };
     };
     Enums: {
       poster_board_status:
