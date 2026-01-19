@@ -1,3 +1,4 @@
+import { getMissionAchievementCounts } from "@/features/missions/services/missions";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import { createClient } from "@/lib/supabase/client";
 import Mission from "./mission-card";
@@ -30,15 +31,7 @@ export default async function Missions({
   const achievedMissionIds = Array.from(userAchievementCountMap.keys());
 
   // すべてのミッションに対する達成人数を取得
-  const { data: achievement_count } = await supabase
-    .from("mission_achievement_count_view")
-    .select("mission_id, achievement_count");
-  const achievement_count_map = new Map(
-    achievement_count?.map((achievement) => [
-      achievement.mission_id,
-      achievement.achievement_count,
-    ]),
-  );
+  const achievementCountMap = await getMissionAchievementCounts();
 
   let query = supabase.from("missions").select().eq("is_hidden", false); // 非表示のミッションを除外
   if (filterFeatured) {
@@ -69,7 +62,7 @@ export default async function Missions({
             <Mission
               key={mission.id}
               mission={mission}
-              achievementsCount={achievement_count_map.get(mission.id) ?? 0}
+              achievementsCount={achievementCountMap.get(mission.id) ?? 0}
               userAchievementCount={
                 userAchievementCountMap.get(mission.id) ?? 0
               }

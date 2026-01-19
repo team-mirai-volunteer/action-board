@@ -60,3 +60,30 @@ export async function hasFeaturedMissions(): Promise<boolean> {
 
   return !!count;
 }
+
+/**
+ * 全ミッションの達成人数を取得
+ */
+export async function getMissionAchievementCounts(): Promise<
+  Map<string, number>
+> {
+  const supabase = createClient();
+
+  const { data: achievementCounts, error } = await supabase
+    .from("mission_achievement_count_view")
+    .select("mission_id, achievement_count");
+
+  if (error) {
+    console.error("Error fetching mission achievement counts:", error);
+    throw error;
+  }
+
+  const countMap = new Map<string, number>();
+  for (const item of achievementCounts ?? []) {
+    if (item.mission_id) {
+      countMap.set(item.mission_id, item.achievement_count ?? 0);
+    }
+  }
+
+  return countMap;
+}
