@@ -1,5 +1,6 @@
 "use client";
 
+import { HEADER_HEIGHT } from "@/lib/constants/layout";
 import type { Json } from "@/lib/types/supabase";
 import { logger } from "@/lib/utils/logger";
 import type { Layer, Map as LeafletMap, Marker } from "leaflet";
@@ -930,7 +931,7 @@ export default function PostingPageClient({
         }
         #map {
           width: 100%;
-          height: calc(100vh - 64px);
+          height: calc(100vh - ${HEADER_HEIGHT}px);
           position: relative;
           z-index: 40;
         }

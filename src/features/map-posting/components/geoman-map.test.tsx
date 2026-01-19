@@ -1,3 +1,4 @@
+import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import GeomanMap from "./geoman-map";
@@ -180,7 +181,7 @@ describe("GeomanMap", () => {
             id="map"
             style={{
               width: "100%",
-              height: "calc(100vh - 64px)",
+              height: CONTENT_HEIGHT,
               margin: 0,
               padding: 0,
             }}
@@ -252,7 +253,7 @@ describe("GeomanMap", () => {
             id="map"
             style={{
               width: "100%",
-              height: "calc(100vh - 64px)",
+              height: CONTENT_HEIGHT,
               margin: 0,
               padding: 0,
             }}
