@@ -12,6 +12,7 @@ interface DisplayModeRefs {
 interface ShapeAreaInfo {
   id: string;
   area_m2: number | null;
+  user_id: string | null;
 }
 
 /**
@@ -72,6 +73,11 @@ interface AreaBasedDisplayModeRefs extends DisplayModeRefs {
   clusterMarkersRef: { current: Map<string, any> };
 }
 
+interface DisplayFilterOptions {
+  showOnlyMine: boolean;
+  currentUserId: string | null;
+}
+
 /**
  * 面積ベースで各shapeの表示モードを切り替える
  * 大きいshapeは低ズームでもポリゴン表示、小さいshapeは高ズームからポリゴン表示
@@ -80,12 +86,14 @@ interface AreaBasedDisplayModeRefs extends DisplayModeRefs {
  * @param currentZoom - 現在のズームレベル
  * @param shapesAreaInfo - 各shapeの面積情報
  * @param refs - レイヤーへの参照
+ * @param filterOptions - フィルターオプション（自分のみ表示など）
  */
 export function updateDisplayModeByArea(
   mapInstance: LeafletMap | null,
   currentZoom: number,
   shapesAreaInfo: ShapeAreaInfo[],
   refs: AreaBasedDisplayModeRefs,
+  filterOptions?: DisplayFilterOptions,
 ): void {
   const {
     polygonLayerGroupRef,
@@ -106,15 +114,30 @@ export function updateDisplayModeByArea(
   const visiblePolygons: Array<{ layer: Layer; area_m2: number | null }> = [];
 
   // 各shapeについて、面積に応じた閾値と現在のズームを比較
-  for (const { id, area_m2 } of shapesAreaInfo) {
+  for (const { id, area_m2, user_id } of shapesAreaInfo) {
+    // フィルター適用: showOnlyMineがtrueの場合、自分のshapeのみ表示
+    const passesFilter =
+      !filterOptions?.showOnlyMine || user_id === filterOptions.currentUserId;
+
     const threshold = getClusterThresholdForArea(area_m2);
-    const shouldShowPolygon = currentZoom >= threshold;
+    const shouldShowPolygon = currentZoom >= threshold && passesFilter;
 
     const polygonLayer = polygonLayersRef.current.get(id);
     const marker = clusterMarkersRef.current.get(id);
     const label = postingLabelLayersRef.current.get(id);
 
-    if (shouldShowPolygon) {
+    if (!passesFilter) {
+      // フィルターを通過しない場合、ポリゴン・マーカー・ラベルすべて非表示
+      if (polygonLayer && polygonLayerGroupRef.current.hasLayer(polygonLayer)) {
+        polygonLayerGroupRef.current.removeLayer(polygonLayer);
+      }
+      if (marker && markerClusterRef.current.hasLayer(marker)) {
+        markerClusterRef.current.removeLayer(marker);
+      }
+      if (label && mapInstance.hasLayer(label)) {
+        mapInstance.removeLayer(label);
+      }
+    } else if (shouldShowPolygon) {
       // ポリゴン表示、マーカー非表示
       if (
         polygonLayer &&
