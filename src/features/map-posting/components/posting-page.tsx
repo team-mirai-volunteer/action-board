@@ -81,7 +81,7 @@ export default function PostingPageClient({
   const clusterMarkersRef = useRef<Map<string, MarkerWithShape>>(new Map());
   // Track shapes area info for area-based display mode
   const shapesAreaInfoRef = useRef<
-    Array<{ id: string; area_m2: number | null }>
+    Array<{ id: string; area_m2: number | null; user_id: string | null }>
   >([]);
   // Track current zoom level for display mode
   const [isClusterMode, setIsClusterMode] = useState(true);
@@ -95,6 +95,8 @@ export default function PostingPageClient({
   const [totalPostingCount, setTotalPostingCount] = useState<number>();
   // Filter: show only my shapes
   const [showOnlyMine, setShowOnlyMine] = useState(false);
+  // Ref to track showOnlyMine for use in event handlers
+  const showOnlyMineRef = useRef(showOnlyMine);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -104,6 +106,10 @@ export default function PostingPageClient({
   useEffect(() => {
     isClusterModeRef.current = isClusterMode;
   }, [isClusterMode]);
+
+  useEffect(() => {
+    showOnlyMineRef.current = showOnlyMine;
+  }, [showOnlyMine]);
 
   // Apply filter when showOnlyMine changes
   useEffect(() => {
@@ -268,11 +274,20 @@ export default function PostingPageClient({
           "shapes:",
           shapesAreaInfoRef.current.length,
         );
-        updateDisplayModeByArea(mapInstance, zoom, shapesAreaInfoRef.current, {
-          ...displayModeRefs,
-          polygonLayersRef,
-          clusterMarkersRef,
-        });
+        updateDisplayModeByArea(
+          mapInstance,
+          zoom,
+          shapesAreaInfoRef.current,
+          {
+            ...displayModeRefs,
+            polygonLayersRef,
+            clusterMarkersRef,
+          },
+          {
+            showOnlyMine: showOnlyMineRef.current,
+            currentUserId: userId,
+          },
+        );
       });
 
       try {
@@ -370,6 +385,7 @@ export default function PostingPageClient({
               shapesAreaInfoRef.current.push({
                 id: saved.id,
                 area_m2: areaM2,
+                user_id: userId,
               });
 
               // Set display mode based on area and current zoom
@@ -611,6 +627,7 @@ export default function PostingPageClient({
           .map((s) => ({
             id: s.id as string,
             area_m2: s.area_m2 ?? null,
+            user_id: s.user_id ?? null,
           }));
 
         // Set initial display mode based on area and zoom level
@@ -623,6 +640,10 @@ export default function PostingPageClient({
             ...displayModeRefs,
             polygonLayersRef,
             clusterMarkersRef,
+          },
+          {
+            showOnlyMine: showOnlyMineRef.current,
+            currentUserId: userId,
           },
         );
 
@@ -649,7 +670,7 @@ export default function PostingPageClient({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [mapInstance, eventId]);
+  }, [mapInstance, eventId, userId]);
 
   const textMarkerStyles = `
     .pm-text {
