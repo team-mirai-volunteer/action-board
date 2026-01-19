@@ -160,7 +160,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         className={className}
         style={{
           width: "100%",
-          height: "100vh",
+          height: "calc(100vh - 64px)",
           margin: 0,
           padding: 0,
         }}

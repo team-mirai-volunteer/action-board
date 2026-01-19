@@ -180,7 +180,7 @@ describe("GeomanMap", () => {
             id="map"
             style={{
               width: "100%",
-              height: "100vh",
+              height: "calc(100vh - 64px)",
               margin: 0,
               padding: 0,
             }}
@@ -252,7 +252,7 @@ describe("GeomanMap", () => {
             id="map"
             style={{
               width: "100%",
-              height: "100vh",
+              height: "calc(100vh - 64px)",
               margin: 0,
               padding: 0,
             }}

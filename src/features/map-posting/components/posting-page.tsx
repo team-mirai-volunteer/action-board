@@ -930,9 +930,9 @@ export default function PostingPageClient({
         }
         #map {
           width: 100%;
-          height: 100vh;
+          height: calc(100vh - 64px);
           position: relative;
-          z-index:  40;
+          z-index: 40;
         }
         /* Ensure Geoman toolbar is visible */
         .leaflet-pm-toolbar {
