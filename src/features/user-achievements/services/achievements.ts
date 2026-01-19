@@ -58,3 +58,32 @@ export async function getUserRepeatableMissionAchievements(
     (achievement) => achievement.achievement_count > 0,
   );
 }
+
+/**
+ * ユーザーのミッション達成情報を取得し、ミッションIDごとの達成回数をMapで返す
+ */
+export async function getUserMissionAchievements(
+  userId: string,
+): Promise<Map<string, number>> {
+  const supabase = createClient();
+
+  const { data: achievements, error } = await supabase
+    .from("achievements")
+    .select("mission_id")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching user achievements:", error);
+    throw error;
+  }
+
+  const achievementMap = new Map<string, number>();
+  for (const achievement of achievements ?? []) {
+    if (achievement.mission_id) {
+      const current = achievementMap.get(achievement.mission_id) ?? 0;
+      achievementMap.set(achievement.mission_id, current + 1);
+    }
+  }
+
+  return achievementMap;
+}
