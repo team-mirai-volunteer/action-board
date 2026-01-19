@@ -15,7 +15,7 @@ export const defaultUrl =
 export const config = {
   title: "チームみらい アクションボード",
   description:
-    "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
+    "政治活動をもっと身近に。楽しく政治参加に取り組める、チームみらいのアクションボード。",
   defaultImage: "/img/ogp-default.png?v=20250714",
   icons: {
     icon: [

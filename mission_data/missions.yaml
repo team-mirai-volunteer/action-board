@@ -106,7 +106,7 @@ missions:
   - slug: follow-teammirai-tiktok
     title: 公式TikTokをフォローしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_follow-teammirai-tiktok.svg
-    content: '<a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
+    content: '<a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -709,7 +709,7 @@ missions:
   - slug: tiktok-comment
     title: TikTokでチームみらい動画にコメントしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
-    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
+    content: <a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -720,7 +720,7 @@ missions:
   - slug: tiktok-comment-reaction
     title: TikTok動画のコメントにリアクションしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
-    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    content: <a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null

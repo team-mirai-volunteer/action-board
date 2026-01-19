@@ -1,5 +1,6 @@
 "use client";
 
+import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import type { Map as LeafletMap } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -160,7 +161,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         className={className}
         style={{
           width: "100%",
-          height: "100vh",
+          height: CONTENT_HEIGHT,
           margin: 0,
           padding: 0,
         }}
