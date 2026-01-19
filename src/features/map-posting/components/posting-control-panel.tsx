@@ -1,5 +1,6 @@
 "use client";
 
+import { HEADER_HEIGHT } from "@/lib/constants/layout";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -53,7 +54,7 @@ export function PostingControlPanel({
     <div
       style={{
         position: "fixed",
-        top: "80px",
+        top: `${HEADER_HEIGHT + 16}px`,
         right: "10px",
         zIndex: 45,
         background: "white",
