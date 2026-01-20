@@ -53,6 +53,15 @@ export async function createOrUpdateHubSpotContact(
     return { success: false, error: "HubSpot API key not configured" };
   }
 
+  // Debug logging for API key (only show first/last few chars for security)
+  const maskedKey =
+    apiKey.length > 8
+      ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`
+      : "***";
+  console.log(
+    `HubSpot API key loaded (masked): ${maskedKey}, length: ${apiKey.length}`,
+  );
+
   try {
     // 既存のコンタクトIDがある場合は更新、ない場合は作成
     let result:
