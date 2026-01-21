@@ -87,3 +87,49 @@ export async function getMissionAchievementCounts(): Promise<
 
   return countMap;
 }
+
+export interface GetMissionsFilterOptions {
+  filterFeatured?: boolean;
+  excludeMissionIds?: string[];
+  maxSize?: number;
+}
+
+/**
+ * フィルター条件付きでミッション一覧を取得
+ */
+export async function getMissionsWithFilter(
+  options: GetMissionsFilterOptions = {},
+): Promise<Tables<"missions">[]> {
+  const { filterFeatured = false, excludeMissionIds = [], maxSize } = options;
+
+  const supabase = createClient();
+
+  let query = supabase.from("missions").select().eq("is_hidden", false);
+
+  if (filterFeatured) {
+    query = query
+      .eq("is_featured", true)
+      .order("featured_importance", { ascending: false, nullsFirst: false });
+  }
+
+  query = query
+    .order("difficulty", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (excludeMissionIds.length > 0) {
+    query = query.not("id", "in", `("${excludeMissionIds.join('","')}")`);
+  }
+
+  if (maxSize) {
+    query = query.limit(maxSize);
+  }
+
+  const { data: missions, error } = await query;
+
+  if (error) {
+    console.error("Error fetching missions:", error);
+    throw error;
+  }
+
+  return missions ?? [];
+}
