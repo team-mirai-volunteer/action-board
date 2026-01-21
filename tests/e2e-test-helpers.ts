@@ -1,5 +1,9 @@
 import { type Page, test as base, expect } from "@playwright/test";
-import { type TestUser, cleanupTestUser, createTestUser } from "./rls/utils";
+import {
+  type TestUser,
+  cleanupTestUser,
+  createTestUser,
+} from "./supabase/rls/utils";
 
 // カスタムテストフィクスチャを定義
 type TestFixtures = {

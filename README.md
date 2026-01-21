@@ -360,7 +360,7 @@ npx playwright show-report
 2. 以下のコマンドですべてのRLSテストを実行できます:
 
    ```bash
-   npm run test:rls
+   npm run test:supabase
    ```
 
 ### テストの概要

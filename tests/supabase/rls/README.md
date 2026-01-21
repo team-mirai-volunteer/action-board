@@ -8,7 +8,7 @@
 2. 次のコマンドを実行します：
 
 ```sh
-npm run test:rls
+npm run test:supabase
 ```
 
 ## テストの概要
