@@ -144,12 +144,6 @@ missions:
     content: |-
       ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
       SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-
-      「動画編集について質問・相談したい！」
-      サポーターSlackの以下チャンネル、またはオプチャへ♪
-      ・<a href="https://team-mirai-volunteer.slack.com/archives/C0A8XMNT6FM" target="_blank" rel="noopener noreferrer">Slack #サポーター映像部</a>
-      ・<a href="https://team-mirai-volunteer.slack.com/archives/C08SEJR0JDP" target="_blank" rel="noopener noreferrer">Slack #22_動画編集_ファンメイド_非公式_切り抜き作成部屋</a>
-      ・<a href="https://line.me/ti/g2/4YuCjNIRF7A-qSJ0hnWoWweQSusE-KR2gS73WQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer">LINEオープンチャット「チームみらい✂️切り抜き部隊」</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
