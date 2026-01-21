@@ -4,6 +4,10 @@ describe("get_period_mission_ranking 関数のテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
   let user2: Awaited<ReturnType<typeof createTestUser>>;
   let missionId: string;
+  // テスト内で作成したIDを追跡
+  const createdMissionIds: string[] = [];
+  const createdAchievementIds: string[] = [];
+  const createdArtifactIds: string[] = [];
 
   beforeEach(async () => {
     // テストユーザーを作成
@@ -22,6 +26,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
 
     // テスト用ミッションを作成（管理者権限で）
     missionId = crypto.randomUUID();
+    createdMissionIds.push(missionId);
     const missionData = {
       id: missionId,
       title: "テストミッション",
@@ -35,25 +40,44 @@ describe("get_period_mission_ranking 関数のテスト", () => {
   });
 
   afterEach(async () => {
-    // テストデータをクリーンアップ（依存関係の順序で削除）
+    // テストで作成したデータのみをクリーンアップ（依存関係の順序で削除）
+    // xp_transactions: テストユーザーのデータのみ削除
     await adminClient
       .from("xp_transactions")
       .delete()
-      .eq("source_type", "MISSION_COMPLETION");
-    await adminClient
-      .from("xp_transactions")
-      .delete()
-      .eq("source_type", "BONUS");
-    await adminClient
-      .from("posting_activities")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-    await adminClient
-      .from("mission_artifacts")
-      .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000");
-    await adminClient.from("achievements").delete().eq("mission_id", missionId);
-    await adminClient.from("missions").delete().eq("id", missionId);
+      .in("user_id", [user1.user.userId, user2.user.userId]);
+
+    // posting_activities: 作成したartifact_idに紐づくもののみ削除
+    if (createdArtifactIds.length > 0) {
+      await adminClient
+        .from("posting_activities")
+        .delete()
+        .in("mission_artifact_id", createdArtifactIds);
+    }
+
+    // mission_artifacts: 作成したachievement_idに紐づくもののみ削除
+    if (createdAchievementIds.length > 0) {
+      await adminClient
+        .from("mission_artifacts")
+        .delete()
+        .in("achievement_id", createdAchievementIds);
+    }
+
+    // achievements: 作成したミッションに紐づくもののみ削除
+    for (const id of createdMissionIds) {
+      await adminClient.from("achievements").delete().eq("mission_id", id);
+    }
+
+    // missions: 作成したミッションのみ削除
+    for (const id of createdMissionIds) {
+      await adminClient.from("missions").delete().eq("id", id);
+    }
+
+    // 追跡用配列をリセット
+    createdMissionIds.length = 0;
+    createdAchievementIds.length = 0;
+    createdArtifactIds.length = 0;
+
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
   });
@@ -61,6 +85,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
   test("通常ミッションでtotal_pointsがxp_transactionsから正しく計算される", async () => {
     // user1がミッションを達成
     const achievementId1 = crypto.randomUUID();
+    createdAchievementIds.push(achievementId1);
     await adminClient.from("achievements").insert({
       id: achievementId1,
       mission_id: missionId,
@@ -79,6 +104,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
     // user2がミッションを2回達成
     const achievementId2a = crypto.randomUUID();
     const achievementId2b = crypto.randomUUID();
+    createdAchievementIds.push(achievementId2a, achievementId2b);
     await adminClient.from("achievements").insert([
       {
         id: achievementId2a,
@@ -138,6 +164,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
   test("ポスティングミッションでBONUSタイプのXPが正しく計算される", async () => {
     // POSTINGミッションを作成
     const postingMissionId = crypto.randomUUID();
+    createdMissionIds.push(postingMissionId);
     await adminClient.from("missions").insert({
       id: postingMissionId,
       title: "ポスティングミッション",
@@ -150,6 +177,8 @@ describe("get_period_mission_ranking 関数のテスト", () => {
     // user1がポスティング達成（10枚 = 500XP）
     const achievementId1 = crypto.randomUUID();
     const artifactId1 = crypto.randomUUID();
+    createdAchievementIds.push(achievementId1);
+    createdArtifactIds.push(artifactId1);
     await adminClient.from("achievements").insert({
       id: achievementId1,
       mission_id: postingMissionId,
@@ -178,6 +207,8 @@ describe("get_period_mission_ranking 関数のテスト", () => {
     // user2がポスティング達成（20枚 = 1000XP）
     const achievementId2 = crypto.randomUUID();
     const artifactId2 = crypto.randomUUID();
+    createdAchievementIds.push(achievementId2);
+    createdArtifactIds.push(artifactId2);
     await adminClient.from("achievements").insert({
       id: achievementId2,
       mission_id: postingMissionId,
@@ -224,42 +255,12 @@ describe("get_period_mission_ranking 関数のテスト", () => {
     expect(data?.[1].user_name).toBe("ユーザー1");
     expect(data?.[1].total_points).toBe(500);
     expect(data?.[1].rank).toBe(2);
-
-    // クリーンアップ
-    await adminClient
-      .from("xp_transactions")
-      .delete()
-      .eq("source_id", achievementId1);
-    await adminClient
-      .from("xp_transactions")
-      .delete()
-      .eq("source_id", achievementId2);
-    await adminClient
-      .from("posting_activities")
-      .delete()
-      .eq("mission_artifact_id", artifactId1);
-    await adminClient
-      .from("posting_activities")
-      .delete()
-      .eq("mission_artifact_id", artifactId2);
-    await adminClient
-      .from("mission_artifacts")
-      .delete()
-      .eq("achievement_id", achievementId1);
-    await adminClient
-      .from("mission_artifacts")
-      .delete()
-      .eq("achievement_id", achievementId2);
-    await adminClient
-      .from("achievements")
-      .delete()
-      .eq("mission_id", postingMissionId);
-    await adminClient.from("missions").delete().eq("id", postingMissionId);
   });
 
   test("異なるXP値のミッションでtotal_pointsが正しく計算される", async () => {
     // 異なるXP値（50XP）のミッションを作成
     const mission50xpId = crypto.randomUUID();
+    createdMissionIds.push(mission50xpId);
     await adminClient.from("missions").insert({
       id: mission50xpId,
       title: "50XPミッション",
@@ -270,6 +271,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
 
     // user1が50XPミッションを達成
     const achievementId = crypto.randomUUID();
+    createdAchievementIds.push(achievementId);
     await adminClient.from("achievements").insert({
       id: achievementId,
       mission_id: mission50xpId,
@@ -295,17 +297,6 @@ describe("get_period_mission_ranking 関数のテスト", () => {
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
     expect(data?.[0].total_points).toBe(50);
-
-    // クリーンアップ
-    await adminClient
-      .from("xp_transactions")
-      .delete()
-      .eq("source_id", achievementId);
-    await adminClient
-      .from("achievements")
-      .delete()
-      .eq("mission_id", mission50xpId);
-    await adminClient.from("missions").delete().eq("id", mission50xpId);
   });
 
   test("期間指定でフィルタリングが正しく動作する", async () => {
@@ -315,6 +306,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
 
     // 2時間前の達成記録を作成
     const oldAchievementId = crypto.randomUUID();
+    createdAchievementIds.push(oldAchievementId);
     await adminClient.from("achievements").insert({
       id: oldAchievementId,
       mission_id: missionId,
@@ -331,6 +323,7 @@ describe("get_period_mission_ranking 関数のテスト", () => {
 
     // 現在の達成記録を作成
     const newAchievementId = crypto.randomUUID();
+    createdAchievementIds.push(newAchievementId);
     await adminClient.from("achievements").insert({
       id: newAchievementId,
       mission_id: missionId,
@@ -365,6 +358,7 @@ describe("get_user_period_mission_ranking 関数のテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
   let user2: Awaited<ReturnType<typeof createTestUser>>;
   let missionId: string;
+  const createdAchievementIds: string[] = [];
 
   beforeEach(async () => {
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
@@ -390,12 +384,16 @@ describe("get_user_period_mission_ranking 関数のテスト", () => {
   });
 
   afterEach(async () => {
+    // テストで作成したデータのみをクリーンアップ
     await adminClient
       .from("xp_transactions")
       .delete()
-      .eq("source_type", "MISSION_COMPLETION");
+      .in("user_id", [user1.user.userId, user2.user.userId]);
     await adminClient.from("achievements").delete().eq("mission_id", missionId);
     await adminClient.from("missions").delete().eq("id", missionId);
+
+    createdAchievementIds.length = 0;
+
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
   });
@@ -403,6 +401,7 @@ describe("get_user_period_mission_ranking 関数のテスト", () => {
   test("特定ユーザーのランキング情報を正しく取得できる", async () => {
     // user1: 100XP（2位になる）
     const achievementId1 = crypto.randomUUID();
+    createdAchievementIds.push(achievementId1);
     await adminClient.from("achievements").insert({
       id: achievementId1,
       mission_id: missionId,
@@ -419,6 +418,7 @@ describe("get_user_period_mission_ranking 関数のテスト", () => {
     // user2: 200XP（1位になる）
     const achievementId2a = crypto.randomUUID();
     const achievementId2b = crypto.randomUUID();
+    createdAchievementIds.push(achievementId2a, achievementId2b);
     await adminClient.from("achievements").insert([
       {
         id: achievementId2a,
