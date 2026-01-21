@@ -1,0 +1,63 @@
+name: Migrate DB then Deploy
+
+on:
+  push:
+    branches: [main, develop]
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    env:
+      # Config parsing env vars (needed for supabase config.toml)
+      ENABLE_CONFIRMATIONS: ${{ vars.ENABLE_CONFIRMATIONS }}
+      SMTP_ENABLED: ${{ vars.SMTP_ENABLED }}
+      SMTP_HOST: ${{ vars.SMTP_HOST }}
+      SMTP_USER: ${{ vars.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      SMTP_ADMIN_EMAIL: ${{ vars.SMTP_ADMIN_EMAIL }}
+      SMTP_SENDER_NAME: ${{ vars.SMTP_SENDER_NAME }}
+      SITE_URL: ${{ vars.SITE_URL }}
+      ADDITIONAL_REDIRECT_URLS: ${{ vars.ADDITIONAL_REDIRECT_URLS }}
+      # Supabase secrets
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link Supabase project
+        run: supabase link --project-ref $SUPABASE_PROJECT_REF --password $SUPABASE_DB_PASSWORD
+
+      - name: Apply migrations
+        run: |
+          supabase db push --include-all
+          supabase config push
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync mission data
+        run: npm run mission:sync
+
+      - name: Sync posting event data
+        run: npm run posting:sync
+
+      - name: Load poster data
+        run: npm run poster:load-csv
+
+      - name: Trigger Vercel deployment
+        run: curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
