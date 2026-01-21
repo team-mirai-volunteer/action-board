@@ -104,6 +104,20 @@ export async function deleteShape(id: string) {
   }
 }
 
+// URLパラメータ長制限を回避するためのバッチサイズ
+const BATCH_SIZE = 200;
+
+/**
+ * 配列をバッチに分割するヘルパー関数
+ */
+function chunk<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
+
 export async function loadShapes(eventId: string) {
   const { data, error } = await supabase
     .from("posting_shapes")
@@ -125,46 +139,52 @@ export async function loadShapes(eventId: string) {
     new Set(data.map((s) => s.user_id).filter((id): id is string => !!id)),
   );
 
-  // Fetch display names for all users
-  let userDisplayNames: Record<string, string> = {};
+  // Fetch display names for all users (in batches to avoid URL length limit)
+  const userDisplayNames: Record<string, string> = {};
   if (userIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("public_user_profiles")
-      .select("id, name")
-      .in("id", userIds);
+    const userIdBatches = chunk(userIds, BATCH_SIZE);
+    const profileResults = await Promise.all(
+      userIdBatches.map((batch) =>
+        supabase
+          .from("public_user_profiles")
+          .select("id, name")
+          .in("id", batch),
+      ),
+    );
 
-    if (profiles) {
-      userDisplayNames = profiles.reduce(
-        (acc, p) => {
+    for (const result of profileResults) {
+      if (result.data) {
+        for (const p of result.data) {
           if (p.id && p.name) {
-            acc[p.id] = p.name;
+            userDisplayNames[p.id] = p.name;
           }
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
+        }
+      }
     }
   }
 
-  // Fetch posting_count for all shapes from posting_activities
+  // Fetch posting_count for all shapes from posting_activities (in batches to avoid URL length limit)
   const shapeIds = data.map((s) => s.id).filter((id): id is string => !!id);
-  let postingCounts: Record<string, number> = {};
+  const postingCounts: Record<string, number> = {};
   if (shapeIds.length > 0) {
-    const { data: activities } = await supabase
-      .from("posting_activities")
-      .select("shape_id, posting_count")
-      .in("shape_id", shapeIds);
+    const shapeIdBatches = chunk(shapeIds, BATCH_SIZE);
+    const activityResults = await Promise.all(
+      shapeIdBatches.map((batch) =>
+        supabase
+          .from("posting_activities")
+          .select("shape_id, posting_count")
+          .in("shape_id", batch),
+      ),
+    );
 
-    if (activities) {
-      postingCounts = activities.reduce(
-        (acc, a) => {
+    for (const result of activityResults) {
+      if (result.data) {
+        for (const a of result.data) {
           if (a.shape_id && a.posting_count) {
-            acc[a.shape_id] = a.posting_count;
+            postingCounts[a.shape_id] = a.posting_count;
           }
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
+        }
+      }
     }
   }
 
