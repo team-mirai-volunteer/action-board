@@ -4,7 +4,7 @@ import {
   cleanupTestUser,
   createTestUser,
   getAnonClient,
-} from "./utils";
+} from "../utils";
 
 describe("poster_activities テーブルのRLSテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;

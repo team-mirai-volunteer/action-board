@@ -89,7 +89,7 @@ The project also includes a Flutter application in the `mobile_flutter` director
 
 *   **Run RLS tests:**
     ```bash
-    npm run test:rls
+    npm run test:supabase
     ```
 
 ## Development Conventions

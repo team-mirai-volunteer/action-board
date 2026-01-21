@@ -3,7 +3,7 @@ import {
   cleanupTestUser,
   createTestUser,
   getAnonClient,
-} from "./utils";
+} from "../utils";
 
 describe("public_user_profiles テーブルのRLSテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;

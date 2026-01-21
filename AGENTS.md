@@ -24,7 +24,7 @@
 - `npm run biome:check:write` - Biomeフォーマッターとリンターを自動修正付きで実行
 - `npm run test` - 全テストを実行 (Jest + Playwright)
 - `npm run test:unit` - ユニットテストのみ実行 (RLSテストを除く)
-- `npm run test:rls` - Supabase RLS (行レベルセキュリティ) テストのみ実行
+- `npm run test:supabase` - Supabase (RLS, DB Function) テストのみ実行
 - `npm run test:e2e` - Playwright E2Eテストを実行
 - `npm run test:e2e:ui` - デバッグ用UIモードでE2Eテストを実行
 - `npm run test:e2e:debug` - デバッグモードでE2Eテストを実行
@@ -271,7 +271,7 @@
 #### RLSテスト
 - 各テーブルのCRUD権限をテスト
 - テストユーザー作成・削除を自動化
-- `npm run test:rls`で実行
+- `npm run test:supabase`で実行
 
 #### E2Eテスト (Playwright)
 - 主要ユーザーフローをカバー
