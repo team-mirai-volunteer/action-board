@@ -1,21 +1,17 @@
-import { getMissionAchievementCounts } from "@/features/missions/services/missions";
+import {
+  getMissionAchievementCounts,
+  getMissionCategoryView,
+} from "@/features/missions/services/missions";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
-import { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/lib/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
 import type { MissionsProps } from "./mission-list";
-
-// View の型
-type MissionCategoryViewRow =
-  Database["public"]["Views"]["mission_category_view"]["Row"];
 
 export default async function MissionsByCategory({
   userId,
   showAchievedMissions,
 }: MissionsProps) {
-  const supabase = createClient();
-
   // ユーザーの各ミッションに対する達成回数のマップ
   const userAchievementCountMap = userId
     ? await getUserMissionAchievements(userId)
@@ -28,33 +24,9 @@ export default async function MissionsByCategory({
   const achievementCountMap = await getMissionAchievementCounts();
 
   // View からミッションデータ取得
-  const { data, error } = await supabase
-    .from("mission_category_view")
-    .select(`
-      category_id,
-      category_title,
-      category_kbn,
-      category_sort_no,
-      mission_id,
-      title,
-      icon_url,
-      difficulty,
-      content,
-      created_at,
-      artifact_label,
-      max_achievement_count,
-      event_date,
-      is_featured,
-      updated_at,
-      is_hidden,
-      ogp_image_url,
-      required_artifact_type,
-      link_sort_no
-    `)
-    .order("category_sort_no", { ascending: true })
-    .order("link_sort_no", { ascending: true });
+  const data = await getMissionCategoryView();
 
-  if (error || !data || data.length === 0) {
+  if (data.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">
@@ -65,17 +37,16 @@ export default async function MissionsByCategory({
   }
 
   // カテゴリごとにグループ化
-  const grouped = data.reduce<Record<string, MissionCategoryViewRow[]>>(
-    (acc, row) => {
-      // category_idがnullの場合はスキップ
-      if (!row.category_id) return acc;
+  const grouped = data.reduce<
+    Record<string, Tables<"mission_category_view">[]>
+  >((acc, row) => {
+    // category_idがnullの場合はスキップ
+    if (!row.category_id) return acc;
 
-      if (!acc[row.category_id]) acc[row.category_id] = [];
-      acc[row.category_id].push(row);
-      return acc;
-    },
-    {},
-  );
+    if (!acc[row.category_id]) acc[row.category_id] = [];
+    acc[row.category_id].push(row);
+    return acc;
+  }, {});
 
   // カテゴリ内のミッションをソート
   for (const categoryId in grouped) {

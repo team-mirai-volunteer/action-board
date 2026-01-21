@@ -133,3 +133,47 @@ export async function getMissionsWithFilter(
 
   return missions ?? [];
 }
+
+/**
+ * カテゴリビューからミッション一覧を取得
+ */
+export async function getMissionCategoryView(): Promise<
+  Tables<"mission_category_view">[]
+> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("mission_category_view")
+    .select(
+      `
+      category_id,
+      category_title,
+      category_kbn,
+      category_sort_no,
+      mission_id,
+      title,
+      icon_url,
+      difficulty,
+      content,
+      created_at,
+      artifact_label,
+      max_achievement_count,
+      event_date,
+      is_featured,
+      updated_at,
+      is_hidden,
+      ogp_image_url,
+      required_artifact_type,
+      link_sort_no
+    `,
+    )
+    .order("category_sort_no", { ascending: true })
+    .order("link_sort_no", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching mission category view:", error);
+    throw error;
+  }
+
+  return data ?? [];
+}
