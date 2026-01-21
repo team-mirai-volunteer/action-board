@@ -3,7 +3,7 @@ import {
   type TestUser,
   cleanupTestUser,
   createTestUser,
-} from "./supabase/rls/utils";
+} from "./supabase/utils";
 
 // カスタムテストフィクスチャを定義
 type TestFixtures = {

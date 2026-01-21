@@ -1,4 +1,4 @@
-import { adminClient, cleanupTestUser, createTestUser } from "../rls/utils";
+import { adminClient, cleanupTestUser, createTestUser } from "../utils";
 
 describe("get_period_mission_ranking 関数のテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
