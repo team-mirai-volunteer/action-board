@@ -37,7 +37,6 @@ export async function searchVideosByHashtag(
   const videoIds: string[] = [];
   let pageToken: string | undefined;
 
-  // ページネーションで全件取得
   while (videoIds.length < maxResults) {
     const response = await youtube.search.list({
       part: ["snippet"],
@@ -45,6 +44,7 @@ export async function searchVideosByHashtag(
       type: ["video"],
       maxResults: Math.min(50, maxResults - videoIds.length),
       order: "date",
+      regionCode: "JP",
       pageToken,
       publishedAfter,
       publishedBefore,

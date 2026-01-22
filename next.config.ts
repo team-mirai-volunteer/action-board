@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        pathname: "/vi/**",
+      },
+    ],
+  },
 };
 
 export default withSentryConfig(nextConfig, {

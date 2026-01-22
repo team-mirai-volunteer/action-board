@@ -41,7 +41,6 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
   if (options.isBackfill) {
     console.log("Backfill mode: ON (fetching older videos)");
   }
-  console.log("");
 
   const supabase = getSupabaseClient();
   const today = new Date().toISOString().split("T")[0];
@@ -81,7 +80,7 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
   console.log(`Max results: ${maxResults}`);
 
   // 3. 動画を検索
-  console.log("\nSearching for videos with #チームみらい hashtag...");
+  console.log("Searching for videos with #チームみらい hashtag...");
   const searchedVideoIds = await searchVideosByHashtag({
     maxResults,
     publishedAfter,
