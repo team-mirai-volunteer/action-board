@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/client";
 import type {
   OverallStatsHistoryItem,
   SortType,
-  StatsHistory,
   StatsSummary,
   VideoCountByDateItem,
   YouTubeVideoWithStats,
@@ -142,33 +141,6 @@ export async function getYouTubeVideoCount(
   }
 
   return count || 0;
-}
-
-/**
- * 動画の統計履歴を取得する
- * @param videoId - YouTube動画のUUID
- * @param days - 取得する日数
- * @returns 統計履歴
- */
-export async function getVideoStatsHistory(
-  videoId: string,
-  days = 30,
-): Promise<StatsHistory[]> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("youtube_video_stats")
-    .select("recorded_at, view_count, like_count, comment_count")
-    .eq("youtube_video_id", videoId)
-    .order("recorded_at", { ascending: true })
-    .limit(days);
-
-  if (error) {
-    console.error("Failed to fetch video stats history:", error);
-    return [];
-  }
-
-  return data || [];
 }
 
 /**
