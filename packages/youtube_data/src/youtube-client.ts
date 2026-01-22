@@ -53,6 +53,7 @@ export async function searchVideosByHashtag(
       type: ["video"],
       maxResults: Math.min(50, maxResults - videoIds.length),
       order: "date",
+      regionCode: "JP",
       pageToken,
       publishedAfter,
       publishedBefore,
