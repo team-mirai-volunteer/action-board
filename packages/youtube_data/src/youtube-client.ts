@@ -36,9 +36,17 @@ export async function searchVideosByHashtag(
   const youtube = getYouTubeClient();
   const videoIds: string[] = [];
   let pageToken: string | undefined;
+  let pageCount = 0;
+
+  console.log("[YouTube API] Search request:");
+  console.log(`  Query: ${HASHTAG}`);
+  console.log(`  maxResults: ${maxResults}`);
+  console.log(`  publishedAfter: ${publishedAfter ?? "(none)"}`);
+  console.log(`  publishedBefore: ${publishedBefore ?? "(none)"}`);
 
   // ページネーションで全件取得
   while (videoIds.length < maxResults) {
+    pageCount++;
     const response = await youtube.search.list({
       part: ["snippet"],
       q: HASHTAG,
@@ -50,8 +58,16 @@ export async function searchVideosByHashtag(
       publishedBefore,
     });
 
+    const pageInfo = response.data.pageInfo;
+    console.log(`[YouTube API] Page ${pageCount} response:`);
+    console.log(`  totalResults: ${pageInfo?.totalResults ?? "unknown"}`);
+    console.log(`  resultsPerPage: ${pageInfo?.resultsPerPage ?? "unknown"}`);
+    console.log(`  items returned: ${response.data.items?.length ?? 0}`);
+    console.log(`  nextPageToken: ${response.data.nextPageToken ?? "(none)"}`);
+
     const items = response.data.items as YouTubeSearchResult[] | undefined;
     if (!items || items.length === 0) {
+      console.log("[YouTube API] No more items, stopping pagination");
       break;
     }
 
@@ -63,10 +79,12 @@ export async function searchVideosByHashtag(
 
     pageToken = response.data.nextPageToken ?? undefined;
     if (!pageToken) {
+      console.log("[YouTube API] No nextPageToken, stopping pagination");
       break;
     }
   }
 
+  console.log(`[YouTube API] Total video IDs collected: ${videoIds.length}`);
   return videoIds;
 }
 
