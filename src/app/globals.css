@@ -145,3 +145,7 @@
     @apply font-extrabold;
   }
 }
+
+.rdp-root {
+  --rdp-accent-color: #0d9488 !important;
+}
