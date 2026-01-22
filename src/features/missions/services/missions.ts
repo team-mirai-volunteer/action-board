@@ -87,3 +87,93 @@ export async function getMissionAchievementCounts(): Promise<
 
   return countMap;
 }
+
+export interface GetMissionsFilterOptions {
+  filterFeatured?: boolean;
+  excludeMissionIds?: string[];
+  maxSize?: number;
+}
+
+/**
+ * フィルター条件付きでミッション一覧を取得
+ */
+export async function getMissionsWithFilter(
+  options: GetMissionsFilterOptions = {},
+): Promise<Tables<"missions">[]> {
+  const { filterFeatured = false, excludeMissionIds = [], maxSize } = options;
+
+  const supabase = createClient();
+
+  let query = supabase.from("missions").select().eq("is_hidden", false);
+
+  if (filterFeatured) {
+    query = query
+      .eq("is_featured", true)
+      .order("featured_importance", { ascending: false, nullsFirst: false });
+  }
+
+  query = query
+    .order("difficulty", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (excludeMissionIds.length > 0) {
+    query = query.not("id", "in", `("${excludeMissionIds.join('","')}")`);
+  }
+
+  if (maxSize) {
+    query = query.limit(maxSize);
+  }
+
+  const { data: missions, error } = await query;
+
+  if (error) {
+    console.error("Error fetching missions:", error);
+    throw error;
+  }
+
+  return missions ?? [];
+}
+
+/**
+ * カテゴリビューからミッション一覧を取得
+ */
+export async function getMissionCategoryView(): Promise<
+  Tables<"mission_category_view">[]
+> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("mission_category_view")
+    .select(
+      `
+      category_id,
+      category_title,
+      category_kbn,
+      category_sort_no,
+      mission_id,
+      title,
+      icon_url,
+      difficulty,
+      content,
+      created_at,
+      artifact_label,
+      max_achievement_count,
+      event_date,
+      is_featured,
+      updated_at,
+      is_hidden,
+      ogp_image_url,
+      required_artifact_type,
+      link_sort_no
+    `,
+    )
+    .order("category_sort_no", { ascending: true })
+    .order("link_sort_no", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching mission category view:", error);
+    throw error;
+  }
+
+  return data ?? [];
+}

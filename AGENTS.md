@@ -18,45 +18,49 @@
 ### ローカル開発環境セットアップ
 - `supabase start` - ローカルSupabase環境を開始
 - `supabase db reset` - マイグレーションとシードデータでローカルデータベースをリセット
-- `npm run dev` - Next.js開発サーバーを開始 (localhost:3000)
+- `pnpm run dev` - Next.js開発サーバーを開始 (localhost:3000)
 
 ### コード品質とテスト
-- `npm run biome:check:write` - Biomeフォーマッターとリンターを自動修正付きで実行
-- `npm run test` - 全テストを実行 (Jest + Playwright)
-- `npm run test:unit` - ユニットテストのみ実行 (RLSテストを除く)
-- `npm run test:supabase` - Supabase (RLS, DB Function) テストのみ実行
-- `npm run test:e2e` - Playwright E2Eテストを実行
-- `npm run test:e2e:ui` - デバッグ用UIモードでE2Eテストを実行
-- `npm run test:e2e:debug` - デバッグモードでE2Eテストを実行
-- `npm run test:ci:unit` - CI用ユニットテスト (JUnit形式レポート出力)
-- `npm run test:ci:e2e` - CI用E2EとRLSテスト
+- `pnpm run biome:check:write` - Biomeフォーマッターとリンターを自動修正付きで実行
+- `pnpm run test` - 全テストを実行 (Jest + Playwright)
+- `pnpm run test:unit` - ユニットテストのみ実行 (RLSテストを除く)
+- `pnpm run test:supabase` - Supabase (RLS, DB Function) テストのみ実行
+- `pnpm run test:e2e` - Playwright E2Eテストを実行
+- `pnpm run test:e2e:ui` - デバッグ用UIモードでE2Eテストを実行
+- `pnpm run test:e2e:debug` - デバッグモードでE2Eテストを実行
+- `pnpm run test:ci:unit` - CI用ユニットテスト (JUnit形式レポート出力)
+- `pnpm run test:ci:e2e` - CI用E2EとRLSテスト
 
 ### データベース型生成とマイグレーション
-- `npm run types` - SupabaseスキーマからTypeScript型を生成 (lib/types/supabase.tsに出力)
+- `pnpm run types` - SupabaseスキーマからTypeScript型を生成 (lib/types/supabase.tsに出力)
 - `npx supabase migration new <migration_name>` - 新しいマイグレーションファイルを作成
 - `npx supabase migration up` - ローカルデータベースにマイグレーションを適用
 - `npx supabase db reset` - マイグレーションとシードデータでローカルデータベースをリセット
 
 ### ビルドとデプロイメント
-- `npm run build` - 本番用Next.jsアプリケーションをビルド
-- `npm run start` - 本番サーバーを開始
-- `npm run typecheck` - TypeScriptの型チェックを実行 (ビルドなし)
+- `pnpm run build` - 本番用Next.jsアプリケーションをビルド
+- `pnpm run start` - 本番サーバーを開始
+- `pnpm run typecheck` - TypeScriptの型チェックを実行 (ビルドなし)
 
 ### ミッションデータ管理
-- `npm run mission:sync` - YAMLファイルからミッションデータをデータベースに同期
-- `npm run mission:sync:dry` - ドライラン (変更内容の確認のみ)
-- `npm run mission:export` - データベースからミッションデータをエクスポート
+- `pnpm run mission:sync` - YAMLファイルからミッションデータをデータベースに同期
+- `pnpm run mission:sync:dry` - ドライラン (変更内容の確認のみ)
+- `pnpm run mission:export` - データベースからミッションデータをエクスポート
 
 ### ポスターデータ管理
-- `npm run poster:load-csv` - CSVファイルからポスターデータをロード
-- `npm run poster:auto-load` - Google Driveから自動ロードして名前をマスク
-- `npm run poster:auto-load:log` - ログ付きで自動ロード
-- `npm run poster:clear` - ポスターデータをクリア
-- `npm run poster:mask-names` - ポスターデータの名前をマスク
+- `pnpm run poster:load-csv` - CSVファイルからポスターデータをロード
+- `pnpm run poster:auto-load` - Google Driveから自動ロードして名前をマスク
+- `pnpm run poster:auto-load:log` - ログ付きで自動ロード
+- `pnpm run poster:clear` - ポスターデータをクリア
+- `pnpm run poster:mask-names` - ポスターデータの名前をマスク
+
+### YouTubeデータ管理
+- `pnpm --filter @action-board/youtube-data sync` - YouTube動画データをデータベースに同期
+- `pnpm --filter @action-board/youtube-data sync:dry` - ドライラン (変更内容の確認のみ)
 
 ### その他のスクリプト
-- `npm run calculate-badges` - バッジの計算スクリプトを実行
-- `npm run export-users-prefecture` - ユーザーの都道府県データをエクスポート
+- `pnpm run calculate-badges` - バッジの計算スクリプトを実行
+- `pnpm run export-users-prefecture` - ユーザーの都道府県データをエクスポート
 
 ## プロジェクトアーキテクチャ
 
@@ -157,6 +161,12 @@
 - `quiz_questions.yaml` - クイズ問題定義
 - `src/sync.ts` - データベース同期スクリプト
 
+#### `/packages` - pnpmワークスペースパッケージ
+- `youtube_data/` - YouTube Data API連携パッケージ
+  - `src/sync.ts` - YouTube動画同期スクリプト
+  - `src/youtube-client.ts` - YouTube APIクライアント
+  - `src/types.ts` - 型定義
+
 ### データベーススキーマとセキュリティ
 
 #### 主要テーブル
@@ -177,6 +187,9 @@
   - `poster_boards` - ポスター掲示板情報
   - `poster_activities` - ポスター活動記録
   - `posting_activities` - 機関誌投稿活動
+- **YouTube関連**
+  - `youtube_videos` - YouTube動画マスターデータ
+  - `youtube_video_stats` - 動画統計情報の日次スナップショット
 - **その他**
   - `user_badges` - 獲得バッジ
   - `seasons` - シーズン定義
@@ -243,6 +256,7 @@
 - **外部連携**
   - `HUBSPOT_API_KEY` (オプション)
   - `MAILGUN_API_KEY` (メール送信用)
+  - `YOUTUBE_API_KEY` (YouTube動画同期用)
 
 ## 開発ワークフロー
 
@@ -271,7 +285,7 @@
 #### RLSテスト
 - 各テーブルのCRUD権限をテスト
 - テストユーザー作成・削除を自動化
-- `npm run test:supabase`で実行
+- `pnpm run test:supabase`で実行
 
 #### E2Eテスト (Playwright)
 - 主要ユーザーフローをカバー
@@ -283,10 +297,10 @@
 1. `supabase migration new {名前}` - 新規マイグレーションファイル作成
 2. SQLを記述
 3. `supabase migration up` - ローカルに適用
-4. `npm run types` - TypeScript型を再生成
+4. `pnpm run types` - TypeScript型を再生成
 
 ### 重要な開発ノート
-- **データベーススキーマ変更後は必ず `npm run types` を実行**
+- **データベーススキーマ変更後は必ず `pnpm run types` を実行**
 - **新規ミッション登録時は `mission_category_link` への登録が必須**
 - **RLSポリシーは必ずテストを書く**
 - **環境変数の追加時は `.env.example` も更新**

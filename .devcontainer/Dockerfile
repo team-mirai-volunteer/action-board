@@ -6,7 +6,7 @@ RUN apt-get update && \
 # Add "node" user to the sudo group and configure sudoers
 RUN apt-get install -y sudo \
     && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/node
-RUN npm i -g npm
+RUN npm install -g pnpm
 
 USER node
 CMD [ "bash" ]

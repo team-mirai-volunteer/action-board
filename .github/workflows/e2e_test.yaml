@@ -11,10 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
       # 環境変数を設定（ローカルSupabaseの接続情報）
       - name: Set Supabase environment variables
@@ -43,10 +47,10 @@ jobs:
           BQ_USER_PASSWORD: bq_user_password
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       # Supabaseの起動を待機
       - name: Wait for Supabase
@@ -69,14 +73,14 @@ jobs:
       - name: Load poster CSV data
         run: |
           echo "Loading poster CSV data..."
-          npm run poster:load-csv
+          pnpm run poster:load-csv
           echo "Poster CSV data loaded."
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Run CI Tests
-        run: npm run test:ci:e2e
+        run: pnpm run test:ci:e2e
         env:
           CI: 'true'
 

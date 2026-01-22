@@ -1,6 +1,8 @@
-import { getMissionAchievementCounts } from "@/features/missions/services/missions";
+import {
+  getMissionAchievementCounts,
+  getMissionsWithFilter,
+} from "@/features/missions/services/missions";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
-import { createClient } from "@/lib/supabase/client";
 import Mission from "./mission-card";
 
 export type MissionsProps = {
@@ -20,8 +22,6 @@ export default async function Missions({
   title = "📈 ミッション",
   id,
 }: MissionsProps) {
-  const supabase = createClient();
-
   // ユーザーの各ミッションに対する達成回数のマップ
   const userAchievementCountMap = userId
     ? await getUserMissionAchievements(userId)
@@ -33,22 +33,12 @@ export default async function Missions({
   // すべてのミッションに対する達成人数を取得
   const achievementCountMap = await getMissionAchievementCounts();
 
-  let query = supabase.from("missions").select().eq("is_hidden", false); // 非表示のミッションを除外
-  if (filterFeatured) {
-    query = query
-      .eq("is_featured", true)
-      // 重要度降順に並べる
-      .order("featured_importance", { ascending: false, nullsFirst: false });
-  }
-  // 重要度が null のミッションを難易度降順→作成日降順に並べる
-  query = query
-    .order("difficulty", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  if (!showAchievedMissions) {
-    query = query.not("id", "in", `("${achievedMissionIds.join('","')}")`);
-  }
-  const { data: missions } = maxSize ? await query.limit(maxSize) : await query;
+  // ミッション一覧を取得
+  const missions = await getMissionsWithFilter({
+    filterFeatured,
+    excludeMissionIds: showAchievedMissions ? [] : achievedMissionIds,
+    maxSize,
+  });
 
   return (
     <div className="flex flex-col gap-6 px-4 md:px-0">

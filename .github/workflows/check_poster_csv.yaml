@@ -64,14 +64,17 @@ jobs:
           BQ_USER_PASSWORD: bq_user_password
           ENABLE_CONFIRMATIONS: false
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       # CSVファイルの検証
       - name: Validate CSV files
         run: |
           echo "Checking poster CSV files..."
-          npm run poster:load-csv
+          pnpm run poster:load-csv
           echo "✅ All CSV files are valid and successfully loaded!"
 
       # オプション: CSVファイルの統計を表示
