@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarUrl } from "@/lib/services/avatar";
-import { createClient } from "@/lib/supabase/client";
 import clsx from "clsx";
 import type { HTMLProps } from "react";
 
@@ -20,11 +19,9 @@ export default function UserAvatar({
   userProfile,
   size = "md",
 }: UserAvatarProps) {
-  const supabase = createClient();
-  let avatarUrl = userProfile.avatar_url;
-  if (avatarUrl) {
-    avatarUrl = getAvatarUrl(supabase, avatarUrl);
-  }
+  const avatarUrl = userProfile.avatar_url
+    ? getAvatarUrl(userProfile.avatar_url)
+    : null;
   const sizeClass = {
     sm: "w-8 h-8",
     md: "w-10 h-10",

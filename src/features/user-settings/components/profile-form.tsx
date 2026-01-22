@@ -26,7 +26,6 @@ import type { PartyMembership } from "@/features/party-membership/types";
 import { updateProfile } from "@/features/user-settings/actions/profile-actions";
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
-import { createClient } from "@/lib/supabase/client";
 import { calculateAge } from "@/lib/utils/utils";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -65,7 +64,6 @@ export default function ProfileForm({
   initialPrivateUser,
   partyMembership,
 }: ProfileFormProps) {
-  const supabase = createClient();
   const [queryMessage, setQueryMessage] = useState<Message | undefined>(
     message,
   );
@@ -75,9 +73,7 @@ export default function ProfileForm({
   );
   // 画像プレビュー用のステート
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
-    initialProfile?.avatar_url
-      ? getAvatarUrl(supabase, initialProfile.avatar_url)
-      : null,
+    initialProfile?.avatar_url ? getAvatarUrl(initialProfile.avatar_url) : null,
   );
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>(
     initialProfile?.address_prefecture || "",
