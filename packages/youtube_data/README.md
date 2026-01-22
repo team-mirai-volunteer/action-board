@@ -45,6 +45,21 @@ pnpm --filter @action-board/youtube-data sync --dry-run
 pnpm --filter @action-board/youtube-data sync --backfill --max-results 500 --dry-run
 ```
 
+### 期間を指定して取得
+
+特定の期間に公開された動画を取得。
+
+```bash
+# 2025年1月以降の動画を取得
+pnpm --filter @action-board/youtube-data sync --published-after 2025-01-01
+
+# 2025年1月1日〜1月31日の動画を取得
+pnpm --filter @action-board/youtube-data sync --published-after 2025-01-01 --published-before 2025-01-31
+
+# ドライランで確認
+pnpm --filter @action-board/youtube-data sync --published-after 2025-01-01 --dry-run
+```
+
 ## CLI オプション
 
 | オプション | 説明 |
@@ -52,6 +67,8 @@ pnpm --filter @action-board/youtube-data sync --backfill --max-results 500 --dry
 | `--dry-run` | 実際には保存せず確認のみ |
 | `--backfill` | 過去の動画を取得（最古より前を検索） |
 | `--max-results <n>` | 最大取得件数（デフォルト: 50） |
+| `--published-after <date>` | 指定日以降に公開された動画を検索（例: `2025-01-01`） |
+| `--published-before <date>` | 指定日以前に公開された動画を検索（例: `2025-12-31`） |
 
 ## データベーススキーマ
 

@@ -10,6 +10,20 @@ import { getSupabaseClient } from "./supabase.js";
 import type { SyncResult } from "./types.js";
 import { getVideoDetails, searchVideosByHashtag } from "./youtube-client.js";
 
+// 日付文字列をISO 8601形式に変換（YouTube APIが要求する形式）
+function toISOTimestamp(dateStr: string): string {
+  // すでにタイムゾーン情報がある場合はそのまま返す
+  if (dateStr.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+  // YYYY-MM-DD形式の場合、T00:00:00Zを付加
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return `${dateStr}T00:00:00Z`;
+  }
+  // その他の場合はDateオブジェクトを経由して変換
+  return new Date(dateStr).toISOString();
+}
+
 // CLIオプションのパース
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -19,10 +33,19 @@ function parseArgs() {
   };
 
   const maxResultsArg = getArg("--max-results");
+  const publishedAfterArg = getArg("--published-after");
+  const publishedBeforeArg = getArg("--published-before");
+
   return {
     isDryRun: args.includes("--dry-run"),
     isBackfill: args.includes("--backfill"),
     maxResults: maxResultsArg ? Number.parseInt(maxResultsArg, 10) : undefined,
+    publishedAfter: publishedAfterArg
+      ? toISOTimestamp(publishedAfterArg)
+      : undefined,
+    publishedBefore: publishedBeforeArg
+      ? toISOTimestamp(publishedBeforeArg)
+      : undefined,
   };
 }
 
@@ -57,18 +80,27 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
   // 2. 検索オプションを決定
   let publishedAfter: string | undefined;
   let publishedBefore: string | undefined;
-  const maxResults = options.maxResults ?? 50;
+  const maxResults = options.maxResults ?? 100;
 
-  if (options.isBackfill) {
+  // コマンド引数でオーバーライド可能
+  if (options.publishedAfter) {
+    publishedAfter = options.publishedAfter;
+    console.log("Using --published-after override");
+  } else if (!options.isBackfill) {
+    // 通常モード: DBの最新の動画より後を検索
+    publishedAfter = getLatestPublishedAfter(existingVideos);
+  }
+
+  if (options.publishedBefore) {
+    publishedBefore = options.publishedBefore;
+    console.log("Using --published-before override");
+  } else if (options.isBackfill) {
     // backfillモード: DBの最古の動画より前を検索
     publishedBefore = getOldestPublishedBefore(existingVideos);
-    if (!publishedBefore) {
+    if (!publishedBefore && !options.publishedAfter) {
       console.log("No existing videos found. Run normal sync first.");
       return result;
     }
-  } else {
-    // 通常モード: DBの最新の動画より後を検索
-    publishedAfter = getLatestPublishedAfter(existingVideos);
   }
 
   if (publishedAfter) {
