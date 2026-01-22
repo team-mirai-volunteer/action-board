@@ -1378,6 +1378,95 @@ export type Database = {
           },
         ];
       };
+      youtube_video_stats: {
+        Row: {
+          comment_count: number | null;
+          created_at: string | null;
+          id: string;
+          like_count: number | null;
+          recorded_at: string;
+          view_count: number | null;
+          youtube_video_id: string | null;
+        };
+        Insert: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at: string;
+          view_count?: number | null;
+          youtube_video_id?: string | null;
+        };
+        Update: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at?: string;
+          view_count?: number | null;
+          youtube_video_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_stats_youtube_video_id_fkey";
+            columns: ["youtube_video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      youtube_videos: {
+        Row: {
+          channel_id: string;
+          channel_title: string | null;
+          created_at: string | null;
+          description: string | null;
+          duration: string | null;
+          id: string;
+          is_active: boolean | null;
+          published_at: string | null;
+          tags: string[] | null;
+          thumbnail_url: string | null;
+          title: string;
+          updated_at: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Insert: {
+          channel_id: string;
+          channel_title?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          duration?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title: string;
+          updated_at?: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Update: {
+          channel_id?: string;
+          channel_title?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          duration?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string;
+          updated_at?: string | null;
+          video_id?: string;
+          video_url?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       activity_timeline_view: {

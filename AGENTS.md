@@ -54,6 +54,10 @@
 - `pnpm run poster:clear` - ポスターデータをクリア
 - `pnpm run poster:mask-names` - ポスターデータの名前をマスク
 
+### YouTubeデータ管理
+- `pnpm --filter @action-board/youtube-data sync` - YouTube動画データをデータベースに同期
+- `pnpm --filter @action-board/youtube-data sync:dry` - ドライラン (変更内容の確認のみ)
+
 ### その他のスクリプト
 - `pnpm run calculate-badges` - バッジの計算スクリプトを実行
 - `pnpm run export-users-prefecture` - ユーザーの都道府県データをエクスポート
@@ -157,6 +161,12 @@
 - `quiz_questions.yaml` - クイズ問題定義
 - `src/sync.ts` - データベース同期スクリプト
 
+#### `/packages` - pnpmワークスペースパッケージ
+- `youtube_data/` - YouTube Data API連携パッケージ
+  - `src/sync.ts` - YouTube動画同期スクリプト
+  - `src/youtube-client.ts` - YouTube APIクライアント
+  - `src/types.ts` - 型定義
+
 ### データベーススキーマとセキュリティ
 
 #### 主要テーブル
@@ -177,6 +187,9 @@
   - `poster_boards` - ポスター掲示板情報
   - `poster_activities` - ポスター活動記録
   - `posting_activities` - 機関誌投稿活動
+- **YouTube関連**
+  - `youtube_videos` - YouTube動画マスターデータ
+  - `youtube_video_stats` - 動画統計情報の日次スナップショット
 - **その他**
   - `user_badges` - 獲得バッジ
   - `seasons` - シーズン定義
@@ -243,6 +256,7 @@
 - **外部連携**
   - `HUBSPOT_API_KEY` (オプション)
   - `MAILGUN_API_KEY` (メール送信用)
+  - `YOUTUBE_API_KEY` (YouTube動画同期用)
 
 ## 開発ワークフロー
 
