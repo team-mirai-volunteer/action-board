@@ -59,7 +59,7 @@
       - [公式ドキュメント](https://docs.docker.jp/desktop/install/windows-install.html)を参照
 
    - Supabase CLI
-      - cmd `pnpm install -g supabase`
+      - cmd `pnpm add -g supabase`
          - E404エラーが出てインストールに失敗する場合
             1. Scoop をインストール
             ```
