@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
@@ -24,8 +25,15 @@ export function DatePicker({
   onSelect,
   placeholder = "日付を選択",
 }: DatePickerProps) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (selectedDate: Date | undefined) => {
+    onSelect(selectedDate);
+    setOpen(false);
+  };
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -42,7 +50,7 @@ export function DatePicker({
         <DayPicker
           mode="single"
           selected={date}
-          onSelect={onSelect}
+          onSelect={handleSelect}
           locale={ja}
         />
       </PopoverContent>
