@@ -42,15 +42,6 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
     console.log("Backfill mode: ON (fetching older videos)");
   }
 
-  // 環境情報のデバッグ
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "(not set)";
-  const apiKeyPrefix = process.env.YOUTUBE_API_KEY?.slice(0, 10) ?? "(not set)";
-  console.log("\n[Environment]");
-  console.log(`  SUPABASE_URL: ${supabaseUrl}`);
-  console.log(`  YOUTUBE_API_KEY: ${apiKeyPrefix}...`);
-  console.log(`  Timestamp: ${new Date().toISOString()}`);
-  console.log("");
-
   const supabase = getSupabaseClient();
   const today = new Date().toISOString().split("T")[0];
 
@@ -61,21 +52,7 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
     existingVideos.map((v) => [v.video_id, v.id]),
   );
   const existingVideoIds = existingVideos.map((v) => v.video_id);
-
-  // DB状態のデバッグ情報
-  console.log("\n[DB State]");
-  console.log(`  Total videos in DB: ${existingVideoIds.length}`);
-  if (existingVideos.length > 0) {
-    const publishedDates = existingVideos
-      .filter((v) => v.published_at)
-      .map((v) => new Date(v.published_at as string).getTime());
-    if (publishedDates.length > 0) {
-      const oldest = new Date(Math.min(...publishedDates)).toISOString();
-      const newest = new Date(Math.max(...publishedDates)).toISOString();
-      console.log(`  Oldest published_at: ${oldest}`);
-      console.log(`  Newest published_at: ${newest}`);
-    }
-  }
+  console.log(`Found ${existingVideoIds.length} existing videos in database`);
 
   // 2. 検索オプションを決定
   let publishedAfter: string | undefined;
@@ -103,7 +80,7 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
   console.log(`Max results: ${maxResults}`);
 
   // 3. 動画を検索
-  console.log("\nSearching for videos with #チームみらい hashtag...");
+  console.log("Searching for videos with #チームみらい hashtag...");
   const searchedVideoIds = await searchVideosByHashtag({
     maxResults,
     publishedAfter,
