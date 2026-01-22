@@ -21,6 +21,8 @@ export interface StatsSummary {
   totalViews: number;
   totalLikes: number;
   totalComments: number;
+  dailyViewsIncrease?: number;
+  dailyVideosIncrease?: number;
 }
 
 export interface OverallStatsHistoryItem {

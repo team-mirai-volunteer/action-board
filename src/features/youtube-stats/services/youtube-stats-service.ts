@@ -224,8 +224,19 @@ export async function getYouTubeStatsSummary(
   let totalViews = 0;
   let totalLikes = 0;
   let totalComments = 0;
+  let yesterdayTotalViews = 0;
+  let todayVideosCount = 0;
+
+  const today = new Date().toISOString().split("T")[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
   for (const video of videos || []) {
+    // 今日投稿された動画をカウント
+    const publishedDate = (video.published_at as string)?.split("T")[0];
+    if (publishedDate === today) {
+      todayVideosCount++;
+    }
+
     const stats = video.youtube_video_stats as Array<{
       view_count: number | null;
       like_count: number | null;
@@ -233,24 +244,38 @@ export async function getYouTubeStatsSummary(
       recorded_at: string;
     }>;
 
-    // 最新の統計を取得
-    const latestStats = stats.sort(
+    // recorded_atでソート（新しい順）
+    const sortedStats = stats.sort(
       (a, b) =>
         new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    )[0];
+    );
 
+    // 最新の統計を取得
+    const latestStats = sortedStats[0];
     if (latestStats) {
       totalViews += latestStats.view_count ?? 0;
       totalLikes += latestStats.like_count ?? 0;
       totalComments += latestStats.comment_count ?? 0;
     }
+
+    // 昨日の統計を取得
+    const yesterdayStats = sortedStats.find((s) => s.recorded_at === yesterday);
+    if (yesterdayStats) {
+      yesterdayTotalViews += yesterdayStats.view_count ?? 0;
+    }
   }
+
+  // 日次増加数を計算（昨日のデータがない場合は0）
+  const dailyViewsIncrease =
+    yesterdayTotalViews > 0 ? totalViews - yesterdayTotalViews : 0;
 
   return {
     totalVideos: videos?.length ?? 0,
     totalViews,
     totalLikes,
     totalComments,
+    dailyViewsIncrease,
+    dailyVideosIncrease: todayVideosCount,
   };
 }
 
