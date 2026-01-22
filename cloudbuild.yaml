@@ -30,8 +30,9 @@ steps:
     args:
       - '-c'
       - |
-        npm ci
-        npm run mission:sync
+        npm install -g pnpm
+        pnpm install --frozen-lockfile
+        pnpm run mission:sync
     env:
       - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
@@ -44,8 +45,9 @@ steps:
     args:
       - '-c'
       - |
-        npm ci
-        npm run posting:sync
+        npm install -g pnpm
+        pnpm install --frozen-lockfile
+        pnpm run posting:sync
     env:
       - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
@@ -58,8 +60,9 @@ steps:
     args:
       - '-c'
       - |
-        npm ci
-        npm run poster:load-csv
+        npm install -g pnpm
+        pnpm install --frozen-lockfile
+        pnpm run poster:load-csv
     env:
       - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'

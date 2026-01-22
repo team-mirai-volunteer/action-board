@@ -12,7 +12,7 @@
       "extensions": ["biomejs.biome"]
     }
   },
-  "postCreateCommand": "npm install; cp .env.example .env.local",
+  "postCreateCommand": "pnpm install; cp .env.example .env.local",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },

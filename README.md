@@ -59,7 +59,7 @@
       - [公式ドキュメント](https://docs.docker.jp/desktop/install/windows-install.html)を参照
 
    - Supabase CLI
-      - cmd `npm install -g supabase`
+      - cmd `pnpm add -g supabase`
          - E404エラーが出てインストールに失敗する場合
             1. Scoop をインストール
             ```
@@ -120,7 +120,7 @@
 5. 必要なパッケージをインストール:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 6. `.env` ファイルの作成
@@ -134,7 +134,7 @@
 7. ミッションデータの同期:
 
    ```bash
-   npm run mission:sync
+   pnpm run mission:sync
    ```
 
    詳しくは [ミッションデータ README](mission_data/README.md) を参照ください。
@@ -142,7 +142,7 @@
 8. Next.js のローカル開発サーバーを起動:
 
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
    サービスは [localhost:3000](http://localhost:3000/) でアクセス可能になります。
@@ -254,7 +254,7 @@ npx supabase gen types typescript --local > src/lib/types/supabase.ts
 1. 以下のコマンドですべてのテストを実行できます:
 
    ```bash
-   npm run test:unit
+   pnpm run test:unit
    ```
 
 ### テストレポートの確認
@@ -291,38 +291,38 @@ npx playwright install-deps
 
    ```bash
    supabase start
-   npm run dev
+   pnpm run dev
    ```
 
 2. 以下のコマンドですべてのテストを実行できます:
 
    ```bash
-   npm run test:e2e
+   pnpm run test:e2e
    ```
 
 3. 特定のテストファイルのみを実行する場合:
 
    ```bash
-   npm run test:e2e -- tests/e2e/auth.spec.ts
+   pnpm run test:e2e -- tests/e2e/auth.spec.ts
    ```
 
 4. 特定のプロジェクト（ブラウザ/デバイス）でのみテストを実行する場合:
 
    ```bash
    # デスクトップブラウザ
-   npm run test:e2e -- --project=chromium
-   npm run test:e2e -- --project=firefox
-   npm run test:e2e -- --project=webkit
+   pnpm run test:e2e -- --project=chromium
+   pnpm run test:e2e -- --project=firefox
+   pnpm run test:e2e -- --project=webkit
 
    # モバイルデバイス
-   npm run test:e2e -- --project=mobile-chrome
-   npm run test:e2e -- --project=mobile-safari
+   pnpm run test:e2e -- --project=mobile-chrome
+   pnpm run test:e2e -- --project=mobile-safari
    ```
 
 5. UIモードでテストを実行する場合（デバッグに便利）:
 
    ```bash
-   npm run test:e2e:ui
+   pnpm run test:e2e:ui
    ```
 
 ### テストレポートの確認
@@ -360,7 +360,7 @@ npx playwright show-report
 2. 以下のコマンドですべてのRLSテストを実行できます:
 
    ```bash
-   npm run test:supabase
+   pnpm run test:supabase
    ```
 
 ### テストの概要

@@ -42,22 +42,24 @@ jobs:
           supabase db push --include-all
           supabase config push
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Sync mission data
-        run: npm run mission:sync
+        run: pnpm run mission:sync
 
       - name: Sync posting event data
-        run: npm run posting:sync
+        run: pnpm run posting:sync
 
       - name: Load poster data
-        run: npm run poster:load-csv
+        run: pnpm run poster:load-csv
 
       - name: Trigger Vercel deployment
         run: curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
