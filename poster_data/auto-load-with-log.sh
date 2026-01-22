@@ -9,7 +9,7 @@ echo "Arguments: $@" | tee -a "$LOG_FILE"
 echo "========================================" | tee -a "$LOG_FILE"
 
 # Run the auto-load script with all passed arguments and pipe output to both console and log file
-npm run poster:auto-load -- "$@" 2>&1 | tee -a "$LOG_FILE"
+pnpm run poster:auto-load -- "$@" 2>&1 | tee -a "$LOG_FILE"
 
 echo "========================================" | tee -a "$LOG_FILE"
 echo "Completed at $(date)" | tee -a "$LOG_FILE"

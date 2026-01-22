@@ -25,14 +25,17 @@ WORKDIR /app
 # CA certificates are required for HTTPS requests (Sentry)
 RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
 
-COPY package.json package-lock.json ./
-RUN npm ci
+# Install pnpm
+RUN npm install -g pnpm
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
 RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} \
     SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY} \
-    npm run build
+    pnpm run build
 
 FROM node:22-slim@sha256:a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8 AS runner
 
