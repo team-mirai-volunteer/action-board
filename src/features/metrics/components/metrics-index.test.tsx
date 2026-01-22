@@ -5,13 +5,21 @@ jest.mock("../services/get-metrics", () => ({
   fetchAllMetricsData: jest.fn(),
 }));
 
+// YouTube統計サービスのモック
+jest.mock("@/features/youtube-stats/services/youtube-stats-service", () => ({
+  getYouTubeStatsSummary: jest.fn(),
+}));
+
 import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
+import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション
 const mockFetchAllMetricsData = fetchAllMetricsData as jest.MockedFunction<
   typeof fetchAllMetricsData
 >;
+const mockGetYouTubeStatsSummary =
+  getYouTubeStatsSummary as jest.MockedFunction<typeof getYouTubeStatsSummary>;
 
 // テスト用のデフォルトデータ
 const defaultMockData = {
@@ -30,6 +38,15 @@ const defaultMockData = {
   },
 };
 
+const defaultYouTubeMockData = {
+  totalVideos: 150,
+  totalViews: 250000,
+  totalLikes: 5000,
+  totalComments: 1200,
+  dailyViewsIncrease: 3500,
+  dailyVideosIncrease: 5,
+};
+
 jest.mock("@/components/ui/separator", () => ({
   Separator: ({ orientation, className }: any) => (
     <div
@@ -44,6 +61,7 @@ describe("Metrics", () => {
   beforeEach(() => {
     // 各テスト前にモックデータをリセット
     mockFetchAllMetricsData.mockResolvedValue(defaultMockData);
+    mockGetYouTubeStatsSummary.mockResolvedValue(defaultYouTubeMockData);
   });
 
   afterEach(() => {
@@ -55,7 +73,8 @@ describe("Metrics", () => {
       render(await Metrics());
 
       expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("達成アクション数")).toBeInTheDocument();
+      expect(screen.getByText("YouTube再生回数")).toBeInTheDocument();
+      expect(screen.getByText("YouTube動画本数")).toBeInTheDocument();
       expect(screen.getByText("サポーター数")).toBeInTheDocument();
     });
 
@@ -65,10 +84,12 @@ describe("Metrics", () => {
       await waitFor(() => {
         // サポーター数の確認
         expect(screen.getByText("75,982")).toBeInTheDocument();
-        expect(screen.getByText("人")).toBeInTheDocument();
 
-        // アクション達成数の確認
-        expect(screen.getByText("18,605")).toBeInTheDocument();
+        // YouTube再生回数の確認
+        expect(screen.getByText("250,000")).toBeInTheDocument();
+
+        // YouTube動画本数の確認
+        expect(screen.getByText("150")).toBeInTheDocument();
       });
     });
 
@@ -119,7 +140,6 @@ describe("Metrics", () => {
       process.env = {
         ...originalEnv,
         FALLBACK_SUPPORTER_COUNT: "50000",
-        FALLBACK_ACHIEVEMENT_COUNT: "10000",
       };
 
       render(await Metrics());
@@ -127,7 +147,6 @@ describe("Metrics", () => {
       // フォールバック値が表示されることを確認
       await waitFor(() => {
         expect(screen.getByText("50,000")).toBeInTheDocument(); // フォールバックサポーター数
-        expect(screen.getByText("10,000")).toBeInTheDocument(); // フォールバック達成数
       });
 
       // 環境変数を元に戻す
@@ -136,26 +155,35 @@ describe("Metrics", () => {
   });
 
   describe("レイアウト", () => {
-    it("外部リンクが正しく表示される", async () => {
+    it("詳しく見るリンクが正しく表示される", async () => {
       render(await Metrics());
 
-      // Looker Studioへのリンク
-      const dashboardLink = screen.getByText("もっと詳しい活動状況を見る");
-      expect(dashboardLink).toBeInTheDocument();
-      expect(dashboardLink.closest("a")).toHaveAttribute(
-        "href",
-        expect.stringContaining("lookerstudio.google.com"),
+      // 詳しく見るリンクが2つ存在する（サポーター用とYouTube用）
+      // spanタグ内のテキストのみをカウント（title要素は除外）
+      const detailLinks = screen.getAllByText("詳しく見る", {
+        selector: "span",
+      });
+      expect(detailLinks).toHaveLength(2);
+    });
+
+    it("Looker Studioへの外部リンクが存在する", async () => {
+      render(await Metrics());
+
+      // サポーターセクションのLooker Studioリンク
+      const externalLink = document.querySelector(
+        'a[href*="lookerstudio.google.com"]',
       );
+      expect(externalLink).toBeInTheDocument();
     });
 
     it("メトリクスの順序が正しい", async () => {
       render(await Metrics());
 
-      const metrics = screen.getAllByText(/達成アクション数|サポーター数/);
+      const metrics = screen.getAllByText(/YouTube再生回数|サポーター数/);
 
-      // 期待される順序: サポーター数 → 達成アクション数
+      // 期待される順序: サポーター数 → YouTube再生回数
       expect(metrics[0]).toHaveTextContent("サポーター数");
-      expect(metrics[1]).toHaveTextContent("達成アクション数");
+      expect(metrics[1]).toHaveTextContent("YouTube再生回数");
     });
   });
 
@@ -163,12 +191,21 @@ describe("Metrics", () => {
     it("外部リンクに適切な属性が設定されている", async () => {
       render(await Metrics());
 
-      const externalLinks = screen.getAllByRole("link");
+      // 外部リンク（Looker Studio）のみチェック
+      const externalLink = document.querySelector(
+        'a[href*="lookerstudio.google.com"]',
+      );
+      expect(externalLink).toHaveAttribute("target", "_blank");
+      expect(externalLink).toHaveAttribute("rel", "noopener noreferrer");
+    });
 
-      for (const link of externalLinks) {
-        expect(link).toHaveAttribute("target", "_blank");
-        expect(link).toHaveAttribute("rel", "noopener noreferrer");
-      }
+    it("内部リンクには適切な属性が設定されていない", async () => {
+      render(await Metrics());
+
+      // 内部リンク（/youtube_stats）はtarget="_blank"を持たない
+      const internalLink = document.querySelector('a[href="/youtube_stats"]');
+      expect(internalLink).toBeInTheDocument();
+      expect(internalLink).not.toHaveAttribute("target", "_blank");
     });
   });
 });
