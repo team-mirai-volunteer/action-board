@@ -1,20 +1,11 @@
+import { Eye, MessageCircle, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { YouTubeVideoWithStats } from "../types";
+import { formatNumberJa } from "../utils/format";
 
 interface YouTubeVideoCardProps {
   video: YouTubeVideoWithStats;
-}
-
-function formatNumber(num: number | null): string {
-  if (num === null) return "-";
-  if (num >= 1000000) {
-    return `${(num / 1000000).toFixed(1)}M`;
-  }
-  if (num >= 1000) {
-    return `${(num / 1000).toFixed(1)}K`;
-  }
-  return num.toLocaleString();
 }
 
 function formatDuration(duration: string | null): string {
@@ -88,17 +79,17 @@ export function YouTubeVideoCard({ video }: YouTubeVideoCardProps) {
 
         {/* 統計 */}
         <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
-          <span className="flex items-center gap-0.5">
-            <span>👁</span>
-            <span>{formatNumber(video.latest_view_count)}</span>
+          <span className="flex items-center gap-1">
+            <Eye className="w-3 h-3" />
+            <span>{formatNumberJa(video.latest_view_count)}</span>
           </span>
-          <span className="flex items-center gap-0.5">
-            <span>👍</span>
-            <span>{formatNumber(video.latest_like_count)}</span>
+          <span className="flex items-center gap-1">
+            <ThumbsUp className="w-3 h-3" />
+            <span>{formatNumberJa(video.latest_like_count)}</span>
           </span>
-          <span className="flex items-center gap-0.5">
-            <span>💬</span>
-            <span>{formatNumber(video.latest_comment_count)}</span>
+          <span className="flex items-center gap-1">
+            <MessageCircle className="w-3 h-3" />
+            <span>{formatNumberJa(video.latest_comment_count)}</span>
           </span>
         </div>
       </div>

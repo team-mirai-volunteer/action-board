@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/chart";
 import { Line, LineChart, XAxis, YAxis } from "recharts";
 import type { OverallStatsHistoryItem } from "../types";
+import { formatNumberJaShort } from "../utils/format";
 
 interface YouTubeOverallChartProps {
   data: OverallStatsHistoryItem[];
@@ -24,16 +25,6 @@ const chartConfig = {
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
-
-function formatNumber(num: number): string {
-  if (num >= 1000000) {
-    return `${(num / 1000000).toFixed(1)}M`;
-  }
-  if (num >= 1000) {
-    return `${(num / 1000).toFixed(0)}K`;
-  }
-  return num.toString();
-}
 
 export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
   if (data.length < 2) {
@@ -74,7 +65,7 @@ export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
             axisLine={false}
             tickMargin={8}
             fontSize={10}
-            tickFormatter={formatNumber}
+            tickFormatter={formatNumberJaShort}
           />
           <YAxis
             yAxisId="right"
@@ -83,7 +74,7 @@ export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
             axisLine={false}
             tickMargin={8}
             fontSize={10}
-            tickFormatter={formatNumber}
+            tickFormatter={formatNumberJaShort}
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Line

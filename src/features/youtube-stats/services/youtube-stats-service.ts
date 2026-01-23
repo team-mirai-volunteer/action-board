@@ -196,17 +196,20 @@ export async function getYouTubeStatsSummary(
   let totalViews = 0;
   let totalLikes = 0;
   let totalComments = 0;
-  let yesterdayTotalViews = 0;
-  let todayVideosCount = 0;
+  let dayBeforeYesterdayTotalViews = 0;
+  let recentVideosCount = 0;
 
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const dayBeforeYesterday = new Date(Date.now() - 86400000 * 2)
+    .toISOString()
+    .split("T")[0];
 
   for (const video of videos || []) {
-    // 今日投稿された動画をカウント
+    // 今日または昨日に投稿された動画をカウント（2日間分）
     const publishedDate = (video.published_at as string)?.split("T")[0];
-    if (publishedDate === today) {
-      todayVideosCount++;
+    if (publishedDate === today || publishedDate === yesterday) {
+      recentVideosCount++;
     }
 
     const stats = video.youtube_video_stats as Array<{
@@ -230,16 +233,20 @@ export async function getYouTubeStatsSummary(
       totalComments += latestStats.comment_count ?? 0;
     }
 
-    // 昨日の統計を取得
-    const yesterdayStats = sortedStats.find((s) => s.recorded_at === yesterday);
-    if (yesterdayStats) {
-      yesterdayTotalViews += yesterdayStats.view_count ?? 0;
+    // 一昨日の統計を取得（2日間の増加分を計算するため）
+    const dayBeforeYesterdayStats = sortedStats.find(
+      (s) => s.recorded_at === dayBeforeYesterday,
+    );
+    if (dayBeforeYesterdayStats) {
+      dayBeforeYesterdayTotalViews += dayBeforeYesterdayStats.view_count ?? 0;
     }
   }
 
-  // 日次増加数を計算（昨日のデータがない場合は0）
+  // 2日間の増加数を計算（一昨日のデータがない場合は0）
   const dailyViewsIncrease =
-    yesterdayTotalViews > 0 ? totalViews - yesterdayTotalViews : 0;
+    dayBeforeYesterdayTotalViews > 0
+      ? totalViews - dayBeforeYesterdayTotalViews
+      : 0;
 
   return {
     totalVideos: videos?.length ?? 0,
@@ -247,7 +254,7 @@ export async function getYouTubeStatsSummary(
     totalLikes,
     totalComments,
     dailyViewsIncrease,
-    dailyVideosIncrease: todayVideosCount,
+    dailyVideosIncrease: recentVideosCount,
   };
 }
 
