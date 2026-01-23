@@ -243,13 +243,16 @@ missions:
   - slug: join-event
     title: イベントに参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
-    content: チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e&source=copy_link#1fef6f56bae1800ab385f544ea22062a" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。仲間とつながり、リアルな場や画面越しで未来を語ろう！<br />成果物として、イベント内で公開されるイベントコードを入力ください。
+    content: |-
+      チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/team-mirai/294f6f56bae180fcb4a1ef853c13efbb?v=294f6f56bae1814f856b000c4fdff5a7" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 
+      全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。
+      仲間とつながり、リアルな場や画面越しで未来を語ろう！
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
-    artifact_label: イベントコード
+    is_hidden: false
+    artifact_label: イベントの名前
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//4_join_event.png
   - slug: referral
     title: チームみらいの仲間を増やそう
@@ -290,12 +293,15 @@ missions:
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
-    content: 「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/225f6f56bae180ceb7f4db761f78d2d2" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>
-    difficulty: 2
+    content: |-
+      「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。
+      演説のスケジュールについては、各公認候補予定者のSNSよりご確認ください。
+      <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+    difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
   - slug: join-73-mirai-kaigi
