@@ -41,7 +41,7 @@ export default async function YouTubeStatsPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const sort = resolvedSearchParams.sort || "published_at";
   const page = Math.max(1, Number(resolvedSearchParams.page) || 1);
-  const period = resolvedSearchParams.period || "all";
+  const period = resolvedSearchParams.period || "this_year";
   const customStartDate = resolvedSearchParams.startDate;
   const customEndDate = resolvedSearchParams.endDate;
   const offset = (page - 1) * PAGE_SIZE;

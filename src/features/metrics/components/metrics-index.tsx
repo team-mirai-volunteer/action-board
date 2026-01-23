@@ -31,7 +31,9 @@ export async function Metrics() {
     };
   }
 
-  // YouTube統計を取得
+  // YouTube統計を取得（今年の1月1日以降のデータのみ）
+  const thisYear = new Date().getFullYear();
+  const startOfYear = new Date(`${thisYear}-01-01`);
   let youtubeStats = {
     totalVideos: 0,
     totalViews: 0,
@@ -39,7 +41,7 @@ export async function Metrics() {
     dailyVideosIncrease: 0,
   };
   try {
-    const stats = await getYouTubeStatsSummary();
+    const stats = await getYouTubeStatsSummary(startOfYear);
     youtubeStats = {
       totalVideos: stats.totalVideos,
       totalViews: stats.totalViews,
@@ -77,6 +79,7 @@ export async function Metrics() {
         totalVideos={youtubeStats.totalVideos}
         dailyViewsIncrease={youtubeStats.dailyViewsIncrease}
         dailyVideosIncrease={youtubeStats.dailyVideosIncrease}
+        startDate={startOfYear}
       />
     </MetricsLayout>
   );

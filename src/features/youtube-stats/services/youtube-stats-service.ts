@@ -319,7 +319,7 @@ export async function getOverallStatsHistory(
 
 /**
  * 日別の動画投稿数を取得する
- * @param startDate - 開始日（オプション、デフォルトは2025年5月1日）
+ * @param startDate - 開始日（オプション、デフォルトは2026年1月1日）
  * @param endDate - 終了日（オプション、デフォルトは今日）
  * @returns 日別の動画投稿数
  */
@@ -329,7 +329,7 @@ export async function getVideoCountByDate(
 ): Promise<VideoCountByDateItem[]> {
   const supabase = createClient();
 
-  const effectiveStartDate = startDate || new Date("2025-05-01");
+  const effectiveStartDate = startDate || new Date("2026-01-01");
   const effectiveEndDate = endDate || new Date();
 
   let query = supabase
