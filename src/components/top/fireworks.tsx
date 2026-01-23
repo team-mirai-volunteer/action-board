@@ -8,7 +8,10 @@
 
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import {
+  type ContributorData,
+  getContributorNames,
+} from "@/lib/services/contributors";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
@@ -16,29 +19,6 @@ import { loadFireworksPreset } from "tsparticles-preset-fireworks";
 
 interface FireworksProps {
   onTrigger?: () => void;
-}
-interface ContributorData {
-  name: string;
-}
-
-async function fetchAllContributors(): Promise<ContributorData[]> {
-  const supabase = createClient();
-  const pageSize = 1000;
-  let from = 0;
-  let all: ContributorData[] = [];
-  while (true) {
-    const { data, error } = await supabase
-      .from("user_ranking_view")
-      .select("name")
-      .order("rank", { ascending: true })
-      .range(from, from + pageSize - 1);
-    if (error) throw error;
-    if (!data || data.length === 0) break;
-    all = all.concat(data.map((u) => ({ name: u.name || "Unknown" })));
-    if (data.length < pageSize) break;
-    from += pageSize;
-  }
-  return all;
 }
 
 const EndCredits = ({
@@ -190,8 +170,13 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
 
   useEffect(() => {
     (async () => {
-      const data = await fetchAllContributors();
-      setContributors(data);
+      try {
+        const data = await getContributorNames();
+        setContributors(data);
+      } catch (error) {
+        console.error("Failed to fetch contributors:", error);
+        setContributors([]);
+      }
     })();
   }, []);
 
