@@ -6,6 +6,17 @@ interface YouTubeMetricProps {
   totalVideos: number;
   dailyViewsIncrease?: number;
   dailyVideosIncrease?: number;
+  startDate?: Date;
+}
+
+/**
+ * 日付を YYYY.MM.DD 形式でフォーマット
+ */
+function formatDateLabel(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
 }
 
 /**
@@ -16,13 +27,16 @@ export function YouTubeMetric({
   totalVideos,
   dailyViewsIncrease = 0,
   dailyVideosIncrease = 0,
+  startDate,
 }: YouTubeMetricProps) {
+  const dateLabel = startDate ? `${formatDateLabel(startDate)}-` : "";
   return (
     <div className="py-3">
       {/* 再生回数 */}
       <div className="flex justify-between">
         <div>
           <p className="text-base text-black mt-1">YouTube再生回数</p>
+          {dateLabel && <p className="text-xs text-gray-500">{dateLabel}</p>}
         </div>
         <div className="text-right">
           <p className="text-2xl font-black text-gray-800">
@@ -42,6 +56,7 @@ export function YouTubeMetric({
       <div className="flex justify-between mt-4">
         <div>
           <p className="text-base text-black mt-1">YouTube動画本数</p>
+          {dateLabel && <p className="text-xs text-gray-500">{dateLabel}</p>}
         </div>
         <div className="text-right">
           <p className="text-2xl font-black text-gray-800">

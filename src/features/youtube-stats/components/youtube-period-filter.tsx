@@ -27,7 +27,7 @@ interface YouTubePeriodFilterProps {
 }
 
 export function YouTubePeriodFilter({
-  defaultPeriod = "all",
+  defaultPeriod = "this_year",
   defaultStartDate,
   defaultEndDate,
 }: YouTubePeriodFilterProps) {
