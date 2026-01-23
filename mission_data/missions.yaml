@@ -244,9 +244,9 @@ missions:
     title: イベントに参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
     content: |-
-      チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/team-mirai/294f6f56bae180fcb4a1ef853c13efbb?v=294f6f56bae1814f856b000c4fdff5a7" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 
-      全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。
-      仲間とつながり、リアルな場や画面越しで未来を語ろう！
+      チームみらいでは、各地でイベントや演説会を開催中！
+      演説やイベントスケジュールについては、各公認候補予定者のSNSよりご確認ください。
+      <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
