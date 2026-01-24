@@ -245,8 +245,9 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
     content: |-
       チームみらいでは、各地でイベントや演説会を開催中！
-      演説やイベントスケジュールについては、各公認候補予定者のSNSよりご確認ください。
-      <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+      ぜひご参加ください！
+    # 演説会やイベントスケジュールについては、候補者のSNSよりご確認ください。
+    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -295,8 +296,9 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
     content: |-
       「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。
-      演説のスケジュールについては、各公認候補予定者のSNSよりご確認ください。
-      <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+      ぜひご参加ください！
+    # 演説のスケジュールについては、候補者のSNSよりご確認ください。
+    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
