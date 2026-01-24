@@ -32,22 +32,34 @@ export function calculateLevel(xp: number): number {
 
 /**
  * ミッションの難易度に基づいてXPを計算する
+ * @param difficulty - 難易度（1-5）
+ * @param isFeatured - 重要ミッションかどうか（2倍ボーナス）
  */
-export function calculateMissionXp(difficulty: number): number {
+export function calculateMissionXp(
+  difficulty: number,
+  isFeatured = false,
+): number {
+  let baseXp: number;
   switch (difficulty) {
     case 1:
-      return 50; // ★1
+      baseXp = 50; // ★1
+      break;
     case 2:
-      return 100; // ★2
+      baseXp = 100; // ★2
+      break;
     case 3:
-      return 200; // ★3
+      baseXp = 200; // ★3
+      break;
     case 4:
-      return 400; // ★4
+      baseXp = 400; // ★4
+      break;
     case 5:
-      return 800; // ★5
+      baseXp = 800; // ★5
+      break;
     default:
-      return 50; // デフォルト（Easy相当）
+      baseXp = 50; // デフォルト（Easy相当）
   }
+  return isFeatured ? baseXp * 2 : baseXp;
 }
 
 /**

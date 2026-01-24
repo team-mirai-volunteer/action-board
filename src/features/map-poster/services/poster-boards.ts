@@ -7,6 +7,74 @@ import type {
   PosterBoardTotal,
 } from "../types/poster-types";
 
+/**
+ * 現在の認証ユーザーIDを取得
+ */
+export async function getCurrentUserId(): Promise<string | null> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
+/**
+ * ポスター貼りミッションのIDを取得
+ */
+export async function getPosterMissionId(): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data: mission, error } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", "put-up-poster-on-board")
+    .single();
+
+  if (error) {
+    console.error("Error fetching poster mission:", error);
+    return null;
+  }
+
+  return mission?.id ?? null;
+}
+
+/**
+ * 特定の掲示板でユーザーがミッション達成済みかチェック
+ */
+export async function checkBoardMissionCompleted(
+  boardId: string,
+  userId: string,
+): Promise<boolean> {
+  const missionId = await getPosterMissionId();
+  if (!missionId) return false;
+
+  const supabase = createClient();
+
+  const { data: activities, error } = await supabase
+    .from("poster_activities")
+    .select(
+      `
+      id,
+      mission_artifacts!inner(
+        achievements!inner(
+          mission_id,
+          user_id
+        )
+      )
+    `,
+    )
+    .eq("board_id", boardId)
+    .eq("mission_artifacts.achievements.user_id", userId)
+    .eq("mission_artifacts.achievements.mission_id", missionId);
+
+  if (error) {
+    console.error("Error checking board mission completion:", error);
+    return false;
+  }
+
+  return (activities?.length ?? 0) > 0;
+}
+
 // 最小限のデータのみ取得（マップ表示用）- 区割り対応版
 export async function getPosterBoardsMinimalByDistrict(district: string) {
   const supabase = createClient();
