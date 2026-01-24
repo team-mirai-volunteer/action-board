@@ -196,3 +196,14 @@ variable "BATCH_ADMIN_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "NEXT_PUBLIC_TIKTOK_CLIENT_KEY" {
+  description = "TikTok Client Key for TikTok Login (public)"
+  type        = string
+}
+
+variable "TIKTOK_CLIENT_SECRET" {
+  description = "TikTok Client Secret for TikTok Login (sensitive)"
+  type        = string
+  sensitive   = true
+}
