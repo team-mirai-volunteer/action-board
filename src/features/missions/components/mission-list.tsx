@@ -11,6 +11,7 @@ export type MissionsProps = {
   showAchievedMissions: boolean;
   filterFeatured?: boolean;
   title?: string;
+  subTitle?: string;
   id?: string;
 };
 
@@ -20,6 +21,7 @@ export default async function Missions({
   showAchievedMissions,
   filterFeatured,
   title = "📈 ミッション",
+  subTitle,
   id,
 }: MissionsProps) {
   // ユーザーの各ミッションに対する達成回数のマップ
@@ -42,9 +44,12 @@ export default async function Missions({
 
   return (
     <div className="flex flex-col gap-6 px-4 md:px-0">
-      <h2 id={id} className="text-center text-2xl md:text-3xl">
-        {title}
-      </h2>
+      <div className="text-center">
+        <h2 id={id} className="text-2xl md:text-3xl">
+          {title}
+        </h2>
+        {subTitle && <p className="text-sm text-gray-600 mt-2">{subTitle}</p>}
+      </div>
 
       {missions && missions.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

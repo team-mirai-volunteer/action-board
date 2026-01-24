@@ -300,10 +300,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count と required_artifact_type を確認
+  // ミッション情報を取得して、max_achievement_count と required_artifact_type と is_featured を確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("max_achievement_count, required_artifact_type")
+    .select("max_achievement_count, required_artifact_type, is_featured")
     .eq("id", validatedMissionId)
     .single();
 
@@ -645,9 +645,12 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスティング用のポイント計算とXP付与
+      // ポスティング用のポイント計算とXP付与（重要ミッションは2倍）
       const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
-      const totalPoints = validatedData.postingCount * pointsPerUnit;
+      const basePoints = validatedData.postingCount * pointsPerUnit;
+      const totalPoints = missionData?.is_featured
+        ? basePoints * 2
+        : basePoints;
 
       // 通常のXP（ミッション難易度ベース）に加えて、ポスティングボーナスXPを付与
       const bonusXpResult = await grantXp(
@@ -655,7 +658,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         totalPoints,
         "BONUS",
         achievement.id,
-        `ポスティング活動ボーナス（${validatedData.postingCount}枚×${pointsPerUnit}ポイント）`,
+        `ポスティング活動ボーナス（${validatedData.postingCount}枚=${totalPoints}ポイント${missionData?.is_featured ? "【2倍】" : ""}）`,
       );
 
       if (!bonusXpResult.success) {
@@ -707,9 +710,12 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスター用のポイント計算とXP付与
+      // ポスター用のポイント計算とXP付与（重要ミッションは2倍）
       const pointsPerUnit = POSTER_POINTS_PER_UNIT;
-      const totalPoints = MAX_POSTER_COUNT * pointsPerUnit;
+      const basePoints = MAX_POSTER_COUNT * pointsPerUnit;
+      const totalPoints = missionData?.is_featured
+        ? basePoints * 2
+        : basePoints;
 
       // 通常のXP（ミッション難易度ベース）に加えて、ポスターボーナスXPを付与
       const bonusXpResult = await grantXp(
@@ -717,7 +723,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         totalPoints,
         "BONUS",
         achievement.id,
-        `ポスターボーナス（${MAX_POSTER_COUNT}枚×${pointsPerUnit}ポイント）`,
+        `ポスターボーナス（${MAX_POSTER_COUNT}枚=${totalPoints}ポイント${missionData?.is_featured ? "【2倍】" : ""}）`,
       );
 
       if (!bonusXpResult.success) {
@@ -833,10 +839,10 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // ミッション情報を取得してXP計算のための難易度を確認
+  // ミッション情報を取得してXP計算のための難易度とis_featuredを確認
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
-    .select("difficulty, title, slug")
+    .select("difficulty, title, slug, is_featured")
     .eq("id", achievement.mission_id)
     .single();
 
@@ -862,8 +868,11 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // XPを減算する（ミッション達成時に付与されたXPを取り消し）
-  const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  // XPを減算する（ミッション達成時に付与されたXPを取り消し、重要ミッションは2倍）
+  const xpToRevoke = calculateMissionXp(
+    missionData.difficulty,
+    missionData.is_featured,
+  );
   const isBonusMission = [
     "posting-magazine",
     "put-up-poster-on-board",

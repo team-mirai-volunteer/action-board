@@ -182,9 +182,9 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(
       signedInPage.getByText("このミッションは何度でもチャレンジできます。"),
     ).toBeVisible();
-    await expect(
-      signedInPage.getByText("800ポイント獲得しました！"),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(signedInPage.getByText("800ポイント獲得しました")).toBeVisible(
+      { timeout: 10000 },
+    );
 
     // ミッション完了後のポイントの変動を確認
     await signedInPage.goto("/");

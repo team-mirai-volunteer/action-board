@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
+import {
+  POSTER_POINTS_PER_UNIT,
+  POSTING_POINTS_PER_UNIT,
+} from "@/lib/constants/mission-config";
 import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
 import { motion } from "framer-motion";
@@ -74,16 +78,20 @@ export default function Mission({
               </span>
             </div>
             <div className="flex items-center">
-              <span className="text-sm font-medium text-gray-700">
-                難易度：
-              </span>
+              <span className="text-sm font-medium text-gray-700">難易度:</span>
               <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
               <span className="text-sm font-medium ml-1.5 text-gray-700">
-                獲得ポイント：
-                {mission.required_artifact_type === "POSTER" ||
-                mission.required_artifact_type === "POSTING"
-                  ? "-"
-                  : calculateMissionXp(mission.difficulty)}
+                <span className="mr-1">獲得ポイント:</span>
+                {mission.required_artifact_type === "POSTER"
+                  ? `1枚あたり${POSTER_POINTS_PER_UNIT}`
+                  : mission.required_artifact_type === "POSTING"
+                    ? `1枚あたり${POSTING_POINTS_PER_UNIT}`
+                    : calculateMissionXp(mission.difficulty)}
+                {mission.is_featured && (
+                  <span className="ml-1.5 px-2 py-0.5 bg-yellow-300/90 text-black text-xs font-medium rounded-full relative top-[-1px]">
+                    x 2
+                  </span>
+                )}
               </span>
             </div>
           </div>
