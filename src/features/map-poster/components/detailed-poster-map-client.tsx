@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { createClient } from "@/lib/supabase/client";
 import { maskUsername } from "@/lib/utils/privacy";
 import {
   Archive,
@@ -47,10 +46,13 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
+  checkBoardMissionCompleted,
   getArchivedPosterBoardsMinimal,
+  getCurrentUserId,
   getPosterBoardDetail,
   getPosterBoardsMinimal,
   getPosterBoardsMinimalByDistrict,
+  getPosterMissionId,
   updateBoardStatus,
 } from "../services/poster-boards";
 import type {
@@ -153,18 +155,8 @@ export default function DetailedPosterMapClient({
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
     const fetchMissionId = async () => {
-      try {
-        const supabase = createClient();
-        const { data: mission } = await supabase
-          .from("missions")
-          .select("id")
-          .eq("slug", "put-up-poster-on-board")
-          .single();
-        setPutUpPosterMissionId(mission?.id ?? null);
-      } catch (error) {
-        console.error("ミッションIDの取得に失敗しました:", error);
-        setPutUpPosterMissionId(null);
-      }
+      const missionId = await getPosterMissionId();
+      setPutUpPosterMissionId(missionId);
     };
     fetchMissionId();
   }, []);
@@ -309,59 +301,18 @@ export default function DetailedPosterMapClient({
     }
   };
 
-  // 掲示板でミッション達成済みかチェック
-  const checkBoardMissionCompleted = async (
-    boardId: string,
-    userId: string,
-  ): Promise<boolean> => {
-    const supabase = createClient();
-
-    // put-up-poster-on-boardミッションのIDを取得
-    const { data: mission } = await supabase
-      .from("missions")
-      .select("id")
-      .eq("slug", "put-up-poster-on-board")
-      .single();
-
-    if (!mission) return false;
-
-    // この掲示板で既にミッション達成しているかチェック
-    const { data: activities } = await supabase
-      .from("poster_activities")
-      .select(`
-        id,
-        mission_artifacts!inner(
-          achievements!inner(
-            mission_id,
-            user_id
-          )
-        )
-      `)
-      .eq("board_id", boardId)
-      .eq("mission_artifacts.achievements.user_id", userId)
-      .eq("mission_artifacts.achievements.mission_id", mission.id);
-
-    return !!(activities && activities.length > 0);
-  };
-
   // ミッション達成処理
   const completePosterBoardMission = async (
     board: PosterBoard,
   ): Promise<void> => {
-    const supabase = createClient();
-    const { data: mission } = await supabase
-      .from("missions")
-      .select("id")
-      .eq("slug", "put-up-poster-on-board")
-      .single();
-
-    if (!mission) {
+    const missionId = await getPosterMissionId();
+    if (!missionId) {
       // ミッションが見つからない場合は静かに終了
       return;
     }
 
     const formData = new FormData();
-    formData.append("missionId", mission.id);
+    formData.append("missionId", missionId);
     formData.append("requiredArtifactType", "POSTER");
     formData.append("posterCount", "1");
     formData.append("prefecture", board.prefecture);
@@ -390,16 +341,13 @@ export default function DetailedPosterMapClient({
 
       // ステータスが「完了」に変更された場合のみミッション達成処理
       if (updateStatus === "done") {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const userId = await getCurrentUserId();
 
-        if (user) {
+        if (userId) {
           // この掲示板で既にミッション達成済みかチェック
           const hasCompleted = await checkBoardMissionCompleted(
             selectedBoard.id,
-            user.id,
+            userId,
           );
 
           if (!hasCompleted) {

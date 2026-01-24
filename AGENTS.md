@@ -71,6 +71,36 @@
 - **再利用性の向上** - 共通コンポーネントとユーティリティの適切な配置
 - **依存関係の明確化** - インポートパスで責務を明確に表現
 
+### データアクセスのルール
+**UIコンポーネント（`.tsx`ファイル）からSupabaseを直接呼び出してはいけません。**
+
+#### 正しいパターン
+```typescript
+// components/example.tsx
+import { getData } from "../services/example";
+
+const data = await getData(); // Service層経由でアクセス
+```
+
+#### 禁止パターン
+```typescript
+// components/example.tsx
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
+const { data } = await supabase.from("table").select(); // NG: 直接アクセス
+```
+
+#### 理由
+1. **責務の分離**: UIはデータの表示に専念し、データ取得ロジックはService層に集約
+2. **テスタビリティ**: Service層をモック化することでUIのテストが容易に
+3. **保守性**: データアクセスロジックの変更がUIに影響しない
+4. **一貫性**: 同じデータ取得ロジックを複数のコンポーネントで再利用可能
+
+#### 配置場所
+- `src/features/{機能名}/services/` - 機能固有のデータアクセス
+- `src/lib/services/` - 共通のデータアクセス
+
 ### 主要技術スタック
 - **フレームワーク**: Next.js 15 with App Router
 - **データベース**: Supabase (PostgreSQL with RLS)
