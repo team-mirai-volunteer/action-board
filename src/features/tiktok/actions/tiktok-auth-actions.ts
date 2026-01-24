@@ -33,8 +33,9 @@ export async function handleTikTokLinkAction(
       };
     }
 
-    const origin = (await headers()).get("origin");
-    const redirectUri = `${origin || "http://localhost:3000"}/auth/tiktok-callback`;
+    const headerOrigin = (await headers()).get("origin");
+    const origin = headerOrigin || process.env.NEXT_PUBLIC_APP_ORIGIN;
+    const redirectUri = `${origin}/auth/tiktok-callback`;
 
     // TikTok APIでトークンと交換
     const tokens = await exchangeCodeForToken(code, codeVerifier, redirectUri);
