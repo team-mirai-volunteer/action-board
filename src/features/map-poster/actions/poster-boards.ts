@@ -265,8 +265,8 @@ export async function getUserEditedBoardIdsByDistrictAction(
     // 区割りでフィルタリングして取得
     const { data, error } = await supabase
       .from("poster_board_latest_editors")
-      .select("board_id, poster_boards!inner(district)")
-      .eq("poster_boards.district", district)
+      .select("board_id")
+      .eq("district", district)
       .eq("last_editor_id", userId);
 
     if (error) {
