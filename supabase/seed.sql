@@ -315,7 +315,6 @@ INSERT INTO daily_dashboard_registration_by_prefecture_summary (date, prefecture
 update public.missions
 set is_featured = true
 where id in (
-  'e2898d7e-903f-4f9a-8b1b-93f783c9afac',
   '4446205f-933f-4a86-83af-dbf6bb6cde92'
 );
 
