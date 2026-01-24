@@ -1160,6 +1160,149 @@ export type Database = {
         };
         Relationships: [];
       };
+      tiktok_user_connections: {
+        Row: {
+          access_token: string;
+          avatar_url: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          id: string;
+          refresh_token: string;
+          refresh_token_expires_at: string | null;
+          scopes: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id: string | null;
+          token_expires_at: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          access_token: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id?: string | null;
+          token_expires_at: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          access_token?: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token?: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id?: string;
+          tiktok_union_id?: string | null;
+          token_expires_at?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      tiktok_video_stats: {
+        Row: {
+          comment_count: number | null;
+          created_at: string | null;
+          id: string;
+          like_count: number | null;
+          recorded_at: string;
+          share_count: number | null;
+          tiktok_video_id: string | null;
+          view_count: number | null;
+        };
+        Insert: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Update: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at?: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tiktok_video_stats_tiktok_video_id_fkey";
+            columns: ["tiktok_video_id"];
+            isOneToOne: false;
+            referencedRelation: "tiktok_videos";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tiktok_videos: {
+        Row: {
+          created_at: string | null;
+          creator_id: string;
+          creator_username: string | null;
+          description: string | null;
+          duration: number | null;
+          id: string;
+          is_active: boolean | null;
+          published_at: string | null;
+          tags: string[] | null;
+          thumbnail_url: string | null;
+          title: string | null;
+          updated_at: string | null;
+          user_id: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          creator_id: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Update: {
+          created_at?: string | null;
+          creator_id?: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id?: string;
+          video_url?: string;
+        };
+        Relationships: [];
+      };
       user_activities: {
         Row: {
           activity_title: string;
@@ -1564,7 +1707,9 @@ export type Database = {
       };
       poster_board_latest_editors: {
         Row: {
+          archived: boolean | null;
           board_id: string | null;
+          district: string | null;
           last_edited_at: string | null;
           last_editor_id: string | null;
           lat: number | null;
