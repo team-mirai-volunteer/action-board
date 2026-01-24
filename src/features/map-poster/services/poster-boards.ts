@@ -18,6 +18,26 @@ export async function getCurrentUserId(): Promise<string | null> {
   return user?.id ?? null;
 }
 
+/**
+ * ポスター貼りミッションのIDを取得
+ */
+export async function getPosterMissionId(): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data: mission, error } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", "put-up-poster-on-board")
+    .single();
+
+  if (error) {
+    console.error("Error fetching poster mission:", error);
+    return null;
+  }
+
+  return mission?.id ?? null;
+}
+
 // 最小限のデータのみ取得（マップ表示用）- 区割り対応版
 export async function getPosterBoardsMinimalByDistrict(district: string) {
   const supabase = createClient();

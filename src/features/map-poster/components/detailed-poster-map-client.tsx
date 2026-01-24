@@ -46,12 +46,13 @@ import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
-import { getCurrentUserId } from "../services/poster-boards";
 import {
   getArchivedPosterBoardsMinimal,
+  getCurrentUserId,
   getPosterBoardDetail,
   getPosterBoardsMinimal,
   getPosterBoardsMinimalByDistrict,
+  getPosterMissionId,
   updateBoardStatus,
 } from "../services/poster-boards";
 import type {
@@ -154,18 +155,8 @@ export default function DetailedPosterMapClient({
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
     const fetchMissionId = async () => {
-      try {
-        const supabase = createClient();
-        const { data: mission } = await supabase
-          .from("missions")
-          .select("id")
-          .eq("slug", "put-up-poster-on-board")
-          .single();
-        setPutUpPosterMissionId(mission?.id ?? null);
-      } catch (error) {
-        console.error("ミッションIDの取得に失敗しました:", error);
-        setPutUpPosterMissionId(null);
-      }
+      const missionId = await getPosterMissionId();
+      setPutUpPosterMissionId(missionId);
     };
     fetchMissionId();
   }, []);
@@ -315,16 +306,10 @@ export default function DetailedPosterMapClient({
     boardId: string,
     userId: string,
   ): Promise<boolean> => {
+    const missionId = await getPosterMissionId();
+    if (!missionId) return false;
+
     const supabase = createClient();
-
-    // put-up-poster-on-boardミッションのIDを取得
-    const { data: mission } = await supabase
-      .from("missions")
-      .select("id")
-      .eq("slug", "put-up-poster-on-board")
-      .single();
-
-    if (!mission) return false;
 
     // この掲示板で既にミッション達成しているかチェック
     const { data: activities } = await supabase
@@ -340,7 +325,7 @@ export default function DetailedPosterMapClient({
       `)
       .eq("board_id", boardId)
       .eq("mission_artifacts.achievements.user_id", userId)
-      .eq("mission_artifacts.achievements.mission_id", mission.id);
+      .eq("mission_artifacts.achievements.mission_id", missionId);
 
     return !!(activities && activities.length > 0);
   };
@@ -349,20 +334,14 @@ export default function DetailedPosterMapClient({
   const completePosterBoardMission = async (
     board: PosterBoard,
   ): Promise<void> => {
-    const supabase = createClient();
-    const { data: mission } = await supabase
-      .from("missions")
-      .select("id")
-      .eq("slug", "put-up-poster-on-board")
-      .single();
-
-    if (!mission) {
+    const missionId = await getPosterMissionId();
+    if (!missionId) {
       // ミッションが見つからない場合は静かに終了
       return;
     }
 
     const formData = new FormData();
-    formData.append("missionId", mission.id);
+    formData.append("missionId", missionId);
     formData.append("requiredArtifactType", "POSTER");
     formData.append("posterCount", "1");
     formData.append("prefecture", board.prefecture);
