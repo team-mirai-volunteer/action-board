@@ -150,7 +150,7 @@ TIKTOK_CLIENT_SECRET=your-tiktok-client-secret
 
 **対処:**
 1. TikTok Developer Portalで登録したRedirect URIを確認
-2. `http://localhost:3000/auth/tiktok-callback` が登録されているか確認
+2. `http://[ngrok等のURL]/auth/tiktok-callback` が登録されているか確認
 3. httpとhttpsの違いに注意
 
 ### エラー: access_denied
