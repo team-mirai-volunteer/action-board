@@ -43,9 +43,24 @@ export async function handleTikTokLinkAction(
     // TikTokユーザー情報を取得
     const tiktokUser = await fetchUserInfo(tokens.access_token);
 
-    // tiktok_user_connectionsテーブルに保存（upsert）
-    // NOTE: テーブルがSupabase型定義に存在しないため、マイグレーション適用後に npm run types で型を更新する
     const adminClient = await createAdminClient();
+
+    // 同じTikTokアカウントが他のユーザーに連携されていないかチェック
+    const { data: existingConnection } = await adminClient
+      .from("tiktok_user_connections")
+      .select("user_id")
+      .eq("tiktok_open_id", tiktokUser.open_id)
+      .maybeSingle();
+
+    if (existingConnection && existingConnection.user_id !== user.id) {
+      return {
+        success: false,
+        error:
+          "このTikTokアカウントは既に別のユーザーに連携されています。別のTikTokアカウントをお試しください。",
+      };
+    }
+
+    // tiktok_user_connectionsテーブルに保存
     const { error: upsertError } = await adminClient
       .from("tiktok_user_connections")
       .upsert(
