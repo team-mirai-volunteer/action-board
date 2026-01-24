@@ -1,5 +1,6 @@
 "use server";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { logger } from "@/lib/utils/logger";
 import {
@@ -7,7 +8,10 @@ import {
   syncUserTikTokVideos,
 } from "../services/tiktok-video-service";
 import type { TikTokSyncResult, TikTokVideo, TikTokVideoStats } from "../types";
-import { refreshTikTokTokenAction } from "./tiktok-auth-actions";
+import {
+  getTikTokConnectionForUser,
+  refreshTikTokTokenAction,
+} from "./tiktok-auth-actions";
 
 /**
  * 現在のユーザーのTikTok動画を同期するServer Action
@@ -15,7 +19,7 @@ import { refreshTikTokTokenAction } from "./tiktok-auth-actions";
 export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
   try {
     const supabase = await createClient();
-    let {
+    const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
@@ -27,12 +31,10 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
       };
     }
 
-    // TikTok連携情報を取得
-    let tiktokOpenId = user.user_metadata?.tiktok_open_id;
-    let accessToken = user.user_metadata?.tiktok_access_token;
-    const tiktokUsername = user.user_metadata?.tiktok_display_name;
+    // TikTok連携情報をテーブルから取得
+    let connection = await getTikTokConnectionForUser(user.id);
 
-    if (!tiktokOpenId || !accessToken) {
+    if (!connection) {
       return {
         success: false,
         error: "TikTokアカウントが連携されていません",
@@ -40,8 +42,7 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
     }
 
     // トークンの有効期限をチェック
-    const tokenExpiresAt = user.user_metadata?.tiktok_token_expires_at;
-    if (tokenExpiresAt && new Date(tokenExpiresAt) < new Date()) {
+    if (new Date(connection.tokenExpiresAt) < new Date()) {
       // トークンが期限切れの場合、リフレッシュを試みる
       logger.debug("TikTok access token expired, attempting refresh...");
       const refreshResult = await refreshTikTokTokenAction();
@@ -54,15 +55,10 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
         };
       }
 
-      // リフレッシュ成功後、最新のユーザー情報を再取得
-      const { data: refreshedUser } = await supabase.auth.getUser();
-      if (refreshedUser.user) {
-        user = refreshedUser.user;
-        accessToken = user.user_metadata?.tiktok_access_token;
-        tiktokOpenId = user.user_metadata?.tiktok_open_id;
-      }
+      // リフレッシュ成功後、最新の接続情報を再取得
+      connection = await getTikTokConnectionForUser(user.id);
 
-      if (!accessToken) {
+      if (!connection) {
         return {
           success: false,
           error: "トークンの更新に失敗しました。再度連携してください。",
@@ -73,9 +69,9 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
     // 動画を同期
     const result = await syncUserTikTokVideos(
       user.id,
-      accessToken,
-      tiktokOpenId,
-      tiktokUsername,
+      connection.accessToken,
+      connection.tiktokOpenId,
+      connection.displayName,
     );
 
     return result;
@@ -156,9 +152,15 @@ export async function getTikTokLinkStatusAction(): Promise<{
       };
     }
 
-    const tiktokOpenId = user.user_metadata?.tiktok_open_id;
+    // tiktok_user_connectionsテーブルから連携状態を取得
+    const adminClient = await createAdminClient();
+    const { data: connection, error } = await adminClient
+      .from("tiktok_user_connections")
+      .select("display_name, avatar_url, created_at")
+      .eq("user_id", user.id)
+      .single();
 
-    if (!tiktokOpenId) {
+    if (error || !connection) {
       return {
         isLinked: false,
       };
@@ -166,9 +168,9 @@ export async function getTikTokLinkStatusAction(): Promise<{
 
     return {
       isLinked: true,
-      tiktokDisplayName: user.user_metadata?.tiktok_display_name,
-      tiktokAvatarUrl: user.user_metadata?.tiktok_avatar_url,
-      linkedAt: user.user_metadata?.tiktok_linked_at,
+      tiktokDisplayName: connection.display_name ?? undefined,
+      tiktokAvatarUrl: connection.avatar_url ?? undefined,
+      linkedAt: connection.created_at ?? undefined,
     };
   } catch (error) {
     console.error("Get TikTok link status error:", error);

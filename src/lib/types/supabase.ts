@@ -1160,6 +1160,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      tiktok_user_connections: {
+        Row: {
+          access_token: string;
+          avatar_url: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          id: string;
+          refresh_token: string;
+          refresh_token_expires_at: string | null;
+          scopes: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id: string | null;
+          token_expires_at: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          access_token: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id?: string | null;
+          token_expires_at: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          access_token?: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token?: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id?: string;
+          tiktok_union_id?: string | null;
+          token_expires_at?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       tiktok_video_stats: {
         Row: {
           comment_count: number | null;
@@ -1659,7 +1707,9 @@ export type Database = {
       };
       poster_board_latest_editors: {
         Row: {
+          archived: boolean | null;
           board_id: string | null;
+          district: string | null;
           last_edited_at: string | null;
           last_editor_id: string | null;
           lat: number | null;

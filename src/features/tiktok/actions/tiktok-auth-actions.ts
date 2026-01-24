@@ -12,7 +12,7 @@ import type {
 
 /**
  * TikTokアカウント連携処理のServer Action
- * 認証コードをトークンに交換し、ユーザーのmetadataにTikTok情報を保存
+ * 認証コードをトークンに交換し、tiktok_user_connectionsテーブルに保存
  */
 export async function handleTikTokLinkAction(
   code: string,
@@ -118,31 +118,40 @@ export async function handleTikTokLinkAction(
 
     const tiktokUser: TikTokUser = userInfoData.data.user;
 
-    // ユーザーのmetadataにTikTok情報を保存
+    // tiktok_user_connectionsテーブルに保存（upsert）
+    // NOTE: テーブルがSupabase型定義に存在しないため、マイグレーション適用後に npm run types で型を更新する
     const adminClient = await createAdminClient();
-    const { error: updateError } = await adminClient.auth.admin.updateUserById(
-      user.id,
-      {
-        user_metadata: {
-          ...user.user_metadata,
+    const { error: upsertError } = await adminClient
+      .from("tiktok_user_connections")
+      .upsert(
+        {
+          user_id: user.id,
           tiktok_open_id: tiktokUser.open_id,
-          tiktok_display_name: tiktokUser.display_name,
-          tiktok_avatar_url: tiktokUser.avatar_url,
-          tiktok_linked_at: new Date().toISOString(),
-          tiktok_access_token: tokens.access_token,
-          tiktok_refresh_token: tokens.refresh_token,
-          tiktok_token_expires_at: new Date(
+          tiktok_union_id: tiktokUser.union_id || null,
+          display_name: tiktokUser.display_name,
+          avatar_url: tiktokUser.avatar_url || null,
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+          token_expires_at: new Date(
             Date.now() + tokens.expires_in * 1000,
           ).toISOString(),
+          refresh_token_expires_at: tokens.refresh_expires_in
+            ? new Date(
+                Date.now() + tokens.refresh_expires_in * 1000,
+              ).toISOString()
+            : null,
+          scopes: tokens.scope ? tokens.scope.split(",") : null,
         },
-      },
-    );
+        {
+          onConflict: "user_id",
+        },
+      );
 
-    if (updateError) {
-      console.error("Failed to update user metadata:", updateError);
+    if (upsertError) {
+      console.error("Failed to save TikTok connection:", upsertError);
       return {
         success: false,
-        error: "ユーザー情報の更新に失敗しました",
+        error: "TikTok連携情報の保存に失敗しました",
       };
     }
 
@@ -180,26 +189,16 @@ export async function unlinkTikTokAccountAction(): Promise<TikTokLinkResult> {
       };
     }
 
-    // TikTok関連のmetadataを削除
+    // tiktok_user_connectionsテーブルから削除
     const adminClient = await createAdminClient();
-    const newMetadata = { ...user.user_metadata };
-    newMetadata.tiktok_open_id = undefined;
-    newMetadata.tiktok_display_name = undefined;
-    newMetadata.tiktok_avatar_url = undefined;
-    newMetadata.tiktok_linked_at = undefined;
-    newMetadata.tiktok_access_token = undefined;
-    newMetadata.tiktok_refresh_token = undefined;
-    newMetadata.tiktok_token_expires_at = undefined;
+    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
+    const { error: deleteError } = await (adminClient as any)
+      .from("tiktok_user_connections")
+      .delete()
+      .eq("user_id", user.id);
 
-    const { error: updateError } = await adminClient.auth.admin.updateUserById(
-      user.id,
-      {
-        user_metadata: newMetadata,
-      },
-    );
-
-    if (updateError) {
-      console.error("Failed to unlink TikTok:", updateError);
+    if (deleteError) {
+      console.error("Failed to unlink TikTok:", deleteError);
       return {
         success: false,
         error: "TikTok連携解除に失敗しました",
@@ -239,8 +238,16 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
       };
     }
 
-    const refreshToken = user.user_metadata?.tiktok_refresh_token;
-    if (!refreshToken) {
+    // tiktok_user_connectionsからリフレッシュトークンを取得
+    const adminClient = await createAdminClient();
+    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
+    const { data: connection, error: fetchError } = await (adminClient as any)
+      .from("tiktok_user_connections")
+      .select("refresh_token")
+      .eq("user_id", user.id)
+      .single();
+
+    if (fetchError || !connection?.refresh_token) {
       return {
         success: false,
         error: "TikTokが連携されていません",
@@ -268,7 +275,7 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
           client_key: clientKey,
           client_secret: clientSecret,
           grant_type: "refresh_token",
-          refresh_token: refreshToken,
+          refresh_token: connection.refresh_token,
         }),
       },
     );
@@ -285,20 +292,22 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
     const tokens: TikTokTokenResponse = await tokenResponse.json();
 
     // 新しいトークンを保存
-    const adminClient = await createAdminClient();
-    const { error: updateError } = await adminClient.auth.admin.updateUserById(
-      user.id,
-      {
-        user_metadata: {
-          ...user.user_metadata,
-          tiktok_access_token: tokens.access_token,
-          tiktok_refresh_token: tokens.refresh_token,
-          tiktok_token_expires_at: new Date(
-            Date.now() + tokens.expires_in * 1000,
-          ).toISOString(),
-        },
-      },
-    );
+    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
+    const { error: updateError } = await (adminClient as any)
+      .from("tiktok_user_connections")
+      .update({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        token_expires_at: new Date(
+          Date.now() + tokens.expires_in * 1000,
+        ).toISOString(),
+        refresh_token_expires_at: tokens.refresh_expires_in
+          ? new Date(
+              Date.now() + tokens.refresh_expires_in * 1000,
+            ).toISOString()
+          : null,
+      })
+      .eq("user_id", user.id);
 
     if (updateError) {
       console.error("Failed to update refreshed token:", updateError);
@@ -320,5 +329,38 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
           ? error.message
           : "トークン更新中にエラーが発生しました",
     };
+  }
+}
+
+/**
+ * TikTok連携情報を取得する（内部用）
+ */
+export async function getTikTokConnectionForUser(userId: string): Promise<{
+  tiktokOpenId: string;
+  accessToken: string;
+  displayName?: string;
+  tokenExpiresAt: string;
+} | null> {
+  try {
+    const adminClient = await createAdminClient();
+    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
+    const { data: connection, error } = await (adminClient as any)
+      .from("tiktok_user_connections")
+      .select("tiktok_open_id, access_token, display_name, token_expires_at")
+      .eq("user_id", userId)
+      .single();
+
+    if (error || !connection) {
+      return null;
+    }
+
+    return {
+      tiktokOpenId: connection.tiktok_open_id,
+      accessToken: connection.access_token,
+      displayName: connection.display_name,
+      tokenExpiresAt: connection.token_expires_at,
+    };
+  } catch {
+    return null;
   }
 }
