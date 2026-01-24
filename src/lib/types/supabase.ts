@@ -1160,6 +1160,101 @@ export type Database = {
         };
         Relationships: [];
       };
+      tiktok_video_stats: {
+        Row: {
+          comment_count: number | null;
+          created_at: string | null;
+          id: string;
+          like_count: number | null;
+          recorded_at: string;
+          share_count: number | null;
+          tiktok_video_id: string | null;
+          view_count: number | null;
+        };
+        Insert: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Update: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at?: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tiktok_video_stats_tiktok_video_id_fkey";
+            columns: ["tiktok_video_id"];
+            isOneToOne: false;
+            referencedRelation: "tiktok_videos";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tiktok_videos: {
+        Row: {
+          created_at: string | null;
+          creator_id: string;
+          creator_username: string | null;
+          description: string | null;
+          duration: number | null;
+          id: string;
+          is_active: boolean | null;
+          published_at: string | null;
+          tags: string[] | null;
+          thumbnail_url: string | null;
+          title: string | null;
+          updated_at: string | null;
+          user_id: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          creator_id: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Update: {
+          created_at?: string | null;
+          creator_id?: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id?: string;
+          video_url?: string;
+        };
+        Relationships: [];
+      };
       user_activities: {
         Row: {
           activity_title: string;
