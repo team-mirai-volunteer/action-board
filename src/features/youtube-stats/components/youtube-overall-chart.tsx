@@ -17,12 +17,8 @@ interface YouTubeOverallChartProps {
 
 const chartConfig = {
   total_views: {
-    label: "総再生数",
-    color: "hsl(var(--chart-1))",
-  },
-  total_likes: {
-    label: "総いいね",
-    color: "hsl(var(--chart-2))",
+    label: "再生数",
+    color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
 
@@ -49,7 +45,7 @@ export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
 
   return (
     <Card className="p-4">
-      <h3 className="text-sm font-medium mb-2">全体推移（再生数・いいね数）</h3>
+      <h3 className="text-sm font-medium mb-2">動画再生数</h3>
       <ChartContainer config={chartConfig} className="h-[200px] w-full">
         <LineChart data={formattedData}>
           <XAxis
@@ -60,16 +56,6 @@ export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
             fontSize={10}
           />
           <YAxis
-            yAxisId="left"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            fontSize={10}
-            tickFormatter={formatNumberJaShort}
-          />
-          <YAxis
-            yAxisId="right"
-            orientation="right"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
@@ -78,18 +64,9 @@ export function YouTubeOverallChart({ data }: YouTubeOverallChartProps) {
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Line
-            yAxisId="left"
             type="monotone"
             dataKey="total_views"
             stroke="var(--color-total_views)"
-            strokeWidth={2}
-            dot={false}
-          />
-          <Line
-            yAxisId="right"
-            type="monotone"
-            dataKey="total_likes"
-            stroke="var(--color-total_likes)"
             strokeWidth={2}
             dot={false}
           />
