@@ -7,6 +7,17 @@ import type {
   PosterBoardTotal,
 } from "../types/poster-types";
 
+/**
+ * 現在の認証ユーザーIDを取得
+ */
+export async function getCurrentUserId(): Promise<string | null> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
 // 最小限のデータのみ取得（マップ表示用）- 区割り対応版
 export async function getPosterBoardsMinimalByDistrict(district: string) {
   const supabase = createClient();

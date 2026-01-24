@@ -46,6 +46,7 @@ import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
+import { getCurrentUserId } from "../services/poster-boards";
 import {
   getArchivedPosterBoardsMinimal,
   getPosterBoardDetail,
@@ -390,16 +391,13 @@ export default function DetailedPosterMapClient({
 
       // ステータスが「完了」に変更された場合のみミッション達成処理
       if (updateStatus === "done") {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const userId = await getCurrentUserId();
 
-        if (user) {
+        if (userId) {
           // この掲示板で既にミッション達成済みかチェック
           const hasCompleted = await checkBoardMissionCompleted(
             selectedBoard.id,
-            user.id,
+            userId,
           );
 
           if (!hasCompleted) {
