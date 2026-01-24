@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { createClient } from "@/lib/supabase/client";
 import { maskUsername } from "@/lib/utils/privacy";
 import {
   Archive,
@@ -47,6 +46,7 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
+  checkBoardMissionCompleted,
   getArchivedPosterBoardsMinimal,
   getCurrentUserId,
   getPosterBoardDetail,
@@ -299,35 +299,6 @@ export default function DetailedPosterMapClient({
     } finally {
       setLoadingHistory(false);
     }
-  };
-
-  // 掲示板でミッション達成済みかチェック
-  const checkBoardMissionCompleted = async (
-    boardId: string,
-    userId: string,
-  ): Promise<boolean> => {
-    const missionId = await getPosterMissionId();
-    if (!missionId) return false;
-
-    const supabase = createClient();
-
-    // この掲示板で既にミッション達成しているかチェック
-    const { data: activities } = await supabase
-      .from("poster_activities")
-      .select(`
-        id,
-        mission_artifacts!inner(
-          achievements!inner(
-            mission_id,
-            user_id
-          )
-        )
-      `)
-      .eq("board_id", boardId)
-      .eq("mission_artifacts.achievements.user_id", userId)
-      .eq("mission_artifacts.achievements.mission_id", missionId);
-
-    return !!(activities && activities.length > 0);
   };
 
   // ミッション達成処理
