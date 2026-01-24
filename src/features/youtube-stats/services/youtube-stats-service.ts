@@ -259,7 +259,7 @@ export async function getYouTubeStatsSummary(
 }
 
 /**
- * 全体の日別統計推移を取得する
+ * 全体の日別統計推移を取得する（期間内に公開された動画のみ）
  * @param startDate - 開始日（オプション）
  * @param endDate - 終了日（オプション）
  * @returns 日別の合計統計
@@ -270,20 +270,55 @@ export async function getOverallStatsHistory(
 ): Promise<OverallStatsHistoryItem[]> {
   const supabase = createClient();
 
-  // 日別に集計
-  let query = supabase
+  // 1. 期間内に公開された動画のIDを取得
+  let videosQuery = supabase
+    .from("youtube_videos")
+    .select("id")
+    .eq("is_active", true);
+
+  if (startDate) {
+    videosQuery = videosQuery.gte("published_at", startDate.toISOString());
+  }
+  if (endDate) {
+    const endOfDay = new Date(endDate);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+    videosQuery = videosQuery.lt("published_at", endOfDay.toISOString());
+  }
+
+  const { data: videos, error: videosError } = await videosQuery;
+
+  if (videosError) {
+    console.error("Failed to fetch videos for stats history:", videosError);
+    return [];
+  }
+
+  if (!videos || videos.length === 0) {
+    return [];
+  }
+
+  const videoIds = videos.map((v) => v.id);
+
+  // 2. 該当動画の統計を取得
+  let statsQuery = supabase
     .from("youtube_video_stats")
     .select("recorded_at, view_count, like_count")
+    .in("youtube_video_id", videoIds)
     .order("recorded_at", { ascending: true });
 
   if (startDate) {
-    query = query.gte("recorded_at", startDate.toISOString().split("T")[0]);
+    statsQuery = statsQuery.gte(
+      "recorded_at",
+      startDate.toISOString().split("T")[0],
+    );
   }
   if (endDate) {
-    query = query.lte("recorded_at", endDate.toISOString().split("T")[0]);
+    statsQuery = statsQuery.lte(
+      "recorded_at",
+      endDate.toISOString().split("T")[0],
+    );
   }
 
-  const { data, error } = await query;
+  const { data, error } = await statsQuery;
 
   if (error) {
     console.error("Failed to fetch overall stats history:", error);
