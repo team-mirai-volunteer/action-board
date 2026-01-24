@@ -267,6 +267,7 @@ export async function getUserEditedBoardIdsByDistrictAction(
       .from("poster_board_latest_editors")
       .select("board_id")
       .eq("district", district)
+      .eq("archived", false)
       .eq("last_editor_id", userId);
 
     if (error) {

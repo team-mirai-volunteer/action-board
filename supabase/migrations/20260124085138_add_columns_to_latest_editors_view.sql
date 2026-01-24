@@ -1,4 +1,4 @@
--- ビューposter_board_latest_editorsに district カラムを追加します。
+-- ビューposter_board_latest_editorsに district, archived カラムを追加します。
 -- 1. ビューに依存している関数を先に削除します
 DROP FUNCTION get_user_edited_boards_by_prefecture(poster_prefecture_enum, uuid);
 DROP FUNCTION get_user_edited_boards_with_details(poster_prefecture_enum, uuid);
@@ -21,7 +21,8 @@ WITH latest_history AS (
 SELECT 
   pb.id AS board_id,
   pb.prefecture,
-  pb.district, -- ★ここに追加
+  pb.district, -- 追加
+  pb.archived, -- 追加
   pb.lat,
   pb.long,
   pb.status,
