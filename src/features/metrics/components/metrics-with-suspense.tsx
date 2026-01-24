@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { MetricsErrorBoundary } from "./metrics-error-boundary";
 import { Metrics } from "./metrics-index";
 
@@ -8,7 +8,7 @@ function MetricsSkeleton() {
     <section className="bg-gradient-hero flex justify-center py-6 px-4">
       <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
         <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-black mb-1">
+          <h2 className="text-2xl font-bold text-black mb-1">
             チームみらいの活動状況🚀
           </h2>
           <output aria-live="polite">

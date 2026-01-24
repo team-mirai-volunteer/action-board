@@ -3088,3 +3088,5 @@
 1. 茅野市_normalized.csv (21.7 KB)
 2. 茅野市_old_normalized.csv (22.1 KB)
 -> choose 茅野市_normalized.csv (shortest filename)
+
+# Poster Data Choices - 2026-01-23T02:09:16.930Z

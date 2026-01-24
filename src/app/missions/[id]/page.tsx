@@ -1,4 +1,3 @@
-import { MissionDetails } from "@/components/mission/MissionDetails";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,28 +6,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
+import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
+import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
+import { MissionDetails } from "@/features/missions/components/mission-details";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
   getUserMissionRanking,
-  getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
-import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
+import { getUser } from "@/features/user-profile/services/profile";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
   config,
   createDefaultMetadata,
   defaultUrl,
   notoSansJP,
-} from "@/lib/metadata";
-import { createClient } from "@/lib/supabase/client";
+} from "@/lib/utils/metadata";
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
-import { getMissionPageData } from "./_lib/data";
-import { getQuizQuestionsAction } from "./actions";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -76,10 +75,7 @@ export async function generateMetadata({
 }
 
 export default async function MissionPage({ params }: Props) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   const { id } = await params;
   const pageData = await getMissionPageData(id, user?.id);
@@ -177,7 +173,7 @@ export default async function MissionPage({ params }: Props) {
                 ログインしてミッションを達成しよう
               </CardTitle>
               <CardDescription>
-                ミッションの達成を報告するには、アカウントにログインしてください。
+                ミッションを達成するには、アカウントにログインしてください。
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">

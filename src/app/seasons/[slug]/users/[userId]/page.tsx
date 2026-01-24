@@ -1,3 +1,6 @@
+import { Card } from "@/components/ui/card";
+import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
 /**
  * シーズン別ユーザー詳細ページ
  *
@@ -13,21 +16,18 @@
  * - 活動タイムライン
  * - 全シーズン履歴
  */
-import UserDetailActivities from "@/app/users/[id]/user-detail-activities";
-import Levels from "@/components/levels";
-import { Card } from "@/components/ui/card";
-import { SocialBadge } from "@/components/ui/social-badge";
-import { UserMissionAchievements } from "@/components/user-mission-achievements";
-import { UserSeasonHeader } from "@/components/user-season-header";
-import { UserSeasonHistory } from "@/components/user-season-history";
-import { UserBadges } from "@/features/user-badges/components/user-badges";
+import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
-} from "@/lib/services/activityTimeline";
+} from "@/features/user-activity/services/timeline";
+import { UserBadges } from "@/features/user-badges/components/user-badges";
+import Levels from "@/features/user-level/components/levels";
+import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
+import { getProfile } from "@/features/user-profile/services/profile";
+import { UserSeasonHeader } from "@/features/user-season/components/user-season-header";
+import { UserSeasonHistory } from "@/features/user-season/components/user-season-history";
 import { getSeasonBySlug, getUserSeasonHistory } from "@/lib/services/seasons";
-import { getUserRepeatableMissionAchievements } from "@/lib/services/userMissionAchievement";
-import { createClient } from "@/lib/supabase/client";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;
@@ -43,7 +43,6 @@ type Props = {
 
 export default async function SeasonUserDetailPage({ params }: Props) {
   const { slug, userId } = await params;
-  const supabase = createClient();
 
   // シーズン情報を取得
   const season = await getSeasonBySlug(slug);
@@ -52,11 +51,7 @@ export default async function SeasonUserDetailPage({ params }: Props) {
   }
 
   // ユーザー情報を取得
-  const { data: user } = await supabase
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  const user = await getProfile(userId);
 
   if (!user) return <div>ユーザーが見つかりません</div>;
 
@@ -80,29 +75,10 @@ export default async function SeasonUserDetailPage({ params }: Props) {
 
       <div className="px-4">
         {/* ソーシャルメディアリンク表示 */}
-        <div className="flex justify-center gap-2">
-          {user.x_username && (
-            <SocialBadge
-              username={user.x_username}
-              platform="x"
-              href={`https://x.com/${user.x_username}`}
-              logoSrc="/img/x_logo.png"
-              logoAlt="Xのロゴ"
-              logoSize={{ width: 16, height: 16 }}
-              showAtSymbol={true}
-            />
-          )}
-          {user.github_username && (
-            <SocialBadge
-              username={user.github_username}
-              platform="github"
-              href={`https://github.com/${user.github_username}`}
-              logoSrc="/img/github-logo.png"
-              logoAlt="GitHubのロゴ"
-              logoSize={{ width: 20, height: 20 }}
-            />
-          )}
-        </div>
+        <SocialBadgeSection
+          x_username={user.x_username}
+          github_username={user.github_username}
+        />
 
         {/* 獲得バッジセクション（そのシーズンのもののみ） */}
         <Card className="w-full p-4 mt-4">

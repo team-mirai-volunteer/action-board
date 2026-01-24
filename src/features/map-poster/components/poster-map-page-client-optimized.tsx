@@ -6,7 +6,7 @@ import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { statusConfig } from "../config/status-config";
-import { POSTER_PREFECTURE_MAP } from "../constants/poster-prefectures";
+import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
 import type { BoardStatus, PosterBoardTotal } from "../types/poster-types";
 import {
   calculateProgressRate,
@@ -26,36 +26,18 @@ export default function PosterMapPageClientOptimized({
   initialSummary,
   initialTotals,
 }: Props) {
-  // 都道府県別の選管データをマップに変換
-  const totalsByPrefecture = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const total of initialTotals) {
-      if (!total.city) {
-        // 都道府県レベルのデータのみ
-        map[total.prefecture] = total.total_count;
-      }
-    }
-    return map;
-  }, [initialTotals]);
-
-  // 都道府県別の統計を使用
+  // 区割り別の統計を使用
   const boardStats = useMemo(() => {
     const stats: Record<string, Record<BoardStatus, number>> = {};
-    for (const [prefecture, data] of Object.entries(initialSummary)) {
-      stats[prefecture] = data.statuses;
+    for (const [district, data] of Object.entries(initialSummary)) {
+      stats[district] = data.statuses;
     }
     return stats;
   }, [initialSummary]);
 
   // 全体の統計を計算（登録済み掲示板数基準）
   const totalStats = useMemo(() => {
-    // 選管データの総数を合計
-    const actualTotal = Object.values(totalsByPrefecture).reduce(
-      (sum, count) => sum + count,
-      0,
-    );
-
-    // 全都道府県の統計を集計
+    // 全区割りの統計を集計
     let registeredTotal = 0;
     let completed = 0;
     const allStatuses: Record<BoardStatus, number> = {
@@ -83,23 +65,25 @@ export default function PosterMapPageClientOptimized({
     const percentage = calculateProgressRate(completed, registeredTotal);
 
     return {
-      actualTotal, // 選管データの総数
       registeredTotal, // DB登録数
       completed,
       percentage,
       statuses: allStatuses, // 各ステータスの合計
     };
-  }, [initialSummary, totalsByPrefecture]);
+  }, [initialSummary]);
 
-  // 都道府県別の完了率を計算（登録済み掲示板数基準）
-  const getCompletionRate = (
-    _prefecture: string,
-    stats: Record<BoardStatus, number>,
-  ) => {
+  // 区割り別の完了率を計算（登録済み掲示板数基準）
+  const getCompletionRate = (stats: Record<BoardStatus, number>) => {
     const registeredTotal = getRegisteredCount(stats);
     const completed = getCompletedCount(stats);
     return calculateProgressRate(completed, registeredTotal);
   };
+
+  // DB から取得した区割りをソート（データがある区割りのみ表示）
+  const sortedDistricts = useMemo(() => {
+    // initialSummary のキー（区割り名）を取得してソート
+    return Object.keys(initialSummary).sort((a, b) => a.localeCompare(b, "ja"));
+  }, [initialSummary]);
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
@@ -107,7 +91,7 @@ export default function PosterMapPageClientOptimized({
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">ポスター掲示板マップ</h1>
         <p className="text-muted-foreground">
-          都道府県を選択して、各地域のポスター掲示板の状況を確認できます
+          選挙区を選択して、各地域のポスター掲示板の状況を確認できます
         </p>
       </div>
 
@@ -119,15 +103,10 @@ export default function PosterMapPageClientOptimized({
         <CardContent>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              {totalStats.actualTotal > 0 && (
-                <div className="text-2xl font-bold">
-                  {totalStats.registeredTotal.toLocaleString()}
-                </div>
-              )}
-              <div className="text-sm text-muted-foreground">総掲示板数</div>
-              <div className="text-xs text-muted-foreground">
-                (公表: {totalStats.actualTotal.toLocaleString()})
+              <div className="text-2xl font-bold">
+                {totalStats.registeredTotal.toLocaleString()}
               </div>
+              <div className="text-sm text-muted-foreground">総掲示板数</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-green-600">
@@ -149,7 +128,7 @@ export default function PosterMapPageClientOptimized({
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
-                className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+                className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
                 style={{ width: `${totalStats.percentage}%` }}
               />
             </div>
@@ -175,13 +154,23 @@ export default function PosterMapPageClientOptimized({
         </CardContent>
       </Card>
 
-      {/* Prefecture List */}
+      {/* District List */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">都道府県から選択</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(POSTER_PREFECTURE_MAP).map(
-            ([prefectureKey, prefectureData]) => {
-              const stats = boardStats[prefectureData.jp] || {
+        <h2 className="text-xl font-semibold">選挙区から選択</h2>
+        {sortedDistricts.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              現在表示できる選挙区がありません
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {sortedDistricts.map((districtJp) => {
+              // 区割り名からURLキーを取得（DB のデータを優先）
+              const districtKey =
+                JP_TO_EN_DISTRICT[districtJp] ||
+                districtJp.toLowerCase().replace(/[^a-z0-9]/g, "-");
+              const stats = boardStats[districtJp] || {
                 not_yet: 0,
                 not_yet_dangerous: 0,
                 reserved: 0,
@@ -191,21 +180,16 @@ export default function PosterMapPageClientOptimized({
                 error_wrong_poster: 0,
                 other: 0,
               };
-              const registeredInPrefecture = Object.values(stats).reduce(
+              const registeredInDistrict = Object.values(stats).reduce(
                 (sum, count) => sum + count,
                 0,
               );
-              const actualTotalInPrefecture =
-                totalsByPrefecture[prefectureData.jp] || 0;
-              const completionRate = getCompletionRate(
-                prefectureData.jp,
-                stats,
-              );
+              const completionRate = getCompletionRate(stats);
 
               return (
                 <Link
-                  key={prefectureKey}
-                  href={`/map/poster/${prefectureKey}`}
+                  key={districtJp}
+                  href={`/map/poster/${districtKey}`}
                   className="block"
                 >
                   <Card className="transition-all hover:shadow-lg">
@@ -215,7 +199,7 @@ export default function PosterMapPageClientOptimized({
                           <MapPin className="h-5 w-5 text-muted-foreground" />
                           <div>
                             <CardTitle className="text-lg">
-                              {prefectureData.jp}
+                              {districtJp}
                             </CardTitle>
                           </div>
                         </div>
@@ -226,20 +210,13 @@ export default function PosterMapPageClientOptimized({
                       <div className="space-y-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">
-                            掲示板数: {registeredInPrefecture.toLocaleString()}
-                            {actualTotalInPrefecture > 0 && (
-                              <span className="text-xs">
-                                {" "}
-                                (公表:{" "}
-                                {actualTotalInPrefecture.toLocaleString()})
-                              </span>
-                            )}
+                            掲示板数: {registeredInDistrict.toLocaleString()}
                           </span>
                           <span className="font-medium">{completionRate}%</span>
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
                           <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+                            className="h-full bg-linear-to-r from-blue-500 to-green-500 transition-all duration-300"
                             style={{ width: `${completionRate}%` }}
                           />
                         </div>
@@ -267,9 +244,9 @@ export default function PosterMapPageClientOptimized({
                   </Card>
                 </Link>
               );
-            },
-          )}
-        </div>
+            })}
+          </div>
+        )}
       </div>
 
       {/* Action Button */}
@@ -280,6 +257,16 @@ export default function PosterMapPageClientOptimized({
             <ChevronRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
+      </div>
+
+      {/* Archive Link */}
+      <div className="flex justify-center pt-2 pb-4">
+        <Link
+          href="/map/poster/archive/sangin-2025"
+          className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+        >
+          過去の選挙データを見る（参議院選挙 2025）
+        </Link>
       </div>
     </div>
   );

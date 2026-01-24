@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
 import { PrefectureSelect } from "./prefecture-select";
 
 const mockPush = jest.fn();

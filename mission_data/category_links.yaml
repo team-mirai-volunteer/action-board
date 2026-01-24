@@ -1,6 +1,16 @@
 category_links:
+  - category_slug: learn-teammirai-supporter
+    missions:
+      - mission_slug: add-supporter-line-friend
+        sort_no: 100
+      - mission_slug: join-orientation
+        sort_no: 200
+      - mission_slug: join-local-organization-briefing
+        sort_no: 300
   - category_slug: follow-teammirai
     missions:
+      - mission_slug: add-supporter-line-friend
+        sort_no: 50
       - mission_slug: add-line-friend
         sort_no: 100
       - mission_slug: youtube-subscribe
@@ -72,6 +82,8 @@ category_links:
   - category_slug: local-activities
     missions:
       - mission_slug: posting-magazine
+        sort_no: 100
+      - mission_slug: posting-activity-magazine
         sort_no: 100
       - mission_slug: posting-flyer
         sort_no: 150

@@ -1,9 +1,7 @@
-import {
-  CopyrightSection,
-  FeedbackSection,
-  LogoSection,
-  SeasonsList,
-} from "@/components/footer";
+import { CopyrightSection } from "@/components/footer/copyright-section";
+import { FeedbackSection } from "@/components/footer/feedback-section";
+import { LogoSection } from "@/components/footer/logo-section";
+import { SeasonsList } from "@/components/footer/seasons-list";
 import Image from "next/image";
 
 export default function Footer() {
@@ -14,7 +12,7 @@ export default function Footer() {
         <LogoSection />
       </div>
 
-      <div className="relative w-full bg-gradient-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
+      <div className="relative w-full bg-linear-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
         <div className="relative h-[280px]">
           <div className="absolute bottom-0 left-0 right-0 w-full flex justify-center">
             <div className="relative w-[756px] min-w-[756px] h-[392px]">

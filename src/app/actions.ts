@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
-} from "@/lib/services/userLevel";
+} from "@/features/user-level/services/level";
 import { createClient } from "@/lib/supabase/client";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
@@ -98,7 +98,7 @@ export const signUpActionWithState = async (
       data: {
         date_of_birth, // 生年月日をユーザーデータに保存。プロフィール作成時に固定で設定される
       },
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${origin}/api/auth/callback`,
     },
   });
 
@@ -324,12 +324,12 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/forgot-password",
-      "パスワードリセットに失敗しました",
+      "LINEで登録されたユーザーのパスワードリセットはできません",
     );
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/reset-password`,
+    redirectTo: `${origin}/api/auth/callback?redirect_to=/reset-password`,
   });
 
   if (error) {
@@ -517,7 +517,7 @@ export async function handleLineAuthAction(
     }
 
     const origin = (await headers()).get("origin");
-    const redirectUri = `${origin || "http://localhost:3000"}/api/auth/callback/line`;
+    const redirectUri = `${origin || "http://localhost:3000"}/api/auth/line-callback`;
     const tokenParams = {
       grant_type: "authorization_code",
       code: validatedCode,
@@ -574,11 +574,9 @@ export async function handleLineAuthAction(
     let userId: string;
     let isNewUser = false;
 
-    // 効率的なPostgreSQL関数を使用してメールアドレスでユーザーを検索 (O(1))
-    // listUsers()の全件取得 (O(n)) から大幅な性能改善
     const { data: userResults, error: userFetchError } = await supabase.rpc(
-      "get_user_by_email",
-      { user_email: email },
+      "get_user_by_line_id",
+      { line_user_id: lineUserId },
     );
 
     if (userFetchError) {
@@ -697,12 +695,13 @@ export async function handleLineAuthAction(
     const clientSupabase = createClient();
     const { error: signInError } = await clientSupabase.auth.signInWithPassword(
       {
-        email,
+        email: userWithEmail?.email || email,
         password: tempPassword,
       },
     );
 
     if (signInError) {
+      console.error("Failed to sign in with temporary password:", signInError);
       throw new Error("Supabaseログインに失敗しました");
     }
 

@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
-import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
 import {
@@ -13,6 +12,7 @@ import {
   getPrefectureDefaultZoom,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilter } from "../hooks/use-poster-board-filter";
+import { getCurrentUserId } from "../services/poster-boards";
 import { PosterBoardFilter } from "./poster-board-filter";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -81,30 +81,21 @@ export default function PosterMap({
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Fetch current user and board info
+  // Fetch current user
   useEffect(() => {
     let isMounted = true;
-    const fetchUserAndBoardInfo = async () => {
+    const fetchUser = async () => {
       try {
-        const supabase = createClient();
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) {
-          return;
-        }
-
+        const userId = await getCurrentUserId();
         if (isMounted) {
-          setCurrentUserId(user?.id);
+          setCurrentUserId(userId ?? undefined);
         }
       } catch (error) {
         // エラーは静かに処理
       }
     };
 
-    fetchUserAndBoardInfo();
+    fetchUser();
 
     return () => {
       isMounted = false;
@@ -296,7 +287,7 @@ export default function PosterMap({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 bottom-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{ zIndex: 1000 }}
           aria-label="フルスクリーン表示"
           title="フルスクリーン表示"
@@ -310,7 +301,7 @@ export default function PosterMap({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 bottom-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{ zIndex: 1000 }}
           aria-label="フルスクリーン解除"
           title="フルスクリーン解除 (ESC)"

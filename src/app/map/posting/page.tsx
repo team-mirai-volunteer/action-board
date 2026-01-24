@@ -1,23 +1,27 @@
-import PostingPageClient from "@/features/map-posting/components/posting-page";
-import { createClient } from "@/lib/supabase/client";
+import { getActiveEvent } from "@/features/map-posting/services/posting-events.server";
+import { getUser } from "@/features/user-profile/services/profile";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "チームみらい機関誌配布マップ",
-  description: "チームみらい機関誌配布マップ",
+  title: "チームみらいポスティングマップ",
+  description: "チームみらいポスティングマップ",
 };
 
 export default async function PostingPage() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return redirect("/sign-in");
   }
 
-  return <PostingPageClient userId={user.id} />;
+  // Get the active event and redirect to its slug
+  const activeEvent = await getActiveEvent();
+
+  if (!activeEvent) {
+    // No active event found
+    return notFound();
+  }
+
+  return redirect(`/map/posting/${activeEvent.slug}`);
 }

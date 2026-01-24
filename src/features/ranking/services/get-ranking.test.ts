@@ -1,3 +1,4 @@
+import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import { getRanking } from "./get-ranking";
@@ -12,6 +13,10 @@ jest.mock("@/lib/services/seasons", () => ({
   getCurrentSeasonId: jest.fn(),
 }));
 
+jest.mock("@/features/party-membership/services/memberships", () => ({
+  getPartyMembershipMap: jest.fn(),
+}));
+
 describe("ranking service", () => {
   const mockSupabase = {
     from: jest.fn(),
@@ -22,6 +27,7 @@ describe("ranking service", () => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
     (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
+    (getPartyMembershipMap as jest.Mock).mockResolvedValue({});
   });
 
   describe("getRanking", () => {
@@ -52,6 +58,17 @@ describe("ranking service", () => {
           data: mockRankingData,
           error: null,
         });
+        (getPartyMembershipMap as jest.Mock).mockResolvedValue({
+          user1: {
+            user_id: "user1",
+            plan: "regular",
+            badge_visibility: false,
+            synced_at: "2024-01-01T00:00:00Z",
+            metadata: {},
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z",
+          },
+        });
 
         const result = await getRanking();
 
@@ -61,7 +78,25 @@ describe("ranking service", () => {
           p_end_date: undefined,
           p_season_id: "test-season-id",
         });
-        expect(result).toEqual(mockRankingData);
+        expect(result).toEqual([
+          {
+            ...mockRankingData[0],
+            party_membership: {
+              user_id: "user1",
+              plan: "regular",
+              badge_visibility: false,
+              synced_at: "2024-01-01T00:00:00Z",
+              metadata: {},
+              created_at: "2024-01-01T00:00:00Z",
+              updated_at: "2024-01-01T00:00:00Z",
+            },
+          },
+          {
+            ...mockRankingData[1],
+            party_membership: null,
+          },
+        ]);
+        expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1", "user2"]);
       });
 
       it("limitパラメータで取得件数を制限できる", async () => {
@@ -81,14 +116,14 @@ describe("ranking service", () => {
       });
 
       it("エラー時は例外をスローする", async () => {
-        const mockError = { message: "Database error" };
+        const mockError = { message: "Test Database error" };
         mockSupabase.rpc.mockResolvedValue({
           data: null,
           error: mockError,
         });
 
         await expect(getRanking()).rejects.toThrow(
-          "シーズンランキングの取得に失敗しました: Database error",
+          "シーズンランキングの取得に失敗しました: Test Database error",
         );
       });
     });
@@ -142,6 +177,7 @@ describe("ranking service", () => {
           xp: 150,
           rank: 2,
         });
+        expect(getPartyMembershipMap).toHaveBeenCalledWith(["user2", "user1"]);
       });
 
       it("日次ランキングを取得する（複数日のデータ）", async () => {
@@ -170,6 +206,7 @@ describe("ranking service", () => {
           xp: 300,
           rank: 1,
         });
+        expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1"]);
       });
 
       it("期間内にXPを獲得したユーザーがいない場合は空配列を返す", async () => {
@@ -186,11 +223,11 @@ describe("ranking service", () => {
       it("RPC取得エラー時は例外をスローする", async () => {
         mockSupabase.rpc.mockResolvedValue({
           data: null,
-          error: { message: "RPC fetch error" },
+          error: { message: "Test RPC fetch error" },
         });
 
         await expect(getRanking(10, "daily")).rejects.toThrow(
-          "シーズンランキングの取得に失敗しました: RPC fetch error",
+          "シーズンランキングの取得に失敗しました: Test RPC fetch error",
         );
       });
     });

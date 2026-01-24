@@ -1,0 +1,48 @@
+name: Daily Party Membership Sync (Staging)
+
+on:
+  schedule:
+    # 毎日 日本時間 00:30 (UTC 15:30) に実行
+    - cron: "30 15 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-party-memberships:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Sync party memberships
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_PARTY_MEMBER_SPREADSHEET_ID: ${{ secrets.GOOGLE_PARTY_MEMBER_SPREADSHEET_ID }}
+        run: pnpm run sync-party-memberships
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Party Membership Sync Failed - ${new Date().toISOString().split('T')[0]}`,
+              body: `The daily party membership sync workflow failed. Please check the logs.\n\nWorkflow run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              labels: ['bug', 'automated']
+            });

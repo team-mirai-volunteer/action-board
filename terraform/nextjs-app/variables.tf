@@ -25,6 +25,12 @@ variable "max_instance_count" {
   default     = 2
 }
 
+variable "cloud_run_memory" {
+  description = "Memory limit for Cloud Run container"
+  type        = string
+  default     = "512Mi"
+}
+
 variable "github_repository_id" {
   description = "GitHub repository ID"
   type        = string
@@ -178,6 +184,17 @@ variable "SENTRY_AUTH_TOKEN" {
 
 variable "BATCH_ADMIN_KEY" {
   description = "Batch Admin Key for API authentication (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "NEXT_PUBLIC_TIKTOK_CLIENT_KEY" {
+  description = "TikTok Client Key for TikTok Login (public)"
+  type        = string
+}
+
+variable "TIKTOK_CLIENT_SECRET" {
+  description = "TikTok Client Secret for TikTok Login (sensitive)"
   type        = string
   sensitive   = true
 }

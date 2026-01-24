@@ -1,18 +1,15 @@
+import { getMissionsForRanking } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { MissionSelect } from "@/features/ranking/components/mission-select";
-import {
-  PeriodToggle,
-  type RankingPeriod,
-} from "@/features/ranking/components/period-toggle";
+import type { RankingPeriod } from "@/features/ranking/components/period-toggle";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import {
   getUserMissionRanking,
-  getUserPostingCount,
   getUserPostingCountByMission,
 } from "@/features/ranking/services/get-missions-ranking";
+import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,7 +19,6 @@ interface PageProps {
 }
 
 export default async function RankingMissionPage({ searchParams }: PageProps) {
-  const supabase = createClient();
   const resolvedSearchParams = await searchParams;
 
   // 現在のシーズンIDを取得
@@ -33,39 +29,12 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   }
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
-  const { data: missions, error: missionsError } = await supabase
-    .from("missions")
-    .select(`
-      *,
-      mission_category_link(
-        mission_category(
-          id,
-          category_title,
-          sort_no
-        )
-      )
-    `)
-    .is("max_achievement_count", null)
-    .eq("is_hidden", false)
-    .order("is_featured", { ascending: false }) // is_featuredがtrueのものを先頭に
-    .order("difficulty", { ascending: true }); // その後、難易度の昇順でソート
+  // ミッション一覧を取得
+  const missions = await getMissionsForRanking();
 
-  // エラーハンドリング
-  if (missionsError) {
-    console.error("ミッション取得エラー:", missionsError);
-    return (
-      <div className="p-4 text-red-600">
-        ミッションの取得中にエラーが発生しました。
-      </div>
-    );
-  }
-
-  if (!missions || missions.length === 0) {
+  if (missions.length === 0) {
     return (
       <div className="p-4 text-gray-600">
         現在利用可能なミッションがありません。

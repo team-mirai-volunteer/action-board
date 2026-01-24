@@ -6,6 +6,18 @@ VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
+-- 管理者ユーザー（admin@example.com / admin123456）
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
+VALUES
+  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-0000-0000-000000000001', 'authenticated', 'authenticated', 'admin@example.com', crypt('admin123456', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"], "roles": ["admin"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now())
+ON CONFLICT (id) DO NOTHING;
+
+-- ポスティング管理者ユーザー（posting-admin@example.com / postingadmin123456）
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
+VALUES
+  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-0000-0000-000000000002', 'authenticated', 'authenticated', 'posting-admin@example.com', crypt('postingadmin123456', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"], "roles": ["posting-admin"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now())
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
   ('00000000-0000-0000-0000-000000000000', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'authenticated', 'authenticated', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
@@ -21,21 +33,61 @@ VALUES
   ('00000000-0000-0000-0000-000000000000', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
   ('00000000-0000-0000-0000-000000000000', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
 
--- ユーザー
-INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
+-- private usersテーブルにデータを追加
+-- 管理者ユーザー
+INSERT INTO private_users (id, date_of_birth, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', '1995-05-05', NULL, '5300001'),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', '1988-03-15', 'sato_taro', '1500012'),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', '1992-07-22', 'suzuki_misaki', '2200001'),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', '1985-11-08', 'takahashi_ken', '5600011'),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', '1993-04-30', 'ito_aiko', '4600001'),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', '1991-09-12', 'yamada_jiro', '8100001'),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', '1994-02-14', 'nakamura_sakura', '0600001'),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', '1987-06-05', 'kobayashi_naoto', '6020001'),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', '1996-12-25', 'kato_miyuki', '9800001'),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', '1989-08-18', 'watanabe_yuichi', '7300001'),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', '1998-01-03', 'matsumoto_kana', '9000001');
+  ('a0000000-0000-0000-0000-000000000001', '1985-01-01', '1000000')
+ON CONFLICT (id) DO NOTHING;
+
+-- ポスティング管理者ユーザー
+INSERT INTO private_users (id, date_of_birth, postcode)
+VALUES
+  ('a0000000-0000-0000-0000-000000000002', '1990-06-15', '1000001')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO private_users (id, date_of_birth, postcode)
+VALUES
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '1990-12-01', '1000001'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '1995-05-05', '5300001'),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '1988-03-15', '1500012'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '1992-07-22', '2200001'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '1985-11-08', '5600011'),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '1993-04-30', '4600001'),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '1991-09-12', '8100001'),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '1994-02-14', '0600001'),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '1987-06-05', '6020001'),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '1996-12-25', '9800001'),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '1989-08-18', '7300001'),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '1998-01-03', '9000001');
+
+-- public_user_profilesテーブルにデータを追加
+-- 管理者ユーザー
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('a0000000-0000-0000-0000-000000000001', '管理者', '東京都', NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+
+-- ポスティング管理者ユーザー
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('a0000000-0000-0000-0000-000000000002', 'ポスティング管理者', '東京都', NULL, NULL)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public_user_profiles (id, name, address_prefecture, x_username, github_username)
+VALUES
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', 'takahiroanno', 'takahiroanno'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, NULL),
+  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', 'sato_taro', 'sato_taro'),
+  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', 'suzuki_misaki', 'suzuki_misaki'),
+  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', 'takahashi_ken', NULL),
+  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', 'ito_aiko', NULL),
+  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', 'yamada_jiro', NULL),
+  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', 'nakamura_sakura', NULL),
+  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', 'kobayashi_naoto', NULL),
+  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', 'kato_miyuki', NULL),
+  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', 'watanabe_yuichi', NULL),
+  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', 'matsumoto_kana', NULL);
 
 -- ユーザーレベル情報（XPとレベル設定）
 -- season1のIDを取得してuser_levelsに使用
@@ -78,7 +130,7 @@ WHERE s.slug = 'season2';
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count, slug)
 VALUES
-  ('e2898d7e-903f-4f9a-8b1b-93f783c9afac', '(seed) ゴミ拾いをしよう (成果物不要)', NULL, '近所のゴミを拾ってみよう！清掃活動の報告は任意です。', 5, NULL, 'NONE', NULL, 'seed-cleanup'),
+  ('e2898d7e-903f-4f9a-8b1b-93f783c9afac', '(seed) ゴミ拾いをしよう (成果物不要)', NULL, '近所のゴミを拾ってみよう！清掃活動の報告は任意です。', 4, NULL, 'NONE', NULL, 'seed-cleanup'),
   ('2246205f-933f-4a86-83af-dbf6bb6cde90', '(seed) 活動ブログを書こう (リンク提出)', '/img/mission_fallback.svg', 'あなたの活動についてブログ記事を書き、URLを提出してください。', 2, NULL, 'LINK', 10, 'seed-activity-blog'),
   ('3346205f-933f-4a86-83af-dbf6bb6cde91', '(seed) 今日のベストショット (画像提出)', '/img/mission_fallback.svg', '今日の活動で見つけた素晴らしい瞬間を写真で共有してください。', 3, '2025-06-01', 'IMAGE', NULL, 'seed-best-shot'),
   ('4446205f-933f-4a86-83af-dbf6bb6cde92', '(seed) 発見！地域の宝 (位置情報付き画像)', '/img/mission_fallback.svg', 'あなたの地域で見つけた素敵な場所や物を、位置情報付きの写真で教えてください。', 4, NULL, 'IMAGE_WITH_GEOLOCATION', 5, 'seed-local-treasure'),
@@ -267,54 +319,68 @@ where id in (
   '4446205f-933f-4a86-83af-dbf6bb6cde92'
 );
 
+-- ポスティングイベントのサンプルデータ
+INSERT INTO posting_events (id, slug, title, description, is_active, created_at, updated_at)
+VALUES
+  ('a0000000-0000-0000-0000-000000000001', 'default', 'デフォルトイベント', '初期イベント', true, '2025-06-01 00:00:00.000', '2025-06-01 00:00:00.000')
+ON CONFLICT (slug) DO NOTHING;
+
 -- ポスティングシェイプのサンプルデータ
-INSERT INTO posting_shapes (id, type, coordinates, properties, created_at, updated_at)
+INSERT INTO posting_shapes (id, type, coordinates, properties, event_id, created_at, updated_at)
 VALUES
   -- 東京エリア（新宿区全域をカバーする大きなポリゴン）
-  ('c04bdb2e-053c-4b9c-95c3-83db26492d7b', 'polygon', 
+  ('c04bdb2e-053c-4b9c-95c3-83db26492d7b', 'polygon',
    '{"type":"Polygon","coordinates":[[[139.6917,35.7020],[139.7317,35.7020],[139.7317,35.6620],[139.6917,35.6620],[139.6917,35.7020]]]}',
    '{"_shapeId":"c04bdb2e-053c-4b9c-95c3-83db26492d7b","originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-02 07:37:29.534', '2025-06-02 07:37:29.534'),
-  
+
   -- 東京エリア（世田谷区全域をカバーする大きなポリゴン）
   ('a0bd1c29-5be9-480a-85e1-6823f232939a', 'polygon',
    '{"type":"Polygon","coordinates":[[[139.6117,35.6620],[139.6617,35.6620],[139.6617,35.6120],[139.6117,35.6120],[139.6117,35.6620]]]}',
    '{"originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-11 21:29:03.136', '2025-06-11 21:29:03.136'),
-  
+
   -- 福岡エリア（博多区周辺の大きなポリゴン）
   ('98388127-ea99-4659-acba-80b61b44fe23', 'polygon',
    '{"type":"Polygon","coordinates":[[[130.3900,33.6100],[130.4300,33.6100],[130.4300,33.5700],[130.3900,33.5700],[130.3900,33.6100]]]}',
    '{"originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-10 14:06:46.592', '2025-06-10 14:06:46.592'),
-  
+
   -- 岡山エリア（岡山市中心部の大きなポリゴン）
   ('74aa7806-69e4-4380-a642-ce31f47ecad9', 'polygon',
    '{"type":"Polygon","coordinates":[[[133.8900,34.6900],[133.9400,34.6900],[133.9400,34.6400],[133.8900,34.6400],[133.8900,34.6900]]]}',
    '{"originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-11 13:51:46.686', '2025-06-11 13:51:46.686'),
-  
+
   -- 大阪エリア（梅田周辺の大きなポリゴン）
   ('b1234567-89ab-cdef-0123-456789abcdef', 'polygon',
    '{"type":"Polygon","coordinates":[[[135.4800,34.7200],[135.5200,34.7200],[135.5200,34.6800],[135.4800,34.6800],[135.4800,34.7200]]]}',
    '{"originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-12 10:15:00.000', '2025-06-12 10:15:00.000'),
-  
+
   -- 名古屋エリア（名古屋駅周辺の大きなポリゴン）
   ('c2345678-90bc-def0-1234-567890bcdef0', 'polygon',
    '{"type":"Polygon","coordinates":[[[136.8600,35.1900],[136.9000,35.1900],[136.9000,35.1500],[136.8600,35.1500],[136.8600,35.1900]]]}',
    '{"originalType":"Polygon"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-13 15:30:45.123', '2025-06-13 15:30:45.123'),
-  
+
   -- テキストタイプのエントリ（東京エリア）
   ('f5678901-23ef-0123-4567-890123ef0123', 'text',
    '{"type":"Point","coordinates":[139.6950,35.6950]}',
    '{"text":"新宿エリア","originalType":"Text"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-14 09:30:00.000', '2025-06-14 09:30:00.000'),
-  
+
   ('17890123-4501-2345-6789-012345012345', 'text',
    '{"type":"Point","coordinates":[139.6350,35.6350]}',
    '{"text":"世田谷区","originalType":"Text"}',
+   'a0000000-0000-0000-0000-000000000001',
    '2025-06-14 10:00:00.000', '2025-06-14 10:00:00.000');
 
 -- ポスター掲示板の情報

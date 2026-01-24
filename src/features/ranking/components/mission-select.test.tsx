@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
 import { MissionSelect } from "./mission-select";
 
 type Mission = {
@@ -150,6 +149,41 @@ describe("MissionSelect", () => {
       expect(select.value).toBe("mission-1");
 
       global.URLSearchParams = originalURLSearchParams;
+    });
+  });
+
+  describe("カテゴリ別グループ化", () => {
+    const make = (id: string, catId: string, title: string, sortNo: number) =>
+      ({
+        id,
+        title: `${title}-ミッション`,
+        mission_category_link: [
+          {
+            mission_category: {
+              id: catId,
+              category_title: title,
+              sort_no: sortNo,
+            },
+          },
+        ],
+      }) as any;
+
+    it("同一カテゴリに集約され、カテゴリはsort_no順", () => {
+      const missions = [
+        make("m1", "cat1", "カテゴリ1", 2),
+        make("m2", "cat1", "カテゴリ1", 2),
+        make("m0", "cat0", "カテゴリ0", 1),
+      ];
+
+      render(<MissionSelect missions={missions} />);
+
+      const groups = screen.getAllByRole("group");
+      expect(groups.map((g) => g.getAttribute("label"))).toEqual([
+        "カテゴリ0",
+        "カテゴリ1",
+      ]);
+      expect(groups[0].querySelectorAll("option").length).toBe(1);
+      expect(groups[1].querySelectorAll("option").length).toBe(2);
     });
   });
 });

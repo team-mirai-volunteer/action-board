@@ -1,4 +1,4 @@
-import { FormMessage } from "@/components/form-message";
+import { FormMessage } from "@/components/common/form-message";
 import Image from "next/image";
 
 export default function SignUpSuccess() {

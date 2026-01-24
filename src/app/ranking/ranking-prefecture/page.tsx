@@ -1,16 +1,12 @@
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
-import {
-  PeriodToggle,
-  type RankingPeriod,
-} from "@/features/ranking/components/period-toggle";
+import type { RankingPeriod } from "@/features/ranking/components/period-toggle";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
-import { PREFECTURES } from "@/lib/address";
+import { getProfile, getUser } from "@/features/user-profile/services/profile";
+import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { getMyProfile } from "@/lib/services/users";
-import { createClient } from "@/lib/supabase/client";
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,7 +18,6 @@ interface PageProps {
 export default async function RankingPrefecturePage({
   searchParams,
 }: PageProps) {
-  const supabase = createClient();
   const resolvedSearchParams = await searchParams;
 
   // 現在のシーズンIDを取得
@@ -33,10 +28,7 @@ export default async function RankingPrefecturePage({
   }
 
   // ユーザー情報取得
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   // 都道府県一覧を取得
   const prefectures = PREFECTURES;
@@ -44,7 +36,7 @@ export default async function RankingPrefecturePage({
   // ユーザーのプロフィール情報を取得
   let userProfile = null;
   if (user) {
-    userProfile = await getMyProfile();
+    userProfile = await getProfile(user.id);
   }
 
   // 選択された都道府県を取得（URLパラメータをデコード）

@@ -1,1 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 85.04 85.04"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .ol {
+        stroke:#231815;
+        stroke-width:16;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+      }
+    </style>
+  </defs>
+
+  <!-- scale up content -->
+  <!-- 元中心(256,256) 기준으로 1.12倍 -->
+  <g transform="translate(256 256) scale(1.12) translate(-256 -256)">
+
+    <!-- post box body -->
+    <rect x="128" y="240" width="256" height="160" rx="24" fill="#dcdddd" class="ol"/>
+
+    <!-- post slot -->
+    <rect x="176" y="264" width="160" height="24" rx="12" fill="#9fa0a0" class="ol"/>
+
+    <!-- flyer (tilted, going into slot) -->
+    <g transform="translate(256 210) rotate(-12) translate(-256 -210)">
+      <rect x="184" y="120" width="144" height="140" rx="16" fill="#fff45c" class="ol"/>
+      <!-- flyer lines -->
+      <line x1="208" y1="162" x2="304" y2="162" class="ol"/>
+      <line x1="208" y1="194" x2="304" y2="194" class="ol"/>
+      <line x1="208" y1="226" x2="272" y2="226" class="ol"/>
+    </g>
+
+    <!-- motion lines -->
+    <line x1="152" y1="168" x2="192" y2="168" class="ol"/>
+    <line x1="140" y1="202" x2="188" y2="202" class="ol"/>
+    <line x1="156" y1="236" x2="196" y2="236" class="ol"/>
+
+    <!-- accent -->
+    <circle cx="352" cy="360" r="20" fill="#7dc1ad" class="ol"/>
+
+  </g>
+</svg>

@@ -96,7 +96,7 @@ export function MissionSelect({ missions }: MissionSelectProps) {
             onChange={handleMissionChange}
             className="w-full p-3 pl-4 pr-10 text-base border border-gray-300 rounded-lg 
                      bg-white appearance-none cursor-pointer
-                     focus:outline-none focus:ring-2 focus:ring-teal-50 focus:border-teal-400
+                     focus:outline-hidden focus:ring-2 focus:ring-teal-50 focus:border-teal-400
                      hover:border-teal-400 transition-colors duration-200"
           >
             {/* カテゴリ別にグループ化されたミッション */}

@@ -27,6 +27,13 @@ jest.mock("next/link", () => {
 });
 
 jest.mock("lucide-react", () => ({
+  ChevronRight: ({ className }) => {
+    const mockReact = require("react");
+    return mockReact.createElement("div", {
+      "data-testid": "chevron-right-icon",
+      className,
+    });
+  },
   CheckIcon: ({ size, className }) => {
     const mockReact = require("react");
     return mockReact.createElement("div", {
@@ -243,7 +250,7 @@ jest.mock("react-dom", () => ({
   useFormStatus: jest.fn(() => ({ pending: false })),
 }));
 
-jest.mock("@/lib/services/userLevel", () => ({
+jest.mock("@/features/user-level/services/level", () => ({
   getUserLevel: jest.fn(() =>
     Promise.resolve({
       user_id: "test-user-id",
@@ -255,7 +262,7 @@ jest.mock("@/lib/services/userLevel", () => ({
   ),
 }));
 
-jest.mock("@/lib/services/users", () => ({
+jest.mock("@/features/user-profile/services/profile", () => ({
   getPrivateUserData: jest.fn(() =>
     Promise.resolve({
       id: "test-user-id",
@@ -270,6 +277,21 @@ jest.mock("@/lib/services/users", () => ({
       name: "テストユーザー",
       address_prefecture: "東京都",
       avatar_url: null,
+    }),
+  ),
+  getMyProfile: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      name: "テストユーザー",
+      address_prefecture: "東京都",
+      avatar_url: null,
+      email: "test@example.com",
+    }),
+  ),
+  getUser: jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-id",
+      email: "test@example.com",
     }),
   ),
 }));

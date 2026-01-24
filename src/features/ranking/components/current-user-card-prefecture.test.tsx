@@ -66,6 +66,15 @@ const mockUser: UserRanking = {
   level: 30,
   xp: 3000,
   updated_at: "2024-01-01T00:00:00Z",
+  party_membership: {
+    plan: "regular",
+    badge_visibility: true,
+    user_id: "test-user-1",
+    synced_at: "2024-01-01T00:00:00Z",
+    metadata: {},
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
 };
 
 describe("CurrentUserCardPrefecture", () => {

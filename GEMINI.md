@@ -13,7 +13,6 @@ The web application uses a variety of modern technologies, including:
 *   **Testing:** Jest (unit), Playwright (E2E), RLS tests for Supabase
 *   **Linting/Formatting:** Biome
 *   **Error Tracking:** Sentry
-*   **Component Library:** Storybook
 
 The project also includes a Flutter application in the `mobile_flutter` directory, though the primary focus of the provided files is the web application.
 
@@ -90,7 +89,7 @@ The project also includes a Flutter application in the `mobile_flutter` director
 
 *   **Run RLS tests:**
     ```bash
-    npm run test:rls
+    npm run test:supabase
     ```
 
 ## Development Conventions
@@ -100,5 +99,4 @@ The project also includes a Flutter application in the `mobile_flutter` director
 *   **Pull Requests:** PRs are made from forks to the main repository.
 *   **Database Migrations:** Supabase migrations are used to manage database schema changes. New migrations can be created with `supabase migration new {name}`.
 *   **Type Generation:** After a migration, new TypeScript types should be generated with `npx supabase gen types typescript --local > lib/types/supabase.ts`.
-*   **Storybook:** UI components are developed in isolation using Storybook. Run `npm run storybook` to start the Storybook server.
 *   **Code Style:** Biome is used for linting and formatting. Run `npm run biome:check:write` to check and fix code style issues.
