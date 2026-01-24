@@ -51,7 +51,7 @@ export default async function ProfileSettingsPage({
         }}
         initialPrivateUser={privateUser}
         partyMembership={partyMembership}
-        email={user.email || ""}
+        email={user.email || null}
       />
 
       {partyMembership && (

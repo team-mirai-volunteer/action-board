@@ -55,7 +55,7 @@ interface ProfileFormProps {
     postcode?: string;
   } | null;
   partyMembership: PartyMembership | null;
-  email?: string;
+  email: string | null;
 }
 
 export default function ProfileForm({
@@ -275,9 +275,9 @@ export default function ProfileForm({
           {!isNew && (
             <div className="space-y-2">
               <Label htmlFor="email">メールアドレス</Label>
-              {email?.endsWith("@line.local") ? (
+              {!email || email?.endsWith("@line.local") ? (
                 <p className="text-sm text-gray-500">
-                  LINEにメールアドレスが登録されていなかったため、表示できません
+                  メールアドレスが登録されていないため、表示できません
                 </p>
               ) : (
                 <>
@@ -288,7 +288,7 @@ export default function ProfileForm({
                     // フォーム送信時に値が送信されないようにname属性は含めない
                     id="email"
                     type="email"
-                    value={email || ""}
+                    value={email}
                     disabled
                     className="bg-gray-50 cursor-not-allowed"
                   />
