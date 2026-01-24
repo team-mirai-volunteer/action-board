@@ -77,7 +77,7 @@ export default async function MissionsByCategory({
 
   return (
     <div className="flex flex-col gap-11">
-      <h2 className="text-center text-2xl md:text-3xl my-5">📈 ミッション</h2>
+      <h2 className="text-center text-2xl md:text-3xl my-5">🎯 ミッション</h2>
 
       {Object.values(grouped).map((missionsInCategory) => {
         const category = missionsInCategory[0];

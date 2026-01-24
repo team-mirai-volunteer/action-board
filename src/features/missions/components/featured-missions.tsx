@@ -8,7 +8,8 @@ export default function FeaturedMissions(
     <Missions
       {...props}
       filterFeatured={true}
-      title="🎯 重要ミッション"
+      title="🔥 重要ミッション"
+      subTitle="重要ミッションは獲得ポイントが2倍となります"
       id="featured-missions"
     />
   );

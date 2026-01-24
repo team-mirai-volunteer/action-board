@@ -11,10 +11,10 @@ export default async function Activities() {
     <div className="max-w-3xl mx-auto px-4">
       <div className="flex flex-col gap-6">
         <div className="text-center">
-          <h2 className="text-2xl md:text-3xl text-gray-900 mb-1">
+          <h2 className="text-2xl md:text-3xl text-gray-900 mb-2">
             ⏰ 活動タイムライン
           </h2>
-          <p className="text-xs text-gray-600">
+          <p className="text-sm text-gray-600">
             リアルタイムで更新される活動記録
           </p>
         </div>
