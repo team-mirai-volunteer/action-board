@@ -10,10 +10,6 @@ import type {
 } from "../types";
 import { fetchVideoList } from "./tiktok-client";
 
-// NOTE: tiktok_videos, tiktok_video_stats テーブルの型は
-// マイグレーション適用後に `npm run types` で生成される
-// それまでは を使用して型エラーを回避
-
 // #チームみらい を検出する正規表現
 const TEAM_MIRAI_REGEX = /#(チームみらい|teammirai)/i;
 
