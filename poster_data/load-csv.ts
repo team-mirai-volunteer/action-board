@@ -262,6 +262,9 @@ async function main() {
             );
             await db.query(`RELEASE SAVEPOINT ${savepoint}`);
           } catch (error2) {
+            console.warn(
+              `9-column format failed for ${file}. Error: ${error2 instanceof Error ? error2.message : error2}`,
+            );
             // Try legacy 7-column format (no district, no note)
             await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
             console.log("  Retrying with legacy 7-column format...");

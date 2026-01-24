@@ -1959,7 +1959,8 @@ export type Database = {
         | "大阪府"
         | "兵庫県"
         | "愛媛県"
-        | "福岡県";
+        | "福岡県"
+        | "京都府";
       posting_shape_status: "planned" | "completed" | "unavailable" | "other";
     };
     CompositeTypes: {
@@ -2117,6 +2118,7 @@ export const Constants = {
         "兵庫県",
         "愛媛県",
         "福岡県",
+        "京都府",
       ],
       posting_shape_status: ["planned", "completed", "unavailable", "other"],
     },
