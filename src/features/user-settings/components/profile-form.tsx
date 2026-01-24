@@ -55,6 +55,7 @@ interface ProfileFormProps {
     postcode?: string;
   } | null;
   partyMembership: PartyMembership | null;
+  email: string | null;
 }
 
 export default function ProfileForm({
@@ -63,6 +64,7 @@ export default function ProfileForm({
   initialProfile,
   initialPrivateUser,
   partyMembership,
+  email,
 }: ProfileFormProps) {
   const [queryMessage, setQueryMessage] = useState<Message | undefined>(
     message,
@@ -269,6 +271,31 @@ export default function ProfileForm({
               disabled={isPending}
             />
           </div>
+
+          {!isNew && (
+            <div className="space-y-2">
+              <Label htmlFor="email">メールアドレス</Label>
+              {!email || email?.endsWith("@line.local") ? (
+                <p className="text-sm text-gray-500">
+                  メールアドレスが登録されていないため、表示できません
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-500">
+                    この項目は公開されず、変更できません
+                  </p>
+                  <Input
+                    // フォーム送信時に値が送信されないようにname属性は含めない
+                    id="email"
+                    type="email"
+                    value={email}
+                    disabled
+                    className="bg-gray-50 cursor-not-allowed"
+                  />
+                </>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="date_of_birth">生年月日</Label>
