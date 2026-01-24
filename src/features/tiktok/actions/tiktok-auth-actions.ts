@@ -3,12 +3,12 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { headers } from "next/headers";
-import type {
-  TikTokLinkResult,
-  TikTokTokenResponse,
-  TikTokUser,
-  TikTokUserInfoResponse,
-} from "../types";
+import {
+  exchangeCodeForToken,
+  fetchUserInfo,
+  refreshAccessToken,
+} from "../services/tiktok-client";
+import type { TikTokLinkResult } from "../types";
 
 /**
  * TikTokアカウント連携処理のServer Action
@@ -33,90 +33,14 @@ export async function handleTikTokLinkAction(
       };
     }
 
-    // TikTok APIでトークンと交換
-    const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-    const clientSecret = process.env.TIKTOK_CLIENT_SECRET;
-
-    if (!clientKey || !clientSecret) {
-      console.error("TikTok credentials not configured");
-      return {
-        success: false,
-        error: "TikTok認証の設定が不完全です",
-      };
-    }
-
     const origin = (await headers()).get("origin");
     const redirectUri = `${origin || "http://localhost:3000"}/auth/tiktok-callback`;
 
-    // トークン交換リクエスト
-    const tokenResponse = await fetch(
-      "https://open.tiktokapis.com/v2/oauth/token/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          client_key: clientKey,
-          client_secret: clientSecret,
-          code: code,
-          grant_type: "authorization_code",
-          redirect_uri: redirectUri,
-          code_verifier: codeVerifier,
-        }),
-      },
-    );
-
-    if (!tokenResponse.ok) {
-      const errorBody = await tokenResponse.text();
-      console.error("TikTok token exchange failed:", errorBody);
-      return {
-        success: false,
-        error: "TikTokとの認証に失敗しました",
-      };
-    }
-
-    const tokens: TikTokTokenResponse = await tokenResponse.json();
-
-    if (!tokens.access_token || !tokens.open_id) {
-      console.error("Invalid TikTok token response:", tokens);
-      return {
-        success: false,
-        error: "TikTokからの応答が不正です",
-      };
-    }
+    // TikTok APIでトークンと交換
+    const tokens = await exchangeCodeForToken(code, codeVerifier, redirectUri);
 
     // TikTokユーザー情報を取得
-    const userInfoResponse = await fetch(
-      "https://open.tiktokapis.com/v2/user/info/?fields=open_id,union_id,avatar_url,display_name",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
-        },
-      },
-    );
-
-    if (!userInfoResponse.ok) {
-      const errorBody = await userInfoResponse.text();
-      console.error("TikTok user info failed:", errorBody);
-      return {
-        success: false,
-        error: "TikTokユーザー情報の取得に失敗しました",
-      };
-    }
-
-    const userInfoData: TikTokUserInfoResponse = await userInfoResponse.json();
-
-    if (userInfoData.error?.code && userInfoData.error.code !== "ok") {
-      console.error("TikTok user info error:", userInfoData.error);
-      return {
-        success: false,
-        error: `TikTokエラー: ${userInfoData.error.message}`,
-      };
-    }
-
-    const tiktokUser: TikTokUser = userInfoData.data.user;
+    const tiktokUser = await fetchUserInfo(tokens.access_token);
 
     // tiktok_user_connectionsテーブルに保存（upsert）
     // NOTE: テーブルがSupabase型定義に存在しないため、マイグレーション適用後に npm run types で型を更新する
@@ -191,8 +115,7 @@ export async function unlinkTikTokAccountAction(): Promise<TikTokLinkResult> {
 
     // tiktok_user_connectionsテーブルから削除
     const adminClient = await createAdminClient();
-    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
-    const { error: deleteError } = await (adminClient as any)
+    const { error: deleteError } = await adminClient
       .from("tiktok_user_connections")
       .delete()
       .eq("user_id", user.id);
@@ -240,8 +163,7 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
 
     // tiktok_user_connectionsからリフレッシュトークンを取得
     const adminClient = await createAdminClient();
-    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
-    const { data: connection, error: fetchError } = await (adminClient as any)
+    const { data: connection, error: fetchError } = await adminClient
       .from("tiktok_user_connections")
       .select("refresh_token")
       .eq("user_id", user.id)
@@ -254,46 +176,11 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
       };
     }
 
-    const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-    const clientSecret = process.env.TIKTOK_CLIENT_SECRET;
-
-    if (!clientKey || !clientSecret) {
-      return {
-        success: false,
-        error: "TikTok認証の設定が不完全です",
-      };
-    }
-
-    const tokenResponse = await fetch(
-      "https://open.tiktokapis.com/v2/oauth/token/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          client_key: clientKey,
-          client_secret: clientSecret,
-          grant_type: "refresh_token",
-          refresh_token: connection.refresh_token,
-        }),
-      },
-    );
-
-    if (!tokenResponse.ok) {
-      const errorBody = await tokenResponse.text();
-      console.error("TikTok token refresh failed:", errorBody);
-      return {
-        success: false,
-        error: "TikTokトークンの更新に失敗しました",
-      };
-    }
-
-    const tokens: TikTokTokenResponse = await tokenResponse.json();
+    // TikTok APIでトークンをリフレッシュ
+    const tokens = await refreshAccessToken(connection.refresh_token);
 
     // 新しいトークンを保存
-    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
-    const { error: updateError } = await (adminClient as any)
+    const { error: updateError } = await adminClient
       .from("tiktok_user_connections")
       .update({
         access_token: tokens.access_token,
@@ -343,8 +230,7 @@ export async function getTikTokConnectionForUser(userId: string): Promise<{
 } | null> {
   try {
     const adminClient = await createAdminClient();
-    // biome-ignore lint/suspicious/noExplicitAny: tiktok_user_connectionsテーブルの型が生成されるまでの一時的な対応
-    const { data: connection, error } = await (adminClient as any)
+    const { data: connection, error } = await adminClient
       .from("tiktok_user_connections")
       .select("tiktok_open_id, access_token, display_name, token_expires_at")
       .eq("user_id", userId)
@@ -357,7 +243,7 @@ export async function getTikTokConnectionForUser(userId: string): Promise<{
     return {
       tiktokOpenId: connection.tiktok_open_id,
       accessToken: connection.access_token,
-      displayName: connection.display_name,
+      displayName: connection.display_name ?? undefined,
       tokenExpiresAt: connection.token_expires_at,
     };
   } catch {

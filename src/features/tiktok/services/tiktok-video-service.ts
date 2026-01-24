@@ -6,9 +6,9 @@ import type {
   TikTokSyncResult,
   TikTokVideo,
   TikTokVideoFromAPI,
-  TikTokVideoListResponse,
   TikTokVideoStats,
 } from "../types";
+import { fetchVideoList } from "./tiktok-client";
 
 // NOTE: tiktok_videos, tiktok_video_stats テーブルの型は
 // マイグレーション適用後に `npm run types` で生成される
@@ -16,66 +16,6 @@ import type {
 
 // #チームみらい を検出する正規表現
 const TEAM_MIRAI_REGEX = /#(チームみらい|teammirai)/i;
-
-/**
- * TikTok APIからユーザーの動画一覧を取得する
- */
-export async function fetchTikTokVideosFromAPI(
-  accessToken: string,
-  cursor?: number,
-): Promise<{ videos: TikTokVideoFromAPI[]; hasMore: boolean; cursor: number }> {
-  const fields = [
-    "id",
-    "create_time",
-    "cover_image_url",
-    "share_url",
-    "video_description",
-    "duration",
-    "title",
-    "like_count",
-    "comment_count",
-    "share_count",
-    "view_count",
-  ].join(",");
-
-  const url = new URL("https://open.tiktokapis.com/v2/video/list/");
-  url.searchParams.set("fields", fields);
-
-  const body: Record<string, number> = {
-    max_count: 20,
-  };
-  if (cursor) {
-    body.cursor = cursor;
-  }
-
-  const response = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("TikTok video list fetch failed:", errorText);
-    throw new Error("TikTok動画一覧の取得に失敗しました");
-  }
-
-  const data: TikTokVideoListResponse = await response.json();
-
-  if (data.error?.code && data.error.code !== "ok") {
-    console.error("TikTok API error:", data.error);
-    throw new Error(`TikTok APIエラー: ${data.error.message}`);
-  }
-
-  return {
-    videos: data.data.videos || [],
-    hasMore: data.data.has_more,
-    cursor: data.data.cursor,
-  };
-}
 
 /**
  * #チームみらい 動画をフィルタリングする
@@ -240,7 +180,7 @@ export async function syncUserTikTokVideos(
 
     // ページネーションで全動画を取得
     while (hasMore) {
-      const result = await fetchTikTokVideosFromAPI(accessToken, cursor);
+      const result = await fetchVideoList(accessToken, cursor);
       const teamMiraiVideos = filterTeamMiraiVideos(result.videos);
 
       for (const video of teamMiraiVideos) {
