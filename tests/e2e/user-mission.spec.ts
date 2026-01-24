@@ -182,9 +182,10 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(
       signedInPage.getByText("このミッションは何度でもチャレンジできます。"),
     ).toBeVisible();
-    await expect(signedInPage.getByText("800ポイント獲得しました")).toBeVisible(
-      { timeout: 10000 },
-    );
+    // 重要ミッションなので獲得ポイントが2倍になっていることを確認
+    await expect(
+      signedInPage.getByText("1600ポイント獲得しました"),
+    ).toBeVisible({ timeout: 10000 });
 
     // ミッション完了後のポイントの変動を確認
     await signedInPage.goto("/");
@@ -198,7 +199,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       signedInPage
         .locator("section")
         .getByText(
-          "テストユーザーLV.9東京都800 ポイント次のレベルまで100ポイント",
+          "テストユーザーLV.13東京都1,600 ポイント次のレベルまで90ポイント",
         ),
     ).toBeVisible({ timeout: 10000 });
 
@@ -208,7 +209,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(
       signedInPage
         .getByRole("link", {
-          name: "テストユーザー 東京都 Lv.9 800pt",
+          name: "テストユーザー 東京都 Lv.13 1600pt",
         })
         .first(),
     ).toBeVisible({ timeout: 10000 });
