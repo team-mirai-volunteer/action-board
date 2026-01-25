@@ -654,16 +654,22 @@ export default function DetailedPosterMapClient({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(statusConfig).map(([status, config]) => (
-                    <SelectItem key={status} value={status}>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
-                        />
-                        <span>{config.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {Object.entries(statusConfig)
+                    .filter(
+                      ([status]) =>
+                        status !== "error_wrong_place" &&
+                        status !== "error_damaged",
+                    )
+                    .map(([status, config]) => (
+                      <SelectItem key={status} value={status}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
+                          />
+                          <span>{config.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
