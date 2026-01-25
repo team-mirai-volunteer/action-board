@@ -25,15 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { maskUsername } from "@/lib/utils/privacy";
-import {
-  Archive,
-  ArrowLeft,
-  Copy,
-  HelpCircle,
-  History,
-  MapPin,
-} from "lucide-react";
+import { Archive, ArrowLeft, Copy, HelpCircle, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -126,7 +118,6 @@ export default function DetailedPosterMapClient({
   const [selectedBoardForLogin, setSelectedBoardForLogin] =
     useState<PosterBoard | null>(null);
   const [history, setHistory] = useState<StatusHistory[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [stats, setStats] = useState(initialStats);
@@ -180,7 +171,6 @@ export default function DetailedPosterMapClient({
           setUpdateStatus(savedBoard.status);
           setUpdateNote("");
           setHistory([]);
-          setShowHistory(false);
           setIsUpdateDialogOpen(true);
 
           // 使用済みのデータをクリア
@@ -190,6 +180,24 @@ export default function DetailedPosterMapClient({
       }
     }
   }, [userId, boards, prefecture]);
+
+  // ダイアログが開いたときに履歴を自動読み込み
+  useEffect(() => {
+    if (isUpdateDialogOpen && selectedBoard && userId) {
+      const loadHistoryOnOpen = async () => {
+        setLoadingHistory(true);
+        try {
+          const data = await getBoardStatusHistoryAction(selectedBoard.id);
+          setHistory(data as unknown as StatusHistory[]);
+        } catch (error) {
+          toast.error("履歴の読み込みに失敗しました");
+        } finally {
+          setLoadingHistory(false);
+        }
+      };
+      loadHistoryOnOpen();
+    }
+  }, [isUpdateDialogOpen, selectedBoard, userId]);
 
   // 住所をクリップボードにコピー
   const copyToClipboard = async (text: string) => {
@@ -283,22 +291,7 @@ export default function DetailedPosterMapClient({
     setUpdateStatus(fullBoardData.status);
     setUpdateNote("");
     setHistory([]);
-    setShowHistory(false);
     setIsUpdateDialogOpen(true);
-  };
-
-  const loadHistory = async () => {
-    if (!selectedBoard || !userId) return;
-
-    setLoadingHistory(true);
-    try {
-      const data = await getBoardStatusHistoryAction(selectedBoard.id);
-      setHistory(data as unknown as StatusHistory[]);
-    } catch (error) {
-      toast.error("履歴の読み込みに失敗しました");
-    } finally {
-      setLoadingHistory(false);
-    }
   };
 
   // ミッション達成処理
@@ -364,7 +357,6 @@ export default function DetailedPosterMapClient({
       await loadBoards(); // Reload to get updated data
       // Clear history so it's fresh next time
       setHistory([]);
-      setShowHistory(false);
     } catch (error) {
       toast.error("ステータスの更新に失敗しました");
     } finally {
@@ -687,88 +679,66 @@ export default function DetailedPosterMapClient({
             </div>
           </div>
           {/* History Section */}
-          {showHistory && (
-            <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">更新履歴</h3>
-                {selectedBoard && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span>ID: {selectedBoard.id}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-5 w-5 p-0"
-                      onClick={() => copyToClipboard(selectedBoard.id)}
-                      title="IDをコピー"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
-                )}
-              </div>
-              {loadingHistory ? (
-                <div className="text-sm text-muted-foreground">
-                  読み込み中...
-                </div>
-              ) : history.length === 0 ? (
-                <div className="text-sm text-muted-foreground">
-                  履歴がありません
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {history.map((item) => (
-                    <div key={item.id} className="text-sm">
-                      <div className="text-muted-foreground">
-                        {statusConfig[item.previous_status as BoardStatus]
-                          ?.label || item.previous_status}
-                        →
-                        {statusConfig[item.new_status as BoardStatus]?.label ||
-                          item.new_status}
-                      </div>
-                      <div className="text-muted-foreground text-xs">
-                        {new Date(item.created_at).toLocaleString("ja-JP")}
-                        {item.user?.name && (
-                          <span className="ml-2">
-                            by {maskUsername(item.user.name)}
-                          </span>
-                        )}
-                        {item.note && (
-                          <span className="ml-2">「{item.note}」</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+          <div className="border-t pt-4 mt-4 max-h-48 overflow-y-auto">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold">更新履歴</h3>
+              {selectedBoard && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <span>ID: {selectedBoard.id}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-5 w-5 p-0"
+                    onClick={() => copyToClipboard(selectedBoard.id)}
+                    title="IDをコピー"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
                 </div>
               )}
             </div>
-          )}
-          <DialogFooter className="flex items-center justify-between">
+            {loadingHistory ? (
+              <div className="text-sm text-muted-foreground">読み込み中...</div>
+            ) : history.length === 0 ? (
+              <div className="text-sm text-muted-foreground">
+                履歴がありません
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {history.map((item) => (
+                  <div key={item.id} className="text-sm">
+                    <div className="text-muted-foreground">
+                      {statusConfig[item.previous_status as BoardStatus]
+                        ?.label || item.previous_status}
+                      →
+                      {statusConfig[item.new_status as BoardStatus]?.label ||
+                        item.new_status}
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      {new Date(item.created_at).toLocaleString("ja-JP")}
+                      {item.user?.name && (
+                        <span className="ml-2">by {item.user.name}</span>
+                      )}
+                      {item.note && (
+                        <span className="ml-2">「{item.note}」</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter className="flex justify-end gap-2">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (!showHistory) {
-                  loadHistory();
-                }
-                setShowHistory(!showHistory);
-              }}
-              type="button"
+              variant="outline"
+              onClick={() => setIsUpdateDialogOpen(false)}
+              disabled={isUpdating}
             >
-              <History className="mr-2 h-4 w-4" />
-              これまでの報告
+              キャンセル
             </Button>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsUpdateDialogOpen(false)}
-                disabled={isUpdating}
-              >
-                キャンセル
-              </Button>
-              <Button onClick={handleStatusUpdate} disabled={isUpdating}>
-                {isUpdating ? "報告中..." : "報告する"}
-              </Button>
-            </div>
+            <Button onClick={handleStatusUpdate} disabled={isUpdating}>
+              {isUpdating ? "報告中..." : "報告する"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -101,8 +101,10 @@
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 
    # `supabase start` 実行時に表示される値を指定します。
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   # Authentication Keys -> Publishable
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxx
+   # Authentication Keys -> Secret
+   SUPABASE_SERVICE_ROLE_KEY=sb_secret_xxx
 
    # SentryのDSNを指定します。開発時は空でもかまいません。
    NEXT_PUBLIC_SENTRY_DSN=

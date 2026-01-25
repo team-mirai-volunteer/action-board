@@ -58,7 +58,8 @@ export async function getPosterBoardStatsAction(
           .from("poster_boards")
           .select("*", { count: "exact", head: true })
           .eq("prefecture", prefecture)
-          .eq("status", status);
+          .eq("status", status)
+          .eq("archived", false);
 
         if (error) {
           console.error(`Error counting ${status}:`, error);
@@ -72,7 +73,8 @@ export async function getPosterBoardStatsAction(
       const totalCountPromise = supabase
         .from("poster_boards")
         .select("*", { count: "exact", head: true })
-        .eq("prefecture", prefecture);
+        .eq("prefecture", prefecture)
+        .eq("archived", false);
 
       // すべてのクエリを並列実行
       const [statusResults, totalResult] = await Promise.all([
@@ -265,8 +267,9 @@ export async function getUserEditedBoardIdsByDistrictAction(
     // 区割りでフィルタリングして取得
     const { data, error } = await supabase
       .from("poster_board_latest_editors")
-      .select("board_id, poster_boards!inner(district)")
-      .eq("poster_boards.district", district)
+      .select("board_id")
+      .eq("district", district)
+      .eq("archived", false)
       .eq("last_editor_id", userId);
 
     if (error) {
