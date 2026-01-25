@@ -55,7 +55,7 @@ export function LoginSection({
         ) : (
           <p className="text-sm text-gray-500">
             ※
-            メールアドレス・パスワードログイン以外のアカウントのメールアドレスは変更できません。
+            メールアドレスログイン以外のアカウントのメールアドレスは変更できません。
           </p>
         )}
       </CardContent>
