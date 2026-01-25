@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/client";
-import { isLineUser } from "@/lib/utils/auth-utils";
+import { isEmailUser } from "@/lib/utils/auth-utils";
 import { z } from "zod";
 
 export type UpdateEmailResult = {
@@ -39,11 +39,12 @@ export async function updateEmailAction(
     };
   }
 
-  // LINE連携ユーザーのチェック
-  if (isLineUser(user)) {
+  // メールアドレスログインユーザーのチェック
+  if (!isEmailUser(user)) {
     return {
       success: false,
-      error: "LINE連携されているアカウントのメールアドレスは変更できません",
+      error:
+        "メールアドレスログイン以外のアカウントのメールアドレスは変更できません",
     };
   }
 
