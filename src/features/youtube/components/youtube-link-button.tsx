@@ -133,7 +133,7 @@ export function YouTubeLinkButton({
         ) : (
           <>
             <GoogleIcon className="w-5 h-5 flex-shrink-0" />
-            <span className="text-[#1F1F1F] text-sm font-medium">
+            <span className="text-[#1F1F1F] text-sm font-bold">
               Googleアカウントで連携
             </span>
           </>
