@@ -497,8 +497,18 @@ export default function DetailedPosterMapClient({
 
           {/* ステータス別内訳 */}
           <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {Object.entries(statusConfig).map(([status, config]) => {
-              const count = statusCounts[status as BoardStatus] || 0;
+            {(
+              [
+                "not_yet",
+                "not_yet_dangerous",
+                "reserved",
+                "done",
+                "error_wrong_poster",
+                "other",
+              ] as BoardStatus[]
+            ).map((status) => {
+              const config = statusConfig[status];
+              const count = statusCounts[status] || 0;
               return (
                 <div key={status} className="flex items-center gap-1">
                   <div
@@ -654,16 +664,28 @@ export default function DetailedPosterMapClient({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(statusConfig).map(([status, config]) => (
-                    <SelectItem key={status} value={status}>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
-                        />
-                        <span>{config.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {(
+                    [
+                      "not_yet",
+                      "reserved",
+                      "done",
+                      "not_yet_dangerous",
+                      "error_wrong_poster",
+                      "other",
+                    ] as BoardStatus[]
+                  ).map((status) => {
+                    const config = statusConfig[status];
+                    return (
+                      <SelectItem key={status} value={status}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
+                          />
+                          <span>{config.label}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
