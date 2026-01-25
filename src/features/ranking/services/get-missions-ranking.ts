@@ -1,8 +1,12 @@
 import "server-only";
 
-import { getJSTMidnightToday } from "@/lib/dateUtils";
+import {
+  getPartyMembership,
+  getPartyMembershipMap,
+} from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
+import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { RankingPeriod, UserMissionRanking } from "../types/ranking-types";
 
 export async function getMissionRanking(
@@ -56,6 +60,12 @@ export async function getMissionRanking(
       return [];
     }
 
+    const membershipMap = await getPartyMembershipMap(
+      rankings
+        .map((ranking) => ranking.user_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
+    );
+
     // ランキングデータを変換
     if (period === "all") {
       return rankings.map(
@@ -70,6 +80,10 @@ export async function getMissionRanking(
             updated_at: ranking.updated_at,
             user_achievement_count: ranking.user_achievement_count,
             total_points: ranking.total_points,
+            party_membership:
+              ranking.user_id && membershipMap[ranking.user_id]
+                ? membershipMap[ranking.user_id]
+                : null,
           }) as UserMissionRanking,
       );
     }
@@ -86,6 +100,10 @@ export async function getMissionRanking(
           updated_at: null,
           user_achievement_count: ranking.user_achievement_count,
           total_points: ranking.total_points,
+          party_membership:
+            ranking.user_id && membershipMap[ranking.user_id]
+              ? membershipMap[ranking.user_id]
+              : null,
         }) as UserMissionRanking,
     );
   } catch (error) {
@@ -147,6 +165,8 @@ export async function getUserMissionRanking(
 
     const ranking = rankings[0] as Record<string, unknown>;
 
+    const partyMembership = await getPartyMembership(userId);
+
     return {
       user_id: ranking.user_id,
       name: ranking.user_name,
@@ -157,6 +177,7 @@ export async function getUserMissionRanking(
       updated_at: ranking.updated_at,
       user_achievement_count: ranking.user_achievement_count,
       total_points: ranking.total_points,
+      party_membership: partyMembership,
     } as UserMissionRanking;
   } catch (error) {
     console.error("User mission ranking service error:", error);

@@ -2,11 +2,9 @@ import type { Tables } from "@/lib/types/supabase";
 // TOPページ用のランキングコンポーネント
 import {
   getMissionRanking,
-  getTopUsersPostingCount,
   getTopUsersPostingCountByMission,
 } from "../services/get-missions-ranking";
 import { BaseRanking } from "./base-ranking";
-import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
 
 interface RankingTopProps {

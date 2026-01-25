@@ -1,5 +1,6 @@
 "use client";
 
+import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import type { Map as LeafletMap } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -74,8 +75,18 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       // Create map
       if (!mapRef.current) return;
 
+      // Check if container already has a map (can happen with React StrictMode)
+      // biome-ignore lint/suspicious/noExplicitAny: Leaflet adds _leaflet_id to container
+      if ((mapRef.current as any)._leaflet_id) {
+        console.log("Map container already initialized, skipping");
+        return;
+      }
+
       try {
-        const map = L.map(mapRef.current).setView([35.6762, 139.6503], 10);
+        const map = L.map(mapRef.current, { maxZoom: 18 }).setView(
+          [35.6762, 139.6503],
+          16,
+        );
         mapInstanceRef.current = map;
 
         console.log("Map created, pm available:", !!map.pm);
@@ -150,7 +161,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         className={className}
         style={{
           width: "100%",
-          height: "100vh",
+          height: CONTENT_HEIGHT,
           margin: 0,
           padding: 0,
         }}

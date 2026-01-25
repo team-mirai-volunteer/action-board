@@ -507,6 +507,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      party_memberships: {
+        Row: {
+          badge_visibility: boolean;
+          created_at: string;
+          metadata: Json;
+          plan: string;
+          synced_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          badge_visibility?: boolean;
+          created_at?: string;
+          metadata?: Json;
+          plan?: string;
+          synced_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       poster_activities: {
         Row: {
           address: string | null;
@@ -670,8 +700,11 @@ export type Database = {
       poster_boards: {
         Row: {
           address: string | null;
+          archived: boolean | null;
           city: string;
           created_at: string;
+          district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -685,8 +718,11 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
+          archived?: boolean | null;
           city: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -700,8 +736,11 @@ export type Database = {
         };
         Update: {
           address?: string | null;
+          archived?: boolean | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -722,6 +761,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -730,6 +770,7 @@ export type Database = {
           location_text: string;
           mission_artifact_id: string;
           posting_count: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -738,6 +779,7 @@ export type Database = {
           location_text?: string;
           mission_artifact_id?: string;
           posting_count?: number;
+          shape_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -748,74 +790,140 @@ export type Database = {
             referencedRelation: "mission_artifacts";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "posting_activities_shape_id_fkey";
+            columns: ["shape_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_shapes";
+            referencedColumns: ["id"];
+          },
         ];
       };
-      posting_shapes: {
+      posting_events: {
         Row: {
-          coordinates: Json;
           created_at: string | null;
+          description: string | null;
           id: string;
-          properties: Json | null;
-          type: string;
+          is_active: boolean;
+          slug: string;
+          title: string;
           updated_at: string | null;
         };
         Insert: {
-          coordinates: Json;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
-          properties?: Json | null;
-          type: string;
+          is_active?: boolean;
+          slug: string;
+          title: string;
           updated_at?: string | null;
         };
         Update: {
-          coordinates?: Json;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
-          properties?: Json | null;
-          type?: string;
+          is_active?: boolean;
+          slug?: string;
+          title?: string;
           updated_at?: string | null;
         };
         Relationships: [];
       };
+      posting_shapes: {
+        Row: {
+          address: string | null;
+          area_m2: number | null;
+          city: string | null;
+          coordinates: Json;
+          created_at: string | null;
+          event_id: string;
+          id: string;
+          lat: number | null;
+          lng: number | null;
+          memo: string | null;
+          postcode: string | null;
+          prefecture: string | null;
+          properties: Json | null;
+          status: Database["public"]["Enums"]["posting_shape_status"];
+          type: string;
+          updated_at: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          address?: string | null;
+          area_m2?: number | null;
+          city?: string | null;
+          coordinates: Json;
+          created_at?: string | null;
+          event_id: string;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
+          type: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          address?: string | null;
+          area_m2?: number | null;
+          city?: string | null;
+          coordinates?: Json;
+          created_at?: string | null;
+          event_id?: string;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          memo?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          properties?: Json | null;
+          status?: Database["public"]["Enums"]["posting_shape_status"];
+          type?: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posting_shapes_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "posting_events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       private_users: {
         Row: {
-          address_prefecture: string;
-          avatar_url: string | null;
           created_at: string;
           date_of_birth: string;
           hubspot_contact_id: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at: string;
           updated_at: string;
-          x_username: string | null;
         };
         Insert: {
-          address_prefecture: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth: string;
           hubspot_contact_id?: string | null;
           id: string;
-          name: string;
           postcode: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Update: {
-          address_prefecture?: string;
-          avatar_url?: string | null;
           created_at?: string;
           date_of_birth?: string;
           hubspot_contact_id?: string | null;
           id?: string;
-          name?: string;
           postcode?: string;
           registered_at?: string;
           updated_at?: string;
-          x_username?: string | null;
         };
         Relationships: [];
       };
@@ -827,15 +935,17 @@ export type Database = {
           github_username: string | null;
           id: string;
           name: string;
+          updated_at: string;
           x_username: string | null;
         };
         Insert: {
           address_prefecture: string;
           avatar_url?: string | null;
-          created_at: string;
+          created_at?: string;
           github_username?: string | null;
           id: string;
           name: string;
+          updated_at?: string;
           x_username?: string | null;
         };
         Update: {
@@ -845,6 +955,7 @@ export type Database = {
           github_username?: string | null;
           id?: string;
           name?: string;
+          updated_at?: string;
           x_username?: string | null;
         };
         Relationships: [];
@@ -1000,6 +1111,8 @@ export type Database = {
           address: string | null;
           city: string;
           created_at: string;
+          district: string | null;
+          election_term: string | null;
           file_name: string | null;
           id: string | null;
           lat: number | null;
@@ -1015,6 +1128,8 @@ export type Database = {
           address?: string | null;
           city: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1030,6 +1145,8 @@ export type Database = {
           address?: string | null;
           city?: string;
           created_at?: string;
+          district?: string | null;
+          election_term?: string | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1040,6 +1157,149 @@ export type Database = {
           row_number?: number | null;
           status?: Database["public"]["Enums"]["poster_board_status"];
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      tiktok_user_connections: {
+        Row: {
+          access_token: string;
+          avatar_url: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          id: string;
+          refresh_token: string;
+          refresh_token_expires_at: string | null;
+          scopes: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id: string | null;
+          token_expires_at: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          access_token: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id: string;
+          tiktok_union_id?: string | null;
+          token_expires_at: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          access_token?: string;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          id?: string;
+          refresh_token?: string;
+          refresh_token_expires_at?: string | null;
+          scopes?: string[] | null;
+          tiktok_open_id?: string;
+          tiktok_union_id?: string | null;
+          token_expires_at?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      tiktok_video_stats: {
+        Row: {
+          comment_count: number | null;
+          created_at: string | null;
+          id: string;
+          like_count: number | null;
+          recorded_at: string;
+          share_count: number | null;
+          tiktok_video_id: string | null;
+          view_count: number | null;
+        };
+        Insert: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Update: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at?: string;
+          share_count?: number | null;
+          tiktok_video_id?: string | null;
+          view_count?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tiktok_video_stats_tiktok_video_id_fkey";
+            columns: ["tiktok_video_id"];
+            isOneToOne: false;
+            referencedRelation: "tiktok_videos";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tiktok_videos: {
+        Row: {
+          created_at: string | null;
+          creator_id: string;
+          creator_username: string | null;
+          description: string | null;
+          duration: number | null;
+          id: string;
+          is_active: boolean | null;
+          published_at: string | null;
+          tags: string[] | null;
+          thumbnail_url: string | null;
+          title: string | null;
+          updated_at: string | null;
+          user_id: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          creator_id: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Update: {
+          created_at?: string | null;
+          creator_id?: string;
+          creator_username?: string | null;
+          description?: string | null;
+          duration?: number | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          video_id?: string;
+          video_url?: string;
         };
         Relationships: [];
       };
@@ -1261,6 +1521,140 @@ export type Database = {
           },
         ];
       };
+      youtube_user_connections: {
+        Row: {
+          access_token: string;
+          avatar_url: string | null;
+          channel_id: string;
+          created_at: string | null;
+          display_name: string | null;
+          google_user_id: string;
+          id: string;
+          refresh_token: string;
+          scopes: string[] | null;
+          token_expires_at: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          access_token: string;
+          avatar_url?: string | null;
+          channel_id: string;
+          created_at?: string | null;
+          display_name?: string | null;
+          google_user_id: string;
+          id?: string;
+          refresh_token: string;
+          scopes?: string[] | null;
+          token_expires_at: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          access_token?: string;
+          avatar_url?: string | null;
+          channel_id?: string;
+          created_at?: string | null;
+          display_name?: string | null;
+          google_user_id?: string;
+          id?: string;
+          refresh_token?: string;
+          scopes?: string[] | null;
+          token_expires_at?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      youtube_video_stats: {
+        Row: {
+          comment_count: number | null;
+          created_at: string | null;
+          id: string;
+          like_count: number | null;
+          recorded_at: string;
+          view_count: number | null;
+          youtube_video_id: string | null;
+        };
+        Insert: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at: string;
+          view_count?: number | null;
+          youtube_video_id?: string | null;
+        };
+        Update: {
+          comment_count?: number | null;
+          created_at?: string | null;
+          id?: string;
+          like_count?: number | null;
+          recorded_at?: string;
+          view_count?: number | null;
+          youtube_video_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_stats_youtube_video_id_fkey";
+            columns: ["youtube_video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      youtube_videos: {
+        Row: {
+          channel_id: string;
+          channel_title: string | null;
+          created_at: string | null;
+          description: string | null;
+          duration: string | null;
+          id: string;
+          is_active: boolean | null;
+          published_at: string | null;
+          tags: string[] | null;
+          thumbnail_url: string | null;
+          title: string;
+          updated_at: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Insert: {
+          channel_id: string;
+          channel_title?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          duration?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title: string;
+          updated_at?: string | null;
+          video_id: string;
+          video_url: string;
+        };
+        Update: {
+          channel_id?: string;
+          channel_title?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          duration?: string | null;
+          id?: string;
+          is_active?: boolean | null;
+          published_at?: string | null;
+          tags?: string[] | null;
+          thumbnail_url?: string | null;
+          title?: string;
+          updated_at?: string | null;
+          video_id?: string;
+          video_url?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       activity_timeline_view: {
@@ -1270,6 +1664,7 @@ export type Database = {
           avatar_url: string | null;
           created_at: string | null;
           id: string | null;
+          mission_id: string | null;
           name: string | null;
           title: string | null;
           user_id: string | null;
@@ -1357,7 +1752,9 @@ export type Database = {
       };
       poster_board_latest_editors: {
         Row: {
+          archived: boolean | null;
           board_id: string | null;
+          district: string | null;
           last_edited_at: string | null;
           last_editor_id: string | null;
           lat: number | null;
@@ -1441,6 +1838,14 @@ export type Database = {
       delete_user_account: {
         Args: { target_user_id: string };
         Returns: undefined;
+      };
+      get_archived_poster_board_stats: {
+        Args: { p_election_term: string };
+        Returns: {
+          count: number;
+          prefecture: string;
+          status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
       };
       get_mission_links: {
         Args: { p_mission_id: string };
@@ -1537,7 +1942,7 @@ export type Database = {
         }[];
       };
       get_poster_board_stats: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           count: number;
           prefecture: string;
@@ -1585,6 +1990,14 @@ export type Database = {
       };
       get_user_by_email: {
         Args: { user_email: string };
+        Returns: {
+          email: string;
+          id: string;
+          user_metadata: Json;
+        }[];
+      };
+      get_user_by_line_id: {
+        Args: { line_user_id: string };
         Returns: {
           email: string;
           id: string;
@@ -1704,6 +2117,15 @@ export type Database = {
           xp: number;
         }[];
       };
+      get_users_by_emails: {
+        Args: { email_list: string[] };
+        Returns: {
+          email: string;
+          id: string;
+        }[];
+      };
+      is_admin: { Args: never; Returns: boolean };
+      is_posting_admin: { Args: never; Returns: boolean };
     };
     Enums: {
       poster_board_status:
@@ -1727,7 +2149,9 @@ export type Database = {
         | "大阪府"
         | "兵庫県"
         | "愛媛県"
-        | "福岡県";
+        | "福岡県"
+        | "京都府";
+      posting_shape_status: "planned" | "completed" | "unavailable" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1884,7 +2308,9 @@ export const Constants = {
         "兵庫県",
         "愛媛県",
         "福岡県",
+        "京都府",
       ],
+      posting_shape_status: ["planned", "completed", "unavailable", "other"],
     },
   },
 } as const;

@@ -2,6 +2,35 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { RankingItem } from "./ranking-item";
 
+const mockUserNameWithBadge = jest.fn(
+  ({ name, membership }: { name: string; membership?: unknown }) => (
+    <span
+      data-testid="user-name-with-badge"
+      data-membership={JSON.stringify(membership)}
+    >
+      {name}
+    </span>
+  ),
+);
+
+jest.mock(
+  "@/features/party-membership/components/user-name-with-badge",
+  () => ({
+    UserNameWithBadge: (props: unknown) =>
+      mockUserNameWithBadge(props as { name: string; membership?: unknown }),
+  }),
+);
+
+const mockPartyMembership = {
+  user_id: "test-user-1",
+  plan: "starter",
+  badge_visibility: true,
+  synced_at: "2024-01-01T00:00:00Z",
+  metadata: {},
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
 type UserRanking = {
   user_id: string;
   name: string;
@@ -10,6 +39,7 @@ type UserRanking = {
   level: number | null;
   xp: number | null;
   updated_at: string | null;
+  party_membership?: typeof mockPartyMembership | null;
 };
 
 type UserMissionRanking = {
@@ -22,6 +52,7 @@ type UserMissionRanking = {
   updated_at: string | null;
   user_achievement_count: number | null;
   total_points: number | null;
+  party_membership?: typeof mockPartyMembership | null;
 };
 
 jest.mock("next/link", () => {
@@ -61,6 +92,7 @@ const mockUserRanking: UserRanking = {
   level: 15,
   xp: 1500,
   updated_at: "2024-01-01T00:00:00Z",
+  party_membership: mockPartyMembership,
 };
 
 const mockUserMissionRanking: UserMissionRanking = {
@@ -73,9 +105,14 @@ const mockUserMissionRanking: UserMissionRanking = {
   updated_at: null,
   user_achievement_count: null,
   total_points: 2500,
+  party_membership: mockPartyMembership,
 };
 
 describe("RankingItem", () => {
+  beforeEach(() => {
+    mockUserNameWithBadge.mockClear();
+  });
+
   describe("基本的な表示", () => {
     it("ユーザー情報が正しく表示される", () => {
       render(<RankingItem user={mockUserRanking} />);
@@ -84,6 +121,13 @@ describe("RankingItem", () => {
       expect(screen.getByText("東京都")).toBeInTheDocument();
       expect(screen.getByText("1,500pt")).toBeInTheDocument();
       expect(screen.getByText("Lv.15")).toBeInTheDocument();
+      expect(mockUserNameWithBadge).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "テストユーザー",
+          membership: mockUserRanking.party_membership,
+          badgeSize: 20,
+        }),
+      );
     });
 
     it("リンクが正しく設定される", () => {
@@ -211,6 +255,39 @@ describe("RankingItem", () => {
       render(<RankingItem user={user} />);
 
       expect(screen.getByText("Lv.")).toBeInTheDocument();
+    });
+  });
+
+  describe("レベルバッジの色分岐", () => {
+    const renderWithLevel = (level: number | null) =>
+      render(<RankingItem user={{ ...mockUserRanking, level }} />);
+
+    it("level>=40 の分岐を通る", () => {
+      renderWithLevel(40);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.40")).toBeInTheDocument();
+    });
+
+    it("level>=30 の分岐を通る", () => {
+      renderWithLevel(30);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.30")).toBeInTheDocument();
+    });
+
+    it("level>=20 の分岐を通る", () => {
+      renderWithLevel(20);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("Lv.20")).toBeInTheDocument();
+    });
+
+    it("level<10 の分岐を通る", () => {
+      renderWithLevel(5);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("text-emerald-700 bg-emerald-100");
+      expect(screen.getByText("Lv.5")).toBeInTheDocument();
     });
   });
 });

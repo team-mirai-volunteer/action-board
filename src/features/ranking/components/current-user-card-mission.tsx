@@ -14,7 +14,7 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
   mission: _mission, // 将来の使用のために保持
   badgeText,
 }) => {
-  if (!currentUser || !currentUser.user_id) {
+  if (!currentUser?.user_id) {
     return null;
   }
 
@@ -23,6 +23,7 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
     name: currentUser.name,
     address_prefecture: currentUser.address_prefecture,
     rank: currentUser.rank,
+    party_membership: currentUser.party_membership ?? null,
   };
 
   return (

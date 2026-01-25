@@ -64,24 +64,33 @@ jobs:
           BQ_USER_PASSWORD: bq_user_password
           ENABLE_CONFIRMATIONS: false
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       # CSVファイルの検証
       - name: Validate CSV files
         run: |
           echo "Checking poster CSV files..."
-          npm run poster:load-csv
+          pnpm run poster:load-csv
           echo "✅ All CSV files are valid and successfully loaded!"
 
       # オプション: CSVファイルの統計を表示
       - name: Show CSV statistics
         run: |
           echo "📊 CSV File Statistics:"
-          echo "Total CSV files: $(find poster_data -name "*.csv" -type f | wc -l)"
           echo ""
-          echo "Files per directory:"
-          find poster_data -name "*.csv" -type f | xargs -I {} dirname {} | sort | uniq -c
+          echo "Data folders:"
+          for dir in poster_data/data/*/; do
+            if [ -d "$dir" ]; then
+              count=$(find "$dir" -name "*.csv" -type f | wc -l)
+              echo "  $(basename $dir): $count CSV files"
+            fi
+          done
+          echo ""
+          echo "Total CSV files in data: $(find poster_data/data -name "*.csv" -type f | wc -l)"
           echo ""
           echo "Total rows across all CSV files:"
-          find poster_data -name "*.csv" -type f -exec wc -l {} + | tail -n 1
+          find poster_data/data -name "*.csv" -type f -exec wc -l {} + 2>/dev/null | tail -n 1 || echo "  No CSV files found"

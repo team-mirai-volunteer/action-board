@@ -196,3 +196,25 @@ variable "BATCH_ADMIN_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "NEXT_PUBLIC_TIKTOK_CLIENT_KEY" {
+  description = "TikTok Client Key for TikTok Login (public)"
+  type        = string
+}
+
+variable "TIKTOK_CLIENT_SECRET" {
+  description = "TikTok Client Secret for TikTok Login (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "NEXT_PUBLIC_GOOGLE_CLIENT_ID" {
+  description = "Google Client ID for YouTube OAuth (public)"
+  type        = string
+}
+
+variable "GOOGLE_CLIENT_SECRET" {
+  description = "Google Client Secret for YouTube OAuth (sensitive)"
+  type        = string
+  sensitive   = true
+}

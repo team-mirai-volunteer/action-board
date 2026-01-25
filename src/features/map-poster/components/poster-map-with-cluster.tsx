@@ -8,8 +8,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
-import { MAX_ZOOM } from "@/lib/constants";
-import { createClient } from "@/lib/supabase/client";
+import { MAX_ZOOM } from "@/lib/constants/mission-config";
 import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
 import {
@@ -17,6 +16,7 @@ import {
   getPrefectureDefaultZoom,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilterOptimized } from "../hooks/use-poster-board-filter-optimized";
+import { getCurrentUserId } from "../services/poster-boards";
 import { PosterBoardFilter } from "./poster-board-filter";
 
 // Fix Leaflet default marker icon issue with Next.js
@@ -43,6 +43,7 @@ interface PosterMapWithClusterProps {
   }) => void;
   currentUserId?: string;
   userEditedBoardIds?: Set<string>;
+  defaultZoom?: number;
 }
 
 // Status colors for markers
@@ -267,6 +268,7 @@ export default function PosterMapWithCluster({
   onFilterChange,
   currentUserId: userIdFromProps,
   userEditedBoardIds,
+  defaultZoom: defaultZoomProp,
 }: PosterMapWithClusterProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -277,31 +279,21 @@ export default function PosterMapWithCluster({
   );
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Fetch current user and board info
+  // Fetch current user
   useEffect(() => {
     let isMounted = true;
-    const fetchUserAndBoardInfo = async () => {
+    const fetchUser = async () => {
       try {
-        const supabase = createClient();
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) {
-          // ユーザー情報の取得に失敗した場合は静かに終了
-          return;
-        }
-
+        const userId = await getCurrentUserId();
         if (isMounted && !userIdFromProps) {
-          setCurrentUserId(user?.id);
+          setCurrentUserId(userId ?? undefined);
         }
       } catch (error) {
         // エラーは静かに処理
       }
     };
 
-    fetchUserAndBoardInfo();
+    fetchUser();
 
     return () => {
       isMounted = false;
@@ -334,10 +326,10 @@ export default function PosterMapWithCluster({
   }, [filterState, onFilterChange]);
 
   useEffect(() => {
-    // Get zoom level for the prefecture
-    const zoomLevel = prefectureKey
-      ? getPrefectureDefaultZoom(prefectureKey)
-      : 12;
+    // Get zoom level: use prop if provided, otherwise get from prefecture config
+    const zoomLevel =
+      defaultZoomProp ??
+      (prefectureKey ? getPrefectureDefaultZoom(prefectureKey) : 12);
 
     if (!mapRef.current) {
       // Initialize map with calculated zoom
@@ -432,7 +424,7 @@ export default function PosterMapWithCluster({
     if (mapRef.current) {
       mapRef.current.setView(center, zoomLevel);
     }
-  }, [center, prefectureKey]);
+  }, [center, prefectureKey, defaultZoomProp]);
 
   useEffect(() => {
     if (!markerClusterRef.current) return;
@@ -642,7 +634,7 @@ export default function PosterMapWithCluster({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 bottom-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 bottom-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{ zIndex: 1000 }}
           aria-label="フルスクリーン表示"
           title="フルスクリーン表示"
@@ -656,7 +648,7 @@ export default function PosterMapWithCluster({
         <button
           type="button"
           onClick={toggleFullscreen}
-          className="absolute left-4 rounded-full shadow px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+          className="absolute left-4 rounded-full shadow-sm px-3 py-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all duration-200"
           style={{
             zIndex: 1000,
             bottom: "calc(1rem + env(safe-area-inset-bottom))",

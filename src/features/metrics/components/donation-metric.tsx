@@ -5,10 +5,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import type { DonationMetricProps } from "@/features/metrics/types/metrics-types";
-import { EXTERNAL_LINKS } from "@/lib/links";
+import type { DonationData } from "@/features/metrics/types/metrics-types";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 import { useEffect, useState } from "react";
+
+interface DonationMetricProps {
+  data: DonationData | null;
+  fallbackAmount?: number;
+  fallbackIncrease?: number;
+}
 
 /**
  * 寄付金額表示コンポーネント
@@ -33,7 +39,7 @@ export function DonationMetric({
 
   const YEN_TO_MAN_DIVISOR = 10000;
 
-  const safeDivision = (value: unknown): number => {
+  const safeDivision = (value: number | null | undefined): number => {
     if (typeof value !== "number" || Number.isNaN(value) || value < 0) {
       return 0;
     }

@@ -2,6 +2,25 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { CurrentUserCardMission } from "./current-user-card-mission";
 
+const mockUserNameWithBadge = jest.fn(
+  ({ name, membership }: { name: string; membership?: unknown }) => (
+    <span
+      data-testid="user-name-with-badge"
+      data-membership={JSON.stringify(membership)}
+    >
+      {name}
+    </span>
+  ),
+);
+
+jest.mock(
+  "@/features/party-membership/components/user-name-with-badge",
+  () => ({
+    UserNameWithBadge: (props: unknown) =>
+      mockUserNameWithBadge(props as { name: string; membership?: unknown }),
+  }),
+);
+
 type UserMissionRanking = {
   user_id: string;
   name: string;
@@ -93,6 +112,15 @@ const mockUser = {
   level: 10,
   updated_at: "2024-01-01T00:00:00Z",
   xp: 1000,
+  party_membership: {
+    plan: "starter" as const,
+    badge_visibility: true,
+    user_id: "test-user-1",
+    synced_at: "2024-01-01T00:00:00Z",
+    metadata: {},
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
 } as any;
 
 const mockMission = {
@@ -103,6 +131,10 @@ const mockMission = {
 } as any;
 
 describe("CurrentUserCardMission", () => {
+  beforeEach(() => {
+    mockUserNameWithBadge.mockClear();
+  });
+
   describe("基本的な表示", () => {
     it("ユーザー情報が正しく表示される", () => {
       render(
@@ -117,6 +149,12 @@ describe("CurrentUserCardMission", () => {
       expect(screen.getByText("東京都")).toBeInTheDocument();
       expect(screen.getByText("1,500pt")).toBeInTheDocument();
       expect(screen.getByText("3")).toBeInTheDocument();
+      expect(mockUserNameWithBadge).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "テストユーザー",
+          membership: mockUser.party_membership,
+        }),
+      );
     });
 
     it("タイトルが正しく表示される", () => {

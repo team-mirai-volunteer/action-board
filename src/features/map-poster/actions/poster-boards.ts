@@ -58,7 +58,8 @@ export async function getPosterBoardStatsAction(
           .from("poster_boards")
           .select("*", { count: "exact", head: true })
           .eq("prefecture", prefecture)
-          .eq("status", status);
+          .eq("status", status)
+          .eq("archived", false);
 
         if (error) {
           console.error(`Error counting ${status}:`, error);
@@ -72,7 +73,8 @@ export async function getPosterBoardStatsAction(
       const totalCountPromise = supabase
         .from("poster_boards")
         .select("*", { count: "exact", head: true })
-        .eq("prefecture", prefecture);
+        .eq("prefecture", prefecture)
+        .eq("archived", false);
 
       // すべてのクエリを並列実行
       const [statusResults, totalResult] = await Promise.all([
@@ -180,6 +182,138 @@ export async function getUserEditedBoardIdsAction(
     );
   } catch (error) {
     console.error("Error in getUserEditedBoardIdsAction:", error);
+    return [];
+  }
+}
+
+// 区割り別の統計情報を取得するServer Action
+export async function getPosterBoardStatsByDistrictAction(
+  district: string,
+): Promise<{
+  totalCount: number;
+  statusCounts: Record<BoardStatus, number>;
+}> {
+  const supabase = createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("poster_boards")
+      .select("status")
+      .eq("district", district)
+      .eq("archived", false);
+
+    if (error) {
+      console.error("Error fetching district stats:", error);
+      return {
+        totalCount: 0,
+        statusCounts: {
+          not_yet: 0,
+          not_yet_dangerous: 0,
+          reserved: 0,
+          done: 0,
+          error_wrong_place: 0,
+          error_damaged: 0,
+          error_wrong_poster: 0,
+          other: 0,
+        },
+      };
+    }
+
+    const statusCounts: Record<BoardStatus, number> = {
+      not_yet: 0,
+      not_yet_dangerous: 0,
+      reserved: 0,
+      done: 0,
+      error_wrong_place: 0,
+      error_damaged: 0,
+      error_wrong_poster: 0,
+      other: 0,
+    };
+
+    for (const row of data || []) {
+      statusCounts[row.status] += 1;
+    }
+
+    return {
+      totalCount: data?.length || 0,
+      statusCounts,
+    };
+  } catch (error) {
+    console.error("Error in getPosterBoardStatsByDistrictAction:", error);
+    return {
+      totalCount: 0,
+      statusCounts: {
+        not_yet: 0,
+        not_yet_dangerous: 0,
+        reserved: 0,
+        done: 0,
+        error_wrong_place: 0,
+        error_damaged: 0,
+        error_wrong_poster: 0,
+        other: 0,
+      },
+    };
+  }
+}
+
+// ユーザーが最後に編集した掲示板IDを区割り別に取得
+export async function getUserEditedBoardIdsByDistrictAction(
+  district: string,
+  userId: string,
+): Promise<string[]> {
+  const supabase = createClient();
+
+  try {
+    // 区割りでフィルタリングして取得
+    const { data, error } = await supabase
+      .from("poster_board_latest_editors")
+      .select("board_id")
+      .eq("district", district)
+      .eq("archived", false)
+      .eq("last_editor_id", userId);
+
+    if (error) {
+      console.error("Error fetching user edited boards by district:", error);
+
+      // フォールバック: poster_boards テーブルから直接取得
+      const { data: boardData, error: boardError } = await supabase
+        .from("poster_boards")
+        .select("id")
+        .eq("district", district)
+        .eq("archived", false);
+
+      if (boardError || !boardData) {
+        return [];
+      }
+
+      const boardIds = boardData.map((b) => b.id);
+
+      const { data: historyData, error: historyError } = await supabase
+        .from("poster_board_status_history")
+        .select("board_id")
+        .in("board_id", boardIds)
+        .eq("user_id", userId);
+
+      if (historyError) {
+        return [];
+      }
+
+      return Array.from(
+        new Set(
+          historyData
+            ?.map((h) => h.board_id)
+            .filter((id): id is string => id !== null) || [],
+        ),
+      );
+    }
+
+    return (
+      data
+        ?.map((item) => item.board_id)
+        .filter((id): id is string => id !== null) || []
+    );
+  } catch (error) {
+    console.error("Error in getUserEditedBoardIdsByDistrictAction:", error);
     return [];
   }
 }

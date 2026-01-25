@@ -9,7 +9,7 @@ interface CurrentUserCardProps {
 export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
   currentUser,
 }) => {
-  if (!currentUser || !currentUser.user_id) {
+  if (!currentUser?.user_id) {
     return null;
   }
 
@@ -24,6 +24,7 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
     name: currentUser.name,
     address_prefecture: currentUser.address_prefecture,
     rank: currentUser.rank,
+    party_membership: currentUser.party_membership ?? null,
   };
 
   return (

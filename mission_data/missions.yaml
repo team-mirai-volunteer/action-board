@@ -1,4 +1,32 @@
 missions:
+  - slug: join-orientation
+    title: サポーター説明会に参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
+    content: |-
+      「サポーター登録はしてみたけど、何から始めたらいいか分からない…」
+      「ツールの使い方や活動の流れがまだよく掴めていない…」
+      そんな方に向けて、週1〜2回のペースで「新メンバー向け説明会」を開催しています！
+      ※サポーター登録時期は問いませんので、少し前に参加された方も大歓迎です！
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: 説明会で共有されたイベントコード
+    ogp_image_url: null
+  - slug: join-local-organization-briefing
+    title: 地域組織の説明会に参加しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
+    content: |-
+      「自分の地域でもっと活動をしたい」「地域サポーターとして何か手伝いたい」そんなサポーターの皆さまに向けて、今後の地域での活動についての説明会を開催します！
+      「ちょっと話を聞いてみたい」という方も大歓迎です。
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: 2
+    is_featured: false
+    is_hidden: true
+    artifact_label: 説明会で共有されたコード
+    ogp_image_url: null
   - slug: link-official-site
     title: チームみらい公式サイトを見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
@@ -41,6 +69,18 @@ missions:
     is_hidden: true
     artifact_label: 提案したページのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//9_propose_manifest_policy.png
+  - slug: add-supporter-line-friend
+    title: サポーター公式LINEに入ろう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_add-line-friend.svg
+    content: |-
+      全体向けのイベントの案内、協力依頼など、基本的にサポーター向け情報はサポーター公式LINEから発信しています。ぜひご登録ください。
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのLINEアカウント名
+    ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//7_add_official_line.png
   - slug: add-line-friend
     title: 公式LINEアカウントと友達になろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_add-line-friend.svg
@@ -66,7 +106,7 @@ missions:
   - slug: follow-teammirai-tiktok
     title: 公式TikTokをフォローしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_follow-teammirai-tiktok.svg
-    content: '<a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
+    content: '<a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>をフォローして、ショート動画をチェックしよう！安野たかひろの解説動画をはじめ、候補者の街頭演説や舞台裏トークなど、お忙しい方でも気軽にご覧いただけるコンテンツを揃えています。'
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -104,11 +144,10 @@ missions:
     content: |-
       ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
       SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
-      <a href="https://team-mirai.notion.site/255f6f56bae1804cbdecdd7b81f9e591" target="_blank" rel="noopener noreferrer">動画切り抜きガイド</a>
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     featured_importance: 10
     is_hidden: false
     artifact_label: ショート動画のURL（Youtube, TikTokなど）
@@ -149,7 +188,7 @@ missions:
   - slug: follow-note
     title: 公式noteをフォローしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_follow-note.svg
-    content: <a href="https://note.com/annotakahiro24" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。
+    content: <a href="https://note.com/team_mirai_jp" target="_blank" rel="noopener noreferrer">公式note</a>をフォローして、チームみらいの活動の裏側や候補者の考え、政策に込めた想いをもっと深く知ろう！政治活動ストーリーや解説記事など、SNSでは語りきれない情報が満載です。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -158,9 +197,9 @@ missions:
     artifact_label: あなたのnoteアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//1_follow_note.png
   - slug: follow-anno-threads
-    title: 安野たかひろスタッフのThreadsをフォローしよう
+    title: 公式Threadsをフォローしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_follow-anno-threads.svg
-    content: <a href="https://www.threads.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">安野たかひろスタッフのThreads</a>をフォローして、チームみらいの最新情報をチェック！街頭演説のお知らせや、日々の活動レポートなど、リアルタイムな情報をお届けしています。
+    content: <a href="https://www.threads.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">公式Threads</a>をフォローして、チームみらいの最新情報をチェック！街頭演説のお知らせや、日々の活動レポートなど、リアルタイムな情報をお届けしています。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -193,7 +232,7 @@ missions:
   - slug: join-prefecture-openchat
     title: 都道府県別LINEオープンチャットに入ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-prefecture-openchat.svg
-    content: <a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3" target="_blank" rel="noopener noreferrer">チームみらいの都道府県別LINEオープンチャット</a>に参加してあなたの地域で、政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。
+    content: チームみらいの都道府県別LINEオープンチャットに参加して、あなたの地域で政治や政策について気軽に話せる仲間を見つけよう！ イベント情報の共有や、地域ならではの課題を話し合える場として活用されています。
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
@@ -204,13 +243,17 @@ missions:
   - slug: join-event
     title: イベントに参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
-    content: チームみらいでは、オンライン・オフライン両方で、サポーター向けのイベントを<a href="https://www.notion.so/1f8f6f56bae180fd96e2f809bf1ca0bf?v=1f8f6f56bae181239689000c7e1d858e&source=copy_link#1fef6f56bae1800ab385f544ea22062a" target="_blank" rel="noopener noreferrer">多数開催中</a>！ 全国各地の交流会、政策トーク、新メンバー説明会など、初めての方でも安心して参加できます。仲間とつながり、リアルな場や画面越しで未来を語ろう！<br />成果物として、イベント内で公開されるイベントコードを入力ください。
+    content: |-
+      チームみらいでは、各地でイベントや演説会を開催中！
+      ぜひご参加ください！
+    # 演説会やイベントスケジュールについては、候補者のSNSよりご確認ください。
+    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: イベントコード
+    artifact_label: イベントの名前
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//4_join_event.png
   - slug: referral
     title: チームみらいの仲間を増やそう
@@ -219,7 +262,7 @@ missions:
     difficulty: 3
     required_artifact_type: REFERRAL
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 100
     is_hidden: false
     artifact_label: null
@@ -227,34 +270,40 @@ missions:
   - slug: github-pull-request
     title: '開発者向け: GitHubでプルリクエストを出そう'
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_github-pull-request.svg
-    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-397eiqk1g-xGljR5LdplaMod6n7sToUQ" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
+    content: チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: あなたが作成したプルリクエストのURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//14_github_pull_request.png
   - slug: join-slack
     title: サポーターSlackに入ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-slack.svg
-    content: <a href="https://team-mirai.notion.site/Slack-20af6f56bae180289341c49a2b395ea3" target="_blank" rel="noopener noreferrer">チームみらいサポーターのSlack</a>に参加しよう！開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心があるチームサポーターの方は、ぜひ「Slack」にご参加ください。
+    content: |-
+      チームみらいサポーターのSlackに参加しよう！
+      開発・デザイン・動画編集・記事化・オフィスワークなどなど、実際に手を動かし、サポーター作業に関わることにご興味・関心がある方は、ぜひ「Slack」にご参加ください。
     difficulty: 1
     required_artifact_type: EMAIL
     max_achievement_count: 1
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
-    content: 「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/225f6f56bae180ceb7f4db761f78d2d2" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>
-    difficulty: 2
+    content: |-
+      「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。
+      ぜひご参加ください！
+    # 演説のスケジュールについては、候補者のSNSよりご確認ください。
+    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+    difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
   - slug: join-73-mirai-kaigi
@@ -286,7 +335,7 @@ missions:
     title: チームみらいの機関誌をポスティングしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
     content: |-
-      チームみらいの機関誌を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき10ポイントを獲得できます。
+      チームみらいの機関誌を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
 
       詳しいポスティングの方法や注意点については、こちらのページをご確認ください：
       <a target="_blank" href="https://team-mirai.notion.site/206f6f56bae18049a2c2f989bc183a53">機関誌ポスティング</a>
@@ -299,6 +348,23 @@ missions:
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//15_posting.png
+  - slug: posting-activity-magazine
+    title: チームみらいの活動報告をポスティングしよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_posting-magazine.svg
+    content: |-
+      チームみらいの活動報告を地域に配布してください。ポスティングした枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
+
+      詳しいポスティングの方法や注意点については、こちらのページをご確認ください：
+      <a target="_blank" href="https://docs.google.com/document/d/1TKgZ-J7quZ4hp9PapjWUnV3cTrqMmOAzsy64wLESLL8/edit?tab=t.0">ポスティング活動ガイドライン</a>
+
+      活動前に必ずガイドラインをお読みいただき、適切な方法でポスティングを行ってください。
+    difficulty: 2
+    required_artifact_type: POSTING
+    max_achievement_count: null
+    is_featured: true
+    is_hidden: false
+    artifact_label: ポスティング情報
+    ogp_image_url: null
   - slug: posting-flyer
     title: 確認団体ビラを配布しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-proportional-representation-poster.svg
@@ -370,13 +436,16 @@ missions:
   - slug: help-event-operation
     title: イベント運営を手伝おう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_help-event-operation.svg
-    content: チームみらいでは、サポーターの皆さんと一緒に、イベントをつくりあげています。イベント会場の調整や当日のスタッフ対応、運営補助など、さまざまなかたちで運営を支えてくれる方を<a href="https://www.notion.so/team-mirai/20af6f56bae180db8f5cc80612bf359a?source=copy_link" target="_blank" rel="noopener noreferrer">募集</a>しています！ <br />成果物として、イベント内で公開されるイベントコードを入力ください。
+    content: |-
+      チームみらいでは、サポーターの皆さんと一緒に、演説会などのイベントをつくりあげています。
+      会場の調整や当日のスタッフ対応、運営補助など、さまざまなかたちで運営を支えてくださると必要です。
+      どんなイベントがあるのか、お手伝いが必要かどうかなどは、ご自身の地域の<a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3?pvs=74" target="_blank" rel="noopener noreferrer">オープンチャット</a>にてお問い合わせください。
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: イベントコード
+    artifact_label: イベント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: instagram-like
     title: Instagram でチームみらい投稿に♡をつけよう
@@ -584,7 +653,7 @@ missions:
   - slug: design-create
     title: 'チームみらいのデザインクリエイティブをお手伝いしよう'
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_design-create.svg
-    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-397eiqk1g-xGljR5LdplaMod6n7sToUQ" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
+    content: チームみらいのプロジェクトで、各種画像や冊子、のぼりのデザインなど、様々なデザインクリエイティブを、多くのサポーターが参加して、制作を進めています。まずは<a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！スカウトが来るかもよ！
     difficulty: 3
     required_artifact_type: LINK
     max_achievement_count: null
@@ -651,7 +720,7 @@ missions:
   - slug: tiktok-comment
     title: TikTokでチームみらい動画にコメントしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
-    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
+    content: <a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>の投稿を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら♡もお願いします！
     difficulty: 2
     required_artifact_type: LINK
     max_achievement_count: null
@@ -662,7 +731,7 @@ missions:
   - slug: tiktok-comment-reaction
     title: TikTok動画のコメントにリアクションしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_tiktok-like.svg
-    content: <a href="https://www.tiktok.com/@annotakahiro2024" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
+    content: <a href="https://www.tiktok.com/@team_mirai_jp" target="_blank" rel="noopener noreferrer">チームみらいの公式TikTokアカウント</a>やチームみらい関連のTikTok投稿で他の視聴者のコメントに「いいね」や「返信」をして、コミュニケーションを楽しもう！あなたのリアクションが、動画コミュニティをより活性化させます。<br><br><a href="https://www.tiktok.com/tag/%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「#チームみらい」で検索</a>
     difficulty: 1
     required_artifact_type: LINK
     max_achievement_count: null

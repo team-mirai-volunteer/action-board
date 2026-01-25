@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-import { getUserActivityTimeline } from "@/lib/services/activityTimeline";
+import { getUserActivityTimeline } from "@/features/user-activity/services/timeline";
 import { NextRequest } from "next/server";
 import { GET } from "./route";
 
-jest.mock("@/lib/services/activityTimeline");
+jest.mock("@/features/user-activity/services/timeline");
 const mockGetUserActivityTimeline =
   getUserActivityTimeline as jest.MockedFunction<
     typeof getUserActivityTimeline
@@ -41,6 +41,7 @@ describe("/api/users/[id]/activity-timeline", () => {
           address_prefecture: "東京都",
           avatar_url: null,
           title: "テストアクティビティ",
+          mission_id: null,
           created_at: "2024-01-01T00:00:00Z",
           activity_type: "signup",
         },
@@ -134,6 +135,7 @@ describe("/api/users/[id]/activity-timeline", () => {
           address_prefecture: "神奈川県",
           avatar_url: null,
           title: "プロキシ経由アクセス",
+          mission_id: "mission-xyz",
           created_at: "2024-01-01T00:00:00Z",
           activity_type: "mission_achievement",
         },

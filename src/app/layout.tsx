@@ -1,12 +1,12 @@
-import Navbar from "@/components/navbar";
-import { notoSansJP } from "@/lib/metadata";
+import Navbar from "@/components/common/navbar";
+import { generateRootMetadata, notoSansJP } from "@/lib/utils/metadata";
 import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
-import { ReferralCodeHandlerWrapper } from "@/components/ReferralCodeHandlerWrapper";
 import { Toaster } from "@/components/ui/sonner";
-import { generateRootMetadata } from "@/lib/metadata";
+import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
 import Script from "next/script";
+import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground">
+        <NextTopLoader showSpinner={false} color="#2aa693" />
         {GA_ID && (
           <>
             <Script

@@ -3,7 +3,6 @@ import * as path from "node:path";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
-import { v4 as uuidv4 } from "uuid";
 import {
   getCategorySlugToIdMap,
   getMissionSlugToIdMap,
@@ -58,7 +57,7 @@ async function syncCategories(categories: Category[], dryRun: boolean) {
         .single();
 
       const categoryData = {
-        id: existing?.id || uuidv4(),
+        id: existing?.id || crypto.randomUUID(),
         slug: category.slug,
         category_title: category.title,
         sort_no: category.sort_no,
@@ -98,7 +97,7 @@ async function syncMissions(missions: Mission[], dryRun: boolean) {
         .single();
 
       const missionData = {
-        id: existing?.id || uuidv4(),
+        id: existing?.id || crypto.randomUUID(),
         slug: mission.slug,
         title: mission.title,
         icon_url: mission.icon_url,
@@ -213,7 +212,7 @@ async function syncQuizCategories(
         .single();
 
       const categoryData = {
-        id: existing?.id || uuidv4(),
+        id: existing?.id || crypto.randomUUID(),
         slug: category.slug,
         name: category.name,
         description: category.description,
@@ -340,7 +339,7 @@ async function syncMissionQuizLinks(
       );
     } else {
       const { error } = await supabase.from("mission_quiz_links").insert({
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         mission_id: missionId,
         link: link.link,
         remark: link.remark,

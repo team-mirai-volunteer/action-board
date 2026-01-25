@@ -13,6 +13,10 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   dotenv.config({ path: ".env.local", override: true });
 }
 
+// Active election data folder - change this when switching to a new election
+// Available folders: sangin-2025 (参議院2025), shugin-2026 (衆議院2026)
+const ACTIVE_DATA_FOLDER = "shugin-2026";
+
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
 
@@ -20,6 +24,7 @@ interface PosterBoardRecord {
   id: number;
   prefecture: string;
   city: string;
+  district: string | null;
   number: string;
   name: string;
   address: string;
@@ -114,12 +119,12 @@ async function main() {
         `Loading specific file: ${specificFile}${verbose ? " (verbose mode)" : ""}`,
       );
     } else {
-      // Find all CSV files in poster_data/data directory
-      csvFiles = await glob("poster_data/data/**/*.csv", {
+      // Find all CSV files in the active election data folder
+      csvFiles = await glob(`poster_data/data/${ACTIVE_DATA_FOLDER}/**/*.csv`, {
         ignore: ["**/node_modules/**", "**/.*"],
       });
       console.log(
-        `Found ${csvFiles.length} CSV files to load${verbose ? " (verbose mode)" : ""}`,
+        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_DATA_FOLDER}${verbose ? " (verbose mode)" : ""}`,
       );
     }
 
@@ -137,42 +142,45 @@ async function main() {
       const savepoint = `sp_${Date.now()}`;
       await db.query(`SAVEPOINT ${savepoint}`);
 
-      // First try with 7 columns (no note)
+      // First try with 8 columns (new format with district, no note)
+      // New format: prefecture, city, district, number, address, name, lat, long
       try {
         await db.query(`
           CREATE TEMP TABLE ${tempTable} (
             row_num SERIAL,
             prefecture TEXT,
             city TEXT,
+            district TEXT,
             number TEXT,
-            name TEXT,
             address TEXT,
+            name TEXT,
             lat TEXT,
             long TEXT
           )
         `);
 
         const copyQuery = copyFrom(
-          `COPY ${tempTable} (prefecture, city, number, address, name, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+          `COPY ${tempTable} (prefecture, city, district, number, address, name, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
         );
 
         await pipeline(createReadStream(file), db.query(copyQuery));
 
         // Insert with type casting, allowing NULL lat/long values
-        const insertResult = await db.query(
+        await db.query(
           `
-          INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
-          SELECT 
+          INSERT INTO ${STAGING_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name)
+          SELECT
             prefecture::poster_prefecture_enum,
             city,
+            NULLIF(NULLIF(district, 'None'), ''),
             number,
             name,
             address,
-            CASE 
+            CASE
               WHEN lat IN ('None', '') OR lat IS NULL THEN NULL
               ELSE lat::decimal(10, 8)
             END,
-            CASE 
+            CASE
               WHEN long IN ('None', '') OR long IS NULL THEN NULL
               ELSE long::decimal(11, 8)
             END,
@@ -184,20 +192,20 @@ async function main() {
         );
 
         await db.query(`DROP TABLE ${tempTable}`);
-        console.log(`✓ Loaded ${file} (7 columns)`);
+        console.log(`✓ Loaded ${file} (8 columns with district)`);
         await db.query(`RELEASE SAVEPOINT ${savepoint}`);
       } catch (error) {
         // Rollback to savepoint to clear the error state
         await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
 
-        // If it fails with "extra data", try with note column
+        // If it fails with "extra data", try with note column (9 columns)
         if (
           error instanceof Error &&
           "code" in error &&
           error.code === "22P04" &&
           error.message.includes("extra data")
         ) {
-          console.log("  Retrying with note column...");
+          console.log("  Retrying with note column (9 columns)...");
 
           // Create a new temp table with note column
           await db.query(`
@@ -205,6 +213,7 @@ async function main() {
               row_num SERIAL,
               prefecture TEXT,
               city TEXT,
+              district TEXT,
               number TEXT,
               address TEXT,
               name TEXT,
@@ -215,27 +224,28 @@ async function main() {
           `);
 
           const copyQueryWithNote = copyFrom(
-            `COPY ${tempTable} (prefecture, city, number, address, name, lat, long, note) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+            `COPY ${tempTable} (prefecture, city, district, number, address, name, lat, long, note) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
           );
 
           try {
             await pipeline(createReadStream(file), db.query(copyQueryWithNote));
 
             // Insert only the columns we need from temp to staging
-            const insertResult = await db.query(
+            await db.query(
               `
-              INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
-              SELECT 
+              INSERT INTO ${STAGING_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name)
+              SELECT
                 prefecture::poster_prefecture_enum,
                 city,
+                NULLIF(NULLIF(district, 'None'), ''),
                 number,
                 name,
                 address,
-                CASE 
+                CASE
                   WHEN lat IN ('None', '') OR lat IS NULL THEN NULL
                   ELSE lat::decimal(10, 8)
                 END,
-                CASE 
+                CASE
                   WHEN long IN ('None', '') OR long IS NULL THEN NULL
                   ELSE long::decimal(11, 8)
                 END,
@@ -247,11 +257,69 @@ async function main() {
             );
 
             await db.query(`DROP TABLE ${tempTable}`);
-            console.log(`✓ Loaded ${file} (8 columns, note ignored)`);
+            console.log(
+              `✓ Loaded ${file} (9 columns with district, note ignored)`,
+            );
             await db.query(`RELEASE SAVEPOINT ${savepoint}`);
           } catch (error2) {
-            console.error(`✗ Failed to load ${file}:`, error2);
-            throw error2;
+            console.warn(
+              `9-column format failed for ${file}. Error: ${error2 instanceof Error ? error2.message : error2}`,
+            );
+            // Try legacy 7-column format (no district, no note)
+            await db.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
+            console.log("  Retrying with legacy 7-column format...");
+
+            await db.query(`
+              CREATE TEMP TABLE ${tempTable} (
+                row_num SERIAL,
+                prefecture TEXT,
+                city TEXT,
+                number TEXT,
+                name TEXT,
+                address TEXT,
+                lat TEXT,
+                long TEXT
+              )
+            `);
+
+            const copyQueryLegacy = copyFrom(
+              `COPY ${tempTable} (prefecture, city, number, address, name, lat, long) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')`,
+            );
+
+            try {
+              await pipeline(createReadStream(file), db.query(copyQueryLegacy));
+
+              await db.query(
+                `
+                INSERT INTO ${STAGING_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
+                SELECT
+                  prefecture::poster_prefecture_enum,
+                  city,
+                  number,
+                  name,
+                  address,
+                  CASE
+                    WHEN lat IN ('None', '') OR lat IS NULL THEN NULL
+                    ELSE lat::decimal(10, 8)
+                  END,
+                  CASE
+                    WHEN long IN ('None', '') OR long IS NULL THEN NULL
+                    ELSE long::decimal(11, 8)
+                  END,
+                  row_num,
+                  $1
+                FROM ${tempTable}
+              `,
+                [fileName],
+              );
+
+              await db.query(`DROP TABLE ${tempTable}`);
+              console.log(`✓ Loaded ${file} (legacy 7 columns, no district)`);
+              await db.query(`RELEASE SAVEPOINT ${savepoint}`);
+            } catch (error3) {
+              console.error(`✗ Failed to load ${file}:`, error3);
+              throw error3;
+            }
           }
         } else {
           console.error(`✗ Failed to load ${file}:`, error);
@@ -261,33 +329,44 @@ async function main() {
     }
 
     // Insert from staging to production table using the full unique constraint
+    // Set election_term based on ACTIVE_DATA_FOLDER
     console.log("\nInserting data into production table...");
-    const result = await db.query(`
-      INSERT INTO ${TARGET_TABLE} (prefecture, city, number, name, address, lat, long, row_number, file_name)
-      SELECT prefecture, city, number, name, address, lat, long, row_number, file_name
+    const result = await db.query(
+      `
+      INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name, archived, election_term)
+      SELECT prefecture, city, district, number, name, address, lat, long, row_number, file_name,
+        CASE WHEN district IS NULL THEN true ELSE false END as archived,
+        $1 as election_term
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name, prefecture) 
+      ON CONFLICT (row_number, file_name, prefecture)
       DO UPDATE SET
         city = EXCLUDED.city,
+        district = EXCLUDED.district,
         number = EXCLUDED.number,
         name = EXCLUDED.name,
         address = EXCLUDED.address,
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
+        archived = CASE WHEN EXCLUDED.district IS NULL THEN true ELSE false END,
+        election_term = EXCLUDED.election_term,
         updated_at = timezone('utc'::text, now())
-      WHERE 
+      WHERE
         ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
+        ${TARGET_TABLE}.district IS DISTINCT FROM EXCLUDED.district OR
         ${TARGET_TABLE}.number IS DISTINCT FROM EXCLUDED.number OR
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
-        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
-      RETURNING id, prefecture, city, number, name, address, lat, long, file_name,
-        CASE 
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long OR
+        ${TARGET_TABLE}.election_term IS DISTINCT FROM EXCLUDED.election_term
+      RETURNING id, prefecture, city, district, number, name, address, lat, long, file_name,
+        CASE
           WHEN xmax = 0 THEN 'inserted'
           ELSE 'updated'
         END as action
-    `);
+    `,
+      [ACTIVE_DATA_FOLDER],
+    );
 
     // Count inserts vs updates
     const insertedRows = result.rows.filter(
@@ -330,12 +409,12 @@ async function main() {
         for (const [prefecture, records] of Object.entries(byPrefecture)) {
           mdContent += `## ${prefecture}\n\n`;
           mdContent +=
-            "| City | Number | Name | Address | Lat | Long | File |\n";
+            "| City | District | Number | Name | Address | Lat | Long | File |\n";
           mdContent +=
-            "|------|--------|------|---------|-----|------|------|\n";
+            "|------|----------|--------|------|---------|-----|------|------|\n";
 
           for (const record of records) {
-            mdContent += `| ${record.city} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
+            mdContent += `| ${record.city} | ${record.district || ""} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
           }
           mdContent += "\n";
         }
@@ -363,12 +442,12 @@ async function main() {
         )) {
           mdContent += `## ${prefecture}\n\n`;
           mdContent +=
-            "| City | Number | Name | Address | Lat | Long | File |\n";
+            "| City | District | Number | Name | Address | Lat | Long | File |\n";
           mdContent +=
-            "|------|--------|------|---------|-----|------|------|\n";
+            "|------|----------|--------|------|---------|-----|------|------|\n";
 
           for (const record of records) {
-            mdContent += `| ${record.city} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
+            mdContent += `| ${record.city} | ${record.district || ""} | ${record.number} | ${record.name} | ${record.address} | ${record.lat} | ${record.long} | ${record.file_name} |\n`;
           }
           mdContent += "\n";
         }
@@ -401,10 +480,7 @@ async function main() {
   }
 }
 
-// Run if called directly
-if (require.main === module) {
-  main().catch((error) => {
-    console.error("Fatal error:", error);
-    process.exit(1);
-  });
-}
+main().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});

@@ -1,9 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
+.pnpm-store
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -30,6 +31,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env.production
 .env*.local
 .env*.test
 .env
@@ -64,8 +66,15 @@ poster_data/processed-files.json
 /supabase/archive/
 
 temp
+docs/qa-reports
 
 # csv export
 users-prefecture-export.csv
 
 .mcp.json
+
+# serena mcp
+/.serena
+
+# claude
+.claude

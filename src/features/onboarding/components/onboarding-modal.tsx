@@ -10,10 +10,14 @@ import { onboardingDialogues } from "../constants/onboarding-texts";
 
 import { MOCK_MISSION } from "../constants/constants";
 import { useOnboardingState } from "../hooks/use-onboarding-state";
-import type { OnboardingModalProps } from "../types/types";
 import { OnboardingCharacter } from "./onboarding-character";
 import { OnboardingMissionDetails } from "./onboarding-mission-details";
 import { OnboardingWelcome } from "./onboarding-welcome";
+
+export interface OnboardingModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
 /**
  * オンボーディングモーダルコンポーネント
@@ -39,10 +43,10 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogPortal>
-        <DialogOverlay className="z-[100]" />
+        <DialogOverlay className="z-100" />
         <DialogPrimitive.Content
           className={cn(
-            "fixed inset-4 md:inset-6 lg:inset-12 z-[110] duration-200",
+            "fixed inset-4 md:inset-6 lg:inset-12 z-110 duration-200",
             "lg:max-w-4xl lg:mx-auto lg:left-0 lg:right-0",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -53,7 +57,7 @@ export function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
             <DialogPrimitive.Title>オンボーディング</DialogPrimitive.Title>
           </VisuallyHidden.Root>
 
-          <div className="relative w-full h-full bg-gradient-to-b from-[#A8E6CF] to-[#7FCDCD] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+          <div className="relative w-full h-full bg-linear-to-b from-[#A8E6CF] to-[#7FCDCD] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
             {/* 閉じるボタン */}
             <CloseButton onClose={() => handleOpenChange(false)} />
 
