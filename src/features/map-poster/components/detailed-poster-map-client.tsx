@@ -664,13 +664,18 @@ export default function DetailedPosterMapClient({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(statusConfig)
-                    .filter(
-                      ([status]) =>
-                        status !== "error_wrong_place" &&
-                        status !== "error_damaged",
-                    )
-                    .map(([status, config]) => (
+                  {(
+                    [
+                      "not_yet",
+                      "reserved",
+                      "done",
+                      "not_yet_dangerous",
+                      "error_wrong_poster",
+                      "other",
+                    ] as BoardStatus[]
+                  ).map((status) => {
+                    const config = statusConfig[status];
+                    return (
                       <SelectItem key={status} value={status}>
                         <div className="flex items-center gap-2">
                           <div
@@ -679,7 +684,8 @@ export default function DetailedPosterMapClient({
                           <span>{config.label}</span>
                         </div>
                       </SelectItem>
-                    ))}
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
