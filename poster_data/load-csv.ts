@@ -342,11 +342,10 @@ async function main() {
     }
 
     // Insert from staging to production table using the full unique constraint
-    // election_term is set to ACTIVE_ELECTION_TERM
+    // election_term is part of the unique key, so each election has separate records
     // Status handling:
     //   - New inserts: status defaults to 'not_yet'
-    //   - Same election_term conflict: preserve existing status (user edits)
-    //   - Different election_term conflict: reset status to 'not_yet' (new election)
+    //   - Re-load same election: conflict triggers, status is preserved (user edits kept)
     console.log("\nInserting data into production table...");
     console.log(`Election term: ${ACTIVE_ELECTION_TERM}`);
     const result = await db.query(
@@ -356,7 +355,7 @@ async function main() {
         CASE WHEN district IS NULL THEN true ELSE false END as archived,
         $1 as election_term
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name, prefecture)
+      ON CONFLICT (row_number, file_name, prefecture, election_term)
       DO UPDATE SET
         city = EXCLUDED.city,
         district = EXCLUDED.district,
@@ -366,12 +365,7 @@ async function main() {
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         archived = CASE WHEN EXCLUDED.district IS NULL THEN true ELSE false END,
-        election_term = EXCLUDED.election_term,
-        -- Preserve status if same election_term, reset to 'not_yet' if different
-        status = CASE
-          WHEN ${TARGET_TABLE}.election_term = EXCLUDED.election_term THEN ${TARGET_TABLE}.status
-          ELSE 'not_yet'::poster_board_status
-        END,
+        -- status is NOT updated - preserves user edits on re-load
         updated_at = timezone('utc'::text, now())
       WHERE
         ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
@@ -380,8 +374,7 @@ async function main() {
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
-        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long OR
-        ${TARGET_TABLE}.election_term IS DISTINCT FROM EXCLUDED.election_term
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
       RETURNING id, prefecture, city, district, number, name, address, lat, long, file_name,
         CASE
           WHEN xmax = 0 THEN 'inserted'
