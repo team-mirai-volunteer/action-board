@@ -175,3 +175,29 @@ TIKTOK_CLIENT_SECRET=your-tiktok-client-secret
 - [TikTok Login Kit Documentation](https://developers.tiktok.com/doc/login-kit-web/)
 - [TikTok Display API Documentation](https://developers.tiktok.com/doc/display-api-overview/)
 - [TikTok OAuth 2.0 Authorization](https://developers.tiktok.com/doc/oauth-user-access-token-management/)
+
+## 審査リクエスト
+```
+Overview:
+Action Board helps Team Mirai volunteers track and visualize their social media impact. By connecting TikTok, users can automatically track their #チームみらい videos, monitor view/like growth over time, and earn points for their content creation activities. This motivates volunteers and recognizes their con
+
+Login Kit Usage:
+Users connect their TikTok account via Settings page to link their profile.
+
+Scopes:
+
+1. user.info.basic
+- Display connected TikTok account name and avatar in settings
+- Allow users to verify which account is linked
+
+2. video.list
+- Fetch user's own videos to find those with #チームみらい or #teammirai hashtags
+- Register matching videos to track content creation activities
+- Display video statistics (views, likes, comments) on user profile
+- Videos synced only when user clicks "Sync Videos" button
+
+Data Handling:
+- Store only video metadata (title, URL, statistics)
+- Do NOT download actual video content
+- Users can disconnect anytime, removing all stored data
+```

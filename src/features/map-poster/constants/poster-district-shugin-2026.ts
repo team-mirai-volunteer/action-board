@@ -2,26 +2,36 @@
 // Format: prefecture-number (e.g., tokyo-1, kanagawa-5)
 
 export const POSTER_DISTRICT_MAP = {
-  "tokyo-1": {
-    jp: "東京1区",
-    prefecture: "東京都",
-    center: [35.6895, 139.6917] as [number, number], // 千代田区・港区・新宿区 area
+  "chiba-5": {
+    jp: "千葉5区",
+    prefecture: "千葉県",
+    center: [35.6719, 139.9311] as [number, number], // 市川市・浦安市
     defaultZoom: 13,
   },
-  // Add more districts here as data becomes available
-  // Example entries (uncomment when ready):
-  // "tokyo-2": {
-  //   jp: "東京2区",
-  //   prefecture: "東京都",
-  //   center: [35.7138, 139.7566] as [number, number],
-  //   defaultZoom: 13,
-  // },
-  // "kanagawa-5": {
-  //   jp: "神奈川5区",
-  //   prefecture: "神奈川県",
-  //   center: [35.3293, 139.5500] as [number, number],
-  //   defaultZoom: 13,
-  // },
+  "tokyo-2": {
+    jp: "東京2区",
+    prefecture: "東京都",
+    center: [35.705, 139.77] as [number, number], // 中央区・文京区・台東区
+    defaultZoom: 13,
+  },
+  "tokyo-7": {
+    jp: "東京7区",
+    prefecture: "東京都",
+    center: [35.658, 139.71] as [number, number], // 渋谷区
+    defaultZoom: 13,
+  },
+  "tokyo-26": {
+    jp: "東京26区",
+    prefecture: "東京都",
+    center: [35.633, 139.685] as [number, number], // 目黒区・大田区北部
+    defaultZoom: 13,
+  },
+  "kyoto-2": {
+    jp: "京都2区",
+    prefecture: "京都府",
+    center: [35.0116, 135.7681] as [number, number], // 左京区・東山区
+    defaultZoom: 13,
+  },
 } as const;
 
 export type PosterDistrictKey = keyof typeof POSTER_DISTRICT_MAP;

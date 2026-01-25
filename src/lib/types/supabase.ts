@@ -1521,6 +1521,51 @@ export type Database = {
           },
         ];
       };
+      youtube_user_connections: {
+        Row: {
+          access_token: string;
+          avatar_url: string | null;
+          channel_id: string;
+          created_at: string | null;
+          display_name: string | null;
+          google_user_id: string;
+          id: string;
+          refresh_token: string;
+          scopes: string[] | null;
+          token_expires_at: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          access_token: string;
+          avatar_url?: string | null;
+          channel_id: string;
+          created_at?: string | null;
+          display_name?: string | null;
+          google_user_id: string;
+          id?: string;
+          refresh_token: string;
+          scopes?: string[] | null;
+          token_expires_at: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          access_token?: string;
+          avatar_url?: string | null;
+          channel_id?: string;
+          created_at?: string | null;
+          display_name?: string | null;
+          google_user_id?: string;
+          id?: string;
+          refresh_token?: string;
+          scopes?: string[] | null;
+          token_expires_at?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       youtube_video_stats: {
         Row: {
           comment_count: number | null;

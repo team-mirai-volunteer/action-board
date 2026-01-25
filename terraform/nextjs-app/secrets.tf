@@ -133,3 +133,16 @@ resource "google_secret_manager_secret_version" "tiktok_client_secret" {
   secret         = google_secret_manager_secret.tiktok_client_secret.id
   secret_data_wo = var.TIKTOK_CLIENT_SECRET
 }
+
+resource "google_secret_manager_secret" "google_client_secret" {
+  secret_id = "${var.app_name}-${var.environment}-google-client-secret"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "google_client_secret" {
+  secret         = google_secret_manager_secret.google_client_secret.id
+  secret_data_wo = var.GOOGLE_CLIENT_SECRET
+}
