@@ -70,6 +70,12 @@ resource "google_secret_manager_secret_iam_member" "tiktok_client_secret_accesso
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "google_client_secret_accessor" {
+  secret_id = google_secret_manager_secret.google_client_secret.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
 
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
@@ -130,5 +136,6 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _SUPABASE_SITE_URL                 = var.SUPABASE_SITE_URL
     _SUPABASE_ADDITIONAL_REDIRECT_URLS = "${var.SUPABASE_SITE_URL}/auth/callback/"
     _NEXT_PUBLIC_TIKTOK_CLIENT_KEY     = var.NEXT_PUBLIC_TIKTOK_CLIENT_KEY
+    _NEXT_PUBLIC_GOOGLE_CLIENT_ID      = var.NEXT_PUBLIC_GOOGLE_CLIENT_ID
   }
 }

@@ -87,6 +87,8 @@ steps:
           --build-arg NEXT_PUBLIC_LINE_CLIENT_ID=${_NEXT_PUBLIC_LINE_CLIENT_ID} \
           --build-arg NEXT_PUBLIC_TIKTOK_CLIENT_KEY=${_NEXT_PUBLIC_TIKTOK_CLIENT_KEY} \
           --build-arg TIKTOK_CLIENT_SECRET="$$TIKTOK_CLIENT_SECRET" \
+          --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${_NEXT_PUBLIC_GOOGLE_CLIENT_ID} \
+          --build-arg GOOGLE_CLIENT_SECRET="$$GOOGLE_CLIENT_SECRET" \
           --build-arg SENTRY_RELEASE=${COMMIT_SHA} \
           --build-arg SENTRY_AUTH_TOKEN="$$SENTRY_AUTH_TOKEN" \
           --build-arg SUPABASE_SERVICE_ROLE_KEY="$$SUPABASE_SERVICE_ROLE_KEY" \
@@ -95,6 +97,7 @@ steps:
       - SENTRY_AUTH_TOKEN
       - SUPABASE_SERVICE_ROLE_KEY
       - TIKTOK_CLIENT_SECRET
+      - GOOGLE_CLIENT_SECRET
 
   # Artifact Registryへのプッシュ
   - name: 'gcr.io/cloud-builders/docker'
@@ -154,3 +157,5 @@ availableSecrets:
       env: SENTRY_AUTH_TOKEN
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-tiktok-client-secret/versions/latest'
       env: TIKTOK_CLIENT_SECRET
+    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-google-client-secret/versions/latest'
+      env: GOOGLE_CLIENT_SECRET
