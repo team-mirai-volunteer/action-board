@@ -802,3 +802,131 @@ export async function getArchivedPosterBoardStats(
 
   return { totalCount, statusCounts };
 }
+
+// ===== User Reservation Stats =====
+
+export interface UserReservationStats {
+  userId: string;
+  userName: string;
+  reservedCount: number;
+  completedCount: number;
+}
+
+/**
+ * ユーザー別の予約/完了統計を取得
+ * 現在アクティブな（アーカイブされていない）掲示板のみを対象
+ */
+export async function getUserReservationStats(): Promise<
+  UserReservationStats[]
+> {
+  const supabase = createClient();
+
+  // まず、アクティブな掲示板のIDを取得
+  const { data: activeBoards, error: boardsError } = await supabase
+    .from("poster_boards")
+    .select("id")
+    .eq("archived", false);
+
+  if (boardsError) {
+    console.error("Error fetching active boards:", boardsError);
+    throw boardsError;
+  }
+
+  const activeBoardIds = activeBoards?.map((b) => b.id) || [];
+
+  if (activeBoardIds.length === 0) {
+    return [];
+  }
+
+  // 履歴データを取得（アクティブな掲示板のみ）
+  // ページネーションで全件取得
+  let allHistory: {
+    board_id: string;
+    user_id: string;
+    new_status: BoardStatus;
+  }[] = [];
+  let page = 0;
+  const pageSize = 1000;
+
+  while (true) {
+    const { data: historyData, error: historyError } = await supabase
+      .from("poster_board_status_history")
+      .select("board_id, user_id, new_status")
+      .in("board_id", activeBoardIds)
+      .in("new_status", ["reserved", "done"])
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (historyError) {
+      console.error("Error fetching history:", historyError);
+      throw historyError;
+    }
+
+    if (!historyData || historyData.length === 0) {
+      break;
+    }
+
+    allHistory = [...allHistory, ...historyData];
+
+    if (historyData.length < pageSize) {
+      break;
+    }
+    page++;
+  }
+
+  if (allHistory.length === 0) {
+    return [];
+  }
+
+  // ユーザーごとにユニークな掲示板をカウント
+  const userStats = new Map<
+    string,
+    { reservedBoards: Set<string>; completedBoards: Set<string> }
+  >();
+
+  for (const record of allHistory) {
+    let stats = userStats.get(record.user_id);
+    if (!stats) {
+      stats = {
+        reservedBoards: new Set(),
+        completedBoards: new Set(),
+      };
+      userStats.set(record.user_id, stats);
+    }
+
+    if (record.new_status === "reserved") {
+      stats.reservedBoards.add(record.board_id);
+    } else if (record.new_status === "done") {
+      stats.completedBoards.add(record.board_id);
+    }
+  }
+
+  // ユーザー情報を取得
+  const userIds = Array.from(userStats.keys());
+  const { data: userData, error: userError } = await supabase
+    .from("public_user_profiles")
+    .select("id, name")
+    .in("id", userIds);
+
+  if (userError) {
+    console.error("Error fetching user profiles:", userError);
+    throw userError;
+  }
+
+  const userMap = new Map(userData?.map((u) => [u.id, u.name]) || []);
+
+  // 結果を整形
+  const result: UserReservationStats[] = [];
+  for (const [userId, stats] of Array.from(userStats.entries())) {
+    result.push({
+      userId,
+      userName: userMap.get(userId) || "不明なユーザー",
+      reservedCount: stats.reservedBoards.size,
+      completedCount: stats.completedBoards.size,
+    });
+  }
+
+  // 予約数でソート（多い順）
+  result.sort((a, b) => b.reservedCount - a.reservedCount);
+
+  return result;
+}
