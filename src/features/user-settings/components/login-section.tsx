@@ -31,11 +31,11 @@ export function LoginSection({
         <CardTitle>ログイン設定</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Label htmlFor="name">ログイン方法</Label>
+        <Label htmlFor="login-method">ログイン方法</Label>
         <p className="text-sm text-gray-500">
           {getAuthMethodDisplayName(user)}
         </p>
-        <Label htmlFor="name">メールアドレス</Label>
+        <Label htmlFor="email">メールアドレス</Label>
         <p className="text-sm text-gray-500">
           {!currentEmail || currentEmail?.endsWith("@line.local")
             ? "メールアドレスが登録されていないため、表示できません"
