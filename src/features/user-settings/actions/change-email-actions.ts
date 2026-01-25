@@ -2,17 +2,16 @@
 
 import { getUser } from "@/features/user-profile/services/profile";
 import { requestEmailChange } from "@/features/user-settings/services/email";
-import { createClient } from "@/lib/supabase/client";
 import { isEmailUser } from "@/lib/utils/auth-utils";
 import { z } from "zod";
 
-export type UpdateEmailResult = {
+export type ChangeEmailResult = {
   success: boolean;
   error?: string;
   message?: string;
 };
 
-const updateEmailFormSchema = z.object({
+const changeEmailFormSchema = z.object({
   newEmail: z
     .string()
     .email({ message: "有効なメールアドレスを入力してください" })
@@ -23,12 +22,10 @@ const updateEmailFormSchema = z.object({
  * メールアドレス変更アクション
  * メールアドレスログインユーザーのみ変更可能
  */
-export async function updateEmailAction(
-  previousState: UpdateEmailResult | null,
+export async function changeEmailAction(
+  previousState: ChangeEmailResult | null,
   formData: FormData,
-): Promise<UpdateEmailResult> {
-  const supabaseClient = createClient();
-
+): Promise<ChangeEmailResult> {
   const user = await getUser();
 
   if (!user) {
@@ -51,7 +48,7 @@ export async function updateEmailAction(
   const newEmail = formData.get("newEmail")?.toString();
 
   // バリデーション
-  const validatedFields = updateEmailFormSchema.safeParse({
+  const validatedFields = changeEmailFormSchema.safeParse({
     newEmail,
   });
 

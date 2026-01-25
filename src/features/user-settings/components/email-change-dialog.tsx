@@ -16,8 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useActionState, useEffect } from "react";
 import {
-  type UpdateEmailResult,
-  updateEmailAction,
+  type ChangeEmailResult,
+  changeEmailAction,
 } from "../actions/change-email-actions";
 
 interface EmailChangeDialogProps {
@@ -30,9 +30,9 @@ export function EmailChangeDialog({
   onOpenChange,
 }: EmailChangeDialogProps) {
   const [state, formAction, isPending] = useActionState<
-    UpdateEmailResult | null,
+    ChangeEmailResult | null,
     FormData
-  >(updateEmailAction, null);
+  >(changeEmailAction, null);
 
   // 成功時にモーダルを閉じる
   useEffect(() => {
