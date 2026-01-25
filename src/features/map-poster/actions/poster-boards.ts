@@ -59,7 +59,7 @@ export async function getPosterBoardStatsAction(
           .select("*", { count: "exact", head: true })
           .eq("prefecture", prefecture)
           .eq("status", status)
-          .eq("archived", false);
+          .eq("election", "shugin-2026");
 
         if (error) {
           console.error(`Error counting ${status}:`, error);
@@ -74,7 +74,7 @@ export async function getPosterBoardStatsAction(
         .from("poster_boards")
         .select("*", { count: "exact", head: true })
         .eq("prefecture", prefecture)
-        .eq("archived", false);
+        .eq("election", "shugin-2026");
 
       // すべてのクエリを並列実行
       const [statusResults, totalResult] = await Promise.all([
@@ -200,7 +200,7 @@ export async function getPosterBoardStatsByDistrictAction(
       .from("poster_boards")
       .select("status")
       .eq("district", district)
-      .eq("archived", false);
+      .eq("election", "shugin-2026");
 
     if (error) {
       console.error("Error fetching district stats:", error);
@@ -269,7 +269,7 @@ export async function getUserEditedBoardIdsByDistrictAction(
       .from("poster_board_latest_editors")
       .select("board_id")
       .eq("district", district)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .eq("last_editor_id", userId);
 
     if (error) {
@@ -280,7 +280,7 @@ export async function getUserEditedBoardIdsByDistrictAction(
         .from("poster_boards")
         .select("id")
         .eq("district", district)
-        .eq("archived", false);
+        .eq("election", "shugin-2026");
 
       if (boardError || !boardData) {
         return [];

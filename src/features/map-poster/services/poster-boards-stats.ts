@@ -69,7 +69,7 @@ async function getFallbackStats(): Promise<{
       .select("prefecture, status")
       .not("lat", "is", null)
       .not("long", "is", null)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
