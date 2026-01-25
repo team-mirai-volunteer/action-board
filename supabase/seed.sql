@@ -411,6 +411,31 @@ INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address,
 ('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区', 'sangin-2025', true)
 ON CONFLICT DO NOTHING;
 
+-- shugin-2026 ポスター掲示板（現行データ）
+INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address, city, election_term, district, archived) VALUES
+-- tokyo-7 (渋谷区)
+('恵比寿東公園', 35.6481725, 139.7111924, '東京都', 'not_yet', '1-1', '恵比寿1丁目2番16号', '渋谷区', 'shugin-2026', 'tokyo-7', false),
+('伊達児童遊園地', 35.6444138, 139.7174316, '東京都', 'done', '1-3', '恵比寿3丁目11番2号', '渋谷区', 'shugin-2026', 'tokyo-7', false),
+('恵比寿駅東口公園', 35.646491, 139.7105855, '東京都', 'reserved', '1-4', '恵比寿4丁目2番6号', '渋谷区', 'shugin-2026', 'tokyo-7', false),
+
+-- tokyo-2 (台東区・中央区)
+('上野公園入口', 35.7141, 139.7774, '東京都', 'not_yet', '2-1', '台東区上野公園1-1', '台東区', 'shugin-2026', 'tokyo-2', false),
+('浅草寺前', 35.7148, 139.7967, '東京都', 'done', '2-2', '台東区浅草2-3-1', '台東区', 'shugin-2026', 'tokyo-2', false),
+
+-- tokyo-26 (目黒区・大田区)
+('目黒駅前', 35.6339, 139.7158, '東京都', 'not_yet', '26-1', '目黒区目黒1-1-1', '目黒区', 'shugin-2026', 'tokyo-26', false),
+('自由が丘駅前', 35.6076, 139.6686, '東京都', 'done', '26-2', '目黒区自由が丘1-1-1', '目黒区', 'shugin-2026', 'tokyo-26', false),
+
+-- kyoto-2 (京都市左京区・東山区)
+('上下水道局疏水事務所', 35.0159308, 135.7756504, '京都府', 'done', '左京区-1-1', '左京区聖護院蓮華蔵町35番地', '京都市', 'shugin-2026', 'kyoto-2', false),
+('元新洞小学校', 35.0120187, 135.7749702, '京都府', 'not_yet', '左京区-1-2', '左京区新東洞院町252番地', '京都市', 'shugin-2026', 'kyoto-2', false),
+
+-- chiba-5 (市川市・浦安市)
+('南八幡勤労福祉センター', 35.7136337, 139.9272993, '千葉県', 'not_yet', '32-1', '南八幡2丁目20-1', '市川市', 'shugin-2026', 'chiba-5', false),
+('市川駅北口', 35.7318, 139.9083, '千葉県', 'done', '32-2', '市川1丁目1-1', '市川市', 'shugin-2026', 'chiba-5', false),
+('浦安駅前', 35.6536, 139.8892, '千葉県', 'reserved', '33-1', '浦安市猫実1-1-1', '浦安市', 'shugin-2026', 'chiba-5', false)
+ON CONFLICT DO NOTHING;
+
 -- バッジデータ（各シーズンごとにバッジを付与）
 INSERT INTO user_badges (user_id, badge_type, sub_type, rank, season_id, achieved_at, is_notified)
 SELECT 
