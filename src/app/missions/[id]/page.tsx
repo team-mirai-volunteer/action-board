@@ -91,7 +91,7 @@ export default async function MissionPage({ params }: Props) {
     userAchievementCount,
     referralCode,
     mainLink,
-    sameCategoryMissions,
+    allCategoryMissions,
   } = pageData;
 
   // クイズミッションの場合は問題を事前取得
@@ -200,17 +200,15 @@ export default async function MissionPage({ params }: Props) {
           </Card>
         )}
 
-        {/* 同一カテゴリのミッション表示 */}
-        <div className="mt-8">
-          <RelatedMissions
-            missions={sameCategoryMissions}
-            categoryTitle={
-              sameCategoryMissions.length > 0
-                ? sameCategoryMissions[0].category_title
-                : null
-            }
-            userId={user?.id}
-          />
+        <div className="mt-8 flex flex-col gap-8">
+          {allCategoryMissions.map((categoryData) => (
+            <RelatedMissions
+              key={categoryData.categoryId}
+              missions={categoryData.missions}
+              categoryTitle={categoryData.categoryTitle}
+              userId={user?.id}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import type {
   Achievement,
+  CategoryWithMissions,
   MissionArtifact,
   MissionPageData,
   SubmissionData,
@@ -205,24 +206,22 @@ export async function getMissionMainLink(
 }
 
 /**
- * 同一カテゴリのミッションを取得
- * ミッションが複数カテゴリに属する場合は、最初のカテゴリ（sort_no最小）のミッションを取得
+ * 対象ミッションが属する全カテゴリのミッションを取得
  * @param missionId - 対象ミッションID
- * @returns 同一カテゴリのミッション（現在のミッションは除外）
+ * @returns カテゴリごとにグループ化されたミッション（現在のミッションは除外）
  */
-export async function getSameCategoryMissions(
+export async function getAllCategoryMissions(
   missionId: string,
-): Promise<Tables<"mission_category_view">[]> {
+): Promise<CategoryWithMissions[]> {
   const supabase = createClient();
 
-  // 対象ミッションの最初のカテゴリIDを取得
+  // 対象ミッションの全カテゴリIDを取得（limit制限なし）
   const { data: links, error: linksError } = await supabase
     .from("mission_category_link")
     .select("category_id")
     .eq("mission_id", missionId)
     .eq("del_flg", false)
-    .order("sort_no", { ascending: true })
-    .limit(1);
+    .order("sort_no", { ascending: true });
 
   if (linksError) {
     console.error("Category link fetch error:", linksError);
@@ -234,22 +233,44 @@ export async function getSameCategoryMissions(
     return [];
   }
 
-  const categoryId = links[0].category_id;
+  // 各カテゴリIDに対してミッションを取得
+  const categoryMissionsPromises = links.map(async (link) => {
+    const categoryId = link.category_id;
 
-  // 同一カテゴリのミッションを取得（現在のミッションは除外）
-  const { data, error } = await supabase
-    .from("mission_category_view")
-    .select("*")
-    .eq("category_id", categoryId)
-    .neq("mission_id", missionId)
-    .order("link_sort_no", { ascending: true });
+    // 各カテゴリのミッションを取得（現在のミッションは除外）
+    const { data, error } = await supabase
+      .from("mission_category_view")
+      .select("*")
+      .eq("category_id", categoryId)
+      .neq("mission_id", missionId)
+      .order("link_sort_no", { ascending: true });
 
-  if (error) {
-    console.error("Same category missions fetch error:", error);
-    return [];
-  }
+    if (error) {
+      console.error(`Category missions fetch error for ${categoryId}:`, error);
+      return null;
+    }
 
-  return data ?? [];
+    // ミッションが0件の場合はnullを返す（後でフィルタリング）
+    if (!data || data.length === 0) {
+      return null;
+    }
+
+    return {
+      categoryId,
+      categoryTitle: data[0]?.category_title ?? null,
+      missions: data,
+    };
+  });
+
+  // 全てのカテゴリのミッションを並列取得
+  const categoryMissionsResults = await Promise.all(categoryMissionsPromises);
+
+  // nullをフィルタリング（ミッションが0件のカテゴリを除外）
+  const categoryMissions = categoryMissionsResults.filter(
+    (result): result is CategoryWithMissions => result !== null,
+  );
+
+  return categoryMissions;
 }
 
 export async function getMissionPageData(
@@ -283,8 +304,8 @@ export async function getMissionPageData(
   // メインリンクの取得
   const mainLink = await getMissionMainLink(missionId);
 
-  // 同一カテゴリのミッションを取得
-  const sameCategoryMissions = await getSameCategoryMissions(missionId);
+  // 全カテゴリのミッションを取得
+  const allCategoryMissions = await getAllCategoryMissions(missionId);
 
   return {
     mission,
@@ -294,7 +315,7 @@ export async function getMissionPageData(
     totalAchievementCount,
     referralCode,
     mainLink,
-    sameCategoryMissions,
+    allCategoryMissions,
   };
 }
 

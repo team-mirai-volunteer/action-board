@@ -21,6 +21,15 @@ export type SubmissionData = {
   created_at: string;
 };
 
+/**
+ * カテゴリと、そのカテゴリに属するミッションのセット
+ */
+export type CategoryWithMissions = {
+  categoryId: string;
+  categoryTitle: string | null;
+  missions: Tables<"mission_category_view">[];
+};
+
 export type MissionPageData = {
   mission: Tables<"missions">;
   userAchievements: Achievement[];
@@ -29,7 +38,7 @@ export type MissionPageData = {
   totalAchievementCount: number;
   referralCode: string | null;
   mainLink: Tables<"mission_main_links"> | null;
-  sameCategoryMissions: Tables<"mission_category_view">[];
+  allCategoryMissions: CategoryWithMissions[];
 };
 
 export type ButtonLabelProps = {
