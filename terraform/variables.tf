@@ -207,3 +207,14 @@ variable "TIKTOK_CLIENT_SECRET" {
   type        = string
   sensitive   = true
 }
+
+variable "NEXT_PUBLIC_GOOGLE_CLIENT_ID" {
+  description = "Google Client ID for YouTube OAuth (public)"
+  type        = string
+}
+
+variable "GOOGLE_CLIENT_SECRET" {
+  description = "Google Client Secret for YouTube OAuth (sensitive)"
+  type        = string
+  sensitive   = true
+}

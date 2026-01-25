@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/client";
+import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
 import type {
   OverallStatsHistoryItem,
   SortType,
@@ -196,19 +197,22 @@ export async function getYouTubeStatsSummary(
   let totalViews = 0;
   let totalLikes = 0;
   let totalComments = 0;
-  let dayBeforeYesterdayTotalViews = 0;
+  let comparisonTotalViews = 0;
   let recentVideosCount = 0;
 
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-  const dayBeforeYesterday = new Date(Date.now() - 86400000 * 2)
-    .toISOString()
-    .split("T")[0];
+  // JSTで日付を取得
+  const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
+
+  // 比較対象の日付リスト（一昨日優先、なければ昨日）
+  const comparisonDates = [dayBeforeYesterday, yesterday];
 
   for (const video of videos || []) {
     // 今日または昨日に投稿された動画をカウント（2日間分）
-    const publishedDate = (video.published_at as string)?.split("T")[0];
-    if (publishedDate === today || publishedDate === yesterday) {
+    const publishedAt = video.published_at as string | null;
+    const publishedDateJst = publishedAt
+      ? toJstDateString(new Date(publishedAt))
+      : null;
+    if (publishedDateJst === today || publishedDateJst === yesterday) {
       recentVideosCount++;
     }
 
@@ -233,20 +237,22 @@ export async function getYouTubeStatsSummary(
       totalComments += latestStats.comment_count ?? 0;
     }
 
-    // 一昨日の統計を取得（2日間の増加分を計算するため）
-    const dayBeforeYesterdayStats = sortedStats.find(
-      (s) => s.recorded_at === dayBeforeYesterday,
-    );
-    if (dayBeforeYesterdayStats) {
-      dayBeforeYesterdayTotalViews += dayBeforeYesterdayStats.view_count ?? 0;
+    // 比較用の過去データを取得（一昨日優先、なければ昨日）
+    // recorded_atはUTCタイムスタンプなのでJSTに変換して比較
+    for (const targetDate of comparisonDates) {
+      const pastStats = sortedStats.find(
+        (s) => toJstDateString(new Date(s.recorded_at)) === targetDate,
+      );
+      if (pastStats) {
+        comparisonTotalViews += pastStats.view_count ?? 0;
+        break; // 見つかったら終了
+      }
     }
   }
 
-  // 2日間の増加数を計算（一昨日のデータがない場合は0）
+  // 増加数を計算（比較データがない場合は0）
   const dailyViewsIncrease =
-    dayBeforeYesterdayTotalViews > 0
-      ? totalViews - dayBeforeYesterdayTotalViews
-      : 0;
+    comparisonTotalViews > 0 ? totalViews - comparisonTotalViews : 0;
 
   return {
     totalVideos: videos?.length ?? 0,
