@@ -1,5 +1,7 @@
 "use server";
 
+import { getUser } from "@/features/user-profile/services/profile";
+import { requestEmailChange } from "@/features/user-settings/services/email";
 import { createClient } from "@/lib/supabase/client";
 import { isEmailUser } from "@/lib/utils/auth-utils";
 import { z } from "zod";
@@ -19,7 +21,7 @@ const updateEmailFormSchema = z.object({
 
 /**
  * メールアドレス変更アクション
- * LINE連携ユーザーは変更不可
+ * メールアドレスログインユーザーのみ変更可能
  */
 export async function updateEmailAction(
   previousState: UpdateEmailResult | null,
@@ -27,10 +29,7 @@ export async function updateEmailAction(
 ): Promise<UpdateEmailResult> {
   const supabaseClient = createClient();
 
-  // 現在のユーザー情報を取得
-  const {
-    data: { user },
-  } = await supabaseClient.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return {
@@ -73,45 +72,19 @@ export async function updateEmailAction(
     };
   }
 
-  try {
-    // Supabaseでメールアドレスを更新
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const redirectUrl = new URL("/settings/profile?type=email_change", baseUrl);
+  // Service層でメールアドレス変更リクエストを送信
+  const result = await requestEmailChange(validatedFields.data.newEmail);
 
-    const { error } = await supabaseClient.auth.updateUser(
-      {
-        email: validatedFields.data.newEmail,
-      },
-      {
-        emailRedirectTo: redirectUrl.toString(),
-      },
-    );
-
-    if (error) {
-      // エラーメッセージの詳細化
-      if (error.message.includes("already")) {
-        return {
-          success: false,
-          error: "このメールアドレスは既に使用されています",
-        };
-      }
-      console.error("Email update error:", error);
-      return {
-        success: false,
-        error: "メールアドレスの変更に失敗しました",
-      };
-    }
-
-    return {
-      success: true,
-      message:
-        "確認メールを送信しました。メール内のリンクをクリックして変更を完了してください。",
-    };
-  } catch (error) {
-    console.error("Unexpected error during email update:", error);
+  if (!result.success) {
     return {
       success: false,
-      error: "予期しないエラーが発生しました",
+      error: result.error,
     };
   }
+
+  return {
+    success: true,
+    message:
+      "確認メールを送信しました。メール内のリンクをクリックして変更を完了してください。",
+  };
 }
