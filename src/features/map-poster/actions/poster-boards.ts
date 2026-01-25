@@ -58,7 +58,8 @@ export async function getPosterBoardStatsAction(
           .from("poster_boards")
           .select("*", { count: "exact", head: true })
           .eq("prefecture", prefecture)
-          .eq("status", status);
+          .eq("status", status)
+          .eq("archived", false);
 
         if (error) {
           console.error(`Error counting ${status}:`, error);
@@ -72,7 +73,8 @@ export async function getPosterBoardStatsAction(
       const totalCountPromise = supabase
         .from("poster_boards")
         .select("*", { count: "exact", head: true })
-        .eq("prefecture", prefecture);
+        .eq("prefecture", prefecture)
+        .eq("archived", false);
 
       // すべてのクエリを並列実行
       const [statusResults, totalResult] = await Promise.all([
