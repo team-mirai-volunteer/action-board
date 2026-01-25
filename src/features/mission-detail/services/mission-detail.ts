@@ -215,7 +215,7 @@ export async function getAllCategoryMissions(
 ): Promise<CategoryWithMissions[]> {
   const supabase = createClient();
 
-  // 対象ミッションの全カテゴリIDを取得（limit制限なし）
+  // テゴリIDを取得
   const { data: links, error: linksError } = await supabase
     .from("mission_category_link")
     .select("category_id")
@@ -224,51 +224,57 @@ export async function getAllCategoryMissions(
     .order("sort_no", { ascending: true });
 
   if (linksError) {
-    console.error("Category link fetch error:", linksError);
+    console.error("Mission category link fetch error:", linksError);
     return [];
   }
 
   if (!links || links.length === 0) {
-    // カテゴリに属していない場合は空配列を返す
     return [];
   }
 
-  // 各カテゴリIDに対してミッションを取得
-  const categoryMissionsPromises = links.map(async (link) => {
-    const categoryId = link.category_id;
+  const categoryIds = links.map((link) => link.category_id);
 
-    // 各カテゴリのミッションを取得（現在のミッションは除外）
-    const { data, error } = await supabase
-      .from("mission_category_view")
-      .select("*")
-      .eq("category_id", categoryId)
-      .neq("mission_id", missionId)
-      .order("link_sort_no", { ascending: true });
+  // 全カテゴリのミッションを取得
+  const { data, error } = await supabase
+    .from("mission_category_view")
+    .select("*")
+    .in("category_id", categoryIds)
+    .neq("mission_id", missionId)
+    .order("category_id", { ascending: true })
+    .order("link_sort_no", { ascending: true });
 
-    if (error) {
-      console.error(`Category missions fetch error for ${categoryId}:`, error);
-      return null;
+  if (error) {
+    console.error("Category missions fetch error:", error);
+    return [];
+  }
+
+  // カテゴリごとにグループ化
+  const categoryMap = new Map<string, Tables<"mission_category_view">[]>();
+
+  for (const mission of data || []) {
+    const categoryId = mission.category_id;
+    if (!categoryId) continue;
+
+    const missions = categoryMap.get(categoryId);
+    if (missions) {
+      missions.push(mission);
+    } else {
+      categoryMap.set(categoryId, [mission]);
     }
+  }
 
-    // ミッションが0件の場合はnullを返す（後でフィルタリング）
-    if (!data || data.length === 0) {
-      return null;
+  // sort_no順でカテゴリを並べる（linksの順序を保持）
+  const categoryMissions: CategoryWithMissions[] = [];
+  for (const link of links) {
+    const missions = categoryMap.get(link.category_id);
+    if (missions && missions.length > 0) {
+      categoryMissions.push({
+        categoryId: link.category_id,
+        categoryTitle: missions[0]?.category_title ?? null,
+        missions,
+      });
     }
-
-    return {
-      categoryId,
-      categoryTitle: data[0]?.category_title ?? null,
-      missions: data,
-    };
-  });
-
-  // 全てのカテゴリのミッションを並列取得
-  const categoryMissionsResults = await Promise.all(categoryMissionsPromises);
-
-  // nullをフィルタリング（ミッションが0件のカテゴリを除外）
-  const categoryMissions = categoryMissionsResults.filter(
-    (result): result is CategoryWithMissions => result !== null,
-  );
+  }
 
   return categoryMissions;
 }

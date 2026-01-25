@@ -34,7 +34,7 @@ export default async function RelatedMissions({
           ? `「${categoryTitle}」の他のミッション`
           : "関連ミッション"}
       </h2>
-      <HorizontalScrollContainer layout="center">
+      <HorizontalScrollContainer centering={true}>
         <div className="flex w-fit gap-4 pl-4 md:pl-0 pr-4 pb-2 pt-4">
           {missions.map((missionView) => {
             if (!missionView.mission_id) return null;
