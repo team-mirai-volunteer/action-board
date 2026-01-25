@@ -259,16 +259,6 @@ export default function PosterMapPageClientOptimized({
         </Button>
       </div>
 
-      {/* Reservations Link */}
-      <div className="flex justify-center pt-2">
-        <Link
-          href="/map/poster/reservations"
-          className="text-sm text-muted-foreground hover:text-foreground hover:underline"
-        >
-          予約/完了一覧を見る
-        </Link>
-      </div>
-
       {/* Archive Link */}
       <div className="flex justify-center pt-2 pb-4">
         <Link

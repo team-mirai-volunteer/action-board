@@ -1,16 +1,67 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getUserReservationStats } from "@/features/map-poster/services/poster-boards";
+import {
+  POSTER_DISTRICT_MAP,
+  isValidDistrict,
+} from "@/features/map-poster/constants/poster-district-shugin-2026";
+import {
+  getDistrictsWithBoards,
+  getUserReservationStats,
+} from "@/features/map-poster/services/poster-boards";
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "予約/完了一覧 - ポスター掲示板マップ",
-  description: "ユーザー別のポスター掲示板の予約・完了状況を確認できます",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ district: string }>;
+}): Promise<Metadata> {
+  const { district: districtKey } = await params;
 
-export default async function ReservationsPage() {
-  const stats = await getUserReservationStats();
+  let districtName = "";
+  if (isValidDistrict(districtKey)) {
+    districtName = POSTER_DISTRICT_MAP[districtKey].jp;
+  } else {
+    const validDistricts = await getDistrictsWithBoards();
+    const matchedDistrict = validDistricts.find(
+      (d) => d.toLowerCase().replace(/[^a-z0-9]/g, "-") === districtKey,
+    );
+    districtName = matchedDistrict || "";
+  }
+
+  return {
+    title: `予約/完了一覧 - ${districtName} - ポスター掲示板マップ`,
+    description: `${districtName}のユーザー別ポスター掲示板の予約・完了状況`,
+  };
+}
+
+export default async function DistrictReservationsPage({
+  params,
+}: {
+  params: Promise<{ district: string }>;
+}) {
+  const { district: districtKey } = await params;
+
+  // 区割り名を取得
+  let districtJp: string;
+
+  if (isValidDistrict(districtKey)) {
+    districtJp = POSTER_DISTRICT_MAP[districtKey].jp;
+  } else {
+    const validDistricts = await getDistrictsWithBoards();
+    const matchedDistrict = validDistricts.find(
+      (d) => d.toLowerCase().replace(/[^a-z0-9]/g, "-") === districtKey,
+    );
+
+    if (!matchedDistrict) {
+      return redirect("/map/poster");
+    }
+
+    districtJp = matchedDistrict;
+  }
+
+  const stats = await getUserReservationStats(districtJp);
 
   // 全体の合計を計算
   const totals = stats.reduce(
@@ -26,13 +77,13 @@ export default async function ReservationsPage() {
       {/* Header */}
       <div className="space-y-2">
         <Link
-          href="/map/poster"
+          href={`/map/poster/${districtKey}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="mr-1 h-4 w-4" />
-          ポスター掲示板マップに戻る
+          {districtJp}のマップに戻る
         </Link>
-        <h1 className="text-2xl font-bold">予約/完了一覧</h1>
+        <h1 className="text-2xl font-bold">{districtJp} - 予約/完了一覧</h1>
         <p className="text-muted-foreground">
           ユーザー別のポスター掲示板の予約・完了状況
         </p>

@@ -815,17 +815,24 @@ export interface UserReservationStats {
 /**
  * ユーザー別の予約/完了統計を取得
  * 現在アクティブな（アーカイブされていない）掲示板のみを対象
+ * @param district - 区割り名（日本語）。指定すると、その区割りのみの統計を取得
  */
-export async function getUserReservationStats(): Promise<
-  UserReservationStats[]
-> {
+export async function getUserReservationStats(
+  district?: string,
+): Promise<UserReservationStats[]> {
   const supabase = createClient();
 
   // まず、アクティブな掲示板のIDを取得
-  const { data: activeBoards, error: boardsError } = await supabase
+  let boardsQuery = supabase
     .from("poster_boards")
     .select("id")
     .eq("archived", false);
+
+  if (district) {
+    boardsQuery = boardsQuery.eq("district", district);
+  }
+
+  const { data: activeBoards, error: boardsError } = await boardsQuery;
 
   if (boardsError) {
     console.error("Error fetching active boards:", boardsError);
