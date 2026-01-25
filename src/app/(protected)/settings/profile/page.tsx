@@ -60,8 +60,6 @@ export default async function ProfileSettingsPage({
           avatar_url: publicUser?.avatar_url || null,
         }}
         initialPrivateUser={privateUser}
-        partyMembership={partyMembership}
-        email={user.email || null}
       />
 
       {partyMembership && (
