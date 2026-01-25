@@ -13,9 +13,19 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   dotenv.config({ path: ".env.local", override: true });
 }
 
-// Active election data folder - change this when switching to a new election
-// Available folders: sangin-2025 (参議院2025), shugin-2026 (衆議院2026)
-const ACTIVE_DATA_FOLDER = "shugin-2026";
+// =============================================================================
+// ELECTION CONFIGURATION - Change this when switching to a new election
+// =============================================================================
+// Available values: "sangin-2025" (参議院2025), "shugin-2026" (衆議院2026)
+//
+// This value is used for:
+//   - Data folder path: poster_data/data/{ACTIVE_ELECTION_TERM}/*.csv
+//   - Database column: election_term
+//   - Status handling on conflict:
+//     - Same election_term: preserve existing status (user edits kept)
+//     - Different election_term: reset status to 'not_yet' (new election)
+// =============================================================================
+const ACTIVE_ELECTION_TERM = "shugin-2026";
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
@@ -120,11 +130,14 @@ async function main() {
       );
     } else {
       // Find all CSV files in the active election data folder
-      csvFiles = await glob(`poster_data/data/${ACTIVE_DATA_FOLDER}/**/*.csv`, {
-        ignore: ["**/node_modules/**", "**/.*"],
-      });
+      csvFiles = await glob(
+        `poster_data/data/${ACTIVE_ELECTION_TERM}/**/*.csv`,
+        {
+          ignore: ["**/node_modules/**", "**/.*"],
+        },
+      );
       console.log(
-        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_DATA_FOLDER}${verbose ? " (verbose mode)" : ""}`,
+        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_ELECTION_TERM}${verbose ? " (verbose mode)" : ""}`,
       );
     }
 
@@ -329,8 +342,13 @@ async function main() {
     }
 
     // Insert from staging to production table using the full unique constraint
-    // Set election_term based on ACTIVE_DATA_FOLDER
+    // election_term is set to ACTIVE_ELECTION_TERM
+    // Status handling:
+    //   - New inserts: status defaults to 'not_yet'
+    //   - Same election_term conflict: preserve existing status (user edits)
+    //   - Different election_term conflict: reset status to 'not_yet' (new election)
     console.log("\nInserting data into production table...");
+    console.log(`Election term: ${ACTIVE_ELECTION_TERM}`);
     const result = await db.query(
       `
       INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name, archived, election_term)
@@ -349,6 +367,11 @@ async function main() {
         long = EXCLUDED.long,
         archived = CASE WHEN EXCLUDED.district IS NULL THEN true ELSE false END,
         election_term = EXCLUDED.election_term,
+        -- Preserve status if same election_term, reset to 'not_yet' if different
+        status = CASE
+          WHEN ${TARGET_TABLE}.election_term = EXCLUDED.election_term THEN ${TARGET_TABLE}.status
+          ELSE 'not_yet'::poster_board_status
+        END,
         updated_at = timezone('utc'::text, now())
       WHERE
         ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
@@ -365,7 +388,7 @@ async function main() {
           ELSE 'updated'
         END as action
     `,
-      [ACTIVE_DATA_FOLDER],
+      [ACTIVE_ELECTION_TERM],
     );
 
     // Count inserts vs updates
