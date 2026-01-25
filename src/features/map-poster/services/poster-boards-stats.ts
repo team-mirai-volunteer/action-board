@@ -69,6 +69,7 @@ async function getFallbackStats(): Promise<{
       .select("prefecture, status")
       .not("lat", "is", null)
       .not("long", "is", null)
+      .eq("archived", false)
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error) {
