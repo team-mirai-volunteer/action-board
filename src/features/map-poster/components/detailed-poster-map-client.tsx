@@ -152,6 +152,16 @@ export default function DetailedPosterMapClient({
     string | null
   >(null);
 
+  // キャンペーン別のlocalStorageキーを生成
+  const getStorageKey = (key: string) => {
+    const campaignPrefix = isArchive
+      ? `archive_${archiveElectionTerm || "unknown"}`
+      : isDistrict
+        ? "active_district"
+        : "active_prefecture";
+    return `${campaignPrefix}_${key}`;
+  };
+
   // ポスター貼りミッションのミッションIDを取得
   useEffect(() => {
     const fetchMissionId = async () => {
@@ -169,8 +179,8 @@ export default function DetailedPosterMapClient({
   // ログイン後に選択した掲示板を復元
   useEffect(() => {
     if (userId && boards.length > 0) {
-      const savedBoardId = localStorage.getItem("selectedBoardId");
-      const savedPrefecture = localStorage.getItem("selectedBoardPrefecture");
+      const savedBoardId = localStorage.getItem(getStorageKey("selectedBoardId"));
+      const savedPrefecture = localStorage.getItem(getStorageKey("selectedBoardPrefecture"));
 
       if (savedBoardId && savedPrefecture === prefecture) {
         const savedBoard = boards.find((board) => board.id === savedBoardId);
@@ -184,8 +194,8 @@ export default function DetailedPosterMapClient({
           setIsUpdateDialogOpen(true);
 
           // 使用済みのデータをクリア
-          localStorage.removeItem("selectedBoardId");
-          localStorage.removeItem("selectedBoardPrefecture");
+          localStorage.removeItem(getStorageKey("selectedBoardId"));
+          localStorage.removeItem(getStorageKey("selectedBoardPrefecture"));
         }
       }
     }
@@ -265,8 +275,8 @@ export default function DetailedPosterMapClient({
 
     if (!userId) {
       // ログイン後に戻ってきた時のために選択した掲示板情報を保存
-      localStorage.setItem("selectedBoardId", board.id);
-      localStorage.setItem("selectedBoardPrefecture", prefecture);
+      localStorage.setItem(getStorageKey("selectedBoardId"), board.id);
+      localStorage.setItem(getStorageKey("selectedBoardPrefecture"), prefecture);
       setSelectedBoardForLogin(board);
       setIsLoginDialogOpen(true);
       return;
