@@ -8,6 +8,12 @@ import type {
 } from "../types/poster-types";
 
 /**
+ * 現在アクティブな選挙期間
+ * 新しい選挙期間に移行する場合はこの値を変更する
+ */
+export const CURRENT_ELECTION_TERM = "shugin-2026";
+
+/**
  * 現在の認証ユーザーIDを取得
  */
 export async function getCurrentUserId(): Promise<string | null> {
@@ -94,6 +100,7 @@ export async function getPosterBoardsMinimalByDistrict(district: string) {
       .select("id,lat,long,status,name,address,city,number")
       .eq("district", district)
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -137,6 +144,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -185,6 +193,7 @@ export async function getPosterBoards(prefecture?: string) {
       .from("poster_boards")
       .select("*")
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -234,6 +243,7 @@ export async function getPosterBoardsByDistrict(district: string) {
       .select("*")
       .eq("district", district)
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -352,6 +362,7 @@ export async function getPrefecturesWithBoards() {
       .select("prefecture")
       .not("prefecture", "is", null)
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .order("prefecture")
       .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -398,6 +409,7 @@ export async function getDistrictsWithBoards(): Promise<string[]> {
       .select("district")
       .not("district", "is", null)
       .eq("archived", false)
+      .eq("election_term", CURRENT_ELECTION_TERM)
       .order("district")
       .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -540,12 +552,13 @@ export async function getPosterBoardSummaryByDistrict(): Promise<
   const supabase = createClient();
 
   // 区割りでグループ化して集計
-  // archived=false のデータのみを対象
+  // archived=false かつ現在の選挙期間のデータのみを対象
   const { data, error } = await supabase
     .from("poster_boards")
     .select("district, status")
     .not("district", "is", null)
-    .eq("archived", false);
+    .eq("archived", false)
+    .eq("election_term", CURRENT_ELECTION_TERM);
 
   if (error) {
     console.error("Error fetching district summary:", error);
@@ -599,7 +612,8 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
     .from("poster_boards")
     .select("status")
     .eq("district", district)
-    .eq("archived", false);
+    .eq("archived", false)
+    .eq("election_term", CURRENT_ELECTION_TERM);
 
   if (error) {
     console.error("Error fetching district stats:", error);
