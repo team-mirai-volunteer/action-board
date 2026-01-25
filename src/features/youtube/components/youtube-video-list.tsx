@@ -63,9 +63,9 @@ export function YouTubeVideoList({
   if (videos.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
-        あなたがアップロードした#チームみらい動画は見つかりませんでした。
+        #チームみらい 動画がまだ同期されていない、もしくは存在しません。
         <br />
-        動画は毎日自動的に収集されます。
+        動画は毎日自動的に同期されます。
       </div>
     );
   }
