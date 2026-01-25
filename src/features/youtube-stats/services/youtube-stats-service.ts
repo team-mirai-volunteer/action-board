@@ -203,16 +203,29 @@ export async function getYouTubeStatsSummary(
   // JSTで日付を取得
   const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
 
-  // 比較対象の日付リスト（一昨日優先、なければ昨日）
-  const comparisonDates = [dayBeforeYesterday, yesterday];
+  // 比較対象の日付リスト（昨日優先、なければ一昨日）
+  const comparisonDates = [yesterday, dayBeforeYesterday];
+
+  // 今日投稿された動画があるかを先にチェック
+  let hasTodayVideos = false;
+  for (const video of videos || []) {
+    const publishedAt = video.published_at as string | null;
+    if (publishedAt && toJstDateString(new Date(publishedAt)) === today) {
+      hasTodayVideos = true;
+      break;
+    }
+  }
 
   for (const video of videos || []) {
-    // 今日または昨日に投稿された動画をカウント（2日間分）
+    // 今日投稿された動画をカウント（今日のデータがなければ昨日もカウント）
     const publishedAt = video.published_at as string | null;
     const publishedDateJst = publishedAt
       ? toJstDateString(new Date(publishedAt))
       : null;
-    if (publishedDateJst === today || publishedDateJst === yesterday) {
+    if (
+      publishedDateJst === today ||
+      (!hasTodayVideos && publishedDateJst === yesterday)
+    ) {
       recentVideosCount++;
     }
 
@@ -237,7 +250,7 @@ export async function getYouTubeStatsSummary(
       totalComments += latestStats.comment_count ?? 0;
     }
 
-    // 比較用の過去データを取得（一昨日優先、なければ昨日）
+    // 比較用の過去データを取得（昨日優先、なければ一昨日）
     // recorded_atはUTCタイムスタンプなのでJSTに変換して比較
     for (const targetDate of comparisonDates) {
       const pastStats = sortedStats.find(
