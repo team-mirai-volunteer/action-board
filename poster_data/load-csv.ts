@@ -20,10 +20,10 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
 //
 // This value is used for:
 //   - Data folder path: poster_data/data/{ACTIVE_ELECTION_TERM}/*.csv
-//   - Database column: election_term
-//   - Status handling on conflict:
-//     - Same election_term: preserve existing status (user edits kept)
-//     - Different election_term: reset status to 'not_yet' (new election)
+//   - Database column: election_term (part of unique constraint)
+//   - Each election has separate records (no conflicts between elections)
+//   - Re-loading same election: preserves status (user edits kept)
+//   - New election: fresh INSERT with default status='not_yet'
 // =============================================================================
 const ACTIVE_ELECTION_TERM = "shugin-2026";
 
