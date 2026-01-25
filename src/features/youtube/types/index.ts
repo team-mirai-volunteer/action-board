@@ -3,12 +3,15 @@
  */
 
 // Googleトークンレスポンス
+// 注意: refresh_tokenは初回認証時またはprompt=consent時のみ返される
+// トークンリフレッシュ時は通常返されない
 export interface GoogleTokenResponse {
   access_token: string;
   expires_in: number;
-  refresh_token: string;
+  refresh_token?: string; // 初回認証時のみ、またはprompt=consent時のみ返される
   scope: string;
   token_type: string;
+  id_token?: string; // OpenID Connect id_token (JWT)
 }
 
 // YouTubeチャンネル情報

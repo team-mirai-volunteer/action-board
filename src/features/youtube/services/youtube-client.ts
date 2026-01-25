@@ -38,6 +38,52 @@ export class YouTubeAPIError extends Error {
 }
 
 /**
+ * id_token (JWT) のペイロード型
+ */
+interface IdTokenPayload {
+  iss: string; // Issuer
+  sub: string; // Subject (Google User ID)
+  aud: string; // Audience (Client ID)
+  exp: number; // Expiration time
+  iat: number; // Issued at
+  email?: string;
+  email_verified?: boolean;
+  name?: string;
+  picture?: string;
+}
+
+/**
+ * id_token (JWT) をパースしてペイロードを取得する
+ * 注意: これは署名検証なしの簡易パースです。
+ * Googleのid_tokenは既にGoogle OAuth経由で取得しているため、
+ * トークン自体の信頼性は担保されています。
+ */
+export function parseIdToken(idToken: string): IdTokenPayload {
+  try {
+    const parts = idToken.split(".");
+    if (parts.length !== 3) {
+      throw new YouTubeAPIError("Invalid id_token format");
+    }
+
+    // Base64URL デコード
+    const payload = parts[1];
+    const decoded = Buffer.from(payload, "base64url").toString("utf-8");
+    const parsed = JSON.parse(decoded) as IdTokenPayload;
+
+    if (!parsed.sub) {
+      throw new YouTubeAPIError("id_token does not contain sub claim");
+    }
+
+    return parsed;
+  } catch (error) {
+    if (error instanceof YouTubeAPIError) {
+      throw error;
+    }
+    throw new YouTubeAPIError("Failed to parse id_token");
+  }
+}
+
+/**
  * 認証コードをアクセストークンに交換する
  */
 export async function exchangeCodeForToken(

@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import {
   exchangeCodeForToken,
   fetchChannelInfo,
+  parseIdToken,
   refreshAccessToken,
 } from "../services/youtube-client";
 import type { YouTubeLinkResult } from "../types";
@@ -39,6 +40,29 @@ export async function handleYouTubeLinkAction(
     // Google APIでトークンと交換
     const tokens = await exchangeCodeForToken(code, redirectUri);
 
+    // id_tokenからGoogleユーザーID (sub) を取得
+    if (!tokens.id_token) {
+      return {
+        success: false,
+        error: "Googleからid_tokenが返されませんでした",
+      };
+    }
+
+    // refresh_tokenの存在確認（NOT NULL制約違反を防ぐ）
+    if (!tokens.refresh_token) {
+      console.error(
+        "Google did not return refresh_token. User may need to re-consent.",
+      );
+      return {
+        success: false,
+        error:
+          "Googleからリフレッシュトークンが取得できませんでした。お手数ですが、もう一度YouTube連携をお試しください。",
+      };
+    }
+
+    const idTokenPayload = parseIdToken(tokens.id_token);
+    const googleUserId = idTokenPayload.sub;
+
     // YouTubeチャンネル情報を取得
     const channel = await fetchChannelInfo(tokens.access_token);
 
@@ -48,7 +72,7 @@ export async function handleYouTubeLinkAction(
     const { data: existingByGoogleId } = await adminClient
       .from("youtube_user_connections")
       .select("user_id")
-      .eq("google_user_id", channel.id)
+      .eq("google_user_id", googleUserId)
       .maybeSingle();
 
     if (existingByGoogleId && existingByGoogleId.user_id !== user.id) {
@@ -80,7 +104,7 @@ export async function handleYouTubeLinkAction(
       .upsert(
         {
           user_id: user.id,
-          google_user_id: channel.id,
+          google_user_id: googleUserId,
           channel_id: channel.id,
           display_name: channel.title,
           avatar_url: channel.thumbnailUrl || null,
@@ -240,33 +264,64 @@ export async function refreshYouTubeTokenAction(): Promise<YouTubeLinkResult> {
 }
 
 /**
- * YouTube連携情報を取得する（内部用）
+ * 現在のユーザーのYouTube連携情報を取得するServer Action
+ * セッションから認証済みユーザーIDを取得して、そのユーザーの連携情報のみを返す
  */
-export async function getYouTubeConnectionForUser(userId: string): Promise<{
-  channelId: string;
-  accessToken: string;
-  displayName?: string;
-  tokenExpiresAt: string;
-} | null> {
+export async function getMyYouTubeConnectionAction(): Promise<{
+  success: boolean;
+  connection?: {
+    channelId: string;
+    accessToken: string;
+    displayName?: string;
+    tokenExpiresAt: string;
+  };
+  error?: string;
+}> {
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        error: "ログインが必要です",
+      };
+    }
+
     const adminClient = await createAdminClient();
     const { data: connection, error } = await adminClient
       .from("youtube_user_connections")
       .select("channel_id, access_token, display_name, token_expires_at")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .single();
 
     if (error || !connection) {
-      return null;
+      return {
+        success: false,
+        error: "YouTube連携情報が見つかりません",
+      };
     }
 
     return {
-      channelId: connection.channel_id,
-      accessToken: connection.access_token,
-      displayName: connection.display_name ?? undefined,
-      tokenExpiresAt: connection.token_expires_at,
+      success: true,
+      connection: {
+        channelId: connection.channel_id,
+        accessToken: connection.access_token,
+        displayName: connection.display_name ?? undefined,
+        tokenExpiresAt: connection.token_expires_at,
+      },
     };
-  } catch {
-    return null;
+  } catch (error) {
+    console.error("Get YouTube connection error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "YouTube連携情報の取得に失敗しました",
+    };
   }
 }
