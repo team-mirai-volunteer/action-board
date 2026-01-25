@@ -497,25 +497,30 @@ export default function DetailedPosterMapClient({
 
           {/* ステータス別内訳 */}
           <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {Object.entries(statusConfig)
-              .filter(
-                ([status]) =>
-                  status !== "error_wrong_place" && status !== "error_damaged",
-              )
-              .map(([status, config]) => {
-                const count = statusCounts[status as BoardStatus] || 0;
-                return (
-                  <div key={status} className="flex items-center gap-1">
-                    <div
-                      className={`h-2.5 w-2.5 rounded-full shrink-0 ${config.color}`}
-                    />
-                    <span className="text-xs whitespace-nowrap">
-                      {config.shortLabel || config.label}
-                      <span className="ml-0.5 font-semibold">{count}</span>
-                    </span>
-                  </div>
-                );
-              })}
+            {(
+              [
+                "not_yet",
+                "not_yet_dangerous",
+                "reserved",
+                "done",
+                "error_wrong_poster",
+                "other",
+              ] as BoardStatus[]
+            ).map((status) => {
+              const config = statusConfig[status];
+              const count = statusCounts[status] || 0;
+              return (
+                <div key={status} className="flex items-center gap-1">
+                  <div
+                    className={`h-2.5 w-2.5 rounded-full shrink-0 ${config.color}`}
+                  />
+                  <span className="text-xs whitespace-nowrap">
+                    {config.shortLabel || config.label}
+                    <span className="ml-0.5 font-semibold">{count}</span>
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
