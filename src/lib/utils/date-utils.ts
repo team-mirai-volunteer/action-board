@@ -2,6 +2,9 @@
  * 日本時間（JST）関連のユーティリティ関数
  */
 
+/** JST (UTC+9) のオフセット（ミリ秒） */
+const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
 /**
  * 日本時間（JST）の今日の0時0分を取得する
  * UTC 15:00 = JST 00:00 のパターンを使用
@@ -20,4 +23,28 @@ export function getJSTMidnightToday(): Date {
   }
 
   return todayJST;
+}
+
+/**
+ * UTCのDateオブジェクトをJSTの日付文字列(YYYY-MM-DD)に変換する
+ */
+export function toJstDateString(date: Date): string {
+  const jstDate = new Date(date.getTime() + JST_OFFSET_MS);
+  return jstDate.toISOString().split("T")[0];
+}
+
+/**
+ * JSTで今日・昨日・一昨日の日付文字列を取得する
+ */
+export function getJstRecentDates(now: Date = new Date()): {
+  today: string;
+  yesterday: string;
+  dayBeforeYesterday: string;
+} {
+  const DAY_MS = 86400000;
+  return {
+    today: toJstDateString(now),
+    yesterday: toJstDateString(new Date(now.getTime() - DAY_MS)),
+    dayBeforeYesterday: toJstDateString(new Date(now.getTime() - DAY_MS * 2)),
+  };
 }
