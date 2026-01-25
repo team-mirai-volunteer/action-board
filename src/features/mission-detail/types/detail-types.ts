@@ -29,6 +29,7 @@ export type MissionPageData = {
   totalAchievementCount: number;
   referralCode: string | null;
   mainLink: Tables<"mission_main_links"> | null;
+  sameCategoryMissions: Tables<"mission_category_view">[];
 };
 
 export type ButtonLabelProps = {

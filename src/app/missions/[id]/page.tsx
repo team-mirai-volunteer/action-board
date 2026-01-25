@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
 import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
+import RelatedMissions from "@/features/mission-detail/components/related-missions";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
@@ -84,8 +85,14 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, submissions, userAchievementCount, referralCode, mainLink } =
-    pageData;
+  const {
+    mission,
+    submissions,
+    userAchievementCount,
+    referralCode,
+    mainLink,
+    sameCategoryMissions,
+  } = pageData;
 
   // クイズミッションの場合は問題を事前取得
   let quizQuestions = null;
@@ -192,6 +199,19 @@ export default async function MissionPage({ params }: Props) {
             </CardContent>
           </Card>
         )}
+
+        {/* 同一カテゴリのミッション表示 */}
+        <div className="mt-8">
+          <RelatedMissions
+            missions={sameCategoryMissions}
+            categoryTitle={
+              sameCategoryMissions.length > 0
+                ? sameCategoryMissions[0].category_title
+                : null
+            }
+            userId={user?.id}
+          />
+        </div>
       </div>
     </div>
   );

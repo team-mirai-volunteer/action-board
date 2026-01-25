@@ -9,12 +9,14 @@ interface HorizontalScrollContainerProps {
   children: React.ReactNode;
   className?: string;
   scrollDistance?: number;
+  layout?: "center" | "left";
 }
 
 export function HorizontalScrollContainer({
   children,
   className,
   scrollDistance = 316,
+  layout = "left",
 }: HorizontalScrollContainerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -147,7 +149,7 @@ export function HorizontalScrollContainer({
     );
 
   return (
-    <div className="relative">
+    <div className="relative flex justify-center">
       {isDesktop && canScrollLeft && (
         <button
           type="button"
@@ -162,12 +164,13 @@ export function HorizontalScrollContainer({
       <div
         ref={scrollRef}
         className={cn(
-          "w-full overflow-x-auto custom-scrollbar",
+          "overflow-x-auto custom-scrollbar",
           isDesktop && isDragging
             ? "cursor-grabbing"
             : isDesktop
               ? "cursor-grab"
               : "",
+          layout === "left" ? "w-full" : "w-fitcontent",
           className,
         )}
         style={{

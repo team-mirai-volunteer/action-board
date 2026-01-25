@@ -204,6 +204,54 @@ export async function getMissionMainLink(
   return data;
 }
 
+/**
+ * 同一カテゴリのミッションを取得
+ * ミッションが複数カテゴリに属する場合は、最初のカテゴリ（sort_no最小）のミッションを取得
+ * @param missionId - 対象ミッションID
+ * @returns 同一カテゴリのミッション（現在のミッションは除外）
+ */
+export async function getSameCategoryMissions(
+  missionId: string,
+): Promise<Tables<"mission_category_view">[]> {
+  const supabase = createClient();
+
+  // 対象ミッションの最初のカテゴリIDを取得
+  const { data: links, error: linksError } = await supabase
+    .from("mission_category_link")
+    .select("category_id")
+    .eq("mission_id", missionId)
+    .eq("del_flg", false)
+    .order("sort_no", { ascending: true })
+    .limit(1);
+
+  if (linksError) {
+    console.error("Category link fetch error:", linksError);
+    return [];
+  }
+
+  if (!links || links.length === 0) {
+    // カテゴリに属していない場合は空配列を返す
+    return [];
+  }
+
+  const categoryId = links[0].category_id;
+
+  // 同一カテゴリのミッションを取得（現在のミッションは除外）
+  const { data, error } = await supabase
+    .from("mission_category_view")
+    .select("*")
+    .eq("category_id", categoryId)
+    .neq("mission_id", missionId)
+    .order("link_sort_no", { ascending: true });
+
+  if (error) {
+    console.error("Same category missions fetch error:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 export async function getMissionPageData(
   missionId: string,
   userId?: string,
@@ -235,6 +283,9 @@ export async function getMissionPageData(
   // メインリンクの取得
   const mainLink = await getMissionMainLink(missionId);
 
+  // 同一カテゴリのミッションを取得
+  const sameCategoryMissions = await getSameCategoryMissions(missionId);
+
   return {
     mission,
     userAchievements,
@@ -243,6 +294,7 @@ export async function getMissionPageData(
     totalAchievementCount,
     referralCode,
     mainLink,
+    sameCategoryMissions,
   };
 }
 
