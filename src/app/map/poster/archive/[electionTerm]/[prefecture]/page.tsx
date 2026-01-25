@@ -4,8 +4,11 @@ import {
   type PosterPrefectureKey,
 } from "@/features/map-poster/constants/poster-prefectures";
 import { getArchivedPosterBoardStats } from "@/features/map-poster/services/poster-boards";
+import type { Database } from "@/lib/types/supabase";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+type ElectionType = Database["public"]["Enums"]["election_type"];
 
 // Election term display names
 const ELECTION_TERM_NAMES: Record<string, string> = {
@@ -62,7 +65,10 @@ export default async function ArchivePrefecturePage({
   const prefectureJp = prefectureData.jp;
 
   // Get archived stats for this election term and prefecture
-  const stats = await getArchivedPosterBoardStats(electionTerm, prefectureJp);
+  const stats = await getArchivedPosterBoardStats(
+    electionTerm as ElectionType,
+    prefectureJp,
+  );
 
   return (
     <DetailedPosterMapClient

@@ -4,6 +4,9 @@ import { statusConfig } from "@/features/map-poster/config/status-config";
 import { JP_TO_EN_PREFECTURE } from "@/features/map-poster/constants/poster-prefectures";
 import { getArchivedPosterBoardSummary } from "@/features/map-poster/services/poster-boards";
 import type { BoardStatus } from "@/features/map-poster/types/poster-types";
+import type { Database } from "@/lib/types/supabase";
+
+type ElectionType = Database["public"]["Enums"]["election_type"];
 import {
   calculateProgressRate,
   getCompletedCount,
@@ -48,7 +51,9 @@ export default async function ArchiveElectionTermPage({
   }
 
   // Get archived summary for this election term
-  const summary = await getArchivedPosterBoardSummary(electionTerm);
+  const summary = await getArchivedPosterBoardSummary(
+    electionTerm as ElectionType,
+  );
 
   // Calculate total stats
   let registeredTotal = 0;

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
+import type { Database } from "@/lib/types/supabase";
 import { Archive, ArrowLeft, Copy, HelpCircle, MapPin } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -54,6 +55,8 @@ import type {
   PosterBoardTotal,
   StatusHistory,
 } from "../types/poster-types";
+
+type ElectionType = Database["public"]["Enums"]["election_type"];
 import {
   calculateProgressRate,
   getCompletedCount,
@@ -226,7 +229,7 @@ export default function DetailedPosterMapClient({
       if (isArchive && archiveElectionTerm) {
         // アーカイブモードの場合
         data = await getArchivedPosterBoardsMinimal(
-          archiveElectionTerm,
+          archiveElectionTerm as ElectionType,
           prefecture,
         );
       } else if (isDistrict) {

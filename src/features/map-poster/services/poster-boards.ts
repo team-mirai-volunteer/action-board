@@ -93,7 +93,7 @@ export async function getPosterBoardsMinimalByDistrict(district: string) {
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
       .eq("district", district)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -136,7 +136,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
     let query = supabase
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
 
@@ -184,7 +184,7 @@ export async function getPosterBoards(prefecture?: string) {
     let query = supabase
       .from("poster_boards")
       .select("*")
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -233,7 +233,7 @@ export async function getPosterBoardsByDistrict(district: string) {
       .from("poster_boards")
       .select("*")
       .eq("district", district)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -351,7 +351,7 @@ export async function getPrefecturesWithBoards() {
       .from("poster_boards")
       .select("prefecture")
       .not("prefecture", "is", null)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .order("prefecture")
       .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -397,7 +397,7 @@ export async function getDistrictsWithBoards(): Promise<string[]> {
       .from("poster_boards")
       .select("district")
       .not("district", "is", null)
-      .eq("archived", false)
+      .eq("election", "shugin-2026")
       .order("district")
       .order("id", { ascending: true })
       .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -540,12 +540,12 @@ export async function getPosterBoardSummaryByDistrict(): Promise<
   const supabase = createClient();
 
   // 区割りでグループ化して集計
-  // archived=false のデータのみを対象
+  // Active election (shugin-2026) のデータのみを対象
   const { data, error } = await supabase
     .from("poster_boards")
     .select("district, status")
     .not("district", "is", null)
-    .eq("archived", false);
+    .eq("election", "shugin-2026");
 
   if (error) {
     console.error("Error fetching district summary:", error);
@@ -599,7 +599,7 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
     .from("poster_boards")
     .select("status")
     .eq("district", district)
-    .eq("archived", false);
+    .eq("election", "shugin-2026");
 
   if (error) {
     console.error("Error fetching district stats:", error);
@@ -628,15 +628,17 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
 
 // ===== Archive Functions =====
 
-// Get available archived election terms
-export async function getArchivedElectionTerms(): Promise<string[]> {
+type ElectionType = Database["public"]["Enums"]["election_type"];
+
+// Get available archived election terms (all elections except the active one)
+export async function getArchivedElectionTerms(): Promise<ElectionType[]> {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
-    .select("election_term")
-    .eq("archived", true)
-    .not("election_term", "is", null);
+    .select("election")
+    .neq("election", "shugin-2026")
+    .not("election", "is", null);
 
   if (error) {
     console.error("Error fetching archived election terms:", error);
@@ -647,17 +649,17 @@ export async function getArchivedElectionTerms(): Promise<string[]> {
   const uniqueTerms = Array.from(
     new Set(
       data
-        ?.map((item) => item.election_term)
-        .filter((t): t is string => t !== null) || [],
+        ?.map((item) => item.election)
+        .filter((t): t is ElectionType => t !== null) || [],
     ),
   );
 
   return uniqueTerms;
 }
 
-// Get archived data summary by prefecture for a specific election term
+// Get archived data summary by prefecture for a specific election
 export async function getArchivedPosterBoardSummary(
-  electionTerm: string,
+  election: ElectionType,
 ): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
@@ -667,7 +669,7 @@ export async function getArchivedPosterBoardSummary(
   const { data, error } = await supabase.rpc(
     "get_archived_poster_board_stats",
     {
-      p_election_term: electionTerm,
+      p_election: election,
     },
   );
 
@@ -710,9 +712,9 @@ export async function getArchivedPosterBoardSummary(
   return summary;
 }
 
-// Get archived poster boards minimal data for a specific election term and prefecture
+// Get archived poster boards minimal data for a specific election and prefecture
 export async function getArchivedPosterBoardsMinimal(
-  electionTerm: string,
+  election: ElectionType,
   prefecture: string,
 ) {
   const supabase = createClient();
@@ -729,12 +731,11 @@ export async function getArchivedPosterBoardsMinimal(
     const { data, error } = await supabase
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
-      .eq("election_term", electionTerm)
+      .eq("election", election)
       .eq(
         "prefecture",
         prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
       )
-      .eq("archived", true)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true });
 
@@ -758,9 +759,9 @@ export async function getArchivedPosterBoardsMinimal(
   return allBoards;
 }
 
-// Get archived poster board stats for a specific election term and prefecture
+// Get archived poster board stats for a specific election and prefecture
 export async function getArchivedPosterBoardStats(
-  electionTerm: string,
+  election: ElectionType,
   prefecture: string,
 ): Promise<{
   totalCount: number;
@@ -771,12 +772,11 @@ export async function getArchivedPosterBoardStats(
   const { data, error } = await supabase
     .from("poster_boards")
     .select("status")
-    .eq("election_term", electionTerm)
+    .eq("election", election)
     .eq(
       "prefecture",
       prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
-    )
-    .eq("archived", true);
+    );
 
   if (error) {
     console.error("Error fetching archived stats:", error);

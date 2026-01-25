@@ -700,11 +700,10 @@ export type Database = {
       poster_boards: {
         Row: {
           address: string | null;
-          archived: boolean | null;
           city: string;
           created_at: string;
           district: string | null;
-          election_term: string | null;
+          election: Database["public"]["Enums"]["election_type"] | null;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -718,11 +717,10 @@ export type Database = {
         };
         Insert: {
           address?: string | null;
-          archived?: boolean | null;
           city: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election?: Database["public"]["Enums"]["election_type"] | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -736,11 +734,10 @@ export type Database = {
         };
         Update: {
           address?: string | null;
-          archived?: boolean | null;
           city?: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election?: Database["public"]["Enums"]["election_type"] | null;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -1112,7 +1109,7 @@ export type Database = {
           city: string;
           created_at: string;
           district: string | null;
-          election_term: string | null;
+          election: Database["public"]["Enums"]["election_type"] | null;
           file_name: string | null;
           id: string | null;
           lat: number | null;
@@ -1129,7 +1126,7 @@ export type Database = {
           city: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election?: Database["public"]["Enums"]["election_type"] | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1146,7 +1143,7 @@ export type Database = {
           city?: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election?: Database["public"]["Enums"]["election_type"] | null;
           file_name?: string | null;
           id?: string | null;
           lat?: number | null;
@@ -1752,9 +1749,9 @@ export type Database = {
       };
       poster_board_latest_editors: {
         Row: {
-          archived: boolean | null;
           board_id: string | null;
           district: string | null;
+          election: Database["public"]["Enums"]["election_type"] | null;
           last_edited_at: string | null;
           last_editor_id: string | null;
           lat: number | null;
@@ -1840,7 +1837,7 @@ export type Database = {
         Returns: undefined;
       };
       get_archived_poster_board_stats: {
-        Args: { p_election_term: string };
+        Args: { p_election: Database["public"]["Enums"]["election_type"] };
         Returns: {
           count: number;
           prefecture: string;
@@ -2128,6 +2125,7 @@ export type Database = {
       is_posting_admin: { Args: never; Returns: boolean };
     };
     Enums: {
+      election_type: "sangin-2025" | "shugin-2026";
       poster_board_status:
         | "not_yet"
         | "reserved"
@@ -2285,6 +2283,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      election_type: ["sangin-2025", "shugin-2026"],
       poster_board_status: [
         "not_yet",
         "reserved",
