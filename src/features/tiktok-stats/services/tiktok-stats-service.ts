@@ -10,12 +10,12 @@ import type {
   OverallStatsHistoryItem,
   SortType,
   StatsSummary,
+  TikTokVideoWithStats,
   VideoCountByDateItem,
-  YouTubeVideoWithStats,
 } from "../types";
 
 /**
- * YouTube動画一覧を最新統計付きで取得する
+ * TikTok動画一覧を最新統計付きで取得する
  * @param limit - 取得件数
  * @param offset - オフセット
  * @param sortBy - ソート順
@@ -23,25 +23,25 @@ import type {
  * @param endDate - 終了日（オプション）
  * @returns 動画一覧
  */
-export async function getYouTubeVideosWithStats(
+export async function getTikTokVideosWithStats(
   limit: number,
   offset: number,
   sortBy: SortType,
   startDate?: Date,
   endDate?: Date,
-): Promise<YouTubeVideoWithStats[]> {
+): Promise<TikTokVideoWithStats[]> {
   const supabase = createClient();
 
-  // 動画と最新の統計情報を取得
   let query = supabase
-    .from("youtube_videos")
+    .from("tiktok_videos")
     .select(
       `
       *,
-      youtube_video_stats(
+      tiktok_video_stats(
         view_count,
         like_count,
         comment_count,
+        share_count,
         recorded_at
       )
     `,
@@ -52,7 +52,6 @@ export async function getYouTubeVideosWithStats(
     query = query.gte("published_at", startDate.toISOString());
   }
   if (endDate) {
-    // 終了日は翌日の0時までを含める
     const endOfDay = new Date(endDate);
     endOfDay.setDate(endOfDay.getDate() + 1);
     query = query.lt("published_at", endOfDay.toISOString());
@@ -63,21 +62,20 @@ export async function getYouTubeVideosWithStats(
   });
 
   if (error) {
-    console.error("Failed to fetch YouTube videos:", error);
+    console.error("Failed to fetch TikTok videos:", error);
     return [];
   }
 
-  // 各動画の最新統計を取得して整形
-  const videosWithStats: YouTubeVideoWithStats[] = (videos || []).map(
+  const videosWithStats: TikTokVideoWithStats[] = (videos || []).map(
     (video) => {
-      const stats = video.youtube_video_stats as Array<{
+      const stats = video.tiktok_video_stats as Array<{
         view_count: number | null;
         like_count: number | null;
         comment_count: number | null;
+        share_count: number | null;
         recorded_at: string;
       }>;
 
-      // 最新の統計を取得（recorded_atでソート）
       const latestStats = stats.sort(
         (a, b) =>
           new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
@@ -85,15 +83,15 @@ export async function getYouTubeVideosWithStats(
 
       return {
         ...video,
-        youtube_video_stats: undefined, // 元のリレーションを除去
+        tiktok_video_stats: undefined,
         latest_view_count: latestStats?.view_count ?? null,
         latest_like_count: latestStats?.like_count ?? null,
         latest_comment_count: latestStats?.comment_count ?? null,
-      } as YouTubeVideoWithStats;
+        latest_share_count: latestStats?.share_count ?? null,
+      } as TikTokVideoWithStats;
     },
   );
 
-  // ソート
   const sorted = videosWithStats.sort((a, b) => {
     switch (sortBy) {
       case "view_count":
@@ -108,24 +106,23 @@ export async function getYouTubeVideosWithStats(
     }
   });
 
-  // ページネーション
   return sorted.slice(offset, offset + limit);
 }
 
 /**
- * YouTube動画の総数を取得する
+ * TikTok動画の総数を取得する
  * @param startDate - 開始日（オプション）
  * @param endDate - 終了日（オプション）
  * @returns 総動画数
  */
-export async function getYouTubeVideoCount(
+export async function getTikTokVideoCount(
   startDate?: Date,
   endDate?: Date,
 ): Promise<number> {
   const supabase = createClient();
 
   let query = supabase
-    .from("youtube_videos")
+    .from("tiktok_videos")
     .select("*", { count: "exact", head: true })
     .eq("is_active", true);
 
@@ -141,7 +138,7 @@ export async function getYouTubeVideoCount(
   const { count, error } = await query;
 
   if (error) {
-    console.error("Failed to fetch YouTube video count:", error);
+    console.error("Failed to fetch TikTok video count:", error);
     return 0;
   }
 
@@ -149,28 +146,28 @@ export async function getYouTubeVideoCount(
 }
 
 /**
- * YouTube動画のサマリー統計を取得する
+ * TikTok動画のサマリー統計を取得する
  * @param startDate - 開始日（オプション）
  * @param endDate - 終了日（オプション）
  * @returns サマリー統計
  */
-export async function getYouTubeStatsSummary(
+export async function getTikTokStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<StatsSummary> {
   const supabase = createClient();
 
-  // 全動画を取得して最新統計をカウント
   let query = supabase
-    .from("youtube_videos")
+    .from("tiktok_videos")
     .select(
       `
       id,
       published_at,
-      youtube_video_stats(
+      tiktok_video_stats(
         view_count,
         like_count,
         comment_count,
+        share_count,
         recorded_at
       )
     `,
@@ -189,23 +186,23 @@ export async function getYouTubeStatsSummary(
   const { data: videos, error } = await query;
 
   if (error) {
-    console.error("Failed to fetch YouTube stats summary:", error);
+    console.error("Failed to fetch TikTok stats summary:", error);
     return {
       totalVideos: 0,
       totalViews: 0,
       totalLikes: 0,
       totalComments: 0,
+      totalShares: 0,
     };
   }
 
   let totalLikes = 0;
   let totalComments = 0;
+  let totalShares = 0;
   let recentVideosCount = 0;
 
-  // JSTで日付を取得
   const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
 
-  // 今日投稿された動画があるかを先にチェック
   let hasTodayVideos = false;
   for (const video of videos || []) {
     const publishedAt = video.published_at as string | null;
@@ -219,7 +216,6 @@ export async function getYouTubeStatsSummary(
   const allVideoStats: VideoStatsRecord[][] = [];
 
   for (const video of videos || []) {
-    // 今日投稿された動画をカウント（今日のデータがなければ昨日もカウント）
     const publishedAt = video.published_at as string | null;
     const publishedDateJst = publishedAt
       ? toJstDateString(new Date(publishedAt))
@@ -231,24 +227,24 @@ export async function getYouTubeStatsSummary(
       recentVideosCount++;
     }
 
-    const stats = video.youtube_video_stats as Array<{
+    const stats = video.tiktok_video_stats as Array<{
       view_count: number | null;
       like_count: number | null;
       comment_count: number | null;
+      share_count: number | null;
       recorded_at: string;
     }>;
 
-    // recorded_atでソート（新しい順）
     const sortedStats = stats.sort(
       (a, b) =>
         new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
     );
 
-    // 最新の統計を取得してlikes/commentsを集計
     const latestStats = sortedStats[0];
     if (latestStats) {
       totalLikes += latestStats.like_count ?? 0;
       totalComments += latestStats.comment_count ?? 0;
+      totalShares += latestStats.share_count ?? 0;
     }
 
     // 日次増加計算用にrecorded_atをJST日付文字列に変換
@@ -272,6 +268,7 @@ export async function getYouTubeStatsSummary(
     totalViews,
     totalLikes,
     totalComments,
+    totalShares,
     dailyViewsIncrease,
     dailyVideosIncrease: recentVideosCount,
   };
@@ -289,9 +286,8 @@ export async function getOverallStatsHistory(
 ): Promise<OverallStatsHistoryItem[]> {
   const supabase = createClient();
 
-  // 1. 期間内に公開された動画のIDを取得
   let videosQuery = supabase
-    .from("youtube_videos")
+    .from("tiktok_videos")
     .select("id")
     .eq("is_active", true);
 
@@ -317,11 +313,10 @@ export async function getOverallStatsHistory(
 
   const videoIds = videos.map((v) => v.id);
 
-  // 2. 該当動画の統計を取得
   let statsQuery = supabase
-    .from("youtube_video_stats")
+    .from("tiktok_video_stats")
     .select("recorded_at, view_count, like_count")
-    .in("youtube_video_id", videoIds)
+    .in("tiktok_video_id", videoIds)
     .order("recorded_at", { ascending: true });
 
   if (startDate) {
@@ -344,7 +339,6 @@ export async function getOverallStatsHistory(
     return [];
   }
 
-  // 日別に集計
   const dailyStats = new Map<
     string,
     { total_views: number; total_likes: number }
@@ -359,7 +353,6 @@ export async function getOverallStatsHistory(
     });
   }
 
-  // 配列に変換
   const result = Array.from(dailyStats.entries())
     .map(([date, stats]) => ({
       date,
@@ -387,7 +380,7 @@ export async function getVideoCountByDate(
   const effectiveEndDate = endDate || new Date();
 
   let query = supabase
-    .from("youtube_videos")
+    .from("tiktok_videos")
     .select("published_at")
     .eq("is_active", true)
     .order("published_at", { ascending: true });
@@ -404,16 +397,14 @@ export async function getVideoCountByDate(
     return [];
   }
 
-  // 日別に集計
   const dailyCount = new Map<string, number>();
 
   for (const video of data || []) {
     if (!video.published_at) continue;
-    const date = video.published_at.split("T")[0]; // YYYY-MM-DD
+    const date = video.published_at.split("T")[0];
     dailyCount.set(date, (dailyCount.get(date) || 0) + 1);
   }
 
-  // startDateからendDateまでの日付を生成（投稿0の日も含める）
   const result: VideoCountByDateItem[] = [];
   effectiveEndDate.setHours(0, 0, 0, 0);
 

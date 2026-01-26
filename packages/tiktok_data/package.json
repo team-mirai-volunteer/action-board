@@ -1,0 +1,18 @@
+{
+  "name": "@action-board/tiktok-data",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "tsx src/sync.ts",
+    "sync:dry": "tsx src/sync.ts --dry-run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

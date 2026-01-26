@@ -262,6 +262,22 @@ importers:
         specifier: ^5.8.3
         version: 5.9.3
 
+  packages/tiktok_data:
+    dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.49.1
+        version: 2.49.8
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.21.0
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/youtube_data:
     dependencies:
       '@supabase/supabase-js':
