@@ -362,7 +362,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: true
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: posting-flyer
