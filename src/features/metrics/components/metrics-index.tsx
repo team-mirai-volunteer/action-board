@@ -1,11 +1,12 @@
 import { Separator } from "@/components/ui/separator";
 import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
 import type { MetricsData } from "@/features/metrics/types/metrics-types";
+import { getTikTokStatsSummary } from "@/features/tiktok-stats/services/tiktok-stats-service";
 import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
-import { YouTubeMetric } from "./youtube-metric";
+import { VideoMetric } from "./video-metric";
 
 export { MetricsErrorBoundary } from "./metrics-error-boundary";
 export { MetricsWithSuspense } from "./metrics-with-suspense";
@@ -31,25 +32,32 @@ export async function Metrics() {
     };
   }
 
-  // YouTube統計を取得（今年の1月1日以降のデータのみ）
+  // YouTube + TikTok統計を取得（今年の1月1日以降のデータのみ）
   const thisYear = new Date().getFullYear();
   const startOfYear = new Date(`${thisYear}-01-01`);
-  let youtubeStats = {
+  let combinedVideoStats = {
     totalVideos: 0,
     totalViews: 0,
     dailyViewsIncrease: 0,
     dailyVideosIncrease: 0,
   };
   try {
-    const stats = await getYouTubeStatsSummary(startOfYear);
-    youtubeStats = {
-      totalVideos: stats.totalVideos,
-      totalViews: stats.totalViews,
-      dailyViewsIncrease: stats.dailyViewsIncrease ?? 0,
-      dailyVideosIncrease: stats.dailyVideosIncrease ?? 0,
+    const [youtubeStats, tiktokStats] = await Promise.all([
+      getYouTubeStatsSummary(startOfYear),
+      getTikTokStatsSummary(startOfYear),
+    ]);
+    combinedVideoStats = {
+      totalVideos: youtubeStats.totalVideos + tiktokStats.totalVideos,
+      totalViews: youtubeStats.totalViews + tiktokStats.totalViews,
+      dailyViewsIncrease:
+        (youtubeStats.dailyViewsIncrease ?? 0) +
+        (tiktokStats.dailyViewsIncrease ?? 0),
+      dailyVideosIncrease:
+        (youtubeStats.dailyVideosIncrease ?? 0) +
+        (tiktokStats.dailyVideosIncrease ?? 0),
     };
   } catch (error) {
-    console.error("Failed to fetch YouTube stats:", error);
+    console.error("Failed to fetch video stats:", error);
   }
 
   const fallbackSupporterCount =
@@ -73,12 +81,12 @@ export async function Metrics() {
       {/* 水平セパレーター */}
       <Separator orientation="horizontal" className="my-4" />
 
-      {/* YouTube統計 */}
-      <YouTubeMetric
-        totalViews={youtubeStats.totalViews}
-        totalVideos={youtubeStats.totalVideos}
-        dailyViewsIncrease={youtubeStats.dailyViewsIncrease}
-        dailyVideosIncrease={youtubeStats.dailyVideosIncrease}
+      {/* 動画統計（YouTube + TikTok） */}
+      <VideoMetric
+        totalViews={combinedVideoStats.totalViews}
+        totalVideos={combinedVideoStats.totalVideos}
+        dailyViewsIncrease={combinedVideoStats.dailyViewsIncrease}
+        dailyVideosIncrease={combinedVideoStats.dailyVideosIncrease}
         startDate={startOfYear}
       />
     </MetricsLayout>
