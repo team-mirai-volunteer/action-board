@@ -42,6 +42,7 @@ interface ShapeStatusDialogProps {
   shape: MapShape | null;
   currentUserId: string;
   isAdmin: boolean;
+  isEventActive: boolean;
   onStatusUpdated: (
     id: string,
     newStatus: PostingShapeStatus,
@@ -57,13 +58,14 @@ export function ShapeStatusDialog({
   shape,
   currentUserId,
   isAdmin,
+  isEventActive,
   onStatusUpdated,
   onDelete,
 }: ShapeStatusDialogProps) {
   // Check if the current user owns this shape
   const isOwner = shape?.user_id === currentUserId || !shape?.user_id;
-  // Allow edit if user is owner or admin
-  const canEdit = isOwner || isAdmin;
+  // Allow edit if user is owner or admin, AND event is active
+  const canEdit = (isOwner || isAdmin) && isEventActive;
   const [selectedStatus, setSelectedStatus] =
     useState<PostingShapeStatus>("planned");
   const [postingCount, setPostingCount] = useState<number | null>(null);
@@ -188,15 +190,17 @@ export function ShapeStatusDialog({
         <DialogHeader>
           <DialogTitle>配布ステータス{canEdit ? "の変更" : ""}</DialogTitle>
           <DialogDescription>
-            {canEdit
-              ? "選択した図形の配布ステータスを変更します"
-              : "この図形は他のユーザーが作成したため、変更できません"}
+            {!isEventActive
+              ? "このイベントは終了しているため、変更できません"
+              : canEdit
+                ? "選択した図形の配布ステータスを変更します"
+                : "この図形は他のユーザーが作成したため、変更できません"}
             {isOwner && isMissionCompleted && (
               <span className="mt-1 block text-green-600">
                 ミッション達成済み
               </span>
             )}
-            {isAdmin && !isOwner && (
+            {isAdmin && !isOwner && isEventActive && (
               <span className="mt-1 block text-orange-400">
                 管理者として編集中
               </span>

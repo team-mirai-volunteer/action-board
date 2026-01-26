@@ -49,6 +49,7 @@ export default async function PostingEventPage({
       eventId={event.id}
       eventTitle={event.title}
       isAdmin={isAdmin(user) || isPostingAdmin(user)}
+      isEventActive={event.is_active}
     />
   );
 }
