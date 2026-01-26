@@ -1,3 +1,4 @@
+import type { CategoryWithMissions } from "@/features/missions/utils/group-missions-by-category";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -19,15 +20,6 @@ export type SubmissionData = {
   season_id: string;
   artifacts: MissionArtifact[];
   created_at: string;
-};
-
-/**
- * カテゴリと、そのカテゴリに属するミッションのセット
- */
-export type CategoryWithMissions = {
-  categoryId: string;
-  categoryTitle: string | null;
-  missions: Tables<"mission_category_view">[];
 };
 
 export type MissionPageData = {

@@ -1,14 +1,14 @@
 import type { Tables } from "@/lib/types/supabase";
 
 type MissionCategoryView = Tables<"mission_category_view">;
-type MissionForComponent = Omit<Tables<"missions">, "slug">;
+export type MissionForComponent = Omit<Tables<"missions">, "slug">;
 
-interface GroupMissionsByCategoryOptions {
+export interface GroupMissionsByCategoryOptions {
   showAchievedMissions: boolean;
   achievedMissionIds: string[];
 }
 
-interface CategoryWithMissions {
+export interface CategoryWithMissions {
   categoryId: string;
   categoryTitle: string;
   missions: MissionForComponent[];
