@@ -11,6 +11,7 @@ import { MissionWithSubmissionHistory } from "@/features/mission-detail/componen
 import { RelatedMissions } from "@/features/mission-detail/components/related-missions";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
+import { getMissionAchievementCounts } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
@@ -89,6 +90,7 @@ export default async function MissionPage({ params }: Props) {
     mission,
     submissions,
     userAchievementCount,
+    userAchievementCountMap,
     referralCode,
     mainLink,
     allCategoryMissions,
@@ -127,6 +129,9 @@ export default async function MissionPage({ params }: Props) {
       badgeText = `${(userWithMissionRanking.user_achievement_count ?? 0).toLocaleString()}回`;
     }
   }
+
+  // 全体の達成数取得
+  const achievementCountMap = await getMissionAchievementCounts();
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
@@ -206,7 +211,8 @@ export default async function MissionPage({ params }: Props) {
               key={categoryData.categoryId}
               missions={categoryData.missions}
               categoryTitle={categoryData.categoryTitle}
-              userId={user?.id}
+              userAchievementCountMap={userAchievementCountMap}
+              achievementCountMap={achievementCountMap}
             />
           ))}
         </div>

@@ -330,6 +330,7 @@ export async function getMissionPageData(
     userAchievements,
     submissions,
     userAchievementCount,
+    userAchievementCountMap,
     totalAchievementCount,
     referralCode,
     mainLink,

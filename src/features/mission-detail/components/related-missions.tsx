@@ -1,31 +1,23 @@
 import { HorizontalScrollContainer } from "@/features/missions/components/horizontal-scroll-container";
 import Mission from "@/features/missions/components/mission-card";
-import { getMissionAchievementCounts } from "@/features/missions/services/missions";
 import type { MissionForComponent } from "@/features/missions/utils/group-missions-by-category";
-import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 
 interface RelatedMissionsProps {
   missions: MissionForComponent[];
   categoryTitle: string;
-  userId?: string;
+  userAchievementCountMap: Map<string, number>;
+  achievementCountMap: Map<string, number>;
 }
 
 export async function RelatedMissions({
   missions,
   categoryTitle,
-  userId,
+  userAchievementCountMap,
+  achievementCountMap,
 }: RelatedMissionsProps) {
   if (missions.length === 0) {
     return null; // ミッションがない場合は何も表示しない
   }
-
-  // ユーザーの各ミッションに対する達成回数のマップ
-  const userAchievementCountMap = userId
-    ? await getUserMissionAchievements(userId)
-    : new Map<string, number>();
-
-  // 全体の達成数取得
-  const achievementCountMap = await getMissionAchievementCounts();
 
   return (
     <section className="relative w-screen ml-[calc(50%-50vw)] md:pl-10 text-center">

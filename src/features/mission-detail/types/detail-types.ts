@@ -27,6 +27,7 @@ export type MissionPageData = {
   userAchievements: Achievement[];
   submissions: SubmissionData[];
   userAchievementCount: number;
+  userAchievementCountMap: Map<string, number>;
   totalAchievementCount: number;
   referralCode: string | null;
   mainLink: Tables<"mission_main_links"> | null;
