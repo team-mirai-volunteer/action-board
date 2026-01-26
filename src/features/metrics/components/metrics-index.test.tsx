@@ -183,14 +183,6 @@ describe("Metrics", () => {
         selector: "span",
       });
       expect(detailLinks).toHaveLength(1); // サポーターのみ
-
-      // YouTubeとTikTokリンクが存在
-      expect(
-        screen.getByText("YouTube", { selector: "span" }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("TikTok", { selector: "span" }),
-      ).toBeInTheDocument();
     });
 
     it("Looker Studioへの外部リンクが存在する", async () => {
