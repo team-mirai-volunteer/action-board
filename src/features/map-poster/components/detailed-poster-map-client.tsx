@@ -199,11 +199,11 @@ export default function DetailedPosterMapClient({
     }
   }, [isUpdateDialogOpen, selectedBoard, userId]);
 
-  // 住所をクリップボードにコピー
-  const copyToClipboard = async (text: string) => {
+  // クリップボードにコピー
+  const copyToClipboard = async (text: string, label = "内容") => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("住所をコピーしました");
+      toast.success(`${label}をコピーしました`);
     } catch (error) {
       toast.error("コピーに失敗しました");
     }
@@ -578,9 +578,9 @@ export default function DetailedPosterMapClient({
                   selectedBoard?.name ||
                   selectedBoard?.address ||
                   selectedBoard?.number;
-                if (text) copyToClipboard(text);
+                if (text) copyToClipboard(text, "名称");
               }}
-              title="名前/住所をコピー"
+              title="名称をコピー"
             >
               <Copy className="h-3 w-3" />
             </Button>
@@ -599,7 +599,7 @@ export default function DetailedPosterMapClient({
                     className="h-6 w-6 p-0"
                     onClick={() => {
                       const address = `${selectedBoard.city} ${selectedBoard.address}`;
-                      copyToClipboard(address);
+                      copyToClipboard(address, "住所");
                     }}
                     title="住所をコピー"
                   >
@@ -711,7 +711,7 @@ export default function DetailedPosterMapClient({
                     variant="ghost"
                     size="sm"
                     className="h-5 w-5 p-0"
-                    onClick={() => copyToClipboard(selectedBoard.id)}
+                    onClick={() => copyToClipboard(selectedBoard.id, "ID")}
                     title="IDをコピー"
                   >
                     <Copy className="h-3 w-3" />
