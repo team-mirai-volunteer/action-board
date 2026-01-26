@@ -170,7 +170,7 @@ export function HorizontalScrollContainer({
             : isDesktop
               ? "cursor-grab"
               : "",
-          centering ? "w-fitcontent" : "w-full",
+          centering ? "w-fit" : "w-full",
           className,
         )}
         style={{
