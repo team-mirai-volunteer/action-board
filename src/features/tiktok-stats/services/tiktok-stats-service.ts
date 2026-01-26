@@ -2,6 +2,10 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/client";
 import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
+import {
+  type VideoStatsRecord,
+  calculateDailyViewsIncrease,
+} from "@/lib/utils/stats-calculator";
 import type {
   OverallStatsHistoryItem,
   SortType,
@@ -192,15 +196,12 @@ export async function getTikTokStatsSummary(
     };
   }
 
-  let totalViews = 0;
   let totalLikes = 0;
   let totalComments = 0;
   let totalShares = 0;
-  let comparisonTotalViews = 0;
   let recentVideosCount = 0;
 
   const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
-  const comparisonDates = [yesterday, dayBeforeYesterday];
 
   let hasTodayVideos = false;
   for (const video of videos || []) {
@@ -210,6 +211,9 @@ export async function getTikTokStatsSummary(
       break;
     }
   }
+
+  // 各動画の統計データを収集
+  const allVideoStats: VideoStatsRecord[][] = [];
 
   for (const video of videos || []) {
     const publishedAt = video.published_at as string | null;
@@ -238,25 +242,26 @@ export async function getTikTokStatsSummary(
 
     const latestStats = sortedStats[0];
     if (latestStats) {
-      totalViews += latestStats.view_count ?? 0;
       totalLikes += latestStats.like_count ?? 0;
       totalComments += latestStats.comment_count ?? 0;
       totalShares += latestStats.share_count ?? 0;
     }
 
-    for (const targetDate of comparisonDates) {
-      const pastStats = sortedStats.find(
-        (s) => toJstDateString(new Date(s.recorded_at)) === targetDate,
-      );
-      if (pastStats) {
-        comparisonTotalViews += pastStats.view_count ?? 0;
-        break;
-      }
-    }
+    // 日次増加計算用にrecorded_atをJST日付文字列に変換
+    const videoStatsRecords: VideoStatsRecord[] = sortedStats.map((s) => ({
+      recorded_at: toJstDateString(new Date(s.recorded_at)),
+      view_count: s.view_count,
+    }));
+    allVideoStats.push(videoStatsRecords);
   }
 
-  const dailyViewsIncrease =
-    comparisonTotalViews > 0 ? totalViews - comparisonTotalViews : 0;
+  // 日次増加数を計算
+  const { totalViews, dailyViewsIncrease } = calculateDailyViewsIncrease(
+    allVideoStats,
+    today,
+    yesterday,
+    dayBeforeYesterday,
+  );
 
   return {
     totalVideos: videos?.length ?? 0,
