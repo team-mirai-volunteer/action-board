@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
 import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
-import RelatedMissions from "@/features/mission-detail/components/related-missions";
+import { RelatedMissions } from "@/features/mission-detail/components/related-missions";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";

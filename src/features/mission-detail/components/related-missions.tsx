@@ -10,7 +10,7 @@ interface RelatedMissionsProps {
   userId?: string;
 }
 
-export default async function RelatedMissions({
+export async function RelatedMissions({
   missions,
   categoryTitle,
   userId,
