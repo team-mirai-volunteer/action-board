@@ -200,6 +200,8 @@ export async function getPosterBoardStatsByDistrictAction(
       .from("poster_boards")
       .select("status")
       .eq("district", district)
+      .not("lat", "is", null) // 座標なしを除外
+      .not("long", "is", null) // 座標なしを除外
       .eq("archived", false);
 
     if (error) {
