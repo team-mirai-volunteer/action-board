@@ -1,3 +1,4 @@
+import type { CategoryWithMissions } from "@/features/missions/utils/group-missions-by-category";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -26,9 +27,11 @@ export type MissionPageData = {
   userAchievements: Achievement[];
   submissions: SubmissionData[];
   userAchievementCount: number;
+  userAchievementCountMap: Map<string, number>;
   totalAchievementCount: number;
   referralCode: string | null;
   mainLink: Tables<"mission_main_links"> | null;
+  allCategoryMissions: CategoryWithMissions[];
 };
 
 export type ButtonLabelProps = {

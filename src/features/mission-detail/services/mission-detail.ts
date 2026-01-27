@@ -4,9 +4,39 @@ import type {
   MissionPageData,
   SubmissionData,
 } from "@/features/mission-detail/types/detail-types";
+import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
+
+/**
+ * ユーザーのミッション達成情報を取得し、ミッションIDごとの達成回数をMapで返す
+ */
+async function getUserMissionAchievements(
+  userId: string,
+): Promise<Map<string, number>> {
+  const supabase = createClient();
+
+  const { data: achievements, error } = await supabase
+    .from("achievements")
+    .select("mission_id")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching user achievements:", error);
+    return new Map();
+  }
+
+  const achievementMap = new Map<string, number>();
+  for (const achievement of achievements ?? []) {
+    if (achievement.mission_id) {
+      const current = achievementMap.get(achievement.mission_id) ?? 0;
+      achievementMap.set(achievement.mission_id, current + 1);
+    }
+  }
+
+  return achievementMap;
+}
 
 export async function getMissionData(
   missionId: string,
@@ -204,6 +234,50 @@ export async function getMissionMainLink(
   return data;
 }
 
+/**
+ * 対象ミッションが属する全カテゴリのミッションを取得
+ * @param missionId - 対象ミッションID
+ * @returns フラットなミッションデータ（現在のミッションは除外）
+ */
+async function getRelatedCategoryMissionsRaw(
+  missionId: string,
+): Promise<Tables<"mission_category_view">[]> {
+  const supabase = createClient();
+
+  // カテゴリIDを取得
+  const { data: links, error: linksError } = await supabase
+    .from("mission_category_link")
+    .select("category_id")
+    .eq("mission_id", missionId)
+    .eq("del_flg", false)
+    .order("sort_no", { ascending: true });
+
+  if (linksError) {
+    console.error("Mission category link fetch error:", linksError);
+    return [];
+  }
+
+  if (!links || links.length === 0) {
+    return [];
+  }
+
+  const categoryIds = links.map((link) => link.category_id);
+
+  // 全カテゴリのミッションを取得
+  const { data, error } = await supabase
+    .from("mission_category_view")
+    .select("*")
+    .in("category_id", categoryIds)
+    .neq("mission_id", missionId);
+
+  if (error) {
+    console.error("Category missions fetch error:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 export async function getMissionPageData(
   missionId: string,
   userId?: string,
@@ -217,6 +291,11 @@ export async function getMissionPageData(
   let userAchievementCount = 0;
   let submissions: SubmissionData[] = [];
   let referralCode: string | null = null;
+
+  // ユーザーの各ミッションに対する達成回数のマップ
+  const userAchievementCountMap = userId
+    ? await getUserMissionAchievements(userId)
+    : new Map<string, number>();
 
   if (userId) {
     const { achievements, count } = await getUserAchievements(
@@ -235,14 +314,27 @@ export async function getMissionPageData(
   // メインリンクの取得
   const mainLink = await getMissionMainLink(missionId);
 
+  // 全カテゴリのミッションを取得し、グループ化・ソート・変換
+  const rawMissions = await getRelatedCategoryMissionsRaw(missionId);
+  const allCategoryMissions = groupMissionsByCategory(
+    rawMissions,
+    userAchievementCountMap,
+    {
+      showAchievedMissions: true,
+      achievedMissionIds: Array.from(userAchievementCountMap.keys()),
+    },
+  );
+
   return {
     mission,
     userAchievements,
     submissions,
     userAchievementCount,
+    userAchievementCountMap,
     totalAchievementCount,
     referralCode,
     mainLink,
+    allCategoryMissions,
   };
 }
 

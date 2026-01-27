@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/card";
 import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
 import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
+import { RelatedMissions } from "@/features/mission-detail/components/related-missions";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
+import { getMissionAchievementCounts } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
@@ -84,8 +86,15 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, submissions, userAchievementCount, referralCode, mainLink } =
-    pageData;
+  const {
+    mission,
+    submissions,
+    userAchievementCount,
+    userAchievementCountMap,
+    referralCode,
+    mainLink,
+    allCategoryMissions,
+  } = pageData;
 
   // クイズミッションの場合は問題を事前取得
   let quizQuestions = null;
@@ -120,6 +129,9 @@ export default async function MissionPage({ params }: Props) {
       badgeText = `${(userWithMissionRanking.user_achievement_count ?? 0).toLocaleString()}回`;
     }
   }
+
+  // 全体の達成数取得
+  const achievementCountMap = await getMissionAchievementCounts();
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
@@ -192,6 +204,18 @@ export default async function MissionPage({ params }: Props) {
             </CardContent>
           </Card>
         )}
+
+        <div className="mt-8 flex flex-col gap-8">
+          {allCategoryMissions.map((categoryData) => (
+            <RelatedMissions
+              key={categoryData.categoryId}
+              missions={categoryData.missions}
+              categoryTitle={categoryData.categoryTitle}
+              userAchievementCountMap={userAchievementCountMap}
+              achievementCountMap={achievementCountMap}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
