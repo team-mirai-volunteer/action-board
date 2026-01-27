@@ -92,6 +92,7 @@ export function getPeriodStartDate(
   const days = Number.parseInt(period, 10);
   const date = new Date();
   date.setDate(date.getDate() - days);
+  date.setHours(0, 0, 0, 0);
   return date;
 }
 
