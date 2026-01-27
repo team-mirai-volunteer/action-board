@@ -83,7 +83,7 @@ export function UserNameWithBadge({
     <span
       className={cn("inline-flex items-center gap-2 max-w-full", className)}
     >
-      <span className={cn("truncate", nameClassName)}>{name}</span>
+      <span className={cn("truncate min-w-0", nameClassName)}>{name}</span>
       {shouldShowBadge && membership && (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
