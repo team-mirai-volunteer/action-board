@@ -302,7 +302,7 @@ missions:
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
@@ -495,13 +495,15 @@ missions:
   - slug: put-up-poster-on-board
     title: 選挙区ポスターを貼ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-poster-on-board.svg
-    content: 掲示板に選挙区ポスターを貼ろう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/223f6f56bae180b6a6f6f47d7d688a3c" target="_blank">ポスター貼りサポーターガイド</a>
+    content: |-
+      小選挙区への立候補者がいる地域については、ポスター貼りがあります。
+      各地域ごとに実施しているため、ポスター貼りをご希望される場合は、「<a href="https://action.team-mir.ai/missions/fd9da44a-d5ba-4bbf-a1c0-98a0142ee029" target="_blank" rel="noopener noreferrer">都道府県別LINEオープンチャットに入ろう</a>」ミッションからご自身の地域のオープンチャットにお入りになり、お問い合わせください。
     difficulty: 2
     required_artifact_type: POSTER
     max_achievement_count: null
     is_featured: true
     featured_importance: 20
-    is_hidden: true
+    is_hidden: false
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
     title: 比例代表ポスターを貼ろう
