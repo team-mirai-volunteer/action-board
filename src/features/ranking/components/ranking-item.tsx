@@ -39,7 +39,7 @@ export function RankingItem({
       className="grid grid-cols-subgrid col-span-full items-center gap-4 py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
     >
       {getRankIcon(user.rank ?? 0)}
-      <div className="min-w-0">
+      <div className="min-w-0 pl-1">
         <UserNameWithBadge
           name={user.name ?? ""}
           membership={user.party_membership ?? null}
@@ -51,36 +51,32 @@ export function RankingItem({
           <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>
         )}
       </div>
-      <div className="flex items-center gap-3">
-        {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
-        {mission ? (
-          <>
-            <Badge
-              className={
-                "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
-              }
-            >
-              {badgeText}
-            </Badge>
-            <span className="font-bold text-lg">
-              {(userWithMission?.total_points ?? 0).toLocaleString()}pt
-            </span>
-          </>
-        ) : (
-          <>
-            <Badge
-              className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full`}
-            >
-              Lv.{user.level}
-            </Badge>
-            <div className="text-right">
-              <div className="font-bold text-lg">
-                {(user.xp ?? 0).toLocaleString()}pt
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+      {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
+      {mission ? (
+        <>
+          <Badge
+            className={
+              "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end"
+            }
+          >
+            {badgeText}
+          </Badge>
+          <span className="font-bold text-lg justify-self-end">
+            {(userWithMission?.total_points ?? 0).toLocaleString()}pt
+          </span>
+        </>
+      ) : (
+        <>
+          <Badge
+            className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full w-fit justify-self-end`}
+          >
+            Lv.{user.level}
+          </Badge>
+          <div className="font-bold text-lg justify-self-end">
+            {(user.xp ?? 0).toLocaleString()}pt
+          </div>
+        </>
+      )}
     </Link>
   );
 }
