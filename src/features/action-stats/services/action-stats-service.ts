@@ -188,10 +188,10 @@ export async function getDailyActionStats(
     return [];
   }
 
-  // 日別に集計
+  // 日別に集計（JSTで日付を判定）
   const dailyCount = new Map<string, number>();
   for (const achievement of achievements ?? []) {
-    const date = achievement.created_at.split("T")[0];
+    const date = toJstDateString(new Date(achievement.created_at));
     dailyCount.set(date, (dailyCount.get(date) || 0) + 1);
   }
 
