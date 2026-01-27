@@ -36,22 +36,20 @@ export function RankingItem({
   return (
     <Link
       href={`/users/${user.user_id}`}
-      className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
+      className="grid grid-cols-subgrid col-span-full items-center gap-4 py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
     >
-      <div className="flex items-center gap-4">
-        {getRankIcon(user.rank ?? 0)}
-        <div>
-          <UserNameWithBadge
-            name={user.name ?? ""}
-            membership={user.party_membership ?? null}
-            nameClassName="font-bold text-lg"
-            badgeSize={20}
-          />
-          <div className="text-sm text-gray-600">{user.address_prefecture}</div>
-          {showDetailedInfo && (
-            <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>
-          )}
-        </div>
+      {getRankIcon(user.rank ?? 0)}
+      <div className="min-w-0">
+        <UserNameWithBadge
+          name={user.name ?? ""}
+          membership={user.party_membership ?? null}
+          nameClassName="font-bold text-lg"
+          badgeSize={20}
+        />
+        <div className="text-sm text-gray-600">{user.address_prefecture}</div>
+        {showDetailedInfo && (
+          <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>
+        )}
       </div>
       <div className="flex items-center gap-3">
         {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}

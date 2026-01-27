@@ -80,7 +80,9 @@ export function UserNameWithBadge({
   );
 
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
+    <span
+      className={cn("inline-flex items-center gap-2 max-w-full", className)}
+    >
       <span className={cn("truncate", nameClassName)}>{name}</span>
       {shouldShowBadge && membership && (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
