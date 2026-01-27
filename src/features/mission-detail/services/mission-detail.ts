@@ -239,7 +239,7 @@ export async function getMissionMainLink(
  * @param missionId - 対象ミッションID
  * @returns フラットなミッションデータ（現在のミッションは除外）
  */
-async function getAllCategoryMissionsRaw(
+async function getRelatedCategoryMissionsRaw(
   missionId: string,
 ): Promise<Tables<"mission_category_view">[]> {
   const supabase = createClient();
@@ -315,7 +315,7 @@ export async function getMissionPageData(
   const mainLink = await getMissionMainLink(missionId);
 
   // 全カテゴリのミッションを取得し、グループ化・ソート・変換
-  const rawMissions = await getAllCategoryMissionsRaw(missionId);
+  const rawMissions = await getRelatedCategoryMissionsRaw(missionId);
   const allCategoryMissions = groupMissionsByCategory(
     rawMissions,
     userAchievementCountMap,
