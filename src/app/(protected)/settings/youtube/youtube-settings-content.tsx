@@ -1,6 +1,8 @@
 "use client";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  YouTubeLikedList,
   YouTubeLinkButton,
   YouTubeSyncButton,
   YouTubeVideoList,
@@ -61,22 +63,33 @@ export function YouTubeSettingsContent({
         )}
       </section>
 
-      {/* 動画一覧セクション（連携済みの場合のみ表示） */}
+      {/* 動画/いいねタブセクション（連携済みの場合のみ表示） */}
       {isLinked && (
         <section className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              #チームみらい 動画
-            </h2>
-            <YouTubeSyncButton onSyncComplete={handleSyncComplete} />
-          </div>
+          <Tabs defaultValue="videos" className="w-full">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="videos">アップロード動画</TabsTrigger>
+                <TabsTrigger value="likes">いいねした動画</TabsTrigger>
+              </TabsList>
+              <YouTubeSyncButton onSyncComplete={handleSyncComplete} />
+            </div>
 
-          <p className="text-sm text-gray-600 mb-4">
-            YouTubeアカウントから取得した #チームみらい
-            ハッシュタグ付きの動画です。
-          </p>
+            <TabsContent value="videos" className="mt-4">
+              <p className="text-sm text-gray-600 mb-4">
+                YouTubeアカウントから取得した #チームみらい
+                ハッシュタグ付きの動画です。
+              </p>
+              <YouTubeVideoList refreshTrigger={refreshTrigger} />
+            </TabsContent>
 
-          <YouTubeVideoList refreshTrigger={refreshTrigger} />
+            <TabsContent value="likes" className="mt-4">
+              <p className="text-sm text-gray-600 mb-4">
+                ミッション達成として記録したチームみらい動画へのいいねです。
+              </p>
+              <YouTubeLikedList refreshTrigger={refreshTrigger} />
+            </TabsContent>
+          </Tabs>
         </section>
       )}
 

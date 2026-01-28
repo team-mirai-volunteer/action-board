@@ -226,3 +226,165 @@ export async function validateYouTubeUrlAction(url: string): Promise<{
     videoId,
   };
 }
+
+/**
+ * いいね記録の詳細情報
+ */
+export interface RecordedLike {
+  videoId: string;
+  title: string;
+  thumbnailUrl?: string;
+  videoUrl: string;
+  recordedAt: string;
+}
+
+/**
+ * ユーザーが記録したいいね一覧を取得するServer Action
+ */
+export async function getRecordedLikesAction(): Promise<{
+  success: boolean;
+  likes?: RecordedLike[];
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        error: "ログインが必要です",
+      };
+    }
+
+    // いいね記録を取得（youtube_videosとJOINして動画情報も取得）
+    const { data: likes, error: likesError } = await supabase
+      .from("youtube_video_likes")
+      .select(
+        `
+        video_id,
+        detected_at,
+        created_at,
+        youtube_videos (
+          title,
+          video_url,
+          thumbnail_url
+        )
+      `,
+      )
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (likesError) {
+      console.error("Failed to fetch recorded likes:", likesError);
+      return {
+        success: false,
+        error: "いいね一覧の取得に失敗しました",
+      };
+    }
+
+    const recordedLikes: RecordedLike[] = (likes || [])
+      .filter((like) => like.youtube_videos)
+      .map((like) => ({
+        videoId: like.video_id,
+        title: like.youtube_videos?.title || "Unknown",
+        thumbnailUrl: like.youtube_videos?.thumbnail_url || undefined,
+        videoUrl:
+          like.youtube_videos?.video_url ||
+          `https://www.youtube.com/watch?v=${like.video_id}`,
+        recordedAt:
+          like.detected_at || like.created_at || new Date().toISOString(),
+      }));
+
+    return {
+      success: true,
+      likes: recordedLikes,
+    };
+  } catch (error) {
+    console.error("Get recorded likes error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "いいね一覧の取得に失敗しました",
+    };
+  }
+}
+
+/**
+ * 自動達成結果
+ */
+export interface AutoAchieveResult {
+  success: boolean;
+  achievedCount: number;
+  totalXpGranted: number;
+  error?: string;
+}
+
+/**
+ * YouTubeいいねを自動検出して、ミッション達成を自動で記録するServer Action
+ * 連携済みユーザーのいいね動画を取得し、チームみらい動画へのいいねを自動で達成として記録
+ */
+export async function autoAchieveYouTubeMissionAction(
+  missionId: string,
+): Promise<AutoAchieveResult> {
+  try {
+    // まずいいねを検出
+    const detectResult = await detectYouTubeLikesAction();
+    if (!detectResult.success || !detectResult.detectedLikes) {
+      return {
+        success: false,
+        achievedCount: 0,
+        totalXpGranted: 0,
+        error: detectResult.error || "いいねの検出に失敗しました",
+      };
+    }
+
+    // 未記録のいいねをフィルタ
+    const unrecordedLikes = detectResult.detectedLikes.filter(
+      (like) => !like.alreadyRecorded,
+    );
+
+    if (unrecordedLikes.length === 0) {
+      return {
+        success: true,
+        achievedCount: 0,
+        totalXpGranted: 0,
+      };
+    }
+
+    // 未記録のいいねを全て記録
+    let achievedCount = 0;
+    let totalXpGranted = 0;
+
+    for (const like of unrecordedLikes) {
+      const result = await recordYouTubeLikeAction(
+        missionId,
+        like.videoId,
+        like.videoUrl,
+      );
+      if (result.success) {
+        achievedCount++;
+        totalXpGranted += result.xpGranted || 0;
+      }
+    }
+
+    return {
+      success: true,
+      achievedCount,
+      totalXpGranted,
+    };
+  } catch (error) {
+    console.error("Auto achieve YouTube mission error:", error);
+    return {
+      success: false,
+      achievedCount: 0,
+      totalXpGranted: 0,
+      error: error instanceof Error ? error.message : "自動達成に失敗しました",
+    };
+  }
+}
