@@ -166,32 +166,9 @@ export async function getSubmissionHistory(
         ),
       );
 
-      // 位置情報を取得
-      const artifactsWithGeolocations = await Promise.all(
-        artifactsWithSignedUrls.map(
-          async (artifact: Tables<"mission_artifacts">) => {
-            if (artifact.artifact_type === "IMAGE_WITH_GEOLOCATION") {
-              const { data: geolocationsData, error: geolocationsError } =
-                await supabase
-                  .from("mission_artifact_geolocations")
-                  .select("*")
-                  .eq("mission_artifact_id", artifact.id);
-
-              if (!geolocationsError && geolocationsData) {
-                return {
-                  ...artifact,
-                  geolocations: geolocationsData,
-                } as MissionArtifact;
-              }
-            }
-            return artifact as MissionArtifact;
-          },
-        ),
-      );
-
       return {
         ...achievement,
-        artifacts: artifactsWithGeolocations,
+        artifacts: artifactsWithSignedUrls as MissionArtifact[],
       } as SubmissionData;
     }),
   );
