@@ -128,7 +128,7 @@ export type Database = {
           {
             foreignKeyName: "mission_artifacts_achievement_id_fkey";
             columns: ["achievement_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "achievements";
             referencedColumns: ["id"];
           },
