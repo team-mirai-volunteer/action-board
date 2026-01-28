@@ -82,8 +82,7 @@ export function groupMissionsByCategory(
       )
       .map((m): MissionForComponent => {
         const missionId = m.mission_id as string;
-        // slugはviewから取得、なければmission_idをフォールバックとして使用
-        const slug = "slug" in m && m.slug ? (m.slug as string) : missionId;
+        const slug = m.slug || missionId;
         return {
           id: missionId,
           slug,
