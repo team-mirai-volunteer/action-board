@@ -18,6 +18,11 @@ export interface DailyActionItem {
   count: number;
 }
 
+export interface DailyActiveUsersItem {
+  date: string; // YYYY-MM-DD
+  count: number;
+}
+
 export interface MissionActionRanking {
   missionId: string;
   missionTitle: string;
