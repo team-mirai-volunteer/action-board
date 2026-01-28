@@ -10,6 +10,7 @@ import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { PosterForm } from "./poster-form";
 import { PostingForm } from "./posting-form";
+import { YouTubeForm } from "./youtube-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
@@ -123,9 +124,9 @@ export function ArtifactForm({
           <PosterForm disabled={disabled} />
         )}
 
-        {/* YouTube入力フォーム - 一時的に無効化 */}
+        {/* YouTube入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE.key && (
-          <div className="text-sm text-gray-500">YouTube機能は準備中です</div>
+          <YouTubeForm disabled={disabled} missionId={mission.id} />
         )}
 
         {/* 補足説明テキストエリア */}
