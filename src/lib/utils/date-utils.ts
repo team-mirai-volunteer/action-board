@@ -48,3 +48,24 @@ export function getJstRecentDates(now: Date = new Date()): {
     dayBeforeYesterday: toJstDateString(new Date(now.getTime() - DAY_MS * 2)),
   };
 }
+
+/**
+ * JSTで今日の日付文字列(YYYY-MM-DD)を取得する
+ */
+export function getTodayJstString(now: Date = new Date()): string {
+  return toJstDateString(now);
+}
+
+/**
+ * 日付配列から本日以降のデータを除外する
+ * @param items - date プロパティを持つオブジェクトの配列
+ * @param now - 基準日時（デフォルトは現在時刻）
+ * @returns 本日より前のデータのみの配列
+ */
+export function filterBeforeToday<T extends { date: string }>(
+  items: T[],
+  now: Date = new Date(),
+): T[] {
+  const todayJst = toJstDateString(now);
+  return items.filter((item) => item.date < todayJst);
+}
