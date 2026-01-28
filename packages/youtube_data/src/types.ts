@@ -45,8 +45,7 @@ export interface YouTubeVideoDetails {
 
 // DBに保存する動画データの型
 export interface YouTubeVideoRecord {
-  id?: string;
-  video_id: string;
+  video_id: string; // PRIMARY KEY
   video_url: string;
   title: string;
   description: string | null;
@@ -64,7 +63,7 @@ export interface YouTubeVideoRecord {
 // DBに保存する統計スナップショットの型
 export interface YouTubeVideoStatsRecord {
   id?: string;
-  youtube_video_id: string;
+  video_id: string; // youtube_videos.video_id への外部キー
   recorded_at: string;
   view_count: number | null;
   like_count: number | null;

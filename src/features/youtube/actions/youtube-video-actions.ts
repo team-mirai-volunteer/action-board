@@ -153,7 +153,6 @@ export async function getMyUploadedVideosAction(
         )[0];
 
         return {
-          id: video.id,
           video_id: video.video_id,
           video_url: video.video_url,
           title: video.title,
