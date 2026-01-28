@@ -101,12 +101,14 @@ export async function getMissionActionRanking(
       mission_slug: string;
       icon_url: string | null;
       action_count: number;
+      is_hidden: boolean;
     }) => ({
       missionId: item.mission_id,
       missionTitle: item.mission_title,
       missionSlug: item.mission_slug,
       iconUrl: item.icon_url,
       actionCount: Number(item.action_count),
+      isHidden: item.is_hidden,
     }),
   );
 }

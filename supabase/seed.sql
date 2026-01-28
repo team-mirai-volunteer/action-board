@@ -315,6 +315,11 @@ where id in (
   '4446205f-933f-4a86-83af-dbf6bb6cde92'
 );
 
+-- 動作確認用：1つのミッションをhiddenに設定
+update public.missions
+set is_hidden = true
+where id = 'e5348472-d054-4ef4-81af-772c6323b669'; -- Xのニックネームを入力しよう
+
 -- ポスティングイベントのサンプルデータ
 INSERT INTO posting_events (id, slug, title, description, is_active, created_at, updated_at)
 VALUES
