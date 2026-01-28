@@ -195,7 +195,11 @@ export async function unlinkYouTubeAccountAction(): Promise<YouTubeLinkResult> {
 /**
  * YouTubeトークンをリフレッシュする
  */
-export async function refreshYouTubeTokenAction(): Promise<YouTubeLinkResult> {
+export async function refreshYouTubeTokenAction(): Promise<{
+  success: boolean;
+  accessToken?: string;
+  error?: string;
+}> {
   try {
     const supabase = await createClient();
     const {
@@ -250,6 +254,7 @@ export async function refreshYouTubeTokenAction(): Promise<YouTubeLinkResult> {
 
     return {
       success: true,
+      accessToken: tokens.access_token,
     };
   } catch (error) {
     console.error("YouTube token refresh error:", error);

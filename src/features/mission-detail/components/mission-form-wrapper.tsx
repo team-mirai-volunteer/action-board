@@ -240,7 +240,7 @@ export function MissionFormWrapper({
       );
     }
 
-    // 通常のアーティファクト提出ミッションの場合
+    // 通常のアーティファクト提出ミッションの場合（YouTube含む）
     return (
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
         <input type="hidden" name="missionId" value={mission.id} />

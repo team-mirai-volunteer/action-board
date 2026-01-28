@@ -353,6 +353,78 @@ export async function fetchVideoDetails(
 }
 
 /**
+ * いいねした動画のAPIレスポンス型
+ */
+export interface LikedVideoItem {
+  id: string;
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    channelTitle: string;
+    title: string;
+    thumbnails: {
+      default?: { url: string };
+      medium?: { url: string };
+    };
+  };
+}
+
+/**
+ * ユーザーがいいねした動画一覧を取得する
+ * @param accessToken OAuth アクセストークン
+ * @param maxResults 取得する最大件数（デフォルト50）
+ */
+export async function fetchUserLikedVideos(
+  accessToken: string,
+  maxResults = 50,
+): Promise<LikedVideoItem[]> {
+  const likedVideos: LikedVideoItem[] = [];
+  let pageToken: string | undefined;
+
+  while (likedVideos.length < maxResults) {
+    const url = new URL(`${YOUTUBE_API_BASE}/videos`);
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("myRating", "like");
+    url.searchParams.set(
+      "maxResults",
+      String(Math.min(50, maxResults - likedVideos.length)),
+    );
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("YouTube liked videos fetch failed:", errorBody);
+      throw new YouTubeAPIError("いいねした動画の取得に失敗しました");
+    }
+
+    const data = await response.json();
+    const items = data.items as LikedVideoItem[] | undefined;
+
+    if (!items || items.length === 0) {
+      break;
+    }
+
+    likedVideos.push(...items);
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) {
+      break;
+    }
+  }
+
+  return likedVideos;
+}
+
+/**
  * YouTube Client オブジェクト
  * 全てのYouTube API呼び出しをまとめたインターフェース
  */
@@ -362,4 +434,5 @@ export const youtubeClient = {
   fetchChannelInfo,
   fetchUserUploadedVideos,
   fetchVideoDetails,
+  fetchUserLikedVideos,
 };

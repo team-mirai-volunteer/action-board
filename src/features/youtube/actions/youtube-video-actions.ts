@@ -229,7 +229,7 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
       console.log("YouTube access token expired, attempting refresh...");
       const refreshResult = await refreshYouTubeTokenAction();
 
-      if (!refreshResult.success) {
+      if (!refreshResult.success || !refreshResult.accessToken) {
         return {
           success: false,
           error:
@@ -237,21 +237,7 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
         };
       }
 
-      // リフレッシュ成功後、最新のトークンを再取得
-      const { data: updatedConnection } = await adminClient
-        .from("youtube_user_connections")
-        .select("access_token")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!updatedConnection?.access_token) {
-        return {
-          success: false,
-          error: "トークンの更新に失敗しました。再度連携してください。",
-        };
-      }
-
-      accessToken = updatedConnection.access_token;
+      accessToken = refreshResult.accessToken;
     }
 
     // 動画を同期
