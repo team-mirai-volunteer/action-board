@@ -2,7 +2,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 
 // メトリクスサービスのモック
 jest.mock("../services/get-metrics", () => ({
-  fetchAllMetricsData: jest.fn(),
+  fetchSupporterData: jest.fn(),
+  fetchAchievementData: jest.fn(),
 }));
 
 // YouTube統計サービスのモック
@@ -15,14 +16,20 @@ jest.mock("@/features/tiktok-stats/services/tiktok-stats-service", () => ({
   getTikTokStatsSummary: jest.fn(),
 }));
 
-import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
+import {
+  fetchAchievementData,
+  fetchSupporterData,
+} from "@/features/metrics/services/get-metrics";
 import { getTikTokStatsSummary } from "@/features/tiktok-stats/services/tiktok-stats-service";
 import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション
-const mockFetchAllMetricsData = fetchAllMetricsData as jest.MockedFunction<
-  typeof fetchAllMetricsData
+const mockFetchSupporterData = fetchSupporterData as jest.MockedFunction<
+  typeof fetchSupporterData
+>;
+const mockFetchAchievementData = fetchAchievementData as jest.MockedFunction<
+  typeof fetchAchievementData
 >;
 const mockGetYouTubeStatsSummary =
   getYouTubeStatsSummary as jest.MockedFunction<typeof getYouTubeStatsSummary>;
@@ -31,20 +38,15 @@ const mockGetTikTokStatsSummary = getTikTokStatsSummary as jest.MockedFunction<
 >;
 
 // テスト用のデフォルトデータ
-const defaultMockData = {
-  supporter: {
-    totalCount: 75982,
-    last24hCount: 1710,
-    updatedAt: "2025-07-03T02:20:00Z",
-  },
-  achievement: {
-    totalCount: 18605,
-    todayCount: 245,
-  },
-  registration: {
-    totalCount: 1000,
-    todayCount: 50,
-  },
+const defaultSupporterData = {
+  totalCount: 75982,
+  last24hCount: 1710,
+  updatedAt: "2025-07-03T02:20:00Z",
+};
+
+const defaultAchievementData = {
+  totalCount: 18605,
+  todayCount: 245,
 };
 
 const defaultYouTubeMockData = {
@@ -79,7 +81,8 @@ jest.mock("@/components/ui/separator", () => ({
 describe("Metrics", () => {
   beforeEach(() => {
     // 各テスト前にモックデータをリセット
-    mockFetchAllMetricsData.mockResolvedValue(defaultMockData);
+    mockFetchSupporterData.mockResolvedValue(defaultSupporterData);
+    mockFetchAchievementData.mockResolvedValue(defaultAchievementData);
     mockGetYouTubeStatsSummary.mockResolvedValue(defaultYouTubeMockData);
     mockGetTikTokStatsSummary.mockResolvedValue(defaultTikTokMockData);
   });
@@ -124,23 +127,21 @@ describe("Metrics", () => {
   });
 
   describe("データ取得", () => {
-    it("fetchAllMetricsDataが正しく呼び出される", async () => {
+    it("fetchSupporterDataとfetchAchievementDataが正しく呼び出される", async () => {
       await Metrics();
 
-      expect(mockFetchAllMetricsData).toHaveBeenCalledTimes(1);
+      expect(mockFetchSupporterData).toHaveBeenCalledTimes(1);
+      expect(mockFetchAchievementData).toHaveBeenCalledTimes(1);
     });
 
     it("異なるデータでも正しく表示される", async () => {
-      const customData = {
-        ...defaultMockData,
-        supporter: {
-          totalCount: 50000,
-          last24hCount: 1000,
-          updatedAt: "2025-07-04T10:30:00Z",
-        },
+      const customSupporterData = {
+        totalCount: 50000,
+        last24hCount: 1000,
+        updatedAt: "2025-07-04T10:30:00Z",
       };
 
-      mockFetchAllMetricsData.mockResolvedValueOnce(customData);
+      mockFetchSupporterData.mockResolvedValueOnce(customSupporterData);
 
       render(await Metrics());
 
@@ -153,7 +154,8 @@ describe("Metrics", () => {
   describe("エラーハンドリング", () => {
     it("データ取得エラー時にフォールバック値が使用される", async () => {
       // エラー発生をモック
-      mockFetchAllMetricsData.mockRejectedValueOnce(new Error("API Error"));
+      mockFetchSupporterData.mockRejectedValueOnce(new Error("API Error"));
+      mockFetchAchievementData.mockRejectedValueOnce(new Error("API Error"));
 
       // 環境変数のフォールバック値をモック
       const originalEnv = process.env;
