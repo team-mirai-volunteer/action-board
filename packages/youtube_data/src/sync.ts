@@ -71,9 +71,7 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
   // 1. 既存動画を取得
   console.log("Fetching existing videos from database...");
   const existingVideos = await fetchExistingVideos(supabase);
-  const existingVideoMap = new Map(
-    existingVideos.map((v) => [v.video_id, v.id]),
-  );
+  const existingVideoIdSet = new Set(existingVideos.map((v) => v.video_id));
   const existingVideoIds = existingVideos.map((v) => v.video_id);
   console.log(`Found ${existingVideoIds.length} existing videos in database`);
 
@@ -119,7 +117,7 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
     publishedBefore,
   });
   const newVideoIds = searchedVideoIds.filter(
-    (id) => !existingVideoMap.has(id),
+    (id) => !existingVideoIdSet.has(id),
   );
   console.log(
     `Found ${searchedVideoIds.length} videos from search, ${newVideoIds.length} are new`,
@@ -176,11 +174,11 @@ async function syncYouTubeVideos(): Promise<SyncResult> {
 
   // 7. 既存動画の統計を更新（backfillモードではスキップ）
   for (const video of existingVideoDetails) {
-    const existingId = existingVideoMap.get(video.id);
-    if (!existingId) continue;
+    if (!existingVideoIdSet.has(video.id)) continue;
 
     try {
-      await upsertStats(supabase, toStatsRecord(existingId, video, today));
+      // video.idがそのままyoutube_videos.video_id（PRIMARY KEY）
+      await upsertStats(supabase, toStatsRecord(video.id, video, today));
       result.statsRecorded++;
       result.updatedVideos++;
     } catch (err) {

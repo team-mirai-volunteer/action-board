@@ -2,8 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { YouTubeVideoRecord, YouTubeVideoStatsRecord } from "./types.js";
 
 export interface ExistingVideo {
-  id: string;
-  video_id: string;
+  video_id: string; // PRIMARY KEY
   published_at: string | null;
 }
 
@@ -12,7 +11,7 @@ export async function fetchExistingVideos(
 ): Promise<ExistingVideo[]> {
   const { data, error } = await supabase
     .from("youtube_videos")
-    .select("id, video_id, published_at")
+    .select("video_id, published_at")
     .eq("is_active", true);
 
   if (error) {
@@ -26,19 +25,15 @@ export async function insertVideo(
   supabase: SupabaseClient,
   record: YouTubeVideoRecord,
 ): Promise<string> {
-  const { data, error } = await supabase
-    .from("youtube_videos")
-    .insert(record)
-    .select("id")
-    .single();
+  const { error } = await supabase.from("youtube_videos").insert(record);
 
-  if (error || !data) {
+  if (error) {
     throw new Error(
-      `Failed to insert video ${record.video_id}: ${error?.message || "Unknown error"}`,
+      `Failed to insert video ${record.video_id}: ${error.message}`,
     );
   }
 
-  return data.id;
+  return record.video_id; // video_id がPRIMARY KEY
 }
 
 export async function upsertStats(
@@ -46,7 +41,7 @@ export async function upsertStats(
   record: YouTubeVideoStatsRecord,
 ): Promise<void> {
   const { error } = await supabase.from("youtube_video_stats").upsert(record, {
-    onConflict: "youtube_video_id,recorded_at",
+    onConflict: "video_id,recorded_at",
   });
 
   if (error) {

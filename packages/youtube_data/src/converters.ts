@@ -25,12 +25,12 @@ export function toVideoRecord(video: YouTubeVideoDetails): YouTubeVideoRecord {
 }
 
 export function toStatsRecord(
-  youtubeVideoId: string,
+  videoId: string,
   video: YouTubeVideoDetails,
   recordedAt: string,
 ): YouTubeVideoStatsRecord {
   return {
-    youtube_video_id: youtubeVideoId,
+    video_id: videoId,
     recorded_at: recordedAt,
     view_count: video.statistics?.viewCount
       ? Number.parseInt(video.statistics.viewCount, 10)
