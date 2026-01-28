@@ -21,12 +21,14 @@
 - Node.js
 - Docker
 - Supabase CLI
+- psql（オプション：ポスティングなどの追加シードデータ投入に必要）
 
 ### インストール for Mac
 
    - Node.jsのインストール `brew install node`
    - Dockerのインストール ([公式サイト](https://docs.docker.jp/desktop/install/mac-install.html))
    - Supabase CLI `brew install supabase/tap/supabase`
+   - psql（オプション） `brew install libpq && brew link --force libpq`
 
 ### インストール for Windows
 
@@ -76,6 +78,12 @@
 
       - インストールされているか確認: `supabase --version`
 
+   - psql（オプション）
+      - PostgreSQLのインストールに含まれています
+      - [公式サイト](https://www.postgresql.org/download/)からインストーラーをダウンロード
+      - インストール時に「Command Line Tools」を選択
+      - インストールされているか確認: `psql --version`
+
 
 ## サービスの起動方法
 
@@ -111,21 +119,13 @@
    NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
    ```
 
-4. ローカルデータベースの初期化:
-
-   ```bash
-   supabase db reset
-   ```
-
-  `supabase/migrations`配下にあるマイグレーションを実行し、`supabase/seed.sql`にあるシードデータをローカルデータベースに流し込みます。
-
-5. 必要なパッケージをインストール:
+4. 必要なパッケージをインストール:
 
    ```bash
    pnpm install
    ```
 
-6. `.env` ファイルの作成
+5. `.env` ファイルの作成
 
    ```bash
    cp .env.local .env
@@ -133,15 +133,20 @@
 
    `.env.local` ファイルをコピーして `.env` を作成します。
 
-7. ミッションデータの同期:
+6. ローカルデータベースの初期化:
 
    ```bash
-   pnpm run mission:sync
+   pnpm run db:reset
    ```
 
-   詳しくは [ミッションデータ README](mission_data/README.md) を参照ください。
+   このコマンドは以下を一括実行します:
+   - `supabase/migrations`配下のマイグレーションを実行
+   - `supabase/seed.sql`のシードデータを投入
+   - TypeScript型定義を生成
+   - ミッションデータを同期（詳しくは [ミッションデータ README](mission_data/README.md) を参照）
+   - ミッション同期後のシードデータを投入（psqlがインストールされている場合のみ）
 
-8. Next.js のローカル開発サーバーを起動:
+7. Next.js のローカル開発サーバーを起動:
 
    ```bash
    pnpm run dev

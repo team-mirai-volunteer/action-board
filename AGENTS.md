@@ -17,7 +17,7 @@
 
 ### ローカル開発環境セットアップ
 - `supabase start` - ローカルSupabase環境を開始
-- `pnpm run db:reset` - データベースリセット + 型生成 + ミッションデータ同期を一括実行
+- `pnpm run db:reset` - データベースリセット + 型生成 + ミッションデータ同期 + シードデータ投入を一括実行
 - `pnpm run dev` - Next.js開発サーバーを開始 (localhost:3000)
 
 ### コード品質とテスト
@@ -32,7 +32,7 @@
 - `pnpm run test:ci:e2e` - CI用E2EとRLSテスト
 
 ### データベース型生成とマイグレーション
-- `pnpm run db:reset` - データベースリセット + 型生成 + ミッションデータ同期を一括実行
+- `pnpm run db:reset` - データベースリセット + 型生成 + ミッションデータ同期 + シードデータ投入を一括実行
 - `pnpm run db:migrate` - マイグレーション適用 + 型生成
 - `pnpm run types` - SupabaseスキーマからTypeScript型を生成 (lib/types/supabase.tsに出力)
 - `npx supabase migration new <migration_name>` - 新しいマイグレーションファイルを作成
