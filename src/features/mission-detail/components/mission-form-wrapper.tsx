@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { MainLinkButton } from "@/features/mission-detail/components/main-link-button";
 import { MissionCompleteDialog } from "@/features/mission-detail/components/mission-complete-dialog";
+import { YouTubeForm } from "@/features/mission-detail/components/youtube-form";
 import { ArtifactForm } from "@/features/missions/components/artifact-form";
 import QuizComponent from "@/features/missions/components/quiz-component";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
@@ -229,6 +230,41 @@ export function MissionFormWrapper({
               リンクを開くとミッションクリアとなります
             </div>
           )}
+
+          {errorMessage && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2 shrink-0" />
+              {errorMessage}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // YouTubeミッションの場合
+    if (mission.required_artifact_type === ARTIFACT_TYPES.YOUTUBE.key) {
+      const handleYouTubeSuccess = (result: {
+        xpGranted?: number;
+        userLevel?: { xp: number };
+      }) => {
+        handleXpAnimation(result);
+        setIsDialogOpen(true);
+        onSubmissionSuccess?.();
+        scrollToTop();
+      };
+
+      const handleYouTubeError = (error: string) => {
+        setErrorMessage(error);
+      };
+
+      return (
+        <div className="space-y-4">
+          <YouTubeForm
+            mission={mission}
+            onSuccess={handleYouTubeSuccess}
+            onError={handleYouTubeError}
+            disabled={isButtonDisabled || isSubmitting}
+          />
 
           {errorMessage && (
             <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg flex items-center">
