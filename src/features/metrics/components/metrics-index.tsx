@@ -4,6 +4,7 @@ import type { MetricsData } from "@/features/metrics/types/metrics-types";
 import { getTikTokStatsSummary } from "@/features/tiktok-stats/services/tiktok-stats-service";
 import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
+import { AchievementMetric } from "./achievement-metric";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 import { VideoMetric } from "./video-metric";
@@ -17,7 +18,8 @@ export { MetricsWithSuspense } from "./metrics-with-suspense";
  * チームみらいの活動状況を表示するメインコンポーネント
  * 以下のデータを統合して表示：
  * 1. サポーター数（外部API）
- * 2. YouTube動画再生数（Supabase）
+ * 2. アクション達成数（Supabase）
+ * 3. YouTube動画再生数（Supabase）
  */
 export async function Metrics() {
   let metricsData: MetricsData;
@@ -77,6 +79,12 @@ export async function Metrics() {
         fallbackCount={fallbackSupporterCount}
         fallbackIncrease={fallbackSupporterIncrease}
       />
+
+      {/* 水平セパレーター */}
+      <Separator orientation="horizontal" className="my-4" />
+
+      {/* アクション達成数 */}
+      <AchievementMetric data={metricsData.achievement} />
 
       {/* 水平セパレーター */}
       <Separator orientation="horizontal" className="my-4" />

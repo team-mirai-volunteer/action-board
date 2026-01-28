@@ -178,11 +178,19 @@ describe("Metrics", () => {
     it("詳しく見るリンクが正しく表示される", async () => {
       render(await Metrics());
 
-      // 詳しく見るリンクが1つ（サポーター用）+ YouTubeとTikTokのリンクが存在
+      // 詳しく見るリンクが2つ（サポーター用 + アクション数用）
       const detailLinks = screen.getAllByText("詳しく見る", {
         selector: "span",
       });
-      expect(detailLinks).toHaveLength(1); // サポーターのみ
+      expect(detailLinks).toHaveLength(2); // サポーター + アクション数
+    });
+
+    it("アクション数ダッシュボードへの内部リンクが存在する", async () => {
+      render(await Metrics());
+
+      // アクション数セクションの/statsリンク
+      const statsLink = document.querySelector('a[href="/stats"]');
+      expect(statsLink).toBeInTheDocument();
     });
 
     it("Looker Studioへの外部リンクが存在する", async () => {
