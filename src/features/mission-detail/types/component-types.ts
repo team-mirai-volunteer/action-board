@@ -1,8 +1,6 @@
 import type { Tables } from "@/lib/types/supabase";
 
-export type MissionArtifact = Tables<"mission_artifacts"> & {
-  geolocations?: Tables<"mission_artifact_geolocations">[];
-};
+export type MissionArtifact = Tables<"mission_artifacts">;
 
 export interface Submission
   extends Omit<Tables<"achievements">, "id" | "mission_id" | "user_id"> {

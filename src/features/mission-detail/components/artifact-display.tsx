@@ -41,12 +41,6 @@ const ImageWithGeolocationArtifact: React.FC<{ artifact: MissionArtifact }> = ({
       )}
     </div>
     <div className="flex-1">
-      <p className="text-xs text-gray-400">
-        位置情報:{" "}
-        {artifact.geolocations && artifact.geolocations.length > 0
-          ? "あり"
-          : "なし"}
-      </p>
       {artifact.description && (
         <p className="text-sm mt-1">{artifact.description}</p>
       )}
