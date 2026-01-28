@@ -196,6 +196,17 @@ const linkAccessArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK_ACCESS.key),
 });
 
+// YOUTUBEタイプ用スキーマ
+const youtubeArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.YOUTUBE.key),
+  artifactLink: z
+    .string()
+    .nonempty({ message: "YouTube動画のURLが必要です" })
+    .regex(/^https?:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/, {
+      message: "有効なYouTube動画のURLを入力してください",
+    }),
+});
+
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
@@ -207,7 +218,8 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   postingArtifactSchema,
   posterArtifactSchema,
   quizArtifactSchema,
-  linkAccessArtifactSchema, // 追加
+  linkAccessArtifactSchema,
+  youtubeArtifactSchema,
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -378,6 +390,42 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // YOUTUBE重複バリデーション（同じ動画へのいいねは1回のみ）
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
+  ) {
+    // YouTube URLからvideo_idを抽出
+    const videoIdMatch = validatedData.artifactLink.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+    );
+    const videoId = videoIdMatch?.[1];
+
+    if (videoId) {
+      // youtube_video_likesテーブルで既に記録済みか確認
+      const { data: existingLike, error: likeCheckError } = await supabase
+        .from("youtube_video_likes")
+        .select("id")
+        .eq("user_id", authUser.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+      if (likeCheckError) {
+        return {
+          success: false,
+          error: "重複チェック中にエラーが発生しました。",
+        };
+      }
+
+      if (existingLike) {
+        return {
+          success: false,
+          error: "この動画へのいいねは既に記録されています。",
+        };
+      }
+    }
+  }
+
   // 現在のシーズンIDを取得
   const currentSeasonId = await getCurrentSeasonId();
   if (!currentSeasonId) {
@@ -518,6 +566,14 @@ export const achieveMissionAction = async (formData: FormData) => {
         artifactPayload.text_content = null;
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
+      }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
+      artifactTypeLabel = "YOUTUBE";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
+        artifactPayload.link_url = validatedData.artifactLink;
+        // CHECK制約: link_url必須、他はnull
+        artifactPayload.image_storage_path = null;
+        artifactPayload.text_content = null;
       }
     } else {
       // その他のタイプは全てnullに
@@ -698,6 +754,46 @@ export const achieveMissionAction = async (formData: FormData) => {
         // ボーナスXP付与の失敗はミッション達成の成功を妨げない
       } else {
         totalXpGranted += totalPoints;
+      }
+    }
+
+    // YouTubeいいね記録をyoutube_video_likesテーブルに保存
+    if (
+      validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
+      validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
+    ) {
+      // YouTube URLからvideo_idを抽出
+      const videoIdMatch = validatedData.artifactLink.match(
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+      );
+      const videoId = videoIdMatch?.[1];
+
+      if (videoId) {
+        // youtube_videosテーブルに動画が存在するか確認
+        const { data: existingVideo } = await supabase
+          .from("youtube_videos")
+          .select("video_id")
+          .eq("video_id", videoId)
+          .single();
+
+        if (existingVideo) {
+          // youtube_video_likesに記録
+          const { error: youtubeLikeError } = await supabase
+            .from("youtube_video_likes")
+            .insert({
+              user_id: authUser.id,
+              video_id: videoId,
+              mission_artifact_id: newArtifact.id,
+            });
+
+          if (youtubeLikeError) {
+            console.error("YouTube like record save error:", youtubeLikeError);
+            return {
+              success: false,
+              error: "YouTubeいいね記録の保存に失敗しました。",
+            };
+          }
+        }
       }
     }
   }
