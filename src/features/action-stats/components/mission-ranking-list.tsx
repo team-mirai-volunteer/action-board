@@ -38,12 +38,12 @@ function MissionRankingItem({
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-gray-900 truncate flex items-center gap-1">
+        <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
           {mission.missionTitle}
           {mission.isHidden && (
             <span className="flex items-center gap-1 text-xs text-gray-400 ml-2">
               <EyeOff className="w-3 h-3 text-gray-400 flex-shrink-0" />
-              アクセス不可
+              <span className="hidden sm:inline">アクセス不可</span>
             </span>
           )}
         </div>

@@ -73,7 +73,7 @@ export function YouTubeVideoList({
   return (
     <div className="flex flex-col divide-y">
       {videos.map((video) => (
-        <YouTubeVideoCard key={video.id} video={video} />
+        <YouTubeVideoCard key={video.video_id} video={video} />
       ))}
     </div>
   );

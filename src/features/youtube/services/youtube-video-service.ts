@@ -50,6 +50,7 @@ function extractHashtags(text: string): string[] {
 
 /**
  * YouTube動画をDBに保存する（upsert）
+ * @returns video_id（PRIMARY KEY）
  */
 export async function saveYouTubeVideo(
   video: YouTubeVideoDetail,
@@ -83,35 +84,32 @@ export async function saveYouTubeVideo(
     updated_at: new Date().toISOString(),
   };
 
-  // video_idでupsert
-  const { data, error } = await supabase
-    .from("youtube_videos")
-    .upsert(videoData, {
-      onConflict: "video_id",
-    })
-    .select("id")
-    .single();
+  // video_idでupsert（video_idがPRIMARY KEY）
+  const { error } = await supabase.from("youtube_videos").upsert(videoData, {
+    onConflict: "video_id",
+  });
 
   if (error) {
     console.error("Failed to save YouTube video:", error);
     return null;
   }
 
-  return data.id;
+  return video.id; // video_idがPRIMARY KEY
 }
 
 /**
  * YouTube動画の統計情報を保存する
+ * @param videoId - YouTube動画ID（youtube_videos.video_idへの外部キー）
  */
 export async function saveYouTubeVideoStats(
-  youtubeVideoId: string,
+  videoId: string,
   video: YouTubeVideoDetail,
 ): Promise<boolean> {
   const supabase = await createAdminClient();
   const today = new Date().toISOString().split("T")[0];
 
   const statsData = {
-    youtube_video_id: youtubeVideoId,
+    video_id: videoId,
     recorded_at: today,
     view_count: video.statistics.viewCount
       ? Number.parseInt(video.statistics.viewCount, 10)
@@ -124,11 +122,11 @@ export async function saveYouTubeVideoStats(
       : null,
   };
 
-  // youtube_video_id と recorded_at でupsert
+  // video_id と recorded_at でupsert
   const { error } = await supabase
     .from("youtube_video_stats")
     .upsert(statsData, {
-      onConflict: "youtube_video_id,recorded_at",
+      onConflict: "video_id,recorded_at",
     });
 
   if (error) {

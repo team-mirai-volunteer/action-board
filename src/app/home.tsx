@@ -1,4 +1,3 @@
-import NoticeBoardAlert from "@/components/common/notice-board-alert";
 import Hero from "@/components/top/hero";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
@@ -67,7 +66,7 @@ export default async function Home({
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* 注意書き */}
-      <NoticeBoardAlert />
+      {/* <NoticeBoardAlert /> */}
 
       {/* レベルアップ通知 */}
       {levelUpNotification && (

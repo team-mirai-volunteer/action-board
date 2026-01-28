@@ -165,7 +165,7 @@ export async function getYouTubeStatsSummary(
     .from("youtube_videos")
     .select(
       `
-      id,
+      video_id,
       published_at,
       youtube_video_stats(
         view_count,

@@ -128,7 +128,7 @@ export type Database = {
           {
             foreignKeyName: "mission_artifacts_achievement_id_fkey";
             columns: ["achievement_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "achievements";
             referencedColumns: ["id"];
           },
@@ -1412,8 +1412,8 @@ export type Database = {
           id: string;
           like_count: number | null;
           recorded_at: string;
+          video_id: string;
           view_count: number | null;
-          youtube_video_id: string | null;
         };
         Insert: {
           comment_count?: number | null;
@@ -1421,8 +1421,8 @@ export type Database = {
           id?: string;
           like_count?: number | null;
           recorded_at: string;
+          video_id: string;
           view_count?: number | null;
-          youtube_video_id?: string | null;
         };
         Update: {
           comment_count?: number | null;
@@ -1430,16 +1430,16 @@ export type Database = {
           id?: string;
           like_count?: number | null;
           recorded_at?: string;
+          video_id?: string;
           view_count?: number | null;
-          youtube_video_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "youtube_video_stats_youtube_video_id_fkey";
-            columns: ["youtube_video_id"];
+            foreignKeyName: "youtube_video_stats_video_id_fkey";
+            columns: ["video_id"];
             isOneToOne: false;
             referencedRelation: "youtube_videos";
-            referencedColumns: ["id"];
+            referencedColumns: ["video_id"];
           },
         ];
       };
@@ -1450,7 +1450,6 @@ export type Database = {
           created_at: string | null;
           description: string | null;
           duration: string | null;
-          id: string;
           is_active: boolean | null;
           published_at: string | null;
           tags: string[] | null;
@@ -1466,7 +1465,6 @@ export type Database = {
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
-          id?: string;
           is_active?: boolean | null;
           published_at?: string | null;
           tags?: string[] | null;
@@ -1482,7 +1480,6 @@ export type Database = {
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
-          id?: string;
           is_active?: boolean | null;
           published_at?: string | null;
           tags?: string[] | null;
