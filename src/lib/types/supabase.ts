@@ -1405,6 +1405,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      youtube_video_likes: {
+        Row: {
+          created_at: string | null;
+          detected_at: string | null;
+          id: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_likes_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "youtube_video_likes_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
+          },
+        ];
+      };
       youtube_video_stats: {
         Row: {
           comment_count: number | null;
