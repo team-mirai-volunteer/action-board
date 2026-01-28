@@ -21,6 +21,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "mission_achievement",
           mission_id: "mission-1",
+          mission_slug: "test-mission",
         },
       ];
 
@@ -31,7 +32,7 @@ describe("ActivityTimeline", () => {
         name: "テストミッション",
       });
       expect(missionLink).toBeInTheDocument();
-      expect(missionLink).toHaveAttribute("href", "/missions/mission-1");
+      expect(missionLink).toHaveAttribute("href", "/missions/test-mission");
     });
 
     it("activity_type別に正しい表示形式を使用", () => {
@@ -45,6 +46,7 @@ describe("ActivityTimeline", () => {
         avatar_url: null,
         activity_type: "signup",
         mission_id: null,
+        mission_slug: null,
       };
 
       const missionActivity = {
@@ -57,6 +59,7 @@ describe("ActivityTimeline", () => {
         avatar_url: null,
         activity_type: "mission_achievement",
         mission_id: "mission-abc",
+        mission_slug: "test-mission-abc",
       };
 
       render(
@@ -73,7 +76,7 @@ describe("ActivityTimeline", () => {
         name: "テストミッション",
       });
       expect(missionLink).toBeInTheDocument();
-      expect(missionLink).toHaveAttribute("href", "/missions/mission-abc");
+      expect(missionLink).toHaveAttribute("href", "/missions/test-mission-abc");
     });
 
     it("ユーザーアバターとリンクが正しく表示される", () => {
@@ -88,6 +91,7 @@ describe("ActivityTimeline", () => {
           avatar_url: "https://example.com/avatar.jpg",
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
@@ -111,6 +115,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
@@ -131,6 +136,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
@@ -152,6 +158,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
@@ -183,6 +190,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
@@ -204,6 +212,7 @@ describe("ActivityTimeline", () => {
           avatar_url: null,
           activity_type: "signup",
           mission_id: null,
+          mission_slug: null,
         },
       ];
 
