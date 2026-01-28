@@ -284,29 +284,6 @@ WHERE s.slug = 'season2';
 --  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです'),
 --  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'LINK', 'https://example.com/anno-blog', '政治活動についての考察記事');
 
--- イベント
-INSERT INTO events (id, title, url, starts_at)
-VALUES
-  ('d8314e09-6647-44ca-93c1-08c51707982b', '地域清掃イベント', 'https://example.com/event1', '2025-05-01T10:00:00Z');
-
--- 日次ダッシュボード登録人数
-INSERT INTO daily_dashboard_registration_summary (date, count) VALUES
-  ('2025-05-01', 12);
-
--- 都道府県別登録人数
-INSERT INTO daily_dashboard_registration_by_prefecture_summary (date, prefecture, count) VALUES
-  ('2025-05-01', '東京都', 3),
-  ('2025-05-01', '大阪府', 2),
-  ('2025-05-01', '神奈川県', 1),
-  ('2025-05-01', '愛知県', 1),
-  ('2025-05-01', '福岡県', 1),
-  ('2025-05-01', '北海道', 1),
-  ('2025-05-01', '京都府', 1),
-  ('2025-05-01', '宮城県', 1),
-  ('2025-05-01', '広島県', 1),
-  ('2025-05-01', '沖縄県', 1);
-
-
 -- missionsテーブルのフューチャードフラグをON
 update public.missions
 set is_featured = true
