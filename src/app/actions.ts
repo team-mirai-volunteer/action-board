@@ -23,6 +23,7 @@ import {
   isValidReferralCode,
 } from "@/lib/validation/referral";
 
+import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { validateReturnUrl } from "@/lib/validation/url";
 
@@ -175,6 +176,7 @@ export const signUpActionWithState = async (
             .insert({
               user_id: referrerUserId,
               mission_id: referralMissionId,
+              season_id: await getCurrentSeasonId(),
             })
             .select("id")
             .single();
@@ -759,6 +761,7 @@ async function handleReferralCode(referralCode: string, email: string) {
             .insert({
               user_id: referrerRecord.user_id,
               mission_id: mission.id,
+              season_id: await getCurrentSeasonId(),
             })
             .select("id")
             .single();
