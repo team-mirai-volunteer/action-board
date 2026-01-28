@@ -6,6 +6,17 @@ interface AchievementMetricProps {
   data: AchievementData | null;
   fallbackTotal?: number;
   fallbackToday?: number;
+  startDate?: Date;
+}
+
+/**
+ * 日付を YYYY.MM.DD 形式でフォーマット
+ */
+function formatDateLabel(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
 }
 
 /**
@@ -18,15 +29,18 @@ export function AchievementMetric({
   data,
   fallbackTotal = 0,
   fallbackToday = 0,
+  startDate,
 }: AchievementMetricProps) {
   const achievementCount = data?.totalCount ?? fallbackTotal;
   const todayAchievementCount = data?.todayCount ?? fallbackToday;
+  const dateLabel = startDate ? `${formatDateLabel(startDate)}-` : "";
 
   return (
     <div className="py-3">
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between">
         <div>
-          <p className="text-base text-black">達成アクション数</p>
+          <p className="text-base text-black mt-1">達成アクション数</p>
+          {dateLabel && <p className="text-xs text-gray-500">{dateLabel}</p>}
         </div>
         <div className="text-right">
           {/* 総アクション数（Supabaseから取得、失敗時は環境変数フォールバック） */}
