@@ -2,18 +2,18 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 
 interface MissionAchievementCardProps {
-  missionId: string;
+  missionSlug: string;
   title: string;
   count: number;
 }
 
 export function MissionAchievementCard({
-  missionId,
+  missionSlug,
   title,
   count,
 }: MissionAchievementCardProps) {
   return (
-    <Link href={`/missions/${missionId}`}>
+    <Link href={`/missions/${missionSlug}`}>
       <Card className="p-4 cursor-pointer hover:shadow-md transition-shadow">
         <div className="flex justify-between items-center">
           <div className="text-sm font-bold text-gray-700 flex-1 min-w-0 truncate">

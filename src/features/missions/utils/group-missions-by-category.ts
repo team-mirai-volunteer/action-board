@@ -1,7 +1,7 @@
 import type { Tables } from "@/lib/types/supabase";
 
 type MissionCategoryView = Tables<"mission_category_view">;
-export type MissionForComponent = Omit<Tables<"missions">, "slug">;
+export type MissionForComponent = Tables<"missions">;
 
 export interface GroupMissionsByCategoryOptions {
   showAchievedMissions: boolean;
@@ -82,8 +82,11 @@ export function groupMissionsByCategory(
       )
       .map((m): MissionForComponent => {
         const missionId = m.mission_id as string;
+        // slugはviewから取得、なければmission_idをフォールバックとして使用
+        const slug = "slug" in m && m.slug ? (m.slug as string) : missionId;
         return {
           id: missionId,
+          slug,
           title: m.title || "",
           icon_url: m.icon_url,
           difficulty: m.difficulty || 1,

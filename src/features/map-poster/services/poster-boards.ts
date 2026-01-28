@@ -7,6 +7,9 @@ import type {
   PosterBoardTotal,
 } from "../types/poster-types";
 
+/** ポスター貼りミッションのslug */
+export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
+
 /**
  * 現在の認証ユーザーIDを取得
  */
@@ -27,7 +30,7 @@ export async function getPosterMissionId(): Promise<string | null> {
   const { data: mission, error } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", "put-up-poster-on-board")
+    .eq("slug", POSTER_MISSION_SLUG)
     .single();
 
   if (error) {

@@ -29,7 +29,7 @@ export async function getUserActivityTimeline(
         ? supabase
             .from("achievements")
             .select(
-              "id, created_at, user_id, mission_id, missions!inner(title)",
+              "id, created_at, user_id, mission_id, missions!inner(title, slug)",
             )
             .eq("user_id", userId)
             .eq("season_id", seasonId)
@@ -38,7 +38,7 @@ export async function getUserActivityTimeline(
         : supabase
             .from("achievements")
             .select(
-              "id, created_at, user_id, mission_id, missions!inner(title)",
+              "id, created_at, user_id, mission_id, missions!inner(title, slug)",
             )
             .eq("user_id", userId)
             .order("created_at", { ascending: false })
@@ -82,6 +82,7 @@ export async function getUserActivityTimeline(
     avatar_url: userProfile?.avatar_url || null,
     title: a.missions.title,
     mission_id: a.mission_id,
+    mission_slug: a.missions.slug,
     created_at: a.created_at,
     activity_type: "mission_achievement",
     party_membership: partyMembership,
@@ -96,6 +97,7 @@ export async function getUserActivityTimeline(
     avatar_url: userProfile?.avatar_url || null,
     title: a.activity_title,
     mission_id: null,
+    mission_slug: null,
     created_at: a.created_at,
     activity_type: a.activity_type,
     party_membership: partyMembership,
@@ -169,6 +171,10 @@ export async function getGlobalActivityTimeline(
     avatar_url: item.avatar_url,
     title: item.title ?? "",
     mission_id: item.mission_id,
+    mission_slug:
+      "mission_slug" in item && item.mission_slug
+        ? (item.mission_slug as string)
+        : null,
     created_at: item.created_at ?? "",
     activity_type: item.activity_type ?? "",
     party_membership:

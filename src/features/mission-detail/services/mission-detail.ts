@@ -10,6 +10,17 @@ import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
 
 /**
+ * UUIDv4の形式かどうかを検証する
+ * @param value - 検証する文字列
+ * @returns UUIDv4形式の場合はtrue
+ */
+export function isUUID(value: string): boolean {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
+/**
  * ユーザーのミッション達成情報を取得し、ミッションIDごとの達成回数をMapで返す
  */
 async function getUserMissionAchievements(
@@ -38,15 +49,23 @@ async function getUserMissionAchievements(
   return achievementMap;
 }
 
+/**
+ * ミッションデータをIDまたはslugで取得する
+ * @param identifier - ミッションIDまたはslug
+ * @returns ミッションデータ
+ */
 export async function getMissionData(
-  missionId: string,
+  identifier: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = createClient();
+
+  // UUIDの場合はIDで検索、それ以外はslugで検索
+  const column = isUUID(identifier) ? "id" : "slug";
 
   const { data: missionData, error } = await supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("id", missionId)
+    .eq(column, identifier)
     .single();
 
   if (error) {
@@ -55,6 +74,50 @@ export async function getMissionData(
   }
 
   return missionData;
+}
+
+/**
+ * slugからミッションのIDを取得する
+ * @param slug - ミッションのslug
+ * @returns ミッションID、見つからない場合はnull
+ */
+export async function getMissionIdBySlug(slug: string): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (error) {
+    console.error("Mission slug lookup error:", error);
+    return null;
+  }
+
+  return data?.id ?? null;
+}
+
+/**
+ * UUIDからミッションのslugを取得する
+ * @param id - ミッションID（UUID）
+ * @returns ミッションslug、見つからない場合はnull
+ */
+export async function getMissionSlugById(id: string): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("missions")
+    .select("slug")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Mission ID lookup error:", error);
+    return null;
+  }
+
+  return data?.slug ?? null;
 }
 
 export async function getTotalAchievementCount(

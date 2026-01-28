@@ -38,6 +38,7 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
+  POSTER_MISSION_SLUG,
   checkBoardMissionCompleted,
   getArchivedPosterBoardsMinimal,
   getCurrentUserId,
@@ -531,22 +532,12 @@ export default function DetailedPosterMapClient({
           「ポスターマップ上に掲示板が見当たらない」「ポスターを貼ったがポイントに反映されなかった」などの問題がある場合は、下記のミッションにて報告をお願いいたします👇
         </p>
         <p className="mt-2">
-          {putUpPosterMissionId ? (
-            <a
-              href={`/missions/${putUpPosterMissionId}`}
-              className="text-blue-700 underline font-bold"
-            >
-              🔗 ミッション「選挙区ポスターを貼ろう」
-            </a>
-          ) : (
-            <span
-              className="text-gray-400 font-bold cursor-not-allowed"
-              title="ミッションページが見つかりません"
-            >
-              🔗
-              ミッションページが見つかりません。ご意見箱からご報告いただけると幸いです🙇
-            </span>
-          )}
+          <a
+            href={`/missions/${POSTER_MISSION_SLUG}`}
+            className="text-blue-700 underline font-bold"
+          >
+            🔗 ミッション「選挙区ポスターを貼ろう」
+          </a>
         </p>
         <p className="mt-2">ご協力ありがとうございます！</p>
       </div>

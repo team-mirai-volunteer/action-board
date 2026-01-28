@@ -8,6 +8,7 @@ export interface ActivityTimelineItem {
   avatar_url: string | null;
   title: string;
   mission_id: string | null;
+  mission_slug: string | null;
   created_at: string;
   activity_type: string;
   party_membership?: PartyMembership | null;

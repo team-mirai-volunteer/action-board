@@ -26,10 +26,10 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   const message = `「${mission.title}」を達成しました！`;
   const shareMessage = `チームみらいアクションボードで${message} #チームみらい\n`;
 
-  // OGP画像付きURLを生成
+  // OGP画像付きURLを生成（slugベース）
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/missions/${mission.id}?type=complete`
+      ? `${window.location.origin}/missions/${mission.slug}?type=complete`
       : "";
 
   return (
@@ -46,7 +46,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             src={
               mission.ogp_image_url
                 ? mission.ogp_image_url
-                : `/api/missions/${mission.id}/og?type=complete`
+                : `/api/missions/${mission.slug}/og?type=complete`
             }
             alt="ミッションクリア"
             className="w-full mx-auto min-h-[158px] md:min-h-[215px]"
@@ -61,14 +61,14 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <ShareTwitterButton
               message={shareMessage}
-              missionId={mission.id}
+              missionSlug={mission.slug}
               url={shareUrl}
             />
-            <ShareFacebookButton missionId={mission.id} url={shareUrl} />
-            <ShareLineButton missionId={mission.id} url={shareUrl} />
+            <ShareFacebookButton missionSlug={mission.slug} url={shareUrl} />
+            <ShareLineButton missionSlug={mission.slug} url={shareUrl} />
             <ShareButton
               message={shareMessage}
-              missionId={mission.id}
+              missionSlug={mission.slug}
               url={shareUrl}
             />
             <ShareUrlButton url={shareUrl} />

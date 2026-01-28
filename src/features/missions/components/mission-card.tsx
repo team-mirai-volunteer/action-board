@@ -16,7 +16,7 @@ import Link from "next/link";
 import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
-  mission: Omit<Tables<"missions">, "slug">;
+  mission: Tables<"missions">;
   achievementsCount: number;
   userAchievementCount: number;
 }
@@ -95,7 +95,7 @@ export default function Mission({
               </span>
             </div>
           </div>
-          <Link href={`/missions/${mission.id}`} className="block">
+          <Link href={`/missions/${mission.slug}`} className="block">
             <motion.div whileTap={{ scale: 0.95 }}>
               <Button
                 variant="default"
