@@ -95,7 +95,10 @@ export default function Mission({
               </span>
             </div>
           </div>
-          <Link href={`/missions/${mission.slug}`} className="block">
+          <Link
+            href={`/missions/${mission.slug || mission.id}`}
+            className="block"
+          >
             <motion.div whileTap={{ scale: 0.95 }}>
               <Button
                 variant="default"
