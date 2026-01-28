@@ -1850,6 +1850,7 @@ export type Database = {
         Returns: {
           action_count: number;
           icon_url: string;
+          is_hidden: boolean;
           mission_id: string;
           mission_slug: string;
           mission_title: string;

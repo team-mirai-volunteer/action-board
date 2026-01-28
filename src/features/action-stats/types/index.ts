@@ -24,4 +24,5 @@ export interface MissionActionRanking {
   missionSlug: string;
   iconUrl: string | null;
   actionCount: number;
+  isHidden: boolean;
 }
