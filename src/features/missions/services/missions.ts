@@ -151,6 +151,7 @@ export async function getMissionCategoryView(): Promise<
       category_kbn,
       category_sort_no,
       mission_id,
+      slug,
       title,
       icon_url,
       difficulty,

@@ -1,5 +1,6 @@
 export interface MissionAchievementSummary {
   mission_id: string;
+  mission_slug: string;
   mission_title: string;
   achievement_count: number;
 }

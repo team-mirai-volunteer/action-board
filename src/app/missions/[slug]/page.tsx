@@ -9,7 +9,11 @@ import {
 import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-actions";
 import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
 import { RelatedMissions } from "@/features/mission-detail/components/related-missions";
-import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
+import {
+  getMissionPageData,
+  getMissionSlugById,
+  isUUID,
+} from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import { getMissionAchievementCounts } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
@@ -29,24 +33,66 @@ import {
 import { LogIn, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({
   searchParams,
   params,
 }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const pageData = await getMissionPageData(id);
+  const { slug } = await params;
+
+  // UUIDの場合はslugを取得してリダイレクト用のメタデータを返す
+  if (isUUID(slug)) {
+    const missionSlug = await getMissionSlugById(slug);
+    if (missionSlug) {
+      // リダイレクト先のメタデータを生成
+      const pageData = await getMissionPageData(missionSlug);
+      if (!pageData) {
+        return createDefaultMetadata();
+      }
+      const { mission } = pageData;
+      let ogpImageUrl = `${defaultUrl}/api/missions/${missionSlug}/og`;
+      const searchParamsResolved = await searchParams;
+      ogpImageUrl =
+        searchParamsResolved.type === "complete"
+          ? `${ogpImageUrl}?type=complete`
+          : ogpImageUrl;
+
+      return {
+        title: `${mission.title} | ${config.title}`,
+        description: config.description,
+        openGraph: {
+          title: config.title,
+          description: config.description,
+          images: [ogpImageUrl],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: config.title,
+          description: config.description,
+          images: [ogpImageUrl],
+        },
+        icons: config.icons,
+        other: {
+          "font-family": notoSansJP.style.fontFamily,
+        },
+      };
+    }
+    return createDefaultMetadata();
+  }
+
+  const pageData = await getMissionPageData(slug);
   if (!pageData) {
     return createDefaultMetadata();
   }
   const { mission } = pageData;
-  let ogpImageUrl = `${defaultUrl}/api/missions/${id}/og`;
+  let ogpImageUrl = `${defaultUrl}/api/missions/${slug}/og`;
 
   // searchParamsをogpImageUrlに追加
   const searchParamsResolved = await searchParams;
@@ -76,11 +122,23 @@ export async function generateMetadata({
   };
 }
 
-export default async function MissionPage({ params }: Props) {
-  const user = await getUser();
+export default async function MissionPage({ params, searchParams }: Props) {
+  const { slug } = await params;
 
-  const { id } = await params;
-  const pageData = await getMissionPageData(id, user?.id);
+  // UUIDでアクセスされた場合は301リダイレクト
+  if (isUUID(slug)) {
+    const missionSlug = await getMissionSlugById(slug);
+    if (missionSlug) {
+      const searchParamsResolved = await searchParams;
+      const queryString =
+        searchParamsResolved.type === "complete" ? "?type=complete" : "";
+      redirect(`/missions/${missionSlug}${queryString}`);
+    }
+    return <div className="p-4">ミッションが見つかりません。</div>;
+  }
+
+  const user = await getUser();
+  const pageData = await getMissionPageData(slug, user?.id);
 
   if (!pageData) {
     return <div className="p-4">ミッションが見つかりません。</div>;
@@ -100,7 +158,7 @@ export default async function MissionPage({ params }: Props) {
   let quizQuestions = null;
   if (mission.required_artifact_type === ARTIFACT_TYPES.QUIZ.key) {
     try {
-      const quizResponse = await getQuizQuestionsAction(id);
+      const quizResponse = await getQuizQuestionsAction(mission.id);
       if (quizResponse.success && quizResponse.questions) {
         quizQuestions = quizResponse.questions;
       }
@@ -111,7 +169,7 @@ export default async function MissionPage({ params }: Props) {
 
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
-    ? await getUserMissionRanking(id, user.id)
+    ? await getUserMissionRanking(mission.id, user.id)
     : null;
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
@@ -149,7 +207,7 @@ export default async function MissionPage({ params }: Props) {
                 referralCode={referralCode}
                 initialUserAchievementCount={userAchievementCount}
                 initialSubmissions={submissions}
-                missionId={id}
+                missionId={mission.id}
                 preloadedQuizQuestions={quizQuestions}
                 mainLink={mainLink}
               />

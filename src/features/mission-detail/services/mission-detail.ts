@@ -10,6 +10,17 @@ import type { Tables } from "@/lib/types/supabase";
 import { nanoid } from "nanoid";
 
 /**
+ * UUIDv4の形式かどうかを検証する
+ * @param value - 検証する文字列
+ * @returns UUIDv4形式の場合はtrue
+ */
+export function isUUID(value: string): boolean {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
+/**
  * ユーザーのミッション達成情報を取得し、ミッションIDごとの達成回数をMapで返す
  */
 async function getUserMissionAchievements(
@@ -38,15 +49,23 @@ async function getUserMissionAchievements(
   return achievementMap;
 }
 
+/**
+ * ミッションデータをIDまたはslugで取得する
+ * @param identifier - ミッションIDまたはslug
+ * @returns ミッションデータ
+ */
 export async function getMissionData(
-  missionId: string,
+  identifier: string,
 ): Promise<Tables<"missions"> | null> {
   const supabase = createClient();
+
+  // UUIDの場合はIDで検索、それ以外はslugで検索
+  const column = isUUID(identifier) ? "id" : "slug";
 
   const { data: missionData, error } = await supabase
     .from("missions")
     .select("*, required_artifact_type, max_achievement_count")
-    .eq("id", missionId)
+    .eq(column, identifier)
     .single();
 
   if (error) {
@@ -55,6 +74,50 @@ export async function getMissionData(
   }
 
   return missionData;
+}
+
+/**
+ * slugからミッションのIDを取得する
+ * @param slug - ミッションのslug
+ * @returns ミッションID、見つからない場合はnull
+ */
+export async function getMissionIdBySlug(slug: string): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("missions")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (error) {
+    console.error("Mission slug lookup error:", error);
+    return null;
+  }
+
+  return data?.id ?? null;
+}
+
+/**
+ * UUIDからミッションのslugを取得する
+ * @param id - ミッションID（UUID）
+ * @returns ミッションslug、見つからない場合はnull
+ */
+export async function getMissionSlugById(id: string): Promise<string | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("missions")
+    .select("slug")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Mission ID lookup error:", error);
+    return null;
+  }
+
+  return data?.slug ?? null;
 }
 
 export async function getTotalAchievementCount(
@@ -255,14 +318,20 @@ async function getRelatedCategoryMissionsRaw(
   return data || [];
 }
 
+/**
+ * @param identifier - ミッションIDまたはslug
+ */
 export async function getMissionPageData(
-  missionId: string,
+  identifier: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionId);
+  const mission = await getMissionData(identifier);
 
   if (!mission) return null;
   if (mission.is_hidden) return null;
+
+  // missionIdパラメータはslugの場合があるため、以降のクエリではmission.id（UUID）を使用
+  const missionUUID = mission.id;
 
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
@@ -277,22 +346,22 @@ export async function getMissionPageData(
   if (userId) {
     const { achievements, count } = await getUserAchievements(
       userId,
-      missionId,
+      missionUUID,
     );
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, missionId);
+    submissions = await getSubmissionHistory(userId, missionUUID);
     referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(missionId);
+  const totalAchievementCount = await getTotalAchievementCount(missionUUID);
 
   // メインリンクの取得
-  const mainLink = await getMissionMainLink(missionId);
+  const mainLink = await getMissionMainLink(missionUUID);
 
   // 全カテゴリのミッションを取得し、グループ化・ソート・変換
-  const rawMissions = await getRelatedCategoryMissionsRaw(missionId);
+  const rawMissions = await getRelatedCategoryMissionsRaw(missionUUID);
   const allCategoryMissions = groupMissionsByCategory(
     rawMissions,
     userAchievementCountMap,
