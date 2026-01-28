@@ -353,6 +353,73 @@ export async function fetchVideoDetails(
 }
 
 /**
+ * ユーザーがいいねした動画の一覧を取得する
+ * YouTube Data API v3 の videos?myRating=like エンドポイントを使用
+ * @param accessToken OAuth アクセストークン
+ * @param maxResults 取得する最大件数（デフォルト50）
+ * @returns いいねした動画の詳細情報配列
+ */
+export async function fetchUserLikedVideos(
+  accessToken: string,
+  maxResults = 50,
+): Promise<YouTubeVideoDetail[]> {
+  const allVideos: YouTubeVideoDetail[] = [];
+  let pageToken: string | undefined;
+
+  while (allVideos.length < maxResults) {
+    const url = new URL(`${YOUTUBE_API_BASE}/videos`);
+    url.searchParams.set("part", "snippet,statistics,contentDetails");
+    url.searchParams.set("myRating", "like");
+    url.searchParams.set(
+      "maxResults",
+      String(Math.min(50, maxResults - allVideos.length)),
+    );
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("YouTube liked videos fetch failed:", errorBody);
+
+      // 401/403エラーの場合は特別なエラーを投げる
+      if (response.status === 401 || response.status === 403) {
+        throw new YouTubeAPIError(
+          "YouTube認証が無効です。再度連携してください。",
+          response.status,
+          "auth_error",
+        );
+      }
+
+      throw new YouTubeAPIError("いいね動画一覧の取得に失敗しました");
+    }
+
+    const data = await response.json();
+    const items = data.items as YouTubeVideoDetail[] | undefined;
+
+    if (!items || items.length === 0) {
+      break;
+    }
+
+    allVideos.push(...items);
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) {
+      break;
+    }
+  }
+
+  return allVideos;
+}
+
+/**
  * YouTube Client オブジェクト
  * 全てのYouTube API呼び出しをまとめたインターフェース
  */
@@ -362,4 +429,5 @@ export const youtubeClient = {
   fetchChannelInfo,
   fetchUserUploadedVideos,
   fetchVideoDetails,
+  fetchUserLikedVideos,
 };

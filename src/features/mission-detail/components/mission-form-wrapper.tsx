@@ -17,6 +17,7 @@ import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { YouTubeLikeForm } from "./youtube-like-form";
 
 type Props = {
   mission: Tables<"missions">;
@@ -237,6 +238,20 @@ export function MissionFormWrapper({
             </div>
           )}
         </div>
+      );
+    }
+
+    // YOUTUBE_LIKEミッションの場合
+    if (mission.required_artifact_type === ARTIFACT_TYPES.YOUTUBE_LIKE.key) {
+      return (
+        <YouTubeLikeForm
+          missionId={mission.id}
+          isCompleted={completed}
+          onSuccess={() => {
+            setIsDialogOpen(true);
+            onSubmissionSuccess?.();
+          }}
+        />
       );
     }
 

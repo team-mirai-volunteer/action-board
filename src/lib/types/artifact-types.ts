@@ -55,6 +55,14 @@ export const ARTIFACT_TYPES = {
     displayName: "リンクアクセス",
     prompt: "リンクをクリックするとミッションが達成されます。",
   },
+  YOUTUBE_LIKE: {
+    key: "YOUTUBE_LIKE",
+    displayName: "YouTubeいいね",
+    prompt:
+      "YouTubeでチームみらい動画に高評価をつけて、自動または手動で記録しましょう。",
+    validationRegex:
+      /^https?:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/,
+  },
   NONE: {
     key: "NONE",
     displayName: "添付データ不要",
@@ -88,4 +96,5 @@ export type MissionRequiredArtifactType =
   | "REFERRAL"
   | "POSTING"
   | "POSTER"
+  | "YOUTUBE_LIKE"
   | "NONE";

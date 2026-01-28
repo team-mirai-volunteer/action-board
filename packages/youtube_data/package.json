@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "sync": "tsx src/sync.ts",
-    "sync:dry": "tsx src/sync.ts --dry-run"
+    "sync:dry": "tsx src/sync.ts --dry-run",
+    "sync-likes": "tsx src/sync-likes.ts",
+    "sync-likes:dry": "tsx src/sync-likes.ts --dry-run"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.49.8",
