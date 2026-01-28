@@ -2,6 +2,7 @@
 
 [![Check code with Biome and tsc](https://github.com/team-mirai/action-board/actions/workflows/check_code.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/check_code.yaml)
 [![Build & Test E2E/RLS](https://github.com/team-mirai/action-board/actions/workflows/e2e_test.yaml/badge.svg)](https://github.com/team-mirai/action-board/actions/workflows/e2e_test.yaml)
+[![codecov](https://codecov.io/gh/team-mirai-volunteer/action-board/graph/badge.svg)](https://codecov.io/gh/team-mirai-volunteer/action-board)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/team-mirai-volunteer/action-board)
 
 ## コントリビュートについて
