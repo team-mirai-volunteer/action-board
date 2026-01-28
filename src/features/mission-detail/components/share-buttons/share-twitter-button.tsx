@@ -3,7 +3,7 @@
 type Props = {
   children?: React.ReactNode;
   message: string;
-  missionId: string;
+  missionSlug: string;
   className?: string;
   url?: string;
 };
@@ -11,11 +11,11 @@ type Props = {
 export function ShareTwitterButton({
   children,
   message,
-  missionId,
+  missionSlug,
   className,
   url,
 }: Props) {
-  const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
+  const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = () => {
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterIntentUrl, "_blank", "noopener,noreferrer");

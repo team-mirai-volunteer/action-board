@@ -2,9 +2,7 @@ import type { CategoryWithMissions } from "@/features/missions/utils/group-missi
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 
-export type MissionArtifact = Tables<"mission_artifacts"> & {
-  geolocations?: Tables<"mission_artifact_geolocations">[];
-};
+export type MissionArtifact = Tables<"mission_artifacts">;
 
 export type Achievement = {
   created_at: string;

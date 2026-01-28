@@ -338,7 +338,8 @@ export async function getOverallStatsHistory(
     });
   }
 
-  // 配列に変換
+  // 配列に変換して本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
   const result = Array.from(dailyStats.entries())
     .map(([date, stats]) => ({
       date,
@@ -347,7 +348,7 @@ export async function getOverallStatsHistory(
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  return result;
+  return filterBeforeToday(result);
 }
 
 /**
@@ -406,5 +407,7 @@ export async function getVideoCountByDate(
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  return result;
+  // 本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  return filterBeforeToday(result);
 }

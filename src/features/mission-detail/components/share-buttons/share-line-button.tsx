@@ -2,19 +2,19 @@
 
 type Props = {
   children?: React.ReactNode;
-  missionId: string;
+  missionSlug: string;
   className?: string;
   url?: string;
 };
 
 export function ShareLineButton({
   children,
-  missionId,
+  missionSlug,
   className,
   url,
 }: Props) {
   // SNSシェア用のハンドラ関数
-  const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
+  const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = () => {
     const lineIntentUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
     window.open(lineIntentUrl, "_blank", "noopener,noreferrer");

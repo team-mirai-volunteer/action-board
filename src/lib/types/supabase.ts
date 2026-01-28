@@ -87,110 +87,6 @@ export type Database = {
           },
         ];
       };
-      daily_dashboard_registration_by_prefecture_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-          prefecture: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-          prefecture: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-          prefecture?: string;
-        };
-        Relationships: [];
-      };
-      daily_dashboard_registration_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
-      events: {
-        Row: {
-          created_at: string;
-          id: string;
-          starts_at: string;
-          title: string;
-          updated_at: string;
-          url: string;
-        };
-        Insert: {
-          created_at?: string;
-          id: string;
-          starts_at: string;
-          title: string;
-          updated_at?: string;
-          url: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          starts_at?: string;
-          title?: string;
-          updated_at?: string;
-          url?: string;
-        };
-        Relationships: [];
-      };
-      mission_artifact_geolocations: {
-        Row: {
-          accuracy: number | null;
-          altitude: number | null;
-          created_at: string;
-          id: number;
-          lat: number;
-          lon: number;
-          mission_artifact_id: string;
-        };
-        Insert: {
-          accuracy?: number | null;
-          altitude?: number | null;
-          created_at?: string;
-          id?: number;
-          lat: number;
-          lon: number;
-          mission_artifact_id: string;
-        };
-        Update: {
-          accuracy?: number | null;
-          altitude?: number | null;
-          created_at?: string;
-          id?: number;
-          lat?: number;
-          lon?: number;
-          mission_artifact_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "mission_artifact_geolocations_mission_artifact_id_fkey";
-            columns: ["mission_artifact_id"];
-            isOneToOne: false;
-            referencedRelation: "mission_artifacts";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       mission_artifacts: {
         Row: {
           achievement_id: string;
@@ -1423,45 +1319,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      weekly_event_count_by_prefecture_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-          prefecture: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-          prefecture: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-          prefecture?: string;
-        };
-        Relationships: [];
-      };
-      weekly_event_count_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
       xp_transactions: {
         Row: {
           created_at: string;
@@ -1647,6 +1504,7 @@ export type Database = {
           created_at: string | null;
           id: string | null;
           mission_id: string | null;
+          mission_slug: string | null;
           name: string | null;
           title: string | null;
           user_id: string | null;
@@ -1679,6 +1537,7 @@ export type Database = {
           mission_id: string | null;
           ogp_image_url: string | null;
           required_artifact_type: string | null;
+          slug: string | null;
           title: string | null;
           updated_at: string | null;
         };
@@ -1845,11 +1704,19 @@ export type Database = {
           date: string;
         }[];
       };
+      get_daily_active_users_history: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
       get_mission_action_ranking: {
         Args: { end_date?: string; limit_count?: number; start_date?: string };
         Returns: {
           action_count: number;
           icon_url: string;
+          is_hidden: boolean;
           mission_id: string;
           mission_slug: string;
           mission_title: string;

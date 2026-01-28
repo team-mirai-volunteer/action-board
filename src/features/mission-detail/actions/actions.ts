@@ -584,42 +584,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     // 作成された成果物IDを保持（戻り値で使用）
     createdArtifactId = newArtifact.id;
 
-    // 位置情報がある場合は mission_artifact_geolocations に記録
-    if (
-      validatedRequiredArtifactType ===
-        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key &&
-      validatedData.requiredArtifactType ===
-        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
-    ) {
-      const geolocationPayload: TablesInsert<"mission_artifact_geolocations"> =
-        {
-          mission_artifact_id: newArtifact.id,
-          lat: Number.parseFloat(validatedData.latitude),
-          lon: Number.parseFloat(validatedData.longitude),
-          accuracy: validatedData.accuracy
-            ? Number.parseFloat(validatedData.accuracy)
-            : null,
-          altitude: validatedData.altitude
-            ? Number.parseFloat(validatedData.altitude)
-            : null,
-        };
-      const { error: geoError } = await supabase
-        .from("mission_artifact_geolocations")
-        .insert(geolocationPayload);
-
-      if (geoError) {
-        console.error(
-          `Geolocation Error: ${geoError.code} ${geoError.message}`,
-        );
-        // 成果物レコードは作成済みだが、位置情報保存に失敗した場合のハンドリング
-        // ここではエラーメッセージを出すに留めるが、より丁寧なエラー処理も検討可能
-        return {
-          success: false,
-          error: `位置情報の保存に失敗しました: ${geoError.message}`,
-        };
-      }
-    }
-
     // ポスティング活動の詳細情報を保存
     if (
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key &&
@@ -854,7 +818,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // 達成記録を削除（CASCADE により関連する mission_artifacts と mission_artifact_geolocations も削除される）
+  // 達成記録を削除（CASCADE により関連する mission_artifacts も削除される）
   const { error: deleteError } = await supabase
     .from("achievements")
     .delete()

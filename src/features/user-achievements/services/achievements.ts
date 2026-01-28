@@ -15,6 +15,7 @@ export async function getUserRepeatableMissionAchievements(
       mission_id,
       missions!inner (
         id,
+        slug,
         title,
         max_achievement_count
       )
@@ -44,6 +45,7 @@ export async function getUserRepeatableMissionAchievements(
       if (!acc[missionId]) {
         acc[missionId] = {
           mission_id: missionId,
+          mission_slug: achievement.missions.slug,
           mission_title: achievement.missions.title,
           achievement_count: 0,
         };

@@ -5,6 +5,7 @@ import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
 // キャッシュ用Mapを定義（メモリキャッシュ）- completeタイプのみキャッシュ
+// キーはslugベースで管理
 const MAX_CACHE_SIZE = 100;
 const cache = new Map<string, ArrayBuffer>();
 
@@ -37,17 +38,19 @@ async function loadGoogleFont(font: string, text: string) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
-  const { id } = await params;
-  if (typeof id !== "string") {
-    return new Response("Invalid mission ID", { status: 400 });
+  const { slug } = await params;
+  if (typeof slug !== "string") {
+    return new Response("Invalid mission identifier", { status: 400 });
   }
 
   if (request.method !== "GET") {
     return new Response("Method Not Allowed", { status: 405 });
   }
-  const pageData = await getMissionPageData(id);
+
+  // getMissionPageDataはslugとUUID両方に対応
+  const pageData = await getMissionPageData(slug);
   if (!pageData) {
     return new Response("Mission not found", { status: 404 });
   }
@@ -60,11 +63,12 @@ export async function GET(
     pageData?.mission.slug || "",
   );
 
-  if (type === "complete") {
-    const key = [id, pageData?.mission.slug ?? ""].join("|");
+  // キャッシュキーはslugベースで統一
+  const cacheKey = pageData.mission.slug;
 
-    if (cache.has(key)) {
-      const buf = cache.get(key);
+  if (type === "complete") {
+    if (cache.has(cacheKey)) {
+      const buf = cache.get(cacheKey);
       if (buf) {
         return new Response(buf, {
           headers: {
@@ -277,8 +281,6 @@ export async function GET(
   const buf = await imageResponse.arrayBuffer();
 
   if (type === "complete") {
-    const key = [id, pageData?.mission.slug ?? ""].join("|");
-
     // キャッシュサイズ制限（FIFO方式）
     if (cache.size >= MAX_CACHE_SIZE) {
       const firstKey = cache.keys().next().value;
@@ -287,7 +289,7 @@ export async function GET(
       }
     }
 
-    cache.set(key, buf);
+    cache.set(cacheKey, buf);
   }
 
   return new Response(buf, {

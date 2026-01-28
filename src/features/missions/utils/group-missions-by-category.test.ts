@@ -11,6 +11,7 @@ function createMissionCategoryView(
 ): MissionCategoryView {
   return {
     mission_id: "mission-1",
+    slug: "mission-1",
     category_id: "category-1",
     category_title: "カテゴリ1",
     category_kbn: null,

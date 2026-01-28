@@ -3,6 +3,7 @@ import { UserMissionAchievements } from "./user-mission-achievements";
 
 type MissionAchievementSummary = {
   mission_id: string;
+  mission_slug: string;
   mission_title: string;
   achievement_count: number;
 };
@@ -30,16 +31,19 @@ jest.mock("./total-card", () => ({
 const mockAchievements: MissionAchievementSummary[] = [
   {
     mission_id: "mission-1",
+    mission_slug: "test-mission-1",
     mission_title: "テストミッション1",
     achievement_count: 3,
   },
   {
     mission_id: "mission-2",
+    mission_slug: "test-mission-2",
     mission_title: "テストミッション2",
     achievement_count: 5,
   },
   {
     mission_id: "mission-3",
+    mission_slug: "test-mission-3",
     mission_title: "テストミッション3",
     achievement_count: 1,
   },
@@ -136,6 +140,7 @@ describe("UserMissionAchievements", () => {
       const singleAchievement: MissionAchievementSummary[] = [
         {
           mission_id: "single-mission",
+          mission_slug: "single-mission",
           mission_title: "単一ミッション",
           achievement_count: 7,
         },

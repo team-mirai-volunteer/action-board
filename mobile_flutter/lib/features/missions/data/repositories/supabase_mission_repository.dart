@@ -111,24 +111,9 @@ class SupabaseMissionRepository implements MissionRepository {
         'description': submission.description,
       };
       
-      final artifactResponse = await _supabase
+      await _supabase
           .from('mission_artifacts')
-          .insert(artifactData)
-          .select()
-          .single();
-      
-      // If location data is provided, save it
-      if (submission.latitude != null && submission.longitude != null) {
-        await _supabase
-            .from('mission_artifact_geolocations')
-            .insert({
-              'mission_artifact_id': artifactResponse['id'],
-              'lat': submission.latitude,
-              'lon': submission.longitude,
-              'accuracy': submission.accuracy,
-              'altitude': submission.altitude,
-            });
-      }
+          .insert(artifactData);
     } catch (e) {
       throw Exception('Failed to submit mission: $e');
     }
