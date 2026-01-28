@@ -289,10 +289,6 @@ INSERT INTO events (id, title, url, starts_at)
 VALUES
   ('d8314e09-6647-44ca-93c1-08c51707982b', '地域清掃イベント', 'https://example.com/event1', '2025-05-01T10:00:00Z');
 
--- 日次アクション数
-INSERT INTO daily_action_summary (date, count) VALUES
-  ('2025-05-01', 10);
-
 -- 日次ダッシュボード登録人数
 INSERT INTO daily_dashboard_registration_summary (date, count) VALUES
   ('2025-05-01', 12);
@@ -486,3 +482,36 @@ FROM (VALUES
 ) AS b(user_id, badge_type, sub_type, rank, slug, achieved_at, is_notified)
 CROSS JOIN seasons s
 WHERE s.slug = b.slug;
+
+-- 直近90日分のachievementsテストデータ（アクション数ダッシュボード動作確認用）
+-- 日別に5〜20件程度のアクションを生成
+INSERT INTO achievements (id, mission_id, user_id, season_id, created_at)
+SELECT
+  gen_random_uuid() as id,
+  (ARRAY[
+    'e2898d7e-903f-4f9a-8b1b-93f783c9afac',
+    '2246205f-933f-4a86-83af-dbf6bb6cde90',
+    '3346205f-933f-4a86-83af-dbf6bb6cde91',
+    '4446205f-933f-4a86-83af-dbf6bb6cde92',
+    'e5348472-d054-4ef4-81af-772c6323b669'
+  ])[1 + (i % 5)]::uuid as mission_id,
+  (ARRAY[
+    '622d6984-2f8a-41df-9ac3-cd4dcceb8d19',
+    '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b811-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b812-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b813-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b814-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b815-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b816-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b817-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b818-9dad-11d1-80b4-00c04fd430c8'
+  ])[1 + (i % 12)]::uuid as user_id,
+  (SELECT id FROM seasons WHERE slug = 'season2') as season_id,
+  -- 各日の9:00〜21:00の間のランダムな時刻
+  (CURRENT_DATE - ((i / 15) || ' days')::interval) +
+  ((9 + (i % 12)) || ' hours')::interval +
+  ((i * 7 % 60) || ' minutes')::interval as created_at
+FROM generate_series(1, 1350) as i;  -- 90日 × 15件/日 = 1350件

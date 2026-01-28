@@ -8,6 +8,7 @@ import {
   getUser,
 } from "@/features/user-profile/services/profile";
 import { AccountDeletionSection } from "@/features/user-settings/components/account-deletion-section";
+import { LoginSection } from "@/features/user-settings/components/login-section";
 import ProfileForm from "@/features/user-settings/components/profile-form";
 import { YouTubeIcon } from "@/features/youtube/components";
 import { ChevronRight } from "lucide-react";
@@ -17,6 +18,7 @@ import { redirect } from "next/navigation";
 
 type ProfileSettingsPageSearchParams = {
   new: string;
+  type?: string; // email_change などのタイプ
 } & Message;
 
 export default async function ProfileSettingsPage({
@@ -45,6 +47,9 @@ export default async function ProfileSettingsPage({
   // 新規ユーザーかどうか判定
   const isNew = Boolean(params?.new);
 
+  // メールアドレス変更成功メッセージ
+  const isEmailChangeSuccessful = params?.type === "email_change";
+
   return (
     <div className="flex flex-col items-center justify-center py-2">
       <ProfileForm
@@ -60,13 +65,20 @@ export default async function ProfileSettingsPage({
           avatar_url: publicUser?.avatar_url || null,
         }}
         initialPrivateUser={privateUser}
-        partyMembership={partyMembership}
-        email={user.email || null}
       />
 
       {partyMembership && (
         <div className="pt-4 border-gray-200 space-y-3">
           <PartyBadgeVisibilityToggle membership={partyMembership} />
+        </div>
+      )}
+
+      {!isNew && (
+        <div className="w-full max-w-md pt-4 ">
+          <LoginSection
+            user={user}
+            isEmailChangeSuccessful={isEmailChangeSuccessful}
+          />
         </div>
       )}
 

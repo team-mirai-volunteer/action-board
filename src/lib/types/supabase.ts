@@ -87,24 +87,6 @@ export type Database = {
           },
         ];
       };
-      daily_action_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
       daily_dashboard_registration_by_prefecture_summary: {
         Row: {
           count: number;
@@ -704,7 +686,7 @@ export type Database = {
           city: string;
           created_at: string;
           district: string | null;
-          election_term: string | null;
+          election_term: string;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -722,7 +704,7 @@ export type Database = {
           city: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election_term: string;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -740,7 +722,7 @@ export type Database = {
           city?: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election_term?: string;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -1839,12 +1821,38 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: undefined;
       };
+      get_action_stats_summary: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          active_users: number;
+          daily_actions_increase: number;
+          daily_users_increase: number;
+          total_actions: number;
+        }[];
+      };
       get_archived_poster_board_stats: {
         Args: { p_election_term: string };
         Returns: {
           count: number;
           prefecture: string;
           status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
+      };
+      get_daily_action_history: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
+      get_mission_action_ranking: {
+        Args: { end_date?: string; limit_count?: number; start_date?: string };
+        Returns: {
+          action_count: number;
+          icon_url: string;
+          mission_id: string;
+          mission_slug: string;
+          mission_title: string;
         }[];
       };
       get_mission_links: {
