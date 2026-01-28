@@ -202,9 +202,12 @@ const youtubeArtifactSchema = baseMissionFormSchema.extend({
   artifactLink: z
     .string()
     .nonempty({ message: "YouTube動画のURLが必要です" })
-    .regex(/^https?:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/, {
-      message: "有効なYouTube動画のURLを入力してください",
-    }),
+    .regex(
+      /^https?:\/\/(www\.youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]+/,
+      {
+        message: "有効なYouTube動画のURLを入力してください",
+      },
+    ),
 });
 
 // 統合スキーマ
@@ -397,7 +400,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   ) {
     // YouTube URLからvideo_idを抽出
     const videoIdMatch = validatedData.artifactLink.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+      /(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)([\w-]+)/,
     );
     const videoId = videoIdMatch?.[1];
 
@@ -764,7 +767,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     ) {
       // YouTube URLからvideo_idを抽出
       const videoIdMatch = validatedData.artifactLink.match(
-        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+        /(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)([\w-]+)/,
       );
       const videoId = videoIdMatch?.[1];
 

@@ -123,6 +123,11 @@ export function ArtifactForm({
           <PosterForm disabled={disabled} />
         )}
 
+        {/* YouTube入力フォーム - 一時的に無効化 */}
+        {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE.key && (
+          <div className="text-sm text-gray-500">YouTube機能は準備中です</div>
+        )}
+
         {/* 補足説明テキストエリア */}
         <div className="space-y-2">
           <Label htmlFor="artifactDescription">補足説明 (任意)</Label>
