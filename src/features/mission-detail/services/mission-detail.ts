@@ -341,14 +341,20 @@ async function getRelatedCategoryMissionsRaw(
   return data || [];
 }
 
+/**
+ * @param identifier - ミッションIDまたはslug
+ */
 export async function getMissionPageData(
-  missionId: string,
+  identifier: string,
   userId?: string,
 ): Promise<MissionPageData | null> {
-  const mission = await getMissionData(missionId);
+  const mission = await getMissionData(identifier);
 
   if (!mission) return null;
   if (mission.is_hidden) return null;
+
+  // missionIdパラメータはslugの場合があるため、以降のクエリではmission.id（UUID）を使用
+  const missionUUID = mission.id;
 
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
@@ -363,22 +369,22 @@ export async function getMissionPageData(
   if (userId) {
     const { achievements, count } = await getUserAchievements(
       userId,
-      missionId,
+      missionUUID,
     );
     userAchievements = achievements;
     userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, missionId);
+    submissions = await getSubmissionHistory(userId, missionUUID);
     referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(missionId);
+  const totalAchievementCount = await getTotalAchievementCount(missionUUID);
 
   // メインリンクの取得
-  const mainLink = await getMissionMainLink(missionId);
+  const mainLink = await getMissionMainLink(missionUUID);
 
   // 全カテゴリのミッションを取得し、グループ化・ソート・変換
-  const rawMissions = await getRelatedCategoryMissionsRaw(missionId);
+  const rawMissions = await getRelatedCategoryMissionsRaw(missionUUID);
   const allCategoryMissions = groupMissionsByCategory(
     rawMissions,
     userAchievementCountMap,

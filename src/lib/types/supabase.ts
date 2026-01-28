@@ -1647,6 +1647,7 @@ export type Database = {
           created_at: string | null;
           id: string | null;
           mission_id: string | null;
+          mission_slug: string | null;
           name: string | null;
           title: string | null;
           user_id: string | null;
@@ -1679,6 +1680,7 @@ export type Database = {
           mission_id: string | null;
           ogp_image_url: string | null;
           required_artifact_type: string | null;
+          slug: string | null;
           title: string | null;
           updated_at: string | null;
         };
