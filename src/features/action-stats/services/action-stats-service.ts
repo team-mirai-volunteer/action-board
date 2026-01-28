@@ -45,7 +45,7 @@ export async function getActionStatsSummary(
  * 日別アクション推移を取得する（RPC使用）
  * @param startDate - 開始日（オプション）
  * @param endDate - 終了日（オプション）
- * @returns 日別アクション数
+ * @returns 日別アクション数（本日以降のデータは除外）
  */
 export async function getDailyActionHistory(
   startDate?: Date,
@@ -63,10 +63,13 @@ export async function getDailyActionHistory(
     return [];
   }
 
-  return (data ?? []).map((item: { date: string; count: number }) => ({
+  // 本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  const items = (data ?? []).map((item: { date: string; count: number }) => ({
     date: item.date,
     count: Number(item.count),
   }));
+  return filterBeforeToday(items);
 }
 
 /**
