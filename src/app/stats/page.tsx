@@ -1,10 +1,12 @@
 import { ActionPeriodFilter } from "@/features/action-stats/components/action-period-filter";
 import { ActionStatsChart } from "@/features/action-stats/components/action-stats-chart";
 import { ActionStatsSummary } from "@/features/action-stats/components/action-stats-summary";
+import { ActiveUsersChart } from "@/features/action-stats/components/active-users-chart";
 import { MissionRankingList } from "@/features/action-stats/components/mission-ranking-list";
 import {
   getActionStatsSummary,
   getDailyActionHistory,
+  getDailyActiveUsersHistory,
   getMissionActionRanking,
 } from "@/features/action-stats/services/action-stats-service";
 import {
@@ -39,11 +41,13 @@ export default async function ActionStatsPage({ searchParams }: PageProps) {
   const endDate = getPeriodEndDate(customEndDate) || undefined;
 
   // データ取得
-  const [summary, dailyHistory, missionRanking] = await Promise.all([
-    getActionStatsSummary(startDate, endDate),
-    getDailyActionHistory(startDate, endDate),
-    getMissionActionRanking(startDate, endDate, 20),
-  ]);
+  const [summary, dailyHistory, dailyActiveUsers, missionRanking] =
+    await Promise.all([
+      getActionStatsSummary(startDate, endDate),
+      getDailyActionHistory(startDate, endDate),
+      getDailyActiveUsersHistory(startDate, endDate),
+      getMissionActionRanking(startDate, endDate, 20),
+    ]);
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full max-w-6xl mx-auto px-4">
@@ -62,8 +66,9 @@ export default async function ActionStatsPage({ searchParams }: PageProps) {
       </section>
 
       {/* グラフセクション */}
-      <section className="mb-6">
+      <section className="mb-6 grid gap-6 lg:grid-cols-2">
         <ActionStatsChart data={dailyHistory} />
+        <ActiveUsersChart data={dailyActiveUsers} />
       </section>
 
       {/* ミッション別ランキング */}

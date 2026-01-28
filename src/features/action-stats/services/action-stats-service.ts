@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import type {
   ActionStatsSummary,
   DailyActionItem,
+  DailyActiveUsersItem,
   MissionActionRanking,
 } from "../types";
 
@@ -60,6 +61,37 @@ export async function getDailyActionHistory(
 
   if (error) {
     console.error("Failed to fetch daily action history:", error);
+    return [];
+  }
+
+  // 本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  const items = (data ?? []).map((item: { date: string; count: number }) => ({
+    date: item.date,
+    count: Number(item.count),
+  }));
+  return filterBeforeToday(items);
+}
+
+/**
+ * 日別アクティブユーザー数推移を取得する（RPC使用）
+ * @param startDate - 開始日（オプション）
+ * @param endDate - 終了日（オプション）
+ * @returns 日別アクティブユーザー数（本日以降のデータは除外）
+ */
+export async function getDailyActiveUsersHistory(
+  startDate?: Date,
+  endDate?: Date,
+): Promise<DailyActiveUsersItem[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc("get_daily_active_users_history", {
+    start_date: startDate?.toISOString(),
+    end_date: endDate?.toISOString(),
+  });
+
+  if (error) {
+    console.error("Failed to fetch daily active users history:", error);
     return [];
   }
 

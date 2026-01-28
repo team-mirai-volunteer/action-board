@@ -8,15 +8,15 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Line, LineChart, XAxis, YAxis } from "recharts";
-import type { DailyActionItem } from "../types";
+import type { DailyActiveUsersItem } from "../types";
 
-interface ActionStatsChartProps {
-  data: DailyActionItem[];
+interface ActiveUsersChartProps {
+  data: DailyActiveUsersItem[];
 }
 
 const chartConfig = {
   count: {
-    label: "アクション数",
+    label: "アクティブユーザー数",
     color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
@@ -28,11 +28,11 @@ function formatNumberShort(num: number): string {
   return num.toLocaleString();
 }
 
-export function ActionStatsChart({ data }: ActionStatsChartProps) {
+export function ActiveUsersChart({ data }: ActiveUsersChartProps) {
   if (data.length < 2) {
     return (
       <Card className="p-4">
-        <h3 className="text-sm font-medium mb-2">日別アクション数</h3>
+        <h3 className="text-sm font-medium mb-2">日別アクティブユーザー数</h3>
         <div className="text-center text-gray-400 text-sm py-8">
           統計データが不足しています
         </div>
@@ -51,7 +51,7 @@ export function ActionStatsChart({ data }: ActionStatsChartProps) {
 
   return (
     <Card className="p-4">
-      <h3 className="text-sm font-medium mb-2">日別アクション数</h3>
+      <h3 className="text-sm font-medium mb-2">日別アクティブユーザー数</h3>
       <ChartContainer config={chartConfig} className="h-[300px] w-full">
         <LineChart data={formattedData}>
           <XAxis
