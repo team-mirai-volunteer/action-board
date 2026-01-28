@@ -50,7 +50,7 @@ export function ActiveUsersChart({ data }: ActiveUsersChartProps) {
   }));
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 overflow-hidden">
       <h3 className="text-sm font-medium mb-2">日別アクティブユーザー数</h3>
       <ChartContainer config={chartConfig} className="h-[300px] w-full">
         <LineChart data={formattedData}>
