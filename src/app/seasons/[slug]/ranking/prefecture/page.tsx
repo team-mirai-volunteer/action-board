@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
@@ -85,6 +86,17 @@ export default async function SeasonPrefectureRankingPage({
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4 w-full">
+      <div className="w-full max-w-7xl px-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ランキング", href: "/ranking" },
+            { label: season.name, href: `/seasons/${slug}/ranking` },
+            { label: "都道府県別" },
+          ]}
+        />
+      </div>
+
       <h2 className="text-2xl font-bold text-center mb-4">
         都道府県別ランキング
       </h2>

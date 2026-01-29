@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { CurrentUserCard } from "@/features/ranking/components/current-user-card";
 import {
   PeriodToggle,
@@ -60,6 +61,16 @@ export default async function SeasonRankingPage({
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4 w-full">
+      <div className="w-full max-w-7xl px-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ランキング", href: "/ranking" },
+            { label: season.name },
+          ]}
+        />
+      </div>
+
       <h2 className="text-2xl font-bold text-center mb-4">
         アクションリーダー
       </h2>

@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import DetailedPosterMapClient from "@/features/map-poster/components/detailed-poster-map-client";
 import {
   POSTER_PREFECTURE_MAP,
@@ -65,19 +66,34 @@ export default async function ArchivePrefecturePage({
   const stats = await getArchivedPosterBoardStats(electionTerm, prefectureJp);
 
   return (
-    <DetailedPosterMapClient
-      userId={undefined}
-      prefecture={prefectureJp}
-      prefectureName={prefectureJp}
-      center={prefectureData.center}
-      initialStats={stats}
-      boardTotal={null}
-      userEditedBoardIds={[]}
-      defaultZoom={prefectureData.defaultZoom}
-      isDistrict={false}
-      isArchive={true}
-      archiveElectionTerm={electionTerm}
-      archiveTermName={termName}
-    />
+    <>
+      <div className="container mx-auto max-w-7xl px-4 pt-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ポスター掲示板マップ", href: "/map/poster" },
+            {
+              label: termName,
+              href: `/map/poster/archive/${electionTerm}`,
+            },
+            { label: prefectureJp },
+          ]}
+        />
+      </div>
+      <DetailedPosterMapClient
+        userId={undefined}
+        prefecture={prefectureJp}
+        prefectureName={prefectureJp}
+        center={prefectureData.center}
+        initialStats={stats}
+        boardTotal={null}
+        userEditedBoardIds={[]}
+        defaultZoom={prefectureData.defaultZoom}
+        isDistrict={false}
+        isArchive={true}
+        archiveElectionTerm={electionTerm}
+        archiveTermName={termName}
+      />
+    </>
   );
 }
