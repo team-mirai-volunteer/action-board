@@ -3,6 +3,7 @@ import { adminClient, cleanupTestUser, createTestUser } from "../utils";
 describe("get_prefecture_ranking 関数のテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
   let user2: Awaited<ReturnType<typeof createTestUser>>;
+  let seasonId: string;
 
   beforeEach(async () => {
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
@@ -18,10 +19,31 @@ describe("get_prefecture_ranking 関数のテスト", () => {
       .update({ name: "ユーザー2", address_prefecture: "大阪府" })
       .eq("id", user2.user.userId);
 
+    // テスト用シーズンを作成
+    seasonId = crypto.randomUUID();
+    await adminClient.from("seasons").insert({
+      id: seasonId,
+      slug: `test-season-${crypto.randomUUID()}`,
+      name: "テストシーズン",
+      start_date: new Date().toISOString(),
+      end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      is_active: false,
+    });
+
     // user_levelsに異なるXPを設定
-    await adminClient.from("user_levels").upsert([
-      { user_id: user1.user.userId, season_id: null, xp: 300, level: 3 },
-      { user_id: user2.user.userId, season_id: null, xp: 500, level: 5 },
+    await adminClient.from("user_levels").insert([
+      {
+        user_id: user1.user.userId,
+        season_id: seasonId,
+        xp: 300,
+        level: 3,
+      },
+      {
+        user_id: user2.user.userId,
+        season_id: seasonId,
+        xp: 500,
+        level: 5,
+      },
     ]);
   });
 
@@ -30,6 +52,7 @@ describe("get_prefecture_ranking 関数のテスト", () => {
       .from("user_levels")
       .delete()
       .in("user_id", [user1.user.userId, user2.user.userId]);
+    await adminClient.from("seasons").delete().eq("id", seasonId);
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
   });
@@ -42,10 +65,9 @@ describe("get_prefecture_ranking 関数のテスト", () => {
 
     expect(error).toBeNull();
     expect(data).not.toBeNull();
-    expect(data?.length).toBeGreaterThanOrEqual(2);
 
     // テストユーザーのデータを抽出
-    const testUsers = data?.filter(
+    const testUsers = (data ?? []).filter(
       (d: { user_id: string }) =>
         d.user_id === user1.user.userId || d.user_id === user2.user.userId,
     );
@@ -60,7 +82,7 @@ describe("get_prefecture_ranking 関数のテスト", () => {
     );
     expect(user2Data?.xp).toBe(500);
     expect(user1Data?.xp).toBe(300);
-    expect(user2Data?.rank).toBeLessThan(user1Data?.rank);
+    expect(Number(user2Data?.rank)).toBeLessThan(Number(user1Data?.rank));
   });
 
   test("limit_countで結果が制限される", async () => {
@@ -87,6 +109,7 @@ describe("get_prefecture_ranking 関数のテスト", () => {
 describe("get_user_prefecture_ranking 関数のテスト", () => {
   let user1: Awaited<ReturnType<typeof createTestUser>>;
   let user2: Awaited<ReturnType<typeof createTestUser>>;
+  let seasonId: string;
 
   beforeEach(async () => {
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
@@ -101,9 +124,29 @@ describe("get_user_prefecture_ranking 関数のテスト", () => {
       .update({ name: "ユーザー2", address_prefecture: "北海道" })
       .eq("id", user2.user.userId);
 
-    await adminClient.from("user_levels").upsert([
-      { user_id: user1.user.userId, season_id: null, xp: 200, level: 2 },
-      { user_id: user2.user.userId, season_id: null, xp: 400, level: 4 },
+    seasonId = crypto.randomUUID();
+    await adminClient.from("seasons").insert({
+      id: seasonId,
+      slug: `test-season-${crypto.randomUUID()}`,
+      name: "テストシーズン",
+      start_date: new Date().toISOString(),
+      end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      is_active: false,
+    });
+
+    await adminClient.from("user_levels").insert([
+      {
+        user_id: user1.user.userId,
+        season_id: seasonId,
+        xp: 200,
+        level: 2,
+      },
+      {
+        user_id: user2.user.userId,
+        season_id: seasonId,
+        xp: 400,
+        level: 4,
+      },
     ]);
   });
 
@@ -112,6 +155,7 @@ describe("get_user_prefecture_ranking 関数のテスト", () => {
       .from("user_levels")
       .delete()
       .in("user_id", [user1.user.userId, user2.user.userId]);
+    await adminClient.from("seasons").delete().eq("id", seasonId);
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
   });
