@@ -49,6 +49,9 @@ jobs:
         id: playwright-version
         run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> $GITHUB_OUTPUT
 
+      - name: Install Playwright OS deps
+        run: pnpm exec playwright install-deps chromium
+
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         id: playwright-cache
@@ -56,9 +59,9 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
 
-      - name: Install Playwright (if not cached)
+      - name: Install Playwright browsers if cache miss
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install chromium
 
       - name: Build Next.js
         run: pnpm run build
