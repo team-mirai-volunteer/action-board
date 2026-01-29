@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { Card } from "@/components/ui/card";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
 import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
@@ -65,6 +66,17 @@ export default async function SeasonUserDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col items-stretch w-full max-w-xl gap-4">
+      <div className="mx-4 mt-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ランキング", href: "/ranking" },
+            { label: season.name, href: `/seasons/${slug}/ranking` },
+            { label: user.name || "ユーザー" },
+          ]}
+        />
+      </div>
+
       {/* シーズン情報ヘッダー */}
       <div className="mx-4 mt-4">
         <UserSeasonHeader season={season} userId={userId} />

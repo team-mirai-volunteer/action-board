@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { statusConfig } from "@/features/map-poster/config/status-config";
@@ -87,6 +88,14 @@ export default async function ArchiveElectionTermPage({
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 p-4">
+      <PageBreadcrumb
+        items={[
+          { label: "ホーム", href: "/" },
+          { label: "ポスター掲示板マップ", href: "/map/poster" },
+          { label: termName },
+        ]}
+      />
+
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
