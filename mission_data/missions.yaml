@@ -139,18 +139,19 @@ missions:
     artifact_label: ショート動画のURL（TikTok）
     ogp_image_url: null
   - slug: youtube-clip
-    title: 動画を切り抜いてショート動画を作ろう
+    title: 動画を作って投稿しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
     content: |-
-      ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
-      SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
+      動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
+      切り抜き動画はもちろん、自分で撮影・編集したオリジナル動画の投稿も大歓迎です！
+      SNSでの拡散や、仲間との共有もぜひ！あなたの動画が、新しい支持を生み出すかもしれません。
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: true
     featured_importance: 10
     is_hidden: false
-    artifact_label: ショート動画のURL（Youtube, TikTokなど）
+    artifact_label: 動画のURL（Youtube, TikTokなど）
     ogp_image_url: null
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
