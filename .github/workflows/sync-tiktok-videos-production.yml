@@ -2,8 +2,8 @@ name: Daily TikTok Videos Sync
 
 on:
   schedule:
-    # 毎日 日本時間 23:30 (UTC 14:30) に実行
-    - cron: "30 14 * * *"
+    # 毎日 日本時間 0:30 (UTC 15:30) に実行
+    - cron: "30 15 * * *"
   workflow_dispatch:
 
 jobs:

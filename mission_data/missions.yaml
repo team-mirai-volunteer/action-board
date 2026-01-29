@@ -139,18 +139,19 @@ missions:
     artifact_label: ショート動画のURL（TikTok）
     ogp_image_url: null
   - slug: youtube-clip
-    title: 動画を切り抜いてショート動画を作ろう
+    title: 動画を作って投稿しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
     content: |-
-      ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
-      SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
+      動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
+      切り抜き動画はもちろん、自分で撮影・編集したオリジナル動画の投稿も大歓迎です！
+      SNSでの拡散や、仲間との共有もぜひ！あなたの動画が、新しい支持を生み出すかもしれません。
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: true
     featured_importance: 10
     is_hidden: false
-    artifact_label: ショート動画のURL（Youtube, TikTokなど）
+    artifact_label: 動画のURL（Youtube, TikTokなど）
     ogp_image_url: null
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
@@ -297,8 +298,8 @@ missions:
     content: |-
       「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。
       ぜひご参加ください！
-    # 演説のスケジュールについては、候補者のSNSよりご確認ください。
-    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+
+      演説のスケジュールは<a href="https://mirai-street-speech-map.vercel.app" target="_blank" rel="noopener noreferrer">街頭演説マップ（非公式）</a>をご覧ください。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -568,7 +569,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step1
@@ -579,7 +580,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step2
@@ -590,7 +591,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-step3
     title: 政策クイズ（ステップ３）に挑戦しよう
@@ -600,7 +601,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-100days
     title: 政策クイズ（100日プラン）に挑戦しよう
@@ -610,7 +611,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: "quiz-electionlaw-basic"
     title: 公職選挙法クイズ（基礎編）に挑戦しよう

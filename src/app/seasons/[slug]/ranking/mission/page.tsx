@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { getMissionsForRanking } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { MissionSelect } from "@/features/ranking/components/mission-select";
@@ -110,6 +111,17 @@ export default async function SeasonMissionRankingPage({
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4 w-full">
+      <div className="w-full max-w-7xl px-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ランキング", href: "/ranking" },
+            { label: season.name, href: `/seasons/${slug}/ranking` },
+            { label: "ミッション別" },
+          ]}
+        />
+      </div>
+
       <h2 className="text-2xl font-bold text-center mb-4">
         ミッション別ランキング
       </h2>
