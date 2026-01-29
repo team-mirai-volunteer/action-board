@@ -1,3 +1,4 @@
+import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import {
   getPosterBoardStatsByDistrictAction,
   getUserEditedBoardIdsByDistrictAction,
@@ -97,16 +98,27 @@ export default async function DistrictPosterMapPage({
   }
 
   return (
-    <DetailedPosterMapClient
-      userId={user?.id}
-      prefecture={districtJp}
-      prefectureName={districtJp}
-      center={center}
-      initialStats={stats}
-      boardTotal={null}
-      userEditedBoardIds={userEditedBoardIds}
-      defaultZoom={defaultZoom}
-      isDistrict={true}
-    />
+    <>
+      <div className="container mx-auto max-w-7xl px-4 pt-4">
+        <PageBreadcrumb
+          items={[
+            { label: "ホーム", href: "/" },
+            { label: "ポスター掲示板マップ", href: "/map/poster" },
+            { label: districtJp },
+          ]}
+        />
+      </div>
+      <DetailedPosterMapClient
+        userId={user?.id}
+        prefecture={districtJp}
+        prefectureName={districtJp}
+        center={center}
+        initialStats={stats}
+        boardTotal={null}
+        userEditedBoardIds={userEditedBoardIds}
+        defaultZoom={defaultZoom}
+        isDistrict={true}
+      />
+    </>
   );
 }
