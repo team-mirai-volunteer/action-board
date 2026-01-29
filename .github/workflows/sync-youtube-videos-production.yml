@@ -2,8 +2,8 @@ name: Daily YouTube Videos Sync
 
 on:
   schedule:
-    # 毎日 日本時間 23:00 (UTC 14:00) に実行
-    - cron: "0 14 * * *"
+    # 毎日 日本時間 0:00 (UTC 15:00) に実行
+    - cron: "0 15 * * *"
   workflow_dispatch:
 
 jobs:
