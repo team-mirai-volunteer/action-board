@@ -20,12 +20,6 @@ describe("get_mission_ranking 関数のテスト", () => {
       .update({ name: "ユーザー2" })
       .eq("id", user2.user.userId);
 
-    // user_levelsにデータを挿入（user_ranking_viewに表示されるために必要）
-    await adminClient.from("user_levels").upsert([
-      { user_id: user1.user.userId, season_id: null, xp: 0, level: 1 },
-      { user_id: user2.user.userId, season_id: null, xp: 0, level: 1 },
-    ]);
-
     missionId = crypto.randomUUID();
     createdMissionIds.push(missionId);
     const { error } = await adminClient.from("missions").insert({
@@ -49,11 +43,6 @@ describe("get_mission_ranking 関数のテスト", () => {
     for (const id of createdMissionIds) {
       await adminClient.from("missions").delete().eq("id", id);
     }
-    await adminClient
-      .from("user_levels")
-      .delete()
-      .in("user_id", [user1.user.userId, user2.user.userId]);
-
     createdMissionIds.length = 0;
     createdAchievementIds.length = 0;
 
@@ -188,11 +177,6 @@ describe("get_user_mission_ranking 関数のテスト", () => {
       .update({ name: "ユーザー2" })
       .eq("id", user2.user.userId);
 
-    await adminClient.from("user_levels").upsert([
-      { user_id: user1.user.userId, season_id: null, xp: 0, level: 1 },
-      { user_id: user2.user.userId, season_id: null, xp: 0, level: 1 },
-    ]);
-
     missionId = crypto.randomUUID();
     await adminClient.from("missions").insert({
       id: missionId,
@@ -210,10 +194,6 @@ describe("get_user_mission_ranking 関数のテスト", () => {
       .in("user_id", [user1.user.userId, user2.user.userId]);
     await adminClient.from("achievements").delete().eq("mission_id", missionId);
     await adminClient.from("missions").delete().eq("id", missionId);
-    await adminClient
-      .from("user_levels")
-      .delete()
-      .in("user_id", [user1.user.userId, user2.user.userId]);
 
     createdAchievementIds.length = 0;
 
