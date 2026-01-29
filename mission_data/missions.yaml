@@ -56,7 +56,7 @@ missions:
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
