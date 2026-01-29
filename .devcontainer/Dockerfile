@@ -1,7 +1,7 @@
 FROM node:22-slim
 
 RUN apt-get update && \
-    apt-get install -y wget git ca-certificates
+    apt-get install -y wget git ca-certificates vim postgresql-client
 
 # Add "node" user to the sudo group and configure sudoers
 RUN apt-get install -y sudo \
