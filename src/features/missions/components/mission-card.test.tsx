@@ -220,6 +220,23 @@ describe("Mission", () => {
     expect(screen.getByText("みんなで0回達成")).toBeInTheDocument();
   });
 
+  it("ポスティングミッションでは枚数表示になる", () => {
+    const postingMission = {
+      ...mockMission,
+      required_artifact_type: "POSTING",
+    };
+
+    render(
+      <Mission
+        mission={postingMission}
+        achievementsCount={30000}
+        userAchievementCount={0}
+      />,
+    );
+
+    expect(screen.getByText("みんなで30,000枚達成")).toBeInTheDocument();
+  });
+
   it("イベント日付がnullの場合は日付表示なし", () => {
     const missionWithoutDate = { ...mockMission, event_date: null };
 

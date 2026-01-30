@@ -1902,6 +1902,13 @@ export type Database = {
           user_id: string;
         }[];
       };
+      get_total_posting_count_by_mission: {
+        Args: {
+          p_season_id?: string;
+          target_mission_id: string;
+        };
+        Returns: number;
+      };
       get_user_by_email: {
         Args: { user_email: string };
         Returns: {

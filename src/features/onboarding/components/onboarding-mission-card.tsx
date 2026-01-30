@@ -69,8 +69,8 @@ export default function OnboardingMissionCard({
             <UsersRound className="size-4 mr-2" />
             <span className="text-sm font-medium text-gray-700">
               {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "みんなで0回達成"}
+                ? `みんなで${achievementsCount.toLocaleString()}${mission.required_artifact_type === "POSTING" ? "枚" : "回"}達成`
+                : `みんなで0${mission.required_artifact_type === "POSTING" ? "枚" : "回"}達成`}
             </span>
           </div>
           <div className="flex items-center">

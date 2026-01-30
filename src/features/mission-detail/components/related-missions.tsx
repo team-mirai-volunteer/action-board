@@ -7,6 +7,7 @@ interface RelatedMissionsProps {
   categoryTitle: string;
   userAchievementCountMap: Map<string, number>;
   achievementCountMap: Map<string, number>;
+  postingCountMap?: Map<string, number>;
 }
 
 export async function RelatedMissions({
@@ -14,6 +15,7 @@ export async function RelatedMissions({
   categoryTitle,
   userAchievementCountMap,
   achievementCountMap,
+  postingCountMap,
 }: RelatedMissionsProps) {
   if (missions.length === 0) {
     return null; // ミッションがない場合は何も表示しない
@@ -32,7 +34,11 @@ export async function RelatedMissions({
             <div key={mission.id} className="shrink-0 w-[300px]">
               <Mission
                 mission={mission}
-                achievementsCount={achievementCountMap.get(mission.id) ?? 0}
+                achievementsCount={
+                  postingCountMap?.get(mission.id) ??
+                  achievementCountMap.get(mission.id) ??
+                  0
+                }
                 userAchievementCount={
                   userAchievementCountMap.get(mission.id) ?? 0
                 }
