@@ -14,7 +14,8 @@
   },
   "postCreateCommand": "pnpm install; cp .env.example .env.local",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
   },
   "remoteUser": "node",
   "remoteEnv": {
