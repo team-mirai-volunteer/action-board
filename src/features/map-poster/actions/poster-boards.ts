@@ -1,7 +1,9 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/client";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
+import { cookies } from "next/headers";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type PrefectureName = NonNullable<
@@ -142,7 +144,8 @@ export async function getUserEditedBoardIdsAction(
   prefecture: PrefectureName,
   userId: string,
 ): Promise<string[]> {
-  const supabase = createClient();
+  const cookieStore = await cookies();
+  const supabase = createServerClient(cookieStore);
 
   try {
     // RPC関数を使用して効率的にデータを取得
@@ -263,7 +266,8 @@ export async function getUserEditedBoardIdsByDistrictAction(
   district: string,
   userId: string,
 ): Promise<string[]> {
-  const supabase = createClient();
+  const cookieStore = await cookies();
+  const supabase = createServerClient(cookieStore);
 
   try {
     // 区割りでフィルタリングして取得
