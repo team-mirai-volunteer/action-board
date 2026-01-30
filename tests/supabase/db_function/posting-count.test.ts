@@ -10,7 +10,7 @@ describe("get_user_posting_count 関数のテスト", () => {
     user1 = await createTestUser(`${crypto.randomUUID()}@example.com`);
 
     missionId = crypto.randomUUID();
-    await adminClient.from("missions").insert({
+    const { error } = await adminClient.from("missions").insert({
       id: missionId,
       title: "ポスティングミッション",
       content: "テスト",
@@ -18,6 +18,7 @@ describe("get_user_posting_count 関数のテスト", () => {
       slug: `test-posting-${crypto.randomUUID()}`,
       required_artifact_type: "POSTING",
     });
+    if (error) throw new Error(`ミッション作成エラー: ${error.message}`);
   });
 
   afterEach(async () => {
@@ -49,29 +50,37 @@ describe("get_user_posting_count 関数のテスト", () => {
     // achievementを作成
     const achievementId = crypto.randomUUID();
     createdAchievementIds.push(achievementId);
-    await adminClient.from("achievements").insert({
+    const { error: achError } = await adminClient.from("achievements").insert({
       id: achievementId,
       mission_id: missionId,
       user_id: user1.user.userId,
     });
+    expect(achError).toBeNull();
 
     // mission_artifactを作成
     const artifactId = crypto.randomUUID();
     createdArtifactIds.push(artifactId);
-    await adminClient.from("mission_artifacts").insert({
-      id: artifactId,
-      achievement_id: achievementId,
-      user_id: user1.user.userId,
-      artifact_type: "POSTING",
-    });
+    const { error: artifactError } = await adminClient
+      .from("mission_artifacts")
+      .insert({
+        id: artifactId,
+        achievement_id: achievementId,
+        user_id: user1.user.userId,
+        artifact_type: "POSTING",
+        text_content: "ポスティング報告",
+      });
+    expect(artifactError).toBeNull();
 
     // posting_activityを作成（10枚）
-    await adminClient.from("posting_activities").insert({
-      id: crypto.randomUUID(),
-      mission_artifact_id: artifactId,
-      location_text: "テスト場所",
-      posting_count: 10,
-    });
+    const { error: activityError } = await adminClient
+      .from("posting_activities")
+      .insert({
+        id: crypto.randomUUID(),
+        mission_artifact_id: artifactId,
+        location_text: "テスト場所",
+        posting_count: 10,
+      });
+    expect(activityError).toBeNull();
 
     const { data, error } = await adminClient.rpc("get_user_posting_count", {
       target_user_id: user1.user.userId,
@@ -86,7 +95,7 @@ describe("get_user_posting_count 関数のテスト", () => {
     const achievementId1 = crypto.randomUUID();
     const achievementId2 = crypto.randomUUID();
     createdAchievementIds.push(achievementId1, achievementId2);
-    await adminClient.from("achievements").insert([
+    const { error: achError } = await adminClient.from("achievements").insert([
       {
         id: achievementId1,
         mission_id: missionId,
@@ -98,39 +107,48 @@ describe("get_user_posting_count 関数のテスト", () => {
         user_id: user1.user.userId,
       },
     ]);
+    expect(achError).toBeNull();
 
     const artifactId1 = crypto.randomUUID();
     const artifactId2 = crypto.randomUUID();
     createdArtifactIds.push(artifactId1, artifactId2);
-    await adminClient.from("mission_artifacts").insert([
-      {
-        id: artifactId1,
-        achievement_id: achievementId1,
-        user_id: user1.user.userId,
-        artifact_type: "POSTING",
-      },
-      {
-        id: artifactId2,
-        achievement_id: achievementId2,
-        user_id: user1.user.userId,
-        artifact_type: "POSTING",
-      },
-    ]);
+    const { error: artifactError } = await adminClient
+      .from("mission_artifacts")
+      .insert([
+        {
+          id: artifactId1,
+          achievement_id: achievementId1,
+          user_id: user1.user.userId,
+          artifact_type: "POSTING",
+          text_content: "ポスティング報告1",
+        },
+        {
+          id: artifactId2,
+          achievement_id: achievementId2,
+          user_id: user1.user.userId,
+          artifact_type: "POSTING",
+          text_content: "ポスティング報告2",
+        },
+      ]);
+    expect(artifactError).toBeNull();
 
-    await adminClient.from("posting_activities").insert([
-      {
-        id: crypto.randomUUID(),
-        mission_artifact_id: artifactId1,
-        location_text: "場所1",
-        posting_count: 10,
-      },
-      {
-        id: crypto.randomUUID(),
-        mission_artifact_id: artifactId2,
-        location_text: "場所2",
-        posting_count: 20,
-      },
-    ]);
+    const { error: activityError } = await adminClient
+      .from("posting_activities")
+      .insert([
+        {
+          id: crypto.randomUUID(),
+          mission_artifact_id: artifactId1,
+          location_text: "場所1",
+          posting_count: 10,
+        },
+        {
+          id: crypto.randomUUID(),
+          mission_artifact_id: artifactId2,
+          location_text: "場所2",
+          posting_count: 20,
+        },
+      ]);
+    expect(activityError).toBeNull();
 
     const { data, error } = await adminClient.rpc("get_user_posting_count", {
       target_user_id: user1.user.userId,
@@ -162,7 +180,7 @@ describe("get_top_users_posting_count 関数のテスト", () => {
     user2 = await createTestUser(`${crypto.randomUUID()}@example.com`);
 
     missionId = crypto.randomUUID();
-    await adminClient.from("missions").insert({
+    const { error } = await adminClient.from("missions").insert({
       id: missionId,
       title: "ポスティングミッション",
       content: "テスト",
@@ -170,6 +188,7 @@ describe("get_top_users_posting_count 関数のテスト", () => {
       slug: `test-posting-${crypto.randomUUID()}`,
       required_artifact_type: "POSTING",
     });
+    if (error) throw new Error(`ミッション作成エラー: ${error.message}`);
   });
 
   afterEach(async () => {
@@ -206,25 +225,35 @@ describe("get_top_users_posting_count 関数のテスト", () => {
     ]) {
       const achievementId = crypto.randomUUID();
       createdAchievementIds.push(achievementId);
-      await adminClient.from("achievements").insert({
-        id: achievementId,
-        mission_id: missionId,
-        user_id: user.user.userId,
-      });
+      const { error: achError } = await adminClient
+        .from("achievements")
+        .insert({
+          id: achievementId,
+          mission_id: missionId,
+          user_id: user.user.userId,
+        });
+      expect(achError).toBeNull();
       const artifactId = crypto.randomUUID();
       createdArtifactIds.push(artifactId);
-      await adminClient.from("mission_artifacts").insert({
-        id: artifactId,
-        achievement_id: achievementId,
-        user_id: user.user.userId,
-        artifact_type: "POSTING",
-      });
-      await adminClient.from("posting_activities").insert({
-        id: crypto.randomUUID(),
-        mission_artifact_id: artifactId,
-        location_text: "テスト場所",
-        posting_count: count,
-      });
+      const { error: artError } = await adminClient
+        .from("mission_artifacts")
+        .insert({
+          id: artifactId,
+          achievement_id: achievementId,
+          user_id: user.user.userId,
+          artifact_type: "POSTING",
+          text_content: "ポスティング報告",
+        });
+      expect(artError).toBeNull();
+      const { error: actError } = await adminClient
+        .from("posting_activities")
+        .insert({
+          id: crypto.randomUUID(),
+          mission_artifact_id: artifactId,
+          location_text: "テスト場所",
+          posting_count: count,
+        });
+      expect(actError).toBeNull();
     }
 
     const { data, error } = await adminClient.rpc(
@@ -253,25 +282,33 @@ describe("get_top_users_posting_count 関数のテスト", () => {
     // user1: 1枚（HAVING > 1 で除外される）
     const achievementId = crypto.randomUUID();
     createdAchievementIds.push(achievementId);
-    await adminClient.from("achievements").insert({
+    const { error: achError } = await adminClient.from("achievements").insert({
       id: achievementId,
       mission_id: missionId,
       user_id: user1.user.userId,
     });
+    expect(achError).toBeNull();
     const artifactId = crypto.randomUUID();
     createdArtifactIds.push(artifactId);
-    await adminClient.from("mission_artifacts").insert({
-      id: artifactId,
-      achievement_id: achievementId,
-      user_id: user1.user.userId,
-      artifact_type: "POSTING",
-    });
-    await adminClient.from("posting_activities").insert({
-      id: crypto.randomUUID(),
-      mission_artifact_id: artifactId,
-      location_text: "テスト場所",
-      posting_count: 1,
-    });
+    const { error: artError } = await adminClient
+      .from("mission_artifacts")
+      .insert({
+        id: artifactId,
+        achievement_id: achievementId,
+        user_id: user1.user.userId,
+        artifact_type: "POSTING",
+        text_content: "ポスティング報告",
+      });
+    expect(artError).toBeNull();
+    const { error: actError } = await adminClient
+      .from("posting_activities")
+      .insert({
+        id: crypto.randomUUID(),
+        mission_artifact_id: artifactId,
+        location_text: "テスト場所",
+        posting_count: 1,
+      });
+    expect(actError).toBeNull();
 
     const { data, error } = await adminClient.rpc(
       "get_top_users_posting_count",
