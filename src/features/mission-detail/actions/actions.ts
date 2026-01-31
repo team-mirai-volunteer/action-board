@@ -794,7 +794,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスティング用のポイント計算とXP付与（重要ミッションは2倍）
+      // ポスティング用のポイント計算とXP付与（注目ミッションは2倍）
       const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
       const basePoints = validatedData.postingCount * pointsPerUnit;
       const totalPoints = missionData?.is_featured
@@ -859,7 +859,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスター用のポイント計算とXP付与（重要ミッションは2倍）
+      // ポスター用のポイント計算とXP付与（注目ミッションは2倍）
       const pointsPerUnit = POSTER_POINTS_PER_UNIT;
       const basePoints = MAX_POSTER_COUNT * pointsPerUnit;
       const totalPoints = missionData?.is_featured
@@ -1073,7 +1073,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // XPを減算する（ミッション達成時に付与されたXPを取り消し、重要ミッションは2倍）
+  // XPを減算する（ミッション達成時に付与されたXPを取り消し、注目ミッションは2倍）
   const xpToRevoke = calculateMissionXp(
     missionData.difficulty,
     missionData.is_featured,
