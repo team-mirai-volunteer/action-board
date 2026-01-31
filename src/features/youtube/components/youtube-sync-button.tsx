@@ -127,7 +127,7 @@ export function YouTubeSyncButton({
       </Button>
       {showLongLoadingMessage && (
         <p className="text-xs text-gray-500">
-          処理に20秒程度かかる場合があります
+          処理に2分程度かかる場合があります
         </p>
       )}
     </div>
