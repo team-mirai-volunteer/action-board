@@ -39,7 +39,7 @@ export const notoSansJP = Noto_Sans_JP({
 // ==========================================
 
 // URLが有効な画像URLかどうかを検証する関数
-export function isValidImageUrl(url: string): boolean {
+export function isValidImageUrl(_url: string): boolean {
   //TODO: URL検証を追加
   return true;
 }

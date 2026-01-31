@@ -1,13 +1,13 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
-import { useState } from "react";
 import { PosterForm } from "./poster-form";
 import { PostingForm } from "./posting-form";
 import { YouTubeCommentForm } from "./youtube-comment-form";
@@ -33,10 +33,12 @@ export function ArtifactForm({
   disabled,
   submittedArtifactImagePath,
 }: ArtifactFormProps) {
-  const [artifactImagePath, setArtifactImagePath] = useState<
+  const [_artifactImagePath, _setArtifactImagePath] = useState<
     string | undefined
   >(undefined);
-  const [geolocation, setGeolocation] = useState<GeolocationData | null>(null);
+  const [_geolocation, _setGeolocation] = useState<GeolocationData | null>(
+    null,
+  );
 
   const artifactConfig = mission
     ? getArtifactConfig(mission.required_artifact_type)

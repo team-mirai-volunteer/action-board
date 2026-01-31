@@ -1,6 +1,6 @@
-import { TikTokIcon } from "@/features/tiktok/components";
 import { Eye, Heart, MessageCircle, Share2 } from "lucide-react";
 import Link from "next/link";
+import { TikTokIcon } from "@/features/tiktok/components";
 import type { TikTokVideoWithStats } from "../types";
 import { formatNumberJa } from "../utils/format";
 

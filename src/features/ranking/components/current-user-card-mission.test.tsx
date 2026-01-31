@@ -59,7 +59,10 @@ jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card">
       {children}
     </div>
@@ -73,7 +76,10 @@ jest.mock("@/components/ui/card", () => ({
   CardTitle: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <h2 className={className} data-testid="card-title">
       {children}
     </h2>
@@ -84,7 +90,10 @@ jest.mock("@/components/ui/badge", () => ({
   Badge: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <span className={className} data-testid="badge">
       {children}
     </span>

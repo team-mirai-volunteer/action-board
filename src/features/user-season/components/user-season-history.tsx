@@ -1,6 +1,6 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import type { UserSeasonHistoryProps } from "@/features/user-season/types/season-types";
-import Link from "next/link";
 
 export function UserSeasonHistory({
   userId,

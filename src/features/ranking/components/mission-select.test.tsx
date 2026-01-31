@@ -8,7 +8,7 @@ type Mission = {
 };
 
 const mockPush = jest.fn();
-const mockSearchParams = new URLSearchParams();
+const _mockSearchParams = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({

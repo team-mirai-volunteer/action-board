@@ -1,5 +1,14 @@
 "use client";
 
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { CollapsibleInfo } from "@/components/common/collapsible-info";
 import { FormMessage, type Message } from "@/components/common/form-message";
 import { SubmitButton } from "@/components/common/submit-button";
@@ -26,15 +35,6 @@ import { updateProfile } from "@/features/user-settings/actions/profile-actions"
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
 import { calculateAge } from "@/lib/utils/utils";
-import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
 
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { HEADER_HEIGHT } from "@/lib/constants/layout";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { type PostingEvent, getAllEvents } from "../services/posting-events";
+import { HEADER_HEIGHT } from "@/lib/constants/layout";
+import { getAllEvents, type PostingEvent } from "../services/posting-events";
 
 interface PostingControlPanelProps {
   eventId: string;

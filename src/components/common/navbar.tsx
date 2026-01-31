@@ -1,3 +1,6 @@
+import { Menu } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import HeaderAuth from "@/components/common/header-auth";
 import {
   DropdownMenu,
@@ -9,9 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import { getUser } from "@/features/user-profile/services/profile";
-import { Menu } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 
 export default async function Navbar() {
   const user = await getUser();

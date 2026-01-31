@@ -1,5 +1,10 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
+import { AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
@@ -12,11 +17,6 @@ import { useQuizMission } from "@/features/missions/hooks/use-quiz-mission";
 import { XpProgressToastContent } from "@/features/user-level/components/xp-progress-toast-content";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
-import { AlertCircle } from "lucide-react";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
 
 type Props = {
   mission: Tables<"missions">;

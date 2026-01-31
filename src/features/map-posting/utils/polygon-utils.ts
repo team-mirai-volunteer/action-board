@@ -1,6 +1,6 @@
-import type { Json } from "@/lib/types/supabase";
 import { area } from "@turf/area";
 import { polygon } from "@turf/helpers";
+import type { Json } from "@/lib/types/supabase";
 
 interface GeoJSONPolygon {
   type: "Polygon";

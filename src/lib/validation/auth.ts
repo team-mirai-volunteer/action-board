@@ -1,8 +1,8 @@
-import { calculateAge } from "@/lib/utils/utils";
 import { z } from "zod";
+import { calculateAge } from "@/lib/utils/utils";
 
 // パスワードの許可文字の正規表現
-const ALLOWED_PASSWORD_CHARS_REGEX = /^[a-zA-Z0-9@+*/#$%&!\-]*$/;
+const ALLOWED_PASSWORD_CHARS_REGEX = /^[a-zA-Z0-9@+*/#$%&!-]*$/;
 // パスワードが英字と数字の両方を含むかチェックする正規表現
 const ALPHANUMERIC_REQUIRED_REGEX = /(?=.*[a-zA-Z])(?=.*[0-9])/;
 

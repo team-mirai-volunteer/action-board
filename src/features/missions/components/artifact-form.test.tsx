@@ -1,6 +1,6 @@
-import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
+import type { Tables } from "@/lib/types/supabase";
 import { ArtifactForm } from "./artifact-form";
 
 // Mock lucide-react icons

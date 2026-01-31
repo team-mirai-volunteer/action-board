@@ -1,6 +1,6 @@
 import path from "node:path";
-import { calculateAllBadges } from "@/features/user-badges-calculation/calculate-badges";
 import dotenv from "dotenv";
+import { calculateAllBadges } from "@/features/user-badges-calculation/calculate-badges";
 
 // .envファイルをロード（ローカル開発用）
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });

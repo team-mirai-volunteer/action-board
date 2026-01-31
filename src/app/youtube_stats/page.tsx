@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { YouTubeOverallChart } from "@/features/youtube-stats/components/youtube-overall-chart";
 import { YouTubePeriodFilter } from "@/features/youtube-stats/components/youtube-period-filter";
 import { YouTubeSortToggle } from "@/features/youtube-stats/components/youtube-sort-toggle";
@@ -12,12 +13,11 @@ import {
   getYouTubeVideosWithStats,
 } from "@/features/youtube-stats/services/youtube-stats-service";
 import {
-  type PeriodType,
-  type SortType,
   getPeriodEndDate,
   getPeriodStartDate,
+  type PeriodType,
+  type SortType,
 } from "@/features/youtube-stats/types";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "YouTube動画ダッシュボード | Action Board",

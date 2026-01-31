@@ -1,5 +1,9 @@
 "use server";
 
+import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 import { recordSignupActivity } from "@/features/user-activity/services/activity";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/services/avatar";
@@ -8,10 +12,6 @@ import { sendWelcomeMail } from "@/lib/services/mail";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";
-import { nanoid } from "nanoid";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { z } from "zod";
 
 export type UpdateProfileResult = {
   success: boolean;
@@ -58,7 +58,7 @@ const updateProfileFormSchema = z.object({
 });
 
 export async function updateProfile(
-  previousState: UpdateProfileResult | null,
+  _previousState: UpdateProfileResult | null,
   formData: FormData,
 ): Promise<UpdateProfileResult | null> {
   const supabaseServiceClient = await createAdminClient();

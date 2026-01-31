@@ -12,7 +12,10 @@ jest.mock("./mission-card", () => ({
   MissionAchievementCard: ({
     title,
     count,
-  }: { title: string; count: number }) => (
+  }: {
+    title: string;
+    count: number;
+  }) => (
     <div data-testid="mission-card">
       <span data-testid="mission-title">{title}</span>
       <span data-testid="mission-count">{count}</span>

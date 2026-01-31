@@ -3,7 +3,10 @@ import { SocialBadge } from "./social-badge";
 const SocialBadgeSection = ({
   x_username,
   github_username,
-}: { x_username: string | null; github_username: string | null }) => {
+}: {
+  x_username: string | null;
+  github_username: string | null;
+}) => {
   return (
     <div className="flex justify-center gap-2">
       {x_username && (

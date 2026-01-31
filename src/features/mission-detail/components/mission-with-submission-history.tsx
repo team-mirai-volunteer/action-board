@@ -1,5 +1,7 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
 import { CopyReferralButton } from "@/features/mission-detail/components/copy-referral-button";
 import { MissionFormWrapper } from "@/features/mission-detail/components/mission-form-wrapper";
 import QRCodeDisplay from "@/features/mission-detail/components/qr-code-display";
@@ -10,8 +12,6 @@ import { MissionGuidanceArrow } from "@/features/missions/components/mission-gui
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
-import { useState } from "react";
 import { MainLinkButton } from "./main-link-button";
 
 type Props = {

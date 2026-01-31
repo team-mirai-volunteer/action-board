@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { ActionPeriodFilter } from "@/features/action-stats/components/action-period-filter";
 import { ActionStatsChart } from "@/features/action-stats/components/action-stats-chart";
 import { ActionStatsSummary } from "@/features/action-stats/components/action-stats-summary";
@@ -10,11 +11,10 @@ import {
   getMissionActionRanking,
 } from "@/features/action-stats/services/action-stats-service";
 import {
-  type PeriodType,
   getPeriodEndDate,
   getPeriodStartDate,
+  type PeriodType,
 } from "@/features/action-stats/types";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "アクション数ダッシュボード | Action Board",

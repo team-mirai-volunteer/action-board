@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { CheckIcon, CircleDashed } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface MissionAchievementStatusProps {
   hasReachedMaxAchievements: boolean;

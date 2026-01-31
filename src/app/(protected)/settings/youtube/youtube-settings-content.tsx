@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   YouTubeCommentList,
@@ -8,9 +11,6 @@ import {
   YouTubeSyncButton,
   YouTubeVideoList,
 } from "@/features/youtube/components";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 interface YouTubeSettingsContentProps {
   isLinked: boolean;

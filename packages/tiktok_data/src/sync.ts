@@ -7,11 +7,11 @@ import {
 } from "./db.js";
 import { getSupabaseClient } from "./supabase.js";
 import {
-  TikTokAPIError,
   extractHashtags,
   fetchVideoList,
   filterTeamMiraiVideos,
   refreshAccessToken,
+  TikTokAPIError,
 } from "./tiktok-client.js";
 import type {
   SyncResult,

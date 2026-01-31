@@ -1,5 +1,5 @@
-import type { Database } from "@/lib/types/supabase";
 import { useCallback, useMemo, useState } from "react";
+import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];

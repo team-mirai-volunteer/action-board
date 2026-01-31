@@ -1,9 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import type { UserBadge } from "@/features/user-badges/badge-types";
 import { markBadgeNotificationAsSeenAction } from "@/features/user-badges-notification/badge-notification-action";
 import { BadgeNotificationDialog } from "@/features/user-badges-notification/components/badge-notification-dialog";
-import type { UserBadge } from "@/features/user-badges/badge-types";
-import { useEffect, useState } from "react";
 
 interface BadgeNotificationCheckProps {
   badgeData?: UserBadge[];

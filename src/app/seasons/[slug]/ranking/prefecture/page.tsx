@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { CurrentUserCardPrefecture } from "@/features/ranking/components/current-user-card-prefecture";
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
@@ -8,8 +10,6 @@ import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefe
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{

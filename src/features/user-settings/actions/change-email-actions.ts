@@ -1,9 +1,9 @@
 "use server";
 
+import { z } from "zod";
 import { getUser } from "@/features/user-profile/services/profile";
 import { requestEmailChange } from "@/features/user-settings/services/email";
 import { isEmailUser } from "@/lib/utils/auth-utils";
-import { z } from "zod";
 
 export type ChangeEmailResult = {
   success: boolean;
@@ -23,7 +23,7 @@ const changeEmailFormSchema = z.object({
  * メールアドレスログインユーザーのみ変更可能
  */
 export async function changeEmailAction(
-  previousState: ChangeEmailResult | null,
+  _previousState: ChangeEmailResult | null,
   formData: FormData,
 ): Promise<ChangeEmailResult> {
   const user = await getUser();

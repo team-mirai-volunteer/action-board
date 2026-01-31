@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import type {
   Achievement,
   MissionArtifact,
@@ -7,7 +8,6 @@ import type {
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { nanoid } from "nanoid";
 
 /**
  * UUIDv4の形式かどうかを検証する

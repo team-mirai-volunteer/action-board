@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { syncAllYouTubeDataAction } from "../actions/youtube-sync-actions";
 import { syncMyYouTubeVideosAction } from "../actions/youtube-video-actions";
 
@@ -40,7 +40,7 @@ export function YouTubeSyncButton({
       const { syncTeamMiraiVideosAction } = await import(
         "../actions/youtube-video-actions"
       );
-      const teamMiraiResult = await syncTeamMiraiVideosAction();
+      const _teamMiraiResult = await syncTeamMiraiVideosAction();
 
       // 2. 自分のアップロード動画を同期（レート制限なし）
       const videoSyncResult = await syncMyYouTubeVideosAction();

@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
-import type { Database } from "@/lib/types/supabase";
 import { Expand, Minimize } from "lucide-react";
+import type { Database } from "@/lib/types/supabase";
 import {
-  type PosterPrefectureKey,
   getPrefectureDefaultZoom,
+  type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilter } from "../hooks/use-poster-board-filter";
 import { getCurrentUserId } from "../services/poster-boards";
@@ -90,7 +90,7 @@ export default function PosterMap({
         if (isMounted) {
           setCurrentUserId(userId ?? undefined);
         }
-      } catch (error) {
+      } catch (_error) {
         // エラーは静かに処理
       }
     };

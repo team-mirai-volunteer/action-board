@@ -1,5 +1,6 @@
 "use client";
 
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
 import {
   type ChartConfig,
@@ -7,7 +8,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import type { VideoCountByDateItem } from "../types";
 
 interface TikTokUploadChartProps {

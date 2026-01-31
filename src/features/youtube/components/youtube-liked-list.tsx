@@ -1,12 +1,12 @@
 "use client";
 
-import {
-  type RecordedLike,
-  getRecordedLikesAction,
-} from "@/features/youtube/actions/youtube-like-actions";
 import { Loader2, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  getRecordedLikesAction,
+  type RecordedLike,
+} from "@/features/youtube/actions/youtube-like-actions";
 
 interface YouTubeLikedListProps {
   refreshTrigger?: number;

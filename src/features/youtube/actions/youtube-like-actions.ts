@@ -3,12 +3,12 @@
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { createClient } from "@/lib/supabase/client";
 import {
-  type LikedVideo,
   checkTeamMiraiVideosBatch,
   extractVideoIdFromUrl,
   fetchUserLikedVideos,
   getYouTubeConnection,
   isTokenExpired,
+  type LikedVideo,
 } from "../services/youtube-like-service";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";
 

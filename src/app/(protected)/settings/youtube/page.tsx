@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import { getUser } from "@/features/user-profile/services/profile";
 import { getYouTubeLinkStatusAction } from "@/features/youtube/actions/youtube-video-actions";
-import { redirect } from "next/navigation";
 import { YouTubeSettingsContent } from "./youtube-settings-content";
 
 export default async function YouTubeSettingsPage({

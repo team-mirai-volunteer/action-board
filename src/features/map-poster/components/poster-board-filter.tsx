@@ -1,11 +1,11 @@
 "use client";
 
+import { ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import type { Database } from "@/lib/types/supabase";
-import { ChevronDown, ChevronUp, Filter } from "lucide-react";
-import { useEffect, useState } from "react";
 import type {
   FilterStatus,
   PosterBoardFilterState,

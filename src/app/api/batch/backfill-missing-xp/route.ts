@@ -1,8 +1,8 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { grantXpBatch } from "@/features/user-level/services/level";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { executeChunkedQuery } from "@/lib/utils/supabase-utils";
-import { type NextRequest, NextResponse } from "next/server";
 
 // 型定義を明示（Supabaseの!innerJOINが配列を返す可能性を考慮）
 type AchievementWithMission = {

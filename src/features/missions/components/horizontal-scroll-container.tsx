@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils/utils";
 
 interface HorizontalScrollContainerProps {
   children: React.ReactNode;

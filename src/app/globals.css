@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@config '../../tailwind.config.ts';
+@config "../../tailwind.config.ts";
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -46,13 +46,15 @@
 }
 
 @utility shadow-soft {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px
-    rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 @utility shadow-soft-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px
-    rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.03);
 }
 
 @utility shadow-custom {
@@ -130,7 +132,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-noto-sans-jp), -apple-system, BlinkMacSystemFont,
+    font-family:
+      var(--font-noto-sans-jp), -apple-system, BlinkMacSystemFont,
       "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;

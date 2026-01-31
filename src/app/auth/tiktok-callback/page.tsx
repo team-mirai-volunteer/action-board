@@ -1,8 +1,8 @@
 "use client";
 
-import { handleTikTokLinkAction } from "@/features/tiktok/actions/tiktok-auth-actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { handleTikTokLinkAction } from "@/features/tiktok/actions/tiktok-auth-actions";
 
 function TikTokCallbackContent() {
   const router = useRouter();

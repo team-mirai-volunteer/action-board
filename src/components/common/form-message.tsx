@@ -1,5 +1,5 @@
-import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import clsx from "clsx";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 
 export type MessageType =
   | "success"
@@ -69,7 +69,10 @@ const getMessageContent = (type: MessageType) => {
 export function FormMessage({
   className,
   message,
-}: { className?: string; message: Message }) {
+}: {
+  className?: string;
+  message: Message;
+}) {
   if (!message) return null;
 
   // Type-based message handling

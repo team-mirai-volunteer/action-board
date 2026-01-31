@@ -1,9 +1,9 @@
 "use client";
 
-import type { Tables } from "@/lib/types/supabase";
 import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import type { Tables } from "@/lib/types/supabase";
 
 type MissionWithCategory = Tables<"missions"> & {
   mission_category_link: Array<{

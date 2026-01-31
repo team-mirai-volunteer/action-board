@@ -1,6 +1,6 @@
+import Image from "next/image";
 import type { Message } from "@/components/common/form-message";
 import EmailSignUpForm from "@/features/auth/components/email-sign-up-form";
-import Image from "next/image";
 
 export default async function EmailSignup(props: {
   searchParams: Promise<Message>;

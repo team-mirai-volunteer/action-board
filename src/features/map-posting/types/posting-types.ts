@@ -1,5 +1,5 @@
-import type { Json } from "@/lib/types/supabase";
 import type { Layer, Marker } from "leaflet";
+import type { Json } from "@/lib/types/supabase";
 import type { PostingShapeStatus } from "../config/status-config";
 
 // === Cluster/Marker Types ===

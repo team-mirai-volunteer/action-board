@@ -8,12 +8,12 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "../styles/poster-map.css";
 import "../styles/poster-map-filter.css";
+import { Expand, Minimize } from "lucide-react";
 import { MAX_ZOOM } from "@/lib/constants/mission-config";
 import type { Database } from "@/lib/types/supabase";
-import { Expand, Minimize } from "lucide-react";
 import {
-  type PosterPrefectureKey,
   getPrefectureDefaultZoom,
+  type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilterOptimized } from "../hooks/use-poster-board-filter-optimized";
 import { getCurrentUserId } from "../services/poster-boards";
@@ -288,7 +288,7 @@ export default function PosterMapWithCluster({
         if (isMounted && !userIdFromProps) {
           setCurrentUserId(userId ?? undefined);
         }
-      } catch (error) {
+      } catch (_error) {
         // エラーは静かに処理
       }
     };

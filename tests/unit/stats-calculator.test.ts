@@ -1,6 +1,6 @@
 import {
-  type VideoStatsRecord,
   calculateDailyViewsIncrease,
+  type VideoStatsRecord,
 } from "@/lib/utils/stats-calculator";
 
 describe("calculateDailyViewsIncrease", () => {

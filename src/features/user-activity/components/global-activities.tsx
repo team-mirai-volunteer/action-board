@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { fetchMoreGlobalActivities } from "@/features/user-activity/actions/timeline-actions";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
-import { useState } from "react";
 
 interface GlobalActivitiesProps {
   initialTimeline: ActivityTimelineItem[];

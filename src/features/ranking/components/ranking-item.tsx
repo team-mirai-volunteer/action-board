@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 // TOPページ用のランキングコンポーネント
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
-import Link from "next/link";
 import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
 import { getRankIcon } from "./ranking-icon";
 

@@ -8,14 +8,14 @@
 
 "use client";
 
-import {
-  type ContributorData,
-  getContributorNames,
-} from "@/lib/services/contributors";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { loadFireworksPreset } from "tsparticles-preset-fireworks";
+import {
+  type ContributorData,
+  getContributorNames,
+} from "@/lib/services/contributors";
 
 interface FireworksProps {
   onTrigger?: () => void;
@@ -35,7 +35,7 @@ const EndCredits = ({
   const [ready, setReady] = useState(false);
 
   // contributors が確定→DOM描画→高さ測定
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: DOM描画後の高さ測定のため、contributors確定時のみ実行
   useEffect(() => {
     if (wrapperRef.current) {
       // scrollHeight: padding + 内容全体
@@ -111,7 +111,7 @@ const EndCredits = ({
         <div style={{ fontSize: "16px", lineHeight: "1.6" }}>
           {rows.map((row, idx) => (
             <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              // biome-ignore lint/suspicious/noArrayIndexKey: 固定的なリスト表示のためインデックスを使用
               key={idx}
               style={{
                 display: "flex",
@@ -210,7 +210,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
   );
 
   return (
-    // biome-ignore lint/a11y/useButtonType: <explanation>
+    // biome-ignore lint/a11y/useButtonType: インタラクティブボタンのためtype不要
     <button
       onClick={handleClick}
       onKeyDown={handleKeyDown}

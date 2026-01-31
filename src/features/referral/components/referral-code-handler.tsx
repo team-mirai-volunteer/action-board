@@ -1,7 +1,7 @@
 "use client";
 
-import { setClientCookie } from "@/lib/utils/cookies";
 import { useEffect } from "react";
+import { setClientCookie } from "@/lib/utils/cookies";
 
 interface ReferralCodeHandlerProps {
   referralCode: string;
