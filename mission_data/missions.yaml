@@ -49,9 +49,9 @@ missions:
     artifact_label: リポストした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//19_x_repost.png
   - slug: read-manifest
-    title: チームみらいのマニフェスト(要約版)をみてみよう！
+    title: チームみらいのマニフェストをみてみよう！
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_read-manifest.svg
-    content: チームみらいのマニフェスト(要約版)は、スライド形式で手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
+    content: チームみらいのマニフェストは、ウェブサイトから手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
     difficulty: 2
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
@@ -404,7 +404,7 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-like.svg
     content:  チームみらい関連のYouTube動画を見つけて「高評価」で応援しよう！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 1
-    required_artifact_type: LINK
+    required_artifact_type: YOUTUBE
     max_achievement_count: null
     is_featured: false
     is_hidden: false
@@ -704,11 +704,11 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
     content: <a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 2
-    required_artifact_type: LINK
+    required_artifact_type: YOUTUBE_COMMENT
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: コメントしたYouTube動画のURL
+    artifact_label: null
     ogp_image_url: null
   - slug: youtube-comment-reaction
     title: YouTube動画のコメントにリアクションしよう

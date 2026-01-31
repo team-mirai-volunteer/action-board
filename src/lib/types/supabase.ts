@@ -1360,6 +1360,76 @@ export type Database = {
           },
         ];
       };
+      youtube_sync_status: {
+        Row: {
+          id: string;
+          last_synced_at: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      youtube_user_comments: {
+        Row: {
+          comment_id: string;
+          created_at: string | null;
+          detected_at: string | null;
+          id: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Insert: {
+          comment_id: string;
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          comment_id?: string;
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_user_comments_comment_id_fkey";
+            columns: ["comment_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_video_comments";
+            referencedColumns: ["comment_id"];
+          },
+          {
+            foreignKeyName: "youtube_user_comments_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "youtube_user_comments_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
+          },
+        ];
+      };
       youtube_user_connections: {
         Row: {
           access_token: string;
@@ -1404,6 +1474,50 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      youtube_video_comments: {
+        Row: {
+          author_channel_id: string;
+          author_display_name: string | null;
+          comment_id: string;
+          created_at: string | null;
+          id: string;
+          published_at: string;
+          text_display: string | null;
+          text_original: string | null;
+          video_id: string;
+        };
+        Insert: {
+          author_channel_id: string;
+          author_display_name?: string | null;
+          comment_id: string;
+          created_at?: string | null;
+          id?: string;
+          published_at: string;
+          text_display?: string | null;
+          text_original?: string | null;
+          video_id: string;
+        };
+        Update: {
+          author_channel_id?: string;
+          author_display_name?: string | null;
+          comment_id?: string;
+          created_at?: string | null;
+          id?: string;
+          published_at?: string;
+          text_display?: string | null;
+          text_original?: string | null;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_comments_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
+          },
+        ];
       };
       youtube_video_likes: {
         Row: {
@@ -1489,6 +1603,7 @@ export type Database = {
         Row: {
           channel_id: string;
           channel_title: string | null;
+          comments_synced_at: string | null;
           created_at: string | null;
           description: string | null;
           duration: string | null;
@@ -1504,6 +1619,7 @@ export type Database = {
         Insert: {
           channel_id: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
@@ -1519,6 +1635,7 @@ export type Database = {
         Update: {
           channel_id?: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;

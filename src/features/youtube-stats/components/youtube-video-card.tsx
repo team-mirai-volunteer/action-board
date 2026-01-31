@@ -40,7 +40,7 @@ export function YouTubeVideoCard({ video }: YouTubeVideoCardProps) {
       href={video.video_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+      className="flex gap-3 p-2 hover:bg-gray-50 transition-colors"
     >
       {/* サムネイル */}
       <div className="relative w-24 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden">

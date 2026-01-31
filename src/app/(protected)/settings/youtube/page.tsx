@@ -6,7 +6,7 @@ import { YouTubeSettingsContent } from "./youtube-settings-content";
 export default async function YouTubeSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ linked?: string } | undefined>;
+  searchParams: Promise<{ linked?: string; tab?: string } | undefined>;
 }) {
   const user = await getUser();
 
@@ -16,6 +16,7 @@ export default async function YouTubeSettingsPage({
 
   const params = await searchParams;
   const justLinked = params?.linked === "true";
+  const activeTab = params?.tab || "likes";
 
   // YouTube連携状態を取得
   const linkStatus = await getYouTubeLinkStatusAction();
@@ -38,6 +39,7 @@ export default async function YouTubeSettingsPage({
         channelTitle={linkStatus.channelTitle}
         thumbnailUrl={linkStatus.thumbnailUrl}
         linkedAt={linkStatus.linkedAt}
+        defaultTab={activeTab}
       />
     </div>
   );

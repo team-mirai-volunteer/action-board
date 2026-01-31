@@ -1,5 +1,3 @@
-import "server-only";
-
 import type {
   GoogleTokenResponse,
   YouTubeChannel,
@@ -353,6 +351,236 @@ export async function fetchVideoDetails(
 }
 
 /**
+ * いいねした動画のAPIレスポンス型
+ */
+export interface LikedVideoItem {
+  id: string;
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    channelTitle: string;
+    title: string;
+    thumbnails: {
+      default?: { url: string };
+      medium?: { url: string };
+    };
+  };
+}
+
+/**
+ * ユーザーがいいねした動画一覧を取得する
+ * @param accessToken OAuth アクセストークン
+ * @param maxResults 取得する最大件数（デフォルト50）
+ */
+export async function fetchUserLikedVideos(
+  accessToken: string,
+  maxResults = 50,
+): Promise<LikedVideoItem[]> {
+  const likedVideos: LikedVideoItem[] = [];
+  let pageToken: string | undefined;
+
+  while (likedVideos.length < maxResults) {
+    const url = new URL(`${YOUTUBE_API_BASE}/videos`);
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("myRating", "like");
+    url.searchParams.set(
+      "maxResults",
+      String(Math.min(50, maxResults - likedVideos.length)),
+    );
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("YouTube liked videos fetch failed:", errorBody);
+      throw new YouTubeAPIError("いいねした動画の取得に失敗しました");
+    }
+
+    const data = await response.json();
+    const items = data.items as LikedVideoItem[] | undefined;
+
+    if (!items || items.length === 0) {
+      break;
+    }
+
+    likedVideos.push(...items);
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) {
+      break;
+    }
+  }
+
+  return likedVideos;
+}
+
+/**
+ * コメントスレッドの型定義
+ */
+export interface CommentThread {
+  id: string;
+  snippet: {
+    videoId: string;
+    topLevelComment: {
+      id: string;
+      snippet: {
+        videoId: string;
+        textDisplay: string;
+        textOriginal: string;
+        authorDisplayName: string;
+        authorChannelId: { value: string };
+        publishedAt: string;
+      };
+    };
+  };
+}
+
+/**
+ * 動画のコメント一覧を取得する（API Key使用）
+ * @param videoId YouTube動画ID
+ * @param maxResults 取得する最大件数（デフォルト100、最大500）
+ * @param publishedAfter この日時以降のコメントのみ取得（差分同期用）
+ */
+export async function fetchVideoComments(
+  videoId: string,
+  maxResults = 100,
+  publishedAfter?: Date,
+): Promise<CommentThread[]> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.error("YOUTUBE_API_KEY is not configured");
+    return [];
+  }
+
+  const comments: CommentThread[] = [];
+  let pageToken: string | undefined;
+
+  while (comments.length < maxResults) {
+    const url = new URL(`${YOUTUBE_API_BASE}/commentThreads`);
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("videoId", videoId);
+    url.searchParams.set(
+      "maxResults",
+      String(Math.min(100, maxResults - comments.length)),
+    );
+    url.searchParams.set("order", "time"); // 最新順
+    url.searchParams.set("textFormat", "plainText");
+    url.searchParams.set("key", apiKey);
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      // コメントが無効化されている動画などはエラーになるので、空配列を返す
+      if (response.status === 403) {
+        console.log(`Comments disabled for video ${videoId}`);
+        return [];
+      }
+      console.error(
+        `YouTube comments fetch failed for video ${videoId}:`,
+        errorBody,
+      );
+      throw new YouTubeAPIError("コメントの取得に失敗しました");
+    }
+
+    const data = await response.json();
+    const items = data.items as CommentThread[] | undefined;
+
+    if (!items || items.length === 0) {
+      break;
+    }
+
+    // 差分同期: publishedAfter以前のコメントが出てきたら終了
+    let reachedOldComments = false;
+    for (const item of items) {
+      const commentDate = new Date(
+        item.snippet.topLevelComment.snippet.publishedAt,
+      );
+      if (publishedAfter && commentDate <= publishedAfter) {
+        reachedOldComments = true;
+        break;
+      }
+      comments.push(item);
+    }
+
+    if (reachedOldComments) {
+      break;
+    }
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) {
+      break;
+    }
+  }
+
+  return comments;
+}
+
+/**
+ * API Keyを使って動画の詳細情報を取得する（公開動画のみ）
+ * ユーザー認証不要で公開情報を取得できる
+ * @param videoIds 動画IDの配列
+ */
+export async function fetchVideoDetailsByApiKey(
+  videoIds: string[],
+): Promise<YouTubeVideoDetail[]> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.error("YOUTUBE_API_KEY is not configured");
+    return [];
+  }
+
+  if (videoIds.length === 0) {
+    return [];
+  }
+
+  const allDetails: YouTubeVideoDetail[] = [];
+
+  // YouTube API は1リクエストで50件まで
+  const chunkSize = 50;
+  for (let i = 0; i < videoIds.length; i += chunkSize) {
+    const chunk = videoIds.slice(i, i + chunkSize);
+
+    const url = new URL(`${YOUTUBE_API_BASE}/videos`);
+    url.searchParams.set("part", "snippet,statistics,contentDetails");
+    url.searchParams.set("id", chunk.join(","));
+    url.searchParams.set("key", apiKey);
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("YouTube video details fetch (API key) failed:", errorBody);
+      // API keyでの取得に失敗しても続行
+      continue;
+    }
+
+    const data = await response.json();
+    const items = data.items as YouTubeVideoDetail[] | undefined;
+    if (items) {
+      allDetails.push(...items);
+    }
+  }
+
+  return allDetails;
+}
+
+/**
  * YouTube Client オブジェクト
  * 全てのYouTube API呼び出しをまとめたインターフェース
  */
@@ -362,4 +590,7 @@ export const youtubeClient = {
   fetchChannelInfo,
   fetchUserUploadedVideos,
   fetchVideoDetails,
+  fetchVideoDetailsByApiKey,
+  fetchUserLikedVideos,
+  fetchVideoComments,
 };

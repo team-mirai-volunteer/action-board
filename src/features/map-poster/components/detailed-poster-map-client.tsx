@@ -323,6 +323,8 @@ export default function DetailedPosterMapClient({
 
     if (result.success) {
       toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
+    } else {
+      toast.error(result.error || "ミッション達成に失敗しました");
     }
   };
 
@@ -345,9 +347,9 @@ export default function DetailedPosterMapClient({
           );
 
           if (!hasCompleted) {
-            // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
+            // ミッション達成処理を実行（失敗してもステータス更新は成功扱い）
             completePosterBoardMission(selectedBoard).catch(() => {
-              // エラーは無視して、ステータス更新自体は成功として扱う
+              toast.error("ミッション達成に失敗しました");
             });
           }
         }
