@@ -77,6 +77,7 @@ export function YouTubeLikedList({
     <div className="space-y-3">
       <p className="text-sm text-gray-600">
         {likes.length}件のいいねを記録しました
+        {likes.length >= 100 && "（最新100件を表示）"}
       </p>
       <div className="flex flex-col divide-y max-h-[70vh] overflow-y-auto">
         {likes.map((like) => (
