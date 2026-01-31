@@ -9,6 +9,14 @@ on:
 jobs:
   sync-youtube-videos:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      APP_URL: ${{ secrets.APP_URL }}
+      BATCH_ADMIN_KEY: ${{ secrets.BATCH_ADMIN_KEY }}
 
     steps:
       - name: Checkout repository
@@ -27,11 +35,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Sync YouTube videos
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: pnpm --filter @action-board/youtube-data sync
+
+      - name: Sync YouTube likes
+        run: pnpm youtube:sync-likes
 
       - name: Notify on failure
         if: failure()
