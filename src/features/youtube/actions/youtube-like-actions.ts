@@ -296,7 +296,8 @@ export async function getRecordedLikesAction(): Promise<{
       `,
       )
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(100);
 
     if (likesError) {
       console.error("Failed to fetch recorded likes:", likesError);
