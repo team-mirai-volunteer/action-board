@@ -5,14 +5,14 @@ CREATE OR REPLACE FUNCTION get_total_posting_count_by_mission(
   target_mission_id UUID,
   p_season_id UUID DEFAULT NULL
 )
-RETURNS INTEGER
+RETURNS BIGINT
 LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public, pg_temp
 AS $$
 DECLARE
-  total_count INTEGER := 0;
+  total_count BIGINT := 0;
 BEGIN
   IF p_season_id IS NOT NULL THEN
     -- Season-based counting
