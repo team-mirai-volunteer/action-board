@@ -105,7 +105,13 @@ export async function checkTeamMiraiVideosBatch(
       const details = await fetchVideoDetails(accessToken, notInDbVideoIds);
 
       for (const detail of details) {
-        if (hasTeamMiraiTag(detail.snippet.tags)) {
+        if (
+          hasTeamMiraiTag(
+            detail.snippet.tags,
+            detail.snippet.title,
+            detail.snippet.description,
+          )
+        ) {
           results.set(detail.id, {
             isTeamMirai: true,
             videoUrl: `https://www.youtube.com/watch?v=${detail.id}`,

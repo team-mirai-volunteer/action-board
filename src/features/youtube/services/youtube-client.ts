@@ -425,6 +425,57 @@ export async function fetchUserLikedVideos(
 }
 
 /**
+ * API Keyを使って動画の詳細情報を取得する（公開動画のみ）
+ * ユーザー認証不要で公開情報を取得できる
+ * @param videoIds 動画IDの配列
+ */
+export async function fetchVideoDetailsByApiKey(
+  videoIds: string[],
+): Promise<YouTubeVideoDetail[]> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.error("YOUTUBE_API_KEY is not configured");
+    return [];
+  }
+
+  if (videoIds.length === 0) {
+    return [];
+  }
+
+  const allDetails: YouTubeVideoDetail[] = [];
+
+  // YouTube API は1リクエストで50件まで
+  const chunkSize = 50;
+  for (let i = 0; i < videoIds.length; i += chunkSize) {
+    const chunk = videoIds.slice(i, i + chunkSize);
+
+    const url = new URL(`${YOUTUBE_API_BASE}/videos`);
+    url.searchParams.set("part", "snippet,statistics,contentDetails");
+    url.searchParams.set("id", chunk.join(","));
+    url.searchParams.set("key", apiKey);
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("YouTube video details fetch (API key) failed:", errorBody);
+      // API keyでの取得に失敗しても続行
+      continue;
+    }
+
+    const data = await response.json();
+    const items = data.items as YouTubeVideoDetail[] | undefined;
+    if (items) {
+      allDetails.push(...items);
+    }
+  }
+
+  return allDetails;
+}
+
+/**
  * YouTube Client オブジェクト
  * 全てのYouTube API呼び出しをまとめたインターフェース
  */
@@ -434,5 +485,6 @@ export const youtubeClient = {
   fetchChannelInfo,
   fetchUserUploadedVideos,
   fetchVideoDetails,
+  fetchVideoDetailsByApiKey,
   fetchUserLikedVideos,
 };

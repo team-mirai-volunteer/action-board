@@ -7,6 +7,7 @@ import {
   YouTubeSyncButton,
   YouTubeVideoList,
 } from "@/features/youtube/components";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -44,7 +45,7 @@ export function YouTubeSettingsContent({
           アカウント連携
         </h2>
         <p className="text-sm text-gray-600 mb-4">
-          Googleアカウントを通じてYouTubeチャンネルと連携すると、あなたがアップロードした
+          Googleアカウントを通じてYouTubeチャンネルと連携すると、あなたがいいねやアップロードした
           #チームみらい 動画を確認できます。
         </p>
 
@@ -66,28 +67,45 @@ export function YouTubeSettingsContent({
       {/* 動画/いいねタブセクション（連携済みの場合のみ表示） */}
       {isLinked && (
         <section className="bg-white rounded-lg border border-gray-200 p-6">
-          <Tabs defaultValue="videos" className="w-full">
+          <Tabs defaultValue="likes" className="w-full">
             <div className="flex items-center justify-between mb-4">
               <TabsList>
-                <TabsTrigger value="videos">アップロード動画</TabsTrigger>
                 <TabsTrigger value="likes">いいねした動画</TabsTrigger>
+                <TabsTrigger value="videos">アップロード動画</TabsTrigger>
               </TabsList>
               <YouTubeSyncButton onSyncComplete={handleSyncComplete} />
             </div>
 
-            <TabsContent value="videos" className="mt-4">
-              <p className="text-sm text-gray-600 mb-4">
-                YouTubeアカウントから取得した #チームみらい
-                ハッシュタグ付きの動画です。
-              </p>
-              <YouTubeVideoList refreshTrigger={refreshTrigger} />
+            <TabsContent value="likes" className="mt-4">
+              <div className="text-sm text-gray-600 mb-4">
+                あなたがいいねしたチームみらい動画の一覧です。
+                <br />
+                Youtubeで動画にいいねをつけてミッションをクリアしましょう！
+                <br />
+                <Link
+                  href="/missions/youtube-like"
+                  className="text-primary hover:underline"
+                >
+                  ミッションページへ →
+                </Link>
+                <p className="text-xs text-gray-500 mt-2">
+                  ※ 同期時は最新100件のいいねをチェックします
+                </p>
+              </div>
+              <YouTubeLikedList refreshTrigger={refreshTrigger} />
             </TabsContent>
 
-            <TabsContent value="likes" className="mt-4">
-              <p className="text-sm text-gray-600 mb-4">
-                ミッション達成として記録したチームみらい動画へのいいねです。
+            <TabsContent value="videos" className="mt-4">
+              <p className="text-sm text-gray-600">
+                あなたがアップロードしたチームみらい動画一覧です。
               </p>
-              <YouTubeLikedList refreshTrigger={refreshTrigger} />
+              {/* 注意事項 */}
+              <section className="text-xs text-gray-500 mb-4">
+                <p>
+                  ※ 動画の統計情報（再生数、いいね数など）は日次で更新されます
+                </p>
+              </section>
+              <YouTubeVideoList refreshTrigger={refreshTrigger} />
             </TabsContent>
           </Tabs>
         </section>
@@ -99,7 +117,6 @@ export function YouTubeSettingsContent({
           ※ 連携したYouTubeアカウントの動画のうち、#チームみらい または
           #teammirai ハッシュタグが含まれる動画のみが取得されます。
         </p>
-        <p>※ 動画の統計情報（再生数、いいね数など）は日次で更新されます。</p>
       </section>
     </div>
   );

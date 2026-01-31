@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { syncYouTubeLikesAction } from "../actions/youtube-like-actions";
 import { syncMyYouTubeVideosAction } from "../actions/youtube-video-actions";
 
 interface YouTubeSyncButtonProps {
@@ -15,58 +17,82 @@ export function YouTubeSyncButton({
   disabled,
 }: YouTubeSyncButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    message: string;
-  } | null>(null);
 
   const handleSync = async () => {
     setIsLoading(true);
-    setResult(null);
     try {
-      const syncResult = await syncMyYouTubeVideosAction();
-      if (syncResult.success) {
-        const message =
-          syncResult.syncedCount && syncResult.syncedCount > 0
-            ? `${syncResult.syncedCount}件の動画を同期しました`
-            : "新しい #チームみらい 動画はありませんでした";
-        setResult({ success: true, message });
-        onSyncComplete?.(syncResult.syncedCount || 0);
+      // 1. アップロード動画を同期
+      const videoSyncResult = await syncMyYouTubeVideosAction();
+
+      // 2. いいね動画を同期＆ミッションクリア
+      const likeSyncResult = await syncYouTubeLikesAction();
+
+      // 結果メッセージを構築
+      const messages: string[] = [];
+
+      if (videoSyncResult.success) {
+        if (videoSyncResult.syncedCount && videoSyncResult.syncedCount > 0) {
+          messages.push(
+            `${videoSyncResult.syncedCount}件のアップロード動画を同期しました`,
+          );
+        }
       } else {
-        setResult({
-          success: false,
-          message: syncResult.error || "同期に失敗しました",
-        });
+        toast.error(videoSyncResult.error || "アップロード動画同期に失敗");
       }
+
+      if (likeSyncResult.success) {
+        if (likeSyncResult.syncedVideoCount > 0) {
+          messages.push(
+            `${likeSyncResult.syncedVideoCount}件のいいね動画を追加しました`,
+          );
+        }
+        if (likeSyncResult.achievedCount > 0) {
+          messages.push(`(+${likeSyncResult.totalXpGranted} XP)`);
+        }
+      } else if (likeSyncResult.error) {
+        toast.error(likeSyncResult.error);
+      }
+
+      // 成功メッセージをtoastで表示
+      if (messages.length > 0) {
+        toast.success("同期完了", {
+          description: (
+            <div className="flex flex-col">
+              {messages.map((msg) => (
+                <span key={msg}>{msg}</span>
+              ))}
+            </div>
+          ),
+          duration: 8000,
+        });
+      } else if (videoSyncResult.success && likeSyncResult.success) {
+        toast.info("新しい動画はありませんでした");
+      }
+
+      // 何かしら同期されたらコールバック
+      const totalSynced =
+        (videoSyncResult.syncedCount || 0) +
+        likeSyncResult.syncedVideoCount +
+        likeSyncResult.achievedCount;
+      onSyncComplete?.(totalSynced);
     } catch (err) {
-      setResult({
-        success: false,
-        message:
-          err instanceof Error ? err.message : "同期中にエラーが発生しました",
-      });
+      toast.error(
+        err instanceof Error ? err.message : "同期中にエラーが発生しました",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-2">
-      <Button
-        onClick={handleSync}
-        disabled={isLoading || disabled}
-        variant="outline"
-        className="gap-2"
-      >
-        <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-        {isLoading ? "同期中..." : "動画を同期"}
-      </Button>
-      {result && (
-        <p
-          className={`text-sm ${result.success ? "text-green-600" : "text-red-600"}`}
-        >
-          {result.message}
-        </p>
-      )}
-    </div>
+    <Button
+      onClick={handleSync}
+      disabled={isLoading || disabled}
+      variant="outline"
+      className="gap-2"
+    >
+      <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+      {isLoading ? "同期中..." : "動画を同期"}
+    </Button>
   );
 }

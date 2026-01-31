@@ -233,6 +233,7 @@ export async function validateYouTubeUrlAction(url: string): Promise<{
 export interface RecordedLike {
   videoId: string;
   title: string;
+  channelTitle?: string;
   thumbnailUrl?: string;
   videoUrl: string;
   recordedAt: string;
@@ -270,6 +271,7 @@ export async function getRecordedLikesAction(): Promise<{
         created_at,
         youtube_videos (
           title,
+          channel_title,
           video_url,
           thumbnail_url
         )
@@ -291,6 +293,7 @@ export async function getRecordedLikesAction(): Promise<{
       .map((like) => ({
         videoId: like.video_id,
         title: like.youtube_videos?.title || "Unknown",
+        channelTitle: like.youtube_videos?.channel_title || undefined,
         thumbnailUrl: like.youtube_videos?.thumbnail_url || undefined,
         videoUrl:
           like.youtube_videos?.video_url ||
@@ -385,6 +388,192 @@ export async function autoAchieveYouTubeMissionAction(
       achievedCount: 0,
       totalXpGranted: 0,
       error: error instanceof Error ? error.message : "自動達成に失敗しました",
+    };
+  }
+}
+
+/**
+ * いいね同期結果
+ */
+export interface SyncLikesResult {
+  success: boolean;
+  syncedVideoCount: number;
+  achievedCount: number;
+  totalXpGranted: number;
+  error?: string;
+}
+
+/**
+ * YouTubeいいねを同期し、youtube_videosに追加し、自動でミッションクリアするServer Action
+ * YouTube設定ページの同期ボタンから呼び出される
+ */
+export async function syncYouTubeLikesAction(): Promise<SyncLikesResult> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        syncedVideoCount: 0,
+        achievedCount: 0,
+        totalXpGranted: 0,
+        error: "ログインが必要です",
+      };
+    }
+
+    // YouTube連携情報を取得
+    const adminClient = await createAdminClient();
+    const { data: connection, error: connectionError } = await adminClient
+      .from("youtube_user_connections")
+      .select("access_token, token_expires_at, refresh_token")
+      .eq("user_id", user.id)
+      .single();
+
+    if (connectionError || !connection) {
+      return {
+        success: false,
+        syncedVideoCount: 0,
+        achievedCount: 0,
+        totalXpGranted: 0,
+        error: "YouTubeアカウントが連携されていません",
+      };
+    }
+
+    let accessToken = connection.access_token;
+
+    // トークンの有効期限をチェック
+    if (new Date(connection.token_expires_at) < new Date()) {
+      const refreshResult = await refreshYouTubeTokenAction();
+      if (!refreshResult.success || !refreshResult.accessToken) {
+        return {
+          success: false,
+          syncedVideoCount: 0,
+          achievedCount: 0,
+          totalXpGranted: 0,
+          error:
+            "YouTubeのアクセストークンが期限切れです。再度連携してください。",
+        };
+      }
+      accessToken = refreshResult.accessToken;
+    }
+
+    // ユーザーがいいねした動画を取得
+    let likedVideos: LikedVideo[];
+    try {
+      likedVideos = await fetchUserLikedVideos(accessToken, 100);
+    } catch (error) {
+      console.error("Failed to fetch liked videos:", error);
+      return {
+        success: false,
+        syncedVideoCount: 0,
+        achievedCount: 0,
+        totalXpGranted: 0,
+        error: "いいねした動画の取得に失敗しました",
+      };
+    }
+
+    // チームみらい動画を一括チェック
+    const videoIds = likedVideos.map((v) => v.videoId);
+    const teamMiraiResults = await checkTeamMiraiVideosBatch(
+      videoIds,
+      accessToken,
+    );
+
+    // チームみらい動画のうち、youtube_videosにないものを取得
+    const teamMiraiVideoIds = Array.from(teamMiraiResults.entries())
+      .filter(([_, result]) => result.isTeamMirai)
+      .map(([videoId]) => videoId);
+
+    // 既にyoutube_videosにある動画を取得
+    const { data: existingVideos } = await supabase
+      .from("youtube_videos")
+      .select("video_id")
+      .in("video_id", teamMiraiVideoIds);
+
+    const existingVideoIds = new Set(
+      (existingVideos || []).map((v) => v.video_id),
+    );
+
+    const newVideoIds = teamMiraiVideoIds.filter(
+      (id) => !existingVideoIds.has(id),
+    );
+
+    // 新しい動画をyoutube_videosに追加
+    let syncedVideoCount = 0;
+    if (newVideoIds.length > 0) {
+      // YouTube APIから動画詳細を取得
+      const { fetchVideoDetails } = await import("../services/youtube-client");
+      const videoDetails = await fetchVideoDetails(accessToken, newVideoIds);
+
+      for (const detail of videoDetails) {
+        const likedVideo = likedVideos.find((v) => v.videoId === detail.id);
+        const { error: insertError } = await adminClient
+          .from("youtube_videos")
+          .upsert(
+            {
+              video_id: detail.id,
+              video_url: `https://www.youtube.com/watch?v=${detail.id}`,
+              title: detail.snippet.title,
+              description: detail.snippet.description || null,
+              thumbnail_url:
+                detail.snippet.thumbnails.medium?.url ||
+                detail.snippet.thumbnails.default?.url ||
+                null,
+              channel_id: detail.snippet.channelId,
+              channel_title: detail.snippet.channelTitle,
+              published_at: detail.snippet.publishedAt,
+              tags: detail.snippet.tags || [],
+              is_active: true,
+            },
+            { onConflict: "video_id", ignoreDuplicates: true },
+          );
+
+        if (!insertError) {
+          syncedVideoCount++;
+        }
+      }
+    }
+
+    // YouTubeミッションを取得
+    const { data: youtubeMission } = await adminClient
+      .from("missions")
+      .select("id")
+      .eq("slug", "youtube-like")
+      .single();
+
+    if (!youtubeMission) {
+      return {
+        success: true,
+        syncedVideoCount,
+        achievedCount: 0,
+        totalXpGranted: 0,
+        error: "YouTubeミッションが見つかりません",
+      };
+    }
+
+    // 自動ミッションクリア
+    const achieveResult = await autoAchieveYouTubeMissionAction(
+      youtubeMission.id,
+    );
+
+    return {
+      success: true,
+      syncedVideoCount,
+      achievedCount: achieveResult.achievedCount,
+      totalXpGranted: achieveResult.totalXpGranted,
+    };
+  } catch (error) {
+    console.error("Sync YouTube likes error:", error);
+    return {
+      success: false,
+      syncedVideoCount: 0,
+      achievedCount: 0,
+      totalXpGranted: 0,
+      error: error instanceof Error ? error.message : "同期に失敗しました",
     };
   }
 }

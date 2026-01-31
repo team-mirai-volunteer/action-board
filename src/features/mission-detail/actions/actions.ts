@@ -777,10 +777,82 @@ export const achieveMissionAction = async (formData: FormData) => {
           .from("youtube_videos")
           .select("video_id")
           .eq("video_id", videoId)
-          .single();
+          .maybeSingle();
 
-        if (existingVideo) {
-          // youtube_video_likesに記録
+        // 動画がyoutube_videosに存在しない場合はチームみらい動画かチェックして追加
+        if (!existingVideo) {
+          // YouTube APIで動画詳細を取得（API Key使用）
+          const { fetchVideoDetailsByApiKey } = await import(
+            "@/features/youtube/services/youtube-client"
+          );
+          const { hasTeamMiraiTag } = await import(
+            "@/features/youtube/constants/team-mirai"
+          );
+
+          const videoDetails = await fetchVideoDetailsByApiKey([videoId]);
+          const videoDetail = videoDetails[0];
+
+          if (!videoDetail) {
+            return {
+              success: false,
+              error:
+                "YouTube動画の情報を取得できませんでした。URLが正しいか確認してください。",
+            };
+          }
+
+          // チームみらいの動画かチェック
+          if (
+            !hasTeamMiraiTag(
+              videoDetail.snippet.tags,
+              videoDetail.snippet.title,
+              videoDetail.snippet.description,
+            )
+          ) {
+            return {
+              success: false,
+              error:
+                "この動画はチームみらいの動画ではありません。チームみらいの動画にいいねしてURLを入力してください。",
+            };
+          }
+
+          // チームみらい動画の場合、youtube_videosに追加（admin clientを使用）
+          const { createAdminClient } = await import(
+            "@/lib/supabase/adminClient"
+          );
+          const adminClient = await createAdminClient();
+          const { error: videoInsertError } = await adminClient
+            .from("youtube_videos")
+            .insert({
+              video_id: videoId,
+              video_url: validatedData.artifactLink,
+              title: videoDetail.snippet.title,
+              description: videoDetail.snippet.description || null,
+              thumbnail_url:
+                videoDetail.snippet.thumbnails.medium?.url ||
+                videoDetail.snippet.thumbnails.default?.url ||
+                null,
+              channel_id: videoDetail.snippet.channelId,
+              channel_title: videoDetail.snippet.channelTitle,
+              published_at: videoDetail.snippet.publishedAt,
+              tags: videoDetail.snippet.tags || [],
+              is_active: true,
+            });
+
+          if (videoInsertError) {
+            console.error("YouTube video insert error:", videoInsertError);
+            // 動画の追加に失敗してもミッション達成は成功とする
+            // ただしyoutube_video_likesには記録できない
+          }
+        }
+
+        // youtube_video_likesに記録（動画が存在する場合のみ）
+        const { data: videoForLike } = await supabase
+          .from("youtube_videos")
+          .select("video_id")
+          .eq("video_id", videoId)
+          .maybeSingle();
+
+        if (videoForLike) {
           const { error: youtubeLikeError } = await supabase
             .from("youtube_video_likes")
             .insert({
@@ -791,6 +863,13 @@ export const achieveMissionAction = async (formData: FormData) => {
 
           if (youtubeLikeError) {
             console.error("YouTube like record save error:", youtubeLikeError);
+            // UNIQUE制約違反の場合はエラーメッセージを変更
+            if (youtubeLikeError.code === "23505") {
+              return {
+                success: false,
+                error: "この動画へのいいねは既に記録されています。",
+              };
+            }
             return {
               success: false,
               error: "YouTubeいいね記録の保存に失敗しました。",
