@@ -449,23 +449,6 @@ export async function getPosterBoardStats(prefecture: string): Promise<{
   );
 }
 
-// 選挙管理委員会から提供された掲示板総数を取得
-export async function getPosterBoardTotals(): Promise<PosterBoardTotal[]> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("poster_board_totals")
-    .select("*")
-    .order("prefecture", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching poster board totals:", error);
-    throw error;
-  }
-
-  return data || [];
-}
-
 // 都道府県別の統計情報のみを取得（集計済みデータ）
 export async function getPosterBoardSummaryByPrefecture(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
