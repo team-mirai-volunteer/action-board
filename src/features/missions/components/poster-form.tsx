@@ -90,10 +90,10 @@ export function PosterForm({ disabled }: PosterFormProps) {
         </p>
       </div>
 
-      {/* 番号 */}
+      {/* 掲示板番号 */}
       <div className="space-y-2">
         <Label htmlFor="boardNumber">
-          番号 <span className="text-red-500">*</span>
+          掲示板番号 <span className="text-red-500">*</span>
         </Label>
         <Input
           type="text"
@@ -106,7 +106,7 @@ export function PosterForm({ disabled }: PosterFormProps) {
           pattern="^(\d+(-\d){0,2})$"
         />
         <p className="text-xs text-gray-500">
-          番号を入力してください（例：10-1、27-2-1、00）
+          掲示板番号を入力してください（例：10-1、27-2-1、00）
         </p>
       </div>
 

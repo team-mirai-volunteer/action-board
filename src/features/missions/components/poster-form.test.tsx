@@ -53,7 +53,7 @@ describe("PosterForm", () => {
       screen.getByRole("button", { name: /Select Prefecture/i }),
     ).toBeInTheDocument(); // Selectボタンの存在確認
     expect(screen.getByLabelText(/市町村＋区/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/番号/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/掲示板番号/)).toBeInTheDocument();
 
     // 必須マークの確認
     expect(screen.getAllByText("*")).toHaveLength(3);
@@ -79,7 +79,7 @@ describe("PosterForm", () => {
       "true",
     );
     expect(screen.getByRole("textbox", { name: /市町村＋区/ })).toBeDisabled();
-    expect(screen.getByRole("textbox", { name: /番号/ })).toBeDisabled();
+    expect(screen.getByRole("textbox", { name: /掲示板番号/ })).toBeDisabled();
     expect(screen.getByRole("textbox", { name: /名前/ })).toBeDisabled();
     expect(screen.getByRole("textbox", { name: /状況/ })).toBeDisabled();
     expect(screen.getByRole("textbox", { name: /住所/ })).toBeDisabled();
@@ -98,7 +98,9 @@ describe("PosterForm", () => {
     expect(
       screen.getByRole("textbox", { name: /市町村＋区/ }),
     ).not.toBeDisabled();
-    expect(screen.getByRole("textbox", { name: /番号/ })).not.toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: /掲示板番号/ }),
+    ).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: /名前/ })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: /状況/ })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: /住所/ })).not.toBeDisabled();
@@ -119,7 +121,9 @@ describe("PosterForm", () => {
   it("has correct input attributes for board number field", () => {
     render(<PosterForm disabled={false} />);
 
-    const boardNumberInput = screen.getByRole("textbox", { name: /番号/ });
+    const boardNumberInput = screen.getByRole("textbox", {
+      name: /掲示板番号/,
+    });
     expect(boardNumberInput).toHaveAttribute("type", "text");
     expect(boardNumberInput).toHaveAttribute("name", "boardNumber");
     expect(boardNumberInput).toHaveAttribute("maxLength", "20");
@@ -257,7 +261,9 @@ describe("PosterForm", () => {
     expect(
       screen.getByRole("textbox", { name: /市町村＋区/ }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: /番号/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("textbox", { name: /掲示板番号/ }),
+    ).toBeInTheDocument();
   });
 
   it("has proper accessibility attributes", () => {
@@ -268,7 +274,9 @@ describe("PosterForm", () => {
     const cityInput = screen.getByRole("textbox", { name: /市町村＋区/ });
     expect(cityInput).toHaveAttribute("id", "city");
 
-    const boardNumberInput = screen.getByRole("textbox", { name: /番号/ });
+    const boardNumberInput = screen.getByRole("textbox", {
+      name: /掲示板番号/,
+    });
     expect(boardNumberInput).toHaveAttribute("id", "boardNumber");
 
     const boardNameInput = screen.getByRole("textbox", { name: /名前/ });
