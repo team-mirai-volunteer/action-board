@@ -33,7 +33,6 @@
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn",
         "noUnusedFunctionParameters": "warn",
-        "noInvalidUseBeforeDeclaration": "warn",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "warn"
       },
