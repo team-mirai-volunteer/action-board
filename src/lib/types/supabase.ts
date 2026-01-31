@@ -1444,7 +1444,6 @@ export type Database = {
           token_expires_at: string;
           updated_at: string | null;
           user_id: string;
-          videos_synced_at: string | null;
         };
         Insert: {
           access_token: string;
@@ -1459,7 +1458,6 @@ export type Database = {
           token_expires_at: string;
           updated_at?: string | null;
           user_id: string;
-          videos_synced_at?: string | null;
         };
         Update: {
           access_token?: string;
@@ -1474,7 +1472,6 @@ export type Database = {
           token_expires_at?: string;
           updated_at?: string | null;
           user_id?: string;
-          videos_synced_at?: string | null;
         };
         Relationships: [];
       };
