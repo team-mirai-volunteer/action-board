@@ -41,7 +41,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} \
+RUN NODE_OPTIONS="--max-old-space-size=4096" \
+    SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} \
     SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY} \
     pnpm run build
 
