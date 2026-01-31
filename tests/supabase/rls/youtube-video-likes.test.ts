@@ -128,8 +128,8 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
     expect(data?.length).toBe(0);
   });
 
-  test("認証済みユーザーは自分のYouTubeいいね記録のみ読み取れる", async () => {
-    // user1は自分のいいね記録を読み取れる
+  test("認証済みユーザーは自分のYouTubeいいね記録のみ閲覧できる", async () => {
+    // user1は自分のいいね記録を閲覧できる
     const { data: user1Data, error: user1Error } = await user1.client
       .from("youtube_video_likes")
       .select("*")
@@ -138,17 +138,17 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
     expect(user1Error).toBeNull();
     expect(user1Data).toHaveLength(1);
 
-    // user2は他人のいいね記録を読み取れない
+    // user2は他人のいいね記録を閲覧できない
     const { data: user2Data, error: user2Error } = await user2.client
       .from("youtube_video_likes")
       .select("*")
       .eq("id", youtubeLikeId);
 
     expect(user2Error).toBeNull();
-    expect(user2Data).toHaveLength(0); // 読み取れない
+    expect(user2Data).toHaveLength(0);
   });
 
-  test("認証済みユーザーは自分の成果物に対してYouTubeいいね記録を作成できる", async () => {
+  test("認証済みユーザーはYouTubeいいね記録を作成できない（service roleのみ）", async () => {
     // 新しい動画を作成
     const newVideoId = `test-video-${crypto.randomUUID().slice(0, 8)}`;
     await adminClient.from("youtube_videos").insert({
@@ -177,7 +177,7 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
       link_url: `https://www.youtube.com/watch?v=${newVideoId}`,
     });
 
-    // user1は自分の成果物に対していいね記録を作成できる
+    // user1は自分の成果物に対してもいいね記録を作成できない
     const newLikeData = {
       id: crypto.randomUUID(),
       user_id: user1.user.userId,
@@ -190,14 +190,11 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
       .insert(newLikeData)
       .select();
 
-    expect(insertError).toBeNull();
-    expect(insertData).toHaveLength(1);
+    // RLSによって挿入が拒否される
+    expect(insertError).toBeTruthy();
+    expect(insertData).toBeNull();
 
     // クリーンアップ
-    await adminClient
-      .from("youtube_video_likes")
-      .delete()
-      .eq("id", newLikeData.id);
     await adminClient
       .from("mission_artifacts")
       .delete()
@@ -209,69 +206,19 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
       .eq("video_id", newVideoId);
   });
 
-  test("認証済みユーザーは他人の成果物に対してYouTubeいいね記録を作成できない", async () => {
-    // 新しい動画を作成
-    const newVideoId = `test-video-${crypto.randomUUID().slice(0, 8)}`;
-    await adminClient.from("youtube_videos").insert({
-      video_id: newVideoId,
-      video_url: `https://www.youtube.com/watch?v=${newVideoId}`,
-      title: "他人用テスト動画",
-      channel_id: "test-channel-id",
-      channel_title: "テストチャンネル",
-      is_active: true,
-    });
+  test("認証済みユーザーはYouTubeいいね記録を削除できない（service roleのみ）", async () => {
+    // user1は自分のいいね記録でも削除できない
+    const { data: user1DeleteData, error: user1DeleteError } =
+      await user1.client
+        .from("youtube_video_likes")
+        .delete()
+        .eq("id", youtubeLikeId)
+        .select();
 
-    // user2の達成記録と成果物を作成
-    const user2AchievementId = crypto.randomUUID();
-    await adminClient.from("achievements").insert({
-      id: user2AchievementId,
-      mission_id: missionId,
-      user_id: user2.user.userId,
-    });
+    expect(user1DeleteError).toBeNull();
+    expect(user1DeleteData).toHaveLength(0); // 削除されたレコードなし
 
-    const user2ArtifactId = crypto.randomUUID();
-    await adminClient.from("mission_artifacts").insert({
-      id: user2ArtifactId,
-      achievement_id: user2AchievementId,
-      user_id: user2.user.userId,
-      artifact_type: "YOUTUBE" as const,
-      link_url: `https://www.youtube.com/watch?v=${newVideoId}`,
-    });
-
-    // user1がuser2の成果物に対していいね記録を作成しようとする
-    const invalidLikeData = {
-      id: crypto.randomUUID(),
-      user_id: user1.user.userId,
-      video_id: newVideoId,
-      mission_artifact_id: user2ArtifactId,
-    };
-
-    const { data: insertData, error: insertError } = await user1.client
-      .from("youtube_video_likes")
-      .insert(invalidLikeData)
-      .select();
-
-    // RLSによって挿入が拒否される
-    expect(insertError).toBeTruthy();
-    expect(insertData).toBeNull();
-
-    // クリーンアップ
-    await adminClient
-      .from("mission_artifacts")
-      .delete()
-      .eq("id", user2ArtifactId);
-    await adminClient
-      .from("achievements")
-      .delete()
-      .eq("id", user2AchievementId);
-    await adminClient
-      .from("youtube_videos")
-      .delete()
-      .eq("video_id", newVideoId);
-  });
-
-  test("認証済みユーザーは自分のYouTubeいいね記録のみ削除できる", async () => {
-    // user2は他人のいいね記録を削除できない
+    // user2も削除できない
     const { data: user2DeleteData, error: user2DeleteError } =
       await user2.client
         .from("youtube_video_likes")
@@ -282,23 +229,12 @@ describe("youtube_video_likes テーブルのRLSテスト", () => {
     expect(user2DeleteError).toBeNull();
     expect(user2DeleteData).toHaveLength(0); // 削除されたレコードなし
 
-    // user1は自分のいいね記録を削除できる
-    const { data: deleteData, error: deleteError } = await user1.client
+    // レコードがまだ存在することを確認
+    const { data: checkData } = await adminClient
       .from("youtube_video_likes")
-      .delete()
-      .eq("id", youtubeLikeId)
-      .select();
+      .select("*")
+      .eq("id", youtubeLikeId);
 
-    expect(deleteError).toBeNull();
-    expect(deleteData).toHaveLength(1);
-    expect(deleteData?.[0].id).toBe(youtubeLikeId);
-
-    // 再作成（afterEachのクリーンアップで削除エラーを防ぐ）
-    await adminClient.from("youtube_video_likes").insert({
-      id: youtubeLikeId,
-      user_id: user1.user.userId,
-      video_id: videoId,
-      mission_artifact_id: missionArtifactId,
-    });
+    expect(checkData).toHaveLength(1);
   });
 });
