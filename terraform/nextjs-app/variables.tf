@@ -209,3 +209,9 @@ variable "GOOGLE_CLIENT_SECRET" {
   type        = string
   sensitive   = true
 }
+
+variable "YOUTUBE_API_KEY" {
+  description = "YouTube Data API Key for video sync (sensitive)"
+  type        = string
+  sensitive   = true
+}
