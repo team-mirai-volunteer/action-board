@@ -45,28 +45,28 @@ describe("ミッション経験値計算", () => {
       expect(calculateMissionXp(999)).toBe(50);
     });
 
-    describe("重要ミッション（2倍ボーナス）", () => {
-      it("難易度1の重要ミッションは100XP", () => {
+    describe("注目ミッション（2倍ボーナス）", () => {
+      it("難易度1の注目ミッションは100XP", () => {
         expect(calculateMissionXp(1, true)).toBe(100);
       });
 
-      it("難易度2の重要ミッションは200XP", () => {
+      it("難易度2の注目ミッションは200XP", () => {
         expect(calculateMissionXp(2, true)).toBe(200);
       });
 
-      it("難易度3の重要ミッションは400XP", () => {
+      it("難易度3の注目ミッションは400XP", () => {
         expect(calculateMissionXp(3, true)).toBe(400);
       });
 
-      it("難易度4の重要ミッションは800XP", () => {
+      it("難易度4の注目ミッションは800XP", () => {
         expect(calculateMissionXp(4, true)).toBe(800);
       });
 
-      it("難易度5の重要ミッションは1600XP", () => {
+      it("難易度5の注目ミッションは1600XP", () => {
         expect(calculateMissionXp(5, true)).toBe(1600);
       });
 
-      it("無効な難易度の重要ミッションはデフォルト50XPの2倍で100XP", () => {
+      it("無効な難易度の注目ミッションはデフォルト50XPの2倍で100XP", () => {
         expect(calculateMissionXp(0, true)).toBe(100);
       });
 
