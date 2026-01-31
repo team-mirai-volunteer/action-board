@@ -1,7 +1,7 @@
 import {
   getMissionAchievementCounts,
   getMissionCategoryView,
-  getTotalPostingCountByMission,
+  getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
@@ -28,17 +28,14 @@ export default async function MissionsByCategory({
   const data = await getMissionCategoryView();
 
   // ポスティングミッションの合計枚数を取得
-  const postingMissions = data.filter(
-    (m) => m.required_artifact_type === "POSTING",
-  );
-  const postingCountMap = new Map<string, number>();
-  await Promise.all(
-    postingMissions.map(async (m) => {
-      if (m.mission_id) {
-        const count = await getTotalPostingCountByMission(m.mission_id);
-        postingCountMap.set(m.mission_id, count);
-      }
-    }),
+  const missionsForPostingCount = data
+    .filter((m) => m.mission_id)
+    .map((m) => ({
+      id: m.mission_id as string,
+      required_artifact_type: m.required_artifact_type,
+    }));
+  const postingCountMap = await getPostingCountsForMissions(
+    missionsForPostingCount,
   );
 
   if (data.length === 0) {

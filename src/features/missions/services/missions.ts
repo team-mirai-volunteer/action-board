@@ -93,6 +93,7 @@ export async function getMissionAchievementCounts(): Promise<
  */
 export async function getTotalPostingCountByMission(
   missionId: string,
+  seasonId?: string,
 ): Promise<number> {
   const supabase = createClient();
 
@@ -100,6 +101,7 @@ export async function getTotalPostingCountByMission(
     "get_total_posting_count_by_mission",
     {
       target_mission_id: missionId,
+      p_season_id: seasonId,
     },
   );
 
@@ -113,6 +115,25 @@ export async function getTotalPostingCountByMission(
   }
 
   return typeof data === "number" ? data : 0;
+}
+
+/**
+ * ポスティングミッション一覧の合計枚数マップを取得
+ */
+export async function getPostingCountsForMissions(
+  missions: { id: string; required_artifact_type: string | null }[],
+): Promise<Map<string, number>> {
+  const postingMissions = missions.filter(
+    (m) => m.required_artifact_type === "POSTING",
+  );
+  const postingCountMap = new Map<string, number>();
+  await Promise.all(
+    postingMissions.map(async (m) => {
+      const count = await getTotalPostingCountByMission(m.id);
+      postingCountMap.set(m.id, count);
+    }),
+  );
+  return postingCountMap;
 }
 
 export interface GetMissionsFilterOptions {

@@ -234,7 +234,10 @@ describe("Mission", () => {
       />,
     );
 
-    expect(screen.getByText("みんなで30,000枚達成")).toBeInTheDocument();
+    const formattedCount = (30000).toLocaleString();
+    expect(
+      screen.getByText(`みんなで${formattedCount}枚達成`),
+    ).toBeInTheDocument();
   });
 
   it("イベント日付がnullの場合は日付表示なし", () => {

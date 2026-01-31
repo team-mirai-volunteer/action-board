@@ -9,6 +9,7 @@ RETURNS INTEGER
 LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
+SET search_path = public, pg_temp
 AS $$
 DECLARE
   total_count INTEGER := 0;

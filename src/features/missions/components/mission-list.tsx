@@ -1,7 +1,7 @@
 import {
   getMissionAchievementCounts,
   getMissionsWithFilter,
-  getTotalPostingCountByMission,
+  getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import Mission from "./mission-card";
@@ -44,16 +44,7 @@ export default async function Missions({
   });
 
   // ポスティングミッションの合計枚数を取得
-  const postingMissions = missions.filter(
-    (m) => m.required_artifact_type === "POSTING",
-  );
-  const postingCountMap = new Map<string, number>();
-  await Promise.all(
-    postingMissions.map(async (m) => {
-      const count = await getTotalPostingCountByMission(m.id);
-      postingCountMap.set(m.id, count);
-    }),
-  );
+  const postingCountMap = await getPostingCountsForMissions(missions);
 
   return (
     <div className="flex flex-col gap-6 px-4 md:px-0">

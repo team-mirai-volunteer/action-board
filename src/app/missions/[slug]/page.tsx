@@ -17,7 +17,7 @@ import {
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import {
   getMissionAchievementCounts,
-  getTotalPostingCountByMission,
+  getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
@@ -196,22 +196,10 @@ export default async function MissionPage({ params, searchParams }: Props) {
 
   // ポスティングミッションの合計枚数を取得
   const allMissions = allCategoryMissions.flatMap((c) => c.missions);
-  const postingMissionsInCategories = allMissions.filter(
-    (m) => m.required_artifact_type === "POSTING",
-  );
-  const postingCountMap = new Map<string, number>();
-  if (isPostingMission) {
-    const count = await getTotalPostingCountByMission(mission.id);
-    postingCountMap.set(mission.id, count);
-  }
-  await Promise.all(
-    postingMissionsInCategories.map(async (m) => {
-      if (!postingCountMap.has(m.id)) {
-        const count = await getTotalPostingCountByMission(m.id);
-        postingCountMap.set(m.id, count);
-      }
-    }),
-  );
+  const postingCountMap = await getPostingCountsForMissions([
+    mission,
+    ...allMissions,
+  ]);
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
