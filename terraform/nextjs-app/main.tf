@@ -30,6 +30,11 @@ resource "google_secret_manager_secret_iam_member" "google_client_secret_access"
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
+resource "google_secret_manager_secret_iam_member" "youtube_api_key_access" {
+  secret_id = google_secret_manager_secret.youtube_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
 
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
@@ -124,6 +129,16 @@ resource "google_cloud_run_v2_service" "default" {
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.google_client_secret.id
+            version = "latest"
+          }
+        }
+      }
+
+      env {
+        name = "YOUTUBE_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.youtube_api_key.id
             version = "latest"
           }
         }
