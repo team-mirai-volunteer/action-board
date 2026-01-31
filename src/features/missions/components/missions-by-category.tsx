@@ -1,7 +1,9 @@
 import {
   getMissionAchievementCounts,
   getMissionCategoryView,
+  getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
+import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
@@ -25,6 +27,17 @@ export default async function MissionsByCategory({
 
   // View からミッションデータ取得
   const data = await getMissionCategoryView();
+
+  // ポスティングミッションの合計枚数を取得
+  const missionsForPostingCount = data
+    .filter((m) => m.mission_id)
+    .map((m) => ({
+      id: m.mission_id as string,
+      required_artifact_type: m.required_artifact_type,
+    }));
+  const postingCountMap = await getPostingCountsForMissions(
+    missionsForPostingCount,
+  );
 
   if (data.length === 0) {
     return (
@@ -67,7 +80,11 @@ export default async function MissionsByCategory({
                 <div key={mission.id} className="shrink-0 w-[300px]">
                   <Mission
                     mission={mission}
-                    achievementsCount={achievementCountMap.get(mission.id) ?? 0}
+                    achievementsCount={getMissionDisplayCount(
+                      mission.id,
+                      achievementCountMap,
+                      postingCountMap,
+                    )}
                     userAchievementCount={
                       userAchievementCountMap.get(mission.id) ?? 0
                     }

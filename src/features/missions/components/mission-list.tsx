@@ -1,7 +1,9 @@
 import {
   getMissionAchievementCounts,
   getMissionsWithFilter,
+  getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
+import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import Mission from "./mission-card";
 
@@ -42,6 +44,9 @@ export default async function Missions({
     maxSize,
   });
 
+  // ポスティングミッションの合計枚数を取得
+  const postingCountMap = await getPostingCountsForMissions(missions);
+
   return (
     <div className="flex flex-col gap-6 px-4 md:px-0">
       <div className="text-center">
@@ -57,7 +62,11 @@ export default async function Missions({
             <Mission
               key={mission.id}
               mission={mission}
-              achievementsCount={achievementCountMap.get(mission.id) ?? 0}
+              achievementsCount={getMissionDisplayCount(
+                mission.id,
+                achievementCountMap,
+                postingCountMap,
+              )}
               userAchievementCount={
                 userAchievementCountMap.get(mission.id) ?? 0
               }

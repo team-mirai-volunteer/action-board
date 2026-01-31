@@ -20,7 +20,10 @@ import {
   isUUID,
 } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
-import { getMissionAchievementCounts } from "@/features/missions/services/missions";
+import {
+  getMissionAchievementCounts,
+  getPostingCountsForMissions,
+} from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
@@ -191,6 +194,13 @@ export default async function MissionPage({ params, searchParams }: Props) {
   // 全体の達成数取得
   const achievementCountMap = await getMissionAchievementCounts();
 
+  // ポスティングミッションの合計枚数を取得
+  const allMissions = allCategoryMissions.flatMap((c) => c.missions);
+  const postingCountMap = await getPostingCountsForMissions([
+    mission,
+    ...allMissions,
+  ]);
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
@@ -271,6 +281,7 @@ export default async function MissionPage({ params, searchParams }: Props) {
               categoryTitle={categoryData.categoryTitle}
               userAchievementCountMap={userAchievementCountMap}
               achievementCountMap={achievementCountMap}
+              postingCountMap={postingCountMap}
             />
           ))}
         </div>
