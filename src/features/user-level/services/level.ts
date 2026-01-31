@@ -1,5 +1,3 @@
-import "server-only";
-
 import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";

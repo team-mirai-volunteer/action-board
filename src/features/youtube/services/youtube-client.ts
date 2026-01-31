@@ -423,6 +423,113 @@ export async function fetchUserLikedVideos(
 }
 
 /**
+ * コメントスレッドの型定義
+ */
+export interface CommentThread {
+  id: string;
+  snippet: {
+    videoId: string;
+    topLevelComment: {
+      id: string;
+      snippet: {
+        videoId: string;
+        textDisplay: string;
+        textOriginal: string;
+        authorDisplayName: string;
+        authorChannelId: { value: string };
+        publishedAt: string;
+      };
+    };
+  };
+}
+
+/**
+ * 動画のコメント一覧を取得する（API Key使用）
+ * @param videoId YouTube動画ID
+ * @param maxResults 取得する最大件数（デフォルト100、最大500）
+ * @param publishedAfter この日時以降のコメントのみ取得（差分同期用）
+ */
+export async function fetchVideoComments(
+  videoId: string,
+  maxResults = 100,
+  publishedAfter?: Date,
+): Promise<CommentThread[]> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.error("YOUTUBE_API_KEY is not configured");
+    return [];
+  }
+
+  const comments: CommentThread[] = [];
+  let pageToken: string | undefined;
+
+  while (comments.length < maxResults) {
+    const url = new URL(`${YOUTUBE_API_BASE}/commentThreads`);
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("videoId", videoId);
+    url.searchParams.set(
+      "maxResults",
+      String(Math.min(100, maxResults - comments.length)),
+    );
+    url.searchParams.set("order", "time"); // 最新順
+    url.searchParams.set("textFormat", "plainText");
+    url.searchParams.set("key", apiKey);
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      // コメントが無効化されている動画などはエラーになるので、空配列を返す
+      if (response.status === 403) {
+        console.log(`Comments disabled for video ${videoId}`);
+        return [];
+      }
+      console.error(
+        `YouTube comments fetch failed for video ${videoId}:`,
+        errorBody,
+      );
+      throw new YouTubeAPIError("コメントの取得に失敗しました");
+    }
+
+    const data = await response.json();
+    const items = data.items as CommentThread[] | undefined;
+
+    if (!items || items.length === 0) {
+      break;
+    }
+
+    // 差分同期: publishedAfter以前のコメントが出てきたら終了
+    let reachedOldComments = false;
+    for (const item of items) {
+      const commentDate = new Date(
+        item.snippet.topLevelComment.snippet.publishedAt,
+      );
+      if (publishedAfter && commentDate <= publishedAfter) {
+        reachedOldComments = true;
+        break;
+      }
+      comments.push(item);
+    }
+
+    if (reachedOldComments) {
+      break;
+    }
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) {
+      break;
+    }
+  }
+
+  return comments;
+}
+
+/**
  * API Keyを使って動画の詳細情報を取得する（公開動画のみ）
  * ユーザー認証不要で公開情報を取得できる
  * @param videoIds 動画IDの配列
@@ -485,4 +592,5 @@ export const youtubeClient = {
   fetchVideoDetails,
   fetchVideoDetailsByApiKey,
   fetchUserLikedVideos,
+  fetchVideoComments,
 };
