@@ -3,6 +3,7 @@ import {
   getMissionCategoryView,
   getPostingCountsForMissions,
 } from "@/features/missions/services/missions";
+import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
@@ -79,11 +80,11 @@ export default async function MissionsByCategory({
                 <div key={mission.id} className="shrink-0 w-[300px]">
                   <Mission
                     mission={mission}
-                    achievementsCount={
-                      postingCountMap.get(mission.id) ??
-                      achievementCountMap.get(mission.id) ??
-                      0
-                    }
+                    achievementsCount={getMissionDisplayCount(
+                      mission.id,
+                      achievementCountMap,
+                      postingCountMap,
+                    )}
                     userAchievementCount={
                       userAchievementCountMap.get(mission.id) ?? 0
                     }

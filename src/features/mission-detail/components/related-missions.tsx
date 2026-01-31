@@ -1,5 +1,6 @@
 import { HorizontalScrollContainer } from "@/features/missions/components/horizontal-scroll-container";
 import Mission from "@/features/missions/components/mission-card";
+import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import type { MissionForComponent } from "@/features/missions/utils/group-missions-by-category";
 
 interface RelatedMissionsProps {
@@ -34,11 +35,11 @@ export async function RelatedMissions({
             <div key={mission.id} className="shrink-0 w-[300px]">
               <Mission
                 mission={mission}
-                achievementsCount={
-                  postingCountMap?.get(mission.id) ??
-                  achievementCountMap.get(mission.id) ??
-                  0
-                }
+                achievementsCount={getMissionDisplayCount(
+                  mission.id,
+                  achievementCountMap,
+                  postingCountMap,
+                )}
                 userAchievementCount={
                   userAchievementCountMap.get(mission.id) ?? 0
                 }
