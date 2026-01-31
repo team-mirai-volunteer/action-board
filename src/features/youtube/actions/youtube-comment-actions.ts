@@ -472,7 +472,8 @@ export async function getRecordedCommentsAction(): Promise<{
       `,
       )
       .eq("user_id", user.id)
-      .order("detected_at", { ascending: false });
+      .order("detected_at", { ascending: false })
+      .limit(100);
 
     if (commentsError) {
       console.error("Failed to fetch user comments:", commentsError);

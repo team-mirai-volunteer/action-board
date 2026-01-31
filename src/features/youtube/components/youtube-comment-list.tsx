@@ -77,6 +77,7 @@ export function YouTubeCommentList({
     <div className="space-y-3">
       <p className="text-sm text-gray-600">
         {comments.length}件のコメントを記録しました
+        {comments.length >= 100 && "（最新100件を表示）"}
       </p>
       <div className="flex flex-col divide-y max-h-[70vh] overflow-y-auto">
         {comments.map((comment) => (
