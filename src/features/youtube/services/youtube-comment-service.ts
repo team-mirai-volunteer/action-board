@@ -8,6 +8,7 @@ export {
   type CachedComment,
   cacheVideoComments,
   createYouTubeCommentRecord,
+  extractCommentIdFromUrl,
   findUserCommentsInCache,
   generateCommentUrl,
   getConnectedUserChannelIds,
@@ -16,6 +17,9 @@ export {
   getUserRecordedComments,
   syncVideoComments,
 } from "./sync-comments-core";
+
+// extractVideoIdFromUrl は youtube-like-service.ts から import すること
+export { extractVideoIdFromUrl } from "./youtube-like-service";
 
 import { createClient } from "@/lib/supabase/client";
 

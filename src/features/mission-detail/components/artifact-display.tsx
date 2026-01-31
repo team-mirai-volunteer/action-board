@@ -155,6 +155,7 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
     case "POSTING":
       return <PostingArtifact artifact={artifact} />;
     case "YOUTUBE":
+    case "YOUTUBE_COMMENT":
       return <YouTubeArtifact artifact={artifact} />;
     default:
       return null;

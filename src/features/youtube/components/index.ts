@@ -1,3 +1,4 @@
+export { YouTubeCommentList } from "./youtube-comment-list";
 export { YouTubeIcon } from "./youtube-icon";
 export { YouTubeLikedList } from "./youtube-liked-list";
 export { YouTubeLinkButton } from "./youtube-link-button";

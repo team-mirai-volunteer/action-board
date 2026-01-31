@@ -104,6 +104,9 @@ importers:
       framer-motion:
         specifier: ^12.22.0
         version: 12.28.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      googleapis:
+        specifier: ^144.0.0
+        version: 144.0.0
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.1
@@ -276,25 +279,6 @@ importers:
         version: 4.21.0
       typescript:
         specifier: ^5.7.2
-        version: 5.9.3
-
-  packages/youtube_data:
-    dependencies:
-      '@supabase/supabase-js':
-        specifier: 2.49.8
-        version: 2.49.8
-      googleapis:
-        specifier: ^144.0.0
-        version: 144.0.0
-    devDependencies:
-      dotenv:
-        specifier: ^16.5.0
-        version: 16.6.1
-      tsx:
-        specifier: ^4.7.0
-        version: 4.21.0
-      typescript:
-        specifier: ^5.8.3
         version: 5.9.3
 
 packages:

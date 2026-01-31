@@ -117,9 +117,8 @@ export async function getYouTubeConnection(
 
 /**
  * トークンが期限切れかどうかをチェックする
- * 共通ロジックは packages/youtube_data から再エクスポート
  */
-export { isTokenExpired } from "@action-board/youtube-data/google-auth";
+export { isTokenExpired } from "./google-auth";
 
 /**
  * チームみらい動画の検証結果

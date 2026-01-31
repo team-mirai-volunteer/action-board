@@ -252,6 +252,7 @@ export interface RecordedLike {
   channelTitle?: string;
   thumbnailUrl?: string;
   videoUrl: string;
+  publishedAt?: string;
   recordedAt: string;
 }
 
@@ -289,7 +290,8 @@ export async function getRecordedLikesAction(): Promise<{
           title,
           channel_title,
           video_url,
-          thumbnail_url
+          thumbnail_url,
+          published_at
         )
       `,
       )
@@ -314,6 +316,7 @@ export async function getRecordedLikesAction(): Promise<{
         videoUrl:
           like.youtube_videos?.video_url ||
           `https://www.youtube.com/watch?v=${like.video_id}`,
+        publishedAt: like.youtube_videos?.published_at || undefined,
         recordedAt:
           like.detected_at || like.created_at || new Date().toISOString(),
       }));

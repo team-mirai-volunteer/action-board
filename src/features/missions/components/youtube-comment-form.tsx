@@ -14,29 +14,32 @@ function ManualInputSection({ disabled }: { disabled: boolean }) {
   return (
     <div className="space-y-2">
       <Label htmlFor="artifactLink">
-        YouTube動画URL <span className="text-red-500">*</span>
+        YouTubeコメントURL <span className="text-red-500">*</span>
       </Label>
       <Input
         type="url"
         name="artifactLink"
         id="artifactLink"
-        placeholder="https://www.youtube.com/watch?v=..."
+        placeholder="https://www.youtube.com/watch?v=...&lc=..."
         disabled={disabled}
         required
       />
       <p className="text-xs text-gray-500">
-        いいねしたYouTube動画のURLを入力してください
+        コメントしたYouTube動画のURLを入力してください（コメントIDを含むURLが望ましい）
       </p>
     </div>
   );
 }
 
-type YouTubeFormProps = {
+type YouTubeCommentFormProps = {
   disabled: boolean;
   missionId: string;
 };
 
-export function YouTubeForm({ disabled, missionId }: YouTubeFormProps) {
+export function YouTubeCommentForm({
+  disabled,
+  missionId,
+}: YouTubeCommentFormProps) {
   const [linkStatus, setLinkStatus] = useState<YouTubeLinkStatus | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
 
@@ -74,19 +77,19 @@ export function YouTubeForm({ disabled, missionId }: YouTubeFormProps) {
               YouTube連携済み
             </p>
             <p className="text-xs mt-1">
-              チームみらい動画にいいねすると、定期的な同期処理で自動的に検出され、ミッション達成として記録されます。
+              チームみらい動画にコメントすると、定期的な同期処理で自動的に検出され、ミッション達成として記録されます。
             </p>
           </div>
         </div>
 
         <Link
-          href="/settings/youtube"
+          href="/settings/youtube?tab=comments"
           className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-3">
             <YouTubeIcon className="w-5 h-5 text-red-600" />
             <span className="text-sm font-medium text-gray-900">
-              いいねした動画を確認
+              コメントした動画を確認
             </span>
           </div>
           <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -106,10 +109,10 @@ export function YouTubeForm({ disabled, missionId }: YouTubeFormProps) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        YouTubeアカウントを連携すると、チームみらい動画へのいいねが自動で検出され、ミッション達成として記録されます。
+        YouTubeアカウントを連携すると、チームみらい動画へのコメントが自動で検出され、ミッション達成として記録されます。
       </p>
       <Link
-        href="/settings/youtube"
+        href="/settings/youtube?tab=comments"
         className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">

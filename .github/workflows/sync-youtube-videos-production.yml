@@ -35,10 +35,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Sync YouTube videos
-        run: pnpm --filter @action-board/youtube-data sync
+        run: pnpm youtube:sync-videos
 
       - name: Sync YouTube likes
         run: pnpm youtube:sync-likes
+
+      - name: Sync YouTube comments
+        run: pnpm youtube:sync-comments
 
       - name: Notify on failure
         if: failure()
