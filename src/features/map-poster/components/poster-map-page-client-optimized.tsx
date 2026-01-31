@@ -24,7 +24,6 @@ interface Props {
 
 export default function PosterMapPageClientOptimized({
   initialSummary,
-  initialTotals,
 }: Props) {
   // 区割り別の統計を使用
   const boardStats = useMemo(() => {

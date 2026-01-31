@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UserSeasonHeaderProps } from "@/features/user-season/types/season-types";
 
-export function UserSeasonHeader({ season, userId }: UserSeasonHeaderProps) {
+export function UserSeasonHeader({ season }: UserSeasonHeaderProps) {
   return (
     <Card className="w-full p-4 bg-emerald-50/80 border-emerald-200">
       <div className="flex items-center justify-between">

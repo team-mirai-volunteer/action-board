@@ -15,11 +15,7 @@ type MissionDetailsProps = {
   onMainLinkClick?: () => Promise<{ success: boolean; error?: string }>;
 };
 
-export function MissionDetails({
-  mission,
-  mainLink,
-  onMainLinkClick,
-}: MissionDetailsProps) {
+export function MissionDetails({ mission }: MissionDetailsProps) {
   return (
     <Card>
       <CardHeader>

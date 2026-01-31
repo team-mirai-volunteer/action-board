@@ -7,12 +7,7 @@ type Props = {
   url?: string;
 };
 
-export function ShareFacebookButton({
-  children,
-  missionSlug,
-  className,
-  url,
-}: Props) {
+export function ShareFacebookButton({ missionSlug, url }: Props) {
   // SNSシェア用のハンドラ関数
   const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = () => {

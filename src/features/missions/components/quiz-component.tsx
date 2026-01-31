@@ -59,13 +59,11 @@ interface QuizComponentProps {
 
 export default function QuizComponent({
   missionId,
-  isCompleted = false,
   preloadedQuestions,
   onQuizComplete,
   onSubmitAchievement,
   isSubmittingAchievement = false,
   buttonLabel,
-  onAchievementSuccess,
   category,
 }: QuizComponentProps) {
   // カテゴリーによる達成メッセージを生成する関数

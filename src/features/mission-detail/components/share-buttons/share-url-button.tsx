@@ -8,7 +8,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export function ShareUrlButton({ url, className, children }: Props) {
+export function ShareUrlButton({ url }: Props) {
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(url);

@@ -27,12 +27,7 @@ type GeolocationData = {
   altitude?: number;
 };
 
-export function ArtifactForm({
-  mission,
-  authUser,
-  disabled,
-  submittedArtifactImagePath,
-}: ArtifactFormProps) {
+export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
   const [_artifactImagePath, _setArtifactImagePath] = useState<
     string | undefined
   >(undefined);

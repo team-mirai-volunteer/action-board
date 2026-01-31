@@ -36,7 +36,7 @@ type YouTubeFormProps = {
   missionId: string;
 };
 
-export function YouTubeForm({ disabled, missionId }: YouTubeFormProps) {
+export function YouTubeForm({ disabled }: YouTubeFormProps) {
   const [linkStatus, setLinkStatus] = useState<YouTubeLinkStatus | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
 

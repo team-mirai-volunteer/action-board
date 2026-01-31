@@ -18,7 +18,6 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
   submissions,
   missionId,
   userId,
-  maxAchievementCount,
 }) => {
   const {
     isDialogOpen,

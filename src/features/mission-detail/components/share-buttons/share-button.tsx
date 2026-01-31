@@ -8,13 +8,7 @@ type Props = {
   url?: string;
 };
 
-export function ShareButton({
-  children,
-  message,
-  missionSlug,
-  className,
-  url,
-}: Props) {
+export function ShareButton({ message, missionSlug, url }: Props) {
   const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = async () => {
     if (navigator.share) {
