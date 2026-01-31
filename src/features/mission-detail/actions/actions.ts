@@ -202,12 +202,9 @@ const youtubeArtifactSchema = baseMissionFormSchema.extend({
   artifactLink: z
     .string()
     .nonempty({ message: "YouTube動画のURLが必要です" })
-    .regex(
-      /^https?:\/\/(www\.youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]+/,
-      {
-        message: "有効なYouTube動画のURLを入力してください",
-      },
-    ),
+    .regex(ARTIFACT_TYPES.YOUTUBE.validationRegex, {
+      message: "有効なYouTube動画のURLを入力してください",
+    }),
 });
 
 // 統合スキーマ

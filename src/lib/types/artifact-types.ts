@@ -61,7 +61,7 @@ export const ARTIFACT_TYPES = {
     prompt:
       "YouTubeでチームみらい動画に高評価をつけて、自動または手動で記録しましょう。",
     validationRegex:
-      /^https?:\/\/(www\.youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]+/,
+      /^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]+(?:[?&#].*)?$/,
   },
   NONE: {
     key: "NONE",
