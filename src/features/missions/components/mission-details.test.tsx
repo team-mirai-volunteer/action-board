@@ -1,5 +1,5 @@
-import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
+import type { Tables } from "@/lib/types/supabase";
 import { MissionDetails } from "./mission-details";
 
 jest.mock(
@@ -7,7 +7,9 @@ jest.mock(
   () => ({
     YouTubeSubscribeButton: function MockYouTubeSubscribeButton({
       channelId,
-    }: { channelId: string }) {
+    }: {
+      channelId: string;
+    }) {
       return (
         <div data-testid="youtube-button">YouTube Button: {channelId}</div>
       );

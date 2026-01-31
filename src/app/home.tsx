@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Hero from "@/components/top/hero";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
@@ -5,8 +6,8 @@ import MissionsByCategory from "@/features/missions/components/missions-by-categ
 import { hasFeaturedMissions } from "@/features/missions/services/missions";
 import RankingSection from "@/features/ranking/components/ranking-section";
 import Activities from "@/features/user-activity/components/activities";
-import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
+import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
 import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
 import {
@@ -15,7 +16,6 @@ import {
 } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { generateRootMetadata } from "@/lib/utils/metadata";
-import { redirect } from "next/navigation";
 
 // メタデータ生成を外部関数に委譲
 export const generateMetadata = generateRootMetadata;
@@ -26,7 +26,7 @@ export default async function Home({
   searchParams: Promise<{ ref?: string }>;
 }) {
   const params = await searchParams;
-  const referralCode = params.ref;
+  const _referralCode = params.ref;
 
   const user = await getUser();
 

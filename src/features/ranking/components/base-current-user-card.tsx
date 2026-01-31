@@ -1,8 +1,8 @@
+import { User } from "lucide-react";
+import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import type { PartyMembership } from "@/features/party-membership/types";
-import { User } from "lucide-react";
-import type React from "react";
 import {
   formatUserDisplayName,
   formatUserPrefecture,

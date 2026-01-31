@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import { getTikTokLinkStatusAction } from "@/features/tiktok/actions/tiktok-video-actions";
 import { getUser } from "@/features/user-profile/services/profile";
-import { redirect } from "next/navigation";
 import { TikTokSettingsContent } from "./tiktok-settings-content";
 
 export default async function TikTokSettingsPage({

@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import {
   Select,
   SelectContent,
@@ -8,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import type React from "react";
 
 type PrefectureSelectProps = {
   name: string;

@@ -3,8 +3,8 @@ import "server-only";
 import { createClient } from "@/lib/supabase/client";
 import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
 import {
-  type VideoStatsRecord,
   calculateDailyViewsIncrease,
+  type VideoStatsRecord,
 } from "@/lib/utils/stats-calculator";
 import type {
   OverallStatsHistoryItem,

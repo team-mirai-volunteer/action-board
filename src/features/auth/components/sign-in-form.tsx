@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 import { signInActionWithState } from "@/app/actions";
 import { FormMessage } from "@/components/common/form-message";
 import { SubmitButton } from "@/components/common/submit-button";
@@ -7,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithLine } from "@/features/auth/services/line-auth";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
 
 interface SignInFormProps {
   returnUrl?: string;
@@ -31,7 +31,7 @@ export default function SignInForm({ returnUrl }: SignInFormProps) {
     try {
       setIsLineLoading(true);
       await signInWithLine(returnUrl);
-    } catch (error) {
+    } catch (_error) {
       setIsLineLoading(false);
     }
   };

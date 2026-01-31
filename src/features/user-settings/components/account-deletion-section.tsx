@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DeleteAccountModal } from "@/features/user-settings/components/delete-account-modal";
-import { useState } from "react";
 
 export function AccountDeletionSection() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

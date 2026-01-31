@@ -13,7 +13,7 @@ export function ShareUrlButton({ url, className, children }: Props) {
     try {
       await navigator.clipboard.writeText(url);
       toast.success("URLをコピーしました！");
-    } catch (error) {
+    } catch (_error) {
       // フォールバック: 古いブラウザ対応
       const textArea = document.createElement("textarea");
       textArea.value = url;

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,14 +7,16 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "**/.next/**",
-      "**/node_modules/**",
-      "**/.pnpm-store/**",
-      "**/supabase/.temp/**",
-      "**/playwright-report/**",
-      "**/coverage/**",
-      "**/mobile_flutter/**"
+    "includes": [
+      "**",
+      "!**/.next",
+      "!**/node_modules",
+      "!**/.pnpm-store",
+      "!**/supabase/.temp",
+      "!**/playwright-report",
+      "!**/coverage",
+      "!**/mobile_flutter",
+      "!**/supabase/templates"
     ]
   },
   "formatter": {
@@ -22,21 +24,31 @@
     "indentStyle": "space",
     "indentWidth": 2
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedImports": "warn"
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn",
+        "noUnusedFunctionParameters": "warn",
+        "noInvalidUseBeforeDeclaration": "warn",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "warn"
+      },
+      "a11y": {
+        "useSemanticElements": "warn",
+        "noStaticElementInteractions": "warn"
+      },
+      "performance": {
+        "noImgElement": "warn"
       }
     }
   },
   "overrides": [
     {
-      "include": ["**/*.test.tsx", "**/*.test.ts"],
+      "includes": ["**/*.test.tsx", "**/*.test.ts"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -50,6 +62,11 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

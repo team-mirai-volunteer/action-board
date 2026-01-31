@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
-import { useState } from "react";
 
 type PosterFormProps = {
   disabled: boolean;

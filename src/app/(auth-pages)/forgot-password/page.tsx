@@ -1,5 +1,5 @@
-import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
 import Image from "next/image";
+import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
 
 export default async function ForgotPassword(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

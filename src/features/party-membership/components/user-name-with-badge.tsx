@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
 import type {
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils/styles";
 import {
-  PARTY_MEMBERSHIP_CTA_URL,
   getPartyPlanConfig,
+  PARTY_MEMBERSHIP_CTA_URL,
 } from "../constants/plans";
 import type { PartyMembership } from "../types";
 import { isPartyBadgeVisible } from "../utils";

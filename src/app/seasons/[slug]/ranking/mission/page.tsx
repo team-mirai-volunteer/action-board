@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { getMissionsForRanking } from "@/features/missions/services/missions";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
@@ -11,8 +13,6 @@ import {
 } from "@/features/ranking/services/get-missions-ranking";
 import { getUser } from "@/features/user-profile/services/profile";
 import { getSeasonBySlug } from "@/lib/services/seasons";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{

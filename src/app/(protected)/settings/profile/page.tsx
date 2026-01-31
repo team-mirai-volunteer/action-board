@@ -1,3 +1,7 @@
+import { ChevronRight } from "lucide-react";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Message } from "@/components/common/form-message";
 import { PartyBadgeVisibilityToggle } from "@/features/party-membership/components/party-badge-visibility-toggle";
 import { getPartyMembership } from "@/features/party-membership/services/memberships";
@@ -11,10 +15,6 @@ import { AccountDeletionSection } from "@/features/user-settings/components/acco
 import { LoginSection } from "@/features/user-settings/components/login-section";
 import ProfileForm from "@/features/user-settings/components/profile-form";
 import { YouTubeIcon } from "@/features/youtube/components";
-import { ChevronRight } from "lucide-react";
-import { headers } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 
 type ProfileSettingsPageSearchParams = {
   new: string;

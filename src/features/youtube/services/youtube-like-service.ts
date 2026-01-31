@@ -7,12 +7,12 @@ import { fetchVideoDetailsByApiKey } from "./youtube-client";
 
 // コアロジックを再エクスポート
 export {
-  type LikedVideo,
-  type SyncLikesForUserResult,
   checkTeamMiraiVideosBatch,
   createYouTubeLikeRecord,
   fetchUserLikedVideos,
   getUserRecordedLikes,
+  type LikedVideo,
+  type SyncLikesForUserResult,
   syncLikesForUser,
 } from "./sync-likes-core";
 

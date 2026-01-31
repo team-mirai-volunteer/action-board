@@ -1,6 +1,6 @@
-import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import GeomanMap from "./geoman-map";
 
 const originalError = console.error;
@@ -142,7 +142,7 @@ describe("GeomanMap", () => {
         const initializeMap = async () => {
           try {
             throw new Error("Failed to load Leaflet");
-          } catch (error) {
+          } catch (_error) {
             act(() => {
               setError("地図ライブラリの読み込みに失敗しました");
               setIsLoading(false);
@@ -214,7 +214,7 @@ describe("GeomanMap", () => {
           try {
             await Promise.resolve(); // Leaflet loads fine
             throw new Error("Failed to load Geoman");
-          } catch (error) {
+          } catch (_error) {
             act(() => {
               setError("地図編集ツールの読み込みに失敗しました");
               setIsLoading(false);

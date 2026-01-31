@@ -1,5 +1,11 @@
 "use client";
 
+import { Archive, ArrowLeft, Copy, HelpCircle, MapPin } from "lucide-react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,12 +31,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { Archive, ArrowLeft, Copy, HelpCircle, MapPin } from "lucide-react";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { statusConfig } from "../config/status-config";
 import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
 import {
@@ -38,7 +38,6 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
-  POSTER_MISSION_SLUG,
   checkBoardMissionCompleted,
   getArchivedPosterBoardsMinimal,
   getCurrentUserId,
@@ -46,6 +45,7 @@ import {
   getPosterBoardsMinimal,
   getPosterBoardsMinimalByDistrict,
   getPosterMissionId,
+  POSTER_MISSION_SLUG,
   updateBoardStatus,
 } from "../services/poster-boards";
 import type {
@@ -122,7 +122,7 @@ export default function DetailedPosterMapClient({
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [stats, setStats] = useState(initialStats);
-  const [filters, setFilters] = useState({
+  const [_filters, setFilters] = useState({
     selectedStatuses: [
       "not_yet",
       "not_yet_dangerous",
@@ -140,7 +140,7 @@ export default function DetailedPosterMapClient({
   >(() => {
     return new Set(userEditedBoardIds || []);
   });
-  const [putUpPosterMissionId, setPutUpPosterMissionId] = useState<
+  const [_putUpPosterMissionId, setPutUpPosterMissionId] = useState<
     string | null
   >(null);
 
@@ -151,11 +151,6 @@ export default function DetailedPosterMapClient({
       setPutUpPosterMissionId(missionId);
     };
     fetchMissionId();
-  }, []);
-
-  useEffect(() => {
-    // 初回ロード時に全データをロード
-    loadBoards();
   }, []);
 
   // ログイン後に選択した掲示板を復元
@@ -190,7 +185,7 @@ export default function DetailedPosterMapClient({
         try {
           const data = await getBoardStatusHistoryAction(selectedBoard.id);
           setHistory(data as unknown as StatusHistory[]);
-        } catch (error) {
+        } catch (_error) {
           toast.error("履歴の読み込みに失敗しました");
         } finally {
           setLoadingHistory(false);
@@ -205,12 +200,12 @@ export default function DetailedPosterMapClient({
     try {
       await navigator.clipboard.writeText(text);
       toast.success(`${label}をコピーしました`);
-    } catch (error) {
+    } catch (_error) {
       toast.error("コピーに失敗しました");
     }
   };
 
-  const loadBoards = async () => {
+  const loadBoards = useCallback(async () => {
     try {
       // 最小限のデータのみ取得
       let data: Pick<
@@ -258,12 +253,17 @@ export default function DetailedPosterMapClient({
           setUserEditedBoardIdsSet(new Set(updatedUserEditedBoardIds || []));
         }
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("ポスター掲示板の読み込みに失敗しました");
     } finally {
       setLoading(false);
     }
-  };
+  }, [prefecture, isArchive, archiveElectionTerm, isDistrict, userId]);
+
+  useEffect(() => {
+    // 初回ロード時に全データをロード
+    loadBoards();
+  }, []);
 
   const handleBoardSelect = async (board: PosterBoard) => {
     // アーカイブモードの場合はクリックを無視
@@ -360,7 +360,7 @@ export default function DetailedPosterMapClient({
       await loadBoards(); // Reload to get updated data
       // Clear history so it's fresh next time
       setHistory([]);
-    } catch (error) {
+    } catch (_error) {
       toast.error("ステータスの更新に失敗しました");
     } finally {
       setIsUpdating(false);

@@ -1,8 +1,8 @@
 "use client";
 
-import { handleYouTubeLinkAction } from "@/features/youtube/actions/youtube-auth-actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { handleYouTubeLinkAction } from "@/features/youtube/actions/youtube-auth-actions";
 
 function YouTubeCallbackContent() {
   const router = useRouter();

@@ -1,3 +1,8 @@
+import { LogIn, Shield } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,11 +35,6 @@ import {
   defaultUrl,
   notoSansJP,
 } from "@/lib/utils/metadata";
-import { LogIn, Shield } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

@@ -1,9 +1,9 @@
 "use client";
 
-import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import type { Map as LeafletMap } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 
 interface GeomanMapProps {
   onMapReady?: (map: LeafletMap) => void;

@@ -1,8 +1,9 @@
 /**
  * @jest-environment node
  */
-import { getUserActivityTimeline } from "@/features/user-activity/services/timeline";
+
 import { NextRequest } from "next/server";
+import { getUserActivityTimeline } from "@/features/user-activity/services/timeline";
 import { GET } from "./route";
 
 jest.mock("@/features/user-activity/services/timeline");

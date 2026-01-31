@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { unlinkTikTokAccountAction } from "../actions/tiktok-auth-actions";
 import { linkTikTokAccount } from "../services/tiktok-auth";
 import { TikTokIcon } from "./tiktok-icon";

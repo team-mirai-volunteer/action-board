@@ -1,6 +1,6 @@
+import { describe, expect, it } from "@jest/globals";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import type { Database } from "@/lib/types/supabase";
-import { describe, expect, it } from "@jest/globals";
 
 type MissionCategoryView =
   Database["public"]["Views"]["mission_category_view"]["Row"];

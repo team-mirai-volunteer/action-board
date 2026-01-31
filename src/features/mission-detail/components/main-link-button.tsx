@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import type { Tables } from "@/lib/types/supabase";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import type { Tables } from "@/lib/types/supabase";
 
 interface MainLinkButtonProps {
   mission: Tables<"missions">;

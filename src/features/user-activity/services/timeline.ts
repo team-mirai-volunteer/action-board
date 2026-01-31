@@ -1,7 +1,9 @@
 import "server-only";
 
-import { getPartyMembershipMap } from "@/features/party-membership/services/memberships";
-import { getPartyMembership } from "@/features/party-membership/services/memberships";
+import {
+  getPartyMembership,
+  getPartyMembershipMap,
+} from "@/features/party-membership/services/memberships";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import { createClient } from "@/lib/supabase/client";
 

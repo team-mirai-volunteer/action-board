@@ -9,6 +9,7 @@ import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 jest.mock("@/lib/utils/date-utils", () => ({
   getJSTMidnightToday: jest.fn(() => new Date("2024-01-01T00:00:00Z")),
 }));
+
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import {
   getPrefecturesRanking,

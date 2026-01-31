@@ -1,13 +1,13 @@
 "use client";
 
+import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getYouTubeLinkStatusAction } from "@/features/youtube/actions/youtube-video-actions";
 import { YouTubeIcon } from "@/features/youtube/components";
 import type { YouTubeLinkStatus } from "@/features/youtube/types";
-import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 
 // 手動入力セクション
 function ManualInputSection({ disabled }: { disabled: boolean }) {

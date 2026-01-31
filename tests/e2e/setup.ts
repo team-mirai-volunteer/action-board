@@ -47,7 +47,7 @@ setup("テスト用アカウントのセットアップ", async ({ page }) => {
       timeout: 5000,
     });
     console.log("テスト用アカウントを作成しました");
-  } catch (e) {
+  } catch (_e) {
     console.log("テスト用アカウントはすでに存在しているかもしれません");
   }
 });

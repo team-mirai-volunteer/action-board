@@ -1,12 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   TikTokLinkButton,
   TikTokSyncButton,
   TikTokVideoList,
 } from "@/features/tiktok/components";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 interface TikTokSettingsContentProps {
   isLinked: boolean;

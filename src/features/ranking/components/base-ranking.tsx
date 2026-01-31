@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
+import { Card } from "@/components/ui/card";
 
 interface BaseRankingProps {
   title: string;

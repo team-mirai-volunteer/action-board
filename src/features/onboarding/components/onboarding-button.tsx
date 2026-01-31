@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { OnboardingModal } from "./onboarding-modal";
 
 interface OnboardingButtonProps {

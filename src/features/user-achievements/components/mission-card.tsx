@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
 interface MissionAchievementCardProps {
   missionSlug: string;

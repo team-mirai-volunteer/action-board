@@ -3,8 +3,8 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import {
-  type YouTubeSyncResult,
   syncUserYouTubeVideos,
+  type YouTubeSyncResult,
 } from "../services/youtube-video-service";
 import type { YouTubeLinkStatus, YouTubeVideoWithStats } from "../types";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";

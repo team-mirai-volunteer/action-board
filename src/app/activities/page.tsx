@@ -1,10 +1,10 @@
+import type { Metadata } from "next";
 import { Card } from "@/components/ui/card";
 import GlobalActivities from "@/features/user-activity/components/global-activities";
 import {
   getGlobalActivityTimeline,
   getGlobalActivityTimelineCount,
 } from "@/features/user-activity/services/timeline";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "活動タイムライン | アクションボード",

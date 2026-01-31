@@ -19,7 +19,7 @@ jest.mock("@/features/missions/components/mission-card", () => {
   };
 });
 
-const mockMissions = [
+const _mockMissions = [
   {
     id: "mission-1",
     title: "ミッション1",
@@ -36,13 +36,13 @@ const mockMissions = [
   },
 ];
 
-const mockAchievements = [
+const _mockAchievements = [
   { mission_id: "mission-1" },
   { mission_id: "mission-1" },
   { mission_id: "mission-2" },
 ];
 
-const mockAchievementCounts = [
+const _mockAchievementCounts = [
   { mission_id: "mission-1", achievement_count: 10 },
   { mission_id: "mission-2", achievement_count: 5 },
 ];

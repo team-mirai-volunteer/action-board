@@ -1,9 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/client";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
-import { cookies } from "next/headers";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type PrefectureName = NonNullable<

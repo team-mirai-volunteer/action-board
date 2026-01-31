@@ -1,10 +1,10 @@
+import { describe, expect, it } from "@jest/globals";
 import {
   calculateProgressRate,
   getCompletedCount,
   getRegisteredCount,
 } from "@/features/map-poster/utils/poster-progress";
 import type { Database } from "@/lib/types/supabase";
-import { describe, expect, it } from "@jest/globals";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];

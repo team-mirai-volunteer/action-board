@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
@@ -18,7 +19,6 @@ import type { Tables } from "@/lib/types/supabase";
  * - ユーザー詳細ページの活動タイムライン
  */
 import { dateTimeFormatter } from "@/lib/utils/date-formatters";
-import Link from "next/link";
 
 interface ActivityTimelineProps {
   /** 表示する活動データの配列 */

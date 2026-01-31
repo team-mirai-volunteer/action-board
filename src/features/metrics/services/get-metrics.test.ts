@@ -11,6 +11,7 @@ import type {
   SupporterData,
 } from "@/features/metrics/types/metrics-types";
 import { createClient } from "@/lib/supabase/client";
+
 jest.mock("@/lib/supabase/client");
 jest.mock("@/features/metrics/services/get-metrics", () =>
   jest.requireActual("@/features/metrics/services/get-metrics"),
@@ -35,7 +36,7 @@ const setupMockSupabaseClient = (
     from: () => ({
       select: () => ({
         count: dataset.length,
-        gte: (columnName: string, thresholdISO: string) => {
+        gte: (_columnName: string, thresholdISO: string) => {
           capturedGteIsoRef.value = thresholdISO;
           const count = dataset.filter(
             (data) => new Date(data.created_at) >= new Date(thresholdISO),

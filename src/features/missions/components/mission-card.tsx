@@ -1,5 +1,9 @@
 "use client";
 
+import clsx from "clsx";
+import { motion } from "framer-motion";
+import { UsersRound } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
@@ -9,10 +13,6 @@ import {
   POSTING_POINTS_PER_UNIT,
 } from "@/lib/constants/mission-config";
 import type { Tables } from "@/lib/types/supabase";
-import clsx from "clsx";
-import { motion } from "framer-motion";
-import { UsersRound } from "lucide-react";
-import Link from "next/link";
 import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { signOutAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,6 @@ import {
 import { OnboardingButton } from "@/features/onboarding/components/onboarding-button";
 import MyAvatar from "@/features/user-profile/components/my-avatar";
 import { getUser } from "@/features/user-profile/services/profile";
-import Link from "next/link";
 
 export default async function AuthButton() {
   const user = await getUser();

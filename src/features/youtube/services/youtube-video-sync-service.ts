@@ -3,8 +3,8 @@
  * #チームみらい ハッシュタグで動画を検索し、DBに同期する
  */
 
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import { google } from "googleapis";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 const HASHTAG = "#チームみらい";
 

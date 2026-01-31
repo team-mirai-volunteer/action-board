@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { markLevelUpSeenAction } from "@/features/user-level/actions/level-up";
 import { LevelUpDialog } from "@/features/user-level/components/level-up-dialog";
 import { ProgressBarAnimated } from "@/features/user-level/components/progress-bar-animated";
@@ -8,7 +9,6 @@ import {
   getXpToNextLevel,
   totalXp,
 } from "@/features/user-level/utils/level-calculator";
-import { useEffect, useState } from "react";
 
 interface XpProgressToastContentProps {
   initialXp: number;

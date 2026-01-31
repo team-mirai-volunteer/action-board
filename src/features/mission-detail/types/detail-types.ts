@@ -1,6 +1,6 @@
+import type { User } from "@supabase/supabase-js";
 import type { CategoryWithMissions } from "@/features/missions/utils/group-missions-by-category";
 import type { Tables } from "@/lib/types/supabase";
-import type { User } from "@supabase/supabase-js";
 
 export type MissionArtifact = Tables<"mission_artifacts">;
 

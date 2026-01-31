@@ -1,8 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
-import { headers } from "next/headers";
 import {
   exchangeCodeForToken,
   fetchUserInfo,

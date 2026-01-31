@@ -1,35 +1,32 @@
 "use server";
 
 import { randomBytes } from "node:crypto";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
 } from "@/features/user-level/services/level";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { z } from "zod";
-
 import {
   forgotPasswordFormSchema,
   signInAndLoginFormSchema,
   signUpAndLoginFormSchema,
 } from "@/lib/validation/auth";
-
 import {
   isEmailAlreadyUsedInReferral,
   isValidReferralCode,
 } from "@/lib/validation/referral";
-
-import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import { validateReturnUrl } from "@/lib/validation/url";
 
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
-  prevState: {
+  _prevState: {
     error?: string;
     success?: string;
     message?: string;
@@ -220,7 +217,7 @@ export const signUpActionWithState = async (
 
 // useActionState用のサインインアクション
 export const signInActionWithState = async (
-  prevState: {
+  _prevState: {
     error?: string;
     success?: string;
     message?: string;
@@ -397,7 +394,7 @@ export const signOutAction = async () => {
 
 // Email + Password専用サインアップアクション（Two-Step Signup用）
 export const emailSignUpActionWithState = async (
-  prevState: {
+  _prevState: {
     error?: string;
     success?: string;
     message?: string;

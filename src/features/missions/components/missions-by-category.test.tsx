@@ -19,7 +19,7 @@ jest.mock("./mission-card", () => {
   };
 });
 
-const mockMissionCategoryViewData = [
+const _mockMissionCategoryViewData = [
   {
     category_id: "category-1",
     category_title: "カテゴリ1",
