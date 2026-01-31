@@ -166,6 +166,7 @@ export async function getMyUploadedVideosAction(
           is_active: video.is_active,
           created_at: video.created_at,
           updated_at: video.updated_at,
+          comments_synced_at: video.comments_synced_at,
           latest_view_count: latestStats?.view_count ?? null,
           latest_like_count: latestStats?.like_count ?? null,
           latest_comment_count: latestStats?.comment_count ?? null,

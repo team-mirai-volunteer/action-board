@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { syncYouTubeLikesAction } from "../actions/youtube-like-actions";
+import { syncAllYouTubeDataAction } from "../actions/youtube-sync-actions";
 import { syncMyYouTubeVideosAction } from "../actions/youtube-video-actions";
 
 interface YouTubeSyncButtonProps {
@@ -24,8 +24,8 @@ export function YouTubeSyncButton({
       // 1. アップロード動画を同期
       const videoSyncResult = await syncMyYouTubeVideosAction();
 
-      // 2. いいね動画を同期＆ミッションクリア
-      const likeSyncResult = await syncYouTubeLikesAction();
+      // 2. いいね・コメントを同期＆ミッションクリア
+      const syncResult = await syncAllYouTubeDataAction();
 
       // 結果メッセージを構築
       const messages: string[] = [];
@@ -40,17 +40,25 @@ export function YouTubeSyncButton({
         toast.error(videoSyncResult.error || "アップロード動画同期に失敗");
       }
 
-      if (likeSyncResult.success) {
-        if (likeSyncResult.syncedVideoCount > 0) {
+      if (syncResult.success) {
+        // いいね
+        if (syncResult.likes.syncedVideoCount > 0) {
           messages.push(
-            `${likeSyncResult.syncedVideoCount}件のいいね動画を追加しました`,
+            `${syncResult.likes.syncedVideoCount}件のいいね動画を追加しました`,
           );
         }
-        if (likeSyncResult.achievedCount > 0) {
-          messages.push(`(+${likeSyncResult.totalXpGranted} XP)`);
+        // コメント（ユーザー自身のコメントでミッション達成した件数）
+        if (syncResult.comments.achievedCount > 0) {
+          messages.push(
+            `${syncResult.comments.achievedCount}件のコメントを検出しました`,
+          );
         }
-      } else if (likeSyncResult.error) {
-        toast.error(likeSyncResult.error);
+        // XP獲得
+        if (syncResult.totalXpGranted > 0) {
+          messages.push(`+${syncResult.totalXpGranted} XP`);
+        }
+      } else if (syncResult.error) {
+        toast.error(syncResult.error);
       }
 
       // 成功メッセージをtoastで表示
@@ -65,15 +73,16 @@ export function YouTubeSyncButton({
           ),
           duration: 8000,
         });
-      } else if (videoSyncResult.success && likeSyncResult.success) {
+      } else if (videoSyncResult.success && syncResult.success) {
         toast.info("新しい動画はありませんでした");
       }
 
       // 何かしら同期されたらコールバック
       const totalSynced =
         (videoSyncResult.syncedCount || 0) +
-        likeSyncResult.syncedVideoCount +
-        likeSyncResult.achievedCount;
+        syncResult.likes.syncedVideoCount +
+        syncResult.likes.achievedCount +
+        syncResult.comments.achievedCount;
       onSyncComplete?.(totalSynced);
     } catch (err) {
       toast.error(

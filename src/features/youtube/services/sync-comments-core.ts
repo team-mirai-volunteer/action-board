@@ -117,27 +117,60 @@ export async function cacheVideoComments(
  * 動画のコメントを取得してキャッシュに保存する
  * @param videoId YouTube動画ID
  * @param maxResults 取得する最大件数
+ * @returns success, newCommentsCount, skipped（1時間以内に同期済みの場合true）
  */
 export async function syncVideoComments(
   videoId: string,
   maxResults = 500,
-): Promise<{ success: boolean; newCommentsCount: number }> {
-  // 最終同期日時を取得
-  const lastSyncedAt = await getLastSyncedCommentDate(videoId);
+): Promise<{ success: boolean; newCommentsCount: number; skipped?: boolean }> {
+  const adminClient = await createAdminClient();
+
+  // 1時間のレート制限チェック
+  const { data: video } = await adminClient
+    .from("youtube_videos")
+    .select("comments_synced_at")
+    .eq("video_id", videoId)
+    .single();
+
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const lastSyncedAt = video?.comments_synced_at
+    ? new Date(video.comments_synced_at)
+    : null;
+
+  if (lastSyncedAt && lastSyncedAt > oneHourAgo) {
+    // 1時間以内に同期済み → スキップ
+    return { success: true, newCommentsCount: 0, skipped: true };
+  }
+
+  // 最終コメント日時を取得（差分同期用）
+  const lastCommentAt = await getLastSyncedCommentDate(videoId);
 
   // コメントを取得
   const comments = await fetchVideoComments(
     videoId,
     maxResults,
-    lastSyncedAt || undefined,
+    lastCommentAt || undefined,
   );
 
   if (comments.length === 0) {
+    // API呼び出しはしたので comments_synced_at を更新
+    await adminClient
+      .from("youtube_videos")
+      .update({ comments_synced_at: new Date().toISOString() })
+      .eq("video_id", videoId);
+
     return { success: true, newCommentsCount: 0 };
   }
 
   // キャッシュに保存
   const result = await cacheVideoComments(comments);
+
+  // comments_synced_at を更新
+  await adminClient
+    .from("youtube_videos")
+    .update({ comments_synced_at: new Date().toISOString() })
+    .eq("video_id", videoId);
+
   return { success: result.success, newCommentsCount: result.cachedCount };
 }
 
@@ -164,7 +197,7 @@ export async function getConnectedUserChannelIds(): Promise<
 /**
  * キャッシュ内のコメントから連携ユーザーのコメントを検索する
  * @param channelIdToUserId チャンネルID→ユーザーIDのマップ
- * @param videoIds 対象の動画ID（省略時は直近1ヶ月の動画）
+ * @param videoIds 対象の動画ID（省略時は全キャッシュ）
  */
 export async function findUserCommentsInCache(
   channelIdToUserId: Map<string, string>,
@@ -173,6 +206,7 @@ export async function findUserCommentsInCache(
   const adminClient = await createAdminClient();
 
   const channelIds = Array.from(channelIdToUserId.keys());
+
   if (channelIds.length === 0) {
     return new Map();
   }
@@ -276,4 +310,14 @@ export async function createYouTubeCommentRecord(
  */
 export function generateCommentUrl(videoId: string, commentId: string): string {
   return `https://www.youtube.com/watch?v=${videoId}&lc=${commentId}`;
+}
+
+/**
+ * YouTube URLからコメントIDを抽出する
+ * @param url YouTube URL (例: https://www.youtube.com/watch?v=xxx&lc=yyy)
+ */
+export function extractCommentIdFromUrl(url: string): string | null {
+  const pattern = /[?&]lc=([\w-]+)/;
+  const match = url.match(pattern);
+  return match?.[1] || null;
 }

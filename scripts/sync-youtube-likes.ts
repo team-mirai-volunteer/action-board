@@ -9,12 +9,12 @@
 
 import "dotenv/config";
 
-import { syncLikesForUser } from "@/features/youtube/services/sync-likes-core";
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import {
   isTokenExpired,
   refreshAccessToken,
-} from "@action-board/youtube-data/google-auth";
+} from "@/features/youtube/services/google-auth";
+import { syncLikesForUser } from "@/features/youtube/services/sync-likes-core";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 interface UserConnection {
   user_id: string;

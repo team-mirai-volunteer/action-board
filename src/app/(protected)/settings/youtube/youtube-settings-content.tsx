@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  YouTubeCommentList,
   YouTubeLikedList,
   YouTubeLinkButton,
   YouTubeSyncButton,
@@ -16,6 +17,7 @@ interface YouTubeSettingsContentProps {
   channelTitle?: string;
   thumbnailUrl?: string;
   linkedAt?: string;
+  defaultTab?: string;
 }
 
 export function YouTubeSettingsContent({
@@ -23,6 +25,7 @@ export function YouTubeSettingsContent({
   channelTitle,
   thumbnailUrl,
   linkedAt,
+  defaultTab = "likes",
 }: YouTubeSettingsContentProps) {
   const router = useRouter();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -64,14 +67,15 @@ export function YouTubeSettingsContent({
         )}
       </section>
 
-      {/* 動画/いいねタブセクション（連携済みの場合のみ表示） */}
+      {/* 動画/いいね/コメントタブセクション（連携済みの場合のみ表示） */}
       {isLinked && (
         <section className="bg-white rounded-lg border border-gray-200 p-6">
-          <Tabs defaultValue="likes" className="w-full">
+          <Tabs defaultValue={defaultTab} className="w-full">
             <div className="flex items-center justify-between mb-4">
               <TabsList>
-                <TabsTrigger value="likes">いいねした動画</TabsTrigger>
-                <TabsTrigger value="videos">アップロード動画</TabsTrigger>
+                <TabsTrigger value="likes">いいね</TabsTrigger>
+                <TabsTrigger value="comments">コメント</TabsTrigger>
+                <TabsTrigger value="videos">アップロード</TabsTrigger>
               </TabsList>
               <YouTubeSyncButton onSyncComplete={handleSyncComplete} />
             </div>
@@ -93,6 +97,25 @@ export function YouTubeSettingsContent({
                 </p>
               </div>
               <YouTubeLikedList refreshTrigger={refreshTrigger} />
+            </TabsContent>
+
+            <TabsContent value="comments" className="mt-4">
+              <div className="text-sm text-gray-600 mb-4">
+                あなたがコメントしたチームみらい動画の一覧です。
+                <br />
+                Youtubeで動画にコメントしてミッションをクリアしましょう！
+                <br />
+                <Link
+                  href="/missions/youtube-comment"
+                  className="text-primary hover:underline"
+                >
+                  ミッションページへ →
+                </Link>
+                <p className="text-xs text-gray-500 mt-2">
+                  ※ 同期時は直近1ヶ月の動画のコメントをチェックします
+                </p>
+              </div>
+              <YouTubeCommentList refreshTrigger={refreshTrigger} />
             </TabsContent>
 
             <TabsContent value="videos" className="mt-4">

@@ -1585,6 +1585,7 @@ export type Database = {
         Row: {
           channel_id: string;
           channel_title: string | null;
+          comments_synced_at: string | null;
           created_at: string | null;
           description: string | null;
           duration: string | null;
@@ -1600,6 +1601,7 @@ export type Database = {
         Insert: {
           channel_id: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
@@ -1615,6 +1617,7 @@ export type Database = {
         Update: {
           channel_id?: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
