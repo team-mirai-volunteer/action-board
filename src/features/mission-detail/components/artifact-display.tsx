@@ -122,6 +122,24 @@ const PostingArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   </div>
 );
 
+const YouTubeArtifact: React.FC<{ artifact: MissionArtifact }> = ({
+  artifact,
+}) => (
+  <div className="flex items-center gap-2">
+    <span className="text-lg">▶️</span>
+    {artifact.link_url && (
+      <Link
+        href={artifact.link_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 hover:underline text-sm"
+      >
+        {artifact.link_url}
+      </Link>
+    )}
+  </div>
+);
+
 const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
   switch (artifact.artifact_type) {
     case "IMAGE":
@@ -136,6 +154,8 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
       return <EmailArtifact artifact={artifact} />;
     case "POSTING":
       return <PostingArtifact artifact={artifact} />;
+    case "YOUTUBE":
+      return <YouTubeArtifact artifact={artifact} />;
     default:
       return null;
   }
