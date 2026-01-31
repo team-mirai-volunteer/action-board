@@ -1360,6 +1360,24 @@ export type Database = {
           },
         ];
       };
+      youtube_sync_status: {
+        Row: {
+          id: string;
+          last_synced_at: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       youtube_user_comments: {
         Row: {
           comment_id: string;
