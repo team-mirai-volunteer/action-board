@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { getSupabaseClient } from "../common/supabase.js";
 import {
   getLatestPublishedAfter,
   getOldestPublishedBefore,
@@ -6,7 +7,6 @@ import {
   toVideoRecord,
 } from "./converters.js";
 import { fetchExistingVideos, insertVideo, upsertStats } from "./db.js";
-import { getSupabaseClient } from "./supabase.js";
 import type { SyncResult } from "./types.js";
 import { getVideoDetails, searchVideosByHashtag } from "./youtube-client.js";
 

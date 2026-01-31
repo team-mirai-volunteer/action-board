@@ -14,7 +14,7 @@ context: fork
 agent: General-purpose
 ---
 
-現在の計画ファイルを読み込み、AskUserQuestionツールを使用して以下の点について詳細にインタビューしてください：
+現在の計画ファイルを読み込み、 AskUserQuestionTool を使用して以下の点について詳細にインタビューしてください：
 - プロダクト仕様
 - 技術的な詳細
 - UI/UX

@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./team-mirai": "./src/common/team-mirai.ts",
+    "./google-auth": "./src/common/google-auth.ts"
+  },
   "scripts": {
-    "sync": "tsx src/sync.ts",
-    "sync:dry": "tsx src/sync.ts --dry-run"
+    "sync": "tsx src/sync-videos/index.ts",
+    "sync:dry": "tsx src/sync-videos/index.ts --dry-run"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.49.8",
