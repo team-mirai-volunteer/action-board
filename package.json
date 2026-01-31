@@ -44,6 +44,8 @@
     "youtube:sync:backfill": "dotenv -e .env -- pnpm --filter @action-board/youtube-data sync --backfill",
     "youtube:sync-likes": "tsx scripts/sync-youtube-likes.ts",
     "youtube:sync-likes:dry": "tsx scripts/sync-youtube-likes.ts --dry-run",
+    "youtube:sync-comments": "tsx scripts/sync-youtube-comments.ts",
+    "youtube:sync-comments:dry": "tsx scripts/sync-youtube-comments.ts --dry-run",
     "tiktok:sync": "dotenv -e .env -- pnpm --filter @action-board/tiktok-data sync",
     "tiktok:sync:dry": "dotenv -e .env -- pnpm --filter @action-board/tiktok-data sync --dry-run"
   },
