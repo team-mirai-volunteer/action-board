@@ -159,5 +159,3 @@ availableSecrets:
       env: TIKTOK_CLIENT_SECRET
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-google-client-secret/versions/latest'
       env: GOOGLE_CLIENT_SECRET
-    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-youtube-api-key/versions/latest'
-      env: YOUTUBE_API_KEY
