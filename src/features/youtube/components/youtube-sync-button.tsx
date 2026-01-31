@@ -51,15 +51,6 @@ export function YouTubeSyncButton({
       // 結果メッセージを構築
       const messages: string[] = [];
 
-      // チームみらい動画の同期結果
-      if (teamMiraiResult.success && !teamMiraiResult.skipped) {
-        if (teamMiraiResult.newVideos && teamMiraiResult.newVideos > 0) {
-          messages.push(
-            `${teamMiraiResult.newVideos}件のチームみらい動画を追加しました`,
-          );
-        }
-      }
-
       if (videoSyncResult.success) {
         if (videoSyncResult.syncedCount && videoSyncResult.syncedCount > 0) {
           messages.push(
@@ -109,7 +100,6 @@ export function YouTubeSyncButton({
 
       // 何かしら同期されたらコールバック
       const totalSynced =
-        (teamMiraiResult.newVideos || 0) +
         (videoSyncResult.syncedCount || 0) +
         syncResult.likes.syncedVideoCount +
         syncResult.likes.achievedCount +
