@@ -284,33 +284,6 @@ WHERE s.slug = 'season2';
 --  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです'),
 --  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'LINK', 'https://example.com/anno-blog', '政治活動についての考察記事');
 
--- イベント
-INSERT INTO events (id, title, url, starts_at)
-VALUES
-  ('d8314e09-6647-44ca-93c1-08c51707982b', '地域清掃イベント', 'https://example.com/event1', '2025-05-01T10:00:00Z');
-
--- 日次アクション数
-INSERT INTO daily_action_summary (date, count) VALUES
-  ('2025-05-01', 10);
-
--- 日次ダッシュボード登録人数
-INSERT INTO daily_dashboard_registration_summary (date, count) VALUES
-  ('2025-05-01', 12);
-
--- 都道府県別登録人数
-INSERT INTO daily_dashboard_registration_by_prefecture_summary (date, prefecture, count) VALUES
-  ('2025-05-01', '東京都', 3),
-  ('2025-05-01', '大阪府', 2),
-  ('2025-05-01', '神奈川県', 1),
-  ('2025-05-01', '愛知県', 1),
-  ('2025-05-01', '福岡県', 1),
-  ('2025-05-01', '北海道', 1),
-  ('2025-05-01', '京都府', 1),
-  ('2025-05-01', '宮城県', 1),
-  ('2025-05-01', '広島県', 1),
-  ('2025-05-01', '沖縄県', 1);
-
-
 -- missionsテーブルのフューチャードフラグをON
 update public.missions
 set is_featured = true
@@ -318,6 +291,11 @@ where id in (
   'e2898d7e-903f-4f9a-8b1b-93f783c9afac',
   '4446205f-933f-4a86-83af-dbf6bb6cde92'
 );
+
+-- 動作確認用：1つのミッションをhiddenに設定
+update public.missions
+set is_hidden = true
+where id = 'e5348472-d054-4ef4-81af-772c6323b669'; -- Xのニックネームを入力しよう
 
 -- ポスティングイベントのサンプルデータ
 INSERT INTO posting_events (id, slug, title, description, is_active, created_at, updated_at)
@@ -385,30 +363,30 @@ VALUES
 
 -- ポスター掲示板の情報
 
-INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address, city) VALUES
+INSERT INTO poster_boards (name, lat, long, prefecture, status, number, address, city, election_term) VALUES
 -- Tokyo boards
-('東京駅前掲示板', 35.6812, 139.7671, '東京都', 'not_yet', '10-1', '千代田区丸の内1-9-1', '千代田区'),
-('新宿駅南口掲示板', 35.6896, 139.7006, '東京都', 'done', '10-2', '新宿区新宿3-38-1', '新宿区'),
-('渋谷駅ハチ公前掲示板', 35.6590, 139.7005, '東京都', 'done', '10-3', '渋谷区道玄坂2-1', '渋谷区'),
-('池袋駅東口掲示板', 35.7295, 139.7104, '東京都', 'not_yet', '10-4', '豊島区南池袋1-28-2', '豊島区'),
-('上野駅公園口掲示板', 35.7141, 139.7774, '東京都', 'reserved', '10-5', '台東区上野7-1-1', '台東区'),
+('東京駅前掲示板', 35.6812, 139.7671, '東京都', 'not_yet', '10-1', '千代田区丸の内1-9-1', '千代田区', 'shugin-2026'),
+('新宿駅南口掲示板', 35.6896, 139.7006, '東京都', 'done', '10-2', '新宿区新宿3-38-1', '新宿区', 'shugin-2026'),
+('渋谷駅ハチ公前掲示板', 35.6590, 139.7005, '東京都', 'done', '10-3', '渋谷区道玄坂2-1', '渋谷区', 'shugin-2026'),
+('池袋駅東口掲示板', 35.7295, 139.7104, '東京都', 'not_yet', '10-4', '豊島区南池袋1-28-2', '豊島区', 'shugin-2026'),
+('上野駅公園口掲示板', 35.7141, 139.7774, '東京都', 'reserved', '10-5', '台東区上野7-1-1', '台東区', 'shugin-2026'),
 
 -- Osaka boards
-('大阪駅前掲示板', 34.7024, 135.4959, '大阪府', 'not_yet', '27-1', '北区梅田3-1-1', '大阪市北区'),
-('なんば駅前掲示板', 34.6666, 135.5011, '大阪府', 'done', '27-2', '中央区難波5-1-60', '大阪市中央区'),
-('天王寺駅前掲示板', 34.6465, 135.5133, '大阪府', 'error_damaged', '27-3', '天王寺区悲田院町10-45', '大阪市天王寺区'),
+('大阪駅前掲示板', 34.7024, 135.4959, '大阪府', 'not_yet', '27-1', '北区梅田3-1-1', '大阪市北区', 'shugin-2026'),
+('なんば駅前掲示板', 34.6666, 135.5011, '大阪府', 'done', '27-2', '中央区難波5-1-60', '大阪市中央区', 'shugin-2026'),
+('天王寺駅前掲示板', 34.6465, 135.5133, '大阪府', 'error_damaged', '27-3', '天王寺区悲田院町10-45', '大阪市天王寺区', 'shugin-2026'),
 
 -- Kyoto boards (Note: Kyoto is not in the prefecture_enum, using nearby osaka)
-('京都駅前掲示板', 34.9859, 135.7585, '大阪府', 'done', '27-4', '下京区烏丸通塩小路下る', '京都市下京区'),
-('四条河原町掲示板', 35.0034, 135.7689, '大阪府', 'done', '27-5', '中京区河原町四条上る', '京都市中京区'),
+('京都駅前掲示板', 34.9859, 135.7585, '大阪府', 'done', '27-4', '下京区烏丸通塩小路下る', '京都市下京区', 'shugin-2026'),
+('四条河原町掲示板', 35.0034, 135.7689, '大阪府', 'done', '27-5', '中京区河原町四条上る', '京都市中京区', 'shugin-2026'),
 
 -- Hokkaido boards
-('札幌駅前掲示板', 43.0687, 141.3507, '北海道', 'not_yet', '01-1', '北区北七条西4丁目', '札幌市北区'),
-('すすきの交差点掲示板', 43.0556, 141.3529, '北海道', 'reserved', '01-2', '中央区南四条西4丁目', '札幌市中央区'),
+('札幌駅前掲示板', 43.0687, 141.3507, '北海道', 'not_yet', '01-1', '北区北七条西4丁目', '札幌市北区', 'shugin-2026'),
+('すすきの交差点掲示板', 43.0556, 141.3529, '北海道', 'reserved', '01-2', '中央区南四条西4丁目', '札幌市中央区', 'shugin-2026'),
 
 -- Fukuoka boards
-('博多駅前掲示板', 33.5903, 130.4208, '福岡県', 'done', '40-1', '博多区博多駅中央街1-1', '福岡市博多区'),
-('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区')
+('博多駅前掲示板', 33.5903, 130.4208, '福岡県', 'done', '40-1', '博多区博多駅中央街1-1', '福岡市博多区', 'shugin-2026'),
+('天神駅前掲示板', 33.5911, 130.3983, '福岡県', 'not_yet', '40-2', '中央区天神2丁目11-1', '福岡市中央区', 'shugin-2026')
 ON CONFLICT DO NOTHING;
 
 -- バッジデータ（各シーズンごとにバッジを付与）
@@ -486,3 +464,36 @@ FROM (VALUES
 ) AS b(user_id, badge_type, sub_type, rank, slug, achieved_at, is_notified)
 CROSS JOIN seasons s
 WHERE s.slug = b.slug;
+
+-- 直近90日分のachievementsテストデータ（アクション数ダッシュボード動作確認用）
+-- 日別に5〜20件程度のアクションを生成
+INSERT INTO achievements (id, mission_id, user_id, season_id, created_at)
+SELECT
+  gen_random_uuid() as id,
+  (ARRAY[
+    'e2898d7e-903f-4f9a-8b1b-93f783c9afac',
+    '2246205f-933f-4a86-83af-dbf6bb6cde90',
+    '3346205f-933f-4a86-83af-dbf6bb6cde91',
+    '4446205f-933f-4a86-83af-dbf6bb6cde92',
+    'e5348472-d054-4ef4-81af-772c6323b669'
+  ])[1 + (i % 5)]::uuid as mission_id,
+  (ARRAY[
+    '622d6984-2f8a-41df-9ac3-cd4dcceb8d19',
+    '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f',
+    'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b811-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b812-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b813-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b814-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b815-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b816-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b817-9dad-11d1-80b4-00c04fd430c8',
+    '6ba7b818-9dad-11d1-80b4-00c04fd430c8'
+  ])[1 + (i % 12)]::uuid as user_id,
+  (SELECT id FROM seasons WHERE slug = 'season2') as season_id,
+  -- 各日の9:00〜21:00の間のランダムな時刻
+  (CURRENT_DATE - ((i / 15) || ' days')::interval) +
+  ((9 + (i % 12)) || ' hours')::interval +
+  ((i * 7 % 60) || ' minutes')::interval as created_at
+FROM generate_series(1, 1350) as i;  -- 90日 × 15件/日 = 1350件

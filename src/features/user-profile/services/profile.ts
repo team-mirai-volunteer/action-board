@@ -1,4 +1,3 @@
-import "server-only";
 import { cache } from "react";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";

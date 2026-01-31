@@ -35,3 +35,13 @@ jobs:
           name: jest-report
           path: jest-report/
           retention-days: 30
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-action-board
+          fail_ci_if_error: false
+          verbose: true

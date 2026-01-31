@@ -39,11 +39,11 @@ export default async function Levels({
     >
       <div className="flex items-center">
         <UserAvatar userProfile={profile} size="lg" />
-        <div className="flex flex-col ml-6">
+        <div className="flex flex-col ml-6 min-w-0">
           <UserNameWithBadge
             name={profile.name}
             membership={partyMembership}
-            nameClassName="text-lg font-bold leading-none"
+            nameClassName="text-lg font-bold"
             badgeSize={22}
           />
           <div className="flex items-center mt-2">

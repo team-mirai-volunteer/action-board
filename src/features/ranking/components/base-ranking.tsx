@@ -25,7 +25,9 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
           {title}
         </h2>
         {children.length > 0 ? (
-          children
+          <div className="grid grid-cols-[auto_1fr_auto_auto] gap-x-3">
+            {children}
+          </div>
         ) : (
           <div className="text-gray-500 text-center">まだ達成者がいません</div>
         )}

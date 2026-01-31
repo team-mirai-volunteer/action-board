@@ -7,6 +7,9 @@ import type {
   PosterBoardTotal,
 } from "../types/poster-types";
 
+/** ポスター貼りミッションのslug */
+export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
+
 /**
  * 現在の認証ユーザーIDを取得
  */
@@ -27,7 +30,7 @@ export async function getPosterMissionId(): Promise<string | null> {
   const { data: mission, error } = await supabase
     .from("missions")
     .select("id")
-    .eq("slug", "put-up-poster-on-board")
+    .eq("slug", POSTER_MISSION_SLUG)
     .single();
 
   if (error) {
@@ -93,6 +96,8 @@ export async function getPosterBoardsMinimalByDistrict(district: string) {
       .from("poster_boards")
       .select("id,lat,long,status,name,address,city,number")
       .eq("district", district)
+      .not("lat", "is", null) // 座標なしを除外
+      .not("long", "is", null) // 座標なしを除外
       .eq("archived", false)
       .range(rangeStart, rangeStart + pageSize - 1)
       .order("id", { ascending: true }); // 一貫した順序を保証
@@ -397,6 +402,8 @@ export async function getDistrictsWithBoards(): Promise<string[]> {
       .from("poster_boards")
       .select("district")
       .not("district", "is", null)
+      .not("lat", "is", null) // 座標なしを除外
+      .not("long", "is", null) // 座標なしを除外
       .eq("archived", false)
       .order("district")
       .order("id", { ascending: true })
@@ -545,6 +552,8 @@ export async function getPosterBoardSummaryByDistrict(): Promise<
     .from("poster_boards")
     .select("district, status")
     .not("district", "is", null)
+    .not("lat", "is", null) // 座標なしを除外
+    .not("long", "is", null) // 座標なしを除外
     .eq("archived", false);
 
   if (error) {
@@ -599,6 +608,8 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
     .from("poster_boards")
     .select("status")
     .eq("district", district)
+    .not("lat", "is", null) // 座標なしを除外
+    .not("long", "is", null) // 座標なしを除外
     .eq("archived", false);
 
   if (error) {

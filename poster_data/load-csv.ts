@@ -13,9 +13,19 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   dotenv.config({ path: ".env.local", override: true });
 }
 
-// Active election data folder - change this when switching to a new election
-// Available folders: sangin-2025 (参議院2025), shugin-2026 (衆議院2026)
-const ACTIVE_DATA_FOLDER = "shugin-2026";
+// =============================================================================
+// ELECTION CONFIGURATION - Change this when switching to a new election
+// =============================================================================
+// Available values: "sangin-2025" (参議院2025), "shugin-2026" (衆議院2026)
+//
+// This value is used for:
+//   - Data folder path: poster_data/data/{ACTIVE_ELECTION_TERM}/*.csv
+//   - Database column: election_term (part of unique constraint)
+//   - Each election has separate records (no conflicts between elections)
+//   - Re-loading same election: preserves status (user edits kept)
+//   - New election: fresh INSERT with default status='not_yet'
+// =============================================================================
+const ACTIVE_ELECTION_TERM = "shugin-2026";
 
 const STAGING_TABLE = "staging_poster_boards";
 const TARGET_TABLE = "poster_boards";
@@ -120,11 +130,14 @@ async function main() {
       );
     } else {
       // Find all CSV files in the active election data folder
-      csvFiles = await glob(`poster_data/data/${ACTIVE_DATA_FOLDER}/**/*.csv`, {
-        ignore: ["**/node_modules/**", "**/.*"],
-      });
+      csvFiles = await glob(
+        `poster_data/data/${ACTIVE_ELECTION_TERM}/**/*.csv`,
+        {
+          ignore: ["**/node_modules/**", "**/.*"],
+        },
+      );
       console.log(
-        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_DATA_FOLDER}${verbose ? " (verbose mode)" : ""}`,
+        `Found ${csvFiles.length} CSV files to load from ${ACTIVE_ELECTION_TERM}${verbose ? " (verbose mode)" : ""}`,
       );
     }
 
@@ -329,8 +342,12 @@ async function main() {
     }
 
     // Insert from staging to production table using the full unique constraint
-    // Set election_term based on ACTIVE_DATA_FOLDER
+    // election_term is part of the unique key, so each election has separate records
+    // Status handling:
+    //   - New inserts: status defaults to 'not_yet'
+    //   - Re-load same election: conflict triggers, status is preserved (user edits kept)
     console.log("\nInserting data into production table...");
+    console.log(`Election term: ${ACTIVE_ELECTION_TERM}`);
     const result = await db.query(
       `
       INSERT INTO ${TARGET_TABLE} (prefecture, city, district, number, name, address, lat, long, row_number, file_name, archived, election_term)
@@ -338,7 +355,7 @@ async function main() {
         CASE WHEN district IS NULL THEN true ELSE false END as archived,
         $1 as election_term
       FROM ${STAGING_TABLE}
-      ON CONFLICT (row_number, file_name, prefecture)
+      ON CONFLICT (row_number, file_name, prefecture, election_term)
       DO UPDATE SET
         city = EXCLUDED.city,
         district = EXCLUDED.district,
@@ -348,7 +365,7 @@ async function main() {
         lat = EXCLUDED.lat,
         long = EXCLUDED.long,
         archived = CASE WHEN EXCLUDED.district IS NULL THEN true ELSE false END,
-        election_term = EXCLUDED.election_term,
+        -- status is NOT updated - preserves user edits on re-load
         updated_at = timezone('utc'::text, now())
       WHERE
         ${TARGET_TABLE}.city IS DISTINCT FROM EXCLUDED.city OR
@@ -357,15 +374,14 @@ async function main() {
         ${TARGET_TABLE}.name IS DISTINCT FROM EXCLUDED.name OR
         ${TARGET_TABLE}.address IS DISTINCT FROM EXCLUDED.address OR
         ${TARGET_TABLE}.lat IS DISTINCT FROM EXCLUDED.lat OR
-        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long OR
-        ${TARGET_TABLE}.election_term IS DISTINCT FROM EXCLUDED.election_term
+        ${TARGET_TABLE}.long IS DISTINCT FROM EXCLUDED.long
       RETURNING id, prefecture, city, district, number, name, address, lat, long, file_name,
         CASE
           WHEN xmax = 0 THEN 'inserted'
           ELSE 'updated'
         END as action
     `,
-      [ACTIVE_DATA_FOLDER],
+      [ACTIVE_ELECTION_TERM],
     );
 
     // Count inserts vs updates

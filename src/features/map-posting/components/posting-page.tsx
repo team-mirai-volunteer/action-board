@@ -55,6 +55,7 @@ export default function PostingPageClient({
   eventId,
   eventTitle,
   isAdmin,
+  isEventActive,
 }: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [showText, setShowText] = useState(true);
@@ -311,13 +312,16 @@ export default function PostingPageClient({
       mapInstance.pm.setLang("ja", geomanJaLang);
       mapInstance.pm.setLang("ja");
 
-      mapInstance.pm.addControls(postingGeomanControls);
+      // Only show Geoman controls for active events
+      if (isEventActive) {
+        mapInstance.pm.addControls(postingGeomanControls);
 
-      // ツールバーボタンにラベルを追加
-      addButtonLabel(
-        ".leaflet-pm-draw .leaflet-buttons-control-button",
-        "エリア選択",
-      );
+        // ツールバーボタンにラベルを追加
+        addButtonLabel(
+          ".leaflet-pm-draw .leaflet-buttons-control-button",
+          "エリア選択",
+        );
+      }
 
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
         if (e.layer) {
@@ -670,7 +674,7 @@ export default function PostingPageClient({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [mapInstance, eventId, userId]);
+  }, [mapInstance, eventId, userId, isEventActive]);
 
   const textMarkerStyles = `
     .pm-text {
@@ -940,6 +944,7 @@ export default function PostingPageClient({
       <PostingControlPanel
         eventId={eventId}
         eventTitle={eventTitle}
+        isEventActive={isEventActive}
         totalPostingCount={totalPostingCount}
         showOnlyMine={showOnlyMine}
         onShowOnlyMineChange={setShowOnlyMine}
@@ -1047,6 +1052,7 @@ export default function PostingPageClient({
         shape={selectedShape}
         currentUserId={userId}
         isAdmin={isAdmin}
+        isEventActive={isEventActive}
         onStatusUpdated={handleStatusUpdated}
         onDelete={async (id) => {
           await handleDeleteShape(id, { removeFromMap: true });

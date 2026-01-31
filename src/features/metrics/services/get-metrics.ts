@@ -180,14 +180,23 @@ export async function fetchDonationData(): Promise<DonationData | null> {
 /**
  * アクション達成数データをSupabaseから取得
  *
+ * @param startDate - 開始日（オプション）指定した場合はその日以降のデータのみ取得
  * @returns Promise<AchievementData> - アクション達成数データ
  */
-export async function fetchAchievementData(): Promise<AchievementData> {
+export async function fetchAchievementData(
+  startDate?: Date,
+): Promise<AchievementData> {
   const supabase = createClient();
 
-  const { count: totalCount } = await supabase
+  let totalQuery = supabase
     .from("achievements")
     .select("*", { count: "exact", head: true });
+
+  if (startDate) {
+    totalQuery = totalQuery.gte("created_at", startDate.toISOString());
+  }
+
+  const { count: totalCount } = await totalQuery;
 
   const date = new Date();
   date.setHours(date.getHours() - 24);

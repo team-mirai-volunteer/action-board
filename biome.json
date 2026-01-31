@@ -10,6 +10,7 @@
     "ignore": [
       "**/.next/**",
       "**/node_modules/**",
+      "**/.pnpm-store/**",
       "**/supabase/.temp/**",
       "**/playwright-report/**",
       "**/coverage/**",

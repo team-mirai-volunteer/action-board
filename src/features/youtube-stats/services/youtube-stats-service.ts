@@ -1,6 +1,11 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/client";
+import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
+import {
+  type VideoStatsRecord,
+  calculateDailyViewsIncrease,
+} from "@/lib/utils/stats-calculator";
 import type {
   OverallStatsHistoryItem,
   SortType,
@@ -160,7 +165,7 @@ export async function getYouTubeStatsSummary(
     .from("youtube_videos")
     .select(
       `
-      id,
+      video_id,
       published_at,
       youtube_video_stats(
         view_count,
@@ -193,22 +198,36 @@ export async function getYouTubeStatsSummary(
     };
   }
 
-  let totalViews = 0;
   let totalLikes = 0;
   let totalComments = 0;
-  let dayBeforeYesterdayTotalViews = 0;
   let recentVideosCount = 0;
 
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-  const dayBeforeYesterday = new Date(Date.now() - 86400000 * 2)
-    .toISOString()
-    .split("T")[0];
+  // JSTで日付を取得
+  const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
+
+  // 今日投稿された動画があるかを先にチェック
+  let hasTodayVideos = false;
+  for (const video of videos || []) {
+    const publishedAt = video.published_at as string | null;
+    if (publishedAt && toJstDateString(new Date(publishedAt)) === today) {
+      hasTodayVideos = true;
+      break;
+    }
+  }
+
+  // 各動画の統計データを収集
+  const allVideoStats: VideoStatsRecord[][] = [];
 
   for (const video of videos || []) {
-    // 今日または昨日に投稿された動画をカウント（2日間分）
-    const publishedDate = (video.published_at as string)?.split("T")[0];
-    if (publishedDate === today || publishedDate === yesterday) {
+    // 今日投稿された動画をカウント（今日のデータがなければ昨日もカウント）
+    const publishedAt = video.published_at as string | null;
+    const publishedDateJst = publishedAt
+      ? toJstDateString(new Date(publishedAt))
+      : null;
+    if (
+      publishedDateJst === today ||
+      (!hasTodayVideos && publishedDateJst === yesterday)
+    ) {
       recentVideosCount++;
     }
 
@@ -225,28 +244,28 @@ export async function getYouTubeStatsSummary(
         new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
     );
 
-    // 最新の統計を取得
+    // 最新の統計を取得してlikes/commentsを集計
     const latestStats = sortedStats[0];
     if (latestStats) {
-      totalViews += latestStats.view_count ?? 0;
       totalLikes += latestStats.like_count ?? 0;
       totalComments += latestStats.comment_count ?? 0;
     }
 
-    // 一昨日の統計を取得（2日間の増加分を計算するため）
-    const dayBeforeYesterdayStats = sortedStats.find(
-      (s) => s.recorded_at === dayBeforeYesterday,
-    );
-    if (dayBeforeYesterdayStats) {
-      dayBeforeYesterdayTotalViews += dayBeforeYesterdayStats.view_count ?? 0;
-    }
+    // 日次増加計算用にrecorded_atをJST日付文字列に変換
+    const videoStatsRecords: VideoStatsRecord[] = sortedStats.map((s) => ({
+      recorded_at: toJstDateString(new Date(s.recorded_at)),
+      view_count: s.view_count,
+    }));
+    allVideoStats.push(videoStatsRecords);
   }
 
-  // 2日間の増加数を計算（一昨日のデータがない場合は0）
-  const dailyViewsIncrease =
-    dayBeforeYesterdayTotalViews > 0
-      ? totalViews - dayBeforeYesterdayTotalViews
-      : 0;
+  // 日次増加数を計算
+  const { totalViews, dailyViewsIncrease } = calculateDailyViewsIncrease(
+    allVideoStats,
+    today,
+    yesterday,
+    dayBeforeYesterday,
+  );
 
   return {
     totalVideos: videos?.length ?? 0,
@@ -270,55 +289,34 @@ export async function getOverallStatsHistory(
 ): Promise<OverallStatsHistoryItem[]> {
   const supabase = createClient();
 
-  // 1. 期間内に公開された動画のIDを取得
-  let videosQuery = supabase
-    .from("youtube_videos")
-    .select("id")
-    .eq("is_active", true);
+  // JOINを使って1つのクエリで取得（URI too long エラーを回避）
+  let query = supabase
+    .from("youtube_video_stats")
+    .select(
+      `
+      recorded_at,
+      view_count,
+      like_count,
+      youtube_videos!inner(
+        published_at,
+        is_active
+      )
+    `,
+    )
+    .eq("youtube_videos.is_active", true)
+    .order("recorded_at", { ascending: true });
 
+  // 動画の公開日でフィルター
   if (startDate) {
-    videosQuery = videosQuery.gte("published_at", startDate.toISOString());
+    query = query.gte("youtube_videos.published_at", startDate.toISOString());
   }
   if (endDate) {
     const endOfDay = new Date(endDate);
     endOfDay.setDate(endOfDay.getDate() + 1);
-    videosQuery = videosQuery.lt("published_at", endOfDay.toISOString());
+    query = query.lt("youtube_videos.published_at", endOfDay.toISOString());
   }
 
-  const { data: videos, error: videosError } = await videosQuery;
-
-  if (videosError) {
-    console.error("Failed to fetch videos for stats history:", videosError);
-    return [];
-  }
-
-  if (!videos || videos.length === 0) {
-    return [];
-  }
-
-  const videoIds = videos.map((v) => v.id);
-
-  // 2. 該当動画の統計を取得
-  let statsQuery = supabase
-    .from("youtube_video_stats")
-    .select("recorded_at, view_count, like_count")
-    .in("youtube_video_id", videoIds)
-    .order("recorded_at", { ascending: true });
-
-  if (startDate) {
-    statsQuery = statsQuery.gte(
-      "recorded_at",
-      startDate.toISOString().split("T")[0],
-    );
-  }
-  if (endDate) {
-    statsQuery = statsQuery.lte(
-      "recorded_at",
-      endDate.toISOString().split("T")[0],
-    );
-  }
-
-  const { data, error } = await statsQuery;
+  const { data, error } = await query;
 
   if (error) {
     console.error("Failed to fetch overall stats history:", error);
@@ -340,7 +338,8 @@ export async function getOverallStatsHistory(
     });
   }
 
-  // 配列に変換
+  // 配列に変換して本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
   const result = Array.from(dailyStats.entries())
     .map(([date, stats]) => ({
       date,
@@ -349,7 +348,7 @@ export async function getOverallStatsHistory(
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  return result;
+  return filterBeforeToday(result);
 }
 
 /**
@@ -408,5 +407,7 @@ export async function getVideoCountByDate(
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  return result;
+  // 本日以降のデータを除外
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  return filterBeforeToday(result);
 }

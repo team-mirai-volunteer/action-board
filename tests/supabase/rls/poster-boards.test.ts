@@ -25,6 +25,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
         number: "TEST-001",
         address: "テストアドレス1-1-1",
         city: "テスト市",
+        election_term: "shugin-2026",
       })
       .select()
       .single();
@@ -59,6 +60,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
             number: "TEST-NULL",
             address: "テストアドレス（座標なし）",
             city: "テスト市",
+            election_term: "shugin-2026",
           })
           .select()
           .single();
@@ -160,6 +162,7 @@ describe("poster_boards テーブルのRLSテスト", () => {
         number: "TEST-002",
         address: "テストアドレス2-2-2",
         city: "テスト市2",
+        election_term: "shugin-2026",
       });
 
       expect(error).not.toBeNull();
@@ -211,6 +214,7 @@ describe("poster_board_status_history テーブルのRLSテスト", () => {
         number: "TEST-003",
         address: "テストアドレス3-3-3",
         city: "テスト市3",
+        election_term: "shugin-2026",
       })
       .select()
       .single();

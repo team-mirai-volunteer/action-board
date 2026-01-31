@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { syncAllYouTubeDataAction } from "../actions/youtube-sync-actions";
 import { syncMyYouTubeVideosAction } from "../actions/youtube-video-actions";
 
 interface YouTubeSyncButtonProps {
@@ -15,42 +17,105 @@ export function YouTubeSyncButton({
   disabled,
 }: YouTubeSyncButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    message: string;
-  } | null>(null);
+  const [showLongLoadingMessage, setShowLongLoadingMessage] = useState(false);
+
+  // 3秒以上経過したらメッセージを表示
+  useEffect(() => {
+    if (!isLoading) {
+      setShowLongLoadingMessage(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setShowLongLoadingMessage(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const handleSync = async () => {
     setIsLoading(true);
-    setResult(null);
     try {
-      const syncResult = await syncMyYouTubeVideosAction();
-      if (syncResult.success) {
-        const message =
-          syncResult.syncedCount && syncResult.syncedCount > 0
-            ? `${syncResult.syncedCount}件の動画を同期しました`
-            : "新しい #チームみらい 動画はありませんでした";
-        setResult({ success: true, message });
-        onSyncComplete?.(syncResult.syncedCount || 0);
+      // 1. チームみらいタグ付き動画を同期（2時間のレート制限付き）
+      const { syncTeamMiraiVideosAction } = await import(
+        "../actions/youtube-video-actions"
+      );
+      const teamMiraiResult = await syncTeamMiraiVideosAction();
+
+      // 2. 自分のアップロード動画を同期（レート制限なし）
+      const videoSyncResult = await syncMyYouTubeVideosAction();
+
+      // 3. いいね・コメントを同期＆ミッションクリア
+      const syncResult = await syncAllYouTubeDataAction();
+
+      // 結果メッセージを構築
+      const messages: string[] = [];
+
+      if (videoSyncResult.success) {
+        if (videoSyncResult.syncedCount && videoSyncResult.syncedCount > 0) {
+          messages.push(
+            `${videoSyncResult.syncedCount}件のアップロード動画を同期しました`,
+          );
+        }
       } else {
-        setResult({
-          success: false,
-          message: syncResult.error || "同期に失敗しました",
-        });
+        toast.error(videoSyncResult.error || "アップロード動画同期に失敗");
       }
+
+      if (syncResult.success) {
+        // いいね
+        if (syncResult.likes.syncedVideoCount > 0) {
+          messages.push(
+            `${syncResult.likes.syncedVideoCount}件のいいね動画を追加しました`,
+          );
+        }
+        // コメント（ユーザー自身のコメントでミッション達成した件数）
+        if (syncResult.comments.achievedCount > 0) {
+          messages.push(
+            `${syncResult.comments.achievedCount}件のコメントを検出しました`,
+          );
+        }
+        // XP獲得
+        if (syncResult.totalXpGranted > 0) {
+          messages.push(`+${syncResult.totalXpGranted} XP`);
+        }
+      } else if (syncResult.error) {
+        toast.error(syncResult.error);
+      }
+
+      // 成功メッセージをtoastで表示
+      if (messages.length > 0) {
+        toast.success("同期完了", {
+          description: (
+            <div className="flex flex-col">
+              {messages.map((msg) => (
+                <span key={msg}>{msg}</span>
+              ))}
+            </div>
+          ),
+          duration: 8000,
+        });
+      } else if (videoSyncResult.success && syncResult.success) {
+        toast.info("新しい動画はありませんでした");
+      }
+
+      // 何かしら同期されたらコールバック
+      const totalSynced =
+        (videoSyncResult.syncedCount || 0) +
+        syncResult.likes.syncedVideoCount +
+        syncResult.likes.achievedCount +
+        syncResult.comments.achievedCount;
+      onSyncComplete?.(totalSynced);
     } catch (err) {
-      setResult({
-        success: false,
-        message:
-          err instanceof Error ? err.message : "同期中にエラーが発生しました",
-      });
+      toast.error(
+        err instanceof Error ? err.message : "同期中にエラーが発生しました",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col items-end gap-1">
       <Button
         onClick={handleSync}
         disabled={isLoading || disabled}
@@ -60,11 +125,9 @@ export function YouTubeSyncButton({
         <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
         {isLoading ? "同期中..." : "動画を同期"}
       </Button>
-      {result && (
-        <p
-          className={`text-sm ${result.success ? "text-green-600" : "text-red-600"}`}
-        >
-          {result.message}
+      {showLongLoadingMessage && (
+        <p className="text-xs text-gray-500">
+          処理に20秒程度かかる場合があります
         </p>
       )}
     </div>

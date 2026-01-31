@@ -9,6 +9,7 @@ import { type PostingEvent, getAllEvents } from "../services/posting-events";
 interface PostingControlPanelProps {
   eventId: string;
   eventTitle: string;
+  isEventActive: boolean;
   totalPostingCount?: number;
   showOnlyMine: boolean;
   onShowOnlyMineChange: (value: boolean) => void;
@@ -17,6 +18,7 @@ interface PostingControlPanelProps {
 export function PostingControlPanel({
   eventId,
   eventTitle,
+  isEventActive,
   totalPostingCount,
   showOnlyMine,
   onShowOnlyMineChange,
@@ -84,6 +86,17 @@ export function PostingControlPanel({
           }}
         >
           {eventTitle}
+          {!isEventActive && (
+            <span
+              style={{
+                fontSize: "11px",
+                color: "#666",
+                fontWeight: "normal",
+              }}
+            >
+              (終了)
+            </span>
+          )}
           {events.length > 1 && (
             <ChevronDown
               size={16}
@@ -148,6 +161,17 @@ export function PostingControlPanel({
                   }}
                 >
                   {event.title}
+                  {!event.is_active && (
+                    <span
+                      style={{
+                        marginLeft: "4px",
+                        fontSize: "11px",
+                        color: "#999",
+                      }}
+                    >
+                      (終了)
+                    </span>
+                  )}
                   {isCurrent && (
                     <span style={{ marginLeft: "8px", fontSize: "11px" }}>
                       (現在表示中)

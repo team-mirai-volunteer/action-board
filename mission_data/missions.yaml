@@ -49,9 +49,9 @@ missions:
     artifact_label: リポストした投稿のURL
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//19_x_repost.png
   - slug: read-manifest
-    title: チームみらいのマニフェスト(要約版)をみてみよう！
+    title: チームみらいのマニフェストをみてみよう！
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_read-manifest.svg
-    content: チームみらいのマニフェスト(要約版)は、スライド形式で手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
+    content: チームみらいのマニフェストは、ウェブサイトから手軽に読むことができます。チームみらいの考える政治や政策について知ろう！
     difficulty: 2
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
@@ -139,18 +139,19 @@ missions:
     artifact_label: ショート動画のURL（TikTok）
     ogp_image_url: null
   - slug: youtube-clip
-    title: 動画を切り抜いてショート動画を作ろう
+    title: 動画を作って投稿しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
     content: |-
-      ショート動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
-      SNSでの拡散や、仲間との共有も大歓迎！あなたの編集が、新しい支持を生み出すかもしれません。
+      動画を投稿して、チームみらいの魅力をもっと多くの人に届けよう。
+      切り抜き動画はもちろん、自分で撮影・編集したオリジナル動画の投稿も大歓迎です！
+      SNSでの拡散や、仲間との共有もぜひ！あなたの動画が、新しい支持を生み出すかもしれません。
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: true
     featured_importance: 10
     is_hidden: false
-    artifact_label: ショート動画のURL（Youtube, TikTokなど）
+    artifact_label: 動画のURL（Youtube, TikTokなど）
     ogp_image_url: null
   - slug: follow-anno-x
     title: 安野たかひろの公式Xをフォローしよう
@@ -297,12 +298,12 @@ missions:
     content: |-
       「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。
       ぜひご参加ください！
-    # 演説のスケジュールについては、候補者のSNSよりご確認ください。
-    # <a href="https://team-mir.ai/election/shugiin-2026" target="_blank" rel="noopener noreferrer">公式サイトの一覧</a>にSNSへのリンクが掲載されています。
+
+      演説のスケジュールは<a href="https://mirai-street-speech-map.vercel.app" target="_blank" rel="noopener noreferrer">街頭演説マップ（非公式）</a>をご覧ください。
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: false
+    is_featured: true
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
@@ -362,7 +363,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: true
-    is_hidden: false
+    is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: posting-flyer
@@ -403,7 +404,7 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-like.svg
     content:  チームみらい関連のYouTube動画を見つけて「高評価」で応援しよう！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 1
-    required_artifact_type: LINK
+    required_artifact_type: YOUTUBE
     max_achievement_count: null
     is_featured: false
     is_hidden: false
@@ -424,13 +425,14 @@ missions:
     title: 街頭演説を手伝おう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_help-street-speech.svg
     content: |-
-      選挙期間中は、全国各地で街頭演説を行います！当日現地に駆けつけていただき、拍手・盛り上げ・合いの手などにご協力いただけるだけでも大変ありがたいですし、街頭演説を行うための事前準備や街頭演説中のサポート（撮影・証紙ビラ配布・場所取り等）もご協力いただければ、さらに嬉しいです🚀
-      <a href="https://team-mirai.notion.site/223f6f56bae1809796bbde536950ebac" target="_blank" rel="noopener noreferrer">街頭演説イベントサポーターガイドはこちら</a>
+      全国各地で街頭演説を行います！
+      街頭演説を行うための事前準備や街頭演説中のサポート（撮影・証紙ビラ配布・場所取り等）にご協力いただけると大変ありがたいです。
+      どこで街頭演説があるのか、お手伝いが必要かどうかなどは、「<a href="https://action.team-mir.ai/missions/fd9da44a-d5ba-4bbf-a1c0-98a0142ee029" target="_blank" rel="noopener noreferrer">都道府県別LINEオープンチャットに入ろう</a>」ミッションからご自身の地域のオープンチャットにお入りになり、お問い合わせください。
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: help-event-operation
@@ -438,8 +440,8 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_help-event-operation.svg
     content: |-
       チームみらいでは、サポーターの皆さんと一緒に、演説会などのイベントをつくりあげています。
-      会場の調整や当日のスタッフ対応、運営補助など、さまざまなかたちで運営を支えてくださると必要です。
-      どんなイベントがあるのか、お手伝いが必要かどうかなどは、ご自身の地域の<a href="https://team-mirai.notion.site/1f9f6f56bae180d19ebcf176d8338ba3?pvs=74" target="_blank" rel="noopener noreferrer">オープンチャット</a>にてお問い合わせください。
+      会場の調整や当日のスタッフ対応、運営補助など、さまざまなかたちで運営を支えてくださる方が必要です。
+      どんなイベントがあるのか、お手伝いが必要かどうかなどは、「<a href="https://action.team-mir.ai/missions/fd9da44a-d5ba-4bbf-a1c0-98a0142ee029" target="_blank" rel="noopener noreferrer">都道府県別LINEオープンチャットに入ろう</a>」ミッションからご自身の地域のオープンチャットにお入りになり、お問い合わせください。
     difficulty: 4
     required_artifact_type: TEXT
     max_achievement_count: null
@@ -494,13 +496,14 @@ missions:
   - slug: put-up-poster-on-board
     title: 選挙区ポスターを貼ろう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_put-up-poster-on-board.svg
-    content: 掲示板に選挙区ポスターを貼ろう！<br><br>詳しいポスター貼りの方法や注意点については、こちらのページをご確認ください：<br><a href="https://team-mirai.notion.site/223f6f56bae180b6a6f6f47d7d688a3c" target="_blank">ポスター貼りサポーターガイド</a>
+    content: |-
+      小選挙区への立候補者がいる地域については、ポスター貼りがあります。
+      各地域ごとに実施しているため、ポスター貼りをご希望される場合は、「<a href="https://action.team-mir.ai/missions/fd9da44a-d5ba-4bbf-a1c0-98a0142ee029" target="_blank" rel="noopener noreferrer">都道府県別LINEオープンチャットに入ろう</a>」ミッションからご自身の地域のオープンチャットにお入りになり、お問い合わせください。
     difficulty: 2
     required_artifact_type: POSTER
     max_achievement_count: null
-    is_featured: true
-    featured_importance: 20
-    is_hidden: true
+    is_featured: false
+    is_hidden: false
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
     title: 比例代表ポスターを貼ろう
@@ -565,7 +568,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step1
@@ -576,7 +579,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: quiz-policy-step2
@@ -587,7 +590,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-step3
     title: 政策クイズ（ステップ３）に挑戦しよう
@@ -597,7 +600,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: quiz-policy-100days
     title: 政策クイズ（100日プラン）に挑戦しよう
@@ -607,7 +610,7 @@ missions:
     required_artifact_type: QUIZ
     max_achievement_count: 3
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
   - slug: "quiz-electionlaw-basic"
     title: 公職選挙法クイズ（基礎編）に挑戦しよう
@@ -700,11 +703,11 @@ missions:
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
     content: <a href="https://youtube.com/channel/UC72A_x2FKHkJ8Nc2eIzqj8Q?si=iVd31cFccDfsEvL0" target="_blank" rel="noopener noreferrer">チームみらいの公式YouTubeチャンネル</a>やチームみらい関連の動画を視聴して、ぜひコメントを残してみてください！あなたの感想や意見が、次の動画制作の参考になります。動画の内容が気に入ったら高評価もお願いします！<br><br><a href="https://www.youtube.com/results?search_query=%E3%83%81%E3%83%BC%E3%83%A0%E3%81%BF%E3%82%89%E3%81%84" target="_blank" rel="noopener noreferrer">「チームみらい」で検索</a>
     difficulty: 2
-    required_artifact_type: LINK
+    required_artifact_type: YOUTUBE_COMMENT
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: コメントしたYouTube動画のURL
+    artifact_label: null
     ogp_image_url: null
   - slug: youtube-comment-reaction
     title: YouTube動画のコメントにリアクションしよう

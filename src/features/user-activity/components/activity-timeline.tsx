@@ -81,7 +81,11 @@ export function ActivityTimeline({
                     が「
                     {activity.mission_id ? (
                       <Link
-                        href={`/missions/${activity.mission_id}`}
+                        href={`/missions/${
+                          "mission_slug" in activity && activity.mission_slug
+                            ? activity.mission_slug
+                            : activity.mission_id
+                        }`}
                         className="text-black font-bold hover:underline"
                       >
                         {activity.title}

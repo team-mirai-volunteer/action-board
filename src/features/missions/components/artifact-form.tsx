@@ -10,6 +10,8 @@ import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { PosterForm } from "./poster-form";
 import { PostingForm } from "./posting-form";
+import { YouTubeCommentForm } from "./youtube-comment-form";
+import { YouTubeForm } from "./youtube-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
@@ -121,6 +123,16 @@ export function ArtifactForm({
         {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
           <PosterForm disabled={disabled} />
+        )}
+
+        {/* YouTube入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE.key && (
+          <YouTubeForm disabled={disabled} missionId={mission.id} />
+        )}
+
+        {/* YouTubeコメント入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE_COMMENT.key && (
+          <YouTubeCommentForm disabled={disabled} missionId={mission.id} />
         )}
 
         {/* 補足説明テキストエリア */}
