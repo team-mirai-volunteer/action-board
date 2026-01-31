@@ -113,6 +113,7 @@ export function YouTubeSettingsContent({
                 </Link>
                 <p className="text-xs text-gray-500 mt-2">
                   ※ 同期時は直近1ヶ月の動画のコメントをチェックします
+                  <br />※ 直近1時間のコメントは自動検出されない場合があります
                 </p>
               </div>
               <YouTubeCommentList refreshTrigger={refreshTrigger} />
