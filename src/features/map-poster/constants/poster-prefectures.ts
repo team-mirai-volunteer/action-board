@@ -44,6 +44,11 @@ export const POSTER_PREFECTURE_MAP = {
     center: [34.6937, 135.5023] as [number, number],
     defaultZoom: 12,
   },
+  kyoto: {
+    jp: "京都府",
+    center: [35.0116, 135.7681] as [number, number],
+    defaultZoom: 11,
+  },
   hyogo: {
     jp: "兵庫県",
     center: [34.6913, 135.1831] as [number, number],
