@@ -153,7 +153,6 @@ export async function getMyUploadedVideosAction(
         )[0];
 
         return {
-          id: video.id,
           video_id: video.video_id,
           video_url: video.video_url,
           title: video.title,
@@ -167,6 +166,7 @@ export async function getMyUploadedVideosAction(
           is_active: video.is_active,
           created_at: video.created_at,
           updated_at: video.updated_at,
+          comments_synced_at: video.comments_synced_at,
           latest_view_count: latestStats?.view_count ?? null,
           latest_like_count: latestStats?.like_count ?? null,
           latest_comment_count: latestStats?.comment_count ?? null,
@@ -191,6 +191,7 @@ export async function getMyUploadedVideosAction(
 
 /**
  * 現在のユーザーのYouTube動画を同期するServer Action
+ * ユーザー自身のアップロード動画は即時同期（レート制限なし）
  */
 export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
   try {
@@ -230,7 +231,7 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
       console.log("YouTube access token expired, attempting refresh...");
       const refreshResult = await refreshYouTubeTokenAction();
 
-      if (!refreshResult.success) {
+      if (!refreshResult.success || !refreshResult.accessToken) {
         return {
           success: false,
           error:
@@ -238,21 +239,7 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
         };
       }
 
-      // リフレッシュ成功後、最新のトークンを再取得
-      const { data: updatedConnection } = await adminClient
-        .from("youtube_user_connections")
-        .select("access_token")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!updatedConnection?.access_token) {
-        return {
-          success: false,
-          error: "トークンの更新に失敗しました。再度連携してください。",
-        };
-      }
-
-      accessToken = updatedConnection.access_token;
+      accessToken = refreshResult.accessToken;
     }
 
     // 動画を同期
@@ -267,6 +254,79 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
         error instanceof Error
           ? error.message
           : "YouTube動画の同期に失敗しました",
+    };
+  }
+}
+
+/**
+ * チームみらい動画結果
+ */
+export interface TeamMiraiVideoSyncResult {
+  success: boolean;
+  newVideos?: number;
+  skipped?: boolean;
+  error?: string;
+}
+
+/**
+ * #チームみらい タグ付き動画を全体同期するServer Action
+ * 最終同期から2時間経過していない場合はスキップ（search.list APIは100ユニット/回と高コスト）
+ */
+export async function syncTeamMiraiVideosAction(): Promise<TeamMiraiVideoSyncResult> {
+  try {
+    const adminClient = await createAdminClient();
+
+    // 2時間のレート制限チェック（全ユーザー共通）
+    const { data: syncStatus } = await adminClient
+      .from("youtube_sync_status")
+      .select("last_synced_at")
+      .eq("id", "videos")
+      .single();
+
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    const lastSyncedAt = syncStatus?.last_synced_at
+      ? new Date(syncStatus.last_synced_at)
+      : null;
+
+    if (lastSyncedAt && lastSyncedAt > twoHoursAgo) {
+      // 2時間以内に同期済み → スキップ
+      return {
+        success: true,
+        newVideos: 0,
+        skipped: true,
+      };
+    }
+
+    // #チームみらい 動画を同期
+    const { syncYouTubeVideos } = await import(
+      "../services/youtube-video-sync-service"
+    );
+
+    const result = await syncYouTubeVideos({
+      maxResults: 50, // 最新50件を検索
+    });
+
+    // 同期成功時は全体共通の last_synced_at を更新
+    await adminClient
+      .from("youtube_sync_status")
+      .update({
+        last_synced_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", "videos");
+
+    return {
+      success: true,
+      newVideos: result.newVideos,
+    };
+  } catch (error) {
+    console.error("Sync team mirai videos error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "チームみらい動画の同期に失敗しました",
     };
   }
 }

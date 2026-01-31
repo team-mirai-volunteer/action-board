@@ -9,6 +9,7 @@ import {
 import type { UserLevel } from "@/features/user-level/types/level-types";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 
@@ -196,6 +197,25 @@ const linkAccessArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK_ACCESS.key),
 });
 
+// YOUTUBEタイプ用スキーマ
+const youtubeArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.YOUTUBE.key),
+  artifactLink: z
+    .string()
+    .nonempty({ message: "YouTube動画のURLが必要です" })
+    .regex(ARTIFACT_TYPES.YOUTUBE.validationRegex, {
+      message: "有効なYouTube動画のURLを入力してください",
+    }),
+});
+
+// YOUTUBE_COMMENTタイプ用スキーマ
+const youtubeCommentArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.YOUTUBE_COMMENT.key),
+  artifactLink: z
+    .string()
+    .nonempty({ message: "YouTubeコメントのURLが必要です" }),
+});
+
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
@@ -207,7 +227,9 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   postingArtifactSchema,
   posterArtifactSchema,
   quizArtifactSchema,
-  linkAccessArtifactSchema, // 追加
+  linkAccessArtifactSchema,
+  youtubeArtifactSchema,
+  youtubeCommentArtifactSchema,
 ]);
 
 // 提出キャンセルアクションのバリデーションスキーマ
@@ -378,6 +400,148 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // YOUTUBE重複バリデーション（同じ動画へのいいねは1回のみ）
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
+  ) {
+    const { extractVideoIdFromUrl } = await import(
+      "@/features/youtube/services/youtube-like-service"
+    );
+    const videoId = extractVideoIdFromUrl(validatedData.artifactLink);
+
+    if (videoId) {
+      // youtube_video_likesテーブルで既に記録済みか確認
+      const { data: existingLike, error: likeCheckError } = await supabase
+        .from("youtube_video_likes")
+        .select("id")
+        .eq("user_id", authUser.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+      if (likeCheckError) {
+        return {
+          success: false,
+          error: "重複チェック中にエラーが発生しました。",
+        };
+      }
+
+      if (existingLike) {
+        return {
+          success: false,
+          error: "この動画へのいいねは既に記録されています。",
+        };
+      }
+    }
+  }
+
+  // YOUTUBE_COMMENT重複バリデーション（同じコメントは1回のみ）
+  let validatedYouTubeCommentInfo: {
+    videoId: string;
+    commentId: string | null;
+  } | null = null;
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE_COMMENT.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE_COMMENT.key
+  ) {
+    const { extractVideoIdFromUrl, extractCommentIdFromUrl } = await import(
+      "@/features/youtube/services/youtube-comment-service"
+    );
+
+    const videoId = extractVideoIdFromUrl(validatedData.artifactLink);
+    const commentId = extractCommentIdFromUrl(validatedData.artifactLink);
+
+    if (!videoId) {
+      return {
+        success: false,
+        error: "YouTube動画のURLを正しく入力してください。",
+      };
+    }
+
+    // チームみらい動画かどうかを確認
+    const { data: video, error: videoError } = await supabase
+      .from("youtube_videos")
+      .select("video_id")
+      .eq("video_id", videoId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (videoError) {
+      return {
+        success: false,
+        error: "動画の確認中にエラーが発生しました。",
+      };
+    }
+
+    if (!video) {
+      return {
+        success: false,
+        error: "この動画はチームみらいの動画ではありません。",
+      };
+    }
+
+    // コメントIDがある場合は重複チェック
+    if (commentId) {
+      const adminClient = await createAdminClient();
+      const { data: existingComment, error: commentCheckError } =
+        await adminClient
+          .from("youtube_user_comments")
+          .select("id")
+          .eq("user_id", authUser.id)
+          .eq("comment_id", commentId)
+          .maybeSingle();
+
+      if (commentCheckError) {
+        return {
+          success: false,
+          error: "重複チェック中にエラーが発生しました。",
+        };
+      }
+
+      if (existingComment) {
+        return {
+          success: false,
+          error: "このコメントは既に記録されています。",
+        };
+      }
+    }
+
+    validatedYouTubeCommentInfo = { videoId, commentId };
+  }
+
+  // YouTubeミッション: チームみらい動画の検証（DB書き込み前に実行）
+  let validatedYouTubeVideoId: string | null = null;
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
+  ) {
+    const { validateAndRegisterTeamMiraiVideo } = await import(
+      "@/features/youtube/services/youtube-like-service"
+    );
+
+    const validateResult = await validateAndRegisterTeamMiraiVideo(
+      validatedData.artifactLink,
+    );
+
+    if (!validateResult.success) {
+      return {
+        success: false,
+        error: validateResult.error || "YouTube動画の検証に失敗しました。",
+      };
+    }
+
+    if (!validateResult.isTeamMirai) {
+      return {
+        success: false,
+        error:
+          validateResult.error ||
+          "この動画はチームみらいの動画ではありません。",
+      };
+    }
+
+    validatedYouTubeVideoId = validateResult.videoId ?? null;
+  }
+
   // 現在のシーズンIDを取得
   const currentSeasonId = await getCurrentSeasonId();
   if (!currentSeasonId) {
@@ -519,6 +683,27 @@ export const achieveMissionAction = async (formData: FormData) => {
         artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
       }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
+      artifactTypeLabel = "YOUTUBE";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
+        artifactPayload.link_url = validatedData.artifactLink;
+        // CHECK制約: link_url必須、他はnull
+        artifactPayload.image_storage_path = null;
+        artifactPayload.text_content = null;
+      }
+    } else if (
+      validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE_COMMENT.key
+    ) {
+      artifactTypeLabel = "YOUTUBE_COMMENT";
+      if (
+        validatedData.requiredArtifactType ===
+        ARTIFACT_TYPES.YOUTUBE_COMMENT.key
+      ) {
+        artifactPayload.link_url = validatedData.artifactLink;
+        // CHECK制約: link_url必須、他はnull
+        artifactPayload.image_storage_path = null;
+        artifactPayload.text_content = null;
+      }
     } else {
       // その他のタイプは全てnullに
       artifactPayload.link_url = null;
@@ -584,42 +769,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     // 作成された成果物IDを保持（戻り値で使用）
     createdArtifactId = newArtifact.id;
 
-    // 位置情報がある場合は mission_artifact_geolocations に記録
-    if (
-      validatedRequiredArtifactType ===
-        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key &&
-      validatedData.requiredArtifactType ===
-        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
-    ) {
-      const geolocationPayload: TablesInsert<"mission_artifact_geolocations"> =
-        {
-          mission_artifact_id: newArtifact.id,
-          lat: Number.parseFloat(validatedData.latitude),
-          lon: Number.parseFloat(validatedData.longitude),
-          accuracy: validatedData.accuracy
-            ? Number.parseFloat(validatedData.accuracy)
-            : null,
-          altitude: validatedData.altitude
-            ? Number.parseFloat(validatedData.altitude)
-            : null,
-        };
-      const { error: geoError } = await supabase
-        .from("mission_artifact_geolocations")
-        .insert(geolocationPayload);
-
-      if (geoError) {
-        console.error(
-          `Geolocation Error: ${geoError.code} ${geoError.message}`,
-        );
-        // 成果物レコードは作成済みだが、位置情報保存に失敗した場合のハンドリング
-        // ここではエラーメッセージを出すに留めるが、より丁寧なエラー処理も検討可能
-        return {
-          success: false,
-          error: `位置情報の保存に失敗しました: ${geoError.message}`,
-        };
-      }
-    }
-
     // ポスティング活動の詳細情報を保存
     if (
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key &&
@@ -645,7 +794,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスティング用のポイント計算とXP付与（重要ミッションは2倍）
+      // ポスティング用のポイント計算とXP付与（注目ミッションは2倍）
       const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
       const basePoints = validatedData.postingCount * pointsPerUnit;
       const totalPoints = missionData?.is_featured
@@ -710,7 +859,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         };
       }
 
-      // ポスター用のポイント計算とXP付与（重要ミッションは2倍）
+      // ポスター用のポイント計算とXP付与（注目ミッションは2倍）
       const pointsPerUnit = POSTER_POINTS_PER_UNIT;
       const basePoints = MAX_POSTER_COUNT * pointsPerUnit;
       const totalPoints = missionData?.is_featured
@@ -735,6 +884,62 @@ export const achieveMissionAction = async (formData: FormData) => {
       } else {
         totalXpGranted += totalPoints;
       }
+    }
+
+    // YouTubeいいね記録をyoutube_video_likesテーブルに保存
+    // 検証は既にDB書き込み前に完了済み（validatedYouTubeVideoIdに格納）
+    if (validatedYouTubeVideoId) {
+      const { createYouTubeLikeRecord } = await import(
+        "@/features/youtube/services/youtube-like-service"
+      );
+
+      const likeResult = await createYouTubeLikeRecord(
+        authUser.id,
+        validatedYouTubeVideoId,
+        newArtifact.id,
+      );
+
+      if (!likeResult.success) {
+        return {
+          success: false,
+          error: likeResult.error || "YouTubeいいね記録の保存に失敗しました。",
+        };
+      }
+    }
+
+    // YouTubeコメント記録をyoutube_user_commentsテーブルに保存
+    // 検証は既にDB書き込み前に完了済み（validatedYouTubeCommentInfoに格納）
+    // コメントIDがキャッシュに存在する場合のみ記録（外部キー制約のため）
+    if (validatedYouTubeCommentInfo?.commentId) {
+      // コメントがキャッシュに存在するか確認
+      const { data: cachedComment } = await supabase
+        .from("youtube_video_comments")
+        .select("comment_id")
+        .eq("comment_id", validatedYouTubeCommentInfo.commentId)
+        .maybeSingle();
+
+      if (cachedComment) {
+        const { createYouTubeCommentRecord } = await import(
+          "@/features/youtube/services/youtube-comment-service"
+        );
+
+        const commentResult = await createYouTubeCommentRecord(
+          authUser.id,
+          validatedYouTubeCommentInfo.videoId,
+          validatedYouTubeCommentInfo.commentId,
+          newArtifact.id,
+        );
+
+        if (!commentResult.success) {
+          // youtube_user_commentsへの記録失敗はミッション達成を妨げない
+          console.error(
+            "YouTubeコメント記録の保存に失敗:",
+            commentResult.error,
+          );
+        }
+      }
+      // キャッシュにない場合はyoutube_user_commentsへの記録をスキップ
+      // （mission_artifactsには記録されるのでミッション達成は有効）
     }
   }
 
@@ -854,7 +1059,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // 達成記録を削除（CASCADE により関連する mission_artifacts と mission_artifact_geolocations も削除される）
+  // 達成記録を削除（CASCADE により関連する mission_artifacts も削除される）
   const { error: deleteError } = await supabase
     .from("achievements")
     .delete()
@@ -868,7 +1073,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  // XPを減算する（ミッション達成時に付与されたXPを取り消し、重要ミッションは2倍）
+  // XPを減算する（ミッション達成時に付与されたXPを取り消し、注目ミッションは2倍）
   const xpToRevoke = calculateMissionXp(
     missionData.difficulty,
     missionData.is_featured,

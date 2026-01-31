@@ -41,12 +41,6 @@ const ImageWithGeolocationArtifact: React.FC<{ artifact: MissionArtifact }> = ({
       )}
     </div>
     <div className="flex-1">
-      <p className="text-xs text-gray-400">
-        位置情報:{" "}
-        {artifact.geolocations && artifact.geolocations.length > 0
-          ? "あり"
-          : "なし"}
-      </p>
       {artifact.description && (
         <p className="text-sm mt-1">{artifact.description}</p>
       )}
@@ -128,6 +122,24 @@ const PostingArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   </div>
 );
 
+const YouTubeArtifact: React.FC<{ artifact: MissionArtifact }> = ({
+  artifact,
+}) => (
+  <div className="flex items-center gap-2">
+    <span className="text-lg">▶️</span>
+    {artifact.link_url && (
+      <Link
+        href={artifact.link_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 hover:underline text-sm"
+      >
+        {artifact.link_url}
+      </Link>
+    )}
+  </div>
+);
+
 const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
   switch (artifact.artifact_type) {
     case "IMAGE":
@@ -142,6 +154,9 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
       return <EmailArtifact artifact={artifact} />;
     case "POSTING":
       return <PostingArtifact artifact={artifact} />;
+    case "YOUTUBE":
+    case "YOUTUBE_COMMENT":
+      return <YouTubeArtifact artifact={artifact} />;
     default:
       return null;
   }

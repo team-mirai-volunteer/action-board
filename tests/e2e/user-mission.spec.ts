@@ -24,9 +24,9 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     ).toBeVisible();
     await expect(signedInPage.getByText("サポーター数")).toBeVisible();
 
-    // 重要ミッションの表示を確認
+    // 注目ミッションの表示を確認
     await expect(
-      signedInPage.getByRole("heading", { name: /重要ミッション/ }),
+      signedInPage.getByRole("heading", { name: /注目ミッション/ }),
     ).toBeVisible();
 
     // 活動タイムラインの表示を確認

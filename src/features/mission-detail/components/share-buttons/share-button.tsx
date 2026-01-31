@@ -3,7 +3,7 @@
 type Props = {
   children?: React.ReactNode;
   message: string;
-  missionId: string;
+  missionSlug: string;
   className?: string;
   url?: string;
 };
@@ -11,11 +11,11 @@ type Props = {
 export function ShareButton({
   children,
   message,
-  missionId,
+  missionSlug,
   className,
   url,
 }: Props) {
-  const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
+  const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = async () => {
     if (navigator.share) {
       try {

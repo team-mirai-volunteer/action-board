@@ -87,128 +87,6 @@ export type Database = {
           },
         ];
       };
-      daily_action_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
-      daily_dashboard_registration_by_prefecture_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-          prefecture: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-          prefecture: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-          prefecture?: string;
-        };
-        Relationships: [];
-      };
-      daily_dashboard_registration_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
-      events: {
-        Row: {
-          created_at: string;
-          id: string;
-          starts_at: string;
-          title: string;
-          updated_at: string;
-          url: string;
-        };
-        Insert: {
-          created_at?: string;
-          id: string;
-          starts_at: string;
-          title: string;
-          updated_at?: string;
-          url: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          starts_at?: string;
-          title?: string;
-          updated_at?: string;
-          url?: string;
-        };
-        Relationships: [];
-      };
-      mission_artifact_geolocations: {
-        Row: {
-          accuracy: number | null;
-          altitude: number | null;
-          created_at: string;
-          id: number;
-          lat: number;
-          lon: number;
-          mission_artifact_id: string;
-        };
-        Insert: {
-          accuracy?: number | null;
-          altitude?: number | null;
-          created_at?: string;
-          id?: number;
-          lat: number;
-          lon: number;
-          mission_artifact_id: string;
-        };
-        Update: {
-          accuracy?: number | null;
-          altitude?: number | null;
-          created_at?: string;
-          id?: number;
-          lat?: number;
-          lon?: number;
-          mission_artifact_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "mission_artifact_geolocations_mission_artifact_id_fkey";
-            columns: ["mission_artifact_id"];
-            isOneToOne: false;
-            referencedRelation: "mission_artifacts";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       mission_artifacts: {
         Row: {
           achievement_id: string;
@@ -250,7 +128,7 @@ export type Database = {
           {
             foreignKeyName: "mission_artifacts_achievement_id_fkey";
             columns: ["achievement_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "achievements";
             referencedColumns: ["id"];
           },
@@ -704,7 +582,7 @@ export type Database = {
           city: string;
           created_at: string;
           district: string | null;
-          election_term: string | null;
+          election_term: string;
           file_name: string | null;
           id: string;
           lat: number | null;
@@ -722,7 +600,7 @@ export type Database = {
           city: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election_term: string;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -740,7 +618,7 @@ export type Database = {
           city?: string;
           created_at?: string;
           district?: string | null;
-          election_term?: string | null;
+          election_term?: string;
           file_name?: string | null;
           id?: string;
           lat?: number | null;
@@ -1441,45 +1319,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      weekly_event_count_by_prefecture_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-          prefecture: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-          prefecture: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-          prefecture?: string;
-        };
-        Relationships: [];
-      };
-      weekly_event_count_summary: {
-        Row: {
-          count: number;
-          created_at: string;
-          date: string;
-        };
-        Insert: {
-          count: number;
-          created_at?: string;
-          date: string;
-        };
-        Update: {
-          count?: number;
-          created_at?: string;
-          date?: string;
-        };
-        Relationships: [];
-      };
       xp_transactions: {
         Row: {
           created_at: string;
@@ -1518,6 +1357,76 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "seasons";
             referencedColumns: ["id"];
+          },
+        ];
+      };
+      youtube_sync_status: {
+        Row: {
+          id: string;
+          last_synced_at: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          last_synced_at?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      youtube_user_comments: {
+        Row: {
+          comment_id: string;
+          created_at: string | null;
+          detected_at: string | null;
+          id: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Insert: {
+          comment_id: string;
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          comment_id?: string;
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_user_comments_comment_id_fkey";
+            columns: ["comment_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_video_comments";
+            referencedColumns: ["comment_id"];
+          },
+          {
+            foreignKeyName: "youtube_user_comments_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "youtube_user_comments_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
           },
         ];
       };
@@ -1566,6 +1475,92 @@ export type Database = {
         };
         Relationships: [];
       };
+      youtube_video_comments: {
+        Row: {
+          author_channel_id: string;
+          author_display_name: string | null;
+          comment_id: string;
+          created_at: string | null;
+          id: string;
+          published_at: string;
+          text_display: string | null;
+          text_original: string | null;
+          video_id: string;
+        };
+        Insert: {
+          author_channel_id: string;
+          author_display_name?: string | null;
+          comment_id: string;
+          created_at?: string | null;
+          id?: string;
+          published_at: string;
+          text_display?: string | null;
+          text_original?: string | null;
+          video_id: string;
+        };
+        Update: {
+          author_channel_id?: string;
+          author_display_name?: string | null;
+          comment_id?: string;
+          created_at?: string | null;
+          id?: string;
+          published_at?: string;
+          text_display?: string | null;
+          text_original?: string | null;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_comments_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
+          },
+        ];
+      };
+      youtube_video_likes: {
+        Row: {
+          created_at: string | null;
+          detected_at: string | null;
+          id: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          detected_at?: string | null;
+          id?: string;
+          mission_artifact_id?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "youtube_video_likes_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "youtube_video_likes_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "youtube_videos";
+            referencedColumns: ["video_id"];
+          },
+        ];
+      };
       youtube_video_stats: {
         Row: {
           comment_count: number | null;
@@ -1573,8 +1568,8 @@ export type Database = {
           id: string;
           like_count: number | null;
           recorded_at: string;
+          video_id: string;
           view_count: number | null;
-          youtube_video_id: string | null;
         };
         Insert: {
           comment_count?: number | null;
@@ -1582,8 +1577,8 @@ export type Database = {
           id?: string;
           like_count?: number | null;
           recorded_at: string;
+          video_id: string;
           view_count?: number | null;
-          youtube_video_id?: string | null;
         };
         Update: {
           comment_count?: number | null;
@@ -1591,16 +1586,16 @@ export type Database = {
           id?: string;
           like_count?: number | null;
           recorded_at?: string;
+          video_id?: string;
           view_count?: number | null;
-          youtube_video_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "youtube_video_stats_youtube_video_id_fkey";
-            columns: ["youtube_video_id"];
+            foreignKeyName: "youtube_video_stats_video_id_fkey";
+            columns: ["video_id"];
             isOneToOne: false;
             referencedRelation: "youtube_videos";
-            referencedColumns: ["id"];
+            referencedColumns: ["video_id"];
           },
         ];
       };
@@ -1608,10 +1603,10 @@ export type Database = {
         Row: {
           channel_id: string;
           channel_title: string | null;
+          comments_synced_at: string | null;
           created_at: string | null;
           description: string | null;
           duration: string | null;
-          id: string;
           is_active: boolean | null;
           published_at: string | null;
           tags: string[] | null;
@@ -1624,10 +1619,10 @@ export type Database = {
         Insert: {
           channel_id: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
-          id?: string;
           is_active?: boolean | null;
           published_at?: string | null;
           tags?: string[] | null;
@@ -1640,10 +1635,10 @@ export type Database = {
         Update: {
           channel_id?: string;
           channel_title?: string | null;
+          comments_synced_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration?: string | null;
-          id?: string;
           is_active?: boolean | null;
           published_at?: string | null;
           tags?: string[] | null;
@@ -1665,6 +1660,7 @@ export type Database = {
           created_at: string | null;
           id: string | null;
           mission_id: string | null;
+          mission_slug: string | null;
           name: string | null;
           title: string | null;
           user_id: string | null;
@@ -1697,6 +1693,7 @@ export type Database = {
           mission_id: string | null;
           ogp_image_url: string | null;
           required_artifact_type: string | null;
+          slug: string | null;
           title: string | null;
           updated_at: string | null;
         };
@@ -1839,12 +1836,46 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: undefined;
       };
+      get_action_stats_summary: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          active_users: number;
+          daily_actions_increase: number;
+          daily_users_increase: number;
+          total_actions: number;
+        }[];
+      };
       get_archived_poster_board_stats: {
         Args: { p_election_term: string };
         Returns: {
           count: number;
           prefecture: string;
           status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
+      };
+      get_daily_action_history: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
+      get_daily_active_users_history: {
+        Args: { end_date?: string; start_date?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
+      get_mission_action_ranking: {
+        Args: { end_date?: string; limit_count?: number; start_date?: string };
+        Returns: {
+          action_count: number;
+          icon_url: string;
+          is_hidden: boolean;
+          mission_id: string;
+          mission_slug: string;
+          mission_title: string;
         }[];
       };
       get_mission_links: {

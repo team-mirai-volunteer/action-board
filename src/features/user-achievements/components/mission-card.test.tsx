@@ -20,7 +20,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="テストミッション"
           count={5}
-          missionId="test-mission-1"
+          missionSlug="test-mission-1"
         />,
       );
 
@@ -32,7 +32,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="テストミッション"
           count={3}
-          missionId="test-mission-2"
+          missionSlug="test-mission-2"
         />,
       );
 
@@ -45,7 +45,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="テストミッション"
           count={1}
-          missionId="test-mission-3"
+          missionSlug="test-mission-3"
         />,
       );
 
@@ -59,7 +59,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="未達成ミッション"
           count={0}
-          missionId="test-mission-4"
+          missionSlug="test-mission-4"
         />,
       );
 
@@ -72,7 +72,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="人気ミッション"
           count={999}
-          missionId="test-mission-5"
+          missionSlug="test-mission-5"
         />,
       );
 
@@ -86,7 +86,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title={longTitle}
           count={2}
-          missionId="test-mission-6"
+          missionSlug="test-mission-6"
         />,
       );
 
@@ -100,7 +100,7 @@ describe("MissionAchievementCard", () => {
         <MissionAchievementCard
           title="アクセシビリティテスト"
           count={4}
-          missionId="test-mission-7"
+          missionSlug="test-mission-7"
         />,
       );
 

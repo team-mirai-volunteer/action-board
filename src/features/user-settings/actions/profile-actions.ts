@@ -394,6 +394,7 @@ export async function updateProfile(
 
   revalidatePath("/settings/profile");
   revalidatePath("/"); // ホームページの活動タイムラインも更新
+  revalidatePath(`/users/${user.id}`); // マイページのキャッシュも更新
   return {
     success: true,
   };

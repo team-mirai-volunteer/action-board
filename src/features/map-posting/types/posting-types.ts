@@ -81,6 +81,7 @@ export interface PostingPageClientProps {
   eventId: string;
   eventTitle: string;
   isAdmin: boolean;
+  isEventActive: boolean;
 }
 
 // === Leaflet and Geoman Types ===

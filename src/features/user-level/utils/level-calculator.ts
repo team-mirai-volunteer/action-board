@@ -33,7 +33,7 @@ export function calculateLevel(xp: number): number {
 /**
  * ミッションの難易度に基づいてXPを計算する
  * @param difficulty - 難易度（1-5）
- * @param isFeatured - 重要ミッションかどうか（2倍ボーナス）
+ * @param isFeatured - 注目ミッションかどうか（2倍ボーナス）
  */
 export function calculateMissionXp(
   difficulty: number,

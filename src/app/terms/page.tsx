@@ -169,7 +169,7 @@ export default function TermsOfService() {
 
       <div className="mt-12 pt-8 border-t border-gray-200">
         <p className="text-sm text-gray-500 text-center">
-          最終更新日: {new Date().toLocaleDateString("ja-JP")}
+          最終更新日: 2025/05/31
         </p>
       </div>
     </div>

@@ -2,7 +2,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 
 // メトリクスサービスのモック
 jest.mock("../services/get-metrics", () => ({
-  fetchAllMetricsData: jest.fn(),
+  fetchSupporterData: jest.fn(),
+  fetchAchievementData: jest.fn(),
 }));
 
 // YouTube統計サービスのモック
@@ -10,32 +11,42 @@ jest.mock("@/features/youtube-stats/services/youtube-stats-service", () => ({
   getYouTubeStatsSummary: jest.fn(),
 }));
 
-import { fetchAllMetricsData } from "@/features/metrics/services/get-metrics";
+// TikTok統計サービスのモック
+jest.mock("@/features/tiktok-stats/services/tiktok-stats-service", () => ({
+  getTikTokStatsSummary: jest.fn(),
+}));
+
+import {
+  fetchAchievementData,
+  fetchSupporterData,
+} from "@/features/metrics/services/get-metrics";
+import { getTikTokStatsSummary } from "@/features/tiktok-stats/services/tiktok-stats-service";
 import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
 import { Metrics } from "./metrics-index";
 
 // モック関数の型アサーション
-const mockFetchAllMetricsData = fetchAllMetricsData as jest.MockedFunction<
-  typeof fetchAllMetricsData
+const mockFetchSupporterData = fetchSupporterData as jest.MockedFunction<
+  typeof fetchSupporterData
+>;
+const mockFetchAchievementData = fetchAchievementData as jest.MockedFunction<
+  typeof fetchAchievementData
 >;
 const mockGetYouTubeStatsSummary =
   getYouTubeStatsSummary as jest.MockedFunction<typeof getYouTubeStatsSummary>;
+const mockGetTikTokStatsSummary = getTikTokStatsSummary as jest.MockedFunction<
+  typeof getTikTokStatsSummary
+>;
 
 // テスト用のデフォルトデータ
-const defaultMockData = {
-  supporter: {
-    totalCount: 75982,
-    last24hCount: 1710,
-    updatedAt: "2025-07-03T02:20:00Z",
-  },
-  achievement: {
-    totalCount: 18605,
-    todayCount: 245,
-  },
-  registration: {
-    totalCount: 1000,
-    todayCount: 50,
-  },
+const defaultSupporterData = {
+  totalCount: 75982,
+  last24hCount: 1710,
+  updatedAt: "2025-07-03T02:20:00Z",
+};
+
+const defaultAchievementData = {
+  totalCount: 18605,
+  todayCount: 245,
 };
 
 const defaultYouTubeMockData = {
@@ -45,6 +56,16 @@ const defaultYouTubeMockData = {
   totalComments: 1200,
   dailyViewsIncrease: 3500,
   dailyVideosIncrease: 5,
+};
+
+const defaultTikTokMockData = {
+  totalVideos: 50,
+  totalViews: 100000,
+  totalLikes: 2000,
+  totalComments: 500,
+  totalShares: 300,
+  dailyViewsIncrease: 1500,
+  dailyVideosIncrease: 2,
 };
 
 jest.mock("@/components/ui/separator", () => ({
@@ -60,8 +81,10 @@ jest.mock("@/components/ui/separator", () => ({
 describe("Metrics", () => {
   beforeEach(() => {
     // 各テスト前にモックデータをリセット
-    mockFetchAllMetricsData.mockResolvedValue(defaultMockData);
+    mockFetchSupporterData.mockResolvedValue(defaultSupporterData);
+    mockFetchAchievementData.mockResolvedValue(defaultAchievementData);
     mockGetYouTubeStatsSummary.mockResolvedValue(defaultYouTubeMockData);
+    mockGetTikTokStatsSummary.mockResolvedValue(defaultTikTokMockData);
   });
 
   afterEach(() => {
@@ -73,23 +96,23 @@ describe("Metrics", () => {
       render(await Metrics());
 
       expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("YouTube再生回数")).toBeInTheDocument();
-      expect(screen.getByText("YouTube動画本数")).toBeInTheDocument();
+      expect(screen.getByText("動画再生回数")).toBeInTheDocument();
+      expect(screen.getByText("動画本数")).toBeInTheDocument();
       expect(screen.getByText("サポーター数")).toBeInTheDocument();
     });
 
-    it("メトリクス数値が正しく表示される", async () => {
+    it("メトリクス数値が正しく表示される（YouTube + TikTok合算）", async () => {
       render(await Metrics());
 
       await waitFor(() => {
         // サポーター数の確認
         expect(screen.getByText("75,982")).toBeInTheDocument();
 
-        // YouTube再生回数の確認
-        expect(screen.getByText("250,000")).toBeInTheDocument();
+        // 動画再生回数の確認（250,000 + 100,000 = 350,000）
+        expect(screen.getByText("350,000")).toBeInTheDocument();
 
-        // YouTube動画本数の確認
-        expect(screen.getByText("150")).toBeInTheDocument();
+        // 動画本数の確認（150 + 50 = 200）
+        expect(screen.getByText("200")).toBeInTheDocument();
       });
     });
 
@@ -104,23 +127,21 @@ describe("Metrics", () => {
   });
 
   describe("データ取得", () => {
-    it("fetchAllMetricsDataが正しく呼び出される", async () => {
+    it("fetchSupporterDataとfetchAchievementDataが正しく呼び出される", async () => {
       await Metrics();
 
-      expect(mockFetchAllMetricsData).toHaveBeenCalledTimes(1);
+      expect(mockFetchSupporterData).toHaveBeenCalledTimes(1);
+      expect(mockFetchAchievementData).toHaveBeenCalledTimes(1);
     });
 
     it("異なるデータでも正しく表示される", async () => {
-      const customData = {
-        ...defaultMockData,
-        supporter: {
-          totalCount: 50000,
-          last24hCount: 1000,
-          updatedAt: "2025-07-04T10:30:00Z",
-        },
+      const customSupporterData = {
+        totalCount: 50000,
+        last24hCount: 1000,
+        updatedAt: "2025-07-04T10:30:00Z",
       };
 
-      mockFetchAllMetricsData.mockResolvedValueOnce(customData);
+      mockFetchSupporterData.mockResolvedValueOnce(customSupporterData);
 
       render(await Metrics());
 
@@ -133,7 +154,8 @@ describe("Metrics", () => {
   describe("エラーハンドリング", () => {
     it("データ取得エラー時にフォールバック値が使用される", async () => {
       // エラー発生をモック
-      mockFetchAllMetricsData.mockRejectedValueOnce(new Error("API Error"));
+      mockFetchSupporterData.mockRejectedValueOnce(new Error("API Error"));
+      mockFetchAchievementData.mockRejectedValueOnce(new Error("API Error"));
 
       // 環境変数のフォールバック値をモック
       const originalEnv = process.env;
@@ -158,12 +180,19 @@ describe("Metrics", () => {
     it("詳しく見るリンクが正しく表示される", async () => {
       render(await Metrics());
 
-      // 詳しく見るリンクが2つ存在する（サポーター用とYouTube用）
-      // spanタグ内のテキストのみをカウント（title要素は除外）
+      // 詳しく見るリンクが2つ（サポーター用 + アクション数用）
       const detailLinks = screen.getAllByText("詳しく見る", {
         selector: "span",
       });
-      expect(detailLinks).toHaveLength(2);
+      expect(detailLinks).toHaveLength(2); // サポーター + アクション数
+    });
+
+    it("アクション数ダッシュボードへの内部リンクが存在する", async () => {
+      render(await Metrics());
+
+      // アクション数セクションの/statsリンク
+      const statsLink = document.querySelector('a[href="/stats"]');
+      expect(statsLink).toBeInTheDocument();
     });
 
     it("Looker Studioへの外部リンクが存在する", async () => {
@@ -179,11 +208,11 @@ describe("Metrics", () => {
     it("メトリクスの順序が正しい", async () => {
       render(await Metrics());
 
-      const metrics = screen.getAllByText(/YouTube再生回数|サポーター数/);
+      const metrics = screen.getAllByText(/動画再生回数|サポーター数/);
 
-      // 期待される順序: サポーター数 → YouTube再生回数
+      // 期待される順序: サポーター数 → 動画再生回数
       expect(metrics[0]).toHaveTextContent("サポーター数");
-      expect(metrics[1]).toHaveTextContent("YouTube再生回数");
+      expect(metrics[1]).toHaveTextContent("動画再生回数");
     });
   });
 
@@ -202,10 +231,14 @@ describe("Metrics", () => {
     it("内部リンクには適切な属性が設定されていない", async () => {
       render(await Metrics());
 
-      // 内部リンク（/youtube_stats）はtarget="_blank"を持たない
-      const internalLink = document.querySelector('a[href="/youtube_stats"]');
-      expect(internalLink).toBeInTheDocument();
-      expect(internalLink).not.toHaveAttribute("target", "_blank");
+      // 内部リンク（/youtube_stats, /tiktok_stats）はtarget="_blank"を持たない
+      const youtubeLink = document.querySelector('a[href="/youtube_stats"]');
+      expect(youtubeLink).toBeInTheDocument();
+      expect(youtubeLink).not.toHaveAttribute("target", "_blank");
+
+      const tiktokLink = document.querySelector('a[href="/tiktok_stats"]');
+      expect(tiktokLink).toBeInTheDocument();
+      expect(tiktokLink).not.toHaveAttribute("target", "_blank");
     });
   });
 });

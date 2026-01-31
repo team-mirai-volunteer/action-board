@@ -38,6 +38,7 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import {
+  POSTER_MISSION_SLUG,
   checkBoardMissionCompleted,
   getArchivedPosterBoardsMinimal,
   getCurrentUserId,
@@ -199,11 +200,11 @@ export default function DetailedPosterMapClient({
     }
   }, [isUpdateDialogOpen, selectedBoard, userId]);
 
-  // 住所をクリップボードにコピー
-  const copyToClipboard = async (text: string) => {
+  // クリップボードにコピー
+  const copyToClipboard = async (text: string, label = "内容") => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("住所をコピーしました");
+      toast.success(`${label}をコピーしました`);
     } catch (error) {
       toast.error("コピーに失敗しました");
     }
@@ -322,6 +323,8 @@ export default function DetailedPosterMapClient({
 
     if (result.success) {
       toast.success(`ミッション達成！ +${result.xpGranted}XP獲得`);
+    } else {
+      toast.error(result.error || "ミッション達成に失敗しました");
     }
   };
 
@@ -344,9 +347,9 @@ export default function DetailedPosterMapClient({
           );
 
           if (!hasCompleted) {
-            // ミッション達成処理を実行（非同期で実行し、失敗してもステータス更新は成功扱い）
+            // ミッション達成処理を実行（失敗してもステータス更新は成功扱い）
             completePosterBoardMission(selectedBoard).catch(() => {
-              // エラーは無視して、ステータス更新自体は成功として扱う
+              toast.error("ミッション達成に失敗しました");
             });
           }
         }
@@ -497,8 +500,18 @@ export default function DetailedPosterMapClient({
 
           {/* ステータス別内訳 */}
           <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {Object.entries(statusConfig).map(([status, config]) => {
-              const count = statusCounts[status as BoardStatus] || 0;
+            {(
+              [
+                "not_yet",
+                "not_yet_dangerous",
+                "reserved",
+                "done",
+                "error_wrong_poster",
+                "other",
+              ] as BoardStatus[]
+            ).map((status) => {
+              const config = statusConfig[status];
+              const count = statusCounts[status] || 0;
               return (
                 <div key={status} className="flex items-center gap-1">
                   <div
@@ -521,22 +534,12 @@ export default function DetailedPosterMapClient({
           「ポスターマップ上に掲示板が見当たらない」「ポスターを貼ったがポイントに反映されなかった」などの問題がある場合は、下記のミッションにて報告をお願いいたします👇
         </p>
         <p className="mt-2">
-          {putUpPosterMissionId ? (
-            <a
-              href={`/missions/${putUpPosterMissionId}`}
-              className="text-blue-700 underline font-bold"
-            >
-              🔗 ミッション「選挙区ポスターを貼ろう」
-            </a>
-          ) : (
-            <span
-              className="text-gray-400 font-bold cursor-not-allowed"
-              title="ミッションページが見つかりません"
-            >
-              🔗
-              ミッションページが見つかりません。ご意見箱からご報告いただけると幸いです🙇
-            </span>
-          )}
+          <a
+            href={`/missions/${POSTER_MISSION_SLUG}`}
+            className="text-blue-700 underline font-bold"
+          >
+            🔗 ミッション「選挙区ポスターを貼ろう」
+          </a>
         </p>
         <p className="mt-2">ご協力ありがとうございます！</p>
       </div>
@@ -568,9 +571,9 @@ export default function DetailedPosterMapClient({
                   selectedBoard?.name ||
                   selectedBoard?.address ||
                   selectedBoard?.number;
-                if (text) copyToClipboard(text);
+                if (text) copyToClipboard(text, "名称");
               }}
-              title="名前/住所をコピー"
+              title="名称をコピー"
             >
               <Copy className="h-3 w-3" />
             </Button>
@@ -589,7 +592,7 @@ export default function DetailedPosterMapClient({
                     className="h-6 w-6 p-0"
                     onClick={() => {
                       const address = `${selectedBoard.city} ${selectedBoard.address}`;
-                      copyToClipboard(address);
+                      copyToClipboard(address, "住所");
                     }}
                     title="住所をコピー"
                   >
@@ -654,16 +657,28 @@ export default function DetailedPosterMapClient({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(statusConfig).map(([status, config]) => (
-                    <SelectItem key={status} value={status}>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
-                        />
-                        <span>{config.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {(
+                    [
+                      "not_yet",
+                      "reserved",
+                      "done",
+                      "not_yet_dangerous",
+                      "error_wrong_poster",
+                      "other",
+                    ] as BoardStatus[]
+                  ).map((status) => {
+                    const config = statusConfig[status];
+                    return (
+                      <SelectItem key={status} value={status}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`h-2 w-2 rounded-full shrink-0 ${config.color}`}
+                          />
+                          <span>{config.label}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -689,7 +704,7 @@ export default function DetailedPosterMapClient({
                     variant="ghost"
                     size="sm"
                     className="h-5 w-5 p-0"
-                    onClick={() => copyToClipboard(selectedBoard.id)}
+                    onClick={() => copyToClipboard(selectedBoard.id, "ID")}
                     title="IDをコピー"
                   >
                     <Copy className="h-3 w-3" />
