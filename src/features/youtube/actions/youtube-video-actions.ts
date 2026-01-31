@@ -191,6 +191,7 @@ export async function getMyUploadedVideosAction(
 
 /**
  * 現在のユーザーのYouTube動画を同期するServer Action
+ * ユーザー自身のアップロード動画は即時同期（レート制限なし）
  */
 export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
   try {
@@ -253,6 +254,79 @@ export async function syncMyYouTubeVideosAction(): Promise<YouTubeSyncResult> {
         error instanceof Error
           ? error.message
           : "YouTube動画の同期に失敗しました",
+    };
+  }
+}
+
+/**
+ * チームみらい動画結果
+ */
+export interface TeamMiraiVideoSyncResult {
+  success: boolean;
+  newVideos?: number;
+  skipped?: boolean;
+  error?: string;
+}
+
+/**
+ * #チームみらい タグ付き動画を全体同期するServer Action
+ * 最終同期から1時間経過していない場合はスキップ（search.list APIは100ユニット/回と高コスト）
+ */
+export async function syncTeamMiraiVideosAction(): Promise<TeamMiraiVideoSyncResult> {
+  try {
+    const adminClient = await createAdminClient();
+
+    // 1時間のレート制限チェック（全ユーザー共通）
+    const { data: syncStatus } = await adminClient
+      .from("youtube_sync_status")
+      .select("last_synced_at")
+      .eq("id", "videos")
+      .single();
+
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const lastSyncedAt = syncStatus?.last_synced_at
+      ? new Date(syncStatus.last_synced_at)
+      : null;
+
+    if (lastSyncedAt && lastSyncedAt > oneHourAgo) {
+      // 1時間以内に同期済み → スキップ
+      return {
+        success: true,
+        newVideos: 0,
+        skipped: true,
+      };
+    }
+
+    // #チームみらい 動画を同期
+    const { syncYouTubeVideos } = await import(
+      "../services/youtube-video-sync-service"
+    );
+
+    const result = await syncYouTubeVideos({
+      maxResults: 50, // 最新50件を検索
+    });
+
+    // 同期成功時は全体共通の last_synced_at を更新
+    await adminClient
+      .from("youtube_sync_status")
+      .update({
+        last_synced_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", "videos");
+
+    return {
+      success: true,
+      newVideos: result.newVideos,
+    };
+  } catch (error) {
+    console.error("Sync team mirai videos error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "チームみらい動画の同期に失敗しました",
     };
   }
 }
