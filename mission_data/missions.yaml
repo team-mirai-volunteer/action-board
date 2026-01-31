@@ -502,8 +502,7 @@ missions:
     difficulty: 2
     required_artifact_type: POSTER
     max_achievement_count: null
-    is_featured: true
-    featured_importance: 20
+    is_featured: false
     is_hidden: false
     ogp_image_url: null
   - slug: put-up-proportional-representation-poster
