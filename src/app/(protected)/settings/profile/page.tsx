@@ -101,7 +101,7 @@ export default async function ProfileSettingsPage({
               <ChevronRight className="w-4 h-4 text-gray-400" />
             </Link>
           )}
-          {!isProduction && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
             <Link
               href="/settings/youtube"
               className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
