@@ -122,6 +122,7 @@ export async function getTotalPostingCountByMission(
  */
 export async function getPostingCountsForMissions(
   missions: { id: string; required_artifact_type: string | null }[],
+  seasonId?: string,
 ): Promise<Map<string, number>> {
   const postingMissions = missions.filter(
     (m) => m.required_artifact_type === "POSTING",
@@ -129,7 +130,7 @@ export async function getPostingCountsForMissions(
   const postingCountMap = new Map<string, number>();
   await Promise.all(
     postingMissions.map(async (m) => {
-      const count = await getTotalPostingCountByMission(m.id);
+      const count = await getTotalPostingCountByMission(m.id, seasonId);
       postingCountMap.set(m.id, count);
     }),
   );
