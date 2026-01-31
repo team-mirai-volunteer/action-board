@@ -31,8 +31,7 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "warn",
-        "noUnusedVariables": "warn",
-        "useExhaustiveDependencies": "warn"
+        "noUnusedVariables": "warn"
       },
       "a11y": {
         "useSemanticElements": "warn",

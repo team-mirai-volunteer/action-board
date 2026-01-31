@@ -260,6 +260,7 @@ export default function DetailedPosterMapClient({
     }
   }, [prefecture, isArchive, archiveElectionTerm, isDistrict, userId]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ロード関数が不変であることを保証するため
   useEffect(() => {
     // 初回ロード時に全データをロード
     loadBoards();
