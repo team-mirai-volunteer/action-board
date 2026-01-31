@@ -30,7 +30,6 @@ interface UseQuizMissionProps {
   onXpAnimationData?: (data: { initialXp: number; xpGained: number }) => void;
   onDialogOpen?: () => void;
   onErrorMessage?: (error: string | null) => void;
-  scrollToTop?: () => void;
 }
 
 export function useQuizMission({

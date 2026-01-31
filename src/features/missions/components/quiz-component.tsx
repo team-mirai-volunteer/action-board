@@ -47,13 +47,11 @@ interface QuizResult {
 
 interface QuizComponentProps {
   missionId: string;
-  isCompleted?: boolean;
   preloadedQuestions?: QuizQuestion[];
   onQuizComplete?: (results: QuizResult) => void;
   onSubmitAchievement?: () => void;
   isSubmittingAchievement?: boolean;
   buttonLabel?: string;
-  onAchievementSuccess?: () => void;
   category?: string; // カテゴリー名を追加
 }
 

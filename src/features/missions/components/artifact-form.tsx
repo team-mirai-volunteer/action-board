@@ -15,9 +15,7 @@ import { YouTubeForm } from "./youtube-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
-  authUser: User | null;
   disabled: boolean;
-  submittedArtifactImagePath: string | null;
 };
 
 type GeolocationData = {
@@ -124,12 +122,12 @@ export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
 
         {/* YouTube入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE.key && (
-          <YouTubeForm disabled={disabled} missionId={mission.id} />
+          <YouTubeForm disabled={disabled} />
         )}
 
         {/* YouTubeコメント入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE_COMMENT.key && (
-          <YouTubeCommentForm disabled={disabled} missionId={mission.id} />
+          <YouTubeCommentForm disabled={disabled} />
         )}
 
         {/* 補足説明テキストエリア */}

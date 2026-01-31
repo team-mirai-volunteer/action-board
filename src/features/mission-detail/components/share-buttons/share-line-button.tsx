@@ -1,9 +1,7 @@
 "use client";
 
 type Props = {
-  children?: React.ReactNode;
   missionSlug: string;
-  className?: string;
   url?: string;
 };
 

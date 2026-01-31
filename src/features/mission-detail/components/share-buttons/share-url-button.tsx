@@ -4,8 +4,6 @@ import { toast } from "sonner";
 
 type Props = {
   url: string;
-  className?: string;
-  children?: React.ReactNode;
 };
 
 export function ShareUrlButton({ url }: Props) {

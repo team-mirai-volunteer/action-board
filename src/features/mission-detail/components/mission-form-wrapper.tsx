@@ -75,7 +75,6 @@ export function MissionFormWrapper({
     onXpAnimationData: setXpAnimationData,
     onDialogOpen: () => setIsDialogOpen(true),
     onErrorMessage: setErrorMessage,
-    scrollToTop,
   });
 
   // XPアニメーションデータを設定する共通関数
@@ -168,7 +167,6 @@ export function MissionFormWrapper({
           <QuizComponent
             key={quizKey}
             missionId={mission.id}
-            isCompleted={completed}
             preloadedQuestions={preloadedQuizQuestions || []}
             onQuizComplete={handleQuizComplete}
             onSubmitAchievement={handleQuizSubmit}
@@ -253,9 +251,7 @@ export function MissionFormWrapper({
         <ArtifactForm
           key={formKey}
           mission={mission}
-          authUser={authUser}
           disabled={isButtonDisabled || isSubmitting}
-          submittedArtifactImagePath={null}
         />
         <SubmitButton
           pendingText="登録中..."

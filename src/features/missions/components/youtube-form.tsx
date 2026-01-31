@@ -33,7 +33,6 @@ function ManualInputSection({ disabled }: { disabled: boolean }) {
 
 type YouTubeFormProps = {
   disabled: boolean;
-  missionId: string;
 };
 
 export function YouTubeForm({ disabled }: YouTubeFormProps) {
