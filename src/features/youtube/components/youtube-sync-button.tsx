@@ -36,7 +36,7 @@ export function YouTubeSyncButton({
   const handleSync = async () => {
     setIsLoading(true);
     try {
-      // 1. チームみらいタグ付き動画を同期（1時間のレート制限付き）
+      // 1. チームみらいタグ付き動画を同期（2時間のレート制限付き）
       const { syncTeamMiraiVideosAction } = await import(
         "../actions/youtube-video-actions"
       );

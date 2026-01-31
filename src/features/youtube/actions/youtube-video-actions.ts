@@ -270,26 +270,26 @@ export interface TeamMiraiVideoSyncResult {
 
 /**
  * #チームみらい タグ付き動画を全体同期するServer Action
- * 最終同期から1時間経過していない場合はスキップ（search.list APIは100ユニット/回と高コスト）
+ * 最終同期から2時間経過していない場合はスキップ（search.list APIは100ユニット/回と高コスト）
  */
 export async function syncTeamMiraiVideosAction(): Promise<TeamMiraiVideoSyncResult> {
   try {
     const adminClient = await createAdminClient();
 
-    // 1時間のレート制限チェック（全ユーザー共通）
+    // 2時間のレート制限チェック（全ユーザー共通）
     const { data: syncStatus } = await adminClient
       .from("youtube_sync_status")
       .select("last_synced_at")
       .eq("id", "videos")
       .single();
 
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
     const lastSyncedAt = syncStatus?.last_synced_at
       ? new Date(syncStatus.last_synced_at)
       : null;
 
-    if (lastSyncedAt && lastSyncedAt > oneHourAgo) {
-      // 1時間以内に同期済み → スキップ
+    if (lastSyncedAt && lastSyncedAt > twoHoursAgo) {
+      // 2時間以内に同期済み → スキップ
       return {
         success: true,
         newVideos: 0,

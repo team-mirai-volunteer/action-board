@@ -117,7 +117,7 @@ export async function cacheVideoComments(
  * 動画のコメントを取得してキャッシュに保存する
  * @param videoId YouTube動画ID
  * @param maxResults 取得する最大件数
- * @returns success, newCommentsCount, skipped（1時間以内に同期済みの場合true）
+ * @returns success, newCommentsCount, skipped（2時間以内に同期済みの場合true）
  */
 export async function syncVideoComments(
   videoId: string,
@@ -125,20 +125,20 @@ export async function syncVideoComments(
 ): Promise<{ success: boolean; newCommentsCount: number; skipped?: boolean }> {
   const adminClient = await createAdminClient();
 
-  // 1時間のレート制限チェック
+  // 2時間のレート制限チェック
   const { data: video } = await adminClient
     .from("youtube_videos")
     .select("comments_synced_at")
     .eq("video_id", videoId)
     .single();
 
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
   const lastSyncedAt = video?.comments_synced_at
     ? new Date(video.comments_synced_at)
     : null;
 
-  if (lastSyncedAt && lastSyncedAt > oneHourAgo) {
-    // 1時間以内に同期済み → スキップ
+  if (lastSyncedAt && lastSyncedAt > twoHoursAgo) {
+    // 2時間以内に同期済み → スキップ
     return { success: true, newCommentsCount: 0, skipped: true };
   }
 
