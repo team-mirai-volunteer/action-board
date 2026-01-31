@@ -26,6 +26,9 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
     handleDialogClose,
   } = useSubmissionCancel(missionId);
 
+  // 5件ずつ表示するためのstate
+  const [showAll, setShowAll] = useState(false);
+
   // 1つ以上の履歴が存在する場合のみ表示
   if (submissions.length === 0) {
     return null;
@@ -36,9 +39,6 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
     (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
-
-  // 5件ずつ表示するためのstate
-  const [showAll, setShowAll] = useState(false);
 
   const displayedSubmissions = showAll
     ? sortedSubmissions
