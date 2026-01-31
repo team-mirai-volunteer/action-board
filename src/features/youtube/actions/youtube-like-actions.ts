@@ -1,13 +1,14 @@
 "use server";
 
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import {
   type LikedVideo,
   checkTeamMiraiVideosBatch,
   extractVideoIdFromUrl,
   fetchUserLikedVideos,
+  getYouTubeConnection,
+  isTokenExpired,
 } from "../services/youtube-like-service";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";
 
@@ -32,6 +33,44 @@ export interface DetectLikesResult {
 }
 
 /**
+ * 有効なYouTubeアクセストークンを取得する共通ヘルパー
+ * トークンが期限切れの場合はリフレッシュを試みる
+ */
+async function getValidAccessToken(
+  userId: string,
+): Promise<
+  { success: true; accessToken: string } | { success: false; error: string }
+> {
+  const connectionResult = await getYouTubeConnection(userId);
+  if (!connectionResult.success || !connectionResult.connection) {
+    return {
+      success: false,
+      error: connectionResult.error || "YouTubeアカウントが連携されていません",
+    };
+  }
+
+  let accessToken = connectionResult.connection.accessToken;
+
+  // トークンの有効期限をチェック
+  if (isTokenExpired(connectionResult.connection.tokenExpiresAt)) {
+    console.log("YouTube access token expired, attempting refresh...");
+    const refreshResult = await refreshYouTubeTokenAction();
+
+    if (!refreshResult.success || !refreshResult.accessToken) {
+      return {
+        success: false,
+        error:
+          "YouTubeのアクセストークンが期限切れです。再度連携してください。",
+      };
+    }
+
+    accessToken = refreshResult.accessToken;
+  }
+
+  return { success: true, accessToken };
+}
+
+/**
  * YouTubeいいねを検出するServer Action
  * 連携済みユーザーのいいね動画を取得し、チームみらい動画を検出する
  */
@@ -50,38 +89,15 @@ export async function detectYouTubeLikesAction(): Promise<DetectLikesResult> {
       };
     }
 
-    // YouTube連携情報を取得
-    const adminClient = await createAdminClient();
-    const { data: connection, error: connectionError } = await adminClient
-      .from("youtube_user_connections")
-      .select("access_token, token_expires_at, refresh_token")
-      .eq("user_id", user.id)
-      .single();
-
-    if (connectionError || !connection) {
+    // 有効なアクセストークンを取得
+    const tokenResult = await getValidAccessToken(user.id);
+    if (!tokenResult.success) {
       return {
         success: false,
-        error: "YouTubeアカウントが連携されていません",
+        error: tokenResult.error,
       };
     }
-
-    let accessToken = connection.access_token;
-
-    // トークンの有効期限をチェック
-    if (new Date(connection.token_expires_at) < new Date()) {
-      console.log("YouTube access token expired, attempting refresh...");
-      const refreshResult = await refreshYouTubeTokenAction();
-
-      if (!refreshResult.success || !refreshResult.accessToken) {
-        return {
-          success: false,
-          error:
-            "YouTubeのアクセストークンが期限切れです。再度連携してください。",
-        };
-      }
-
-      accessToken = refreshResult.accessToken;
-    }
+    const accessToken = tokenResult.accessToken;
 
     // ユーザーがいいねした動画を取得
     let likedVideos: LikedVideo[];
@@ -425,41 +441,22 @@ export async function syncYouTubeLikesAction(): Promise<SyncLikesResult> {
       };
     }
 
-    // YouTube連携情報を取得
-    const adminClient = await createAdminClient();
-    const { data: connection, error: connectionError } = await adminClient
-      .from("youtube_user_connections")
-      .select("access_token, token_expires_at, refresh_token")
-      .eq("user_id", user.id)
-      .single();
-
-    if (connectionError || !connection) {
+    // 有効なアクセストークンを取得
+    const tokenResult = await getValidAccessToken(user.id);
+    if (!tokenResult.success) {
       return {
         success: false,
         syncedVideoCount: 0,
         achievedCount: 0,
         totalXpGranted: 0,
-        error: "YouTubeアカウントが連携されていません",
+        error: tokenResult.error,
       };
     }
+    const accessToken = tokenResult.accessToken;
 
-    let accessToken = connection.access_token;
-
-    // トークンの有効期限をチェック
-    if (new Date(connection.token_expires_at) < new Date()) {
-      const refreshResult = await refreshYouTubeTokenAction();
-      if (!refreshResult.success || !refreshResult.accessToken) {
-        return {
-          success: false,
-          syncedVideoCount: 0,
-          achievedCount: 0,
-          totalXpGranted: 0,
-          error:
-            "YouTubeのアクセストークンが期限切れです。再度連携してください。",
-        };
-      }
-      accessToken = refreshResult.accessToken;
-    }
+    // adminClientを取得（youtube_videosへの書き込みとミッション取得に必要）
+    const { createAdminClient } = await import("@/lib/supabase/adminClient");
+    const adminClient = await createAdminClient();
 
     // ユーザーがいいねした動画を取得
     let likedVideos: LikedVideo[];
@@ -510,7 +507,6 @@ export async function syncYouTubeLikesAction(): Promise<SyncLikesResult> {
       const videoDetails = await fetchVideoDetails(accessToken, newVideoIds);
 
       for (const detail of videoDetails) {
-        const likedVideo = likedVideos.find((v) => v.videoId === detail.id);
         const { error: insertError } = await adminClient
           .from("youtube_videos")
           .upsert(
