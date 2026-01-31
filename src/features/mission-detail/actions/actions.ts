@@ -425,6 +425,39 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // YouTubeミッション: チームみらい動画の検証（DB書き込み前に実行）
+  let validatedYouTubeVideoId: string | null = null;
+  if (
+    validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
+    validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
+  ) {
+    const { validateAndRegisterTeamMiraiVideo } = await import(
+      "@/features/youtube/services/youtube-like-service"
+    );
+
+    const validateResult = await validateAndRegisterTeamMiraiVideo(
+      validatedData.artifactLink,
+    );
+
+    if (!validateResult.success) {
+      return {
+        success: false,
+        error: validateResult.error || "YouTube動画の検証に失敗しました。",
+      };
+    }
+
+    if (!validateResult.isTeamMirai) {
+      return {
+        success: false,
+        error:
+          validateResult.error ||
+          "この動画はチームみらいの動画ではありません。",
+      };
+    }
+
+    validatedYouTubeVideoId = validateResult.videoId ?? null;
+  }
+
   // 現在のシーズンIDを取得
   const currentSeasonId = await getCurrentSeasonId();
   if (!currentSeasonId) {
@@ -757,50 +790,23 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
 
     // YouTubeいいね記録をyoutube_video_likesテーブルに保存
-    if (
-      validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
-      validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
-    ) {
-      const { validateAndRegisterTeamMiraiVideo, createYouTubeLikeRecord } =
-        await import("@/features/youtube/services/youtube-like-service");
-
-      // チームみらい動画の検証とDB登録
-      const validateResult = await validateAndRegisterTeamMiraiVideo(
-        validatedData.artifactLink,
+    // 検証は既にDB書き込み前に完了済み（validatedYouTubeVideoIdに格納）
+    if (validatedYouTubeVideoId) {
+      const { createYouTubeLikeRecord } = await import(
+        "@/features/youtube/services/youtube-like-service"
       );
 
-      if (!validateResult.success) {
+      const likeResult = await createYouTubeLikeRecord(
+        authUser.id,
+        validatedYouTubeVideoId,
+        newArtifact.id,
+      );
+
+      if (!likeResult.success) {
         return {
           success: false,
-          error: validateResult.error || "YouTube動画の検証に失敗しました。",
+          error: likeResult.error || "YouTubeいいね記録の保存に失敗しました。",
         };
-      }
-
-      if (!validateResult.isTeamMirai) {
-        return {
-          success: false,
-          error:
-            validateResult.error ||
-            "この動画はチームみらいの動画ではありません。",
-        };
-      }
-
-      // youtube_video_likesに記録
-      if (validateResult.videoId) {
-        const likeResult = await createYouTubeLikeRecord(
-          authUser.id,
-          validateResult.videoId,
-          newArtifact.id,
-        );
-
-        if (!likeResult.success) {
-          // 重複エラーは成功扱いなのでここには来ない
-          return {
-            success: false,
-            error:
-              likeResult.error || "YouTubeいいね記録の保存に失敗しました。",
-          };
-        }
       }
     }
   }
