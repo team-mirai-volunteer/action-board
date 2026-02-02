@@ -1,27 +1,27 @@
 -- 京都府ポスターミッション達成データの復旧
 -- 原因: POSTER_PREFECTURE_MAP に京都府が含まれていなかったため、achieveMissionAction のバリデーションが失敗
 -- 対象: 京都府のポスター掲示板で done ステータスに更新されたが、poster_activities が存在しないレコード
+-- 注意: 復旧対象のデータが作成された期間中、このミッションは is_featured = true だったため、XPは2倍で計算する
 
 DO $$
 DECLARE
   poster_mission_id uuid;
   current_season_id uuid;
-  mission_difficulty integer;
-  mission_is_featured boolean;
-  calculated_xp integer;
-  bonus_xp integer;
-  total_xp integer;
   rec record;
   new_achievement_id uuid;
   new_artifact_id uuid;
   recovered_count integer := 0;
-  -- 定数（src/lib/constants/mission-config.ts と同じ値）
+  -- 定数（src/lib/constants/mission-config.ts と mission_data/missions.yaml の値）
+  -- put-up-poster-on-board: difficulty=2, is_featured=true（復旧対象期間中）
+  -- ミッションXP: 100(difficulty=2) * 2(featured) = 200
+  -- ボーナスXP: 1(MAX_POSTER_COUNT) * 400(POSTER_POINTS_PER_UNIT) * 2(featured) = 800
+  MISSION_XP constant integer := 200;
+  BONUS_XP constant integer := 800;
+  TOTAL_XP constant integer := 1000;
   MAX_POSTER_COUNT constant integer := 1;
-  POSTER_POINTS_PER_UNIT constant integer := 400;
 BEGIN
-  -- ポスターミッションの情報を取得
-  SELECT id, difficulty, is_featured
-  INTO poster_mission_id, mission_difficulty, mission_is_featured
+  -- ポスターミッションのIDを取得
+  SELECT id INTO poster_mission_id
   FROM missions
   WHERE slug = 'put-up-poster-on-board';
 
@@ -42,29 +42,8 @@ BEGIN
     RETURN;
   END IF;
 
-  -- ミッション完了XP計算（difficulty: 1=50, 2=100, 3=200, 4=400, 5=800、featured なら2倍）
-  calculated_xp := CASE mission_difficulty
-    WHEN 1 THEN 50
-    WHEN 2 THEN 100
-    WHEN 3 THEN 200
-    WHEN 4 THEN 400
-    WHEN 5 THEN 800
-    ELSE 50
-  END;
-  IF mission_is_featured THEN
-    calculated_xp := calculated_xp * 2;
-  END IF;
-
-  -- ボーナスXP計算（MAX_POSTER_COUNT * POSTER_POINTS_PER_UNIT、featured なら2倍）
-  bonus_xp := MAX_POSTER_COUNT * POSTER_POINTS_PER_UNIT;
-  IF mission_is_featured THEN
-    bonus_xp := bonus_xp * 2;
-  END IF;
-
-  total_xp := calculated_xp + bonus_xp;
-
   RAISE NOTICE 'Mission ID: %, Season ID: %, Mission XP: %, Bonus XP: %, Total XP: %',
-    poster_mission_id, current_season_id, calculated_xp, bonus_xp, total_xp;
+    poster_mission_id, current_season_id, MISSION_XP, BONUS_XP, TOTAL_XP;
 
   -- 京都府のdone更新でposter_activitiesがないレコードを処理
   FOR rec IN
@@ -145,7 +124,7 @@ BEGIN
       gen_random_uuid(),
       rec.user_id,
       current_season_id,
-      calculated_xp,
+      MISSION_XP,
       'MISSION_COMPLETION',
       new_achievement_id,
       'ミッション「選挙区ポスターを貼ろう」達成による経験値獲得（データ復旧）',
@@ -160,24 +139,23 @@ BEGIN
       gen_random_uuid(),
       rec.user_id,
       current_season_id,
-      bonus_xp,
+      BONUS_XP,
       'BONUS',
       new_achievement_id,
-      'ポスターボーナス（' || MAX_POSTER_COUNT || '枚=' || bonus_xp || 'ポイント' ||
-        CASE WHEN mission_is_featured THEN '【2倍】' ELSE '' END || '）（データ復旧）',
+      'ポスターボーナス（' || MAX_POSTER_COUNT || '枚=' || BONUS_XP || 'ポイント【2倍】）（データ復旧）',
       rec.history_created_at
     );
 
     -- 6. user_levels テーブルを更新（XP加算：ミッションXP + ボーナスXP）
     INSERT INTO user_levels (user_id, season_id, xp, level, updated_at)
-    VALUES (rec.user_id, current_season_id, total_xp, 1, now())
+    VALUES (rec.user_id, current_season_id, TOTAL_XP, 1, now())
     ON CONFLICT (user_id, season_id) DO UPDATE
-    SET xp = user_levels.xp + total_xp,
+    SET xp = user_levels.xp + TOTAL_XP,
         updated_at = now();
 
     recovered_count := recovered_count + 1;
     RAISE NOTICE 'Recovered achievement for user_id: %, board_id: %, total_xp: %',
-      rec.user_id, rec.board_id, total_xp;
+      rec.user_id, rec.board_id, TOTAL_XP;
   END LOOP;
 
   -- 7. user_levels のレベルを再計算
