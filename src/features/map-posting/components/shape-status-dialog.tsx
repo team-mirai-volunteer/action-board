@@ -166,6 +166,14 @@ export function ShapeStatusDialog({
   const handleDelete = async () => {
     if (!shape?.id || !onDelete) return;
 
+    // ミッション達成済みの図形は削除をブロック
+    if (isMissionCompleted) {
+      toast.error(
+        "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
+      );
+      return;
+    }
+
     const confirmed = window.confirm(
       "この図形を削除しますか？\n削除すると元に戻せません。",
     );
