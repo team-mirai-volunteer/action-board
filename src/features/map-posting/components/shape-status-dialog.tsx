@@ -77,6 +77,7 @@ export function ShapeStatusDialog({
   >(null);
   const [memo, setMemo] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isMissionStatusError, setIsMissionStatusError] = useState(false);
 
   // ダイアログ開時にミッション達成状況を取得
   useEffect(() => {
@@ -85,6 +86,7 @@ export function ShapeStatusDialog({
       setMemo(shape.memo || "");
       setPostingCount(null);
       setIsLoading(true);
+      setIsMissionStatusError(false);
 
       getShapeMissionStatus(shape.id)
         .then((status) => {
@@ -97,6 +99,7 @@ export function ShapeStatusDialog({
         })
         .catch((error) => {
           console.error("Failed to fetch mission status:", error);
+          setIsMissionStatusError(true);
           toast.error("ミッション状況の取得に失敗しました");
         })
         .finally(() => setIsLoading(false));
@@ -166,10 +169,12 @@ export function ShapeStatusDialog({
   const handleDelete = async () => {
     if (!shape?.id || !onDelete) return;
 
-    // ミッション達成済みの図形は削除をブロック
-    if (isMissionCompleted) {
+    // ミッション達成済み、またはミッション状況取得失敗時は削除をブロック
+    if (isMissionCompleted || isMissionStatusError) {
       toast.error(
-        "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
+        isMissionStatusError
+          ? "ミッション状況の確認に失敗しました。削除を中止します。"
+          : "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
       );
       return;
     }

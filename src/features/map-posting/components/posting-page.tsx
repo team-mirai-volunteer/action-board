@@ -434,6 +434,11 @@ export default function PostingPageClient({
               }
             } catch (error) {
               console.error("Failed to check mission status:", error);
+              toast.error(
+                "ミッション状況の確認に失敗しました。削除を中止します。",
+              );
+              layer.addTo(mapInstance);
+              return;
             }
           }
 
