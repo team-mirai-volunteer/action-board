@@ -14,6 +14,7 @@ const ImageArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   <div className="flex flex-row gap-2">
     <div className="w-24 h-24 shrink-0 relative mb-2">
       {artifact.image_storage_path && (
+        // biome-ignore lint/performance/noImgElement: 外部ストレージの画像URLのためnext/imageは使用不可
         <img
           src={artifact.image_storage_path}
           alt="提出画像"
@@ -33,6 +34,7 @@ const ImageWithGeolocationArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   <div className="flex flex-row gap-2">
     <div className="w-24 h-24 shrink-0 relative mb-2">
       {artifact.image_storage_path && (
+        // biome-ignore lint/performance/noImgElement: 外部ストレージの画像URLのためnext/imageは使用不可
         <img
           src={artifact.image_storage_path}
           alt="提出画像"

@@ -27,6 +27,7 @@ jest.mock("@radix-ui/react-dialog", () => ({
 
 jest.mock("next/image", () => {
   return ({ src, alt, width, height, style }: any) => (
+    // biome-ignore lint/performance/noImgElement: テスト用モックのため<img>を使用
     <img src={src} alt={alt} width={width} height={height} style={style} />
   );
 });

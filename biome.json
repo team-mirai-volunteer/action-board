@@ -33,9 +33,6 @@
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
       },
-      "performance": {
-        "noImgElement": "warn"
-      },
       "complexity": {
         "noImportantStyles": "warn"
       }

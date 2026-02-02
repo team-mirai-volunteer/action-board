@@ -91,6 +91,7 @@ export function YouTubeLinkButton({
       <div className="space-y-3">
         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
           {thumbnailUrl && (
+            // biome-ignore lint/performance/noImgElement: YouTubeの外部サムネイルURLのためnext/imageは使用不可
             <img
               src={thumbnailUrl}
               alt={channelTitle || "YouTube"}

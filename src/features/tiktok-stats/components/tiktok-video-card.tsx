@@ -35,6 +35,7 @@ export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
       {/* サムネイル（縦長） */}
       <div className="relative w-10 h-15 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
         {video.thumbnail_url ? (
+          // biome-ignore lint/performance/noImgElement: TikTokの外部サムネイルURLのためnext/imageは使用不可
           <img
             src={video.thumbnail_url}
             alt={video.title || "TikTok動画"}
