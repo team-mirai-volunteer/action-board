@@ -12,12 +12,12 @@ export function YouTubeSubscribeButton({ channelId, className }: Props) {
 
   return (
     <div className={className}>
-      <div
+      <button
+        type="button"
         className="g-ytsubscribe"
         data-channelid={channelId}
         data-layout="full"
         data-count="default"
-        role="button"
         aria-label={`YouTube チャンネル ${channelId} を購読`}
         tabIndex={0}
       />

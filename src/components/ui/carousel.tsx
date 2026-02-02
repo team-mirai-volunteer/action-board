@@ -134,8 +134,8 @@ const Carousel = React.forwardRef<
           canScrollNext,
         }}
       >
-        {/* biome-ignore lint/a11y/useSemanticElements: shadcn/uiのコンポーネントでrole属性を使用 */}
-        <div
+        {/* biome-ignore lint/a11y/useSemanticElements: explicit role="region" is required for aria-roledescription to work properly */}
+        <section
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
@@ -144,7 +144,7 @@ const Carousel = React.forwardRef<
           {...props}
         >
           {children}
-        </div>
+        </section>
       </CarouselContext.Provider>
     );
   },
