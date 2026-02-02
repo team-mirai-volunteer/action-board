@@ -4,11 +4,9 @@ import { toast } from "sonner";
 
 type Props = {
   url: string;
-  className?: string;
-  children?: React.ReactNode;
 };
 
-export function ShareUrlButton({ url, className, children }: Props) {
+export function ShareUrlButton({ url }: Props) {
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(url);

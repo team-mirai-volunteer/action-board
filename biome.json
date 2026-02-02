@@ -31,11 +31,7 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "warn",
-        "noUnusedVariables": "warn",
-        "noUnusedFunctionParameters": "warn",
-        "noInvalidUseBeforeDeclaration": "warn",
-        "useExhaustiveDependencies": "warn",
-        "useHookAtTopLevel": "warn"
+        "noUnusedVariables": "warn"
       },
       "a11y": {
         "useSemanticElements": "warn",

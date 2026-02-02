@@ -88,10 +88,6 @@ export function createDefaultMetadata(): Metadata {
 // Next.js generateMetadata関数
 // ==========================================
 
-export async function generateRootMetadata({
-  params,
-}: {
-  params?: Promise<{ [key: string]: string | undefined }>;
-}): Promise<Metadata> {
+export async function generateRootMetadata(): Promise<Metadata> {
   return createDefaultMetadata();
 }

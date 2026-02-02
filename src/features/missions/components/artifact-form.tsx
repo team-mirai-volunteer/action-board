@@ -1,6 +1,5 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,9 +14,7 @@ import { YouTubeForm } from "./youtube-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
-  authUser: User | null;
   disabled: boolean;
-  submittedArtifactImagePath: string | null;
 };
 
 type GeolocationData = {
@@ -27,12 +24,7 @@ type GeolocationData = {
   altitude?: number;
 };
 
-export function ArtifactForm({
-  mission,
-  authUser,
-  disabled,
-  submittedArtifactImagePath,
-}: ArtifactFormProps) {
+export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
   const [_artifactImagePath, _setArtifactImagePath] = useState<
     string | undefined
   >(undefined);
@@ -129,12 +121,12 @@ export function ArtifactForm({
 
         {/* YouTube入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE.key && (
-          <YouTubeForm disabled={disabled} missionId={mission.id} />
+          <YouTubeForm disabled={disabled} />
         )}
 
         {/* YouTubeコメント入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.YOUTUBE_COMMENT.key && (
-          <YouTubeCommentForm disabled={disabled} missionId={mission.id} />
+          <YouTubeCommentForm disabled={disabled} />
         )}
 
         {/* 補足説明テキストエリア */}

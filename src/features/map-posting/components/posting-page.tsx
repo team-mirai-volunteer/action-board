@@ -185,6 +185,7 @@ export default function PostingPageClient({
     setTotalPostingCount(total);
   }, [showOnlyMine, mapInstance, userId, isClusterMode]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 初期化処理のため依存配列を最小限に保つ
   useEffect(() => {
     if (!mapInstance) return;
 
@@ -674,7 +675,6 @@ export default function PostingPageClient({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapInstance, eventId, userId, isEventActive]);
 
   const textMarkerStyles = `

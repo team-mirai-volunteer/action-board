@@ -33,10 +33,9 @@ function ManualInputSection({ disabled }: { disabled: boolean }) {
 
 type YouTubeFormProps = {
   disabled: boolean;
-  missionId: string;
 };
 
-export function YouTubeForm({ disabled, missionId }: YouTubeFormProps) {
+export function YouTubeForm({ disabled }: YouTubeFormProps) {
   const [linkStatus, setLinkStatus] = useState<YouTubeLinkStatus | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
 

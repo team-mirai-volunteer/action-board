@@ -33,13 +33,9 @@ function ManualInputSection({ disabled }: { disabled: boolean }) {
 
 type YouTubeCommentFormProps = {
   disabled: boolean;
-  missionId: string;
 };
 
-export function YouTubeCommentForm({
-  disabled,
-  missionId,
-}: YouTubeCommentFormProps) {
+export function YouTubeCommentForm({ disabled }: YouTubeCommentFormProps) {
   const [linkStatus, setLinkStatus] = useState<YouTubeLinkStatus | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
 

@@ -30,7 +30,6 @@ interface UseQuizMissionProps {
   onXpAnimationData?: (data: { initialXp: number; xpGained: number }) => void;
   onDialogOpen?: () => void;
   onErrorMessage?: (error: string | null) => void;
-  scrollToTop?: () => void;
 }
 
 export function useQuizMission({
@@ -39,7 +38,6 @@ export function useQuizMission({
   onXpAnimationData,
   onDialogOpen,
   onErrorMessage,
-  scrollToTop,
 }: UseQuizMissionProps) {
   // クイズカテゴリの状態
   const [quizCategory, setQuizCategory] = useState<string>("その他");

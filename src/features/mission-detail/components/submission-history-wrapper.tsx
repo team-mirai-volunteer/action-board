@@ -7,14 +7,12 @@ type Props = {
   submissions: SubmissionData[];
   missionId: string;
   userId?: string | null;
-  maxAchievementCount: number;
 };
 
 export function SubmissionHistoryWrapper({
   submissions,
   missionId,
   userId,
-  maxAchievementCount,
 }: Props) {
   if (submissions.length === 0) {
     return null;
@@ -30,7 +28,6 @@ export function SubmissionHistoryWrapper({
       }))}
       missionId={missionId}
       userId={userId}
-      maxAchievementCount={maxAchievementCount}
     />
   );
 }

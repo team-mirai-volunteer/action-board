@@ -37,7 +37,7 @@ jest.mock("@/components/ui/card", () => ({
 }));
 
 jest.mock("./ranking-item", () => ({
-  RankingItem: ({ user, userWithMission, mission, badgeText }: any) => (
+  RankingItem: ({ user, mission, badgeText }: any) => (
     <div data-testid="ranking-item">
       <span data-testid="user-name">{user.name}</span>
       <span data-testid="badge-text">{badgeText}</span>

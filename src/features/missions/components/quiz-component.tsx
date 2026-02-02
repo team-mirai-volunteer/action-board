@@ -47,25 +47,21 @@ interface QuizResult {
 
 interface QuizComponentProps {
   missionId: string;
-  isCompleted?: boolean;
   preloadedQuestions?: QuizQuestion[];
   onQuizComplete?: (results: QuizResult) => void;
   onSubmitAchievement?: () => void;
   isSubmittingAchievement?: boolean;
   buttonLabel?: string;
-  onAchievementSuccess?: () => void;
   category?: string; // カテゴリー名を追加
 }
 
 export default function QuizComponent({
   missionId,
-  isCompleted = false,
   preloadedQuestions,
   onQuizComplete,
   onSubmitAchievement,
   isSubmittingAchievement = false,
   buttonLabel,
-  onAchievementSuccess,
   category,
 }: QuizComponentProps) {
   // カテゴリーによる達成メッセージを生成する関数

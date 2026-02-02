@@ -260,6 +260,7 @@ export default function DetailedPosterMapClient({
     }
   }, [prefecture, isArchive, archiveElectionTerm, isDistrict, userId]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ルート遷移時にコンポーネントが再マウントされるため、初回マウント時の単発実行で十分
   useEffect(() => {
     // 初回ロード時に全データをロード
     loadBoards();

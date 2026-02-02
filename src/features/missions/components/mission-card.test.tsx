@@ -86,11 +86,9 @@ jest.mock("@/components/ui/button", () => ({
   Button: ({
     children,
     className,
-    variant,
   }: {
     children: React.ReactNode;
     className?: string;
-    variant?: string;
   }) => (
     <button type="button" className={className} data-testid="button">
       {children}
@@ -99,15 +97,9 @@ jest.mock("@/components/ui/button", () => ({
 }));
 
 jest.mock("@/features/missions/components/mission-icon", () => ({
-  MissionIcon: ({
-    src,
-    alt,
-    size,
-  }: {
-    src: string;
-    alt: string;
-    size: string;
-  }) => <img src={src} alt={alt} data-testid="mission-icon" />,
+  MissionIcon: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} data-testid="mission-icon" />
+  ),
 }));
 
 jest.mock("@/features/missions/components/mission-achievement-status", () => {

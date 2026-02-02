@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { statusConfig } from "../config/status-config";
 import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
-import type { BoardStatus, PosterBoardTotal } from "../types/poster-types";
+import type { BoardStatus } from "../types/poster-types";
 import {
   calculateProgressRate,
   getCompletedCount,
@@ -19,12 +19,10 @@ interface Props {
     string,
     { total: number; statuses: Record<BoardStatus, number> }
   >;
-  initialTotals: PosterBoardTotal[];
 }
 
 export default function PosterMapPageClientOptimized({
   initialSummary,
-  initialTotals,
 }: Props) {
   // 区割り別の統計を使用
   const boardStats = useMemo(() => {

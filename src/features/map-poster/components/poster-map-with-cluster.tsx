@@ -20,7 +20,6 @@ import { getCurrentUserId } from "../services/poster-boards";
 import { PosterBoardFilter } from "./poster-board-filter";
 
 // Fix Leaflet default marker icon issue with Next.js
-// biome-ignore lint/performance/noDelete: Required for Leaflet icon fix
 // biome-ignore lint/suspicious/noExplicitAny: Leaflet internal API
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({

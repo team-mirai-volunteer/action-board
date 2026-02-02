@@ -1,20 +1,12 @@
 "use client";
 
 type Props = {
-  children?: React.ReactNode;
   message: string;
   missionSlug: string;
-  className?: string;
   url?: string;
 };
 
-export function ShareTwitterButton({
-  children,
-  message,
-  missionSlug,
-  className,
-  url,
-}: Props) {
+export function ShareTwitterButton({ message, missionSlug, url }: Props) {
   const shareUrl = url ?? `${window.location.origin}/missions/${missionSlug}`;
   const handleShare = () => {
     const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;

@@ -318,7 +318,7 @@ jest.mock("@radix-ui/react-dialog", () => {
   };
 
   const mockComponents = {
-    Root: ({ children, open, onOpenChange }) => {
+    Root: ({ children, open }) => {
       return open
         ? mockReact.createElement(
             "div",
