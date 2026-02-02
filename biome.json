@@ -33,9 +33,6 @@
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
       },
-      "a11y": {
-        "noStaticElementInteractions": "warn"
-      },
       "performance": {
         "noImgElement": "warn"
       },

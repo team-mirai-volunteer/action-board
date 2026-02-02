@@ -161,8 +161,9 @@ export function HorizontalScrollContainer({
         </button>
       )}
 
-      <div
+      <section
         ref={scrollRef}
+        aria-label="スクロール可能なミッションコンテナ"
         className={cn(
           "overflow-x-auto custom-scrollbar",
           isDesktop && isDragging
@@ -183,7 +184,7 @@ export function HorizontalScrollContainer({
         onMouseLeave={handleMouseLeave}
       >
         {children}
-      </div>
+      </section>
 
       {isDesktop && canScrollRight && (
         <button
