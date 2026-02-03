@@ -779,3 +779,14 @@ missions:
     is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
     ogp_image_url: null
+  - slug: follow-candidates-sns
+    title: 立候補者のSNSをフォローしよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_x-like.svg
+    content: チームみらいの立候補者のX、Instagramなどをフォローして、最新情報をキャッチしよう！<br><br>▼公認候補者・SNSアカウント一覧<br><a href="https://team-mir.ai/#member" target="_blank" rel="noopener noreferrer">チームみらい公認候補者一覧</a>
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのSNSのアカウント名
+    ogp_image_url: null
