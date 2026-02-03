@@ -36,13 +36,13 @@ git log origin/develop..HEAD --oneline
 git add -A
 git commit -m "wip: temporary"
 git checkout develop
-git pull --ff-only origin develop
+git pull --rebase origin develop
 git checkout -b <新しいブランチ名>
 git cherry-pick <wipコミット>
 
 # すでにコミットがある場合
 git checkout develop
-git pull --ff-only origin develop
+git pull --rebase origin develop
 git checkout -b <新しいブランチ名>
 git cherry-pick <コミット範囲>
 ```
@@ -69,7 +69,7 @@ git checkout -b <新しいブランチ名>
 もし `develop` / `main` で **未コミットの変更が無い** 場合は、先に最新化してからブランチを作成する：
 
 ```bash
-git pull --ff-only origin <develop または main>
+git pull --rebase origin <develop または main>
 git checkout -b <新しいブランチ名>
 ```
 
