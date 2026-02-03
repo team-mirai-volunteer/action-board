@@ -22,7 +22,7 @@ export default async function YouTubeSettingsPage({
   const linkStatus = await getYouTubeLinkStatusAction();
 
   return (
-    <div className="max-w-2xl mx-auto py-6 px-4">
+    <div className="w-full max-w-2xl mx-auto py-6 px-4">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">YouTube連携設定</h1>
 
       {justLinked && (
