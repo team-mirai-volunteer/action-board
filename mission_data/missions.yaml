@@ -788,5 +788,5 @@ missions:
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: あなたのSNSのアカウント名
+    artifact_label: SNS名と候補者名
     ogp_image_url: null
