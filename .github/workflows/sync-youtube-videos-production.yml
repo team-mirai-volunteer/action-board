@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-youtube-videos:
+  sync-videos:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -17,34 +17,79 @@ jobs:
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       APP_URL: ${{ secrets.APP_URL }}
       BATCH_ADMIN_KEY: ${{ secrets.BATCH_ADMIN_KEY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: "pnpm"
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Sync YouTube videos
         run: pnpm youtube:sync-videos
 
+  sync-likes:
+    needs: sync-videos
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      APP_URL: ${{ secrets.APP_URL }}
+      BATCH_ADMIN_KEY: ${{ secrets.BATCH_ADMIN_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Sync YouTube likes
         run: pnpm youtube:sync-likes
 
+  sync-comments:
+    needs: sync-likes
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      APP_URL: ${{ secrets.APP_URL }}
+      BATCH_ADMIN_KEY: ${{ secrets.BATCH_ADMIN_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Sync YouTube comments
         run: pnpm youtube:sync-comments
 
-      - name: Notify on failure
-        if: failure()
+  notify-failure:
+    needs: [sync-videos, sync-likes, sync-comments]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create issue on failure
         uses: actions/github-script@v7
         with:
           script: |
