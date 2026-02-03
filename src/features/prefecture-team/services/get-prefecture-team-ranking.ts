@@ -41,14 +41,10 @@ export async function getPrefectureTeamRanking(
       return [];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = (await (supabase.rpc as any)(
-      "get_prefecture_team_ranking",
-      {
-        p_season_id: targetSeasonId,
-        p_limit: 47,
-      },
-    )) as { data: PrefectureTeamRankingRow[] | null; error: Error | null };
+    const { data, error } = (await supabase.rpc("get_prefecture_team_ranking", {
+      p_season_id: targetSeasonId,
+      p_limit: 47,
+    })) as { data: PrefectureTeamRankingRow[] | null; error: Error | null };
 
     if (error) {
       console.error("Failed to fetch prefecture team ranking:", error);
@@ -100,8 +96,7 @@ export async function getUserPrefectureContribution(
       return null;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = (await (supabase.rpc as any)(
+    const { data, error } = (await supabase.rpc(
       "get_user_prefecture_contribution",
       {
         p_user_id: userId,
