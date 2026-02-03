@@ -3,18 +3,13 @@ import type {
   PrefectureTeamRanking,
   UserPrefectureContribution,
 } from "../types/prefecture-team-types";
+import { formatContributionPercent } from "../utils/format-contribution-percent";
 
 function getPrefectureInternalLabel(prefecture: string): string {
   if (prefecture === "東京都") return "都内";
   if (prefecture === "北海道") return "道内";
   if (prefecture.endsWith("府")) return "府内";
   return "県内";
-}
-
-function formatContributionPercent(percent: number): string {
-  if (percent >= 0.1) return percent.toFixed(1);
-  if (percent >= 0.01) return percent.toFixed(2);
-  return percent.toFixed(3);
 }
 
 interface PrefectureTeamUserCardContentProps {
