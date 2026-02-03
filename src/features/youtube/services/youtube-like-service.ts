@@ -181,6 +181,7 @@ export async function validateAndRegisterTeamMiraiVideo(
       videoDetail.snippet.tags,
       videoDetail.snippet.title,
       videoDetail.snippet.description,
+      videoDetail.snippet.channelTitle,
     )
   ) {
     return {
