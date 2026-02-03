@@ -55,14 +55,13 @@ git diff origin/develop...HEAD --stat
 
 #### 4.1 リモートにpush
 
-```bash
-git push -u origin <ブランチ名>
-```
-
-既にリモートに存在する場合は `--force-with-lease` を使用：
+リモートブランチの存在を確認し、適切なpushコマンドを実行：
 
 ```bash
-git push origin <ブランチ名> --force-with-lease
+# リモートブランチが存在すればforce-with-lease、なければ通常push
+git ls-remote --heads origin <ブランチ名> | grep -q <ブランチ名> && \
+  git push origin <ブランチ名> --force-with-lease || \
+  git push -u origin <ブランチ名>
 ```
 
 #### 4.2 PRタイトルと本文の生成
