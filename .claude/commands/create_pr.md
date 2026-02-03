@@ -8,21 +8,30 @@ $ARGUMENTS
 
 ## タスク
 
-現在のブランチから develop ブランチに対してPRを作成します。
+現在の変更から新しいブランチを作成し、develop ブランチに対してPRを作成します。
 
-### 1. 事前確認とrebase
-
-以下のコマンドを実行して最新のdevelopにrebase：
+### 1. 事前確認と新しいブランチの作成
 
 ```bash
 # 最新のdevelopをfetch
 git fetch origin develop
 
-# 現在のブランチ名
+# 現在のブランチ名とワーキングツリーの状態を確認
 git branch --show-current
-
-# ワーキングツリーの状態
 git status
+
+# origin/developとの差分コミットを確認
+git log origin/develop..HEAD --oneline
+```
+
+差分コミットの内容を分析し、適切なブランチ名を生成する：
+- `fix/xxx` - バグ修正
+- `feat/xxx` - 新機能
+- `chore/xxx` - メンテナンス・設定変更
+
+```bash
+# 新しいブランチを作成して切り替え（現在のコミットを引き継ぐ）
+git checkout -b <新しいブランチ名>
 
 # 最新のdevelopにrebase
 git rebase origin/develop
@@ -55,14 +64,13 @@ git diff origin/develop...HEAD --stat
 
 #### 4.1 リモートにpush
 
-```bash
-git push -u origin <ブランチ名>
-```
-
-既にリモートに存在する場合は `--force-with-lease` を使用：
+リモートブランチの存在を確認し、適切なpushコマンドを実行：
 
 ```bash
-git push origin <ブランチ名> --force-with-lease
+# リモートブランチが存在すればforce-with-lease、なければ通常push
+git ls-remote --heads origin <ブランチ名> | grep -q <ブランチ名> && \
+  git push origin <ブランチ名> --force-with-lease || \
+  git push -u origin <ブランチ名>
 ```
 
 #### 4.2 PRタイトルと本文の生成
