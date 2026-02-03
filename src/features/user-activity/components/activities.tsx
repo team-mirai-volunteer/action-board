@@ -9,7 +9,7 @@ export default async function Activities() {
 
   return (
     <div className="max-w-3xl mx-auto px-4">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 items-center">
         <div className="text-center">
           <h2 className="text-2xl md:text-3xl text-gray-900 mb-2">
             ⏰ 活動タイムライン
@@ -18,7 +18,7 @@ export default async function Activities() {
             リアルタイムで更新される活動記録
           </p>
         </div>
-        <Card className="rounded-2xl shadow-sm transition-all duration-300 p-8 bg-white">
+        <Card className="max-w-lg rounded-xl shadow-sm transition-all duration-300 p-8 bg-white">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <ActivityTimeline timeline={timeline} hasNext={false} />

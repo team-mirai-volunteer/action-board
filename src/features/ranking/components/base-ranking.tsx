@@ -20,7 +20,7 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-6">
-      <Card className="border-2 border-gray-200 rounded-2xl transition-all duration-300 p-8">
+      <Card className="rounded-xl transition-all duration-300 p-8">
         <h2 className="text-xl md:text-2xl text-gray-900 mb-4 text-center">
           {title}
         </h2>
