@@ -33,7 +33,8 @@ export function PrefectureTeamUserCardContent({
               {prefectureRanking.prefecture}
             </div>
             <div className="text-sm text-gray-500">
-              チームパワー {prefectureRanking.xpPerCapita.toLocaleString()}
+              チームパワー{" "}
+              {Math.floor(prefectureRanking.xpPerCapita).toLocaleString()}
             </div>
           </div>
         </div>
@@ -53,7 +54,7 @@ export function PrefectureTeamUserCardContent({
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-teal-500" />
             <span className="text-sm font-bold">
-              貢献度 {userContribution.contributionPercent}%
+              貢献度 {userContribution.contributionPercent.toFixed(1)}%
             </span>
           </div>
         </div>
