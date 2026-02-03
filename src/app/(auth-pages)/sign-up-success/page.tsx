@@ -1,5 +1,5 @@
-import { FormMessage } from "@/components/common/form-message";
 import Image from "next/image";
+import { FormMessage } from "@/components/common/form-message";
 
 export default function SignUpSuccess() {
   return (

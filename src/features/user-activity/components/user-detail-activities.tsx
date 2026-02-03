@@ -14,9 +14,9 @@
  */
 "use client";
 
+import { useState } from "react";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
-import { useState } from "react";
 
 interface UserDetailActivitiesProps {
   /** サーバーサイドで取得済みの初期タイムラインデータ */

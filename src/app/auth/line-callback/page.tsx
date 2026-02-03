@@ -1,8 +1,8 @@
 "use client";
 
-import { handleLineAuthAction } from "@/app/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { handleLineAuthAction } from "@/app/actions";
 
 function LineCallbackContent() {
   const router = useRouter();

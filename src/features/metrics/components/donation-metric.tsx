@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -8,7 +9,6 @@ import {
 import type { DonationData } from "@/features/metrics/types/metrics-types";
 import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
-import { useEffect, useState } from "react";
 
 interface DonationMetricProps {
   data: DonationData | null;

@@ -1,12 +1,12 @@
 "use client";
 
-import { HEADER_HEIGHT } from "@/lib/constants/layout";
-import type { Json } from "@/lib/types/supabase";
-import { logger } from "@/lib/utils/logger";
 import type { Layer, Map as LeafletMap, Marker } from "leaflet";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { HEADER_HEIGHT } from "@/lib/constants/layout";
+import type { Json } from "@/lib/types/supabase";
+import { logger } from "@/lib/utils/logger";
 import {
   addButtonLabel,
   geomanJaLang,
@@ -14,8 +14,8 @@ import {
   postingGeomanControls,
 } from "../config/geoman-config";
 import {
-  type PostingShapeStatus,
   getClusterThresholdForArea,
+  type PostingShapeStatus,
   postingStatusConfig,
   postingStatusLabels,
 } from "../config/status-config";
@@ -26,11 +26,11 @@ import {
   saveShape as saveMapShape,
   updateShape as updateMapShape,
 } from "../services/posting-shapes";
-import type { MarkerWithShape } from "../types/posting-types";
 import type {
   GeomanEvent,
   LeafletWindow,
   MapShape as MapShapeData,
+  MarkerWithShape,
   PolygonProperties,
   PostingPageClientProps,
   TextCoordinates,
@@ -58,7 +58,7 @@ export default function PostingPageClient({
   isEventActive,
 }: PostingPageClientProps) {
   const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
-  const [showText, setShowText] = useState(true);
+  const [showText, _setShowText] = useState(true);
   const textLayersRef = useRef<Set<Layer>>(new Set());
   const showTextRef = useRef(showText);
   const autoSave = true;
@@ -85,7 +85,7 @@ export default function PostingPageClient({
     Array<{ id: string; area_m2: number | null; user_id: string | null }>
   >([]);
   // Track current zoom level for display mode
-  const [isClusterMode, setIsClusterMode] = useState(true);
+  const [isClusterMode, _setIsClusterMode] = useState(true);
   // Ref to track isClusterMode for use in event handlers
   const isClusterModeRef = useRef(isClusterMode);
   // Current location hook
@@ -185,6 +185,7 @@ export default function PostingPageClient({
     setTotalPostingCount(total);
   }, [showOnlyMine, mapInstance, userId, isClusterMode]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 初期化処理のため依存配列を最小限に保つ
   useEffect(() => {
     if (!mapInstance) return;
 
@@ -689,10 +690,10 @@ export default function PostingPageClient({
   `;
 
   // 図形削除の共通処理
-  const handleDeleteShape = async (
+  async function handleDeleteShape(
     shapeId: string,
     options?: { layer?: Layer; removeFromMap?: boolean },
-  ) => {
+  ): Promise<void> {
     await deleteMapShape(shapeId);
 
     // モーダルからの削除の場合はマップからレイヤーを削除
@@ -717,7 +718,7 @@ export default function PostingPageClient({
     // Clean up tracking refs
     shapesDataRef.current.delete(shapeId);
     polygonLayersRef.current.delete(shapeId);
-  };
+  }
 
   function attachTextEvents(layer: Layer) {
     if (!layer?.pm) return;
@@ -740,7 +741,7 @@ export default function PostingPageClient({
     });
   }
 
-  const extractShapeData = (layer: Layer): MapShapeData => {
+  function extractShapeData(layer: Layer): MapShapeData {
     const shapeName = layer.pm?.getShape ? layer.pm.getShape() : undefined;
 
     if (shapeName === "Text") {
@@ -768,9 +769,9 @@ export default function PostingPageClient({
       user_id: userId,
       status: "planned", // Default status for new shapes
     };
-  };
+  }
 
-  const saveOrUpdateLayer = async (layer: Layer) => {
+  async function saveOrUpdateLayer(layer: Layer) {
     const shapeData = extractShapeData(layer);
     const sid = getShapeId(layer);
     if (sid) {
@@ -778,14 +779,14 @@ export default function PostingPageClient({
         coordinates: shapeData.coordinates,
         properties: shapeData.properties,
       });
-    } else {
-      const saved = await saveMapShape(shapeData);
-      propagateShapeId(layer, saved.id);
-      return saved;
+      return undefined;
     }
-  };
+    const saved = await saveMapShape(shapeData);
+    propagateShapeId(layer, saved.id);
+    return saved;
+  }
 
-  function propagateShapeId(layer: Layer, id: string) {
+  function propagateShapeId(layer: Layer, id: string): void {
     if (!layer) return;
     layer._shapeId = id;
     if (layer.options) (layer.options as Record<string, unknown>).shapeId = id;
@@ -804,7 +805,12 @@ export default function PostingPageClient({
     attachPersistenceEvents(layer);
   }
 
-  function attachPersistenceEvents(layer: Layer) {
+  async function onLayerChange(e: GeomanEvent): Promise<void> {
+    const layer = e.layer || e.target;
+    if (layer) await saveOrUpdateLayer(layer);
+  }
+
+  function attachPersistenceEvents(layer: Layer): void {
     if (!layer?.pm) return;
 
     layer.off("pm:change", onLayerChange);
@@ -813,11 +819,6 @@ export default function PostingPageClient({
     layer.on("pm:change", onLayerChange);
     layer.on("pm:dragend", onLayerChange);
   }
-
-  const onLayerChange = async (e: GeomanEvent) => {
-    const layer = e.layer || e.target;
-    if (layer) await saveOrUpdateLayer(layer);
-  };
 
   // Handle polygon click to open status dialog
   const handlePolygonClick = useCallback(

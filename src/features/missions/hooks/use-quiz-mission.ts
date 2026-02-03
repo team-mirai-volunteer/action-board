@@ -1,13 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   achieveMissionAction,
   getMissionQuizCategoryAction,
 } from "@/features/mission-detail/actions/actions";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 // クイズ結果の型定義
 export interface QuizResults {
@@ -30,7 +30,6 @@ interface UseQuizMissionProps {
   onXpAnimationData?: (data: { initialXp: number; xpGained: number }) => void;
   onDialogOpen?: () => void;
   onErrorMessage?: (error: string | null) => void;
-  scrollToTop?: () => void;
 }
 
 export function useQuizMission({
@@ -39,7 +38,6 @@ export function useQuizMission({
   onXpAnimationData,
   onDialogOpen,
   onErrorMessage,
-  scrollToTop,
 }: UseQuizMissionProps) {
   // クイズカテゴリの状態
   const [quizCategory, setQuizCategory] = useState<string>("その他");

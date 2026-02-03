@@ -1,6 +1,6 @@
-import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
+import type { Tables } from "@/lib/types/supabase";
 import { ArtifactForm } from "./artifact-form";
 
 // Mock lucide-react icons
@@ -42,12 +42,7 @@ describe("ArtifactForm", () => {
     const mission = { ...baseMission, required_artifact_type: "NONE" as const };
 
     const { container } = render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
+      <ArtifactForm mission={mission} disabled={false} />,
     );
 
     expect(container.firstChild).toBeNull();
@@ -56,14 +51,7 @@ describe("ArtifactForm", () => {
   it("LINKタイプの場合はURL入力フォームが表示される", () => {
     const mission = { ...baseMission, required_artifact_type: "LINK" as const };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     expect(screen.getByText("ミッション完了を記録しよう")).toBeInTheDocument();
     expect(screen.getByLabelText(/テストラベル/)).toBeInTheDocument();
@@ -75,14 +63,7 @@ describe("ArtifactForm", () => {
   it("TEXTタイプの場合はテキスト入力フォームが表示される", () => {
     const mission = { ...baseMission, required_artifact_type: "TEXT" as const };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     expect(screen.getByLabelText(/テストラベル/)).toBeInTheDocument();
     expect(
@@ -96,14 +77,7 @@ describe("ArtifactForm", () => {
       required_artifact_type: "EMAIL" as const,
     };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     const emailInput = screen.getByPlaceholderText(
       "テストラベルを入力してください",
@@ -117,14 +91,7 @@ describe("ArtifactForm", () => {
       required_artifact_type: "POSTING" as const,
     };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     expect(screen.getByText("ポスティング・配布枚数")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("例：50")).toBeInTheDocument();
@@ -137,14 +104,7 @@ describe("ArtifactForm", () => {
       required_artifact_type: "POSTER" as const,
     };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     expect(
       screen.getByText(
@@ -157,14 +117,7 @@ describe("ArtifactForm", () => {
   it("disabledがtrueの場合は入力フィールドが無効化される", () => {
     const mission = { ...baseMission, required_artifact_type: "LINK" as const };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={true}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={true} />);
 
     const input = screen.getByPlaceholderText("テストラベルを入力してください");
     expect(input).toBeDisabled();
@@ -173,14 +126,7 @@ describe("ArtifactForm", () => {
   it("補足説明テキストエリアが常に表示される", () => {
     const mission = { ...baseMission, required_artifact_type: "LINK" as const };
 
-    render(
-      <ArtifactForm
-        mission={mission}
-        authUser={mockUser}
-        disabled={false}
-        submittedArtifactImagePath={null}
-      />,
-    );
+    render(<ArtifactForm mission={mission} disabled={false} />);
 
     expect(screen.getByText("補足説明 (任意)")).toBeInTheDocument();
     expect(

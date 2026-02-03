@@ -79,7 +79,7 @@ export default async function SeasonUserDetailPage({ params }: Props) {
 
       {/* シーズン情報ヘッダー */}
       <div className="mx-4 mt-4">
-        <UserSeasonHeader season={season} userId={userId} />
+        <UserSeasonHeader season={season} />
       </div>
 
       {/* ユーザーレベル表示（プログレスバーは非表示） - シーズン用 */}

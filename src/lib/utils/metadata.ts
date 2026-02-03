@@ -39,7 +39,7 @@ export const notoSansJP = Noto_Sans_JP({
 // ==========================================
 
 // URLが有効な画像URLかどうかを検証する関数
-export function isValidImageUrl(url: string): boolean {
+export function isValidImageUrl(_url: string): boolean {
   //TODO: URL検証を追加
   return true;
 }
@@ -88,10 +88,6 @@ export function createDefaultMetadata(): Metadata {
 // Next.js generateMetadata関数
 // ==========================================
 
-export async function generateRootMetadata({
-  params,
-}: {
-  params?: Promise<{ [key: string]: string | undefined }>;
-}): Promise<Metadata> {
+export async function generateRootMetadata(): Promise<Metadata> {
   return createDefaultMetadata();
 }

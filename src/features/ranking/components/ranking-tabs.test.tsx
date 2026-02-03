@@ -27,7 +27,7 @@ jest.mock("@/components/ui/tabs", () => ({
       {children}
     </div>
   ),
-  TabsTrigger: ({ children, value, asChild }: any) => (
+  TabsTrigger: ({ children, value }: any) => (
     <div data-testid="tabs-trigger" data-value={value}>
       {children}
     </div>

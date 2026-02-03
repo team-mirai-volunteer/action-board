@@ -12,7 +12,7 @@ export function DifficultyBadge({
   showLabel = true,
   className,
 }: DifficultyBadgeProps) {
-  const getDifficultyStyles = (difficulty: number) => {
+  const getDifficultyStyles = (_difficulty: number) => {
     return "text-gray-700 border-gray-400 hover:bg-gray-50";
   };
 

@@ -1,5 +1,8 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,9 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { deleteAccountAction } from "@/features/user-settings/actions/delete-account-action";
-import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ export function DeleteAccountModal({
       if (result?.success) {
         toast.success("退会処理が完了しました");
       }
-    } catch (err) {
+    } catch (_err) {
       setIsDeleting(false);
       onClose();
       toast.error("退会処理でエラーが発生しました。もう一度お試しください。");

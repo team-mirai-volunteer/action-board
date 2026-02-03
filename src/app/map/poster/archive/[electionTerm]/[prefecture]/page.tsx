@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import DetailedPosterMapClient from "@/features/map-poster/components/detailed-poster-map-client";
 import {
@@ -5,8 +7,6 @@ import {
   type PosterPrefectureKey,
 } from "@/features/map-poster/constants/poster-prefectures";
 import { getArchivedPosterBoardStats } from "@/features/map-poster/services/poster-boards";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 // Election term display names
 const ELECTION_TERM_NAMES: Record<string, string> = {

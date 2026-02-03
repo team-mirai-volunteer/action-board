@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run biome:check:write 2>&1 | head -30"
+          }
+        ]
+      }
+    ]
+  }
+}

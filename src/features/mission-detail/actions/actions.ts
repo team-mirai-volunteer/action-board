@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
 import {
   getUserXpBonus,
@@ -8,26 +9,31 @@ import {
 } from "@/features/user-level/services/level";
 import type { UserLevel } from "@/features/user-level/types/level-types";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/client";
-import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
-
 import {
   MAX_POSTER_COUNT,
   MAX_POSTING_COUNT,
   POSTER_POINTS_PER_UNIT,
   POSTING_POINTS_PER_UNIT,
 } from "@/lib/constants/mission-config";
+import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
+import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Database, TablesInsert } from "@/lib/types/supabase";
-import { z } from "zod";
+import {
+  buildArtifactPayload,
+  getArtifactTypeLabel,
+  grantActivityBonusXp,
+  savePosterActivity,
+  savePostingActivity,
+} from "./artifact-helpers";
 
 // Quiz関連のServer ActionsとQuizQuestion型をインポート
 import {
-  type QuizQuestion,
   checkQuizAnswersAction,
   getMissionQuizCategoryAction,
   getQuizQuestionsAction,
+  type QuizQuestion,
 } from "./quiz-actions";
 
 // Quiz関連のServer Actionsを再エクスポート
@@ -231,6 +237,8 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   youtubeArtifactSchema,
   youtubeCommentArtifactSchema,
 ]);
+
+export type AchieveMissionFormData = z.infer<typeof achieveMissionFormSchema>;
 
 // 提出キャンセルアクションのバリデーションスキーマ
 const cancelSubmissionFormSchema = z.object({
@@ -588,14 +596,23 @@ export const achieveMissionAction = async (formData: FormData) => {
     validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key &&
     validatedRequiredArtifactType !== ARTIFACT_TYPES.LINK_ACCESS.key
   ) {
+    // artifact type に基づいてペイロードフィールドをビルド
+    const artifactFields = buildArtifactPayload(
+      validatedRequiredArtifactType,
+      validatedData,
+    );
+    const artifactTypeLabel = getArtifactTypeLabel(
+      validatedRequiredArtifactType,
+    );
+
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,
       user_id: authUser.id,
       artifact_type: validatedRequiredArtifactType,
       description: validatedArtifactDescription || null,
+      ...artifactFields,
     };
 
-    let artifactTypeLabel = "OTHER";
     let validationError = null;
 
     // formDataの内容を全てログ出力
@@ -603,113 +620,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     formData.forEach((value, key) => {
       formDataObj[key] = String(value);
     });
-
-    if (validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key) {
-      artifactTypeLabel = "LINK";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key) {
-        artifactPayload.link_url = validatedData.artifactLink;
-        // CHECK制約: link_url必須、他はnull
-        artifactPayload.image_storage_path = null;
-        artifactPayload.text_content = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.TEXT.key) {
-      artifactTypeLabel = "TEXT";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.TEXT.key) {
-        artifactPayload.text_content = validatedData.artifactText;
-        // CHECK制約: text_content必須、他はnull
-        artifactPayload.link_url = null;
-        artifactPayload.image_storage_path = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.EMAIL.key) {
-      artifactTypeLabel = "EMAIL";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.EMAIL.key) {
-        artifactPayload.text_content = validatedData.artifactEmail;
-        // CHECK制約: text_content必須、他はnull
-        artifactPayload.link_url = null;
-        artifactPayload.image_storage_path = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
-      artifactTypeLabel = "IMAGE";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
-        artifactPayload.image_storage_path = validatedData.artifactImagePath;
-        // CHECK制約: image_storage_path必須、他はnull
-        artifactPayload.link_url = null;
-        artifactPayload.text_content = null;
-      }
-    } else if (
-      validatedRequiredArtifactType ===
-      ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
-    ) {
-      artifactTypeLabel = "IMAGE_WITH_GEOLOCATION";
-      if (
-        validatedData.requiredArtifactType ===
-        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
-      ) {
-        artifactPayload.image_storage_path = validatedData.artifactImagePath;
-        artifactPayload.link_url = null;
-        artifactPayload.text_content = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key) {
-      artifactTypeLabel = "POSTING";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key) {
-        // ポスティング情報をtext_contentに格納
-        artifactPayload.text_content = `${validatedData.postingCount}枚を${validatedData.locationText}に配布`;
-        // CHECK制約: text_content必須、他はnull
-        artifactPayload.link_url = null;
-        artifactPayload.image_storage_path = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
-      artifactTypeLabel = "POSTER";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key) {
-        // ポスター情報をtext_contentに詳細に格納
-        const locationInfo = `${validatedData.prefecture}${validatedData.city} ${validatedData.boardNumber}`;
-        const nameInfo = validatedData.boardName
-          ? ` (${validatedData.boardName})`
-          : "";
-        const statusInfo = validatedData.boardNote
-          ? ` - 状況: ${validatedData.boardNote}`
-          : "";
-
-        artifactPayload.text_content = `${locationInfo}${nameInfo}に貼付${statusInfo}`;
-        // CHECK制約: text_content必須、他はnull
-        artifactPayload.link_url = null;
-        artifactPayload.image_storage_path = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
-      artifactTypeLabel = "QUIZ";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.QUIZ.key) {
-        // クイズ結果はdescriptionのみに格納
-        artifactPayload.text_content = null;
-        artifactPayload.link_url = null;
-        artifactPayload.image_storage_path = null;
-      }
-    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
-      artifactTypeLabel = "YOUTUBE";
-      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key) {
-        artifactPayload.link_url = validatedData.artifactLink;
-        // CHECK制約: link_url必須、他はnull
-        artifactPayload.image_storage_path = null;
-        artifactPayload.text_content = null;
-      }
-    } else if (
-      validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE_COMMENT.key
-    ) {
-      artifactTypeLabel = "YOUTUBE_COMMENT";
-      if (
-        validatedData.requiredArtifactType ===
-        ARTIFACT_TYPES.YOUTUBE_COMMENT.key
-      ) {
-        artifactPayload.link_url = validatedData.artifactLink;
-        // CHECK制約: link_url必須、他はnull
-        artifactPayload.image_storage_path = null;
-        artifactPayload.text_content = null;
-      }
-    } else {
-      // その他のタイプは全てnullに
-      artifactPayload.link_url = null;
-      artifactPayload.image_storage_path = null;
-      artifactPayload.text_content = null;
-    }
 
     // CHECK制約: QUIZタイプ以外はlink_url、text_content、image_storage_pathのいずれか一つは必須
     if (
@@ -774,116 +684,63 @@ export const achieveMissionAction = async (formData: FormData) => {
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key &&
       validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key
     ) {
-      // shapeIdが渡された場合は紐付ける（ポスティングマップから）
       const shapeId = formData.get("shapeId") as string | null;
 
-      const { error: postingError } = await supabase
-        .from("posting_activities")
-        .insert({
-          mission_artifact_id: newArtifact.id,
-          posting_count: validatedData.postingCount,
-          location_text: validatedData.locationText ?? "",
-          shape_id: shapeId || null,
-        });
-
-      if (postingError) {
-        console.error("Posting activity save error:", postingError);
-        return {
-          success: false,
-          error: `ポスティング活動の保存に失敗しました: ${postingError.message}`,
-        };
+      const postingResult = await savePostingActivity(supabase, {
+        artifactId: newArtifact.id,
+        postingCount: validatedData.postingCount,
+        locationText: validatedData.locationText ?? "",
+        shapeId: shapeId || null,
+      });
+      if (!postingResult.success) {
+        return { success: false, error: postingResult.error };
       }
 
-      // ポスティング用のポイント計算とXP付与（注目ミッションは2倍）
-      const pointsPerUnit = POSTING_POINTS_PER_UNIT; // 固定値（フェーズ1では固定、フェーズ2で設定テーブルから取得予定）
-      const basePoints = validatedData.postingCount * pointsPerUnit;
-      const totalPoints = missionData?.is_featured
-        ? basePoints * 2
-        : basePoints;
-
-      // 通常のXP（ミッション難易度ベース）に加えて、ポスティングボーナスXPを付与
-      const bonusXpResult = await grantXp(
-        authUser.id,
-        totalPoints,
-        "BONUS",
-        achievement.id,
-        `ポスティング活動ボーナス（${validatedData.postingCount}枚=${totalPoints}ポイント${missionData?.is_featured ? "【2倍】" : ""}）`,
-      );
-
-      if (!bonusXpResult.success) {
-        console.error(
-          "ポスティングボーナスXP付与に失敗しました:",
-          bonusXpResult.error,
-        );
-        // ボーナスXP付与の失敗はミッション達成の成功を妨げない
-      } else {
-        totalXpGranted += totalPoints;
-      }
+      totalXpGranted += await grantActivityBonusXp({
+        userId: authUser.id,
+        achievementId: achievement.id,
+        count: validatedData.postingCount,
+        pointsPerUnit: POSTING_POINTS_PER_UNIT,
+        isFeatured: missionData?.is_featured ?? false,
+        descriptionLabel: "ポスティング活動ボーナス",
+      });
     }
 
-    // ポスター活動の詳細情報をposter_activitiesテーブルに保存
+    // ポスター活動の詳細情報を保存
     if (
       validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key &&
       validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
     ) {
-      // poster_activitiesテーブルに必要なデータを準備
-      const posterActivityPayload = {
-        user_id: authUser.id,
-        mission_artifact_id: newArtifact.id,
-        poster_count: MAX_POSTER_COUNT,
+      const posterResult = await savePosterActivity(supabase, {
+        userId: authUser.id,
+        artifactId: newArtifact.id,
         prefecture:
           validatedData.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
         city: validatedData.city,
-        number: validatedData.boardNumber,
-        name: validatedData.boardName || null,
-        note: validatedData.boardNote || null,
-        address: validatedData.boardAddress || null,
-        lat: validatedData.boardLat
+        boardNumber: validatedData.boardNumber,
+        boardName: validatedData.boardName || null,
+        boardNote: validatedData.boardNote || null,
+        boardAddress: validatedData.boardAddress || null,
+        boardLat: validatedData.boardLat
           ? Number.parseFloat(validatedData.boardLat)
           : null,
-        long: validatedData.boardLong
+        boardLong: validatedData.boardLong
           ? Number.parseFloat(validatedData.boardLong)
           : null,
-        board_id: boardId || null,
-      };
-
-      const { error: posterActivityError } = await supabase
-        .from("poster_activities")
-        .insert(posterActivityPayload);
-
-      if (posterActivityError) {
-        console.error("Poster activity save error:", posterActivityError);
-        return {
-          success: false,
-          error: `ポスター活動の保存に失敗しました: ${posterActivityError.message}`,
-        };
+        boardId: boardId || null,
+      });
+      if (!posterResult.success) {
+        return { success: false, error: posterResult.error };
       }
 
-      // ポスター用のポイント計算とXP付与（注目ミッションは2倍）
-      const pointsPerUnit = POSTER_POINTS_PER_UNIT;
-      const basePoints = MAX_POSTER_COUNT * pointsPerUnit;
-      const totalPoints = missionData?.is_featured
-        ? basePoints * 2
-        : basePoints;
-
-      // 通常のXP（ミッション難易度ベース）に加えて、ポスターボーナスXPを付与
-      const bonusXpResult = await grantXp(
-        authUser.id,
-        totalPoints,
-        "BONUS",
-        achievement.id,
-        `ポスターボーナス（${MAX_POSTER_COUNT}枚=${totalPoints}ポイント${missionData?.is_featured ? "【2倍】" : ""}）`,
-      );
-
-      if (!bonusXpResult.success) {
-        console.error(
-          "ポスターボーナスXP付与に失敗しました:",
-          bonusXpResult.error,
-        );
-        // ボーナスXP付与の失敗はミッション達成の成功を妨げない
-      } else {
-        totalXpGranted += totalPoints;
-      }
+      totalXpGranted += await grantActivityBonusXp({
+        userId: authUser.id,
+        achievementId: achievement.id,
+        count: MAX_POSTER_COUNT,
+        pointsPerUnit: POSTER_POINTS_PER_UNIT,
+        isFeatured: missionData?.is_featured ?? false,
+        descriptionLabel: "ポスターボーナス",
+      });
     }
 
     // YouTubeいいね記録をyoutube_video_likesテーブルに保存

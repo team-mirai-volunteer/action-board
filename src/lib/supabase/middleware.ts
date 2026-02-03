@@ -1,6 +1,6 @@
-import type { Database } from "@/lib/types/supabase";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import type { Database } from "@/lib/types/supabase";
 
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
@@ -46,7 +46,7 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     return response;
-  } catch (e) {
+  } catch (_e) {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
     // Check out http://localhost:3000 for Next Steps.

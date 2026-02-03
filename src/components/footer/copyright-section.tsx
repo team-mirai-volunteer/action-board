@@ -1,5 +1,5 @@
-import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import Link from "next/link";
+import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 
 export function CopyrightSection() {
   return (

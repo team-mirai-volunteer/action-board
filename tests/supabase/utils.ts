@@ -1,5 +1,5 @@
-import type { Database } from "@/lib/types/supabase";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/types/supabase";
 
 // 環境変数の設定が必要
 if (

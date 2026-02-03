@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import type {
   Achievement,
   MissionArtifact,
@@ -7,7 +8,6 @@ import type {
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { nanoid } from "nanoid";
 
 /**
  * UUIDv4の形式かどうかを検証する
@@ -209,13 +209,7 @@ export async function getSubmissionHistory(
             if (artifact.image_storage_path) {
               const { data: signedUrlData } = await supabase.storage
                 .from("mission_artifact_files")
-                .createSignedUrl(artifact.image_storage_path, 60, {
-                  transform: {
-                    width: 240,
-                    height: 240,
-                    resize: "contain",
-                  },
-                });
+                .createSignedUrl(artifact.image_storage_path, 60);
 
               if (signedUrlData) {
                 return {

@@ -26,7 +26,10 @@ jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card">
       {children}
     </div>
@@ -34,7 +37,7 @@ jest.mock("@/components/ui/card", () => ({
 }));
 
 jest.mock("./ranking-item", () => ({
-  RankingItem: ({ user, userWithMission, mission, badgeText }: any) => (
+  RankingItem: ({ user, mission, badgeText }: any) => (
     <div data-testid="ranking-item">
       <span data-testid="user-name">{user.name}</span>
       <span data-testid="badge-text">{badgeText}</span>
@@ -85,7 +88,7 @@ const mockPostingCounts: UserPostingCount[] = [
   { user_id: "user-2", posting_count: 8 },
 ];
 
-const mockCurrentUser: UserMissionRanking = {
+const _mockCurrentUser: UserMissionRanking = {
   user_id: "current-user",
   name: "現在のユーザー",
   address_prefecture: "愛知県",

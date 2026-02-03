@@ -1,5 +1,5 @@
-import { getInactiveSeasons } from "@/lib/services/seasons";
 import Link from "next/link";
+import { getInactiveSeasons } from "@/lib/services/seasons";
 
 export async function SeasonsList() {
   const seasons = await getInactiveSeasons();

@@ -1,13 +1,13 @@
+import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/common/navbar";
 import { generateRootMetadata, notoSansJP } from "@/lib/utils/metadata";
-import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
 import Script from "next/script";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
+import { Toaster } from "@/components/ui/sonner";
+import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 

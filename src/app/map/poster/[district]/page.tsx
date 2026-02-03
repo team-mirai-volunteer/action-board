@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import {
   getPosterBoardStatsByDistrictAction,
@@ -5,14 +7,12 @@ import {
 } from "@/features/map-poster/actions/poster-boards";
 import DetailedPosterMapClient from "@/features/map-poster/components/detailed-poster-map-client";
 import {
+  isValidDistrict,
   POSTER_DISTRICT_MAP,
   type PosterDistrictKey,
-  isValidDistrict,
 } from "@/features/map-poster/constants/poster-district-shugin-2026";
 import { getDistrictsWithBoards } from "@/features/map-poster/services/poster-boards";
 import { getUser } from "@/features/user-profile/services/profile";
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 export async function generateMetadata({
   params,

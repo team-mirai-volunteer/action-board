@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
 import { TrendingUp, Users, Zap } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type { ActionStatsSummary as ActionStatsSummaryType } from "../types";
 
 interface ActionStatsSummaryProps {

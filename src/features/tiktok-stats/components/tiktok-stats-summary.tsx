@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
 import { Eye, Heart, MessageCircle, MonitorPlay, Share2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type { StatsSummary } from "../types";
 import { formatNumberJa } from "../utils/format";
 

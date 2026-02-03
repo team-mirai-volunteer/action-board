@@ -1,5 +1,6 @@
 "use client";
 
+import { Line, LineChart, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
 import {
   type ChartConfig,
@@ -7,7 +8,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis } from "recharts";
 import type { DailyActiveUsersItem } from "../types";
 
 interface ActiveUsersChartProps {

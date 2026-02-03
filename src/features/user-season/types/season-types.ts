@@ -11,7 +11,6 @@ export interface UserSeasonHistoryItem {
 
 export interface UserSeasonHeaderProps {
   season: Season;
-  userId: string;
 }
 
 export interface UserSeasonHistoryProps {

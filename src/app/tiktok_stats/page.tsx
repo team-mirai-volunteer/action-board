@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { TikTokOverallChart } from "@/features/tiktok-stats/components/tiktok-overall-chart";
 import { TikTokPeriodFilter } from "@/features/tiktok-stats/components/tiktok-period-filter";
 import { TikTokSortToggle } from "@/features/tiktok-stats/components/tiktok-sort-toggle";
@@ -12,12 +13,11 @@ import {
   getVideoCountByDate,
 } from "@/features/tiktok-stats/services/tiktok-stats-service";
 import {
-  type PeriodType,
-  type SortType,
   getPeriodEndDate,
   getPeriodStartDate,
+  type PeriodType,
+  type SortType,
 } from "@/features/tiktok-stats/types";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "TikTok動画ダッシュボード | Action Board",

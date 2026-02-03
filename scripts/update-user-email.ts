@@ -4,9 +4,9 @@
 // npx tsx scripts/update-user-email.ts --old 旧メールアドレス --new 新メールアドレス
 
 import path from "node:path";
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import { Command } from "commander";
 import dotenv from "dotenv";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 // .envファイルをロード（ローカル開発用）
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });

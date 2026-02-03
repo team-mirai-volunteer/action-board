@@ -3,8 +3,8 @@
 import { execSync } from "node:child_process";
 import {
   existsSync,
-  readFileSync,
   readdirSync,
+  readFileSync,
   statSync,
   writeFileSync,
 } from "node:fs";
@@ -46,7 +46,7 @@ function loadProcessedFiles(): Record<string, { mtime: number; size: number }> {
   if (existsSync(PROCESSED_FILES_LOG)) {
     try {
       return JSON.parse(readFileSync(PROCESSED_FILES_LOG, "utf-8"));
-    } catch (e) {
+    } catch (_e) {
       console.warn("⚠️  Could not read processed files log, starting fresh");
     }
   }
@@ -75,7 +75,7 @@ function hasFileChanged(
     return (
       processed[filepath].mtime !== mtime || processed[filepath].size !== size
     );
-  } catch (e) {
+  } catch (_e) {
     return true; // If we can't stat it, assume it changed
   }
 }
@@ -112,7 +112,7 @@ function findCsvFiles(dir: string): CsvFiles {
 
         try {
           stat = statSync(fullPath);
-        } catch (e) {
+        } catch (_e) {
           console.warn(`⚠️  Could not stat ${entry}, skipping`);
           continue;
         }
@@ -293,8 +293,8 @@ async function logFileSelection(
 // Log append files
 async function logAppendFiles(
   files: string[],
-  prefecture: string,
-  city: string,
+  _prefecture: string,
+  _city: string,
 ): Promise<void> {
   if (files.length === 0) return;
 

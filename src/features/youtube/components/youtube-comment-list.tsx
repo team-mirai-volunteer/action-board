@@ -1,12 +1,12 @@
 "use client";
 
-import {
-  type RecordedComment,
-  getRecordedCommentsAction,
-} from "@/features/youtube/actions/youtube-comment-actions";
 import { Loader2, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  getRecordedCommentsAction,
+  type RecordedComment,
+} from "@/features/youtube/actions/youtube-comment-actions";
 
 interface YouTubeCommentListProps {
   refreshTrigger?: number;

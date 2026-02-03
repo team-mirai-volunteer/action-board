@@ -1,6 +1,6 @@
 "use client";
-import type { Tables } from "@/lib/types/supabase";
 import { useMemo } from "react";
+import type { Tables } from "@/lib/types/supabase";
 
 export function useMissionSubmission(
   mission: Tables<"missions">,

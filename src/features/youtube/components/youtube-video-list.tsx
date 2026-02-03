@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { YouTubeVideoCard } from "@/features/youtube-stats/components/youtube-video-card";
 import type { YouTubeVideoWithStats } from "@/features/youtube-stats/types";
-import { useEffect, useState } from "react";
 import { getMyUploadedVideosAction } from "../actions/youtube-video-actions";
 
 interface YouTubeVideoListProps {

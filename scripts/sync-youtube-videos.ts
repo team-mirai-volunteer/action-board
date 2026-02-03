@@ -11,8 +11,8 @@
 import "dotenv/config";
 
 import {
-  type VideoSyncResult,
   syncYouTubeVideos,
+  type VideoSyncResult,
 } from "@/features/youtube/services/youtube-video-sync-service";
 
 // 日付文字列をISO 8601形式に変換（YouTube APIが要求する形式）

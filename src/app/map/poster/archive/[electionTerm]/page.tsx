@@ -1,3 +1,7 @@
+import { Archive, ChevronRight, MapPin } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,10 +14,6 @@ import {
   getCompletedCount,
   getRegisteredCount,
 } from "@/features/map-poster/utils/poster-progress";
-import { Archive, ChevronRight, MapPin } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
 // Election term display names
 const ELECTION_TERM_NAMES: Record<string, string> = {

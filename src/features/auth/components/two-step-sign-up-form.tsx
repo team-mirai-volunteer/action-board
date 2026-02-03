@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { CollapsibleInfo } from "@/components/common/collapsible-info";
 import { FormMessage, type Message } from "@/components/common/form-message";
 import { Button } from "@/components/ui/button";
@@ -15,9 +18,6 @@ import {
 } from "@/components/ui/select";
 import { signInWithLine } from "@/features/auth/services/line-auth";
 import { calculateAge } from "@/lib/utils/utils";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
 
 interface TwoStepSignUpFormProps {
   searchParams: Message;

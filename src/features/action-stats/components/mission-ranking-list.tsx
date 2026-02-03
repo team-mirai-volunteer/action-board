@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 import type { MissionActionRanking } from "../types";
 
 interface MissionRankingListProps {

@@ -1,11 +1,11 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
-  type UserBadge,
   getBadgeEmoji,
   getBadgeRankingUrl,
   getBadgeTitle,
+  type UserBadge,
 } from "@/features/user-badges/badge-types";
-import Link from "next/link";
 
 interface BadgeDisplayProps {
   badge: UserBadge;
@@ -14,7 +14,7 @@ interface BadgeDisplayProps {
   clickable?: boolean;
 }
 
-export function getGradientClass(rank: number): string {
+export function getGradientClass(_rank: number): string {
   return "bg-linear-to-r from-emerald-500 to-emerald-600 text-white border-0";
 }
 

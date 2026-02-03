@@ -1,10 +1,10 @@
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
 import {
   getActiveEvent,
   getAllEvents,
 } from "@/features/map-posting/services/posting-events.server";
 import { getUser } from "@/features/user-profile/services/profile";
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "チームみらいポスティングマップ",

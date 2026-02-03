@@ -1,5 +1,7 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
 import { FormMessage } from "@/components/common/form-message";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -8,8 +10,6 @@ import {
   isEmailUser as checkIsEmailUser,
   getAuthMethodDisplayName,
 } from "@/lib/utils/auth-utils";
-import type { User } from "@supabase/supabase-js";
-import { useState } from "react";
 
 interface LoginSectionProps {
   user: User;

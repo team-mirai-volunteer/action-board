@@ -1,14 +1,14 @@
 "use client";
 
+import clsx from "clsx";
+import { motion } from "framer-motion";
+import { UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import MissionAchievementStatus from "@/features/missions/components/mission-achievement-status";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import type { Tables } from "@/lib/types/supabase";
-import clsx from "clsx";
-import { motion } from "framer-motion";
-import { UsersRound } from "lucide-react";
 
 interface OnboardingMissionCardProps {
   mission: Omit<Tables<"missions">, "slug">;
@@ -69,8 +69,8 @@ export default function OnboardingMissionCard({
             <UsersRound className="size-4 mr-2" />
             <span className="text-sm font-medium text-gray-700">
               {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "みんなで0回達成"}
+                ? `みんなで${achievementsCount.toLocaleString()}${mission.required_artifact_type === "POSTING" ? "枚" : "回"}達成`
+                : `みんなで0${mission.required_artifact_type === "POSTING" ? "枚" : "回"}達成`}
             </span>
           </div>
           <div className="flex items-center">

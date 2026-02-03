@@ -6,7 +6,10 @@ jest.mock("@/components/ui/badge", () => ({
   Badge: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <span className={className} data-testid="badge">
       {children}
     </span>

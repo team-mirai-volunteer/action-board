@@ -1,12 +1,12 @@
 "use client";
 
+import { Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis } from "recharts";
 import type { StatsHistory } from "../types";
 
 interface YouTubeStatsChartProps {

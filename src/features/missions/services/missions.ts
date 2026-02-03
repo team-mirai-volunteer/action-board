@@ -88,6 +88,55 @@ export async function getMissionAchievementCounts(): Promise<
   return countMap;
 }
 
+/**
+ * ポスティングミッションの合計枚数を取得（全ユーザー合計）
+ */
+export async function getTotalPostingCountByMission(
+  missionId: string,
+  seasonId?: string,
+): Promise<number> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc(
+    "get_total_posting_count_by_mission",
+    {
+      target_mission_id: missionId,
+      p_season_id: seasonId,
+    },
+  );
+
+  if (error) {
+    console.error("Error fetching total posting count by mission:", {
+      missionId,
+      errorMessage: error.message,
+      errorCode: error.code,
+    });
+    return 0;
+  }
+
+  return typeof data === "number" ? data : 0;
+}
+
+/**
+ * ポスティングミッション一覧の合計枚数マップを取得
+ */
+export async function getPostingCountsForMissions(
+  missions: { id: string; required_artifact_type: string | null }[],
+  seasonId?: string,
+): Promise<Map<string, number>> {
+  const postingMissions = missions.filter(
+    (m) => m.required_artifact_type === "POSTING",
+  );
+  const postingCountMap = new Map<string, number>();
+  await Promise.all(
+    postingMissions.map(async (m) => {
+      const count = await getTotalPostingCountByMission(m.id, seasonId);
+      postingCountMap.set(m.id, count);
+    }),
+  );
+  return postingCountMap;
+}
+
 export interface GetMissionsFilterOptions {
   filterFeatured?: boolean;
   excludeMissionIds?: string[];

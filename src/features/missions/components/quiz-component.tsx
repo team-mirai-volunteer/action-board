@@ -1,13 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { checkQuizAnswersAction } from "@/features/mission-detail/actions/actions";
-import {
-  type MissionLink,
-  getMissionLinksAction,
-} from "@/features/mission-detail/actions/quiz-actions";
 import {
   AlertCircle,
   CheckCircle,
@@ -16,6 +8,14 @@ import {
   XCircle,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { checkQuizAnswersAction } from "@/features/mission-detail/actions/actions";
+import {
+  getMissionLinksAction,
+  type MissionLink,
+} from "@/features/mission-detail/actions/quiz-actions";
 
 interface QuizQuestion {
   id: string;
@@ -47,29 +47,25 @@ interface QuizResult {
 
 interface QuizComponentProps {
   missionId: string;
-  isCompleted?: boolean;
   preloadedQuestions?: QuizQuestion[];
   onQuizComplete?: (results: QuizResult) => void;
   onSubmitAchievement?: () => void;
   isSubmittingAchievement?: boolean;
   buttonLabel?: string;
-  onAchievementSuccess?: () => void;
   category?: string; // カテゴリー名を追加
 }
 
 export default function QuizComponent({
   missionId,
-  isCompleted = false,
   preloadedQuestions,
   onQuizComplete,
   onSubmitAchievement,
   isSubmittingAchievement = false,
   buttonLabel,
-  onAchievementSuccess,
   category,
 }: QuizComponentProps) {
   // カテゴリーによる達成メッセージを生成する関数
-  const getAchievementMessage = (categoryName?: string) => {
+  const _getAchievementMessage = (categoryName?: string) => {
     switch (categoryName) {
       case "政策・マニフェスト":
         return "ミッション達成！政策・マニフェストマスターですね！";
@@ -436,7 +432,7 @@ export default function QuizComponent({
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
-            {missionLinks.map((link, index) => (
+            {missionLinks.map((link, _index) => (
               <a
                 key={link.link}
                 href={link.link}

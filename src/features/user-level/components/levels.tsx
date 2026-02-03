@@ -1,3 +1,5 @@
+import { MapPin } from "lucide-react";
+import Link from "next/link";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import { getPartyMembership } from "@/features/party-membership/services/memberships";
 import { UserTopBadge } from "@/features/user-badges/components/user-top-badge";
@@ -5,8 +7,6 @@ import { LevelProgress } from "@/features/user-level/components/level-progress";
 import { getUserLevel } from "@/features/user-level/services/level";
 import UserAvatar from "@/features/user-profile/components/user-avatar";
 import { getProfile } from "@/features/user-profile/services/profile";
-import { MapPin } from "lucide-react";
-import Link from "next/link";
 
 interface LevelsProps {
   userId: string;

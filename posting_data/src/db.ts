@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { createAdminClient } from "@/lib/supabase/adminClient";
 import * as dotenv from "dotenv";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 // Load .env from project root
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });

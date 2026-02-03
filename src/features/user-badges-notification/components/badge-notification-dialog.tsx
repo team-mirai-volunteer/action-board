@@ -1,5 +1,6 @@
 "use client";
 
+import { Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import type { UserBadge } from "@/features/user-badges/badge-types";
 import { BadgeItem } from "@/features/user-badges/components/badge-item";
-import { Award } from "lucide-react";
 
 interface BadgeNotificationDialogProps {
   isOpen: boolean;

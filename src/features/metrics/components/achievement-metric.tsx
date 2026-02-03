@@ -1,6 +1,6 @@
+import Link from "next/link";
 import type { AchievementData } from "@/features/metrics/types/metrics-types";
 import { formatNumber } from "@/lib/utils/metrics-formatter";
-import Link from "next/link";
 
 interface AchievementMetricProps {
   data: AchievementData | null;

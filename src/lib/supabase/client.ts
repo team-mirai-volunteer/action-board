@@ -1,6 +1,6 @@
-import type { Database } from "@/lib/types/supabase";
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/types/supabase";
 
 /**
  * 実行環境を自動判定してSupabaseクライアントを作成する透過的な関数
@@ -40,7 +40,7 @@ export function createClient(): SupabaseClient<Database> {
               for (const { name, value, options } of cookiesToSet) {
                 cookieStore.set(name, value, options);
               }
-            } catch (error) {
+            } catch (_error) {
               // The `set` method was called from a Server Component.
               // This can be ignored if you have middleware refreshing
               // user sessions.
@@ -48,7 +48,7 @@ export function createClient(): SupabaseClient<Database> {
           },
         },
       });
-    } catch (error) {
+    } catch (_error) {
       // next/headersが利用できない場合（テスト環境など）はシンプルなServerClientを返す
       return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
         cookies: {

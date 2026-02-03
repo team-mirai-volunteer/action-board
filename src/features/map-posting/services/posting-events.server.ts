@@ -1,7 +1,7 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
-import { cache } from "react";
 
 export type PostingEvent = Tables<"posting_events">;
 

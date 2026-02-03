@@ -37,7 +37,7 @@ export const mockUpload = jest.fn().mockResolvedValue({
 });
 
 export const mockSupabaseClient = {
-  from: jest.fn((table: string) => createMockQuery([])),
+  from: jest.fn((_table: string) => createMockQuery([])),
   storage: {
     from: jest.fn(() => ({
       upload: mockUpload,

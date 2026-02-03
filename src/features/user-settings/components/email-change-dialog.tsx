@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
 import { FormMessage } from "@/components/common/form-message";
 import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useActionState, useEffect } from "react";
 import {
   type ChangeEmailResult,
   changeEmailAction,

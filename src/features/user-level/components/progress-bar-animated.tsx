@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils/utils";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils/utils";
 
 interface ProgressBarAnimatedProps {
   zeroValue: number;

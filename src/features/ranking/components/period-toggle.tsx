@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 export type RankingPeriod = "all" | "daily";
 

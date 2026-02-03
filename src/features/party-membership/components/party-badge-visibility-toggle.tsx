@@ -1,10 +1,10 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils/styles";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
 import { updateBadgeVisibility } from "../actions/update-badge-visibility";
 import { getPartyPlanConfig } from "../constants/plans";
 import type { PartyMembership, PartyPlan } from "../types";
@@ -24,7 +24,7 @@ export function PartyBadgeVisibilityToggle({
   );
   const [isPending, startTransition] = useTransition();
 
-  const planConfig = getPartyPlanConfig(membership.plan as PartyPlan);
+  const _planConfig = getPartyPlanConfig(membership.plan as PartyPlan);
 
   const handleChange = (checked: boolean | "indeterminate") => {
     if (checked === "indeterminate") {

@@ -1,5 +1,5 @@
 // Jest setup file
-const React = require("react");
+const _React = require("react");
 
 require("@testing-library/jest-dom");
 
@@ -87,7 +87,7 @@ jest.mock("lucide-react", () => ({
   },
 }));
 
-const createMockSupabaseQuery = () => {
+const _createMockSupabaseQuery = () => {
   const mockQuery = {
     eq: jest.fn(() => mockQuery),
     gte: jest.fn(() => mockQuery),
@@ -318,7 +318,7 @@ jest.mock("@radix-ui/react-dialog", () => {
   };
 
   const mockComponents = {
-    Root: ({ children, open, onOpenChange }) => {
+    Root: ({ children, open }) => {
       return open
         ? mockReact.createElement(
             "div",

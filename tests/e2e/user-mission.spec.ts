@@ -120,7 +120,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await signedInPage
       .getByRole("link", { name: "テストユーザーさんのプロフィールへ" })
       .click();
-    await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, {
+    await expect(signedInPage).toHaveURL(/\/users\/[^/]+$/, {
       timeout: 10000,
     });
 
@@ -137,7 +137,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       .filter({ hasText: "佐藤太郎" })
       .first()
       .click();
-    await expect(signedInPage).toHaveURL(/\/users\/[^\/]+$/, {
+    await expect(signedInPage).toHaveURL(/\/users\/[^/]+$/, {
       timeout: 10000,
     });
 
@@ -156,7 +156,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       .filter({ hasText: "(seed) ゴミ拾いをしよう (成果物不要)" })
       .getByRole("button", { name: "今すぐチャレンジ" })
       .click();
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, {
+    await expect(signedInPage).toHaveURL(/\/missions\/[^/]+$/, {
       timeout: 10000,
     });
 
@@ -219,7 +219,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       .getByRole("button", { name: "もう一回チャレンジ" })
       .first()
       .click();
-    await expect(signedInPage).toHaveURL(/\/missions\/[^\/]+$/, {
+    await expect(signedInPage).toHaveURL(/\/missions\/[^/]+$/, {
       timeout: 10000,
     });
 

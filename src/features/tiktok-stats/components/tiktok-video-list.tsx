@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type { TikTokVideoWithStats } from "../types";
 import { TikTokVideoCard } from "./tiktok-video-card";
 

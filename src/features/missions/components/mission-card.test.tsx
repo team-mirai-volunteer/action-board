@@ -1,6 +1,6 @@
-import type { Tables } from "@/lib/types/supabase";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
+import type { Tables } from "@/lib/types/supabase";
 import Mission from "./mission-card";
 
 jest.mock("next/link", () => {
@@ -25,7 +25,10 @@ jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card">
       {children}
     </div>
@@ -33,7 +36,10 @@ jest.mock("@/components/ui/card", () => ({
   CardFooter: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card-footer">
       {children}
     </div>
@@ -41,7 +47,10 @@ jest.mock("@/components/ui/card", () => ({
   CardHeader: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card-header">
       {children}
     </div>
@@ -49,7 +58,10 @@ jest.mock("@/components/ui/card", () => ({
   CardTitle: ({
     children,
     className,
-  }: { children: React.ReactNode; className?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <h3 className={className} data-testid="card-title">
       {children}
     </h3>
@@ -60,7 +72,10 @@ jest.mock("@/features/missions/components/difficulty-badge", () => ({
   DifficultyBadge: ({
     difficulty,
     className,
-  }: { difficulty: number; className?: string }) => (
+  }: {
+    difficulty: number;
+    className?: string;
+  }) => (
     <span className={className} data-testid="difficulty-badge">
       難易度{difficulty}
     </span>
@@ -71,8 +86,10 @@ jest.mock("@/components/ui/button", () => ({
   Button: ({
     children,
     className,
-    variant,
-  }: { children: React.ReactNode; className?: string; variant?: string }) => (
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <button type="button" className={className} data-testid="button">
       {children}
     </button>
@@ -80,11 +97,7 @@ jest.mock("@/components/ui/button", () => ({
 }));
 
 jest.mock("@/features/missions/components/mission-icon", () => ({
-  MissionIcon: ({
-    src,
-    alt,
-    size,
-  }: { src: string; alt: string; size: string }) => (
+  MissionIcon: ({ src, alt }: { src: string; alt: string }) => (
     <img src={src} alt={alt} data-testid="mission-icon" />
   ),
 }));
@@ -218,6 +231,26 @@ describe("Mission", () => {
     );
 
     expect(screen.getByText("みんなで0回達成")).toBeInTheDocument();
+  });
+
+  it("ポスティングミッションでは枚数表示になる", () => {
+    const postingMission = {
+      ...mockMission,
+      required_artifact_type: "POSTING",
+    };
+
+    render(
+      <Mission
+        mission={postingMission}
+        achievementsCount={30000}
+        userAchievementCount={0}
+      />,
+    );
+
+    const formattedCount = (30000).toLocaleString();
+    expect(
+      screen.getByText(`みんなで${formattedCount}枚達成`),
+    ).toBeInTheDocument();
   });
 
   it("イベント日付がnullの場合は日付表示なし", () => {
