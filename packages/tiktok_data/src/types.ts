@@ -90,11 +90,13 @@ export interface SyncResult {
   totalUsers: number;
   successfulSyncs: number;
   failedSyncs: number;
+  skippedSyncs: number;
   newVideos: number;
   updatedVideos: number;
   statsRecorded: number;
   tokensRefreshed: number;
   errors: string[];
+  warnings: string[];
 }
 
 // ユーザーごとの同期結果

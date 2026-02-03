@@ -212,16 +212,25 @@ async function syncUserVideos(
 /**
  * メイン同期処理
  */
+// 再認証が必要なエラーコード（スキップ扱いにする）
+const REAUTH_REQUIRED_ERROR_CODES = [
+  "scope_not_authorized", // ユーザーが必要なスコープを許可していない
+  "access_token_invalid", // アクセストークンが無効
+  "user_not_found", // ユーザーが見つからない（連携解除済み）
+];
+
 async function syncTikTokVideos(): Promise<SyncResult> {
   const result: SyncResult = {
     totalUsers: 0,
     successfulSyncs: 0,
     failedSyncs: 0,
+    skippedSyncs: 0,
     newVideos: 0,
     updatedVideos: 0,
     statsRecorded: 0,
     tokensRefreshed: 0,
     errors: [],
+    warnings: [],
   };
 
   console.log("=== TikTok Videos Sync ===");
@@ -311,9 +320,23 @@ async function syncTikTokVideos(): Promise<SyncResult> {
             : String(err);
 
       userResult.error = errorMessage;
-      result.failedSyncs++;
-      result.errors.push(`${userName}: ${errorMessage}`);
-      console.error(`  Error: ${errorMessage}`);
+
+      // 再認証が必要なエラーはスキップ扱い（ワークフロー失敗にしない）
+      if (
+        err instanceof TikTokAPIError &&
+        err.code &&
+        REAUTH_REQUIRED_ERROR_CODES.includes(err.code)
+      ) {
+        result.skippedSyncs++;
+        result.warnings.push(
+          `${userName}: 再認証が必要です (${err.code}) - TikTok連携を再設定してください`,
+        );
+        console.warn(`  [SKIP] Re-authentication required: ${errorMessage}`);
+      } else {
+        result.failedSyncs++;
+        result.errors.push(`${userName}: ${errorMessage}`);
+        console.error(`  Error: ${errorMessage}`);
+      }
     }
 
     userResults.push(userResult);
@@ -330,11 +353,21 @@ async function main() {
     console.log(`Total users: ${result.totalUsers}`);
     console.log(`Successful syncs: ${result.successfulSyncs}`);
     console.log(`Failed syncs: ${result.failedSyncs}`);
+    console.log(`Skipped syncs: ${result.skippedSyncs}`);
     console.log(`New videos: ${result.newVideos}`);
     console.log(`Updated videos: ${result.updatedVideos}`);
     console.log(`Stats recorded: ${result.statsRecorded}`);
     console.log(`Tokens refreshed: ${result.tokensRefreshed}`);
 
+    // 警告を表示（再認証が必要なユーザー）
+    if (result.warnings.length > 0) {
+      console.log(`\nWarnings (${result.warnings.length}):`);
+      for (const warning of result.warnings) {
+        console.warn(`  - ${warning}`);
+      }
+    }
+
+    // エラーがある場合のみ失敗扱い（警告のみの場合は成功）
     if (result.errors.length > 0) {
       console.log(`\nErrors (${result.errors.length}):`);
       for (const error of result.errors) {

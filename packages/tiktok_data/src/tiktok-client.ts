@@ -126,6 +126,20 @@ export async function fetchVideoList(
   if (!response.ok) {
     const errorText = await response.text();
     console.error("TikTok video list fetch failed:", errorText);
+
+    // レスポンスボディからエラーコードを抽出
+    try {
+      const errorJson = JSON.parse(errorText);
+      if (errorJson.error?.code) {
+        throw new TikTokAPIError(
+          errorJson.error.message || "TikTok動画一覧の取得に失敗しました",
+          errorJson.error.code,
+          errorJson.error.log_id,
+        );
+      }
+    } catch (parseError) {
+      // JSONパースに失敗した場合は無視
+    }
     throw new TikTokAPIError("TikTok動画一覧の取得に失敗しました");
   }
 
