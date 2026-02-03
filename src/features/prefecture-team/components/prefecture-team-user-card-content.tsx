@@ -11,6 +11,12 @@ function getPrefectureInternalLabel(prefecture: string): string {
   return "県内";
 }
 
+function formatContributionPercent(percent: number): string {
+  if (percent >= 0.1) return percent.toFixed(1);
+  if (percent >= 0.01) return percent.toFixed(2);
+  return percent.toFixed(3);
+}
+
 interface PrefectureTeamUserCardContentProps {
   prefectureRanking: PrefectureTeamRanking;
   userContribution: UserPrefectureContribution;
@@ -54,7 +60,8 @@ export function PrefectureTeamUserCardContent({
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-teal-500" />
             <span className="text-sm font-bold">
-              貢献度 {userContribution.contributionPercent.toFixed(1)}%
+              貢献度{" "}
+              {formatContributionPercent(userContribution.contributionPercent)}%
             </span>
           </div>
         </div>
