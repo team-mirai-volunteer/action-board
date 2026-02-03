@@ -2001,6 +2001,14 @@ export type Database = {
           xp: number;
         }[];
       };
+      get_prefecture_team_ranking: {
+        Args: { p_limit?: number; p_season_id?: string };
+        Returns: {
+          prefecture: string;
+          total_xp: number;
+          user_count: number;
+        }[];
+      };
       get_top_users_posting_count: {
         Args: { user_ids: string[] };
         Returns: {
@@ -2020,10 +2028,7 @@ export type Database = {
         }[];
       };
       get_total_posting_count_by_mission: {
-        Args: {
-          p_season_id?: string;
-          target_mission_id: string;
-        };
+        Args: { p_season_id?: string; target_mission_id: string };
         Returns: number;
       };
       get_user_by_email: {
@@ -2142,6 +2147,15 @@ export type Database = {
           target_user_id: string;
         };
         Returns: number;
+      };
+      get_user_prefecture_contribution: {
+        Args: { p_season_id?: string; p_user_id: string };
+        Returns: {
+          prefecture: string;
+          prefecture_total_xp: number;
+          user_rank_in_prefecture: number;
+          user_xp: number;
+        }[];
       };
       get_user_prefecture_ranking: {
         Args: { prefecture: string; target_user_id: string };

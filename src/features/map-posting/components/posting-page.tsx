@@ -22,6 +22,7 @@ import {
 import { useCurrentLocation } from "../hooks/use-current-location";
 import {
   deleteShape as deleteMapShape,
+  getShapeMissionStatus,
   loadShapes as loadMapShapes,
   saveShape as saveMapShape,
   updateShape as updateMapShape,
@@ -419,6 +420,38 @@ export default function PostingPageClient({
         const layer = e.layer;
         if (layer) {
           const sid = getShapeId(layer);
+
+          // ミッション達成済みの図形は削除をブロック
+          if (sid) {
+            try {
+              const missionStatus = await getShapeMissionStatus(sid);
+              if (missionStatus.isCompleted) {
+                toast.error(
+                  "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
+                  {
+                    action: {
+                      label: "取り消しページへ",
+                      onClick: () =>
+                        window.open(
+                          "/missions/posting-activity-magazine",
+                          "_blank",
+                          "noopener,noreferrer",
+                        ),
+                    },
+                  },
+                );
+                layer.addTo(mapInstance);
+                return;
+              }
+            } catch (error) {
+              console.error("Failed to check mission status:", error);
+              toast.error(
+                "ミッション状況の確認に失敗しました。削除を中止します。",
+              );
+              layer.addTo(mapInstance);
+              return;
+            }
+          }
 
           // 削除確認ダイアログを表示
           const confirmed = window.confirm(

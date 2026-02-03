@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Hero from "@/components/top/hero";
+import { PrefectureTeamCard } from "@/components/top/prefecture-team-card";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
 import MissionsByCategory from "@/features/missions/components/missions-by-category";
@@ -83,20 +84,28 @@ export default async function Home({
         <Hero />
       </section>
 
-      <div className="w-full md:container md:mx-auto py-4">
-        {/* メトリクスセクション */}
-        <MetricsWithSuspense />
-
-        {/* アクティビティセクション */}
-        <section className="py-12 md:py-16 bg-white">
-          <Activities />
+      {/* 都道府県対抗ランキング導線 */}
+      {user != null && (
+        <section className="py-4 md:py-8">
+          <div className="w-full max-w-lg mx-auto">
+            <PrefectureTeamCard />
+          </div>
         </section>
+      )}
 
-        {/* ランキングセクション */}
-        <section className="md:py-16 bg-white">
-          <RankingSection />
-        </section>
+      {/* メトリクスセクション */}
+      <MetricsWithSuspense />
 
+      {/* アクティビティセクション */}
+      <section className="py-12 md:py-16 bg-white">
+        <Activities />
+      </section>
+
+      {/* ランキングセクション */}
+      <section className="md:py-16 bg-white">
+        <RankingSection />
+      </section>
+      <div className="w-full md:container md:mx-auto">
         {/* フューチャードミッションセクション */}
         {showFeatured && (
           <section className="py-12 md:py-16 bg-white">
