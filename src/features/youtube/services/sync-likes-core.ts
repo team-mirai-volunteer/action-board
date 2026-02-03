@@ -101,6 +101,7 @@ export async function checkTeamMiraiVideosBatch(
             detail.snippet.tags,
             detail.snippet.title,
             detail.snippet.description,
+            detail.snippet.channelTitle,
           )
         ) {
           results.set(detail.id, {

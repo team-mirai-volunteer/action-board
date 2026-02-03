@@ -1,26 +1,25 @@
 import type { User } from "@supabase/supabase-js";
 
 /**
- * ユーザーの認証プロバイダーを取得
- */
-export function getAuthProviders(user: User): string[] {
-  return (user.app_metadata as { providers?: string[] })?.providers || [];
-}
-
-/**
  * LINE認証ユーザーかどうかを判定
  */
 export function isLineUser(user: User): boolean {
-  const providers = getAuthProviders(user);
-  return providers.includes("line");
+  const userMetadataProvider = (user.user_metadata as { provider?: string })
+    ?.provider;
+  return userMetadataProvider === "line";
 }
 
 /**
  * Email/Password認証ユーザーかどうかを判定
+ * 直接判定する方法がないため、LINEユーザーでない場合のみEmailユーザーと判定
  */
 export function isEmailUser(user: User): boolean {
-  const providers = getAuthProviders(user);
-  return providers.includes("email");
+  // まずLINEユーザーかチェック
+  if (isLineUser(user)) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 /**
@@ -30,9 +29,7 @@ export function isEmailUser(user: User): boolean {
 export function getAuthMethodDisplayName(user: User): string {
   if (isLineUser(user)) {
     return "LINEログイン";
-  }
-  if (isEmailUser(user)) {
+  } else {
     return "メールアドレスログイン";
   }
-  return "不明";
 }

@@ -9,15 +9,17 @@ export const TEAM_MIRAI_KEYWORDS = [
 ] as const;
 
 /**
- * 動画のタグ、タイトル、説明文にチームみらい関連のキーワードが含まれているかチェック
+ * 動画のタグ、タイトル、説明文、チャンネル名にチームみらい関連のキーワードが含まれているかチェック
  * @param tags 動画のタグ配列
  * @param title 動画のタイトル
  * @param description 動画の説明文
+ * @param channelTitle 動画のチャンネル名
  */
 export function hasTeamMiraiTag(
   tags: string[] | undefined,
   title?: string | null,
   description?: string | null,
+  channelTitle?: string | null,
 ): boolean {
   // タグをチェック
   if (tags && tags.length > 0) {
@@ -48,6 +50,18 @@ export function hasTeamMiraiTag(
     if (
       TEAM_MIRAI_KEYWORDS.some((keyword) =>
         lowerDesc.includes(keyword.toLowerCase()),
+      )
+    ) {
+      return true;
+    }
+  }
+
+  // チャンネル名をチェック
+  if (channelTitle) {
+    const lowerChannel = channelTitle.toLowerCase();
+    if (
+      TEAM_MIRAI_KEYWORDS.some((keyword) =>
+        lowerChannel.includes(keyword.toLowerCase()),
       )
     ) {
       return true;
