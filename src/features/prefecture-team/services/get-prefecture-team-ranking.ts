@@ -117,9 +117,7 @@ export async function getUserPrefectureContribution(
 
     const contributionPercent =
       contribution.prefecture_total_xp > 0
-        ? Math.round(
-            (contribution.user_xp / contribution.prefecture_total_xp) * 1000,
-          ) / 10
+        ? (contribution.user_xp / contribution.prefecture_total_xp) * 100
         : 0;
 
     return {
