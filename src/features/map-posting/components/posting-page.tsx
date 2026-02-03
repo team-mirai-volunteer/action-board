@@ -428,6 +428,17 @@ export default function PostingPageClient({
               if (missionStatus.isCompleted) {
                 toast.error(
                   "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
+                  {
+                    action: {
+                      label: "取り消しページへ",
+                      onClick: () =>
+                        window.open(
+                          "/missions/posting-activity-magazine",
+                          "_blank",
+                          "noopener,noreferrer",
+                        ),
+                    },
+                  },
                 );
                 layer.addTo(mapInstance);
                 return;

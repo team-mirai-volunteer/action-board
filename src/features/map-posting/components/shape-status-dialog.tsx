@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -171,11 +172,24 @@ export function ShapeStatusDialog({
 
     // ミッション達成済み、またはミッション状況取得失敗時は削除をブロック
     if (isMissionCompleted || isMissionStatusError) {
-      toast.error(
-        isMissionStatusError
-          ? "ミッション状況の確認に失敗しました。削除を中止します。"
-          : "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
-      );
+      if (isMissionStatusError) {
+        toast.error("ミッション状況の確認に失敗しました。削除を中止します。");
+      } else {
+        toast.error(
+          "ミッション達成済みの図形は削除できません。先にミッション提出を取り消してください。",
+          {
+            action: {
+              label: "取り消しページへ",
+              onClick: () =>
+                window.open(
+                  "/missions/posting-activity-magazine",
+                  "_blank",
+                  "noopener,noreferrer",
+                ),
+            },
+          },
+        );
+      }
       return;
     }
 
@@ -210,7 +224,16 @@ export function ShapeStatusDialog({
                 : "この図形は他のユーザーが作成したため、変更できません"}
             {isOwner && isMissionCompleted && (
               <span className="mt-1 block text-green-600">
-                ミッション達成済み
+                ミッション達成済み（
+                <Link
+                  href="/missions/posting-activity-magazine"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  取り消しはこちら
+                </Link>
+                ）
               </span>
             )}
             {isAdmin && !isOwner && isEventActive && (
