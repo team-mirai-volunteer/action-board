@@ -41,9 +41,9 @@ export function YouTubeSettingsContent({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-hidden">
       {/* 連携状態セクション */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
+      <section className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 overflow-hidden">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           アカウント連携
         </h2>
@@ -69,14 +69,16 @@ export function YouTubeSettingsContent({
 
       {/* 動画/いいね/コメントタブセクション（連携済みの場合のみ表示） */}
       {isLinked && (
-        <section className="bg-white rounded-lg border border-gray-200 p-6">
+        <section className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 overflow-hidden">
           <Tabs defaultValue={defaultTab} className="w-full">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList>
-                <TabsTrigger value="likes">いいね</TabsTrigger>
-                <TabsTrigger value="comments">コメント</TabsTrigger>
-                <TabsTrigger value="videos">アップロード</TabsTrigger>
-              </TabsList>
+            <div className="space-y-3 mb-4">
+              <div className="w-full overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                <TabsList>
+                  <TabsTrigger value="likes">いいね</TabsTrigger>
+                  <TabsTrigger value="comments">コメント</TabsTrigger>
+                  <TabsTrigger value="videos">アップロード</TabsTrigger>
+                </TabsList>
+              </div>
               <YouTubeSyncButton onSyncComplete={handleSyncComplete} />
             </div>
 
