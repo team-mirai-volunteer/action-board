@@ -92,6 +92,7 @@ const EndCredits = ({
             gap: "3rem", // ← 画像とテキストの間にスペース
           }}
         >
+          {/* biome-ignore lint/performance/noImgElement: アニメーション用にimgタグを使用 */}
           <img
             src="/img/logo.png"
             alt="チームロゴ"
@@ -296,6 +297,7 @@ export default function Fireworks({ onTrigger }: FireworksProps) {
                 }}
               >
                 ご支援をいただき、 誠にありがとうございました
+                {/* biome-ignore lint/performance/noImgElement: アニメーション用にimgタグを使用 */}
                 <img
                   src="/img/logo.png"
                   alt="チームロゴ"

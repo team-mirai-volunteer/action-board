@@ -864,7 +864,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   const {
     achievementId: validatedAchievementId,
-    missionId: validatedMissionId,
+    missionId: _validatedMissionId,
   } = validatedFields.data;
 
   const supabase = createClient();

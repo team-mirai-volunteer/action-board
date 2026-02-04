@@ -20,26 +20,6 @@ export interface MissionLink {
   display_order: number;
 }
 
-// データベースから取得されるクイズ問題の型
-interface DbQuizQuestion {
-  id: string;
-  question: string;
-  option1: string;
-  option2: string;
-  option3: string;
-  option4: string;
-  correct_answer: number;
-  explanation: string | null;
-}
-
-// quiz_questionsテーブルから直接取得される問題の型
-interface MissionQuizQuestion extends DbQuizQuestion {
-  question_order: number;
-  quiz_categories: {
-    name: string;
-  };
-}
-
 // ミッションのクイズカテゴリ取得関数
 async function getMissionQuizCategory(
   missionId: string,

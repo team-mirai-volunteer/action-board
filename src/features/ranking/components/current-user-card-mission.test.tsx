@@ -21,18 +21,6 @@ jest.mock(
   }),
 );
 
-type UserMissionRanking = {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  rank: number | null;
-  total_points: number | null;
-  user_achievement_count?: number;
-  level?: number;
-  updated_at?: string;
-  xp?: number;
-};
-
 type Mission = {
   id: string;
   title: string;
