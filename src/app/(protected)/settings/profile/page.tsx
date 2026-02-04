@@ -1,5 +1,4 @@
 import { ChevronRight } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Message } from "@/components/common/form-message";
@@ -33,11 +32,6 @@ export default async function ProfileSettingsPage({
   if (!user) {
     return redirect("/sign-in");
   }
-
-  // 本番環境（action.team-mir.ai）では外部サービス連携を非表示
-  // TODO: 将来的に本番環境での挙動を変更する際に使用
-  const _headersList = await headers();
-  const _host = _headersList.get("host") || "";
 
   // ユーザー情報を取得
   const privateUser = await getMyProfile();

@@ -113,9 +113,7 @@ describe("poster_activities テーブルのRLSテスト", () => {
 
   test("匿名ユーザーはポスター活動を読み取れない", async () => {
     const anonClient = getAnonClient();
-    const { data, error } = await anonClient
-      .from("poster_activities")
-      .select("*");
+    const { data } = await anonClient.from("poster_activities").select("*");
 
     expect(data?.length).toBe(0);
   });

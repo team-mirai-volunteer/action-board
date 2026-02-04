@@ -36,7 +36,7 @@ type Props = {
 
 export function MissionFormWrapper({
   mission,
-  authUser,
+  authUser: _authUser,
   userAchievementCount,
   onSubmissionSuccess,
   preloadedQuizQuestions,
