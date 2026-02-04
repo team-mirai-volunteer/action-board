@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PrefectureTeamGoalBanner } from "@/features/prefecture-team/components/prefecture-team-goal-banner";
-import { PrefectureTeamRanking } from "@/features/prefecture-team/components/prefecture-team-ranking";
+import { PrefectureTeamTabs } from "@/features/prefecture-team/components/prefecture-team-tabs";
 import { PrefectureTeamUserCard } from "@/features/prefecture-team/components/prefecture-team-user-card";
 import {
   getPrefectureTeamRanking,
@@ -89,9 +89,9 @@ export default async function PrefectureTeamPage() {
           />
         )}
 
-        {/* ランキング表 */}
-        <PrefectureTeamRanking
-          seasonId={currentSeason.id}
+        {/* タブ（地図/ランキング表） */}
+        <PrefectureTeamTabs
+          rankings={rankings}
           userPrefecture={userProfile?.address_prefecture}
         />
       </div>

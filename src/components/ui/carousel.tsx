@@ -134,6 +134,7 @@ const Carousel = React.forwardRef<
           canScrollNext,
         }}
       >
+        {/* biome-ignore lint/a11y/useSemanticElements: shadcn/uiのコンポーネントでrole属性を使用 */}
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}
@@ -179,6 +180,7 @@ const CarouselItem = React.forwardRef<
   const { orientation } = useCarousel();
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: shadcn/uiのコンポーネントでrole属性を使用
     <div
       ref={ref}
       role="group"
@@ -198,7 +200,7 @@ const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const { scrollPrev, canScrollPrev } = useCarousel();
 
   return (
     <Button
@@ -228,7 +230,7 @@ const CarouselNext = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const { scrollNext, canScrollNext } = useCarousel();
 
   return (
     <Button

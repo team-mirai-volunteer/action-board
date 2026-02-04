@@ -1,4 +1,3 @@
-import type { User } from "@supabase/supabase-js";
 import { render, screen } from "@testing-library/react";
 import type { Tables } from "@/lib/types/supabase";
 import { ArtifactForm } from "./artifact-form";
@@ -7,16 +6,6 @@ import { ArtifactForm } from "./artifact-form";
 jest.mock("lucide-react", () => ({
   ChevronDown: () => <div data-testid="chevron-down-icon" />,
 }));
-
-const mockUser: User = {
-  id: "test-user-id",
-  email: "test@example.com",
-  created_at: "2025-06-22T00:00:00Z",
-  app_metadata: {},
-  user_metadata: {},
-  aud: "authenticated",
-  role: "authenticated",
-};
 
 const baseMission: Tables<"missions"> = {
   id: "test-mission-1",

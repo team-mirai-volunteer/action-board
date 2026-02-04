@@ -147,7 +147,7 @@ describe("user_levels テーブルのRLSテスト", () => {
   });
 
   test("認証済みユーザーは自分のレベル情報を更新できない（通常は更新機能がないため）", async () => {
-    const { data, error } = await user1.client
+    const { data } = await user1.client
       .from("user_levels")
       .update({ xp: 200, level: 3 })
       .eq("user_id", user1.user.userId);

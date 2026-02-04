@@ -39,6 +39,9 @@
       },
       "performance": {
         "noImgElement": "warn"
+      },
+      "complexity": {
+        "noImportantStyles": "warn"
       }
     }
   },
@@ -50,6 +53,16 @@
           "suspicious": {
             "noExplicitAny": "off",
             "noThenProperty": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
           }
         }
       }

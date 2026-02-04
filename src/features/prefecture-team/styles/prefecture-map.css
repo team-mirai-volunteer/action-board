@@ -1,0 +1,131 @@
+/* 都道府県対抗ランキング地図用スタイル */
+
+/* マップコンテナ */
+#prefecture-team-map {
+  width: 100%;
+  height: 500px;
+  border-radius: 0.5rem;
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  #prefecture-team-map {
+    height: 600px;
+  }
+}
+
+/* Leaflet z-index の調整 */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 10;
+}
+
+.leaflet-control {
+  z-index: 10;
+}
+
+/* ツールチップスタイル */
+.prefecture-tooltip {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.prefecture-tooltip .tooltip-header {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.prefecture-tooltip .tooltip-rank {
+  color: #059669;
+  font-weight: bold;
+}
+
+.prefecture-tooltip .tooltip-stats {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* 凡例スタイル */
+.prefecture-map-legend {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.prefecture-map-legend h4 {
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #374151;
+}
+
+.prefecture-map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.prefecture-map-legend .legend-color {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.prefecture-map-legend .legend-label {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+/* ローディングオーバーレイ */
+.prefecture-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 20;
+  border-radius: 0.5rem;
+}
+
+.prefecture-map-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ポリゴンホバー時のスタイル（Leafletのパスに適用） */
+.leaflet-interactive:hover {
+  cursor: pointer;
+}
+
+/* モバイル用ポップアップスタイル */
+.prefecture-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  padding: 0;
+}
+
+.prefecture-popup .leaflet-popup-content {
+  margin: 0;
+}
+
+.prefecture-popup .leaflet-popup-tip {
+  background: white;
+}

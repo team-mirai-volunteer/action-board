@@ -103,9 +103,7 @@ describe("posting_activities テーブルのRLSテスト", () => {
 
   test("匿名ユーザーはポスティング活動を読み取れない", async () => {
     const anonClient = getAnonClient();
-    const { data, error } = await anonClient
-      .from("posting_activities")
-      .select("*");
+    const { data } = await anonClient.from("posting_activities").select("*");
 
     expect(data?.length).toBe(0);
   });
