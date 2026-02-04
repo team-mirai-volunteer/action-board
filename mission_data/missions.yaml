@@ -790,3 +790,15 @@ missions:
     is_hidden: false
     artifact_label: SNS名と候補者名
     ogp_image_url: null
+  - slug: early-vote-2026-shugiin
+    title: 期日前投票をしよう！
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_early-vote.svg
+    content: 予定が合わない方も安心！「期日前投票」は、選挙日の前でも投票できる便利な制度です。<br>忙しい方や当日行けない方も、あなたの大切な一票を無理なく投じることができます。<br>みんなで投票率アップを目指そう！<br><br>■選挙区候補者<br>・千葉5区：小林しゅうへい<br>・東京2区：土橋あきひろ<br>・東京7区：みねしま侑也<br>・東京26区：うさみ登<br>・京都1区：堀場さち子<br>・京都2区：酒井ゆうすけ<br><br>■比例代表候補者<br>・北海道ブロック：稲原むねよし<br>・東北ブロック：林たくみ<br>・北関東ブロック：武藤かず子<br>・南関東ブロック：河合みちお、小林しゅうへい、山田えり<br>・東京ブロック：うさみ登、高山さとし、土橋あきひろ、みねしま侑也<br>・東海ブロック：須田えいたろう<br>・近畿ブロック：酒井ゆうすけ、堀場さち子<br>・九州ブロック：古川あおい
+    difficulty: 5
+    required_artifact_type: NONE
+    max_achievement_count: 1
+    is_featured: true
+    featured_importance: 100
+    is_hidden: false
+    artifact_label: null
+    ogp_image_url: null
