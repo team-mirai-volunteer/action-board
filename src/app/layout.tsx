@@ -1,6 +1,10 @@
 import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/common/navbar";
-import { generateRootMetadata, notoSansJP } from "@/lib/utils/metadata";
+import {
+  generateRootMetadata,
+  lexendGiga,
+  notoSansJP,
+} from "@/lib/utils/metadata";
 import Footer from "./footer";
 import "./globals.css";
 import Script from "next/script";
@@ -28,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
+    <html lang="ja" className={`${notoSansJP.variable} ${lexendGiga.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <NextTopLoader showSpinner={false} color="#2aa693" />
         {GA_ID && (

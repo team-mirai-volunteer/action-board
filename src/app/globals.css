@@ -37,7 +37,15 @@
 }
 
 @utility bg-gradient-level {
-  background: linear-gradient(90deg, #30baa7, #47c991);
+  background: linear-gradient(90deg, #2aa693, #47c991);
+}
+
+@utility bg-mirai-gradient {
+  background: linear-gradient(to bottom right, #64d8c6, #bcecd3);
+}
+
+@utility bg-mirai-light-gradient {
+  background: linear-gradient(to bottom, #e2f6f3, #eef6e2);
 }
 
 @utility bg-gradient-radial {
@@ -69,26 +77,26 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 43 33% 95%;
     --foreground: 0 0% 20%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
-    --primary: 158 64% 42%;
+    --primary: 170 56% 41%;
     --primary-foreground: 0 0% 100%;
     --secondary: 156 72% 67%;
     --secondary-foreground: 0 0% 20%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 158 64% 42%;
+    --accent: 170 56% 41%;
     --accent-foreground: 0 0% 100%;
     --destructive: 4 100% 60%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 158 64% 42%;
-    --radius: 0.75rem;
+    --ring: 170 56% 41%;
+    --radius: 0.625rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -145,8 +153,43 @@
   h4,
   h5,
   h6 {
+    font-family:
+      var(--font-lexend-giga), var(--font-noto-sans-jp), -apple-system,
+      BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo,
+      sans-serif;
     @apply font-extrabold;
   }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@utility animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@utility animate-bounce-gentle {
+  animation: bounce-gentle 1s ease-in-out infinite;
 }
 
 .rdp-root {

@@ -29,7 +29,7 @@ export function ProgressCircle({
   max,
   size = 160,
   strokeWidth = 8,
-  progressColor = "#30BAA7",
+  progressColor = "#2aa693",
   backgroundColor = "#E2F6F3",
   centerText,
   centerTextClassName = "",

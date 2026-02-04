@@ -3,7 +3,7 @@
 // ==========================================
 
 import type { Metadata } from "next";
-import { Noto_Sans_JP } from "next/font/google";
+import { Lexend_Giga, Noto_Sans_JP } from "next/font/google";
 
 export const defaultUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -30,6 +30,13 @@ export const config = {
 export const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   variable: "--font-noto-sans-jp",
+  display: "swap",
+  weight: ["400", "500", "700"],
+});
+
+export const lexendGiga = Lexend_Giga({
+  subsets: ["latin"],
+  variable: "--font-lexend-giga",
   display: "swap",
   weight: ["400", "500", "700"],
 });

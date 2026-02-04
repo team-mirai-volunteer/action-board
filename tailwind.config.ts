@@ -56,6 +56,12 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         "tm-teal": "#30BAA7",
+        "mirai-primary": "#2aa693",
+        "mirai-primary-accent": "#0f8472",
+        "mirai-beige": "#f7f4ee",
+      },
+      fontFamily: {
+        lexend: ["var(--font-lexend-giga)"],
       },
       borderRadius: {
         lg: "var(--radius)",
