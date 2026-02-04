@@ -80,6 +80,7 @@ export default function PrefectureTeamMap({
 
   const loadGeoJSON = async () => {
     try {
+      setError(null);
       setIsLoading(true);
       const response = await fetch("/geojson/japan-prefectures.geojson");
       if (!response.ok) {
