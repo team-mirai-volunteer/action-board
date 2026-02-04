@@ -206,11 +206,6 @@ export async function updateProfile(
       if (error) {
         console.error("Upload error:", error);
         // アップロードに失敗しても、他のプロフィール情報は更新を続ける
-      } else {
-        // 公開URLを取得して保存用に設定
-        const { data } = supabaseServiceClient.storage
-          .from("avatars")
-          .getPublicUrl(fileName);
       }
       avatar_path = fileName;
     } catch (error) {

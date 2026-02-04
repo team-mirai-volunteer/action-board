@@ -30,8 +30,7 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedImports": "warn",
-        "noUnusedVariables": "warn"
+        "noUnusedImports": "warn"
       },
       "complexity": {
         "noImportantStyles": "warn"

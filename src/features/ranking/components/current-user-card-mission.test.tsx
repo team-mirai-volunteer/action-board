@@ -21,28 +21,6 @@ jest.mock(
   }),
 );
 
-type Mission = {
-  id: string;
-  title: string;
-  description: string;
-  artifact_label?: string | null;
-  content?: string | null;
-  created_at?: string;
-  difficulty?: number;
-  event_date?: string | null;
-  icon_url?: string | null;
-  is_featured?: boolean;
-  is_posting_mission?: boolean;
-  location?: string | null;
-  max_participants?: number | null;
-  name?: string;
-  updated_at?: string;
-  is_hidden?: boolean;
-  max_achievement_count?: number | null;
-  ogp_image_url?: string | null;
-  required_artifact_type?: string | null;
-};
-
 jest.mock("@/components/ui/card", () => ({
   Card: ({
     children,
