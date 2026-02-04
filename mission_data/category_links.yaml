@@ -211,7 +211,7 @@ category_links:
         sort_no: 300
   - category_slug: vote-in-various-ways
     missions:
-      - mission_slug: early-vote
+      - mission_slug: early-vote-2026-shugiin
         sort_no: 100
       - mission_slug: absent-vote
         sort_no: 200
