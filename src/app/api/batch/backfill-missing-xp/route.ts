@@ -353,15 +353,14 @@ export async function GET() {
     }
 
     // 統計情報を返却（count機能を使用して効率化）
-    const { count: totalAchievements, error: countError } = await supabaseAdmin
+    const { count: totalAchievements } = await supabaseAdmin
       .from("achievements")
       .select("*", { count: "exact", head: true });
 
-    const { count: totalXpTransactions, error: xpCountError } =
-      await supabaseAdmin
-        .from("xp_transactions")
-        .select("*", { count: "exact", head: true })
-        .eq("source_type", "MISSION_COMPLETION");
+    const { count: totalXpTransactions } = await supabaseAdmin
+      .from("xp_transactions")
+      .select("*", { count: "exact", head: true })
+      .eq("source_type", "MISSION_COMPLETION");
 
     return NextResponse.json({
       statistics: {
