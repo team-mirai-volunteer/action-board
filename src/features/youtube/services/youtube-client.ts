@@ -484,16 +484,21 @@ export async function fetchVideoComments(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      // コメントが無効化されている動画などはエラーになるので、空配列を返す
-      if (response.status === 403) {
-        console.log(`Comments disabled for video ${videoId}`);
+      // コメントが無効化されている動画(403)、削除された動画(404)などは空配列を返す
+      if (response.status === 403 || response.status === 404) {
+        console.log(
+          `Comments unavailable for video ${videoId} (status: ${response.status})`,
+        );
         return [];
       }
       console.error(
         `YouTube comments fetch failed for video ${videoId}:`,
         errorBody,
       );
-      throw new YouTubeAPIError("コメントの取得に失敗しました");
+      throw new YouTubeAPIError(
+        "コメントの取得に失敗しました",
+        response.status,
+      );
     }
 
     const data = await response.json();
