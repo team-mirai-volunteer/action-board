@@ -109,7 +109,7 @@ export default function Mission({
               <Button
                 variant="default"
                 className={clsx(
-                  "w-full rounded-full py-6 text-base font-bold text-white",
+                  "w-full rounded-full py-6 text-base font-bold text-white border-none",
                   hasReachedMaxAchievements
                     ? "bg-yellow-300 hover:bg-yellow-300/90 text-black"
                     : userAchievementCount === 0
