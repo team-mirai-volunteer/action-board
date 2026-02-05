@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 type Props = {
   missionSlug: string;
   url?: string;
@@ -20,9 +22,11 @@ export function ShareFacebookButton({ missionSlug, url }: Props) {
       className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
       aria-label="Facebookでシェア"
     >
-      <img
+      <Image
         src="/img/icon-facebook2x.png"
         alt="Facebook"
+        width={50}
+        height={50}
         className="w-full h-full object-contain"
       />
     </button>

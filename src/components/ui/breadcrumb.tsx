@@ -61,12 +61,8 @@ const BreadcrumbPage = React.forwardRef<
   HTMLSpanElement,
   React.ComponentPropsWithoutRef<"span">
 >(({ className, ...props }, ref) => (
-  // biome-ignore lint/a11y/useSemanticElements: shadcn/uiのコンポーネントでrole属性を使用
   <span
     ref={ref}
-    role="link"
-    tabIndex={0}
-    aria-disabled="true"
     aria-current="page"
     className={cn("font-normal text-foreground", className)}
     {...props}

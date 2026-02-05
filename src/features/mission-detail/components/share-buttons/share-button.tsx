@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 type Props = {
   message: string;
   missionSlug: string;
@@ -32,9 +34,11 @@ export function ShareButton({ message, missionSlug, url }: Props) {
       className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity md:hidden"
       aria-label="その他のサービスでシェア"
     >
-      <img
+      <Image
         src="/img/icon-Shere2x.png"
         alt="シェア"
+        width={50}
+        height={50}
         className="w-full h-full object-contain"
       />
     </button>

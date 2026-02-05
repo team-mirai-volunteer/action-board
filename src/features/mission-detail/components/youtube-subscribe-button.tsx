@@ -12,6 +12,7 @@ export function YouTubeSubscribeButton({ channelId, className }: Props) {
 
   return (
     <div className={className}>
+      {/** biome-ignore lint/a11y/useSemanticElements: YouTubeの公式埋め込みコードに基づく */}
       <div
         className="g-ytsubscribe"
         data-channelid={channelId}

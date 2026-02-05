@@ -17,6 +17,7 @@ jest.mock("@/components/ui/avatar", () => ({
     <div data-testid="avatar-fallback">{children}</div>
   ),
   AvatarImage: ({ src, alt }: { src: string; alt: string }) => (
+    // biome-ignore lint/performance/noImgElement: テスト用モックのため<img>を使用
     <img src={src} alt={alt} data-testid="avatar-image" />
   ),
 }));
@@ -98,6 +99,7 @@ jest.mock("@/components/ui/button", () => ({
 
 jest.mock("@/features/missions/components/mission-icon", () => ({
   MissionIcon: ({ src, alt }: { src: string; alt: string }) => (
+    // biome-ignore lint/performance/noImgElement: テスト用モックのため<img>を使用
     <img src={src} alt={alt} data-testid="mission-icon" />
   ),
 }));

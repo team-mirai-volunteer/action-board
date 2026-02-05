@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 interface SocialBadgeProps {
@@ -44,14 +45,7 @@ function SocialBadge({
         variant="outline"
         className="flex items-center gap-2 px-3 py-1 text-[15px] hover:bg-emerald-50 hover:text-emerald-600 transition cursor-pointer"
       >
-        <img
-          src={logoSrc}
-          alt={logoAlt}
-          style={{
-            width: logoSize,
-            height: logoSize,
-          }}
-        />
+        <Image src={logoSrc} alt={logoAlt} width={logoSize} height={logoSize} />
         {title}
       </Badge>
     </a>
