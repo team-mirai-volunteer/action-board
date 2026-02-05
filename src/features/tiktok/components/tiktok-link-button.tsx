@@ -61,6 +61,7 @@ export function TikTokLinkButton({
       <div className="space-y-3">
         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
           {tiktokAvatarUrl && (
+            // biome-ignore lint/performance/noImgElement: TikTokの外部アバターURLのためnext/imageは使用不可
             <img
               src={tiktokAvatarUrl}
               alt={tiktokDisplayName || "TikTok"}

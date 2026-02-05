@@ -4,7 +4,7 @@ import { FOOTER_IMAGE_SIZES } from "./footer";
 
 export function LogoSection() {
   return (
-    <div className="bg-white py-8">
+    <div className="pt-8">
       <div className="px-4 md:container md:mx-auto text-center">
         <Link href="/" className="inline-block">
           <Image
@@ -17,7 +17,7 @@ export function LogoSection() {
         </Link>
         <div className="mt-4 flex flex-col justify-center items-center">
           <div
-            className="text-black text-center font-bold text-xs leading-5 tracking-[0.24px]"
+            className="text-black text-center font-bold text-lg leading-5 tracking-[0.24px]"
             style={{ fontFamily: "Noto Sans JP" }}
           >
             アクションボード

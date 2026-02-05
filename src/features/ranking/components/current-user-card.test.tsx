@@ -21,15 +21,6 @@ jest.mock(
   }),
 );
 
-type UserRanking = {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  rank: number | null;
-  level: number | null;
-  xp: number | null;
-};
-
 jest.mock("next/link", () => {
   return ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>

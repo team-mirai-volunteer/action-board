@@ -30,15 +30,7 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedImports": "warn",
-        "noUnusedVariables": "warn"
-      },
-      "a11y": {
-        "useSemanticElements": "warn",
-        "noStaticElementInteractions": "warn"
-      },
-      "performance": {
-        "noImgElement": "warn"
+        "noUnusedImports": "warn"
       },
       "complexity": {
         "noImportantStyles": "warn"

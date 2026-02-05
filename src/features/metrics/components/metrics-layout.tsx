@@ -19,7 +19,7 @@ export function MetricsLayout({
   lastUpdated,
 }: MetricsLayoutProps) {
   return (
-    <section className="bg-gray-50 flex justify-center py-10 px-4">
+    <section className="flex justify-center py-10 px-4">
       <Card className="w-full max-w-lg bg-white rounded-md p-6 py-8">
         {/* ヘッダー部分：タイトルと最終更新日時 */}
         <div className="text-center mb-6">

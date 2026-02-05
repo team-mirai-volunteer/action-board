@@ -77,7 +77,7 @@ export default async function PrefectureTeamPage() {
             userContribution={userContribution}
           />
         )}
-        <p className="text-xs text-gray-400 text-center mb-6 px-4">
+        <p className="text-xs text-gray-600 text-center mb-6 px-4">
           ※ チームパワーは「都道府県のXP合計 ÷ 人口（万人）」で計算されています
         </p>
 

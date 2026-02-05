@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,13 +43,15 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           <DialogDescription className="text-center">
             {message}
           </DialogDescription>
-          <img
+          <Image
             src={
               mission.ogp_image_url
                 ? mission.ogp_image_url
                 : `/api/missions/${mission.slug}/og?type=complete`
             }
             alt="ミッションクリア"
+            width={400}
+            height={210}
             className="w-full mx-auto min-h-[158px] md:min-h-[215px]"
           />
         </DialogHeader>

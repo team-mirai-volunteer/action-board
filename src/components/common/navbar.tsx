@@ -17,14 +17,14 @@ export default async function Navbar() {
   const user = await getUser();
 
   return (
-    <nav className="sticky top-0 z-50 w-full flex justify-center bg-white border-b border-b-foreground/10 h-16">
-      <div className="px-4 md:container md:mx-auto w-full flex justify-between items-center text-sm">
+    <nav className="sticky top-4 z-50 w-full flex justify-center h-16">
+      <div className="px-4 w-full flex justify-between items-center text-sm bg-white border-b border-b-foreground/10 mx-4 rounded-2xl ">
         <div className="flex gap-5 items-center font-semibold min-w-[60px]">
           <Link href="/" className="flex items-center gap-4">
             <Image
               src="/img/logo_shiro.png"
               alt="logo"
-              width={57}
+              width={48}
               height={48}
             />
             <div className="text-lg">アクションボード</div>

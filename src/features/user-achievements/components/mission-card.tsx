@@ -14,7 +14,7 @@ export function MissionAchievementCard({
 }: MissionAchievementCardProps) {
   return (
     <Link href={`/missions/${missionSlug}`}>
-      <Card className="p-4 cursor-pointer hover:shadow-md transition-shadow">
+      <Card className="p-4 cursor-pointer hover:shadow-md transition-shadow border-gray-400">
         <div className="flex justify-between items-center">
           <div className="text-sm font-bold text-gray-700 flex-1 min-w-0 truncate">
             {title}

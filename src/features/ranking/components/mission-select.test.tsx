@@ -1,12 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MissionSelect } from "./mission-select";
 
-type Mission = {
-  id: string;
-  title: string;
-  description: string;
-};
-
 const mockPush = jest.fn();
 const _mockSearchParams = new URLSearchParams();
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { toast } from "sonner";
 
 type Props = {
@@ -30,9 +31,11 @@ export function ShareUrlButton({ url }: Props) {
       className="w-[50px] h-[50px] rounded-full hover:opacity-80 transition-opacity"
       aria-label="シェアURLをコピー"
     >
-      <img
+      <Image
         src="/img/icon-Copy2x.png"
         alt="コピー"
+        width={50}
+        height={50}
         className="w-full h-full object-contain"
       />
     </button>

@@ -36,7 +36,7 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       </CardHeader>
       <CardContent>
         <div
-          className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
+          className="text-gray-700 leading-relaxed whitespace-pre-wrap mission-content"
           ref={(el) => {
             if (el && mission.content) {
               el.innerHTML = mission.content;

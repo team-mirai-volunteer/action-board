@@ -19,7 +19,7 @@ export function YouTubeLikedList({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: refreshTriggerの変更時のみ再フェッチする意図的な設計
   useEffect(() => {
     const fetchLikes = async () => {
       setIsLoading(true);
