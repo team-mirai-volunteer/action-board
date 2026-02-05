@@ -23,8 +23,8 @@ export async function RelatedMissions({
   }
 
   return (
-    <section className="relative w-screen ml-[calc(50%-50vw)] md:pl-10 text-center">
-      <h2 className="text-xl font-bold mb-4 pl-4 md:pl-0 text-center">
+    <section className="relative w-screen ml-[calc(50%-50vw)] md:pl-10 mt-10">
+      <h2 className="text-xl font-bold mb-4 pl-4 md:pl-0 ">
         {categoryTitle
           ? `「${categoryTitle}」の他のミッション`
           : "関連ミッション"}
