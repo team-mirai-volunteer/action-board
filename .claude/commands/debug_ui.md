@@ -11,6 +11,9 @@ $ARGUMENTS
 - Chrome DevTools MCP (`mcp__chrome-devtools__*`) が利用可能であること
 - ローカル開発サーバーが起動していること
 
+Chrome DevTools MCPが設定されてない場合は、以下のコマンドでセットアップします。
+`claude mcp add chrome-devtools npx chrome-devtools-mcp@latest`
+
 ## タスク
 
 Chrome DevTools MCPを使ってUI問題を特定・修正します。

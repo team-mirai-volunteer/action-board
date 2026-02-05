@@ -26,7 +26,7 @@ export function UserSeasonHistory({
           }
           className="block"
         >
-          <Card className="p-4 hover:bg-emerald-50/50 transition-colors cursor-pointer">
+          <Card className="p-4 hover:bg-emerald-50/50 transition-colors cursor-pointer border-gray-400">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">

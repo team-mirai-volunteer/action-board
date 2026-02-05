@@ -3,7 +3,7 @@ import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 
 export function CopyrightSection() {
   return (
-    <div className="bg-white py-8">
+    <div className="bg-background py-8">
       <div className="px-4 md:container md:mx-auto">
         <div className="text-center">
           {/* Desktop layout - single row */}
@@ -13,7 +13,6 @@ export function CopyrightSection() {
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-70 transition-opacity duration-200"
-              style={{ color: "#089781" }}
             >
               運営組織
             </Link>
@@ -21,7 +20,6 @@ export function CopyrightSection() {
             <Link
               href="/terms"
               className="hover:opacity-70 transition-opacity duration-200"
-              style={{ color: "#089781" }}
             >
               利用規約
             </Link>
@@ -29,7 +27,6 @@ export function CopyrightSection() {
             <Link
               href="/privacy"
               className="hover:opacity-70 transition-opacity duration-200"
-              style={{ color: "#089781" }}
             >
               プライバシーポリシー
             </Link>
@@ -39,7 +36,6 @@ export function CopyrightSection() {
               className="hover:opacity-70 transition-opacity duration-200"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "#089781" }}
             >
               ご意見箱
             </Link>
@@ -49,7 +45,6 @@ export function CopyrightSection() {
               className="hover:opacity-70 transition-opacity duration-200"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "#089781" }}
             >
               よくあるご質問
             </Link>
@@ -64,7 +59,6 @@ export function CopyrightSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-70 transition-opacity duration-200"
-                style={{ color: "#089781" }}
               >
                 運営組織
               </Link>
@@ -72,7 +66,6 @@ export function CopyrightSection() {
               <Link
                 href="/terms"
                 className="hover:opacity-70 transition-opacity duration-200"
-                style={{ color: "#089781" }}
               >
                 利用規約
               </Link>
@@ -80,7 +73,6 @@ export function CopyrightSection() {
               <Link
                 href="/privacy"
                 className="hover:opacity-70 transition-opacity duration-200"
-                style={{ color: "#089781" }}
               >
                 プライバシーポリシー
               </Link>
@@ -93,7 +85,6 @@ export function CopyrightSection() {
                 className="hover:opacity-70 transition-opacity duration-200"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#089781" }}
               >
                 ご意見箱
               </Link>
@@ -103,7 +94,6 @@ export function CopyrightSection() {
                 className="hover:opacity-70 transition-opacity duration-200"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#089781" }}
               >
                 よくあるご質問
               </Link>

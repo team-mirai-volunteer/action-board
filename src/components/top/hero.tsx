@@ -17,7 +17,7 @@ export default async function Hero() {
   }
 
   return (
-    <section className="relative w-full h-[640px] bg-linear-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
+    <section className="relative w-full h-[740px] bg-linear-to-b from-[#64d8c6] to-[#bcecd3] overflow-hidden mt-[-96px] pt-24">
       <div className="absolute inset-0 w-full h-full flex justify-center items-end">
         <div className="relative w-[1080px] min-w-[1080px] h-[560px]">
           <Image
@@ -48,7 +48,7 @@ export default async function Hero() {
           <h1 className="text-4xl md:text-4xl font-bold text-gray-800 mb-4">
             アクションボード
           </h1>
-          <p className="text-xs text-[#0f8472] font-bold mb-8 px-3">
+          <p className="text-sm font-bold mb-8 px-3">
             テクノロジーで政治をかえる。あなたと一緒に未来をつくる。
           </p>
 
@@ -57,7 +57,8 @@ export default async function Hero() {
               <Link href="/sign-up">
                 <Button
                   size="lg"
-                  className="bg-[#FA5A77] hover:bg-[#E0425E] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-base whitespace-nowrap min-w-fit"
+                  variant="outline"
+                  className="text-gray-800 border border-black font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:opacity-90 transform hover:-translate-y-0.5 transition-all duration-200 text-base whitespace-nowrap min-w-fit"
                 >
                   アクションボードに登録する
                 </Button>
@@ -65,7 +66,7 @@ export default async function Hero() {
 
               <OnboardingButton
                 variant="link"
-                className="text-sm text-[#0f8472] hover:text-[#0d6b5e] underline font-medium transition-colors duration-200"
+                className="text-sm hover:text-[#0d6b5e] underline font-medium transition-colors duration-200"
               >
                 アクションボードとは？
               </OnboardingButton>

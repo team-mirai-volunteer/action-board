@@ -97,25 +97,25 @@ export default async function Home({
       <MetricsWithSuspense />
 
       {/* アクティビティセクション */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-background">
         <Activities />
       </section>
 
       {/* ランキングセクション */}
-      <section className="md:py-16 bg-white">
+      <section className="md:py-16 bg-background">
         <RankingSection />
       </section>
       <div className="w-full md:container md:mx-auto">
         {/* フューチャードミッションセクション */}
         {showFeatured && (
-          <section className="py-12 md:py-16 bg-white">
+          <section className="py-12 md:py-16 bg-background">
             <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
           </section>
         )}
 
         {/* ミッションセクション */}
       </div>
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-background">
         <MissionsByCategory
           userId={user?.id}
           showAchievedMissions={true}

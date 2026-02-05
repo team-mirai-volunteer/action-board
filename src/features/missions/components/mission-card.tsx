@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { UsersRound } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
@@ -78,22 +79,26 @@ export default function Mission({
                 {mission.required_artifact_type === "POSTING" ? "枚" : "回"}達成
               </span>
             </div>
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-gray-700">難易度:</span>
-              <span className="mx-1">{"⭐".repeat(mission.difficulty)}</span>
-              <span className="text-sm font-medium ml-1.5 text-gray-700">
-                <span className="mr-1">獲得ポイント:</span>
-                {mission.required_artifact_type === "POSTER"
-                  ? `1枚あたり${POSTER_POINTS_PER_UNIT}`
-                  : mission.required_artifact_type === "POSTING"
-                    ? `1枚あたり${POSTING_POINTS_PER_UNIT}`
-                    : calculateMissionXp(mission.difficulty)}
-                {mission.is_featured && (
-                  <span className="ml-1.5 px-2 py-0.5 bg-yellow-300/90 text-black text-xs font-medium rounded-full relative top-[-1px]">
-                    x 2
-                  </span>
-                )}
-              </span>
+            <div className="flex items-center gap-2">
+              <Badge>
+                <span className="text-sm font-medium text-gray-700">
+                  難易度
+                </span>
+                <span className="ml-1">{"⭐".repeat(mission.difficulty)}</span>
+              </Badge>
+              <Badge
+                className={`${mission.is_featured ? "bg-yellow-300/90 text-black" : ""}`}
+              >
+                <span className="text-sm font-medium text-gray-700">
+                  {mission.required_artifact_type === "POSTER"
+                    ? `1枚あたり${POSTER_POINTS_PER_UNIT}`
+                    : mission.required_artifact_type === "POSTING"
+                      ? `1枚あたり${POSTING_POINTS_PER_UNIT}`
+                      : calculateMissionXp(mission.difficulty)}
+                  <span className="">P</span>
+                  {mission.is_featured && <span className="ml-1">x 2</span>}
+                </span>
+              </Badge>
             </div>
           </div>
           <Link

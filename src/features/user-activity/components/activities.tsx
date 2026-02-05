@@ -28,7 +28,7 @@ export default async function Activities() {
         <div className="flex justify-center">
           <Link
             href="/activities"
-            className="flex items-center text-teal-600 hover:text-teal-700"
+            className="flex items-center hover:text-teal-700"
           >
             もっと見る
             <ChevronRight className="w-4 h-4 ml-1" />

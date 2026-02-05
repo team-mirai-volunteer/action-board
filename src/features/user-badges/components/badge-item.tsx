@@ -15,7 +15,7 @@ interface BadgeDisplayProps {
 }
 
 export function getGradientClass(_rank: number): string {
-  return "bg-linear-to-r from-emerald-500 to-emerald-600 text-white border-0";
+  return "bg-mirai-gradient";
 }
 
 export function BadgeItem({
@@ -37,7 +37,7 @@ export function BadgeItem({
       } ${className}`}
     >
       <span className="text-base">{emoji}</span>
-      {title && <span className="font-medium">{title}</span>}
+      {title && <span className="font-bold">{title}</span>}
     </Badge>
   );
 

@@ -6,13 +6,13 @@ import { SeasonsList } from "@/components/footer/seasons-list";
 
 export default function Footer() {
   return (
-    <footer className="w-full mt-16">
-      <div className="bg-background">
+    <footer className="w-full mt-16 pt-16">
+      <div className="">
         <FeedbackSection />
-        <LogoSection />
       </div>
 
-      <div className="relative w-full bg-linear-to-b from-[#A4F1C9] to-[#D1F6DF] overflow-hidden">
+      <div className="relative w-full bg-linear-to-b from-[#64d8c6] to-[#bcecd3] overflow-hidden">
+        <LogoSection />
         <div className="relative h-[280px]">
           <div className="absolute bottom-0 left-0 right-0 w-full flex justify-center">
             <div className="relative w-full max-w-[756px] h-[392px]">
