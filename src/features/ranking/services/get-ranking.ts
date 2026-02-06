@@ -11,6 +11,7 @@ import {
   dateFilterToISOString,
   getPeriodDateFilter,
 } from "../utils/period-utils";
+import { attachPartyMembership } from "../utils/ranking-helpers";
 
 export interface UserPeriodRanking {
   user_id: string;
@@ -110,13 +111,7 @@ export async function getRanking(
         .filter((id): id is string => typeof id === "string" && id.length > 0),
     );
 
-    return rankings.map((ranking) => ({
-      ...ranking,
-      party_membership:
-        ranking.user_id && membershipMap[ranking.user_id]
-          ? membershipMap[ranking.user_id]
-          : null,
-    }));
+    return attachPartyMembership(rankings, membershipMap);
   } catch (error) {
     console.error("Ranking service error:", error);
     throw error;
