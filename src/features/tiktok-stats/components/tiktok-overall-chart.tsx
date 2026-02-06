@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatChartDates } from "@/lib/utils/chart-transforms";
 import type { OverallStatsHistoryItem } from "../types";
 import { formatNumberJaShort } from "../utils/format";
 
@@ -34,13 +35,7 @@ export function TikTokOverallChart({ data }: TikTokOverallChartProps) {
     );
   }
 
-  const formattedData = data.map((item) => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString("ja-JP", {
-      month: "short",
-      day: "numeric",
-    }),
-  }));
+  const formattedData = formatChartDates(data);
 
   return (
     <Card className="p-4">

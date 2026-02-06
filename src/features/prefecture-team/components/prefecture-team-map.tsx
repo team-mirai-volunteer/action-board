@@ -4,6 +4,7 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
+import { createLookupMap } from "@/lib/utils/chart-transforms";
 import "../styles/prefecture-map.css";
 import type { PrefectureTeamRanking } from "../types/prefecture-team-types";
 import { getColorForRank, NO_DATA_COLOR } from "../utils/color-scale";
@@ -33,7 +34,7 @@ export default function PrefectureTeamMap({
   const [error, setError] = useState<string | null>(null);
 
   // ランキングデータをマップで高速検索できるようにする
-  const rankingMap = new Map(rankings.map((r) => [r.prefecture, r]));
+  const rankingMap = createLookupMap(rankings, "prefecture");
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: 初期化は一度だけ実行
   useEffect(() => {
