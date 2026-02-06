@@ -9,6 +9,10 @@ import {
   refreshAccessToken,
 } from "../services/tiktok-client";
 import type { TikTokLinkResult } from "../types";
+import {
+  buildTikTokConnectionUpsertData,
+  buildTokenUpdateData,
+} from "../utils/data-builders";
 
 /**
  * TikTokアカウント連携処理のServer Action
@@ -63,29 +67,9 @@ export async function handleTikTokLinkAction(
     // tiktok_user_connectionsテーブルに保存
     const { error: upsertError } = await adminClient
       .from("tiktok_user_connections")
-      .upsert(
-        {
-          user_id: user.id,
-          tiktok_open_id: tiktokUser.open_id,
-          tiktok_union_id: tiktokUser.union_id || null,
-          display_name: tiktokUser.display_name,
-          avatar_url: tiktokUser.avatar_url || null,
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-          token_expires_at: new Date(
-            Date.now() + tokens.expires_in * 1000,
-          ).toISOString(),
-          refresh_token_expires_at: tokens.refresh_expires_in
-            ? new Date(
-                Date.now() + tokens.refresh_expires_in * 1000,
-              ).toISOString()
-            : null,
-          scopes: tokens.scope ? tokens.scope.split(",") : null,
-        },
-        {
-          onConflict: "user_id",
-        },
-      );
+      .upsert(buildTikTokConnectionUpsertData(user.id, tokens, tiktokUser), {
+        onConflict: "user_id",
+      });
 
     if (upsertError) {
       console.error("Failed to save TikTok connection:", upsertError);
@@ -198,18 +182,7 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
     // 新しいトークンを保存
     const { error: updateError } = await adminClient
       .from("tiktok_user_connections")
-      .update({
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        token_expires_at: new Date(
-          Date.now() + tokens.expires_in * 1000,
-        ).toISOString(),
-        refresh_token_expires_at: tokens.refresh_expires_in
-          ? new Date(
-              Date.now() + tokens.refresh_expires_in * 1000,
-            ).toISOString()
-          : null,
-      })
+      .update(buildTokenUpdateData(tokens))
       .eq("user_id", user.id);
 
     if (updateError) {
