@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
+import {
+  aggregateBoardStats,
+  aggregateBoardsByPrefecture,
+} from "../utils/stats-aggregation";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type PrefectureStats = Record<string, Record<BoardStatus, number>>;
@@ -20,34 +24,11 @@ export async function getPosterBoardStats(): Promise<{
     return getFallbackStats();
   }
 
-  // Transform the data into our expected format
-  const stats: PrefectureStats = {};
-  let total = 0;
-  let completed = 0;
-
   if (data && Array.isArray(data)) {
-    for (const row of data) {
-      if (!stats[row.prefecture]) {
-        stats[row.prefecture] = {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        };
-      }
-      stats[row.prefecture][row.status as BoardStatus] = row.count;
-      total += row.count;
-      if (row.status === "done") {
-        completed += row.count;
-      }
-    }
+    return aggregateBoardStats(data);
   }
 
-  return { stats, total, completed };
+  return { stats: {}, total: 0, completed: 0 };
 }
 
 // Fallback function that fetches minimal data
@@ -90,30 +71,5 @@ async function getFallbackStats(): Promise<{
     page++;
   }
 
-  // Calculate statistics
-  const stats: PrefectureStats = {};
-  let total = 0;
-  let completed = 0;
-
-  for (const board of allBoards) {
-    if (!stats[board.prefecture]) {
-      stats[board.prefecture] = {
-        not_yet: 0,
-        not_yet_dangerous: 0,
-        reserved: 0,
-        done: 0,
-        error_wrong_place: 0,
-        error_damaged: 0,
-        error_wrong_poster: 0,
-        other: 0,
-      };
-    }
-    stats[board.prefecture][board.status]++;
-    total++;
-    if (board.status === "done") {
-      completed++;
-    }
-  }
-
-  return { stats, total, completed };
+  return aggregateBoardsByPrefecture(allBoards);
 }
