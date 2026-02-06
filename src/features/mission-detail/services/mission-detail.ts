@@ -6,7 +6,7 @@ import type {
   SubmissionData,
 } from "@/features/mission-detail/types/detail-types";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Tables } from "@/lib/types/supabase";
 
 /**
@@ -26,7 +26,7 @@ export function isUUID(value: string): boolean {
 async function getUserMissionAchievements(
   userId: string,
 ): Promise<Map<string, number>> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: achievements, error } = await supabase
     .from("achievements")
@@ -57,7 +57,7 @@ async function getUserMissionAchievements(
 export async function getMissionData(
   identifier: string,
 ): Promise<Tables<"missions"> | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // UUIDの場合はIDで検索、それ以外はslugで検索
   const column = isUUID(identifier) ? "id" : "slug";
@@ -82,7 +82,7 @@ export async function getMissionData(
  * @returns ミッションID、見つからない場合はnull
  */
 export async function getMissionIdBySlug(slug: string): Promise<string | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("missions")
@@ -104,7 +104,7 @@ export async function getMissionIdBySlug(slug: string): Promise<string | null> {
  * @returns ミッションslug、見つからない場合はnull
  */
 export async function getMissionSlugById(id: string): Promise<string | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("missions")
@@ -123,7 +123,7 @@ export async function getMissionSlugById(id: string): Promise<string | null> {
 export async function getTotalAchievementCount(
   missionId: string,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: countData, error } = await supabase
     .from("mission_achievement_count_view")
@@ -143,7 +143,7 @@ export async function getUserAchievements(
   userId: string,
   missionId: string,
 ): Promise<{ achievements: Achievement[]; count: number }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: achievementsData, error } = await supabase
     .from("achievements")
@@ -167,7 +167,7 @@ export async function getSubmissionHistory(
   userId: string,
   missionId: string,
 ): Promise<SubmissionData[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // ユーザーの達成履歴を取得
   const { data: achievementsData, error: achievementsError } = await supabase
@@ -252,7 +252,7 @@ export async function getSubmissionHistory(
 export async function getMissionMainLink(
   missionId: string,
 ): Promise<Tables<"mission_main_links"> | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_main_links")
@@ -276,7 +276,7 @@ export async function getMissionMainLink(
 async function getRelatedCategoryMissionsRaw(
   missionId: string,
 ): Promise<Tables<"mission_category_view">[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // カテゴリIDを取得
   const { data: links, error: linksError } = await supabase
@@ -380,7 +380,7 @@ export async function getMissionPageData(
 
 // ログインユーザーに紐づくリファラルコードの取得
 export async function getReferralCode(userId: string): Promise<string> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("user_referral")

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type {
   ActionStatsSummary,
   DailyActionItem,
@@ -22,7 +22,7 @@ export async function getActionStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<ActionStatsSummary> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase.rpc("get_action_stats_summary", {
     start_date: startDate?.toISOString(),
@@ -50,7 +50,7 @@ export async function getDailyActionHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<DailyActionItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase.rpc("get_daily_action_history", {
     start_date: startDate?.toISOString(),
@@ -81,7 +81,7 @@ export async function getDailyActiveUsersHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<DailyActiveUsersItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase.rpc("get_daily_active_users_history", {
     start_date: startDate?.toISOString(),
@@ -114,7 +114,7 @@ export async function getMissionActionRanking(
   endDate?: Date,
   limit = 20,
 ): Promise<MissionActionRanking[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase.rpc("get_mission_action_ranking", {
     start_date: startDate?.toISOString(),

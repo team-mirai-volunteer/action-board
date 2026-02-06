@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { MissionAchievementSummary } from "@/features/user-achievements/types/achievement-types";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import {
   aggregateAchievementCounts,
   buildAchievementMap,
@@ -11,7 +11,7 @@ export async function getUserRepeatableMissionAchievements(
   userId: string,
   seasonId?: string,
 ): Promise<MissionAchievementSummary[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("achievements")
@@ -52,7 +52,7 @@ export async function getUserRepeatableMissionAchievements(
 export async function getUserMissionAchievements(
   userId: string,
 ): Promise<Map<string, number>> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: achievements, error } = await supabase
     .from("achievements")

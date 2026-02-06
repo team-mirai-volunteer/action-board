@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Tables } from "@/lib/types/supabase";
 
 type Mission = Tables<"missions">;
@@ -22,7 +22,7 @@ export interface MissionWithCategory extends Mission {
  * - is_featured 優先、難易度昇順でソート
  */
 export async function getMissionsForRanking(): Promise<MissionWithCategory[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("missions")
@@ -52,7 +52,7 @@ export async function getMissionsForRanking(): Promise<MissionWithCategory[]> {
 }
 
 export async function hasFeaturedMissions(): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
   const { count } = await supabase
     .from("missions")
     .select("id", { count: "exact", head: true })
@@ -67,7 +67,7 @@ export async function hasFeaturedMissions(): Promise<boolean> {
 export async function getMissionAchievementCounts(): Promise<
   Map<string, number>
 > {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: achievementCounts, error } = await supabase
     .from("mission_achievement_count_view")
@@ -95,7 +95,7 @@ export async function getTotalPostingCountByMission(
   missionId: string,
   seasonId?: string,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase.rpc(
     "get_total_posting_count_by_mission",
@@ -151,7 +151,7 @@ export async function getMissionsWithFilter(
 ): Promise<Tables<"missions">[]> {
   const { filterFeatured = false, excludeMissionIds = [], maxSize } = options;
 
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase.from("missions").select().eq("is_hidden", false);
 
@@ -189,7 +189,7 @@ export async function getMissionsWithFilter(
 export async function getMissionCategoryView(): Promise<
   Tables<"mission_category_view">[]
 > {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("mission_category_view")
