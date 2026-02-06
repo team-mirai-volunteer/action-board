@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getLatestStats } from "@/features/tiktok-stats/utils/stats-utils";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { extractHashtags } from "@/lib/utils/text-utils";
@@ -268,11 +269,7 @@ export async function getTikTokVideosWithStats(
   // 各動画の最新統計を取得
   const videosWithStats = ((videos || []) as VideoWithStats[]).map((video) => {
     const stats = video.tiktok_video_stats || [];
-
-    const latestStats = stats.sort(
-      (a, b) =>
-        new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    )[0];
+    const latestStats = getLatestStats(stats);
 
     return {
       ...video,
@@ -350,11 +347,7 @@ export async function getUserTikTokVideos(
   // 各動画の最新統計を取得
   return ((videos || []) as VideoWithStats[]).map((video) => {
     const stats = video.tiktok_video_stats || [];
-
-    const latestStats = stats.sort(
-      (a, b) =>
-        new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    )[0];
+    const latestStats = getLatestStats(stats);
 
     return {
       ...video,
