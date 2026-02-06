@@ -23,7 +23,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
   const canCancel = userId && submission.user_id === userId;
 
   return (
-    <li className="border p-4 rounded-lg shadow-sm">
+    <li className="border p-4 rounded-lg shadow-sm bg-white">
       <div className="flex justify-between items-center">
         <div className="text-sm text-gray-500">
           提出日時: {dateTimeFormatter(new Date(submission.created_at))}
