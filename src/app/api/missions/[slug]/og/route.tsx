@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 import { getMissionPageData } from "@/features/mission-detail/services/mission-detail";
+import { formatTitleWithLineBreaks, isVotingMission } from "./og-helpers";
 
 // キャッシュ用Mapを定義（メモリキャッシュ）- completeタイプのみキャッシュ
 // キーはslugベースで管理
@@ -58,10 +59,7 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type");
 
-  const votingMissionSlugs = ["early-vote", "absent-vote", "overseas-vote"];
-  const isVotingMission = votingMissionSlugs.includes(
-    pageData?.mission.slug || "",
-  );
+  const votingMission = isVotingMission(pageData?.mission.slug || "");
 
   // キャッシュキーはslugベースで統一
   const cacheKey = pageData.mission.slug;
@@ -85,7 +83,7 @@ export async function GET(
   try {
     // ベース画像を読み込み
     let baseImageFileName = "";
-    if (isVotingMission) {
+    if (votingMission) {
       baseImageFileName = "public/img/ogp_mission_vote.png";
     } else if (type === "complete") {
       baseImageFileName = "public/img/ogp_mission_complete_base.png";
@@ -100,9 +98,8 @@ export async function GET(
     return new Response("Base image not found", { status: 500 });
   }
 
-  // titleに()や（）が含まれる場合は(や（の手前で改行する
   const title = pageData?.mission.title ?? "ミッションが見つかりません";
-  const titleWithLineBreak = title.replace(/（/g, "\n（").replace(/\(/g, "\n(");
+  const titleWithLineBreak = formatTitleWithLineBreaks(title);
 
   const fontData = await loadGoogleFont(
     "Noto+Sans+JP",
@@ -111,7 +108,7 @@ export async function GET(
 
   let imageResponse: ImageResponse;
 
-  if (isVotingMission) {
+  if (votingMission) {
     // 投票ミッションの場合は画像のみ表示（文字オーバーレイなし）
     imageResponse = new ImageResponse(
       <div
