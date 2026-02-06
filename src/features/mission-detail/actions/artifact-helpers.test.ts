@@ -204,7 +204,7 @@ describe("buildArtifactPayload", () => {
   describe("不明なartifact type", () => {
     test("登録されていないtype → 全フィールドnull", () => {
       const data = baseFormData({
-        requiredArtifactType: "UNKNOWN_TYPE",
+        requiredArtifactType: "UNKNOWN_TYPE" as any,
       });
       const result = buildArtifactPayload("UNKNOWN_TYPE", data);
       expect(result).toEqual(NULL_FIELDS);
