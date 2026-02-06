@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
 import {
   calculateDailyViewsIncrease,
@@ -37,7 +37,7 @@ export async function getTikTokVideosWithStats(
   startDate?: Date,
   endDate?: Date,
 ): Promise<TikTokVideoWithStats[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("tiktok_videos")
@@ -114,7 +114,7 @@ export async function getTikTokVideoCount(
   startDate?: Date,
   endDate?: Date,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("tiktok_videos")
@@ -150,7 +150,7 @@ export async function getTikTokStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<StatsSummary> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("tiktok_videos")
@@ -279,7 +279,7 @@ export async function getOverallStatsHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<OverallStatsHistoryItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // JOINを使って1つのクエリで取得（URI too long エラーを回避）
   let query = supabase
@@ -340,7 +340,7 @@ export async function getVideoCountByDate(
   startDate?: Date,
   endDate?: Date,
 ): Promise<VideoCountByDateItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const effectiveStartDate = startDate || new Date("2026-01-01");
   const effectiveEndDate = endDate || new Date();
