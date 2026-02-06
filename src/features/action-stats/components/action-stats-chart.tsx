@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatChartDates } from "@/lib/utils/chart-transforms";
 import { formatNumberJaShort } from "@/lib/utils/format-number-ja";
 import type { DailyActionItem } from "../types";
 
@@ -34,14 +35,7 @@ export function ActionStatsChart({ data }: ActionStatsChartProps) {
     );
   }
 
-  // 日付をフォーマット
-  const formattedData = data.map((item) => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString("ja-JP", {
-      month: "short",
-      day: "numeric",
-    }),
-  }));
+  const formattedData = formatChartDates(data);
 
   return (
     <Card className="p-4 overflow-hidden">
