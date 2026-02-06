@@ -66,7 +66,7 @@ describe("badge-types", () => {
           sub_type: null,
           rank: 1,
         });
-        expect(getBadgeTitle(badge)).toBe("null 1位");
+        expect(getBadgeTitle(badge)).toBe("ミッションランキング 1位");
       });
     });
 
