@@ -77,65 +77,199 @@ describe("get-metrics", () => {
     return { thresholdISO, capturedGteIsoRef };
   };
 
-  // validation関数は独立しているため、単体でテスト実施。正常系はfetch系で確認されるため、異常系のみ確認
-  describe("validateDonationData / validateSupporterData", () => {
-    it("異常系: データがnullの場合、falseを返す", () => {
-      const resultDonation = validateDonationData(null);
-      expect(resultDonation).toBe(false);
-
-      const resultSupporter = validateSupporterData(null);
-      expect(resultSupporter).toBe(false);
+  describe("validateSupporterData", () => {
+    it("正常系: 有効なデータの場合、trueを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: 1000,
+          last24hCount: 50,
+          updatedAt: "2024-06-01T12:00:00Z",
+        }),
+      ).toBe(true);
     });
 
-    it("異常系: 必須フィールドが欠落している場合、falseを返す", () => {
-      const invalidData = {
-        last24hCount: 2,
-        updatedAt: new Date().toISOString(),
-      };
-      const resultDonation = validateDonationData(invalidData);
-      expect(resultDonation).toBe(false);
-
-      const resultSupporter = validateSupporterData(invalidData);
-      expect(resultSupporter).toBe(false);
+    it("正常系: カウントがゼロの場合、trueを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: 0,
+          last24hCount: 0,
+          updatedAt: "2024-01-01T00:00:00Z",
+        }),
+      ).toBe(true);
     });
 
-    it("異常系: フィールドの型が不正な場合、falseを返す", () => {
-      const invalidData = {
-        totalCount: "10", // 型が文字列
-        last24hCount: 2,
-        updatedAt: new Date().toISOString(),
-      };
-      const resultDonation = validateDonationData(invalidData);
-      expect(resultDonation).toBe(false);
-
-      const resultSupporter = validateSupporterData(invalidData);
-      expect(resultSupporter).toBe(false);
+    it("異常系: nullの場合、falseを返す", () => {
+      expect(validateSupporterData(null)).toBe(false);
     });
 
-    it("異常系: フィールドの値が負の値の場合、falseを返す", () => {
-      const invalidData = {
-        totalCount: 2,
-        last24hCount: -10, // 負の値
-        updatedAt: new Date().toISOString(),
-      };
-      const resultDonation = validateDonationData(invalidData);
-      expect(resultDonation).toBe(false);
+    it("異常系: undefinedの場合、falseを返す", () => {
+      expect(validateSupporterData(undefined)).toBe(false);
+    });
 
-      const resultSupporter = validateSupporterData(invalidData);
-      expect(resultSupporter).toBe(false);
+    it("異常系: 文字列の場合、falseを返す", () => {
+      expect(validateSupporterData("string")).toBe(false);
+    });
+
+    it("異常系: totalCountが欠落している場合、falseを返す", () => {
+      expect(
+        validateSupporterData({
+          last24hCount: 2,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: last24hCountが欠落している場合、falseを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: 10,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: updatedAtが欠落している場合、falseを返す", () => {
+      expect(validateSupporterData({ totalCount: 10, last24hCount: 2 })).toBe(
+        false,
+      );
+    });
+
+    it("異常系: totalCountが文字列の場合、falseを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: "10",
+          last24hCount: 2,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: totalCountが負の場合、falseを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: -1,
+          last24hCount: 2,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: last24hCountが負の場合、falseを返す", () => {
+      expect(
+        validateSupporterData({
+          totalCount: 10,
+          last24hCount: -1,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
     });
 
     it("異常系: updatedAtが無効な日付形式の場合、falseを返す", () => {
-      const invalidData = {
-        totalCount: 10,
-        last24hCount: 2,
-        updatedAt: "invalid-date", // 無効な日付
-      };
-      const resultDonation = validateDonationData(invalidData);
-      expect(resultDonation).toBe(false);
+      expect(
+        validateSupporterData({
+          totalCount: 10,
+          last24hCount: 2,
+          updatedAt: "invalid-date",
+        }),
+      ).toBe(false);
+    });
+  });
 
-      const resultSupporter = validateSupporterData(invalidData);
-      expect(resultSupporter).toBe(false);
+  describe("validateDonationData", () => {
+    it("正常系: 有効なデータの場合、trueを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: 500000,
+          last24hAmount: 10000,
+          updatedAt: "2024-06-01T12:00:00Z",
+        }),
+      ).toBe(true);
+    });
+
+    it("正常系: 金額がゼロの場合、trueを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: 0,
+          last24hAmount: 0,
+          updatedAt: "2024-01-01T00:00:00Z",
+        }),
+      ).toBe(true);
+    });
+
+    it("異常系: nullの場合、falseを返す", () => {
+      expect(validateDonationData(null)).toBe(false);
+    });
+
+    it("異常系: undefinedの場合、falseを返す", () => {
+      expect(validateDonationData(undefined)).toBe(false);
+    });
+
+    it("異常系: 数値の場合、falseを返す", () => {
+      expect(validateDonationData(42)).toBe(false);
+    });
+
+    it("異常系: totalAmountが欠落している場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          last24hAmount: 200,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: last24hAmountが欠落している場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: 1000,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: updatedAtが欠落している場合、falseを返す", () => {
+      expect(
+        validateDonationData({ totalAmount: 1000, last24hAmount: 200 }),
+      ).toBe(false);
+    });
+
+    it("異常系: totalAmountが文字列の場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: "500000",
+          last24hAmount: 200,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: totalAmountが負の場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: -1,
+          last24hAmount: 200,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: last24hAmountが負の場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: 1000,
+          last24hAmount: -1,
+          updatedAt: new Date().toISOString(),
+        }),
+      ).toBe(false);
+    });
+
+    it("異常系: updatedAtが無効な日付形式の場合、falseを返す", () => {
+      expect(
+        validateDonationData({
+          totalAmount: 1000,
+          last24hAmount: 200,
+          updatedAt: "not-a-date",
+        }),
+      ).toBe(false);
     });
   });
 
