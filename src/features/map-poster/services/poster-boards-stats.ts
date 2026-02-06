@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Database } from "@/lib/types/supabase";
 import {

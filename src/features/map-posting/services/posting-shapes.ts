@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { chunk } from "@/lib/utils/array-utils";
 import type { PostingShapeStatus } from "../config/status-config";

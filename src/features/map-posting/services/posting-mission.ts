@@ -1,3 +1,5 @@
+import "server-only";
+
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getShapeMissionStatus } from "./posting-shapes";

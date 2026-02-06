@@ -1,4 +1,7 @@
+import "server-only";
+
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { getPosterBoardStatsAction } from "../actions/poster-boards";
 import type {
@@ -20,7 +23,7 @@ export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
  * 現在の認証ユーザーIDを取得
  */
 export async function getCurrentUserId(): Promise<string | null> {
-  const supabase = await createAdminClient();
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -321,9 +324,10 @@ export async function updateBoardStatus(
   }
 
   // Get current user - required for history tracking
+  const supabaseAuth = createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabaseAuth.auth.getUser();
 
   if (!user) {
     throw new Error("User must be authenticated to update board status");
