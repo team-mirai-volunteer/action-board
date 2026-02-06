@@ -1,7 +1,7 @@
 "use server";
 
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import {
   checkTeamMiraiVideosBatch,
   extractVideoIdFromUrl,
@@ -76,7 +76,7 @@ async function getValidAccessToken(
  */
 export async function detectYouTubeLikesAction(): Promise<DetectLikesResult> {
   try {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const {
       data: { user },
       error: userError,
@@ -168,7 +168,7 @@ export async function recordYouTubeLikeAction(
   videoUrl: string,
 ): Promise<{ success: boolean; xpGranted?: number; error?: string }> {
   try {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const {
       data: { user },
       error: userError,
@@ -265,7 +265,7 @@ export async function getRecordedLikesAction(): Promise<{
   error?: string;
 }> {
   try {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const {
       data: { user },
       error: userError,
@@ -429,7 +429,7 @@ export interface SyncLikesResult {
  */
 export async function syncYouTubeLikesAction(): Promise<SyncLikesResult> {
   try {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const {
       data: { user },
       error: userError,

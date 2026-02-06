@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 export interface ContributorData {
   name: string;
@@ -13,7 +13,7 @@ export interface ContributorData {
  * @returns 貢献者名の配列（ランク順）
  */
 export async function getContributorNames(): Promise<ContributorData[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
   const pageSize = 1000;
   let from = 0;
   const all: ContributorData[] = [];

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
 import {
   calculateDailyViewsIncrease,
@@ -30,7 +30,7 @@ export async function getYouTubeVideosWithStats(
   startDate?: Date,
   endDate?: Date,
 ): Promise<YouTubeVideoWithStats[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 動画と最新の統計情報を取得
   let query = supabase
@@ -122,7 +122,7 @@ export async function getYouTubeVideoCount(
   startDate?: Date,
   endDate?: Date,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("youtube_videos")
@@ -158,7 +158,7 @@ export async function getYouTubeStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<StatsSummary> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 全動画を取得して最新統計をカウント
   let query = supabase
@@ -287,7 +287,7 @@ export async function getOverallStatsHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<OverallStatsHistoryItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // JOINを使って1つのクエリで取得（URI too long エラーを回避）
   let query = supabase
@@ -361,7 +361,7 @@ export async function getVideoCountByDate(
   startDate?: Date,
   endDate?: Date,
 ): Promise<VideoCountByDateItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const effectiveStartDate = startDate || new Date("2026-01-01");
   const effectiveEndDate = endDate || new Date();
