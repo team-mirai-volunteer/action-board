@@ -218,6 +218,9 @@ const REAUTH_REQUIRED_ERROR_CODES = [
   "access_token_invalid", // アクセストークンが無効
   "user_not_found", // ユーザーが見つからない（連携解除済み）
 ];
+const TRANSIENT_ERROR_CODES = [
+  "internal_error", // TikTok API側の一時的なエラー
+];
 
 async function syncTikTokVideos(): Promise<SyncResult> {
   const result: SyncResult = {
@@ -332,6 +335,16 @@ async function syncTikTokVideos(): Promise<SyncResult> {
           `${userName}: 再認証が必要です (${err.code}) - TikTok連携を再設定してください`,
         );
         console.warn(`  [SKIP] Re-authentication required: ${errorMessage}`);
+      } else if (
+        err instanceof TikTokAPIError &&
+        err.code &&
+        TRANSIENT_ERROR_CODES.includes(err.code)
+      ) {
+        result.skippedSyncs++;
+        result.warnings.push(
+          `${userName}: TikTok APIの一時エラーです (${err.code}) - 次回同期で再試行されます`,
+        );
+        console.warn(`  [SKIP] Transient TikTok API error: ${errorMessage}`);
       } else {
         result.failedSyncs++;
         result.errors.push(`${userName}: ${errorMessage}`);
