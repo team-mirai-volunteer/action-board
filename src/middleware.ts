@@ -3,41 +3,76 @@ import { updateSession } from "@/lib/supabase/middleware";
 import { shouldShowMaintenance } from "@/lib/utils/time-check";
 
 const MAINTENANCE_PATH = "/maintenance";
+const ROOT_PATH = "/";
 const API_PATH = "/api";
 const API_PATH_PREFIX = "/api/";
 const RETRY_AFTER_SECONDS = "3600";
 
-export async function middleware(request: NextRequest) {
+function isApiRequest(pathname: string): boolean {
+  return pathname === API_PATH || pathname.startsWith(API_PATH_PREFIX);
+}
+
+function createMaintenanceApiResponse() {
+  return NextResponse.json(
+    {
+      error: "service_unavailable",
+      message: "現在メンテナンス中です。しばらくしてからお試しください。",
+    },
+    {
+      status: 503,
+      headers: {
+        "Retry-After": RETRY_AFTER_SECONDS,
+        "Cache-Control": "no-store",
+      },
+    },
+  );
+}
+
+function createMaintenanceRewriteResponse(request: NextRequest) {
+  const maintenanceUrl = request.nextUrl.clone();
+  maintenanceUrl.pathname = MAINTENANCE_PATH;
+  return NextResponse.rewrite(maintenanceUrl);
+}
+
+function createRootRedirectResponse(request: NextRequest) {
+  const rootUrl = request.nextUrl.clone();
+  rootUrl.pathname = ROOT_PATH;
+  rootUrl.search = "";
+  return NextResponse.redirect(rootUrl);
+}
+
+function resolveMaintenanceResponse(
+  request: NextRequest,
+  maintenanceEnabled: boolean,
+) {
   const { pathname } = request.nextUrl;
-  const maintenanceEnabled = shouldShowMaintenance(request.nextUrl);
 
   if (maintenanceEnabled) {
-    if (pathname === API_PATH || pathname.startsWith(API_PATH_PREFIX)) {
-      return NextResponse.json(
-        {
-          error: "service_unavailable",
-          message: "現在メンテナンス中です。しばらくしてからお試しください。",
-        },
-        {
-          status: 503,
-          headers: {
-            "Retry-After": RETRY_AFTER_SECONDS,
-            "Cache-Control": "no-store",
-          },
-        },
-      );
+    if (isApiRequest(pathname)) {
+      return createMaintenanceApiResponse();
     }
-
     if (pathname !== MAINTENANCE_PATH) {
-      const maintenanceUrl = request.nextUrl.clone();
-      maintenanceUrl.pathname = MAINTENANCE_PATH;
-      return NextResponse.rewrite(maintenanceUrl);
+      return createMaintenanceRewriteResponse(request);
     }
-  } else if (pathname === MAINTENANCE_PATH) {
-    const rootUrl = request.nextUrl.clone();
-    rootUrl.pathname = "/";
-    rootUrl.search = "";
-    return NextResponse.redirect(rootUrl);
+    return null;
+  }
+
+  if (pathname === MAINTENANCE_PATH) {
+    return createRootRedirectResponse(request);
+  }
+
+  return null;
+}
+
+export async function middleware(request: NextRequest) {
+  const maintenanceEnabled = shouldShowMaintenance(request.nextUrl);
+  const maintenanceResponse = resolveMaintenanceResponse(
+    request,
+    maintenanceEnabled,
+  );
+
+  if (maintenanceResponse) {
+    return maintenanceResponse;
   }
 
   return await updateSession(request);
