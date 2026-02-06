@@ -7,6 +7,7 @@ import type {
 } from "@/features/mission-detail/types/detail-types";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 
 /**
@@ -317,8 +318,14 @@ async function getRelatedCategoryMissionsRaw(
  */
 export async function getMissionPageData(
   identifier: string,
-  userId?: string,
 ): Promise<MissionPageData | null> {
+  // セッションからユーザーIDを取得（未認証の場合はnull）
+  const supabaseAuth = createClient();
+  const {
+    data: { user },
+  } = await supabaseAuth.auth.getUser();
+  const userId = user?.id;
+
   const mission = await getMissionData(identifier);
 
   if (!mission) return null;
