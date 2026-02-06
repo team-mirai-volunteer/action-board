@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { isValidUrl } from "@/lib/utils/url-validation";
 
 interface SocialBadgeProps {
   title: string;
@@ -8,15 +9,6 @@ interface SocialBadgeProps {
   logoAlt: string;
   logoSize: number;
 }
-
-const isValidUrl = (url: string) => {
-  try {
-    const parsedUrl = new URL(url);
-    return ["http:", "https:"].includes(parsedUrl.protocol);
-  } catch {
-    return false;
-  }
-};
 
 function SocialBadge({
   title,
