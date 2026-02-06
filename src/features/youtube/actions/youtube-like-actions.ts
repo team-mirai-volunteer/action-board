@@ -11,6 +11,7 @@ import {
   isTokenExpired,
   type LikedVideo,
 } from "../services/youtube-like-service";
+import { transformValidLikesToRecordedLikes } from "../utils/like-video-transformers";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";
 
 /**
@@ -311,20 +312,9 @@ export async function getRecordedLikesAction(): Promise<{
       };
     }
 
-    const recordedLikes: RecordedLike[] = (likes || [])
-      .filter((like) => like.youtube_videos)
-      .map((like) => ({
-        videoId: like.video_id,
-        title: like.youtube_videos?.title || "Unknown",
-        channelTitle: like.youtube_videos?.channel_title || undefined,
-        thumbnailUrl: like.youtube_videos?.thumbnail_url || undefined,
-        videoUrl:
-          like.youtube_videos?.video_url ||
-          `https://www.youtube.com/watch?v=${like.video_id}`,
-        publishedAt: like.youtube_videos?.published_at || undefined,
-        recordedAt:
-          like.detected_at || like.created_at || new Date().toISOString(),
-      }));
+    const recordedLikes = transformValidLikesToRecordedLikes(
+      (likes || []) as Parameters<typeof transformValidLikesToRecordedLikes>[0],
+    );
 
     return {
       success: true,
