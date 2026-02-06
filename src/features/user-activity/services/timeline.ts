@@ -6,6 +6,8 @@ import {
 } from "@/features/party-membership/services/memberships";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
 import {
+  enrichTimelineItemsWithMemberships,
+  extractValidUserIds,
   mapAchievementsToTimeline,
   mapActivitiesToTimeline,
   mergeAndSortTimeline,
@@ -142,31 +144,11 @@ export async function getGlobalActivityTimeline(
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
-  const membershipMap = await getPartyMembershipMap(
-    (activityTimelines ?? [])
-      .map((item) => item.user_id)
-      .filter((id): id is string => typeof id === "string" && id.length > 0),
-  );
+  const items = activityTimelines ?? [];
+  const userIds = extractValidUserIds(items);
+  const membershipMap = await getPartyMembershipMap(userIds);
 
-  return (activityTimelines ?? []).map((item) => ({
-    id: item.id ?? "",
-    user_id: item.user_id ?? "",
-    name: item.name ?? "",
-    address_prefecture: item.address_prefecture,
-    avatar_url: item.avatar_url,
-    title: item.title ?? "",
-    mission_id: item.mission_id,
-    mission_slug:
-      "mission_slug" in item && item.mission_slug
-        ? (item.mission_slug as string)
-        : null,
-    created_at: item.created_at ?? "",
-    activity_type: item.activity_type ?? "",
-    party_membership:
-      item.user_id && membershipMap[item.user_id]
-        ? membershipMap[item.user_id]
-        : null,
-  }));
+  return enrichTimelineItemsWithMemberships(items, membershipMap);
 }
 
 /**

@@ -36,6 +36,30 @@ interface UserProfileInfo {
 }
 
 /**
+ * 単一のミッション達成データを活動タイムライン形式に変換する
+ */
+export function mapAchievementToTimeline(
+  achievement: AchievementRow,
+  userId: string,
+  userProfile: UserProfileInfo | null,
+  partyMembership: PartyMembership | null,
+): ActivityTimelineItem {
+  return {
+    id: `achievement_${achievement.id}`,
+    user_id: userId,
+    name: userProfile?.name || "",
+    address_prefecture: userProfile?.address_prefecture || null,
+    avatar_url: userProfile?.avatar_url || null,
+    title: achievement.missions.title,
+    mission_id: achievement.mission_id,
+    mission_slug: achievement.missions.slug,
+    created_at: achievement.created_at,
+    activity_type: "mission_achievement",
+    party_membership: partyMembership,
+  };
+}
+
+/**
  * ミッション達成データを活動タイムライン形式に変換する
  */
 export function mapAchievementsToTimeline(
@@ -44,19 +68,33 @@ export function mapAchievementsToTimeline(
   userProfile: UserProfileInfo | null,
   partyMembership: PartyMembership | null,
 ): ActivityTimelineItem[] {
-  return achievements.map((a) => ({
-    id: `achievement_${a.id}`,
+  return achievements.map((a) =>
+    mapAchievementToTimeline(a, userId, userProfile, partyMembership),
+  );
+}
+
+/**
+ * 単一のユーザーアクティビティデータを活動タイムライン形式に変換する
+ */
+export function mapActivityToTimeline(
+  activity: ActivityRow,
+  userId: string,
+  userProfile: UserProfileInfo | null,
+  partyMembership: PartyMembership | null,
+): ActivityTimelineItem {
+  return {
+    id: `activity_${activity.id}`,
     user_id: userId,
     name: userProfile?.name || "",
     address_prefecture: userProfile?.address_prefecture || null,
     avatar_url: userProfile?.avatar_url || null,
-    title: a.missions.title,
-    mission_id: a.mission_id,
-    mission_slug: a.missions.slug,
-    created_at: a.created_at,
-    activity_type: "mission_achievement",
+    title: activity.activity_title,
+    mission_id: null,
+    mission_slug: null,
+    created_at: activity.created_at,
+    activity_type: activity.activity_type,
     party_membership: partyMembership,
-  }));
+  };
 }
 
 /**
@@ -68,19 +106,9 @@ export function mapActivitiesToTimeline(
   userProfile: UserProfileInfo | null,
   partyMembership: PartyMembership | null,
 ): ActivityTimelineItem[] {
-  return activities.map((a) => ({
-    id: `activity_${a.id}`,
-    user_id: userId,
-    name: userProfile?.name || "",
-    address_prefecture: userProfile?.address_prefecture || null,
-    avatar_url: userProfile?.avatar_url || null,
-    title: a.activity_title,
-    mission_id: null,
-    mission_slug: null,
-    created_at: a.created_at,
-    activity_type: a.activity_type,
-    party_membership: partyMembership,
-  }));
+  return activities.map((a) =>
+    mapActivityToTimeline(a, userId, userProfile, partyMembership),
+  );
 }
 
 /**
@@ -98,4 +126,56 @@ export function mergeAndSortTimeline(
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )
     .slice(0, limit);
+}
+
+/**
+ * タイムラインアイテム配列から有効なユーザーIDを抽出する
+ */
+export function extractValidUserIds(
+  items: Array<{ user_id?: string | null }>,
+): string[] {
+  return items
+    .map((item) => item.user_id)
+    .filter((id): id is string => typeof id === "string" && id.length > 0);
+}
+
+/**
+ * タイムラインアイテムにパーティメンバーシップ情報を付与する
+ */
+export function enrichTimelineItemsWithMemberships(
+  items: Array<{
+    id: string | null;
+    user_id: string | null;
+    name: string | null;
+    address_prefecture: string | null;
+    avatar_url: string | null;
+    title: string | null;
+    mission_id: string | null;
+    mission_slug?: unknown;
+    created_at: string | null;
+    activity_type: string | null;
+  }>,
+  membershipMap: Record<string, PartyMembership>,
+): ActivityTimelineItem[] {
+  return items.map((item) => ({
+    id: item.id ?? "",
+    user_id: item.user_id ?? "",
+    name: item.name ?? "",
+    address_prefecture: item.address_prefecture,
+    avatar_url: item.avatar_url,
+    title: item.title ?? "",
+    mission_id: item.mission_id,
+    mission_slug:
+      item.mission_slug != null &&
+      typeof item.mission_slug === "string" &&
+      item.mission_slug
+        ? item.mission_slug
+        : null,
+    created_at: item.created_at ?? "",
+    activity_type: item.activity_type ?? "",
+    party_membership:
+      item.user_id && membershipMap[item.user_id]
+        ? membershipMap[item.user_id]
+        : null,
+  }));
 }
