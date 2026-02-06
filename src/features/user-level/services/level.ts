@@ -14,6 +14,10 @@ import type {
   XpTransaction,
 } from "../types/level-types";
 import { calculateLevel, calculateMissionXp } from "../utils/level-calculator";
+import {
+  aggregateXpByUser,
+  buildLevelUpdates,
+} from "../utils/xp-batch-helpers";
 
 /**
  * ユーザーのレベル情報を取得する（現在のアクティブシーズン）
@@ -446,62 +450,14 @@ export async function grantXpBatch(
     }
 
     // 6. ユーザーごとのXP合計を計算
-    const userXpUpdates = new Map<string, number>();
-
-    for (const transaction of transactions) {
-      const currentTotal = userXpUpdates.get(transaction.userId) || 0;
-      userXpUpdates.set(
-        transaction.userId,
-        currentTotal + transaction.xpAmount,
-      );
-    }
+    const userXpUpdates = aggregateXpByUser(transactions);
 
     // 7. ユーザーレベルを一括更新
-    const levelUpdates: Array<{
-      user_id: string;
-      season_id: string;
-      xp: number;
-      level: number;
-      updated_at: string;
-    }> = [];
-
-    const results: Array<{
-      userId: string;
-      success: boolean;
-      error?: string;
-      newXp?: number;
-      newLevel?: number;
-    }> = [];
-
-    for (const [userId, xpChange] of Array.from(userXpUpdates.entries())) {
-      const currentLevel = levelMap.get(userId);
-      if (!currentLevel) {
-        results.push({
-          userId,
-          success: false,
-          error: "ユーザーレベル情報が見つかりません",
-        });
-        continue;
-      }
-
-      const newXp = currentLevel.xp + xpChange;
-      const newLevel = calculateLevel(newXp);
-
-      levelUpdates.push({
-        user_id: userId,
-        season_id: seasonId,
-        xp: newXp,
-        level: newLevel,
-        updated_at: new Date().toISOString(),
-      });
-
-      results.push({
-        userId,
-        success: true,
-        newXp,
-        newLevel,
-      });
-    }
+    const { levelUpdates, results } = buildLevelUpdates(
+      userXpUpdates,
+      levelMap,
+      seasonId,
+    );
 
     // 8. レベル情報を一括更新（upsert）
     if (levelUpdates.length > 0) {
