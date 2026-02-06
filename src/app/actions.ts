@@ -11,6 +11,8 @@ import {
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { validateAge } from "@/lib/utils/age-validation";
+import { parseIdTokenPayload } from "@/lib/utils/jwt-utils";
 import { deleteCookie, getCookie } from "@/lib/utils/server-cookies";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import {
@@ -424,12 +426,10 @@ export const emailSignUpActionWithState = async (
   }
 
   // サーバーサイドで年齢チェック（LINEログインと同様）
-  const age = calculateAge(dateOfBirth);
-  if (age < 18) {
-    const yearsToWait = 18 - age;
-    const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
+  const ageError = validateAge(dateOfBirth);
+  if (ageError) {
     return {
-      error: `18歳以上の方のみご登録いただけます。${waitText}登録できますので、その日を楽しみにお待ちください！`,
+      error: ageError,
       formData: currentFormData,
     };
   }
@@ -551,11 +551,7 @@ export async function handleLineAuthAction(
     } = {};
 
     if (tokens.id_token) {
-      const base64Payload = tokens.id_token.split(".")[1];
-      const payload = JSON.parse(
-        Buffer.from(base64Payload, "base64").toString(),
-      );
-      userInfo = payload;
+      userInfo = parseIdTokenPayload(tokens.id_token);
     }
 
     if (!userInfo.sub) {
