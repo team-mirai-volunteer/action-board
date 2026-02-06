@@ -28,7 +28,27 @@ describe("utils", () => {
 
     it("should handle empty inputs", () => {
       const result = cn();
-      expect(typeof result).toBe("string");
+      expect(result).toBe("");
+    });
+
+    it("should return a single class as-is", () => {
+      expect(cn("p-4")).toBe("p-4");
+    });
+
+    it("should merge conflicting Tailwind classes (last wins)", () => {
+      expect(cn("p-2", "p-4")).toBe("p-4");
+    });
+
+    it("should merge conflicting Tailwind text size classes", () => {
+      expect(cn("text-sm", "text-lg")).toBe("text-lg");
+    });
+
+    it("should handle undefined and null values", () => {
+      expect(cn("base", undefined, null, "extra")).toBe("base extra");
+    });
+
+    it("should handle array inputs", () => {
+      expect(cn(["p-2", "m-2"])).toBe("p-2 m-2");
     });
   });
 
@@ -88,6 +108,25 @@ describe("utils", () => {
     it("should handle leap year birthdate", () => {
       const age = calculateAge("1992-02-29");
       expect(age).toBe(32);
+    });
+
+    it("should return 0 for a baby born this year before today", () => {
+      expect(calculateAge("2024-01-01")).toBe(0);
+    });
+
+    it("should return 0 for a baby born today", () => {
+      expect(calculateAge("2024-06-15")).toBe(0);
+    });
+
+    it("should handle leap year birthday before it occurs in non-leap year", () => {
+      jest.setSystemTime(new Date("2025-02-28"));
+      // Born Feb 29, 2000. Feb 29 doesn't exist in 2025.
+      // Month is same (1), but day 28 < 29, so age is decremented
+      expect(calculateAge("2000-02-29")).toBe(24);
+    });
+
+    it("should handle birthday tomorrow", () => {
+      expect(calculateAge("1990-06-16")).toBe(33);
     });
   });
 });
