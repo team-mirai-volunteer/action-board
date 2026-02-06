@@ -3,17 +3,10 @@
 import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import type { Tables } from "@/lib/types/supabase";
-
-type MissionWithCategory = Tables<"missions"> & {
-  mission_category_link: Array<{
-    mission_category: {
-      id: string;
-      category_title: string | null;
-      sort_no: number;
-    } | null;
-  }>;
-};
+import {
+  groupMissionsByCategory,
+  type MissionWithCategory,
+} from "../utils/mission-grouping";
 
 interface MissionSelectProps {
   missions: MissionWithCategory[];
@@ -25,39 +18,10 @@ export function MissionSelect({ missions }: MissionSelectProps) {
   const [selectedMissionId, setSelectedMissionId] = useState<string>("");
 
   // ミッションをカテゴリ別にグループ化
-  const groupedMissions = useMemo(() => {
-    const groups: Record<
-      string,
-      { category: string; missions: MissionWithCategory[]; sortNo: number }
-    > = {};
-    const uncategorized: MissionWithCategory[] = [];
-
-    for (const mission of missions) {
-      const categoryLink = mission.mission_category_link?.[0];
-      const category = categoryLink?.mission_category;
-
-      if (category?.category_title) {
-        const key = category.id;
-        if (!groups[key]) {
-          groups[key] = {
-            category: category.category_title,
-            missions: [],
-            sortNo: category.sort_no,
-          };
-        }
-        groups[key].missions.push(mission);
-      } else {
-        uncategorized.push(mission);
-      }
-    }
-
-    // カテゴリを sort_no でソート
-    const sortedCategories = Object.entries(groups).sort(
-      ([, a], [, b]) => a.sortNo - b.sortNo,
-    );
-
-    return { sortedCategories, uncategorized };
-  }, [missions]);
+  const groupedMissions = useMemo(
+    () => groupMissionsByCategory(missions),
+    [missions],
+  );
 
   useEffect(() => {
     // URLからmissionIdパラメータを取得
