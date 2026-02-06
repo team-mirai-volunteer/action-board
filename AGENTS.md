@@ -299,8 +299,14 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `develop` - 機能統合ブランチ (PRのデフォルトブランチ)
 - `feat/xxx` - 機能ブランチ (`develop`から分岐、`develop`にマージ)
 
+### Worktree必須ルール
+コード変更を伴う作業は、必ず git worktree を作成してから開始すること。メインのリポジトリディレクトリでは直接コード変更を行わない。
+
+- **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
+- **例外**: ドキュメント作成のみの作業、CLAUDE.mdの更新など、コードに影響しない変更
+
 ### Git Worktree作成手順 (Claude Code向け)
-Claude Codeで並行作業のためにworktreeを作成する場合は、以下の手順に従うこと：
+Claude Codeで作業を開始する場合は、以下の手順に従うこと：
 
 ```bash
 # 1. worktreeを作成
