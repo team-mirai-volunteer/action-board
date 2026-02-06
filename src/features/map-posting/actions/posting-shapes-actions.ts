@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { PostingShapeStatus } from "../config/status-config";
 import {
+  authorizeShapeOwner,
   deleteShape as deleteShapeService,
   saveShape as saveShapeService,
   updateShape as updateShapeService,
@@ -26,12 +27,14 @@ export async function saveShape(shape: MapShape) {
 
 export async function deleteShape(id: string) {
   const userId = await requireAuth();
-  return deleteShapeService(id, userId);
+  await authorizeShapeOwner(id, userId);
+  return deleteShapeService(id);
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
   const userId = await requireAuth();
-  return updateShapeService(id, data, userId);
+  await authorizeShapeOwner(id, userId);
+  return updateShapeService(id, data);
 }
 
 export async function updateShapeStatus(
@@ -40,5 +43,6 @@ export async function updateShapeStatus(
   memo?: string | null,
 ) {
   const userId = await requireAuth();
-  return updateShapeStatusService(id, status, memo, userId);
+  await authorizeShapeOwner(id, userId);
+  return updateShapeStatusService(id, status, memo);
 }

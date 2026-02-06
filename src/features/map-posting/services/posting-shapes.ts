@@ -90,13 +90,34 @@ export async function saveShape(shape: MapShape) {
   return data;
 }
 
-export async function deleteShape(id: string, userId: string) {
+/**
+ * 図形の所有者であることを確認する認可チェック
+ */
+export async function authorizeShapeOwner(
+  id: string,
+  userId: string,
+): Promise<void> {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase
+    .from("posting_shapes")
+    .select("user_id")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) {
+    throw new Error("図形が見つかりません");
+  }
+  if (data.user_id !== userId) {
+    throw new Error("この図形を操作する権限がありません");
+  }
+}
+
+export async function deleteShape(id: string) {
   const supabase = await createAdminClient();
   const { count, error } = await supabase
     .from("posting_shapes")
     .delete({ count: "exact" })
-    .eq("id", id)
-    .eq("user_id", userId);
+    .eq("id", id);
 
   if (count == null || count === 0) {
     throw new Error("No shape deleted");
@@ -192,11 +213,7 @@ export async function loadShapes(eventId: string) {
   }));
 }
 
-export async function updateShape(
-  id: string,
-  data: Partial<MapShape>,
-  userId: string,
-) {
+export async function updateShape(id: string, data: Partial<MapShape>) {
   const supabase = await createAdminClient();
   // Exclude protected fields that should not be updated
   const {
@@ -239,7 +256,6 @@ export async function updateShape(
     .from("posting_shapes")
     .update(updateData)
     .eq("id", id)
-    .eq("user_id", userId)
     .select()
     .single();
 
@@ -255,23 +271,18 @@ export async function updateShapeStatus(
   id: string,
   status: PostingShapeStatus,
   memo?: string | null,
-  userId?: string,
 ) {
   const supabase = await createAdminClient();
-  let query = supabase
+  const { data, error } = await supabase
     .from("posting_shapes")
     .update({
       status,
       memo,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", id);
-
-  if (userId) {
-    query = query.eq("user_id", userId);
-  }
-
-  const { data, error } = await query.select().single();
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) {
     console.error("Error updating shape status:", error);
