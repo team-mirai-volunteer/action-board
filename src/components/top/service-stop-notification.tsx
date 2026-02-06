@@ -1,9 +1,7 @@
 /**
  * サービス停止通知コンポーネント
  *
- * このコンポーネントは投開票日当日のサービス停止時に使用されました。
- * アクションボードのサービスの一時停止措置として実装されています。
- *
+ * メンテナンスモード中に表示される停止画面。
  */
 
 "use client";
@@ -11,9 +9,12 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const Fireworks = dynamic(() => import("@/components/top/fireworks"), {
-  ssr: false,
-});
+const MaintenanceWinterEffect = dynamic(
+  () => import("@/components/top/maintenance-winter-effect"),
+  {
+    ssr: false,
+  },
+);
 
 export default function ServiceStopNotification() {
   return (
@@ -28,8 +29,7 @@ export default function ServiceStopNotification() {
         />
       </div>
 
-      {/* tsParticles の fireworks - now clickable */}
-      <Fireworks />
+      <MaintenanceWinterEffect />
     </div>
   );
 }

@@ -123,8 +123,10 @@ const EndCredits = ({
                 fontFamily: "'Noto Sans JP', sans-serif",
               }}
             >
-              {row.map((c) => (
-                <span key={c.name}>{c.name}</span>
+              {row.map((c, contributorIndex) => (
+                <span key={`${c.name}-${idx}-${contributorIndex}`}>
+                  {c.name}
+                </span>
               ))}
             </div>
           ))}
