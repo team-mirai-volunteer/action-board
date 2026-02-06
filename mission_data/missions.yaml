@@ -61,7 +61,7 @@ missions:
   - slug: check-mirai-gikai
     title: みらい議会を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
-    content: みらい議会で、いま議論されている論点や提案を見てみよう。政治の意思決定プロセスを、より身近に確認できます。
+    content: みらい議会は、チームみらいの政策提案を「法案」として一覧できるサービスです。法案ごとのステータスや要点、賛成・懸念のポイントをまとめて確認できるので、今どんな議論が進んでいるかを短時間で把握できます。まずは気になる法案を1つ開いてみよう。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
