@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { extractHashtags } from "@/lib/utils/text-utils";
 import { filterTeamMiraiVideos } from "../utils/video-filter";
 import type { YouTubeVideoDetail } from "./youtube-client";
 import {
@@ -17,14 +18,6 @@ export interface YouTubeSyncResult {
   syncedCount?: number;
   skippedCount?: number;
   error?: string;
-}
-
-/**
- * テキストからハッシュタグを抽出する
- */
-function extractHashtags(text: string): string[] {
-  const matches = text.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]+/g);
-  return matches || [];
 }
 
 /**
