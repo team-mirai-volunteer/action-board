@@ -58,6 +58,26 @@ missions:
     is_featured: false
     is_hidden: false
     ogp_image_url: null
+  - slug: check-mirai-gikai
+    title: みらい議会を見てみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
+    content: みらい議会で、いま議論されている論点や提案を見てみよう。政治の意思決定プロセスを、より身近に確認できます。
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
+  - slug: check-mirai-marumie-seijishikin
+    title: みらいまる見え政治資金を見てみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
+    content: みらいまる見え政治資金で、政治資金の流れや内訳を確認してみよう。お金の動きから政治を理解するきっかけになります。
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_propose-manifest-idobata.svg

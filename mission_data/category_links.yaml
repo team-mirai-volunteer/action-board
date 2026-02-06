@@ -31,6 +31,10 @@ category_links:
     missions:
       - mission_slug: link-official-site
         sort_no: 100
+      - mission_slug: check-mirai-gikai
+        sort_no: 110
+      - mission_slug: check-mirai-marumie-seijishikin
+        sort_no: 120
       - mission_slug: quiz-teammirai-anno
         sort_no: 200
       - mission_slug: quiz-teammirai-vision

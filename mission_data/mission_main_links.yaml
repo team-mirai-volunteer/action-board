@@ -5,6 +5,12 @@ mission_main_links:
   - mission_slug: read-manifest
     label: チームみらいのマニフェストを読む
     link: https://policy.team-mir.ai
+  - mission_slug: check-mirai-gikai
+    label: みらい議会を見る
+    link: https://gikai.team-mir.ai
+  - mission_slug: check-mirai-marumie-seijishikin
+    label: みらいまる見え政治資金を見る
+    link: https://marumie.team-mir.ai/o/team-mirai
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
