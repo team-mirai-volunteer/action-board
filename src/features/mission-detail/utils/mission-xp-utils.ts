@@ -4,6 +4,7 @@
 export const BONUS_MISSION_SLUGS = [
   "posting-magazine",
   "put-up-poster-on-board",
+  "posting-activity-magazine",
 ] as const;
 
 /**
