@@ -1,10 +1,9 @@
-// 期間フィルター型はyoutube-statsから再利用
-export type { PeriodType } from "@/features/youtube-stats/types";
+export type { PeriodType } from "@/lib/utils/period-date-utils";
 export {
   getPeriodEndDate,
   getPeriodStartDate,
   PERIOD_OPTIONS,
-} from "@/features/youtube-stats/types";
+} from "@/lib/utils/period-date-utils";
 
 export interface ActionStatsSummary {
   totalActions: number;
