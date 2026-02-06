@@ -16,6 +16,7 @@ import { sendWelcomeMail } from "@/lib/services/mail";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { encodedRedirect } from "@/lib/utils/utils";
+import { formatZodErrors } from "@/lib/utils/validation-utils";
 
 export type UpdateProfileResult = {
   success: boolean;
@@ -98,9 +99,7 @@ export async function updateProfile(
   if (!validatedFields.success) {
     return {
       success: false,
-      error: validatedFields.error.errors
-        .map((error) => error.message)
-        .join("\n"),
+      error: formatZodErrors(validatedFields.error),
     };
   }
 
