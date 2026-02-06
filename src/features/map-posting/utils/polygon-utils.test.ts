@@ -77,8 +77,8 @@ describe("polygon-utils", () => {
       // 両方とも同じ3点を使っているので結果は同じ
       expect(closedResult).not.toBeNull();
       expect(openResult).not.toBeNull();
-      expect(closedResult?.lat).toBeCloseTo(openResult?.lat, 10);
-      expect(closedResult?.lng).toBeCloseTo(openResult?.lng, 10);
+      expect(closedResult?.lat).toBeCloseTo(openResult!.lat, 10);
+      expect(closedResult?.lng).toBeCloseTo(openResult!.lng, 10);
     });
 
     test("閉じていないリングの場合は全点を使う", () => {
