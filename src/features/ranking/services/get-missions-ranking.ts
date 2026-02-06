@@ -6,8 +6,11 @@ import {
 } from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { RankingPeriod, UserMissionRanking } from "../types/ranking-types";
+import {
+  dateFilterToISOString,
+  getPeriodDateFilter,
+} from "../utils/period-utils";
 
 export async function getMissionRanking(
   missionId: string,
@@ -27,16 +30,7 @@ export async function getMissionRanking(
     }
 
     // 期間に応じた日付フィルタを設定
-    let dateFilter: Date | null = null;
-
-    switch (period) {
-      case "daily":
-        // 日本時間の今日の0時0分を基準にする
-        dateFilter = getJSTMidnightToday();
-        break;
-      default:
-        dateFilter = null;
-    }
+    const dateFilter = getPeriodDateFilter(period);
 
     // シーズン対応のミッション別ランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
@@ -44,7 +38,7 @@ export async function getMissionRanking(
       {
         p_mission_id: missionId,
         p_limit: limit,
-        p_start_date: dateFilter?.toISOString() || undefined,
+        p_start_date: dateFilterToISOString(dateFilter),
         p_season_id: targetSeasonId,
       },
     );
@@ -130,16 +124,7 @@ export async function getUserMissionRanking(
     }
 
     // 期間に応じた日付フィルタを設定
-    let dateFilter: Date | null = null;
-
-    switch (period) {
-      case "daily":
-        // 日本時間の今日の0時0分を基準にする
-        dateFilter = getJSTMidnightToday();
-        break;
-      default:
-        dateFilter = null;
-    }
+    const dateFilter = getPeriodDateFilter(period);
 
     // シーズン対応の特定ユーザーのミッションランキングを取得
     const { data: rankings, error: rankingsError } = await supabase.rpc(
@@ -147,7 +132,7 @@ export async function getUserMissionRanking(
       {
         p_mission_id: missionId,
         p_user_id: userId,
-        p_start_date: dateFilter?.toISOString() || undefined,
+        p_start_date: dateFilterToISOString(dateFilter),
         p_season_id: targetSeasonId,
       },
     );
