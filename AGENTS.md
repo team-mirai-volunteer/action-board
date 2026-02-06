@@ -295,6 +295,20 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `develop` - 機能統合ブランチ (PRのデフォルトブランチ)
 - `feat/xxx` - 機能ブランチ (`develop`から分岐、`develop`にマージ)
 
+### Git Worktree作成手順 (Claude Code向け)
+Claude Codeで並行作業のためにworktreeを作成する場合は、以下の手順に従うこと：
+
+```bash
+# 1. worktreeを作成
+git worktree add ../action-board-<branch-name> -b <branch-name>
+
+# 2. .claudeディレクトリを作成し、settings.local.jsonをコピー
+mkdir -p ../action-board-<branch-name>/.claude
+cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
+```
+
+**重要**: `settings.local.json`には権限設定が含まれているため、コピーしないとworktree内でのファイル操作時に毎回permission確認が発生する。
+
 ### コード品質ツール
 - **Biome**: フォーマットとリンティング
   - インデント: スペース2つ
