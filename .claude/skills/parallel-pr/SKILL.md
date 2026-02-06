@@ -105,10 +105,22 @@ for pr in {PR番号リスト}; do
 done
 ```
 
+```bash
+# 全PRのコメントを確認（CodeRabbitやレビューアからのフィードバック）
+for pr in {PR番号リスト}; do
+  echo "=== PR #$pr comments ==="
+  gh pr view $pr --comments
+done
+```
+
 CI失敗時の対応:
 - **flaky RLSテスト**: `gh run rerun <run-id> --failed` で再実行
 - **TypeScript型エラー**: worktreeで直接修正してpush
 - **Biomeエラー**: worktreeで `pnpm run biome:check:write` して再push
+
+PRコメント対応:
+- **CodeRabbitの指摘**: 重要な指摘はworktreeで修正してpush
+- **軽微な指摘（nitpick等）**: マージ後に対応するか、必要に応じて対応
 
 ### Phase 5: クリーンアップ
 
