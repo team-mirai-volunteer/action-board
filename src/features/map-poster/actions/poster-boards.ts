@@ -4,6 +4,10 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/client";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
+import {
+  countBoardsByStatus,
+  createEmptyStatusCounts,
+} from "../utils/poster-stats";
 
 type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type PrefectureName = NonNullable<
@@ -43,16 +47,7 @@ export async function getPosterBoardStatsAction(
         "other",
       ];
 
-      const statusCounts: Record<BoardStatus, number> = {
-        not_yet: 0,
-        not_yet_dangerous: 0,
-        reserved: 0,
-        done: 0,
-        error_wrong_place: 0,
-        error_damaged: 0,
-        error_wrong_poster: 0,
-        other: 0,
-      };
+      const statusCounts = createEmptyStatusCounts();
 
       // 並列でカウントクエリを実行
       const countPromises = statusTypes.map(async (status) => {
@@ -109,32 +104,14 @@ export async function getPosterBoardStatsAction(
     // データがない場合のデフォルト値
     return {
       totalCount: 0,
-      statusCounts: {
-        not_yet: 0,
-        not_yet_dangerous: 0,
-        reserved: 0,
-        done: 0,
-        error_wrong_place: 0,
-        error_damaged: 0,
-        error_wrong_poster: 0,
-        other: 0,
-      },
+      statusCounts: createEmptyStatusCounts(),
     };
   } catch (error) {
     console.error("Error in getPosterBoardStatsAction:", error);
     // エラー時のデフォルト値
     return {
       totalCount: 0,
-      statusCounts: {
-        not_yet: 0,
-        not_yet_dangerous: 0,
-        reserved: 0,
-        done: 0,
-        error_wrong_place: 0,
-        error_damaged: 0,
-        error_wrong_poster: 0,
-        other: 0,
-      },
+      statusCounts: createEmptyStatusCounts(),
     };
   }
 }
@@ -211,52 +188,20 @@ export async function getPosterBoardStatsByDistrictAction(
       console.error("Error fetching district stats:", error);
       return {
         totalCount: 0,
-        statusCounts: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
+        statusCounts: createEmptyStatusCounts(),
       };
     }
 
-    const statusCounts: Record<BoardStatus, number> = {
-      not_yet: 0,
-      not_yet_dangerous: 0,
-      reserved: 0,
-      done: 0,
-      error_wrong_place: 0,
-      error_damaged: 0,
-      error_wrong_poster: 0,
-      other: 0,
-    };
-
-    for (const row of data || []) {
-      statusCounts[row.status] += 1;
-    }
-
+    const boards = data || [];
     return {
-      totalCount: data?.length || 0,
-      statusCounts,
+      totalCount: boards.length,
+      statusCounts: countBoardsByStatus(boards),
     };
   } catch (error) {
     console.error("Error in getPosterBoardStatsByDistrictAction:", error);
     return {
       totalCount: 0,
-      statusCounts: {
-        not_yet: 0,
-        not_yet_dangerous: 0,
-        reserved: 0,
-        done: 0,
-        error_wrong_place: 0,
-        error_damaged: 0,
-        error_wrong_poster: 0,
-        other: 0,
-      },
+      statusCounts: createEmptyStatusCounts(),
     };
   }
 }
