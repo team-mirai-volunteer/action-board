@@ -80,7 +80,7 @@ export default async function Levels({
 
   if (clickable) {
     return (
-      <section className="bg-gradient-hero flex justify-center py-6 px-4">
+      <section className="flex justify-center py-6 px-4">
         <Link
           href={`/users/${userId}`}
           aria-label={`${profile.name}さんのプロフィールへ`}
@@ -93,8 +93,6 @@ export default async function Levels({
   }
 
   return (
-    <section className="bg-gradient-hero flex justify-center py-6 px-4">
-      {cardContent}
-    </section>
+    <section className="flex justify-center py-6 px-4">{cardContent}</section>
   );
 }

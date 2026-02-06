@@ -29,7 +29,7 @@ export function TikTokSortToggle({
   );
 
   return (
-    <div className="flex justify-center gap-1 p-1 bg-gray-100 rounded-lg max-w-fit mx-auto">
+    <div className="flex justify-center gap-1 p-1 bg-white rounded-lg max-w-fit mx-auto">
       {SORT_OPTIONS.map((option) => (
         <Button
           key={option.value}

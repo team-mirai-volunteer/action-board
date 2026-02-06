@@ -36,7 +36,7 @@ export function PeriodToggle({ defaultPeriod = "daily" }: PeriodToggleProps) {
   );
 
   return (
-    <div className="flex justify-center gap-1 p-1 bg-gray-100 rounded-lg max-w-fit mx-auto">
+    <div className="flex justify-center gap-1 p-1 bg-white rounded-lg max-w-fit mx-auto">
       {periodOptions.map((option) => (
         <Button
           key={option.value}

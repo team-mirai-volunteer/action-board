@@ -38,18 +38,18 @@ export default async function RankingPage({ searchParams }: PageProps) {
       </h2>
       <RankingTabs>
         {/* 期間選択トグル */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           <PeriodToggle defaultPeriod={period} />
         </section>
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCard currentUser={userRanking} />
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* ランキング */}
           <RankingTop limit={100} period={period} />
         </section>
