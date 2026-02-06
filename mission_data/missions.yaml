@@ -71,7 +71,7 @@ missions:
   - slug: check-mirai-marumie-seijishikin
     title: みらいまる見え政治資金を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
-    content: みらいまる見え政治資金で、政治資金の流れや内訳を確認してみよう。お金の動きから政治を理解するきっかけになります。
+    content: みらいまる見え政治資金は、政治資金の流れをサンキー図で直感的に見られる「見える化ツール」です。収支の全体像だけでなく、月次収支・B/S・出入金の詳細まで確認できるので、政治とお金の実態を具体的に把握できます。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
