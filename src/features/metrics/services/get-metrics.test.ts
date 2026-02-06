@@ -8,9 +8,9 @@ import type {
   DonationData,
   SupporterData,
 } from "@/features/metrics/types/metrics-types";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
-jest.mock("@/lib/supabase/client");
+jest.mock("@/lib/supabase/adminClient");
 jest.mock("@/features/metrics/services/get-metrics", () =>
   jest.requireActual("@/features/metrics/services/get-metrics"),
 );
@@ -30,7 +30,7 @@ const setupMockSupabaseClient = (
   dataset: { created_at: string }[],
   capturedGteIsoRef: { value: string | null },
 ) => {
-  (createClient as jest.Mock).mockReturnValue({
+  (createAdminClient as jest.Mock).mockResolvedValue({
     from: () => ({
       select: () => ({
         count: dataset.length,

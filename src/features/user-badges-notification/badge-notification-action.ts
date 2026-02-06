@@ -1,13 +1,12 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/client";
 import { markBadgeNotificationAsSeen } from "./services/mark-badges-as-seen";
 
 export async function markBadgeNotificationAsSeenAction(
   badgeIds: string[],
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
