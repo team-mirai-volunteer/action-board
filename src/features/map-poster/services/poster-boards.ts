@@ -6,6 +6,12 @@ import type {
   PosterBoard,
   PosterBoardTotal,
 } from "../types/poster-types";
+import {
+  buildSummaryFromAggregatedRows,
+  buildSummaryFromIndividualRows,
+  extractUniqueValues,
+} from "../utils/board-transforms";
+import { countBoardsByStatus } from "../utils/poster-stats";
 
 /** ポスター貼りミッションのslug */
 export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
@@ -383,9 +389,7 @@ export async function getPrefecturesWithBoards() {
   }
 
   // Get unique prefectures
-  const uniquePrefectures = Array.from(new Set(allPrefectures));
-
-  return uniquePrefectures;
+  return extractUniqueValues(allPrefectures, (p) => p);
 }
 
 // Get unique districts that have poster boards (区割り対応版)
@@ -433,9 +437,7 @@ export async function getDistrictsWithBoards(): Promise<string[]> {
   }
 
   // Get unique districts
-  const uniqueDistricts = Array.from(new Set(allDistricts));
-
-  return uniqueDistricts;
+  return extractUniqueValues(allDistricts, (d) => d);
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）
@@ -470,33 +472,10 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
   }
 
   // RPC関数から返されたデータを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  for (const row of aggregatedData) {
-    const prefecture = row.prefecture;
-    if (!summary[prefecture]) {
-      summary[prefecture] = {
-        total: 0,
-        statuses: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
-      };
-    }
-    summary[prefecture].statuses[row.status] = row.count;
-    summary[prefecture].total += row.count;
-  }
-
-  return summary;
+  return buildSummaryFromAggregatedRows(
+    aggregatedData,
+    (row) => row.prefecture,
+  );
 }
 
 // 特定の都道府県の掲示板総数を取得
@@ -549,35 +528,7 @@ export async function getPosterBoardSummaryByDistrict(): Promise<
   }
 
   // データを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  for (const row of data) {
-    const district = row.district;
-    if (!district) continue;
-
-    if (!summary[district]) {
-      summary[district] = {
-        total: 0,
-        statuses: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
-      };
-    }
-    summary[district].statuses[row.status] += 1;
-    summary[district].total += 1;
-  }
-
-  return summary;
+  return buildSummaryFromIndividualRows(data, (row) => row.district);
 }
 
 // 区割り別の統計情報を取得（特定の区割り）
@@ -600,21 +551,7 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
     throw error;
   }
 
-  const statusCounts: Record<BoardStatus, number> = {
-    not_yet: 0,
-    not_yet_dangerous: 0,
-    reserved: 0,
-    done: 0,
-    error_wrong_place: 0,
-    error_damaged: 0,
-    error_wrong_poster: 0,
-    other: 0,
-  };
-
-  for (const row of data || []) {
-    statusCounts[row.status] += 1;
-  }
-
+  const statusCounts = countBoardsByStatus(data || []);
   const totalCount = data?.length || 0;
 
   return { totalCount, statusCounts };
@@ -638,15 +575,7 @@ export async function getArchivedElectionTerms(): Promise<string[]> {
   }
 
   // Get unique election terms
-  const uniqueTerms = Array.from(
-    new Set(
-      data
-        ?.map((item) => item.election_term)
-        .filter((t): t is string => t !== null) || [],
-    ),
-  );
-
-  return uniqueTerms;
+  return extractUniqueValues(data || [], (item) => item.election_term);
 }
 
 // Get archived data summary by prefecture for a specific election term
@@ -671,37 +600,11 @@ export async function getArchivedPosterBoardSummary(
   }
 
   // データを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  if (data && Array.isArray(data)) {
-    for (const row of data) {
-      const prefecture = row.prefecture;
-      if (!prefecture) continue;
-
-      if (!summary[prefecture]) {
-        summary[prefecture] = {
-          total: 0,
-          statuses: {
-            not_yet: 0,
-            not_yet_dangerous: 0,
-            reserved: 0,
-            done: 0,
-            error_wrong_place: 0,
-            error_damaged: 0,
-            error_wrong_poster: 0,
-            other: 0,
-          },
-        };
-      }
-      summary[prefecture].statuses[row.status as BoardStatus] = row.count;
-      summary[prefecture].total += row.count;
-    }
+  if (!data || !Array.isArray(data)) {
+    return {};
   }
 
-  return summary;
+  return buildSummaryFromAggregatedRows(data, (row) => row.prefecture);
 }
 
 // Get archived poster boards minimal data for a specific election term and prefecture
@@ -777,21 +680,7 @@ export async function getArchivedPosterBoardStats(
     throw error;
   }
 
-  const statusCounts: Record<BoardStatus, number> = {
-    not_yet: 0,
-    not_yet_dangerous: 0,
-    reserved: 0,
-    done: 0,
-    error_wrong_place: 0,
-    error_damaged: 0,
-    error_wrong_poster: 0,
-    other: 0,
-  };
-
-  for (const row of data || []) {
-    statusCounts[row.status] += 1;
-  }
-
+  const statusCounts = countBoardsByStatus(data || []);
   const totalCount = data?.length || 0;
 
   return { totalCount, statusCounts };
