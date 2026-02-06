@@ -105,6 +105,61 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `src/features/{機能名}/services/` - 機能固有のデータアクセス
 - `src/lib/services/` - 共通のデータアクセス
 
+### Supabaseクライアントの使い分けルール
+
+このプロジェクトには2種類のSupabaseクライアントがあり、用途に応じて正しく使い分ける必要があります。
+
+| クライアント | 用途 | cookie/セッション | RLSバイパス |
+|---|---|---|---|
+| `createClient()` | 認証操作（セッション管理） | あり | なし |
+| `createAdminClient()` | データベース操作（CRUD） | なし | あり |
+
+#### `createClient()` を使うべき場面（`@/lib/supabase/client`）
+- `supabase.auth.getUser()` - 現在のログインユーザー取得
+- `supabase.auth.exchangeCodeForSession()` - OAuthコールバック処理
+- `supabase.auth.updateUser()` - ユーザー情報更新
+- その他すべての `supabase.auth.*` 操作
+
+**理由**: `createClient` は `@supabase/ssr` の `createServerClient` を使い、Next.jsのcookieと連携してセッション情報を読み書きします。
+
+#### `createAdminClient()` を使うべき場面（`@/lib/supabase/adminClient`）
+- `supabase.from("table").select()` - テーブルデータの読み取り
+- `supabase.from("table").insert()` / `.update()` / `.delete()` - テーブルデータの書き込み
+- その他すべての `supabase.from(...)` 操作
+
+**理由**: RLSポリシーが削除されているため、`service_role` キーを持つ `createAdminClient` でないとデータにアクセスできません。
+
+#### 両方が必要な場合のパターン
+認証とデータベース操作の両方が必要な場合は、2つのクライアントを併用します：
+
+```typescript
+// 正しいパターン: 認証 + DB操作の併用
+import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
+
+export async function someAction() {
+  // 認証: cookie-aware clientでユーザー取得
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // DB操作: admin clientでデータアクセス
+  const supabaseAdmin = await createAdminClient();
+  const { data } = await supabaseAdmin.from("table").select().eq("user_id", user.id);
+}
+```
+
+#### 禁止パターン
+```typescript
+// NG: admin clientで認証操作 → cookieが読めずセッション取得失敗
+const supabase = await createAdminClient();
+const { data: { user } } = await supabase.auth.getUser(); // 動かない
+
+// NG: 通常clientでDB操作 → RLSで拒否される
+const supabase = createClient();
+const { data } = await supabase.from("table").select(); // RLSで空結果
+```
+
 ### 主要技術スタック
 - **フレームワーク**: Next.js 15 with App Router
 - **データベース**: Supabase (PostgreSQL with RLS)
