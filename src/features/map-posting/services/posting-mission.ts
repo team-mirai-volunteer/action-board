@@ -1,5 +1,5 @@
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getShapeMissionStatus } from "./posting-shapes";
 
 // ミッション達成済みかチェック（posting_activitiesのshape_idで判定）
@@ -16,7 +16,7 @@ export async function completePostingMission(
   postingCount: number,
   locationText?: string,
 ): Promise<{ success: boolean; xpGranted?: number; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 既に達成済みかチェック
   const isCompleted = await checkShapeMissionCompleted(shapeId);

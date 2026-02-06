@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { chunk } from "@/lib/utils/array-utils";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
@@ -7,8 +7,6 @@ import {
   calculatePolygonCentroid,
 } from "../utils/polygon-utils";
 import { reverseGeocode } from "./reverse-geocoding";
-
-const supabase = createClient();
 
 /**
  * 図形の座標から住所情報と中心座標を取得
@@ -58,6 +56,7 @@ async function getAddressForShape(shape: MapShape): Promise<{
 }
 
 export async function saveShape(shape: MapShape) {
+  const supabase = await createAdminClient();
   const nowISO = new Date().toISOString();
 
   // ポリゴンの場合、住所情報を取得
@@ -90,6 +89,7 @@ export async function saveShape(shape: MapShape) {
 }
 
 export async function deleteShape(id: string) {
+  const supabase = await createAdminClient();
   const { count, error } = await supabase
     .from("posting_shapes")
     .delete({ count: "exact" })
@@ -109,6 +109,7 @@ export async function deleteShape(id: string) {
 const BATCH_SIZE = 200;
 
 export async function loadShapes(eventId: string) {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_shapes")
     .select("*")
@@ -189,6 +190,7 @@ export async function loadShapes(eventId: string) {
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
+  const supabase = await createAdminClient();
   // Exclude protected fields that should not be updated
   const {
     id: _id,
@@ -246,6 +248,7 @@ export async function updateShapeStatus(
   status: PostingShapeStatus,
   memo?: string | null,
 ) {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_shapes")
     .update({
@@ -269,6 +272,7 @@ export async function updateShapeStatus(
 export async function getShapeMissionStatus(
   shapeId: string,
 ): Promise<ShapeMissionStatus> {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_activities")
     .select("id, posting_count, mission_artifact_id")

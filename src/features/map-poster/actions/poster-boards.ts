@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
 import { mapUserToHistory } from "../utils/history-helpers";
@@ -22,7 +22,7 @@ export async function getPosterBoardStatsAction(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   try {
     // 最適化されたRPC関数を使用
@@ -174,7 +174,7 @@ export async function getPosterBoardStatsByDistrictAction(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   try {
     const { data, error } = await supabase
@@ -272,7 +272,7 @@ export async function getUserEditedBoardIdsByDistrictAction(
 
 // 個別の掲示板の履歴を取得
 export async function getBoardStatusHistoryAction(boardId: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // まず履歴データを取得
   const { data: historyData, error: historyError } = await supabase

@@ -1,13 +1,12 @@
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Tables } from "@/lib/types/supabase";
 
 export type PostingEvent = Tables<"posting_events">;
 
-const supabase = createClient();
-
 export async function getEventBySlug(
   slug: string,
 ): Promise<PostingEvent | null> {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_events")
     .select("*")
@@ -27,6 +26,7 @@ export async function getEventBySlug(
 }
 
 export async function getActiveEvent(): Promise<PostingEvent | null> {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_events")
     .select("*")
@@ -46,6 +46,7 @@ export async function getActiveEvent(): Promise<PostingEvent | null> {
 }
 
 export async function getAllEvents(): Promise<PostingEvent[]> {
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_events")
     .select("*")

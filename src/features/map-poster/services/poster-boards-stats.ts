@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Database } from "@/lib/types/supabase";
 import {
   aggregateBoardStats,
@@ -13,7 +13,7 @@ export async function getPosterBoardStats(): Promise<{
   total: number;
   completed: number;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Use SQL aggregation for much faster performance
   const { data, error } = await supabase.rpc("get_poster_board_stats");
@@ -37,7 +37,7 @@ async function getFallbackStats(): Promise<{
   total: number;
   completed: number;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Fetch only necessary fields with pagination
   let allBoards: { prefecture: string; status: BoardStatus }[] = [];
