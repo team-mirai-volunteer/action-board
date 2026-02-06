@@ -1,4 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  buildPosterActivityText,
+  buildPostingActivityText,
+  getArtifactTypeLabel,
+} from "@/features/mission-detail/utils/activity-text-builders";
 import { grantXp } from "@/features/user-level/services/level";
 import { MAX_POSTER_COUNT } from "@/lib/constants/mission-config";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
@@ -73,19 +78,25 @@ const ARTIFACT_PAYLOAD_BUILDERS: Record<
       return nullFields();
     return {
       link_url: null,
-      text_content: `${data.postingCount}枚を${data.locationText}に配布`,
+      text_content: buildPostingActivityText(
+        data.postingCount,
+        data.locationText,
+      ),
       image_storage_path: null,
     };
   },
   [ARTIFACT_TYPES.POSTER.key]: (data) => {
     if (data.requiredArtifactType !== ARTIFACT_TYPES.POSTER.key)
       return nullFields();
-    const locationInfo = `${data.prefecture}${data.city} ${data.boardNumber}`;
-    const nameInfo = data.boardName ? ` (${data.boardName})` : "";
-    const statusInfo = data.boardNote ? ` - 状況: ${data.boardNote}` : "";
     return {
       link_url: null,
-      text_content: `${locationInfo}${nameInfo}に貼付${statusInfo}`,
+      text_content: buildPosterActivityText(
+        data.prefecture,
+        data.city,
+        data.boardNumber,
+        data.boardName,
+        data.boardNote,
+      ),
       image_storage_path: null,
     };
   },
@@ -125,17 +136,8 @@ export function buildArtifactPayload(
   return builder(validatedData);
 }
 
-/**
- * artifact type のラベルを取得する（ログ用）。
- */
-export function getArtifactTypeLabel(artifactType: string): string {
-  for (const type of Object.values(ARTIFACT_TYPES)) {
-    if (type.key === artifactType) {
-      return type.key;
-    }
-  }
-  return "OTHER";
-}
+// getArtifactTypeLabel is re-exported from activity-text-builders
+export { getArtifactTypeLabel };
 
 /**
  * POSTING / POSTER 共通のボーナスXP計算・付与。
