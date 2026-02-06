@@ -2,6 +2,7 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { extractHashtags } from "@/lib/utils/text-utils";
 import type {
   TikTokSyncResult,
   TikTokVideo,
