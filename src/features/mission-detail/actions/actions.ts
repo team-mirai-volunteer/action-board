@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
+import { isBonusMission } from "@/features/mission-detail/utils/mission-xp-utils";
 import {
   getUserXpBonus,
   grantMissionCompletionXp,
@@ -20,6 +21,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Database, TablesInsert } from "@/lib/types/supabase";
+import { formatZodErrors } from "@/lib/utils/validation-utils";
 import {
   buildArtifactPayload,
   getArtifactTypeLabel,
@@ -306,9 +308,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   if (!validatedFields.success) {
     return {
       success: false,
-      error: validatedFields.error.errors
-        .map((error) => error.message)
-        .join("\n"),
+      error: formatZodErrors(validatedFields.error),
     };
   }
 
@@ -856,9 +856,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   if (!validatedFields.success) {
     return {
       success: false,
-      error: validatedFields.error.errors
-        .map((error) => error.message)
-        .join("\n"),
+      error: formatZodErrors(validatedFields.error),
     };
   }
 
@@ -935,11 +933,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     missionData.difficulty,
     missionData.is_featured,
   );
-  const isBonusMission = [
-    "posting-magazine",
-    "put-up-poster-on-board",
-  ].includes(missionData.slug);
-  const bonusXp = isBonusMission
+  const bonusXp = isBonusMission(missionData.slug)
     ? await getUserXpBonus(authUser.id, validatedAchievementId)
     : 0;
   const totalXpToRevoke = xpToRevoke + bonusXp;
