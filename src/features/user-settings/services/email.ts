@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/adminClient";
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * メールアドレス変更リクエストを送信
@@ -8,7 +8,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 export async function requestEmailChange(
   newEmail: string,
 ): Promise<{ success: true } | { success: false; error: string }> {
-  const supabaseClient = await createAdminClient();
+  const supabaseClient = createClient();
 
   try {
     // Supabaseでメールアドレスを更新
