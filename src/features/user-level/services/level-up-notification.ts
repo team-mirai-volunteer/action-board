@@ -3,7 +3,10 @@ import "server-only";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { LevelUpNotification } from "../types/level-types";
-import { totalXp } from "../utils/level-calculator";
+import {
+  buildLevelUpNotificationData,
+  shouldShowLevelUpNotification,
+} from "../utils/level-up-helpers";
 
 /**
  * レベルアップ通知をチェックし、必要に応じて通知データを返す
@@ -30,24 +33,17 @@ export async function checkLevelUpNotification(
     return { shouldNotify: false };
   }
 
-  // 現在のレベルと最後に通知されたレベルを比較
-  const currentLevel = userLevel.level;
-  const lastNotifiedLevel = userLevel.last_notified_level || 1;
-
-  // レベルが上がっている場合は通知する
-  if (currentLevel > lastNotifiedLevel) {
-    // 次のレベルまでのポイントを計算
-    const nextLevelPoints = totalXp(currentLevel + 1);
-    const pointsToNextLevel = nextLevelPoints - userLevel.xp;
-
-    return {
-      shouldNotify: true,
-      levelUp: {
-        previousLevel: lastNotifiedLevel,
-        newLevel: currentLevel,
-        pointsToNextLevel: Math.max(0, pointsToNextLevel),
-      },
-    };
+  if (
+    shouldShowLevelUpNotification(
+      userLevel.level,
+      userLevel.last_notified_level,
+    )
+  ) {
+    return buildLevelUpNotificationData(
+      userLevel.level,
+      userLevel.last_notified_level,
+      userLevel.xp,
+    );
   }
 
   return { shouldNotify: false };
