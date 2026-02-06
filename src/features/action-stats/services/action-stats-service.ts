@@ -7,6 +7,10 @@ import type {
   DailyActiveUsersItem,
   MissionActionRanking,
 } from "../types";
+import {
+  mapMissionRankingResults,
+  transformActionStatsResult,
+} from "../utils/stats-transform";
 
 /**
  * アクション統計サマリーを取得する（RPC使用）
@@ -33,13 +37,7 @@ export async function getActionStatsSummary(
     };
   }
 
-  const result = data?.[0];
-  return {
-    totalActions: Number(result?.total_actions ?? 0),
-    activeUsers: Number(result?.active_users ?? 0),
-    dailyActionsIncrease: Number(result?.daily_actions_increase ?? 0),
-    dailyUsersIncrease: Number(result?.daily_users_increase ?? 0),
-  };
+  return transformActionStatsResult(data?.[0]);
 }
 
 /**
@@ -129,21 +127,5 @@ export async function getMissionActionRanking(
     return [];
   }
 
-  return (data ?? []).map(
-    (item: {
-      mission_id: string;
-      mission_title: string;
-      mission_slug: string;
-      icon_url: string | null;
-      action_count: number;
-      is_hidden: boolean;
-    }) => ({
-      missionId: item.mission_id,
-      missionTitle: item.mission_title,
-      missionSlug: item.mission_slug,
-      iconUrl: item.icon_url,
-      actionCount: Number(item.action_count),
-      isHidden: item.is_hidden,
-    }),
-  );
+  return mapMissionRankingResults(data ?? []);
 }

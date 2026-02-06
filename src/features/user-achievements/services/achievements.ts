@@ -2,6 +2,10 @@ import "server-only";
 
 import type { MissionAchievementSummary } from "@/features/user-achievements/types/achievement-types";
 import { createClient } from "@/lib/supabase/client";
+import {
+  aggregateAchievementCounts,
+  buildAchievementMap,
+} from "../utils/achievement-aggregation";
 
 export async function getUserRepeatableMissionAchievements(
   userId: string,
@@ -37,27 +41,8 @@ export async function getUserRepeatableMissionAchievements(
 
   if (!data) return [];
 
-  const achievementCounts = data.reduce(
-    (acc, achievement) => {
-      const missionId = achievement.mission_id;
-      if (!missionId || !achievement.missions) return acc;
-
-      if (!acc[missionId]) {
-        acc[missionId] = {
-          mission_id: missionId,
-          mission_slug: achievement.missions.slug,
-          mission_title: achievement.missions.title,
-          achievement_count: 0,
-        };
-      }
-      acc[missionId].achievement_count += 1;
-      return acc;
-    },
-    {} as Record<string, MissionAchievementSummary>,
-  );
-
-  return Object.values(achievementCounts).filter(
-    (achievement) => achievement.achievement_count > 0,
+  return aggregateAchievementCounts(
+    data as Parameters<typeof aggregateAchievementCounts>[0],
   );
 }
 
@@ -79,13 +64,5 @@ export async function getUserMissionAchievements(
     throw error;
   }
 
-  const achievementMap = new Map<string, number>();
-  for (const achievement of achievements ?? []) {
-    if (achievement.mission_id) {
-      const current = achievementMap.get(achievement.mission_id) ?? 0;
-      achievementMap.set(achievement.mission_id, current + 1);
-    }
-  }
-
-  return achievementMap;
+  return buildAchievementMap(achievements ?? []);
 }
