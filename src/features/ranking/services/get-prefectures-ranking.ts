@@ -11,6 +11,7 @@ import {
   dateFilterToISOString,
   getPeriodDateFilter,
 } from "../utils/period-utils";
+import { attachPartyMembership } from "../utils/ranking-helpers";
 
 export async function getPrefecturesRanking(
   prefecture: string,
@@ -61,18 +62,16 @@ export async function getPrefecturesRanking(
     );
 
     // ランキングデータを変換（period_prefecture_rankingの結果形式）
-    return rankings.map((ranking: Record<string, unknown>) => {
-      return {
-        user_id: ranking.user_id,
-        name: ranking.name,
-        address_prefecture: prefecture,
-        rank: ranking.rank,
-        level: ranking.level,
-        xp: ranking.xp,
-        updated_at: ranking.updated_at,
-        party_membership: membershipMap[ranking.user_id as string],
-      } as UserRanking;
-    });
+    const mapped = rankings.map((ranking: Record<string, unknown>) => ({
+      user_id: ranking.user_id as string | null,
+      name: ranking.name,
+      address_prefecture: prefecture,
+      rank: ranking.rank,
+      level: ranking.level,
+      xp: ranking.xp,
+      updated_at: ranking.updated_at,
+    }));
+    return attachPartyMembership(mapped, membershipMap) as UserRanking[];
   } catch (error) {
     console.error("Prefecture ranking service error:", error);
     throw error;

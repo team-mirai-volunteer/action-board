@@ -11,6 +11,7 @@ import {
   dateFilterToISOString,
   getPeriodDateFilter,
 } from "../utils/period-utils";
+import { attachPartyMembership } from "../utils/ranking-helpers";
 
 export async function getMissionRanking(
   missionId: string,
@@ -62,44 +63,35 @@ export async function getMissionRanking(
 
     // ランキングデータを変換
     if (period === "all") {
-      return rankings.map(
-        (ranking) =>
-          ({
-            user_id: ranking.user_id,
-            name: ranking.user_name,
-            address_prefecture: ranking.address_prefecture,
-            rank: ranking.rank,
-            level: ranking.level,
-            xp: ranking.xp,
-            updated_at: ranking.updated_at,
-            user_achievement_count: ranking.user_achievement_count,
-            total_points: ranking.total_points,
-            party_membership:
-              ranking.user_id && membershipMap[ranking.user_id]
-                ? membershipMap[ranking.user_id]
-                : null,
-          }) as UserMissionRanking,
-      );
+      const mapped = rankings.map((ranking) => ({
+        user_id: ranking.user_id,
+        name: ranking.user_name,
+        address_prefecture: ranking.address_prefecture,
+        rank: ranking.rank,
+        level: ranking.level,
+        xp: ranking.xp,
+        updated_at: ranking.updated_at,
+        user_achievement_count: ranking.user_achievement_count,
+        total_points: ranking.total_points,
+      }));
+      return attachPartyMembership(
+        mapped,
+        membershipMap,
+      ) as UserMissionRanking[];
     }
     // 期間別の場合
-    return rankings.map(
-      (ranking) =>
-        ({
-          user_id: ranking.user_id,
-          name: ranking.user_name,
-          address_prefecture: ranking.address_prefecture,
-          rank: ranking.rank,
-          level: null, // 期間別では取得しない
-          xp: null, // 期間別では取得しない
-          updated_at: null,
-          user_achievement_count: ranking.user_achievement_count,
-          total_points: ranking.total_points,
-          party_membership:
-            ranking.user_id && membershipMap[ranking.user_id]
-              ? membershipMap[ranking.user_id]
-              : null,
-        }) as UserMissionRanking,
-    );
+    const mapped = rankings.map((ranking) => ({
+      user_id: ranking.user_id,
+      name: ranking.user_name,
+      address_prefecture: ranking.address_prefecture,
+      rank: ranking.rank,
+      level: null as number | null,
+      xp: null as number | null,
+      updated_at: null as string | null,
+      user_achievement_count: ranking.user_achievement_count,
+      total_points: ranking.total_points,
+    }));
+    return attachPartyMembership(mapped, membershipMap) as UserMissionRanking[];
   } catch (error) {
     console.error("Mission ranking service error:", error);
     throw error;
