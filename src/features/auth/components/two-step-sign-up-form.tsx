@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CollapsibleInfo } from "@/components/common/collapsible-info";
 import { FormMessage, type Message } from "@/components/common/form-message";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { signInWithLine } from "@/features/auth/services/line-auth";
-import { calculateAge } from "@/lib/utils/utils";
+import {
+  formatBirthDate,
+  generateDaysArray,
+} from "@/lib/utils/date-form-utils";
+import { verifyMinimumAge } from "@/lib/utils/form-date-utils";
 
 interface TwoStepSignUpFormProps {
   searchParams: Message;
@@ -316,55 +320,27 @@ export default function TwoStepSignUpForm({
   const birthYearThreshold = new Date().getFullYear() - 18;
   const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from(
-    { length: new Date(selectedYear, selectedMonth, 0).getDate() },
-    (_, i) => i + 1,
+  const days = generateDaysArray(selectedYear, selectedMonth);
+
+  const formattedDate = formatBirthDate(
+    selectedYear,
+    selectedMonth,
+    selectedDay,
   );
-
-  // 日付フォーマット関数
-  const formatDate = useCallback(
-    (year: number | null, month: number | null, day: number | null): string => {
-      if (!year || !month || !day) return "";
-      const pad = (n: number) => n.toString().padStart(2, "0");
-      return `${year}-${pad(month)}-${pad(day)}`;
-    },
-    [],
-  );
-
-  const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
-
-  // 年齢チェック関数
-  const verifyAge = useCallback((birthdate: string): boolean => {
-    if (!birthdate) return false;
-
-    const age = calculateAge(birthdate);
-    if (age < 18) {
-      const yearsToWait = 18 - age;
-      const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
-      setAgeError(
-        `18歳以上の方のみご登録いただけます。${waitText}登録できますので、その日を楽しみにお待ちください！`,
-      );
-      setIsAgeValid(false);
-      return false;
-    }
-
-    setAgeError(null);
-    setIsAgeValid(true);
-    return true;
-  }, []);
 
   // 生年月日が変更された際に年齢チェックを実行
   useEffect(() => {
-    verifyAge(formattedDate);
-  }, [formattedDate, verifyAge]);
+    const result = verifyMinimumAge(formattedDate, 18);
+    setAgeError(result.message);
+    setIsAgeValid(result.isValid);
+  }, [formattedDate]);
 
   // 月を変更した際、日付が月の日数を超えていたら1日に変更する
   useEffect(() => {
-    const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-    if (selectedDay > daysInMonth) {
+    if (selectedDay > days.length) {
       setSelectedDay(1);
     }
-  }, [selectedYear, selectedMonth, selectedDay]);
+  }, [selectedDay, days.length]);
 
   const handleNext = () => {
     setCurrentPhase("login-selection");

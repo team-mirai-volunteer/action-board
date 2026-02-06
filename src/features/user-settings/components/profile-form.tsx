@@ -35,10 +35,10 @@ import { updateProfile } from "@/features/user-settings/actions/profile-actions"
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
 import {
-  formatDateComponents,
-  getDaysInMonth,
-  verifyMinimumAge,
-} from "@/lib/utils/form-date-utils";
+  formatBirthDate,
+  generateDaysArray,
+} from "@/lib/utils/date-form-utils";
+import { verifyMinimumAge } from "@/lib/utils/form-date-utils";
 
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 
@@ -101,9 +101,9 @@ export default function ProfileForm({
   const birthYearThreshold = new Date().getFullYear() - 18;
   const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = getDaysInMonth(selectedYear, selectedMonth);
+  const days = generateDaysArray(selectedYear, selectedMonth);
 
-  const formattedDate = formatDateComponents(
+  const formattedDate = formatBirthDate(
     selectedYear,
     selectedMonth,
     selectedDay,
