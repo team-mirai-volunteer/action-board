@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { chunk } from "@/lib/utils/array-utils";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
 import {
@@ -106,17 +107,6 @@ export async function deleteShape(id: string) {
 
 // URLパラメータ長制限を回避するためのバッチサイズ
 const BATCH_SIZE = 200;
-
-/**
- * 配列をバッチに分割するヘルパー関数
- */
-function chunk<T>(array: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
-}
 
 export async function loadShapes(eventId: string) {
   const { data, error } = await supabase
