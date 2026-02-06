@@ -1,7 +1,14 @@
 import type { NextRequest } from "next/server";
+import { resolveMaintenanceResponse } from "@/lib/middleware/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  const maintenanceResponse = resolveMaintenanceResponse(request);
+
+  if (maintenanceResponse) {
+    return maintenanceResponse;
+  }
+
   return await updateSession(request);
 }
 
