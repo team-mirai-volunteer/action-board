@@ -30,7 +30,7 @@ export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
       href={video.video_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+      className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors bg-white"
     >
       {/* サムネイル（縦長） */}
       <div className="relative w-10 h-15 flex-shrink-0 bg-gray-100 rounded overflow-hidden">

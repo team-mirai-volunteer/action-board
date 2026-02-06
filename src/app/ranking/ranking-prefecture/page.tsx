@@ -70,7 +70,7 @@ export default async function RankingPrefecturePage({
       </h2>
       <RankingTabs>
         {/* 都道府県選択 */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           <PrefectureSelect
             prefectures={prefectures}
             selectedPrefecture={selectedPrefecture}
@@ -79,7 +79,7 @@ export default async function RankingPrefecturePage({
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCardPrefecture
               currentUser={userRanking}
               prefecture={selectedPrefecture}
@@ -87,7 +87,7 @@ export default async function RankingPrefecturePage({
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* 都道府県別ランキング（シーズン対応） */}
           <RankingPrefecture
             limit={100}

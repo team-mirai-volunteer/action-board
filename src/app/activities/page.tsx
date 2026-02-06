@@ -20,7 +20,7 @@ export default async function ActivitiesPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col gap-6">
           <div className="text-center">

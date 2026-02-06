@@ -52,7 +52,7 @@ export function RankingTabs({ children, seasonSlug }: RankingTabsProps) {
   };
 
   return (
-    <Tabs value={getTabValue()} className="w-full max-w-6xl mx-auto px-4">
+    <Tabs value={getTabValue()} className="w-full max-w-xl mx-auto px-4">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="overall" asChild>
           <Link href={getTabHref("overall")}>全体</Link>
@@ -64,7 +64,9 @@ export function RankingTabs({ children, seasonSlug }: RankingTabsProps) {
           <Link href={getTabHref("mission")}>ミッション別</Link>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value={getTabValue()}>{children}</TabsContent>
+      <section className="max-w-lg mx-auto">
+        <TabsContent value={getTabValue()}>{children}</TabsContent>
+      </section>
     </Tabs>
   );
 }

@@ -93,13 +93,13 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
       </h2>
       <RankingTabs>
         {/* ミッション選択 */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           <MissionSelect missions={missions} />
         </section>
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCardMission
               currentUser={userRanking}
               mission={selectedMission}
@@ -108,7 +108,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* ミッション別ランキング（シーズン対応） */}
           <RankingMission
             limit={100}

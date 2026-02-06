@@ -10,7 +10,11 @@ export default async function Hero() {
 
   if (user) {
     try {
-      return <Levels userId={user.id} clickable={true} showBadge={true} />;
+      return (
+        <section className="mt-[-96px] pt-24 bg-gradient-hero ">
+          <Levels userId={user.id} clickable={true} showBadge={true} />
+        </section>
+      );
     } catch (error) {
       console.error("Error fetching user levels:", error);
     }
