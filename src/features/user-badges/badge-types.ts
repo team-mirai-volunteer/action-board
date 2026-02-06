@@ -38,8 +38,12 @@ export const getBadgeTitle = (badge: UserBadge): string => {
       return `総合ランキング ${badge.rank}位`;
     case "PREFECTURE":
       return `${badge.sub_type}ランキング ${badge.rank}位`;
-    case "MISSION":
-      return `${badge.mission_title || badge.sub_type} ${badge.rank}位`;
+    case "MISSION": {
+      const title = badge.mission_title ?? badge.sub_type ?? "";
+      return title
+        ? `${title} ${badge.rank}位`
+        : `ミッションランキング ${badge.rank}位`;
+    }
     default:
       return `ランキング ${badge.rank}位`;
   }

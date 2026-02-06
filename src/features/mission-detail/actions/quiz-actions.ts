@@ -2,16 +2,14 @@
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import {
+  gradeQuizAnswers,
+  type QuizAnswer,
+  type QuizQuestion,
+  transformQuizRow,
+} from "../utils/quiz-grader";
 
-// クイズ用の型定義
-export interface QuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correct_answer: number;
-  explanation: string | null;
-  category?: string; // カテゴリー名を追加
-}
+export type { QuizQuestion };
 
 // ミッションリンクの型定義
 export interface MissionLink {
@@ -88,19 +86,7 @@ async function getQuestionsByMission(
     return [];
   }
 
-  return data.map((q) => {
-    const category = Array.isArray(q.quiz_categories)
-      ? q.quiz_categories[0]
-      : q.quiz_categories;
-    return {
-      id: q.id,
-      question: q.question,
-      options: [q.option1, q.option2, q.option3, q.option4],
-      correct_answer: q.correct_answer,
-      explanation: q.explanation,
-      category: category?.name || "その他",
-    };
-  });
+  return data.map(transformQuizRow);
 }
 
 // === クイズ関連のServer Actions ===
@@ -216,40 +202,11 @@ export const checkQuizAnswersAction = async (
     }
 
     // 回答チェック
-    const results = answers.map((answer) => {
-      const question = questions.find((q) => q.id === answer.questionId);
-      if (!question) {
-        return {
-          questionId: answer.questionId,
-          correct: false,
-          explanation: "",
-          selectedAnswer: answer.selectedAnswer,
-          correctAnswer: 0, // デフォルト値
-        };
-      }
-
-      const isCorrect = question.correct_answer === answer.selectedAnswer;
-      return {
-        questionId: answer.questionId,
-        correct: isCorrect,
-        explanation: question.explanation || "",
-        selectedAnswer: answer.selectedAnswer,
-        correctAnswer: question.correct_answer,
-      };
-    });
-
-    const correctCount = results.filter((r) => r.correct).length;
-    const totalQuestions = questions.length;
-    const score = Math.round((correctCount / totalQuestions) * 100);
-    const passed = correctCount === totalQuestions; // 全問正解が合格条件
+    const gradeResult = gradeQuizAnswers(questions, answers as QuizAnswer[]);
 
     return {
       success: true,
-      score,
-      passed,
-      correctAnswers: correctCount,
-      totalQuestions,
-      results,
+      ...gradeResult,
     };
   } catch (error) {
     console.error("Error checking quiz answers:", error);

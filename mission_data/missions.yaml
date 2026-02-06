@@ -822,3 +822,24 @@ missions:
     is_hidden: false
     artifact_label: null
     ogp_image_url: null
+  - slug: share-vstudio-video
+    title: みらい動画スタジオで動画を作って投稿してみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-clip.svg
+    content: |-
+      みらい動画スタジオで、チームみらいの動画から「これ！」という場面を簡単に見つけて、SNSでシェアしましょう。
+
+      使い方はとってもカンタン（3ステップ）：
+      ・<a href="https://vstudio.team-mir.ai/" target="_blank" rel="noopener noreferrer">みらい動画スタジオ</a>にアクセス → 「皆が切り抜いた動画はこちら」をタップ
+      ・気に入ったクリップを選んで操作すると、AIが自動で字幕をつけてくれます（待つだけでOK！）
+      ・完成した動画をダウンロードして、TikTok・X・Instagram・YouTubeなどに投稿！
+
+      難しい編集は一切不要。スマホだけでできます。
+      あなたが届けた一本の動画が、まだチームみらいを知らない誰かの心を動かすかもしれません。みんなで広げていきましょう！
+    difficulty: 4
+    required_artifact_type: LINK
+    max_achievement_count: null
+    is_featured: true
+    featured_importance: 100
+    is_hidden: false
+    artifact_label: 動画や投稿のURL
+    ogp_image_url: null

@@ -13,6 +13,13 @@ import type {
   TikTokVideoWithStats,
   VideoCountByDateItem,
 } from "../types";
+import {
+  aggregateDailyStats,
+  countVideosByDate,
+  generateDateRange,
+  getLatestStats,
+  mapVideoToWithStats,
+} from "../utils/stats-utils";
 
 /**
  * TikTok動画一覧を最新統計付きで取得する
@@ -66,30 +73,18 @@ export async function getTikTokVideosWithStats(
     return [];
   }
 
-  const videosWithStats: TikTokVideoWithStats[] = (videos || []).map(
-    (video) => {
-      const stats = video.tiktok_video_stats as Array<{
-        view_count: number | null;
-        like_count: number | null;
-        comment_count: number | null;
-        share_count: number | null;
-        recorded_at: string;
-      }>;
-
-      const latestStats = stats.sort(
-        (a, b) =>
-          new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-      )[0];
-
-      return {
-        ...video,
-        tiktok_video_stats: undefined,
-        latest_view_count: latestStats?.view_count ?? null,
-        latest_like_count: latestStats?.like_count ?? null,
-        latest_comment_count: latestStats?.comment_count ?? null,
-        latest_share_count: latestStats?.share_count ?? null,
-      } as TikTokVideoWithStats;
-    },
+  const videosWithStats: TikTokVideoWithStats[] = (videos || []).map((video) =>
+    mapVideoToWithStats(
+      video as unknown as Record<string, unknown> & {
+        tiktok_video_stats: Array<{
+          view_count: number | null;
+          like_count: number | null;
+          comment_count: number | null;
+          share_count: number | null;
+          recorded_at: string;
+        }>;
+      },
+    ),
   );
 
   const sorted = videosWithStats.sort((a, b) => {
@@ -235,12 +230,12 @@ export async function getTikTokStatsSummary(
       recorded_at: string;
     }>;
 
-    const sortedStats = stats.sort(
+    const sortedStats = [...stats].sort(
       (a, b) =>
         new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
     );
 
-    const latestStats = sortedStats[0];
+    const latestStats = getLatestStats(stats);
     if (latestStats) {
       totalLikes += latestStats.like_count ?? 0;
       totalComments += latestStats.comment_count ?? 0;
@@ -320,19 +315,7 @@ export async function getOverallStatsHistory(
     return [];
   }
 
-  const dailyStats = new Map<
-    string,
-    { total_views: number; total_likes: number }
-  >();
-
-  for (const stat of data || []) {
-    const date = stat.recorded_at;
-    const current = dailyStats.get(date) || { total_views: 0, total_likes: 0 };
-    dailyStats.set(date, {
-      total_views: current.total_views + (stat.view_count ?? 0),
-      total_likes: current.total_likes + (stat.like_count ?? 0),
-    });
-  }
+  const dailyStats = aggregateDailyStats(data || []);
 
   // 配列に変換して本日以降のデータを除外
   const { filterBeforeToday } = await import("@/lib/utils/date-utils");
@@ -380,26 +363,15 @@ export async function getVideoCountByDate(
     return [];
   }
 
-  const dailyCount = new Map<string, number>();
+  const dailyCount = countVideosByDate(
+    (data || []).map((video) => video.published_at),
+  );
 
-  for (const video of data || []) {
-    if (!video.published_at) continue;
-    const date = video.published_at.split("T")[0];
-    dailyCount.set(date, (dailyCount.get(date) || 0) + 1);
-  }
-
-  const result: VideoCountByDateItem[] = [];
-  effectiveEndDate.setHours(0, 0, 0, 0);
-
-  const currentDate = new Date(effectiveStartDate);
-  while (currentDate <= effectiveEndDate) {
-    const dateStr = currentDate.toISOString().split("T")[0];
-    result.push({
-      date: dateStr,
-      count: dailyCount.get(dateStr) || 0,
-    });
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+  const result = generateDateRange(
+    effectiveStartDate,
+    effectiveEndDate,
+    dailyCount,
+  );
 
   // 本日以降のデータを除外
   const { filterBeforeToday } = await import("@/lib/utils/date-utils");

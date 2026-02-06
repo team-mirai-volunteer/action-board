@@ -1,22 +1,15 @@
 import "server-only";
 
-import {
-  calculateXpPerCapita,
-  PREFECTURE_POPULATIONS,
-} from "@/lib/constants/prefecture-populations";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
 import type {
   PrefectureTeamRanking,
   UserPrefectureContribution,
 } from "../types/prefecture-team-types";
-
-// RPC関数の戻り値の型定義
-interface PrefectureTeamRankingRow {
-  prefecture: string;
-  total_xp: number;
-  user_count: number;
-}
+import {
+  type PrefectureTeamRankingRow,
+  transformToXpPerCapitaRanking,
+} from "../utils/ranking-transform";
 
 interface UserPrefectureContributionRow {
   prefecture: string;
@@ -57,22 +50,7 @@ export async function getPrefectureTeamRanking(
       return [];
     }
 
-    // 人口比XPを計算してランキングを生成
-    const rankingWithXpPerCapita = data
-      .filter((item) => PREFECTURE_POPULATIONS[item.prefecture])
-      .map((item) => ({
-        prefecture: item.prefecture,
-        totalXp: item.total_xp,
-        userCount: item.user_count,
-        xpPerCapita: calculateXpPerCapita(item.total_xp, item.prefecture),
-      }))
-      .sort((a, b) => b.xpPerCapita - a.xpPerCapita)
-      .map((item, index) => ({
-        ...item,
-        rank: index + 1,
-      }));
-
-    return rankingWithXpPerCapita;
+    return transformToXpPerCapitaRanking(data);
   } catch (error) {
     console.error("Prefecture team ranking service error:", error);
     throw error;

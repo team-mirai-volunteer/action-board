@@ -1,30 +1,21 @@
 import "server-only";
 
+import { getLatestStats } from "@/features/tiktok-stats/utils/stats-utils";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { extractHashtags } from "@/lib/utils/text-utils";
 import type {
   TikTokSyncResult,
   TikTokVideo,
   TikTokVideoFromAPI,
   TikTokVideoStats,
 } from "../types";
+import {
+  buildTikTokVideoInsertData,
+  buildTikTokVideoUpdateData,
+} from "../utils/data-builders";
+import { filterTeamMiraiVideos } from "../utils/video-filters";
 import { fetchVideoList } from "./tiktok-client";
-
-// #チームみらい を検出する正規表現
-const TEAM_MIRAI_REGEX = /#(チームみらい|teammirai)/i;
-
-/**
- * #チームみらい 動画をフィルタリングする
- */
-export function filterTeamMiraiVideos(
-  videos: TikTokVideoFromAPI[],
-): TikTokVideoFromAPI[] {
-  return videos.filter((video) => {
-    const description = video.video_description || "";
-    const title = video.title || "";
-    return TEAM_MIRAI_REGEX.test(description) || TEAM_MIRAI_REGEX.test(title);
-  });
-}
 
 /**
  * TikTok動画をDBに保存する（service_role使用）
@@ -48,13 +39,7 @@ export async function saveTikTokVideo(
     // 既存の動画がある場合は更新
     const { data, error } = await supabase
       .from("tiktok_videos")
-      .update({
-        title: video.title || null,
-        description: video.video_description || null,
-        thumbnail_url: video.cover_image_url || null,
-        duration: video.duration || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(buildTikTokVideoUpdateData(video))
       .eq("id", existing.id)
       .select()
       .single();
@@ -70,22 +55,9 @@ export async function saveTikTokVideo(
   // 新規動画を挿入
   const { data, error } = await supabase
     .from("tiktok_videos")
-    .insert({
-      video_id: video.id,
-      user_id: userId,
-      creator_id: creatorId,
-      creator_username: creatorUsername || null,
-      title: video.title || null,
-      description: video.video_description || null,
-      thumbnail_url: video.cover_image_url || null,
-      video_url: video.share_url,
-      published_at: video.create_time
-        ? new Date(video.create_time * 1000).toISOString()
-        : null,
-      duration: video.duration || null,
-      tags: extractHashtags(video.video_description || ""),
-      is_active: true,
-    })
+    .insert(
+      buildTikTokVideoInsertData(video, userId, creatorId, creatorUsername),
+    )
     .select()
     .single();
 
@@ -282,11 +254,7 @@ export async function getTikTokVideosWithStats(
   // 各動画の最新統計を取得
   const videosWithStats = ((videos || []) as VideoWithStats[]).map((video) => {
     const stats = video.tiktok_video_stats || [];
-
-    const latestStats = stats.sort(
-      (a, b) =>
-        new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    )[0];
+    const latestStats = getLatestStats(stats);
 
     return {
       ...video,
@@ -364,11 +332,7 @@ export async function getUserTikTokVideos(
   // 各動画の最新統計を取得
   return ((videos || []) as VideoWithStats[]).map((video) => {
     const stats = video.tiktok_video_stats || [];
-
-    const latestStats = stats.sort(
-      (a, b) =>
-        new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    )[0];
+    const latestStats = getLatestStats(stats);
 
     return {
       ...video,
@@ -405,12 +369,4 @@ export async function getTikTokVideoCount(): Promise<number> {
   }
 
   return count || 0;
-}
-
-/**
- * テキストからハッシュタグを抽出する
- */
-function extractHashtags(text: string): string[] {
-  const matches = text.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]+/g);
-  return matches || [];
 }

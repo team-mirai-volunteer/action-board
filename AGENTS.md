@@ -2,6 +2,10 @@
 
 このファイルは、このリポジトリでコードを操作する際のAIエージェントへの指針を提供します。
 
+## 並列PR作成ルール
+複数の独立したPRを作成する必要がある場合は、`/parallel-pr` スキルを使用して git worktree + エージェントチームで並列に作業すること。
+詳細は `docs/20260206_1437_並列worktreeチーム運用ガイド.md` を参照。
+
 ## 要件定義、実装計画のルール
 要件定義や実装計画を依頼された場合は、最初に論点を洗い出して、ユーザーに質問をしながら論点をクリアにしてください。 論点がクリアになったら、マークダウンでドキュメントを作成すること。
 
@@ -294,6 +298,26 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `main` - 本番準備完了コード
 - `develop` - 機能統合ブランチ (PRのデフォルトブランチ)
 - `feat/xxx` - 機能ブランチ (`develop`から分岐、`develop`にマージ)
+
+### Worktree必須ルール
+コード変更を伴う作業は、必ず git worktree を作成してから開始すること。メインのリポジトリディレクトリでは直接コード変更を行わない。
+
+- **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
+- **例外**: ドキュメント作成のみの作業、CLAUDE.mdの更新など、コードに影響しない変更
+
+### Git Worktree作成手順 (Claude Code向け)
+Claude Codeで作業を開始する場合は、以下の手順に従うこと：
+
+```bash
+# 1. worktreeを作成
+git worktree add ../action-board-<branch-name> -b <branch-name>
+
+# 2. .claudeディレクトリを作成し、settings.local.jsonをコピー
+mkdir -p ../action-board-<branch-name>/.claude
+cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
+```
+
+**重要**: `settings.local.json`には権限設定が含まれているため、コピーしないとworktree内でのファイル操作時に毎回permission確認が発生する。
 
 ### コード品質ツール
 - **Biome**: フォーマットとリンティング

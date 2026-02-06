@@ -1,15 +1,14 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { extractHashtags } from "@/lib/utils/text-utils";
+import { filterTeamMiraiVideos } from "../utils/video-filter";
 import type { YouTubeVideoDetail } from "./youtube-client";
 import {
   fetchChannelInfo,
   fetchUserUploadedVideos,
   fetchVideoDetails,
 } from "./youtube-client";
-
-// #チームみらい を検出する正規表現
-const TEAM_MIRAI_REGEX = /#(チームみらい|teammirai)/i;
 
 /**
  * YouTube同期結果
@@ -19,33 +18,6 @@ export interface YouTubeSyncResult {
   syncedCount?: number;
   skippedCount?: number;
   error?: string;
-}
-
-/**
- * #チームみらい 動画をフィルタリングする
- */
-export function filterTeamMiraiVideos(
-  videos: YouTubeVideoDetail[],
-): YouTubeVideoDetail[] {
-  return videos.filter((video) => {
-    const description = video.snippet.description || "";
-    const title = video.snippet.title || "";
-    const tags = video.snippet.tags || [];
-
-    return (
-      TEAM_MIRAI_REGEX.test(description) ||
-      TEAM_MIRAI_REGEX.test(title) ||
-      tags.some((tag) => TEAM_MIRAI_REGEX.test(tag))
-    );
-  });
-}
-
-/**
- * テキストからハッシュタグを抽出する
- */
-function extractHashtags(text: string): string[] {
-  const matches = text.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]+/g);
-  return matches || [];
 }
 
 /**

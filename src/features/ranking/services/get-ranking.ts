@@ -6,8 +6,12 @@ import {
 } from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createClient } from "@/lib/supabase/client";
-import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 import type { RankingPeriod, UserRanking } from "../types/ranking-types";
+import {
+  dateFilterToISOString,
+  getPeriodDateFilter,
+} from "../utils/period-utils";
+import { attachPartyMembership } from "../utils/ranking-helpers";
 
 export interface UserPeriodRanking {
   user_id: string;
@@ -31,14 +35,11 @@ export async function getUserPeriodRanking(
   const supabase = createClient();
 
   // 期間フィルター計算
-  let dateFilter: Date | null = null;
-  if (period === "daily") {
-    dateFilter = getJSTMidnightToday();
-  }
+  const dateFilter = getPeriodDateFilter(period);
 
   const { data, error } = await supabase.rpc("get_user_period_ranking", {
     target_user_id: userId,
-    start_date: dateFilter?.toISOString() || undefined,
+    start_date: dateFilterToISOString(dateFilter),
     p_season_id: seasonId,
   });
 
@@ -83,22 +84,13 @@ export async function getRanking(
     }
 
     // 期間に応じた日付フィルタを設定
-    let dateFilter: Date | null = null;
-
-    switch (period) {
-      case "daily":
-        // 日本時間の今日の0時0分を基準にする
-        dateFilter = getJSTMidnightToday();
-        break;
-      default:
-        dateFilter = null;
-    }
+    const dateFilter = getPeriodDateFilter(period);
 
     // 指定されたシーズンのRPC関数を使用
     const { data: periodRankingData, error: rpcError } = await supabase.rpc(
       "get_period_ranking",
       {
-        p_start_date: dateFilter?.toISOString() || undefined,
+        p_start_date: dateFilterToISOString(dateFilter),
         p_limit: limit,
         p_end_date: undefined,
         p_season_id: targetSeasonId, // 指定されたシーズンIDを使用
@@ -119,13 +111,7 @@ export async function getRanking(
         .filter((id): id is string => typeof id === "string" && id.length > 0),
     );
 
-    return rankings.map((ranking) => ({
-      ...ranking,
-      party_membership:
-        ranking.user_id && membershipMap[ranking.user_id]
-          ? membershipMap[ranking.user_id]
-          : null,
-    }));
+    return attachPartyMembership(rankings, membershipMap);
   } catch (error) {
     console.error("Ranking service error:", error);
     throw error;
