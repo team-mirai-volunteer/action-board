@@ -22,16 +22,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { completePostingMission } from "../actions/posting-mission-actions";
+import { updateShapeStatus } from "../actions/posting-shapes-actions";
 import {
   type PostingShapeStatus,
   postingStatusBadgeColors,
   postingStatusConfig,
 } from "../config/status-config";
-import { completePostingMission } from "../services/posting-mission";
-import {
-  getShapeMissionStatus,
-  updateShapeStatus,
-} from "../services/posting-shapes";
+import { getShapeMissionStatus } from "../loaders/posting-shapes-loaders";
 import type { MapShape } from "../types/posting-types";
 
 // 配布枚数の上限

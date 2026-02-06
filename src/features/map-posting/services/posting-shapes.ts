@@ -90,12 +90,13 @@ export async function saveShape(shape: MapShape) {
   return data;
 }
 
-export async function deleteShape(id: string) {
+export async function deleteShape(id: string, userId: string) {
   const supabase = await createAdminClient();
   const { count, error } = await supabase
     .from("posting_shapes")
     .delete({ count: "exact" })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", userId);
 
   if (count == null || count === 0) {
     throw new Error("No shape deleted");
@@ -191,7 +192,11 @@ export async function loadShapes(eventId: string) {
   }));
 }
 
-export async function updateShape(id: string, data: Partial<MapShape>) {
+export async function updateShape(
+  id: string,
+  data: Partial<MapShape>,
+  userId: string,
+) {
   const supabase = await createAdminClient();
   // Exclude protected fields that should not be updated
   const {
@@ -234,6 +239,7 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
     .from("posting_shapes")
     .update(updateData)
     .eq("id", id)
+    .eq("user_id", userId)
     .select()
     .single();
 
@@ -249,18 +255,23 @@ export async function updateShapeStatus(
   id: string,
   status: PostingShapeStatus,
   memo?: string | null,
+  userId?: string,
 ) {
   const supabase = await createAdminClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("posting_shapes")
     .update({
       status,
       memo,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", id)
-    .select()
-    .single();
+    .eq("id", id);
+
+  if (userId) {
+    query = query.eq("user_id", userId);
+  }
+
+  const { data, error } = await query.select().single();
 
   if (error) {
     console.error("Error updating shape status:", error);
