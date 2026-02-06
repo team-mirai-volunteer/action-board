@@ -105,6 +105,14 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `src/features/{機能名}/services/` - 機能固有のデータアクセス
 - `src/lib/services/` - 共通のデータアクセス
 
+### Supabaseクライアントの使い分けルール
+
+詳細は [docs/20260206_2220_Supabaseクライアント使い分けガイド.md](docs/20260206_2220_Supabaseクライアント使い分けガイド.md) を参照。
+
+- **`createClient()` / `getAuth()` / `getStorage()`**: 認証操作（`supabase.auth.*`）やStorage操作に使用。cookie連携あり。
+- **`createAdminClient()`**: DB操作（`supabase.from(...)`）に使用。service_roleでRLSバイパス。
+- **`createAdminClient()` で `supabase.auth.*` を呼んではいけない**（cookieが読めずセッション取得失敗）
+
 ### 主要技術スタック
 - **フレームワーク**: Next.js 15 with App Router
 - **データベース**: Supabase (PostgreSQL with RLS)
