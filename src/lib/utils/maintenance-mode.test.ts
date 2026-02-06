@@ -2,9 +2,9 @@ import {
   isMaintenanceActive,
   isMaintenancePreview,
   shouldShowMaintenance,
-} from "./time-check";
+} from "./maintenance-mode";
 
-describe("time-check", () => {
+describe("maintenance-mode", () => {
   it("JST 23:58:59 ではメンテナンス未開始", () => {
     const now = new Date("2026-02-07T14:58:59.000Z");
     expect(isMaintenanceActive(now)).toBe(false);

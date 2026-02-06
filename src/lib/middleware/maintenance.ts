@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { shouldShowMaintenance } from "@/lib/utils/time-check";
+import { shouldShowMaintenance } from "@/lib/utils/maintenance-mode";
 
 const MAINTENANCE_PATH = "/maintenance";
 const ROOT_PATH = "/";
