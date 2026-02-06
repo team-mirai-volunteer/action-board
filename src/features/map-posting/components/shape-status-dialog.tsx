@@ -125,7 +125,12 @@ export function ShapeStatusDialog({
     setIsUpdating(true);
     try {
       // 1. ステータスとメモを更新
-      await updateShapeStatus(shape.id, selectedStatus, memo || null);
+      await updateShapeStatus(
+        shape.id,
+        selectedStatus,
+        memo || null,
+        currentUserId,
+      );
 
       // 2. 配布完了 & 未達成の場合、ミッション達成処理
       if (

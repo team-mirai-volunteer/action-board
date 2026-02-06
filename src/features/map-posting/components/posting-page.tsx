@@ -727,7 +727,7 @@ export default function PostingPageClient({
     shapeId: string,
     options?: { layer?: Layer; removeFromMap?: boolean },
   ): Promise<void> {
-    await deleteMapShape(shapeId);
+    await deleteMapShape(shapeId, userId);
 
     // モーダルからの削除の場合はマップからレイヤーを削除
     if (options?.removeFromMap) {
@@ -808,10 +808,14 @@ export default function PostingPageClient({
     const shapeData = extractShapeData(layer);
     const sid = getShapeId(layer);
     if (sid) {
-      await updateMapShape(sid, {
-        coordinates: shapeData.coordinates,
-        properties: shapeData.properties,
-      });
+      await updateMapShape(
+        sid,
+        {
+          coordinates: shapeData.coordinates,
+          properties: shapeData.properties,
+        },
+        userId,
+      );
       return undefined;
     }
     const saved = await saveMapShape(shapeData);
