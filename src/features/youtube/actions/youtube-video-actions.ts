@@ -7,6 +7,7 @@ import {
   type YouTubeSyncResult,
 } from "../services/youtube-video-service";
 import type { YouTubeLinkStatus, YouTubeVideoWithStats } from "../types";
+import { enrichVideosWithLatestStats } from "../utils/like-video-transformers";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";
 
 /**
@@ -136,42 +137,8 @@ export async function getMyUploadedVideosAction(
     }
 
     // 各動画の最新統計を整形
-    const videosWithStats: YouTubeVideoWithStats[] = (videos || []).map(
-      (video) => {
-        const stats = video.youtube_video_stats as Array<{
-          view_count: number | null;
-          like_count: number | null;
-          comment_count: number | null;
-          recorded_at: string;
-        }>;
-
-        // 最新の統計を取得
-        const latestStats = stats?.sort(
-          (a, b) =>
-            new Date(b.recorded_at).getTime() -
-            new Date(a.recorded_at).getTime(),
-        )[0];
-
-        return {
-          video_id: video.video_id,
-          video_url: video.video_url,
-          title: video.title,
-          description: video.description,
-          thumbnail_url: video.thumbnail_url,
-          channel_id: video.channel_id,
-          channel_title: video.channel_title,
-          published_at: video.published_at,
-          duration: video.duration,
-          tags: video.tags,
-          is_active: video.is_active,
-          created_at: video.created_at,
-          updated_at: video.updated_at,
-          comments_synced_at: video.comments_synced_at,
-          latest_view_count: latestStats?.view_count ?? null,
-          latest_like_count: latestStats?.like_count ?? null,
-          latest_comment_count: latestStats?.comment_count ?? null,
-        };
-      },
+    const videosWithStats = enrichVideosWithLatestStats(
+      (videos || []) as Parameters<typeof enrichVideosWithLatestStats>[0],
     );
 
     return {
