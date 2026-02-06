@@ -5,8 +5,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { recordSignupActivity } from "@/features/user-activity/services/activity";
+import {
+  extractAvatarPathFromUrl,
+  shouldDeleteOldAvatar,
+  validateAvatarFile,
+} from "@/features/user-settings/utils/avatar-helpers";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import { AVATAR_MAX_FILE_SIZE } from "@/lib/services/avatar";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { sendWelcomeMail } from "@/lib/services/mail";
 import { createAdminClient } from "@/lib/supabase/adminClient";
@@ -131,40 +135,28 @@ export async function updateProfile(
   const avatar_file = formData.get("avatar") as File | null;
 
   // 画像ファイルのバリデーション
-  if (avatar_file && avatar_file.size > 0) {
-    // ファイルサイズのチェック
-    if (avatar_file.size > AVATAR_MAX_FILE_SIZE) {
-      return {
-        success: false,
-        error: "画像ファイルのサイズは5MB以下にしてください",
-      };
-    }
-
-    // ファイルタイプのチェック
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(avatar_file.type)) {
-      return {
-        success: false,
-        error: "対応している画像形式はJPEG、PNG、WebPです",
-      };
-    }
+  const avatarValidation = validateAvatarFile(avatar_file);
+  if (!avatarValidation.valid) {
+    return {
+      success: false,
+      error: avatarValidation.error,
+    };
   }
 
-  // 古い画像を削除するかチェック:
-  // 1. 画像が削除された場合（avatar_urlがnullになった）
-  // 2. 新しい画像がアップロードされる場合
-  const shouldDeleteOldAvatar =
-    previousAvatarUrl &&
-    (avatar_path === null || (avatar_file && avatar_file.size > 0));
+  // 古い画像を削除するかチェック
+  const needsDeleteOldAvatar = shouldDeleteOldAvatar(
+    previousAvatarUrl,
+    avatar_path,
+    !!(avatar_file && avatar_file.size > 0),
+  );
 
-  if (shouldDeleteOldAvatar) {
+  if (needsDeleteOldAvatar) {
     try {
-      // URLからファイルパスを抽出
-      // 例: https://xxxx.supabase.co/storage/v1/object/public/avatars/userid/12345.jpg
-      const pathMatch = previousAvatarUrl.match(/\/avatars\/(.+)$/);
+      const filePath = previousAvatarUrl
+        ? extractAvatarPathFromUrl(previousAvatarUrl)
+        : null;
 
-      if (pathMatch?.[1]) {
-        const filePath = pathMatch[1];
+      if (filePath) {
         // 古い画像をストレージから削除
         const { error: deleteError } = await supabaseServiceClient.storage
           .from("avatars")
