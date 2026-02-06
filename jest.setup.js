@@ -172,13 +172,29 @@ jest.mock("@/lib/supabase/adminClient", () => ({
   })),
 }));
 
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(() =>
-        Promise.resolve({ data: { user: null }, error: null }),
-      ),
-    },
+jest.mock("@/lib/supabase/client", () => {
+  const mockAuth = {
+    getUser: jest.fn(() =>
+      Promise.resolve({ data: { user: null }, error: null }),
+    ),
+  };
+  const mockStorage = {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({
+        data: { path: "test/path/file.jpg" },
+        error: null,
+      }),
+      remove: jest.fn().mockResolvedValue({ error: null }),
+      getPublicUrl: jest.fn(() => ({
+        data: { publicUrl: "https://example.com/avatar.jpg" },
+      })),
+    })),
+  };
+  return {
+    getAuth: jest.fn(() => mockAuth),
+    getStorage: jest.fn(() => mockStorage),
+    createClient: jest.fn(() => ({
+    auth: mockAuth,
     from: jest.fn(() => {
       const createMockSupabaseQuery = () => {
         const mockQuery = {
@@ -230,20 +246,10 @@ jest.mock("@/lib/supabase/client", () => ({
         upsert: jest.fn(() => createMockSupabaseQuery()),
       };
     }),
-    storage: {
-      from: jest.fn(() => ({
-        upload: jest.fn().mockResolvedValue({
-          data: { path: "test/path/file.jpg" },
-          error: null,
-        }),
-        remove: jest.fn().mockResolvedValue({ error: null }),
-        getPublicUrl: jest.fn(() => ({
-          data: { publicUrl: "https://example.com/avatar.jpg" },
-        })),
-      })),
-    },
+    storage: mockStorage,
   })),
-}));
+  };
+});
 
 jest.mock("react-dom", () => ({
   ...jest.requireActual("react-dom"),
