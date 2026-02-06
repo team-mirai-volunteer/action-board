@@ -85,6 +85,8 @@ category_links:
         sort_no: 400
       - mission_slug: share-manifest-sns
         sort_no: 500
+      - mission_slug: share-vstudio-video
+        sort_no: 600
   - category_slug: local-activities
     missions:
       - mission_slug: posting-magazine
@@ -177,6 +179,8 @@ category_links:
         sort_no: 500
       - mission_slug: youtube-clip
         sort_no: 600
+      - mission_slug: share-vstudio-video
+        sort_no: 700
   - category_slug: support-on-note
     missions:
       - mission_slug: follow-note
@@ -193,6 +197,8 @@ category_links:
         sort_no: 300
       - mission_slug: design-create
         sort_no: 400
+      - mission_slug: share-vstudio-video
+        sort_no: 500
   - category_slug: support-on-tiktok
     missions:
       - mission_slug: follow-teammirai-tiktok
@@ -205,6 +211,8 @@ category_links:
         sort_no: 400
       - mission_slug: youtube-clip
         sort_no: 500
+      - mission_slug: share-vstudio-video
+        sort_no: 600
   - category_slug: support-on-threads
     missions:
       - mission_slug: follow-anno-threads
