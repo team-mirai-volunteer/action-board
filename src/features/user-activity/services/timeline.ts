@@ -5,6 +5,11 @@ import {
   getPartyMembershipMap,
 } from "@/features/party-membership/services/memberships";
 import type { ActivityTimelineItem } from "@/features/user-activity/types/activity-types";
+import {
+  mapAchievementsToTimeline,
+  mapActivitiesToTimeline,
+  mergeAndSortTimeline,
+} from "@/features/user-activity/utils/timeline-transforms";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -75,43 +80,21 @@ export async function getUserActivityTimeline(
   const userProfile = userProfileResult.data;
   const partyMembership = await getPartyMembership(userId);
 
-  // ミッション達成データを活動タイムライン形式に変換
-  const achievements = (achievementsResult.data || []).map((a) => ({
-    id: `achievement_${a.id}`,
-    user_id: userId,
-    name: userProfile?.name || "",
-    address_prefecture: userProfile?.address_prefecture || null,
-    avatar_url: userProfile?.avatar_url || null,
-    title: a.missions.title,
-    mission_id: a.mission_id,
-    mission_slug: a.missions.slug,
-    created_at: a.created_at,
-    activity_type: "mission_achievement",
-    party_membership: partyMembership,
-  }));
+  const achievements = mapAchievementsToTimeline(
+    achievementsResult.data || [],
+    userId,
+    userProfile,
+    partyMembership,
+  );
 
-  // ユーザーアクティビティデータを活動タイムライン形式に変換
-  const activities = (activitiesResult.data || []).map((a) => ({
-    id: `activity_${a.id}`,
-    user_id: userId,
-    name: userProfile?.name || "",
-    address_prefecture: userProfile?.address_prefecture || null,
-    avatar_url: userProfile?.avatar_url || null,
-    title: a.activity_title,
-    mission_id: null,
-    mission_slug: null,
-    created_at: a.created_at,
-    activity_type: a.activity_type,
-    party_membership: partyMembership,
-  }));
+  const activities = mapActivitiesToTimeline(
+    activitiesResult.data || [],
+    userId,
+    userProfile,
+    partyMembership,
+  );
 
-  // 両方のデータを統合し、作成日時の降順でソートして指定件数まで取得
-  return [...achievements, ...activities]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    )
-    .slice(0, limit);
+  return mergeAndSortTimeline(achievements, activities, limit);
 }
 
 export async function getUserActivityTimelineCount(
