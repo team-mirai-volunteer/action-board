@@ -12,6 +12,10 @@ import {
   getVideoInfoMap,
   syncVideoComments,
 } from "../services/youtube-comment-service";
+import {
+  enrichCommentsWithVideoInfo,
+  transformToRecordedComments,
+} from "../utils/comment-transformers";
 
 /**
  * 記録済みコメント情報
@@ -114,21 +118,10 @@ export async function detectYouTubeCommentsAction(): Promise<DetectCommentsResul
     const videoInfoMap = await getVideoInfoMap(videoIds);
 
     // 検出結果を整形
-    const detectedComments: DetectedUserComment[] = userComments.map(
-      (comment) => {
-        const videoInfo = videoInfoMap.get(comment.videoId);
-        return {
-          commentId: comment.commentId,
-          videoId: comment.videoId,
-          videoTitle: videoInfo?.title || "Unknown",
-          videoUrl:
-            videoInfo?.videoUrl ||
-            `https://www.youtube.com/watch?v=${comment.videoId}`,
-          textOriginal: comment.textOriginal,
-          publishedAt: comment.publishedAt,
-          alreadyRecorded: recordedComments.has(comment.commentId),
-        };
-      },
+    const detectedComments = enrichCommentsWithVideoInfo(
+      userComments,
+      videoInfoMap,
+      recordedComments,
     );
 
     return {
@@ -483,31 +476,9 @@ export async function getRecordedCommentsAction(): Promise<{
       };
     }
 
-    const comments: RecordedComment[] = (userComments || []).map((uc) => {
-      const videoComment = uc.youtube_video_comments as {
-        text_original: string | null;
-        published_at: string;
-      };
-      const video = uc.youtube_videos as {
-        title: string;
-        channel_title: string;
-        thumbnail_url: string | null;
-        published_at: string | null;
-      };
-
-      return {
-        commentId: uc.comment_id,
-        videoId: uc.video_id,
-        videoTitle: video.title,
-        videoUrl: `https://www.youtube.com/watch?v=${uc.video_id}`,
-        thumbnailUrl: video.thumbnail_url,
-        channelTitle: video.channel_title,
-        textOriginal: videoComment.text_original || "",
-        videoPublishedAt: video.published_at,
-        commentedAt: videoComment.published_at,
-        recordedAt: uc.detected_at || new Date().toISOString(),
-      };
-    });
+    const comments = transformToRecordedComments(
+      (userComments || []) as Parameters<typeof transformToRecordedComments>[0],
+    );
 
     return {
       success: true,
