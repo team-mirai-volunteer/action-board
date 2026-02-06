@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { UserBadge } from "../badge-types";
+import { mapMissionDataToBadges } from "../utils/badge-enrichment";
 
 /**
  * ミッションバッジにタイトル情報を追加する
@@ -34,18 +35,5 @@ export async function enrichMissionBadges(
     missions.map((m) => [m.slug, { id: m.id, title: m.title }]),
   );
 
-  // バッジにミッションタイトルとIDを追加
-  return badges.map((badge) => {
-    if (badge.badge_type === "MISSION" && badge.sub_type) {
-      const missionInfo = missionMap.get(badge.sub_type);
-      if (missionInfo) {
-        return {
-          ...badge,
-          mission_title: missionInfo.title,
-          mission_id: missionInfo.id,
-        };
-      }
-    }
-    return badge;
-  });
+  return mapMissionDataToBadges(badges, missionMap);
 }
