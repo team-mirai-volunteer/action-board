@@ -6,6 +6,7 @@ import type {
   PrefectureTeamRanking,
   UserPrefectureContribution,
 } from "../types/prefecture-team-types";
+import { calculateContributionPercent } from "../utils/contribution-utils";
 import {
   type PrefectureTeamRankingRow,
   transformToXpPerCapitaRanking,
@@ -93,10 +94,10 @@ export async function getUserPrefectureContribution(
 
     const contribution = data[0];
 
-    const contributionPercent =
-      contribution.prefecture_total_xp > 0
-        ? (contribution.user_xp / contribution.prefecture_total_xp) * 100
-        : 0;
+    const contributionPercent = calculateContributionPercent(
+      contribution.user_xp,
+      contribution.prefecture_total_xp,
+    );
 
     return {
       prefecture: contribution.prefecture,

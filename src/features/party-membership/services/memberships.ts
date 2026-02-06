@@ -2,6 +2,10 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { PartyMembership } from "../types";
+import {
+  buildMembershipMap,
+  deduplicateUserIds,
+} from "../utils/membership-helpers";
 
 type MembershipMap = Record<string, PartyMembership>;
 
@@ -30,7 +34,7 @@ export async function getPartyMembership(
 export async function getPartyMembershipMap(
   userIds: string[],
 ): Promise<MembershipMap> {
-  const uniqueIds = Array.from(new Set(userIds.filter(Boolean)));
+  const uniqueIds = deduplicateUserIds(userIds);
   if (uniqueIds.length === 0) {
     return {};
   }
@@ -46,10 +50,5 @@ export async function getPartyMembershipMap(
     return {};
   }
 
-  return (data ?? []).reduce<MembershipMap>((acc, membership) => {
-    if (membership?.user_id) {
-      acc[membership.user_id] = membership;
-    }
-    return acc;
-  }, {});
+  return buildMembershipMap(data ?? []);
 }
