@@ -6,7 +6,10 @@ import {
 
 describe("buildSummaryFromAggregatedRows", () => {
   it("空配列の場合は空オブジェクトを返す", () => {
-    const result = buildSummaryFromAggregatedRows([], (row) => row.key);
+    const result = buildSummaryFromAggregatedRows(
+      [] as { key: string; status: string; count: number }[],
+      (row) => row.key,
+    );
     expect(result).toEqual({});
   });
 
@@ -77,7 +80,10 @@ describe("buildSummaryFromAggregatedRows", () => {
 
 describe("buildSummaryFromIndividualRows", () => {
   it("空配列の場合は空オブジェクトを返す", () => {
-    const result = buildSummaryFromIndividualRows([], (row) => row.key);
+    const result = buildSummaryFromIndividualRows(
+      [] as { key: string; status: string }[],
+      (row) => row.key,
+    );
     expect(result).toEqual({});
   });
 
