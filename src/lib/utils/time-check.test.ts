@@ -15,6 +15,11 @@ describe("time-check", () => {
     expect(isMaintenanceActive(now)).toBe(true);
   });
 
+  it("開始時刻がnullならメンテナンスは無効", () => {
+    const now = new Date("2026-02-07T14:59:00.000Z");
+    expect(isMaintenanceActive(now, null)).toBe(false);
+  });
+
   it("開始前でも preview=maintenance なら表示する", () => {
     const url = new URL("https://example.com/?preview=maintenance");
     const now = new Date("2026-02-07T14:58:59.000Z");
@@ -29,5 +34,12 @@ describe("time-check", () => {
 
     expect(isMaintenancePreview(url)).toBe(false);
     expect(shouldShowMaintenance(url, now)).toBe(false);
+  });
+
+  it("開始時刻がnullでも preview=maintenance なら表示する", () => {
+    const url = new URL("https://example.com/?preview=maintenance");
+    const now = new Date("2026-02-07T14:59:00.000Z");
+
+    expect(shouldShowMaintenance(url, now, null)).toBe(true);
   });
 });
