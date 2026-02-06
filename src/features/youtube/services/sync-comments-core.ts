@@ -303,21 +303,8 @@ export async function createYouTubeCommentRecord(
   return { success: true };
 }
 
-/**
- * コメントURLを生成する
- * @param videoId 動画ID
- * @param commentId コメントID
- */
-export function generateCommentUrl(videoId: string, commentId: string): string {
-  return `https://www.youtube.com/watch?v=${videoId}&lc=${commentId}`;
-}
-
-/**
- * YouTube URLからコメントIDを抽出する
- * @param url YouTube URL (例: https://www.youtube.com/watch?v=xxx&lc=yyy)
- */
-export function extractCommentIdFromUrl(url: string): string | null {
-  const pattern = /[?&]lc=([\w-]+)/;
-  const match = url.match(pattern);
-  return match?.[1] || null;
-}
+// URL ユーティリティを再エクスポート
+export {
+  extractCommentIdFromUrl,
+  generateCommentUrl,
+} from "../utils/url-utils";

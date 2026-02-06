@@ -3,6 +3,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { hasTeamMiraiTag } from "../constants/team-mirai";
+import { extractVideoIdFromUrl } from "../utils/url-utils";
 import { fetchVideoDetailsByApiKey } from "./youtube-client";
 
 // コアロジックを再エクスポート
@@ -16,6 +17,9 @@ export {
   syncLikesForUser,
 } from "./sync-likes-core";
 
+// URL ユーティリティを再エクスポート（後方互換性のため）
+export { extractVideoIdFromUrl };
+
 /**
  * いいね同期結果
  */
@@ -23,29 +27,6 @@ export interface SyncLikesResult {
   success: boolean;
   newLikesCount?: number;
   error?: string;
-}
-
-/**
- * YouTube URLから動画IDを抽出する
- * @param url YouTube動画URL
- */
-export function extractVideoIdFromUrl(url: string): string | null {
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=)([\w-]+)/,
-    /(?:youtu\.be\/)([\w-]+)/,
-    /(?:youtube\.com\/embed\/)([\w-]+)/,
-    /(?:youtube\.com\/shorts\/)([\w-]+)/,
-    /(?:youtube\.com\/live\/)([\w-]+)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match?.[1]) {
-      return match[1];
-    }
-  }
-
-  return null;
 }
 
 /**
