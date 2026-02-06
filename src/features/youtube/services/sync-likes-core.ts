@@ -5,7 +5,11 @@
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { hasTeamMiraiTag } from "../constants/team-mirai";
-import { buildLikeVideoRecord, filterNewIds } from "../utils/sync-helpers";
+import {
+  buildLikeVideoRecord,
+  filterNewIds,
+  mapLikedVideoItem,
+} from "../utils/sync-helpers";
 import {
   fetchUserLikedVideos as fetchUserLikedVideosRaw,
   fetchVideoDetails,
@@ -34,16 +38,7 @@ export async function fetchUserLikedVideos(
 ): Promise<LikedVideo[]> {
   const rawItems = await fetchUserLikedVideosRaw(accessToken, maxResults);
 
-  return rawItems.map((item) => ({
-    videoId: item.id,
-    title: item.snippet.title,
-    channelId: item.snippet.channelId,
-    channelTitle: item.snippet.channelTitle,
-    thumbnailUrl:
-      item.snippet.thumbnails.medium?.url ||
-      item.snippet.thumbnails.default?.url,
-    publishedAt: item.snippet.publishedAt,
-  }));
+  return rawItems.map(mapLikedVideoItem);
 }
 
 /**

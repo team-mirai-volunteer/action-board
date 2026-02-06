@@ -1,10 +1,76 @@
-import type { CommentThread } from "../services/youtube-client";
+import type { CommentThread, LikedVideoItem } from "../services/youtube-client";
 import {
   buildCommentCacheRecord,
   buildLikeVideoRecord,
   filterNewIds,
   groupCommentsByUser,
+  mapLikedVideoItem,
 } from "./sync-helpers";
+
+describe("mapLikedVideoItem", () => {
+  it("mediumサムネイルがある場合はそれを優先する", () => {
+    const item: LikedVideoItem = {
+      id: "video123",
+      snippet: {
+        publishedAt: "2025-01-15T00:00:00Z",
+        channelId: "ch1",
+        channelTitle: "Channel One",
+        title: "Test Video",
+        thumbnails: {
+          default: { url: "https://example.com/default.jpg" },
+          medium: { url: "https://example.com/medium.jpg" },
+        },
+      },
+    };
+
+    const result = mapLikedVideoItem(item);
+
+    expect(result).toEqual({
+      videoId: "video123",
+      title: "Test Video",
+      channelId: "ch1",
+      channelTitle: "Channel One",
+      thumbnailUrl: "https://example.com/medium.jpg",
+      publishedAt: "2025-01-15T00:00:00Z",
+    });
+  });
+
+  it("mediumサムネイルがない場合はdefaultを使用する", () => {
+    const item: LikedVideoItem = {
+      id: "video456",
+      snippet: {
+        publishedAt: "2025-02-01T12:00:00Z",
+        channelId: "ch2",
+        channelTitle: "Channel Two",
+        title: "Another Video",
+        thumbnails: {
+          default: { url: "https://example.com/default.jpg" },
+        },
+      },
+    };
+
+    const result = mapLikedVideoItem(item);
+
+    expect(result.thumbnailUrl).toBe("https://example.com/default.jpg");
+  });
+
+  it("サムネイルが両方ない場合はundefinedになる", () => {
+    const item: LikedVideoItem = {
+      id: "video789",
+      snippet: {
+        publishedAt: "2025-03-01T00:00:00Z",
+        channelId: "ch3",
+        channelTitle: "Channel Three",
+        title: "No Thumbnail",
+        thumbnails: {},
+      },
+    };
+
+    const result = mapLikedVideoItem(item);
+
+    expect(result.thumbnailUrl).toBeUndefined();
+  });
+});
 
 describe("buildLikeVideoRecord", () => {
   it("APIの動画詳細からDB保存用レコードを構築する", () => {

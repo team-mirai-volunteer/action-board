@@ -1,4 +1,4 @@
-import type { CommentThread } from "../services/youtube-client";
+import type { CommentThread, LikedVideoItem } from "../services/youtube-client";
 
 /**
  * キャッシュされたコメント情報
@@ -11,6 +11,29 @@ export interface CachedComment {
   textDisplay: string | null;
   textOriginal: string | null;
   publishedAt: string;
+}
+
+/**
+ * YouTube APIのいいね動画アイテムをアプリ内の LikedVideo 形式にマッピングする
+ */
+export function mapLikedVideoItem(item: LikedVideoItem): {
+  videoId: string;
+  title: string;
+  channelId: string;
+  channelTitle: string;
+  thumbnailUrl?: string;
+  publishedAt: string;
+} {
+  return {
+    videoId: item.id,
+    title: item.snippet.title,
+    channelId: item.snippet.channelId,
+    channelTitle: item.snippet.channelTitle,
+    thumbnailUrl:
+      item.snippet.thumbnails.medium?.url ||
+      item.snippet.thumbnails.default?.url,
+    publishedAt: item.snippet.publishedAt,
+  };
 }
 
 /**
