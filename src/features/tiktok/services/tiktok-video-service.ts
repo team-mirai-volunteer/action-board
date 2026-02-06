@@ -1,9 +1,7 @@
 import "server-only";
 
-import { getLatestStats } from "@/features/tiktok-stats/utils/stats-utils";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
-import { extractHashtags } from "@/lib/utils/text-utils";
 import type {
   TikTokSyncResult,
   TikTokVideo,
@@ -15,6 +13,12 @@ import {
   buildTikTokVideoUpdateData,
 } from "../utils/data-builders";
 import { filterTeamMiraiVideos } from "../utils/video-filters";
+import {
+  attachLatestStats,
+  formatDateToYMD,
+  sortTikTokVideos,
+  type VideoWithStats,
+} from "../utils/video-helpers";
 import { fetchVideoList } from "./tiktok-client";
 
 /**
@@ -77,7 +81,7 @@ export async function saveTikTokVideoStats(
   video: TikTokVideoFromAPI,
 ): Promise<TikTokVideoStats | null> {
   const supabase = await createAdminClient();
-  const today = new Date().toISOString().split("T")[0];
+  const today = formatDateToYMD(new Date());
 
   // 今日の統計が既にあるかチェック
   const { data: existing } = await supabase
@@ -195,31 +199,6 @@ export async function syncUserTikTokVideos(
   }
 }
 
-interface VideoWithStats {
-  id: string;
-  video_id: string;
-  user_id: string | null;
-  creator_id: string;
-  creator_username: string | null;
-  title: string | null;
-  description: string | null;
-  thumbnail_url: string | null;
-  video_url: string;
-  published_at: string | null;
-  duration: number | null;
-  tags: string[] | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  tiktok_video_stats: Array<{
-    view_count: number | null;
-    like_count: number | null;
-    comment_count: number | null;
-    share_count: number | null;
-    recorded_at: string;
-  }>;
-}
-
 /**
  * DBからTikTok動画一覧を取得する（最新統計付き）
  */
@@ -252,46 +231,12 @@ export async function getTikTokVideosWithStats(
   }
 
   // 各動画の最新統計を取得
-  const videosWithStats = ((videos || []) as VideoWithStats[]).map((video) => {
-    const stats = video.tiktok_video_stats || [];
-    const latestStats = getLatestStats(stats);
-
-    return {
-      ...video,
-      tiktok_video_stats: undefined,
-      latest_stats: latestStats
-        ? {
-            id: "",
-            tiktok_video_id: video.id,
-            recorded_at: latestStats.recorded_at,
-            view_count: latestStats.view_count,
-            like_count: latestStats.like_count,
-            comment_count: latestStats.comment_count,
-            share_count: latestStats.share_count,
-            created_at: "",
-          }
-        : undefined,
-    } as TikTokVideo & { latest_stats?: TikTokVideoStats };
-  });
+  const videosWithStats = ((videos || []) as VideoWithStats[]).map(
+    attachLatestStats,
+  );
 
   // ソート
-  const sorted = videosWithStats.sort((a, b) => {
-    switch (sortBy) {
-      case "view_count":
-        return (
-          (b.latest_stats?.view_count ?? 0) - (a.latest_stats?.view_count ?? 0)
-        );
-      case "like_count":
-        return (
-          (b.latest_stats?.like_count ?? 0) - (a.latest_stats?.like_count ?? 0)
-        );
-      default:
-        return (
-          new Date(b.published_at ?? 0).getTime() -
-          new Date(a.published_at ?? 0).getTime()
-        );
-    }
-  });
+  const sorted = sortTikTokVideos(videosWithStats, sortBy);
 
   return sorted.slice(offset, offset + limit);
 }
@@ -330,27 +275,7 @@ export async function getUserTikTokVideos(
   }
 
   // 各動画の最新統計を取得
-  return ((videos || []) as VideoWithStats[]).map((video) => {
-    const stats = video.tiktok_video_stats || [];
-    const latestStats = getLatestStats(stats);
-
-    return {
-      ...video,
-      tiktok_video_stats: undefined,
-      latest_stats: latestStats
-        ? {
-            id: "",
-            tiktok_video_id: video.id,
-            recorded_at: latestStats.recorded_at,
-            view_count: latestStats.view_count,
-            like_count: latestStats.like_count,
-            comment_count: latestStats.comment_count,
-            share_count: latestStats.share_count,
-            created_at: "",
-          }
-        : undefined,
-    } as TikTokVideo & { latest_stats?: TikTokVideoStats };
-  });
+  return ((videos || []) as VideoWithStats[]).map(attachLatestStats);
 }
 
 /**
