@@ -61,7 +61,7 @@ missions:
   - slug: check-mirai-gikai
     title: みらい議会を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
-    content: みらい議会は、チームみらいの政策提案を「法案」として一覧できるサービスです。法案ごとのステータスや要点、賛成・懸念のポイントをまとめて確認できるので、今どんな議論が進んでいるかを短時間で把握できます。まずは気になる法案を1つ開いてみよう。
+    content: みらい議会は、国会で扱われている法案や議論を、わかりやすく確認できるサービスです。法案のポイントや賛成・反対の意見をまとめて読めるので、政治の動きを短時間でつかめます。まずは気になる法案を1つ開いてみよう。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
@@ -71,7 +71,7 @@ missions:
   - slug: check-mirai-marumie-seijishikin
     title: みらいまる見え政治資金を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
-    content: みらいまる見え政治資金は、政治資金の流れをサンキー図で直感的に見られる「見える化ツール」です。収支の全体像だけでなく、月次収支・B/S・出入金の詳細まで確認できるので、政治とお金の実態を具体的に把握できます。
+    content: みらいまる見え政治資金は、政治のお金の入りと出を、図や一覧でわかりやすく見られるサービスです。どこから入り、何に使われたかをひと目で確認できます。気になる月を開いて、実際の使い道を見てみよう。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
