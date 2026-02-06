@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { createPaginationUrl } from "@/lib/utils/pagination-utils";
 import type { TikTokVideoWithStats } from "../types";
 import { TikTokVideoCard } from "./tiktok-video-card";
 
@@ -26,16 +27,8 @@ export function TikTokVideoList({
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
-  const createPageUrl = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (page === 1) {
-      params.delete("page");
-    } else {
-      params.set("page", page.toString());
-    }
-    const query = params.toString();
-    return `${pathname}${query ? `?${query}` : ""}`;
-  };
+  const createPageUrl = (page: number) =>
+    createPaginationUrl(pathname, searchParams, page);
 
   if (videos.length === 0) {
     return (
