@@ -34,7 +34,11 @@ import {
 import { updateProfile } from "@/features/user-settings/actions/profile-actions";
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
 import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
-import { calculateAge } from "@/lib/utils/utils";
+import {
+  formatDateComponents,
+  getDaysInMonth,
+  verifyMinimumAge,
+} from "@/lib/utils/form-date-utils";
 
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 
@@ -97,41 +101,19 @@ export default function ProfileForm({
   const birthYearThreshold = new Date().getFullYear() - 18;
   const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from(
-    { length: new Date(selectedYear, selectedMonth, 0).getDate() },
-    (_, i) => i + 1,
-  );
+  const days = getDaysInMonth(selectedYear, selectedMonth);
 
-  // 日付フォーマット関数
-  const formatDate = useCallback(
-    (year: number | null, month: number | null, day: number | null): string => {
-      if (!year || !month || !day) return "";
-      const pad = (n: number) => n.toString().padStart(2, "0");
-      return `${year}-${pad(month)}-${pad(day)}`;
-    },
-    [],
+  const formattedDate = formatDateComponents(
+    selectedYear,
+    selectedMonth,
+    selectedDay,
   );
-
-  const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
 
   // 年齢チェック関数
-  const verifyAge = useCallback((birthdate: string): boolean => {
-    if (!birthdate) return false;
-
-    const age = calculateAge(birthdate);
-    if (age < 18) {
-      const yearsToWait = 18 - age;
-      const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
-      setAgeError(
-        `18歳以上の方のみご登録いただけます。${waitText}登録できますので、その日を楽しみにお待ちください！`,
-      );
-      setIsAgeValid(false);
-      return false;
-    }
-
-    setAgeError(null);
-    setIsAgeValid(true);
-    return true;
+  const verifyAge = useCallback((birthdate: string): void => {
+    const result = verifyMinimumAge(birthdate, 18);
+    setAgeError(result.message);
+    setIsAgeValid(result.isValid);
   }, []);
 
   useEffect(() => {
