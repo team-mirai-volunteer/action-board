@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type {
   PrefectureTeamRanking,
   UserPrefectureContribution,
@@ -25,7 +25,7 @@ export async function getPrefectureTeamRanking(
   seasonId?: string,
 ): Promise<PrefectureTeamRanking[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createAdminClient();
 
     const targetSeasonId = seasonId || (await getCurrentSeasonId());
 
@@ -65,7 +65,7 @@ export async function getUserPrefectureContribution(
   seasonId?: string,
 ): Promise<UserPrefectureContribution | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createAdminClient();
 
     const targetSeasonId = seasonId || (await getCurrentSeasonId());
 

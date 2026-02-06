@@ -5,7 +5,7 @@ import {
   getPartyMembershipMap,
 } from "@/features/party-membership/services/memberships";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { RankingPeriod, UserRanking } from "../types/ranking-types";
 import {
   dateFilterToISOString,
@@ -32,7 +32,7 @@ export async function getUserPeriodRanking(
   seasonId: string,
   period: RankingPeriod = "all",
 ): Promise<UserPeriodRanking | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 期間フィルター計算
   const dateFilter = getPeriodDateFilter(period);
@@ -73,7 +73,7 @@ export async function getRanking(
   seasonId?: string,
 ): Promise<UserRanking[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createAdminClient();
 
     // seasonIdが指定されている場合はそれを使用、そうでなければ現在のシーズン
     const targetSeasonId = seasonId || (await getCurrentSeasonId());

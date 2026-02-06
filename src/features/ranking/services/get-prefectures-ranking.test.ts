@@ -2,7 +2,7 @@ import {
   getPartyMembership,
   getPartyMembershipMap,
 } from "@/features/party-membership/services/memberships";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getJSTMidnightToday } from "@/lib/utils/date-utils";
 
 // Mock dateUtils
@@ -17,8 +17,8 @@ import {
 } from "./get-prefectures-ranking";
 
 // Supabaseクライアントをモック
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(),
+jest.mock("@/lib/supabase/adminClient", () => ({
+  createAdminClient: jest.fn(),
 }));
 
 // seasonsサービスをモック
@@ -38,7 +38,7 @@ describe("prefecturesRanking service", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    (createAdminClient as jest.Mock).mockResolvedValue(mockSupabase);
     (getCurrentSeasonId as jest.Mock).mockResolvedValue("test-season-id");
     (getPartyMembershipMap as jest.Mock).mockResolvedValue({});
     (getPartyMembership as jest.Mock).mockResolvedValue(null);
