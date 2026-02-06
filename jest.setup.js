@@ -400,3 +400,4 @@ jest.mock("@/features/metrics/services/get-metrics", () => ({
     }),
   ),
 }));
+
