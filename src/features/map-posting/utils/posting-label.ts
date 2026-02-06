@@ -4,7 +4,7 @@
  */
 
 // Calculate dynamic icon width based on digit count
-function getLabelIconWidth(postingCount: number): number {
+export function getLabelIconWidth(postingCount: number): number {
   const digits = postingCount.toString().length;
   // Base width + extra per digit + padding for "枚"
   return Math.max(50, 30 + digits * 10);
