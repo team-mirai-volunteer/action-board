@@ -14,22 +14,22 @@
 jest.unmock("@/features/user-activity/services/timeline");
 
 import { getPartyMembership } from "@/features/party-membership/services/memberships";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
 } from "./timeline";
 
-jest.mock("@/lib/supabase/client", () => ({
-  createClient: jest.fn(),
+jest.mock("@/lib/supabase/adminClient", () => ({
+  createAdminClient: jest.fn(),
 }));
 
 jest.mock("@/features/party-membership/services/memberships", () => ({
   getPartyMembership: jest.fn(),
 }));
 
-const mockCreateClient = createClient as jest.MockedFunction<
-  typeof createClient
+const mockCreateAdminClient = createAdminClient as jest.MockedFunction<
+  typeof createAdminClient
 >;
 const mockGetPartyMembership = getPartyMembership as jest.MockedFunction<
   typeof getPartyMembership
@@ -45,7 +45,7 @@ describe("activityTimeline service", () => {
       from: jest.fn(),
     };
 
-    mockCreateClient.mockReturnValue(mockSupabase);
+    mockCreateAdminClient.mockResolvedValue(mockSupabase as any);
     mockGetPartyMembership.mockResolvedValue(null);
   });
 
