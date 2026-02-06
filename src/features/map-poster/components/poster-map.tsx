@@ -12,7 +12,7 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilter } from "../hooks/use-poster-board-filter";
-import { getCurrentUserId } from "../services/poster-boards";
+import { getCurrentUserId } from "../loaders/poster-boards-loaders";
 import { PosterBoardFilter } from "./poster-board-filter";
 
 // Fix Leaflet default marker icon issue with Next.js

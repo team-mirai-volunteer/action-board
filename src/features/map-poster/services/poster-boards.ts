@@ -20,17 +20,6 @@ import { countBoardsByStatus } from "../utils/poster-stats";
 export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
 
 /**
- * 現在の認証ユーザーIDを取得
- */
-export async function getCurrentUserId(): Promise<string | null> {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user?.id ?? null;
-}
-
-/**
  * ポスター貼りミッションのIDを取得
  */
 export async function getPosterMissionId(): Promise<string | null> {
