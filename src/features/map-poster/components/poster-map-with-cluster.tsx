@@ -16,7 +16,7 @@ import {
   type PosterPrefectureKey,
 } from "../constants/poster-prefectures";
 import { usePosterBoardFilterOptimized } from "../hooks/use-poster-board-filter-optimized";
-import { getCurrentUserId } from "../services/poster-boards";
+import { getCurrentUserId } from "../loaders/poster-boards-loaders";
 import {
   createMarkerIconHtml,
   createPieSegments,

@@ -8,6 +8,11 @@ import { HEADER_HEIGHT } from "@/lib/constants/layout";
 import type { Json } from "@/lib/types/supabase";
 import { logger } from "@/lib/utils/logger";
 import {
+  deleteShape as deleteMapShape,
+  saveShape as saveMapShape,
+  updateShape as updateMapShape,
+} from "../actions/posting-shapes-actions";
+import {
   addButtonLabel,
   geomanJaLang,
   geomanPathOptions,
@@ -21,12 +26,9 @@ import {
 } from "../config/status-config";
 import { useCurrentLocation } from "../hooks/use-current-location";
 import {
-  deleteShape as deleteMapShape,
   getShapeMissionStatus,
   loadShapes as loadMapShapes,
-  saveShape as saveMapShape,
-  updateShape as updateMapShape,
-} from "../services/posting-shapes";
+} from "../loaders/posting-shapes-loaders";
 import type {
   GeomanEvent,
   LeafletWindow,
