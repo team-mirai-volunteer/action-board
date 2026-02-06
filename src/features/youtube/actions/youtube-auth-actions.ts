@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { parseOAuthScopes } from "@/lib/utils/oauth-utils";
 import {
   exchangeCodeForToken,
   fetchChannelInfo,
@@ -113,7 +114,7 @@ export async function handleYouTubeLinkAction(
           token_expires_at: new Date(
             Date.now() + tokens.expires_in * 1000,
           ).toISOString(),
-          scopes: tokens.scope ? tokens.scope.split(" ") : null,
+          scopes: tokens.scope ? parseOAuthScopes(tokens.scope) : null,
         },
         {
           onConflict: "user_id",
