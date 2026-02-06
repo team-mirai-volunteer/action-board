@@ -7,6 +7,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { DonationData } from "@/features/metrics/types/metrics-types";
+import {
+  parseCurrencyDisplay,
+  safeYenToMan,
+} from "@/features/metrics/utils/currency-utils";
 import { EXTERNAL_LINKS } from "@/lib/constants/external-links";
 import { formatAmount } from "@/lib/utils/metrics-formatter";
 
@@ -37,22 +41,13 @@ export function DonationMetric({
     setIsMobile(checkIsMobile());
   }, []);
 
-  const YEN_TO_MAN_DIVISOR = 10000;
-
-  const safeDivision = (value: number | null | undefined): number => {
-    if (typeof value !== "number" || Number.isNaN(value) || value < 0) {
-      return 0;
-    }
-    return value / YEN_TO_MAN_DIVISOR;
-  };
-
   const donationAmount = data
-    ? safeDivision(data.totalAmount)
-    : safeDivision(fallbackAmount);
+    ? safeYenToMan(data.totalAmount)
+    : safeYenToMan(fallbackAmount);
 
   const donationIncrease = data
-    ? safeDivision(data.last24hAmount)
-    : safeDivision(fallbackIncrease);
+    ? safeYenToMan(data.last24hAmount)
+    : safeYenToMan(fallbackIncrease);
 
   const handlePopoverClick = () => {
     if (isMobile) {
@@ -99,33 +94,13 @@ export function DonationMetric({
           {/* 総寄付金額（外部APIから取得、失敗時は環境変数フォールバック） */}
           <p className="text-2xl font-black text-gray-800 whitespace-nowrap">
             {(() => {
-              const formatted = formatAmount(donationAmount);
-              if (formatted.includes("億") && formatted.includes("万")) {
-                // 例: "1億456.9万円" -> "1億456.9" + "万円"
-                const withoutManYen = formatted.replace(/万円$/, "");
-                return (
-                  <>
-                    {withoutManYen}
-                    <span className="text-lg">万円</span>
-                  </>
-                );
-              }
-              if (formatted.includes("億")) {
-                // 例: "1億円" -> "1" + "億円"
-                const number = formatted.replace(/億円$/, "");
-                return (
-                  <>
-                    {number}
-                    <span className="text-lg">億円</span>
-                  </>
-                );
-              }
-              // 例: "456.9万円" -> "456.9" + "万円"
-              const number = formatted.replace(/万円$/, "");
+              const { number, unit } = parseCurrencyDisplay(
+                formatAmount(donationAmount),
+              );
               return (
                 <>
                   {number}
-                  <span className="text-lg">万円</span>
+                  <span className="text-lg">{unit}</span>
                 </>
               );
             })()}
