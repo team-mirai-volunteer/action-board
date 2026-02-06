@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/client";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
+import { mapUserToHistory } from "../utils/history-helpers";
 import {
   countBoardsByStatus,
   createEmptyStatusCounts,
@@ -307,8 +308,5 @@ export async function getBoardStatusHistoryAction(boardId: string) {
   const userMap = new Map(userData?.map((u) => [u.id, u]) || []);
 
   // 履歴データにユーザー情報を追加
-  return historyData.map((h) => ({
-    ...h,
-    user: userMap.get(h.user_id) || null,
-  }));
+  return mapUserToHistory(historyData, userMap);
 }
