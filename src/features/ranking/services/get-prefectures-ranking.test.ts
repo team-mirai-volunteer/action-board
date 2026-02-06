@@ -91,7 +91,7 @@ describe("prefecturesRanking service", () => {
           name: "東京ユーザー1",
           address_prefecture: "東京都",
           rank: 1,
-          party_membership: undefined,
+          party_membership: null,
         });
         expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1", "user2"]);
       });
@@ -151,7 +151,7 @@ describe("prefecturesRanking service", () => {
           xp: 200,
           level: undefined,
           updated_at: undefined,
-          party_membership: undefined,
+          party_membership: null,
         });
         expect(getPartyMembershipMap).toHaveBeenCalledWith(["user1"]);
       });
