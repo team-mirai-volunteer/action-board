@@ -2,14 +2,11 @@ import { EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { formatNumberLocale } from "@/lib/utils/format-number-ja";
 import type { MissionActionRanking } from "../types";
 
 interface MissionRankingListProps {
   rankings: MissionActionRanking[];
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString();
 }
 
 function MissionRankingItem({
@@ -49,7 +46,7 @@ function MissionRankingItem({
         </div>
       </div>
       <div className="text-sm font-bold text-gray-700">
-        {formatNumber(mission.actionCount)}
+        {formatNumberLocale(mission.actionCount)}
         <span className="text-xs font-normal text-gray-500 ml-1">件</span>
       </div>
     </>
