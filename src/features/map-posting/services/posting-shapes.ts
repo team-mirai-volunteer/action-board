@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { chunk } from "@/lib/utils/array-utils";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
 import {
@@ -88,12 +89,11 @@ export async function saveShape(shape: MapShape) {
   return data;
 }
 
-export async function deleteShape(id: string, userId: string) {
+export async function deleteShape(id: string) {
   const { count, error } = await supabase
     .from("posting_shapes")
     .delete({ count: "exact" })
-    .eq("id", id)
-    .eq("user_id", userId);
+    .eq("id", id);
 
   if (count == null || count === 0) {
     throw new Error("No shape deleted");
@@ -107,17 +107,6 @@ export async function deleteShape(id: string, userId: string) {
 
 // URLパラメータ長制限を回避するためのバッチサイズ
 const BATCH_SIZE = 200;
-
-/**
- * 配列をバッチに分割するヘルパー関数
- */
-function chunk<T>(array: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
-}
 
 export async function loadShapes(eventId: string) {
   const { data, error } = await supabase
@@ -199,11 +188,7 @@ export async function loadShapes(eventId: string) {
   }));
 }
 
-export async function updateShape(
-  id: string,
-  data: Partial<MapShape>,
-  userId: string,
-) {
+export async function updateShape(id: string, data: Partial<MapShape>) {
   // Exclude protected fields that should not be updated
   const {
     id: _id,
@@ -245,7 +230,6 @@ export async function updateShape(
     .from("posting_shapes")
     .update(updateData)
     .eq("id", id)
-    .eq("user_id", userId)
     .select()
     .single();
 
@@ -261,23 +245,17 @@ export async function updateShapeStatus(
   id: string,
   status: PostingShapeStatus,
   memo?: string | null,
-  userId?: string,
 ) {
-  let query = supabase
+  const { data, error } = await supabase
     .from("posting_shapes")
     .update({
       status,
       memo,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", id);
-
-  // userIdが指定されている場合は所有者チェックを追加
-  if (userId) {
-    query = query.eq("user_id", userId);
-  }
-
-  const { data, error } = await query.select().single();
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) {
     console.error("Error updating shape status:", error);
