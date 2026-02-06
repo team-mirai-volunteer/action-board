@@ -1,4 +1,4 @@
-import { chunk } from "./array-utils";
+import { chunk, shuffleArray } from "./array-utils";
 
 describe("chunk", () => {
   it("should return empty array for empty input", () => {
@@ -32,5 +32,29 @@ describe("chunk", () => {
     const objects = [{ id: 1 }, { id: 2 }, { id: 3 }];
     const result = chunk(objects, 2);
     expect(result).toEqual([[{ id: 1 }, { id: 2 }], [{ id: 3 }]]);
+  });
+});
+
+describe("shuffleArray", () => {
+  it("should return empty array for empty input", () => {
+    expect(shuffleArray([])).toEqual([]);
+  });
+
+  it("should return single element array unchanged", () => {
+    expect(shuffleArray([42])).toEqual([42]);
+  });
+
+  it("should contain the same elements after shuffle", () => {
+    const original = [1, 2, 3, 4, 5];
+    const result = shuffleArray(original);
+    expect(result).toHaveLength(original.length);
+    expect(result.sort()).toEqual([...original].sort());
+  });
+
+  it("should not mutate the original array", () => {
+    const original = [1, 2, 3, 4, 5];
+    const copy = [...original];
+    shuffleArray(original);
+    expect(original).toEqual(copy);
   });
 });
