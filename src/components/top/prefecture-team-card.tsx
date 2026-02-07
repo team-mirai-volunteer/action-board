@@ -5,9 +5,9 @@ import { PrefectureTeamUserCardContent } from "@/features/prefecture-team/compon
 import {
   getPrefectureTeamRanking,
   getUserPrefectureContribution,
-} from "@/features/prefecture-team/services/get-prefecture-team-ranking";
+} from "@/features/prefecture-team/loaders/prefecture-team-loaders";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
-import { getCurrentSeason } from "@/lib/services/seasons";
+import { getCurrentSeason } from "@/lib/loaders/seasons-loaders";
 
 export async function PrefectureTeamCard() {
   const [user, currentSeason] = await Promise.all([

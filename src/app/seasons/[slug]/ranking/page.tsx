@@ -9,9 +9,9 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
-import { getUserPeriodRanking } from "@/features/ranking/services/get-ranking";
+import { getUserPeriodRanking } from "@/features/ranking/loaders/ranking-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{

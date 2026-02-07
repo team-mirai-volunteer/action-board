@@ -5,9 +5,9 @@ import {
 } from "@/features/ranking/components/period-toggle";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
-import { getUserPeriodRanking } from "@/features/ranking/services/get-ranking";
+import { getUserPeriodRanking } from "@/features/ranking/loaders/ranking-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 
 interface PageProps {
   searchParams: Promise<{

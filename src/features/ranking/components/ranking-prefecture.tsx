@@ -1,5 +1,5 @@
 // TOPページ用のランキングコンポーネント
-import { getPrefecturesRanking } from "../services/get-prefectures-ranking";
+import { getPrefecturesRanking } from "../loaders/ranking-loaders";
 import { BaseRanking } from "./base-ranking";
 import { RankingItem } from "./ranking-item";
 

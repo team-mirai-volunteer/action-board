@@ -10,9 +10,9 @@ import { SeasonRankingHeader } from "@/features/ranking/components/season-rankin
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/features/ranking/services/get-missions-ranking";
+} from "@/features/ranking/loaders/ranking-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{

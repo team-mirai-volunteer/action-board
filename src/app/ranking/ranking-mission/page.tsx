@@ -7,9 +7,9 @@ import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/features/ranking/services/get-missions-ranking";
+} from "@/features/ranking/loaders/ranking-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 
 interface PageProps {
   searchParams: Promise<{

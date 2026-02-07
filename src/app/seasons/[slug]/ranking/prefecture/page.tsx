@@ -6,10 +6,10 @@ import { PrefectureSelect } from "@/features/ranking/components/prefecture-selec
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
-import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
+import { getUserPrefecturesRanking } from "@/features/ranking/loaders/ranking-loaders";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{
