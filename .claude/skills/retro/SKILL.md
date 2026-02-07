@@ -27,12 +27,13 @@ $ARGUMENTS
 
 ```bash
 # CodeRabbit・人間レビュアーのインラインコメント（botを除外）
+# 注意: jqで != を使うとBashツールが \! にエスケープするため、代替構文を使用
 gh api repos/team-mirai-volunteer/action-board/pulls/{PR}/comments \
-  --jq '.[] | select(.user.login != "vercel[bot]" and .user.login != "codecov[bot]") | {user: .user.login, path: .path, body: .body}'
+  --jq '[.[] | select(.user.login | test("vercel|codecov") | not) | {user: .user.login, path: .path, body: .body}]'
 
 # レビューサマリー
 gh api repos/team-mirai-volunteer/action-board/pulls/{PR}/reviews \
-  --jq '.[] | select(.body != "" and .body != null) | {user: .user.login, state: .state, body: .body}'
+  --jq '[.[] | select(.body | length > 0) | {user: .user.login, state: .state, body: .body}]'
 ```
 
 `recent` の場合:
