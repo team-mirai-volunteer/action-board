@@ -45,8 +45,8 @@ import {
   getPosterBoardsMinimal,
   getPosterBoardsMinimalByDistrict,
   getPosterMissionId,
-  POSTER_MISSION_SLUG,
 } from "../loaders/poster-boards-loaders";
+import { POSTER_MISSION_SLUG } from "../services/poster-boards";
 import type {
   BoardStats,
   BoardStatus,

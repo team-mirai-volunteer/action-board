@@ -12,10 +12,7 @@ import {
   getPosterBoardsMinimalByDistrict as getPosterBoardsMinimalByDistrictService,
   getPosterBoardsMinimal as getPosterBoardsMinimalService,
   getPosterMissionId as getPosterMissionIdService,
-  POSTER_MISSION_SLUG,
 } from "../services/poster-boards";
-
-export { POSTER_MISSION_SLUG };
 
 export async function getCurrentUserId(): Promise<string | null> {
   const supabase = createClient();
