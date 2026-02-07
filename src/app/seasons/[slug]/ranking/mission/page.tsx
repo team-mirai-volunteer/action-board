@@ -10,9 +10,8 @@ import { SeasonRankingHeader } from "@/features/ranking/components/season-rankin
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/features/ranking/services/get-missions-ranking";
-import { getUser } from "@/features/user-profile/services/profile";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+} from "@/features/ranking/loaders/ranking-loaders";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{
@@ -51,9 +50,6 @@ export default async function SeasonMissionRankingPage({
     notFound();
   }
 
-  // ユーザー情報取得
-  const user = await getUser();
-
   // ミッション一覧を取得
   const missions = await getMissionsForRanking();
 
@@ -78,27 +74,17 @@ export default async function SeasonMissionRankingPage({
     );
   }
 
-  let userRanking = null;
-
-  if (user) {
-    // 現在のユーザーのミッション別ランキングを探す（シーズン対応）
-    userRanking = await getUserMissionRanking(
-      selectedMission.id,
-      user.id,
-      season.id,
-    );
-  }
+  // 現在のユーザーのミッション別ランキングを探す（シーズン対応）
+  const userRanking = await getUserMissionRanking(
+    selectedMission.id,
+    season.id,
+  );
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = selectedMission.required_artifact_type === "POSTING";
-  const userPostingCount =
-    user && isPostingMission
-      ? await getUserPostingCountByMission(
-          user.id,
-          selectedMission.id,
-          season.id,
-        )
-      : 0;
+  const userPostingCount = isPostingMission
+    ? await getUserPostingCountByMission(selectedMission.id, season.id)
+    : 0;
   let badgeText = "";
 
   if (userRanking) {

@@ -1,5 +1,5 @@
 // TOPページ用のランキングコンポーネント
-import { getRanking } from "../services/get-ranking";
+import { getRanking } from "../loaders/ranking-loaders";
 import { BaseRanking } from "./base-ranking";
 import type { RankingPeriod } from "./period-toggle";
 import { RankingItem } from "./ranking-item";
