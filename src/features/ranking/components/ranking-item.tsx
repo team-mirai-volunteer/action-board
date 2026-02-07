@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 // TOPページ用のランキングコンポーネント
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
+import { formatNumberJa } from "@/lib/utils/format-number-ja";
 import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
 import { getLevelBadgeColor } from "../utils/level-badge-styles";
 import { getRankIcon } from "./ranking-icon";
@@ -64,7 +65,7 @@ export function RankingItem({
             Lv.{user.level}
           </Badge>
           <div className="font-bold text-lg justify-self-end">
-            {(user.xp ?? 0).toLocaleString()}pt
+            {formatNumberJa(user.xp ?? 0)}pt
           </div>
         </>
       )}

@@ -1,3 +1,4 @@
+import { formatNumberJa } from "@/lib/utils/format-number-ja";
 import type { UserRanking } from "../types/ranking-types";
 import { BaseCurrentUserCard } from "./base-current-user-card";
 import { LevelBadge } from "./ranking-level-badge";
@@ -32,7 +33,7 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
       <div className="flex items-center gap-2 mb-1">
         <LevelBadge level={displayUser.level} />
         <div className="text-lg font-bold">
-          {displayUser.xp.toLocaleString()}pt
+          {formatNumberJa(displayUser.xp)}pt
         </div>
       </div>
     </BaseCurrentUserCard>
