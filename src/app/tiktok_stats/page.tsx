@@ -11,7 +11,7 @@ import {
   getTikTokVideoCount,
   getTikTokVideosWithStats,
   getVideoCountByDate,
-} from "@/features/tiktok-stats/services/tiktok-stats-service";
+} from "@/features/tiktok-stats/loaders/tiktok-stats-loaders";
 import {
   getPeriodEndDate,
   getPeriodStartDate,

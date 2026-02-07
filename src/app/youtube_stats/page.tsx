@@ -11,7 +11,7 @@ import {
   getYouTubeStatsSummary,
   getYouTubeVideoCount,
   getYouTubeVideosWithStats,
-} from "@/features/youtube-stats/services/youtube-stats-service";
+} from "@/features/youtube-stats/loaders/youtube-stats-loaders";
 import {
   getPeriodEndDate,
   getPeriodStartDate,
