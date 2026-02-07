@@ -6,7 +6,7 @@ import { CopyReferralButton } from "@/features/mission-detail/components/copy-re
 import { MissionFormWrapper } from "@/features/mission-detail/components/mission-form-wrapper";
 import QRCodeDisplay from "@/features/mission-detail/components/qr-code-display";
 import { SubmissionHistoryWrapper } from "@/features/mission-detail/components/submission-history-wrapper";
-import { getSubmissionHistory } from "@/features/mission-detail/services/mission-detail";
+import { getSubmissionHistory } from "@/features/mission-detail/loaders/mission-detail-loaders";
 import type { SubmissionData } from "@/features/mission-detail/types/detail-types";
 import { MissionGuidanceArrow } from "@/features/missions/components/mission-guidance-arrow";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";

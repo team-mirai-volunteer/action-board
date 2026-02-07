@@ -18,18 +18,18 @@ import {
   getMissionPageData,
   getMissionSlugById,
   isUUID,
-} from "@/features/mission-detail/services/mission-detail";
+} from "@/features/mission-detail/loaders/mission-detail-loaders";
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import {
   getMissionAchievementCounts,
   getPostingCountsForMissions,
-} from "@/features/missions/services/missions";
+} from "@/features/missions/loaders/missions-loaders";
 import { CurrentUserCardMission } from "@/features/ranking/components/current-user-card-mission";
 import { RankingMission } from "@/features/ranking/components/ranking-mission";
 import {
   getUserMissionRanking,
   getUserPostingCountByMission,
-} from "@/features/ranking/services/get-missions-ranking";
+} from "@/features/ranking/loaders/ranking-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import {
