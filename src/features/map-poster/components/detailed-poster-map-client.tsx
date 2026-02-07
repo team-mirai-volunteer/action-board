@@ -33,6 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
 import { statusConfig } from "../config/status-config";
 import { JP_TO_EN_DISTRICT } from "../constants/poster-district-shugin-2026";
+import { POSTER_MISSION_SLUG } from "../constants/poster-mission";
 import {
   JP_TO_EN_PREFECTURE,
   type PosterPrefectureKey,
@@ -46,7 +47,6 @@ import {
   getPosterBoardsMinimalByDistrict,
   getPosterMissionId,
 } from "../loaders/poster-boards-loaders";
-import { POSTER_MISSION_SLUG } from "../services/poster-boards";
 import type {
   BoardStats,
   BoardStatus,
