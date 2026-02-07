@@ -374,296 +374,46 @@ function getDragonHeadPosition(
   return { x, y };
 }
 
-// --- 迎春サウンドスケープ (Web Audio API) ---
-// うぐいす(ホーホケキョ) + 小鳥のさえずり + 春風アンビエント
+// --- BGM再生 (HTML5 Audio) ---
 
-const BGM_MASTER_VOLUME = 0.25;
+const BGM_SRC = "/audio/maintenance_winter.mp3";
 
 class JapaneseBGM {
-  private ctx: AudioContext;
-  private masterGain: GainNode;
-  private dryBus: GainNode;
-  private reverbBus: GainNode;
-  private timers: ReturnType<typeof setTimeout>[] = [];
+  private audio: HTMLAudioElement;
 
   constructor() {
-    this.ctx = new AudioContext();
-
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
-
-    // Dry / Reverb buses (森の残響感)
-    this.dryBus = this.ctx.createGain();
-    this.dryBus.gain.value = 0.55;
-    this.dryBus.connect(this.masterGain);
-
-    this.reverbBus = this.ctx.createGain();
-    this.reverbBus.gain.value = 0.45;
-
-    // フィードバックディレイリバーブ (森の空間)
-    const delay1 = this.ctx.createDelay(1.0);
-    delay1.delayTime.value = 0.14;
-    const delay2 = this.ctx.createDelay(1.0);
-    delay2.delayTime.value = 0.28;
-    const delay3 = this.ctx.createDelay(1.0);
-    delay3.delayTime.value = 0.42;
-    const feedback = this.ctx.createGain();
-    feedback.gain.value = 0.22;
-    const lpf = this.ctx.createBiquadFilter();
-    lpf.type = "lowpass";
-    lpf.frequency.value = 3500;
-
-    this.reverbBus.connect(delay1);
-    delay1.connect(lpf);
-    lpf.connect(delay2);
-    delay2.connect(delay3);
-    delay3.connect(feedback);
-    feedback.connect(delay1);
-    delay1.connect(this.masterGain);
-    delay2.connect(this.masterGain);
-    delay3.connect(this.masterGain);
+    this.audio = new Audio(BGM_SRC);
+    this.audio.loop = true;
+    this.audio.volume = 0;
   }
 
   start() {
-    this.ctx.resume();
-    this.masterGain.gain.linearRampToValueAtTime(
-      BGM_MASTER_VOLUME,
-      this.ctx.currentTime + 2.5,
-    );
-    this.startWindAmbient();
-    this.scheduleUguisu();
-    this.scheduleSmallBirds();
+    // フェードイン
+    this.audio.volume = 0;
+    this.audio.play().catch(() => {});
+    this.fadeToVolume(0.5, 2000);
   }
 
-  // --- 春風アンビエント (木漏れ日の中の穏やかな風) ---
-  private startWindAmbient() {
-    const bufSize = this.ctx.sampleRate * 3;
-    const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
-    const ch = buf.getChannelData(0);
-    for (let i = 0; i < bufSize; i++) ch[i] = Math.random() * 2 - 1;
+  private fadeToVolume(target: number, durationMs: number) {
+    const startVol = this.audio.volume;
+    const startTime = performance.now();
 
-    const src = this.ctx.createBufferSource();
-    src.buffer = buf;
-    src.loop = true;
-
-    // ローパスで柔らかい風に
-    const lp = this.ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = 600;
-    lp.Q.value = 0.7;
-
-    // 超低速LFOで風のうねり
-    const lfo = this.ctx.createOscillator();
-    const lfoAmp = this.ctx.createGain();
-    lfo.frequency.value = 0.06;
-    lfoAmp.gain.value = 200;
-    lfo.connect(lfoAmp);
-    lfoAmp.connect(lp.frequency);
-
-    const windGain = this.ctx.createGain();
-    windGain.gain.value = 0.03;
-
-    src.connect(lp);
-    lp.connect(windGain);
-    windGain.connect(this.dryBus);
-
-    src.start();
-    lfo.start();
-  }
-
-  // --- うぐいす「ホーホケキョ」---
-  private playUguisu() {
-    const now = this.ctx.currentTime;
-    // 距離感をランダムに (近い/遠い)
-    const distance = 0.6 + Math.random() * 0.5;
-    // 毎回わずかにピッチを変える (個体差)
-    const pitchShift = 0.92 + Math.random() * 0.16;
-
-    const birdGain = this.ctx.createGain();
-    birdGain.gain.value = 0.14 * distance;
-    birdGain.connect(this.dryBus);
-    birdGain.connect(this.reverbBus);
-
-    // 「ホー」 — 長く上昇するトーン
-    this.synthBirdTone(
-      now,
-      1800 * pitchShift,
-      2300 * pitchShift,
-      0.6,
-      0.13 * distance,
-      birdGain,
-    );
-
-    // たまに「ホー」だけで終わる (自然な変化)
-    if (Math.random() < 0.25) return;
-
-    // 「ホ」 — 高く短い
-    this.synthBirdTone(
-      now + 0.78,
-      2700 * pitchShift,
-      2900 * pitchShift,
-      0.08,
-      0.11 * distance,
-      birdGain,
-    );
-
-    // 「ケ」 — さらに高く
-    this.synthBirdTone(
-      now + 0.9,
-      3300 * pitchShift,
-      3500 * pitchShift,
-      0.06,
-      0.1 * distance,
-      birdGain,
-    );
-
-    // 「キョ」 — 下降して締める
-    this.synthBirdTone(
-      now + 1.0,
-      3100 * pitchShift,
-      2200 * pitchShift,
-      0.18,
-      0.12 * distance,
-      birdGain,
-    );
-  }
-
-  // 鳥の単音: 周波数スウィープ + ビブラート
-  private synthBirdTone(
-    time: number,
-    freqStart: number,
-    freqEnd: number,
-    dur: number,
-    vol: number,
-    dest: AudioNode,
-  ) {
-    const osc = this.ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(freqStart, time);
-    osc.frequency.linearRampToValueAtTime(freqEnd, time + dur);
-
-    // 微細なビブラート
-    const vib = this.ctx.createOscillator();
-    const vibAmp = this.ctx.createGain();
-    vib.frequency.value = 5 + Math.random() * 3;
-    vibAmp.gain.value = freqStart * 0.008;
-    vib.connect(vibAmp);
-    vibAmp.connect(osc.frequency);
-
-    const env = this.ctx.createGain();
-    env.gain.setValueAtTime(0, time);
-    env.gain.linearRampToValueAtTime(vol, time + Math.min(0.015, dur * 0.1));
-    env.gain.setValueAtTime(vol, time + dur * 0.7);
-    env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
-
-    osc.connect(env);
-    env.connect(dest);
-
-    vib.start(time);
-    osc.start(time);
-    osc.stop(time + dur + 0.02);
-    vib.stop(time + dur + 0.02);
-  }
-
-  private scheduleUguisu() {
-    // 初回は2秒後
-    const firstDelay = 2000;
-    const t = setTimeout(() => {
-      this.playUguisu();
-      this.loopUguisu();
-    }, firstDelay);
-    this.timers.push(t);
-  }
-
-  private loopUguisu() {
-    // 8〜18秒間隔でランダムに鳴く
-    const delay = 8000 + Math.random() * 10000;
-    const t = setTimeout(() => {
-      this.playUguisu();
-      this.loopUguisu();
-    }, delay);
-    this.timers.push(t);
-  }
-
-  // --- 小鳥のさえずり (メジロ、シジュウカラ風) ---
-  private playSmallBird() {
-    const now = this.ctx.currentTime;
-    const distance = 0.4 + Math.random() * 0.6;
-    // 鳥の種類でベース周波数を変える
-    const species = Math.random();
-    let baseFreq: number;
-    let chirpCount: number;
-    let chirpInterval: number;
-
-    if (species < 0.4) {
-      // メジロ風: 高めの速いさえずり
-      baseFreq = 3500 + Math.random() * 1500;
-      chirpCount = 3 + Math.floor(Math.random() * 4);
-      chirpInterval = 0.06 + Math.random() * 0.04;
-    } else if (species < 0.7) {
-      // シジュウカラ風: 「ツーピー ツーピー」
-      baseFreq = 2800 + Math.random() * 800;
-      chirpCount = 2 + Math.floor(Math.random() * 2);
-      chirpInterval = 0.12 + Math.random() * 0.08;
-    } else {
-      // ヒヨドリ風: やや低めの単音
-      baseFreq = 2200 + Math.random() * 600;
-      chirpCount = 1 + Math.floor(Math.random() * 2);
-      chirpInterval = 0.15 + Math.random() * 0.1;
-    }
-
-    const birdGain = this.ctx.createGain();
-    birdGain.gain.value = distance;
-    birdGain.connect(this.dryBus);
-    birdGain.connect(this.reverbBus);
-
-    for (let i = 0; i < chirpCount; i++) {
-      const t = now + i * chirpInterval;
-      const freqVariation = (Math.random() - 0.5) * 600;
-      const isUp = Math.random() < 0.6;
-      this.synthBirdTone(
-        t,
-        baseFreq + freqVariation,
-        baseFreq + freqVariation + (isUp ? 400 : -300),
-        0.03 + Math.random() * 0.04,
-        0.06 * distance,
-        birdGain,
-      );
-    }
-  }
-
-  private scheduleSmallBirds() {
-    // 初回は3秒後
-    const firstDelay = 3000;
-    const t = setTimeout(() => {
-      this.playSmallBird();
-      this.loopSmallBirds();
-    }, firstDelay);
-    this.timers.push(t);
-  }
-
-  private loopSmallBirds() {
-    // 3〜7秒間隔
-    const delay = 3000 + Math.random() * 4000;
-    const t = setTimeout(() => {
-      this.playSmallBird();
-      this.loopSmallBirds();
-    }, delay);
-    this.timers.push(t);
+    const step = () => {
+      const elapsed = performance.now() - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+      this.audio.volume = startVol + (target - startVol) * progress;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
 
   setMuted(muted: boolean) {
-    this.masterGain.gain.linearRampToValueAtTime(
-      muted ? 0 : BGM_MASTER_VOLUME,
-      this.ctx.currentTime + 0.3,
-    );
+    this.fadeToVolume(muted ? 0 : 0.5, 300);
   }
 
   dispose() {
-    for (const t of this.timers) clearTimeout(t);
-    this.timers = [];
-    this.ctx.close();
+    this.audio.pause();
+    this.audio.src = "";
   }
 }
 
