@@ -386,9 +386,12 @@ class JapaneseBGM {
     this.audio = new Audio(BGM_SRC);
     this.audio.loop = true;
     this.audio.volume = 0;
+    this.audio.preload = "auto";
   }
 
   start() {
+    // 音声ファイル先頭に約3秒の無音があるためスキップ
+    this.audio.currentTime = 3;
     this.audio.volume = 0;
     this.audio.play().catch(() => {});
     this.fadeToVolume(BGM_MAX_VOLUME, 2000);
@@ -1014,19 +1017,19 @@ export default function MaintenanceWinterEffect() {
     })();
   }, []);
 
-  // BGM cleanup
+  // BGM preload on mount & cleanup
   useEffect(() => {
+    const bgm = new JapaneseBGM();
+    bgmRef.current = bgm;
     return () => {
-      bgmRef.current?.dispose();
+      bgm.dispose();
     };
   }, []);
 
   // Audio handlers (fireworks.tsx pattern: full-screen tap)
   const handleClick = useCallback(() => {
     if (!audioStarted) {
-      const bgm = new JapaneseBGM();
-      bgm.start();
-      bgmRef.current = bgm;
+      bgmRef.current?.start();
       setAudioStarted(true);
     } else {
       const newMuted = !isMuted;
