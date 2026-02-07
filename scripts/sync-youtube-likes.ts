@@ -10,6 +10,7 @@
 import "dotenv/config";
 
 import {
+  isExpectedTokenError,
   isTokenExpired,
   refreshAccessToken,
 } from "@/features/youtube/services/google-auth";
@@ -33,12 +34,6 @@ interface SyncResult {
   totalXpGranted?: number;
   error?: string;
   isExpectedError?: boolean;
-}
-
-/** トークン更新失敗など、個別ユーザー起因の想定内エラーかどうかを判定する */
-function isExpectedUserError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.includes("トークンの更新に失敗");
 }
 
 function parseArgs() {
@@ -136,7 +131,7 @@ async function main() {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      const expected = isExpectedUserError(error);
+      const expected = isExpectedTokenError(error);
       if (expected) {
         console.warn(`  Warning: ${errorMessage}`);
       } else {

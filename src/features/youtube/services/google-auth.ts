@@ -5,6 +5,26 @@
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 /**
+ * Googleトークン更新時のエラー
+ * error: Google OAuth error code (e.g. "invalid_grant")
+ * errorDescription: 詳細メッセージ (e.g. "Account has been deleted")
+ */
+export class GoogleTokenRefreshError extends Error {
+  constructor(
+    public readonly errorCode: string,
+    public readonly errorDescription: string,
+  ) {
+    super(`Google token refresh failed: ${errorCode} - ${errorDescription}`);
+    this.name = "GoogleTokenRefreshError";
+  }
+}
+
+/** ユーザー起因で再試行しても回復しないエラーコード */
+const EXPECTED_TOKEN_ERROR_CODES = new Set([
+  "invalid_grant", // アカウント削除、トークンrevoke、長期間未使用
+]);
+
+/**
  * Googleトークンレスポンス
  */
 export interface GoogleTokenResponse {
@@ -57,9 +77,19 @@ export async function refreshAccessToken(
   });
 
   if (!response.ok) {
-    const errorBody = await response.text();
-    console.error("Google token refresh failed:", errorBody);
-    throw new Error("Googleトークンの更新に失敗しました");
+    let errorCode = "unknown";
+    let errorDescription = `HTTP ${response.status}`;
+    try {
+      const errorJson = await response.json();
+      errorCode = errorJson.error || errorCode;
+      errorDescription = errorJson.error_description || errorDescription;
+    } catch {
+      // JSONパース失敗時はデフォルト値を使用
+    }
+    console.error(
+      `Google token refresh failed: ${errorCode} - ${errorDescription}`,
+    );
+    throw new GoogleTokenRefreshError(errorCode, errorDescription);
   }
 
   const tokens: GoogleTokenResponse = await response.json();
@@ -76,4 +106,14 @@ export async function refreshAccessToken(
  */
 export function isTokenExpired(tokenExpiresAt: string): boolean {
   return new Date(tokenExpiresAt) < new Date();
+}
+
+/**
+ * GoogleTokenRefreshErrorかつ想定内のエラーコードかどうかを判定する
+ */
+export function isExpectedTokenError(error: unknown): boolean {
+  return (
+    error instanceof GoogleTokenRefreshError &&
+    EXPECTED_TOKEN_ERROR_CODES.has(error.errorCode)
+  );
 }
