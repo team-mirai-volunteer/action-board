@@ -375,111 +375,197 @@ function getDragonHeadPosition(
 }
 
 // --- Japanese BGM (Web Audio API) ---
+// 琴風メロディ + 尺八風アンビエントパッド + フィードバックディレイリバーブ
+
+const BGM_MASTER_VOLUME = 0.2;
+
+// 都節音階 (miyako-bushi) on D — 日本的な情緒を出す
+// D4, Eb4, G4, A4, Bb4, D5, Eb5
+const KOTO_PHRASES: (number | 0)[][] = [
+  // Phrase 1: 序 — ゆっくり上昇
+  [293.66, 0, 392.0, 440.0, 466.16, 440.0, 392.0, 293.66],
+  // Phrase 2: 破 — 高音域へ
+  [440.0, 466.16, 587.33, 466.16, 440.0, 392.0, 293.66, 0],
+  // Phrase 3: 急 — 動きのあるフレーズ
+  [392.0, 440.0, 466.16, 587.33, 466.16, 392.0, 440.0, 392.0],
+  // Phrase 4: 結 — 解決、静かに
+  [440.0, 392.0, 311.13, 293.66, 0, 293.66, 0, 0],
+];
 
 class JapaneseBGM {
   private ctx: AudioContext;
   private masterGain: GainNode;
-  private timerId: ReturnType<typeof setTimeout> | null = null;
+  private dryBus: GainNode;
+  private reverbBus: GainNode;
+  private phraseTimer: ReturnType<typeof setTimeout> | null = null;
+  private phraseIndex = 0;
 
   constructor() {
     this.ctx = new AudioContext();
+
+    // Master output
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
     this.masterGain.connect(this.ctx.destination);
+
+    // Dry / Reverb buses
+    this.dryBus = this.ctx.createGain();
+    this.dryBus.gain.value = 0.65;
+    this.dryBus.connect(this.masterGain);
+
+    this.reverbBus = this.ctx.createGain();
+    this.reverbBus.gain.value = 0.35;
+
+    // Simple feedback-delay reverb
+    const preDelay = this.ctx.createDelay(0.5);
+    preDelay.delayTime.value = 0.08;
+    const delay1 = this.ctx.createDelay(1.0);
+    delay1.delayTime.value = 0.18;
+    const delay2 = this.ctx.createDelay(1.0);
+    delay2.delayTime.value = 0.32;
+    const feedback = this.ctx.createGain();
+    feedback.gain.value = 0.28;
+    const lpf = this.ctx.createBiquadFilter();
+    lpf.type = "lowpass";
+    lpf.frequency.value = 2200;
+
+    this.reverbBus.connect(preDelay);
+    preDelay.connect(delay1);
+    delay1.connect(lpf);
+    lpf.connect(delay2);
+    delay2.connect(feedback);
+    feedback.connect(delay1);
+    delay1.connect(this.masterGain);
+    delay2.connect(this.masterGain);
   }
 
   start() {
     this.ctx.resume();
-    // Gentle fade-in
+    // 2秒かけてフェードイン
     this.masterGain.gain.linearRampToValueAtTime(
-      0.15,
-      this.ctx.currentTime + 1.5,
+      BGM_MASTER_VOLUME,
+      this.ctx.currentTime + 2,
     );
+    this.startAmbientPad();
     this.startDrone();
-    this.schedulePluck();
+    this.scheduleNextPhrase();
   }
 
-  private startDrone() {
-    const gain = this.ctx.createGain();
-    gain.gain.value = 0.04;
-    gain.connect(this.masterGain);
+  // 尺八風の息遣い — フィルタードノイズ
+  private startAmbientPad() {
+    const bufSize = this.ctx.sampleRate * 2;
+    const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) ch[i] = Math.random() * 2 - 1;
 
-    // Slow LFO for gentle pitch movement
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+
+    // Narrow bandpass → 息っぽい質感
+    const bp = this.ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.value = 320;
+    bp.Q.value = 3;
+
+    // 超低速LFOでフィルタ揺らし
     const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 1.5;
-    lfo.connect(lfoGain);
+    const lfoAmp = this.ctx.createGain();
+    lfo.frequency.value = 0.04;
+    lfoAmp.gain.value = 80;
+    lfo.connect(lfoAmp);
+    lfoAmp.connect(bp.frequency);
 
-    // D3 + A3 drone (perfect fifth)
-    for (const freq of [146.83, 220.0]) {
-      const osc = this.ctx.createOscillator();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      lfoGain.connect(osc.frequency);
-      osc.connect(gain);
-      osc.start();
-    }
+    const padGain = this.ctx.createGain();
+    padGain.gain.value = 0.018;
 
+    src.connect(bp);
+    bp.connect(padGain);
+    padGain.connect(this.dryBus);
+    padGain.connect(this.reverbBus);
+
+    src.start();
     lfo.start();
   }
 
-  private schedulePluck() {
-    // Yo-scale (Japanese pentatonic): D4, E4, G4, A4, B4, D5
-    const notes = [293.66, 329.63, 392.0, 440.0, 493.88, 587.33];
+  // D2 + A2 の超低ドローン
+  private startDrone() {
+    const droneGain = this.ctx.createGain();
+    droneGain.gain.value = 0.025;
+    droneGain.connect(this.dryBus);
 
-    const pluck = () => {
-      const freq = notes[Math.floor(Math.random() * notes.length)];
-      const now = this.ctx.currentTime;
-
-      // Koto-like plucked string: triangle wave, quick attack, slow decay
+    for (const freq of [73.42, 110.0]) {
       const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = "triangle";
+      osc.type = "sine";
       osc.frequency.value = freq;
-      osc.detune.value = (Math.random() - 0.5) * 6;
+      osc.connect(droneGain);
+      osc.start();
+    }
+  }
 
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.18, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.03, now + 0.4);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+  // 琴ノート: 基音 + 2倍音 + 3倍音 の合成
+  private playKotoNote(freq: number, time: number, dur = 3.2) {
+    if (freq === 0) return;
 
-      osc.connect(gain);
-      gain.connect(this.masterGain);
-      osc.start(now);
-      osc.stop(now + 3);
+    const layers: [OscillatorType, number, number][] = [
+      ["triangle", freq, 0.13], // 基音
+      ["sine", freq * 2, 0.045], // 2倍音 (オクターブ)
+      ["sine", freq * 3, 0.018], // 3倍音
+    ];
 
-      // Occasional octave harmonic for sparkle
-      if (Math.random() < 0.3) {
-        const harm = this.ctx.createOscillator();
-        const harmGain = this.ctx.createGain();
-        harm.type = "sine";
-        harm.frequency.value = freq * 2;
-        harmGain.gain.setValueAtTime(0, now + 0.3);
-        harmGain.gain.linearRampToValueAtTime(0.06, now + 0.32);
-        harmGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
-        harm.connect(harmGain);
-        harmGain.connect(this.masterGain);
-        harm.start(now + 0.3);
-        harm.stop(now + 2);
+    for (const [type, f, vol] of layers) {
+      const osc = this.ctx.createOscillator();
+      osc.type = type;
+      osc.frequency.value = f;
+      // 微細なデチューンで温かみ
+      osc.detune.value = (Math.random() - 0.5) * 5;
+
+      const env = this.ctx.createGain();
+      // 琴の特徴: 鋭いアタック → 速い初期減衰 → 緩やかなサステイン減衰
+      env.gain.setValueAtTime(0, time);
+      env.gain.linearRampToValueAtTime(vol, time + 0.006);
+      env.gain.exponentialRampToValueAtTime(vol * 0.3, time + 0.12);
+      env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+
+      osc.connect(env);
+      env.connect(this.dryBus);
+      // 基音のみリバーブに送る
+      if (f === freq) {
+        env.connect(this.reverbBus);
       }
 
-      this.timerId = setTimeout(pluck, 1500 + Math.random() * 2500);
-    };
+      osc.start(time);
+      osc.stop(time + dur + 0.05);
+    }
+  }
 
-    this.timerId = setTimeout(pluck, 800);
+  private scheduleNextPhrase() {
+    const phrase = KOTO_PHRASES[this.phraseIndex % KOTO_PHRASES.length];
+    this.phraseIndex++;
+
+    const baseTime = this.ctx.currentTime + 0.1;
+    const interval = 0.85; // ノート間隔 (秒)
+
+    for (let i = 0; i < phrase.length; i++) {
+      // 微細なタイミング揺れで人間味を出す
+      const jitter = (Math.random() - 0.5) * 0.04;
+      this.playKotoNote(phrase[i], baseTime + i * interval + jitter);
+    }
+
+    // フレーズ間の間 (2秒) + フレーズ長
+    const nextDelay = (phrase.length * interval + 2.0) * 1000;
+    this.phraseTimer = setTimeout(() => this.scheduleNextPhrase(), nextDelay);
   }
 
   setMuted(muted: boolean) {
     this.masterGain.gain.linearRampToValueAtTime(
-      muted ? 0 : 0.15,
+      muted ? 0 : BGM_MASTER_VOLUME,
       this.ctx.currentTime + 0.3,
     );
   }
 
   dispose() {
-    if (this.timerId) clearTimeout(this.timerId);
+    if (this.phraseTimer) clearTimeout(this.phraseTimer);
     this.ctx.close();
   }
 }
