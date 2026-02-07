@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import PostingPageClient from "@/features/map-posting/components/posting-page";
-import { getEventBySlug } from "@/features/map-posting/services/posting-events.server";
+import { getEventBySlug } from "@/features/map-posting/loaders/posting-events-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 import { isAdmin, isPostingAdmin } from "@/lib/utils/admin";
 

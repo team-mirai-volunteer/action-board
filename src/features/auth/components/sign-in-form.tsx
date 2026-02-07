@@ -9,7 +9,7 @@ import { SubmitButton } from "@/components/common/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signInWithLine } from "@/features/auth/services/line-auth";
+import { signInWithLine } from "@/features/auth/client/line-auth";
 
 interface SignInFormProps {
   returnUrl?: string;
