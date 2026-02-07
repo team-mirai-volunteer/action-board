@@ -377,6 +377,7 @@ function getDragonHeadPosition(
 // --- BGM再生 (HTML5 Audio) ---
 
 const BGM_SRC = "/audio/maintenance_winter.mp3";
+const BGM_MAX_VOLUME = 0.25;
 
 class JapaneseBGM {
   private audio: HTMLAudioElement;
@@ -388,10 +389,9 @@ class JapaneseBGM {
   }
 
   start() {
-    // フェードイン
     this.audio.volume = 0;
     this.audio.play().catch(() => {});
-    this.fadeToVolume(0.5, 2000);
+    this.fadeToVolume(BGM_MAX_VOLUME, 2000);
   }
 
   private fadeToVolume(target: number, durationMs: number) {
@@ -408,7 +408,7 @@ class JapaneseBGM {
   }
 
   setMuted(muted: boolean) {
-    this.fadeToVolume(muted ? 0 : 0.5, 300);
+    this.fadeToVolume(muted ? 0 : BGM_MAX_VOLUME, 300);
   }
 
   dispose() {
