@@ -2,6 +2,7 @@
 
 import {
   type CSSProperties,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -14,8 +15,12 @@ import {
 
 const WINTER_LOGO_SRC =
   "/img/mission-icons/actionboard_icon_work_20250713_ol_TeamMirai-logo.svg";
+const WINTER_BGM_SRC = "/audio/maintenance_winter.mp3";
 const INTRO_DURATION_MS = 3000;
 const CREDITS_DELAY_AFTER_OVERLAY_MS = 3000;
+const BGM_MAX_VOLUME = 0.5;
+const FADE_STEP_MS = 50;
+const FADE_DURATION_MS = 1500;
 
 type Particle = {
   id: number;
@@ -531,6 +536,116 @@ const EndCredits = ({
   );
 };
 
+function BgmToggle() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const fadeRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearFade = useCallback(() => {
+    if (fadeRef.current) {
+      clearInterval(fadeRef.current);
+      fadeRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearFade();
+    };
+  }, [clearFade]);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+
+    if (isPlaying) {
+      clearFade();
+      const steps = Math.ceil(FADE_DURATION_MS / FADE_STEP_MS);
+      const decrement = audio.volume / steps;
+      fadeRef.current = setInterval(() => {
+        if (audio.volume - decrement <= 0) {
+          audio.volume = 0;
+          audio.pause();
+          clearFade();
+        } else {
+          audio.volume = Math.max(0, audio.volume - decrement);
+        }
+      }, FADE_STEP_MS);
+      setIsPlaying(false);
+    } else {
+      clearFade();
+      audio.volume = 0;
+      audio
+        .play()
+        .then(() => {
+          const steps = Math.ceil(FADE_DURATION_MS / FADE_STEP_MS);
+          const increment = BGM_MAX_VOLUME / steps;
+          fadeRef.current = setInterval(() => {
+            if (audio.volume + increment >= BGM_MAX_VOLUME) {
+              audio.volume = BGM_MAX_VOLUME;
+              clearFade();
+            } else {
+              audio.volume = Math.min(BGM_MAX_VOLUME, audio.volume + increment);
+            }
+          }, FADE_STEP_MS);
+          setIsPlaying(true);
+        })
+        .catch(() => {
+          setIsPlaying(false);
+        });
+    }
+  };
+
+  return (
+    <>
+      {/* biome-ignore lint/a11y/useMediaCaption: BGM音楽ファイルのためキャプション不要 */}
+      <audio ref={audioRef} src={WINTER_BGM_SRC} loop preload="none" />
+      <button
+        type="button"
+        onClick={togglePlay}
+        aria-label={isPlaying ? "BGMを停止" : "BGMを再生"}
+        className="bgm-toggle"
+      >
+        {isPlaying ? (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          </svg>
+        ) : (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+        )}
+      </button>
+    </>
+  );
+}
+
 export default function MaintenanceWinterEffect() {
   const snowflakes = useMemo(() => createSnowflakes(120), []);
   const petals = useMemo(() => createPetals(16), []);
@@ -570,67 +685,68 @@ export default function MaintenanceWinterEffect() {
   }, []);
 
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden z-10"
-    >
-      <div className="absolute inset-0 winter-glow" />
-      {showNightOverlay && <div className="absolute inset-0 night-overlay" />}
-      {showNightOverlay && showCredits && (
-        <div className="night-logo-stage">
-          <DroneLogoStage />
-        </div>
-      )}
+    <>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden z-10"
+      >
+        <div className="absolute inset-0 winter-glow" />
+        {showNightOverlay && <div className="absolute inset-0 night-overlay" />}
+        {showNightOverlay && showCredits && (
+          <div className="night-logo-stage">
+            <DroneLogoStage />
+          </div>
+        )}
 
-      {snowflakes.map((flake) => (
-        <span
-          key={`snow-${flake.id}`}
-          className="snowflake"
-          style={
-            {
-              left: `${flake.left}%`,
-              width: `${flake.size}px`,
-              height: `${flake.size}px`,
-              filter: `blur(${flake.blur}px)`,
-              animationDuration: `${flake.duration}s`,
-              animationDelay: `${flake.delay}s`,
-              "--drift": `${flake.drift}px`,
-              "--flake-opacity": `${flake.opacity}`,
-            } as CSSProperties
-          }
-        />
-      ))}
-
-      {!showNightOverlay &&
-        petals.map((petal) => (
+        {snowflakes.map((flake) => (
           <span
-            key={`petal-${petal.id}`}
-            className="petal"
+            key={`snow-${flake.id}`}
+            className="snowflake"
             style={
               {
-                left: `${petal.left}%`,
-                width: `${petal.size}px`,
-                height: `${petal.size}px`,
-                opacity: petal.opacity,
-                animationDuration: `${petal.duration}s`,
-                animationDelay: `${petal.delay}s`,
-                "--drift": `${petal.drift}px`,
+                left: `${flake.left}%`,
+                width: `${flake.size}px`,
+                height: `${flake.size}px`,
+                filter: `blur(${flake.blur}px)`,
+                animationDuration: `${flake.duration}s`,
+                animationDelay: `${flake.delay}s`,
+                "--drift": `${flake.drift}px`,
+                "--flake-opacity": `${flake.opacity}`,
               } as CSSProperties
             }
           />
         ))}
 
-      {showCredits && (
-        <EndCredits
-          contributors={contributors}
-          scrollSpeedPxPerSec={SCROLL_SPEED}
-          onEnd={() => {
-            setShowCredits(false);
-          }}
-        />
-      )}
+        {!showNightOverlay &&
+          petals.map((petal) => (
+            <span
+              key={`petal-${petal.id}`}
+              className="petal"
+              style={
+                {
+                  left: `${petal.left}%`,
+                  width: `${petal.size}px`,
+                  height: `${petal.size}px`,
+                  opacity: petal.opacity,
+                  animationDuration: `${petal.duration}s`,
+                  animationDelay: `${petal.delay}s`,
+                  "--drift": `${petal.drift}px`,
+                } as CSSProperties
+              }
+            />
+          ))}
 
-      <style jsx>{`
+        {showCredits && (
+          <EndCredits
+            contributors={contributors}
+            scrollSpeedPxPerSec={SCROLL_SPEED}
+            onEnd={() => {
+              setShowCredits(false);
+            }}
+          />
+        )}
+
+        <style jsx>{`
         .winter-glow {
           background:
             radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.3), transparent 35%),
@@ -732,6 +848,31 @@ export default function MaintenanceWinterEffect() {
           }
         }
 
+        .bgm-toggle {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 50;
+          pointer-events: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 9999px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.4);
+          backdrop-filter: blur(8px);
+          color: rgba(255, 255, 255, 0.8);
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+        }
+
+        .bgm-toggle:hover {
+          background: rgba(0, 0, 0, 0.6);
+          color: #fff;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .snowflake,
           .petal {
@@ -740,6 +881,8 @@ export default function MaintenanceWinterEffect() {
           }
         }
       `}</style>
-    </div>
+      </div>
+      <BgmToggle />
+    </>
   );
 }
