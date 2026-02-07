@@ -3,15 +3,16 @@
 import { createClient } from "@/lib/supabase/client";
 import {
   checkBoardMissionCompleted as checkBoardMissionCompletedService,
+  getArchivedPosterBoardStats as getArchivedPosterBoardStatsService,
+  getArchivedPosterBoardSummary as getArchivedPosterBoardSummaryService,
   getArchivedPosterBoardsMinimal as getArchivedPosterBoardsMinimalService,
+  getDistrictsWithBoards as getDistrictsWithBoardsService,
   getPosterBoardDetail as getPosterBoardDetailService,
+  getPosterBoardSummaryByDistrict as getPosterBoardSummaryByDistrictService,
   getPosterBoardsMinimalByDistrict as getPosterBoardsMinimalByDistrictService,
   getPosterBoardsMinimal as getPosterBoardsMinimalService,
   getPosterMissionId as getPosterMissionIdService,
-  POSTER_MISSION_SLUG,
 } from "../services/poster-boards";
-
-export { POSTER_MISSION_SLUG };
 
 export async function getCurrentUserId(): Promise<string | null> {
   const supabase = createClient();
@@ -49,4 +50,23 @@ export async function checkBoardMissionCompleted(
   userId: string,
 ) {
   return checkBoardMissionCompletedService(boardId, userId);
+}
+
+export async function getPosterBoardSummaryByDistrict() {
+  return getPosterBoardSummaryByDistrictService();
+}
+
+export async function getDistrictsWithBoards() {
+  return getDistrictsWithBoardsService();
+}
+
+export async function getArchivedPosterBoardSummary(electionTerm: string) {
+  return getArchivedPosterBoardSummaryService(electionTerm);
+}
+
+export async function getArchivedPosterBoardStats(
+  electionTerm: string,
+  prefecture: string,
+) {
+  return getArchivedPosterBoardStatsService(electionTerm, prefecture);
 }

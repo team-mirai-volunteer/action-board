@@ -6,7 +6,7 @@ import {
   POSTER_PREFECTURE_MAP,
   type PosterPrefectureKey,
 } from "@/features/map-poster/constants/poster-prefectures";
-import { getArchivedPosterBoardStats } from "@/features/map-poster/services/poster-boards";
+import { getArchivedPosterBoardStats } from "@/features/map-poster/loaders/poster-boards-loaders";
 
 // Election term display names
 const ELECTION_TERM_NAMES: Record<string, string> = {

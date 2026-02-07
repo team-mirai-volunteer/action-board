@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { signInWithLine } from "@/features/auth/services/line-auth";
+import { signInWithLine } from "@/features/auth/client/line-auth";
 import {
   formatBirthDate,
   generateDaysArray,

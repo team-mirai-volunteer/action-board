@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { unlinkYouTubeAccountAction } from "../actions/youtube-auth-actions";
-import { linkYouTubeAccount } from "../services/youtube-auth";
+import { linkYouTubeAccount } from "../client/youtube-auth";
 
 // Google "G" ロゴ（公式カラー版）
 function GoogleIcon({ className }: { className?: string }) {

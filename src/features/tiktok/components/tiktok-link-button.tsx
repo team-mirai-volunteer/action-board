@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { unlinkTikTokAccountAction } from "../actions/tiktok-auth-actions";
-import { linkTikTokAccount } from "../services/tiktok-auth";
+import { linkTikTokAccount } from "../client/tiktok-auth";
 import { TikTokIcon } from "./tiktok-icon";
 
 interface TikTokLinkButtonProps {

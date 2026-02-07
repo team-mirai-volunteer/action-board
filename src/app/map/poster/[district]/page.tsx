@@ -11,7 +11,7 @@ import {
   POSTER_DISTRICT_MAP,
   type PosterDistrictKey,
 } from "@/features/map-poster/constants/poster-district-shugin-2026";
-import { getDistrictsWithBoards } from "@/features/map-poster/services/poster-boards";
+import { getDistrictsWithBoards } from "@/features/map-poster/loaders/poster-boards-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export async function generateMetadata({
