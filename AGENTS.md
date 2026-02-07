@@ -22,6 +22,33 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 ### データアクセス
 **UIコンポーネント（`.tsx`ファイル）からSupabaseを直接呼び出してはいけない。** Service層（`services/`）経由でアクセスすること。
 
+#### 正しいパターン
+```typescript
+// components/example.tsx
+import { getData } from "../services/example";
+
+const data = await getData(); // Service層経由でアクセス
+```
+
+#### 禁止パターン
+```typescript
+// components/example.tsx
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
+const { data } = await supabase.from("table").select(); // NG: 直接アクセス
+```
+
+#### 理由
+1. **責務の分離**: UIはデータの表示に専念し、データ取得ロジックはService層に集約
+2. **テスタビリティ**: Service層をモック化することでUIのテストが容易に
+3. **保守性**: データアクセスロジックの変更がUIに影響しない
+4. **一貫性**: 同じデータ取得ロジックを複数のコンポーネントで再利用可能
+
+#### 配置場所
+- `src/features/{機能名}/services/` - 機能固有のデータアクセス
+- `src/lib/services/` - 共通のデータアクセス
+
 ### Supabaseクライアントの使い分け
 - **`createClient()` / `getAuth()` / `getStorage()`**: 認証操作（`supabase.auth.*`）やStorage操作に使用
 - **`createAdminClient()`**: DB操作（`supabase.from(...)`）に使用。service_roleでRLSバイパス
@@ -45,8 +72,12 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 依頼された場合は、最初に論点を洗い出してユーザーに質問しながらクリアにし、マークダウンでドキュメントを作成すること。
 
 ### ドキュメント管理
+設計作業などのドキュメント作成を依頼された場合は、以下のルールに従ってファイルを作成すること：
+
 - ファイル名: `YYYYMMDD_HHMM_{日本語の作業内容}.md`
 - 保存場所: `docs/` 以下
+- フォーマット: Markdown
+- 例: `docs/20250815_1430_ユーザー認証システム設計.md`
 
 ### GitHub Issue作成
 - プラン内容を簡略化せず、そのままissueに記載する
@@ -54,7 +85,10 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 - 検証方法を具体的に記載する
 
 ### Pull Request作成
-- PRの説明文に `Resolves #issue番号` を必ず記載する
+- PRの説明文に `Resolves #issue番号` を必ず記載し、マージ時に対応するissueが自動的にクローズされるようにする
+  - 例: `Resolves #123`
+  - 複数のissueをクローズする場合は、それぞれ別の行に記載する
+    - 例: `Resolves #123`、`Resolves #456`
 
 ## 開発コマンド
 
@@ -95,6 +129,10 @@ src/features/{feature-name}/
 ├── utils/         # ユーティリティ
 └── constants/     # 定数
 ```
+
+## プロジェクト概要
+
+DBスキーマ、認証フロー、ミッションシステム、ディレクトリ構造の詳細は [プロジェクト概要](docs/プロジェクト概要.md) を参照。
 
 ## 開発ワークフロー
 
