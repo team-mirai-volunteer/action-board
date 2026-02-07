@@ -10,6 +10,7 @@
 import "dotenv/config";
 
 import {
+  isExpectedTokenError,
   isTokenExpired,
   refreshAccessToken,
 } from "@/features/youtube/services/google-auth";
@@ -32,6 +33,7 @@ interface SyncResult {
   achievedCount?: number;
   totalXpGranted?: number;
   error?: string;
+  isExpectedError?: boolean;
 }
 
 function parseArgs() {
@@ -129,12 +131,18 @@ async function main() {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      console.error(`  Error: ${errorMessage}`);
+      const expected = isExpectedTokenError(error);
+      if (expected) {
+        console.warn(`  Warning: ${errorMessage}`);
+      } else {
+        console.error(`  Error: ${errorMessage}`);
+      }
       results.push({
         userId: connection.user_id,
         displayName: connection.display_name,
         success: false,
         error: errorMessage,
+        isExpectedError: expected,
       });
     }
   }
@@ -166,10 +174,22 @@ async function main() {
   console.log(`Achievements: ${summary.totalAchievements}`);
   console.log(`XP granted: ${summary.totalXpGranted}`);
 
-  // 失敗したユーザーがいればエラーとして扱う
-  if (summary.failedUsers > 0) {
-    console.log("\nFailed users:");
-    for (const user of results.filter((r) => !r.success)) {
+  const failedResults = results.filter((r) => !r.success);
+  const expectedFailures = failedResults.filter((r) => r.isExpectedError);
+  const unexpectedFailures = failedResults.filter((r) => !r.isExpectedError);
+
+  // 想定内エラー（トークン失効など）はwarn表示
+  if (expectedFailures.length > 0) {
+    console.log(`\nExpected failures (${expectedFailures.length}):`);
+    for (const user of expectedFailures) {
+      console.warn(`  - ${user.displayName || user.userId}: ${user.error}`);
+    }
+  }
+
+  // 想定外エラーがあればerror表示してexit(1)
+  if (unexpectedFailures.length > 0) {
+    console.log(`\nUnexpected failures (${unexpectedFailures.length}):`);
+    for (const user of unexpectedFailures) {
       console.error(`  - ${user.displayName || user.userId}: ${user.error}`);
     }
     process.exit(1);
