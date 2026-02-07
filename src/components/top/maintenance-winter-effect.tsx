@@ -390,6 +390,8 @@ class JapaneseBGM {
   }
 
   start() {
+    // 音声ファイル先頭に約3秒の無音があるためスキップ
+    this.audio.currentTime = 3;
     this.audio.volume = 0;
     this.audio.play().catch(() => {});
     this.fadeToVolume(BGM_MAX_VOLUME, 2000);
