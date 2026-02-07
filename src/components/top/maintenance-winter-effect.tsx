@@ -374,86 +374,71 @@ function getDragonHeadPosition(
   return { x, y };
 }
 
-// --- Japanese BGM (Web Audio API) ---
-// 琴風メロディ + 尺八風アンビエントパッド + フィードバックディレイリバーブ
+// --- 迎春サウンドスケープ (Web Audio API) ---
+// うぐいす(ホーホケキョ) + 小鳥のさえずり + 春風アンビエント
 
-const BGM_MASTER_VOLUME = 0.2;
-
-// 都節音階 (miyako-bushi) on D — 日本的な情緒を出す
-// D4, Eb4, G4, A4, Bb4, D5, Eb5
-const KOTO_PHRASES: (number | 0)[][] = [
-  // Phrase 1: 序 — ゆっくり上昇
-  [293.66, 0, 392.0, 440.0, 466.16, 440.0, 392.0, 293.66],
-  // Phrase 2: 破 — 高音域へ
-  [440.0, 466.16, 587.33, 466.16, 440.0, 392.0, 293.66, 0],
-  // Phrase 3: 急 — 動きのあるフレーズ
-  [392.0, 440.0, 466.16, 587.33, 466.16, 392.0, 440.0, 392.0],
-  // Phrase 4: 結 — 解決、静かに
-  [440.0, 392.0, 311.13, 293.66, 0, 293.66, 0, 0],
-];
+const BGM_MASTER_VOLUME = 0.25;
 
 class JapaneseBGM {
   private ctx: AudioContext;
   private masterGain: GainNode;
   private dryBus: GainNode;
   private reverbBus: GainNode;
-  private phraseTimer: ReturnType<typeof setTimeout> | null = null;
-  private phraseIndex = 0;
+  private timers: ReturnType<typeof setTimeout>[] = [];
 
   constructor() {
     this.ctx = new AudioContext();
 
-    // Master output
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
     this.masterGain.connect(this.ctx.destination);
 
-    // Dry / Reverb buses
+    // Dry / Reverb buses (森の残響感)
     this.dryBus = this.ctx.createGain();
-    this.dryBus.gain.value = 0.65;
+    this.dryBus.gain.value = 0.55;
     this.dryBus.connect(this.masterGain);
 
     this.reverbBus = this.ctx.createGain();
-    this.reverbBus.gain.value = 0.35;
+    this.reverbBus.gain.value = 0.45;
 
-    // Simple feedback-delay reverb
-    const preDelay = this.ctx.createDelay(0.5);
-    preDelay.delayTime.value = 0.08;
+    // フィードバックディレイリバーブ (森の空間)
     const delay1 = this.ctx.createDelay(1.0);
-    delay1.delayTime.value = 0.18;
+    delay1.delayTime.value = 0.14;
     const delay2 = this.ctx.createDelay(1.0);
-    delay2.delayTime.value = 0.32;
+    delay2.delayTime.value = 0.28;
+    const delay3 = this.ctx.createDelay(1.0);
+    delay3.delayTime.value = 0.42;
     const feedback = this.ctx.createGain();
-    feedback.gain.value = 0.28;
+    feedback.gain.value = 0.22;
     const lpf = this.ctx.createBiquadFilter();
     lpf.type = "lowpass";
-    lpf.frequency.value = 2200;
+    lpf.frequency.value = 3500;
 
-    this.reverbBus.connect(preDelay);
-    preDelay.connect(delay1);
+    this.reverbBus.connect(delay1);
     delay1.connect(lpf);
     lpf.connect(delay2);
-    delay2.connect(feedback);
+    delay2.connect(delay3);
+    delay3.connect(feedback);
     feedback.connect(delay1);
     delay1.connect(this.masterGain);
     delay2.connect(this.masterGain);
+    delay3.connect(this.masterGain);
   }
 
   start() {
     this.ctx.resume();
-    // 2秒かけてフェードイン
     this.masterGain.gain.linearRampToValueAtTime(
       BGM_MASTER_VOLUME,
-      this.ctx.currentTime + 2,
+      this.ctx.currentTime + 2.5,
     );
-    this.startAmbientPad();
-    this.startDrone();
-    this.scheduleNextPhrase();
+    this.startWindAmbient();
+    this.scheduleUguisu();
+    this.scheduleSmallBirds();
   }
 
-  // 尺八風の息遣い — フィルタードノイズ
-  private startAmbientPad() {
-    const bufSize = this.ctx.sampleRate * 2;
+  // --- 春風アンビエント (木漏れ日の中の穏やかな風) ---
+  private startWindAmbient() {
+    const bufSize = this.ctx.sampleRate * 3;
     const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
     const ch = buf.getChannelData(0);
     for (let i = 0; i < bufSize; i++) ch[i] = Math.random() * 2 - 1;
@@ -462,99 +447,210 @@ class JapaneseBGM {
     src.buffer = buf;
     src.loop = true;
 
-    // Narrow bandpass → 息っぽい質感
-    const bp = this.ctx.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 320;
-    bp.Q.value = 3;
+    // ローパスで柔らかい風に
+    const lp = this.ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 600;
+    lp.Q.value = 0.7;
 
-    // 超低速LFOでフィルタ揺らし
+    // 超低速LFOで風のうねり
     const lfo = this.ctx.createOscillator();
     const lfoAmp = this.ctx.createGain();
-    lfo.frequency.value = 0.04;
-    lfoAmp.gain.value = 80;
+    lfo.frequency.value = 0.06;
+    lfoAmp.gain.value = 200;
     lfo.connect(lfoAmp);
-    lfoAmp.connect(bp.frequency);
+    lfoAmp.connect(lp.frequency);
 
-    const padGain = this.ctx.createGain();
-    padGain.gain.value = 0.018;
+    const windGain = this.ctx.createGain();
+    windGain.gain.value = 0.03;
 
-    src.connect(bp);
-    bp.connect(padGain);
-    padGain.connect(this.dryBus);
-    padGain.connect(this.reverbBus);
+    src.connect(lp);
+    lp.connect(windGain);
+    windGain.connect(this.dryBus);
 
     src.start();
     lfo.start();
   }
 
-  // D2 + A2 の超低ドローン
-  private startDrone() {
-    const droneGain = this.ctx.createGain();
-    droneGain.gain.value = 0.025;
-    droneGain.connect(this.dryBus);
+  // --- うぐいす「ホーホケキョ」---
+  private playUguisu() {
+    const now = this.ctx.currentTime;
+    // 距離感をランダムに (近い/遠い)
+    const distance = 0.6 + Math.random() * 0.5;
+    // 毎回わずかにピッチを変える (個体差)
+    const pitchShift = 0.92 + Math.random() * 0.16;
 
-    for (const freq of [73.42, 110.0]) {
-      const osc = this.ctx.createOscillator();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      osc.connect(droneGain);
-      osc.start();
+    const birdGain = this.ctx.createGain();
+    birdGain.gain.value = 0.14 * distance;
+    birdGain.connect(this.dryBus);
+    birdGain.connect(this.reverbBus);
+
+    // 「ホー」 — 長く上昇するトーン
+    this.synthBirdTone(
+      now,
+      1800 * pitchShift,
+      2300 * pitchShift,
+      0.6,
+      0.13 * distance,
+      birdGain,
+    );
+
+    // たまに「ホー」だけで終わる (自然な変化)
+    if (Math.random() < 0.25) return;
+
+    // 「ホ」 — 高く短い
+    this.synthBirdTone(
+      now + 0.78,
+      2700 * pitchShift,
+      2900 * pitchShift,
+      0.08,
+      0.11 * distance,
+      birdGain,
+    );
+
+    // 「ケ」 — さらに高く
+    this.synthBirdTone(
+      now + 0.9,
+      3300 * pitchShift,
+      3500 * pitchShift,
+      0.06,
+      0.1 * distance,
+      birdGain,
+    );
+
+    // 「キョ」 — 下降して締める
+    this.synthBirdTone(
+      now + 1.0,
+      3100 * pitchShift,
+      2200 * pitchShift,
+      0.18,
+      0.12 * distance,
+      birdGain,
+    );
+  }
+
+  // 鳥の単音: 周波数スウィープ + ビブラート
+  private synthBirdTone(
+    time: number,
+    freqStart: number,
+    freqEnd: number,
+    dur: number,
+    vol: number,
+    dest: AudioNode,
+  ) {
+    const osc = this.ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freqStart, time);
+    osc.frequency.linearRampToValueAtTime(freqEnd, time + dur);
+
+    // 微細なビブラート
+    const vib = this.ctx.createOscillator();
+    const vibAmp = this.ctx.createGain();
+    vib.frequency.value = 5 + Math.random() * 3;
+    vibAmp.gain.value = freqStart * 0.008;
+    vib.connect(vibAmp);
+    vibAmp.connect(osc.frequency);
+
+    const env = this.ctx.createGain();
+    env.gain.setValueAtTime(0, time);
+    env.gain.linearRampToValueAtTime(vol, time + Math.min(0.015, dur * 0.1));
+    env.gain.setValueAtTime(vol, time + dur * 0.7);
+    env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+
+    osc.connect(env);
+    env.connect(dest);
+
+    vib.start(time);
+    osc.start(time);
+    osc.stop(time + dur + 0.02);
+    vib.stop(time + dur + 0.02);
+  }
+
+  private scheduleUguisu() {
+    // 初回は2秒後
+    const firstDelay = 2000;
+    const t = setTimeout(() => {
+      this.playUguisu();
+      this.loopUguisu();
+    }, firstDelay);
+    this.timers.push(t);
+  }
+
+  private loopUguisu() {
+    // 8〜18秒間隔でランダムに鳴く
+    const delay = 8000 + Math.random() * 10000;
+    const t = setTimeout(() => {
+      this.playUguisu();
+      this.loopUguisu();
+    }, delay);
+    this.timers.push(t);
+  }
+
+  // --- 小鳥のさえずり (メジロ、シジュウカラ風) ---
+  private playSmallBird() {
+    const now = this.ctx.currentTime;
+    const distance = 0.4 + Math.random() * 0.6;
+    // 鳥の種類でベース周波数を変える
+    const species = Math.random();
+    let baseFreq: number;
+    let chirpCount: number;
+    let chirpInterval: number;
+
+    if (species < 0.4) {
+      // メジロ風: 高めの速いさえずり
+      baseFreq = 3500 + Math.random() * 1500;
+      chirpCount = 3 + Math.floor(Math.random() * 4);
+      chirpInterval = 0.06 + Math.random() * 0.04;
+    } else if (species < 0.7) {
+      // シジュウカラ風: 「ツーピー ツーピー」
+      baseFreq = 2800 + Math.random() * 800;
+      chirpCount = 2 + Math.floor(Math.random() * 2);
+      chirpInterval = 0.12 + Math.random() * 0.08;
+    } else {
+      // ヒヨドリ風: やや低めの単音
+      baseFreq = 2200 + Math.random() * 600;
+      chirpCount = 1 + Math.floor(Math.random() * 2);
+      chirpInterval = 0.15 + Math.random() * 0.1;
+    }
+
+    const birdGain = this.ctx.createGain();
+    birdGain.gain.value = distance;
+    birdGain.connect(this.dryBus);
+    birdGain.connect(this.reverbBus);
+
+    for (let i = 0; i < chirpCount; i++) {
+      const t = now + i * chirpInterval;
+      const freqVariation = (Math.random() - 0.5) * 600;
+      const isUp = Math.random() < 0.6;
+      this.synthBirdTone(
+        t,
+        baseFreq + freqVariation,
+        baseFreq + freqVariation + (isUp ? 400 : -300),
+        0.03 + Math.random() * 0.04,
+        0.06 * distance,
+        birdGain,
+      );
     }
   }
 
-  // 琴ノート: 基音 + 2倍音 + 3倍音 の合成
-  private playKotoNote(freq: number, time: number, dur = 3.2) {
-    if (freq === 0) return;
-
-    const layers: [OscillatorType, number, number][] = [
-      ["triangle", freq, 0.13], // 基音
-      ["sine", freq * 2, 0.045], // 2倍音 (オクターブ)
-      ["sine", freq * 3, 0.018], // 3倍音
-    ];
-
-    for (const [type, f, vol] of layers) {
-      const osc = this.ctx.createOscillator();
-      osc.type = type;
-      osc.frequency.value = f;
-      // 微細なデチューンで温かみ
-      osc.detune.value = (Math.random() - 0.5) * 5;
-
-      const env = this.ctx.createGain();
-      // 琴の特徴: 鋭いアタック → 速い初期減衰 → 緩やかなサステイン減衰
-      env.gain.setValueAtTime(0, time);
-      env.gain.linearRampToValueAtTime(vol, time + 0.006);
-      env.gain.exponentialRampToValueAtTime(vol * 0.3, time + 0.12);
-      env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
-
-      osc.connect(env);
-      env.connect(this.dryBus);
-      // 基音のみリバーブに送る
-      if (f === freq) {
-        env.connect(this.reverbBus);
-      }
-
-      osc.start(time);
-      osc.stop(time + dur + 0.05);
-    }
+  private scheduleSmallBirds() {
+    // 初回は3秒後
+    const firstDelay = 3000;
+    const t = setTimeout(() => {
+      this.playSmallBird();
+      this.loopSmallBirds();
+    }, firstDelay);
+    this.timers.push(t);
   }
 
-  private scheduleNextPhrase() {
-    const phrase = KOTO_PHRASES[this.phraseIndex % KOTO_PHRASES.length];
-    this.phraseIndex++;
-
-    const baseTime = this.ctx.currentTime + 0.1;
-    const interval = 0.85; // ノート間隔 (秒)
-
-    for (let i = 0; i < phrase.length; i++) {
-      // 微細なタイミング揺れで人間味を出す
-      const jitter = (Math.random() - 0.5) * 0.04;
-      this.playKotoNote(phrase[i], baseTime + i * interval + jitter);
-    }
-
-    // フレーズ間の間 (2秒) + フレーズ長
-    const nextDelay = (phrase.length * interval + 2.0) * 1000;
-    this.phraseTimer = setTimeout(() => this.scheduleNextPhrase(), nextDelay);
+  private loopSmallBirds() {
+    // 3〜7秒間隔
+    const delay = 3000 + Math.random() * 4000;
+    const t = setTimeout(() => {
+      this.playSmallBird();
+      this.loopSmallBirds();
+    }, delay);
+    this.timers.push(t);
   }
 
   setMuted(muted: boolean) {
@@ -565,7 +661,8 @@ class JapaneseBGM {
   }
 
   dispose() {
-    if (this.phraseTimer) clearTimeout(this.phraseTimer);
+    for (const t of this.timers) clearTimeout(t);
+    this.timers = [];
     this.ctx.close();
   }
 }
