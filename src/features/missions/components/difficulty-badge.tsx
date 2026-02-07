@@ -1,5 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/utils";
+import {
+  getDifficultyLabel,
+  getDifficultyStyles,
+} from "../utils/difficulty-styles";
 
 interface DifficultyBadgeProps {
   difficulty: number;
@@ -12,20 +16,7 @@ export function DifficultyBadge({
   showLabel = true,
   className,
 }: DifficultyBadgeProps) {
-  const getDifficultyStyles = (_difficulty: number) => {
-    return "text-gray-700 border-gray-400 hover:bg-gray-50";
-  };
-
-  const difficultyLabels = {
-    1: "⭐",
-    2: "⭐⭐",
-    3: "⭐⭐⭐",
-    4: "⭐⭐⭐⭐",
-    5: "⭐⭐⭐⭐⭐",
-  };
-
-  const label =
-    difficultyLabels[difficulty as keyof typeof difficultyLabels] || difficulty;
+  const label = getDifficultyLabel(difficulty);
 
   return (
     <Badge

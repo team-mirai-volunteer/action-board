@@ -1,3 +1,6 @@
+import "server-only";
+
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { getPosterBoardStatsAction } from "../actions/poster-boards";
@@ -6,26 +9,21 @@ import type {
   PosterBoard,
   PosterBoardTotal,
 } from "../types/poster-types";
+import {
+  buildSummaryFromAggregatedRows,
+  buildSummaryFromIndividualRows,
+  extractUniqueValues,
+} from "../utils/board-transforms";
+import { countBoardsByStatus } from "../utils/poster-stats";
 
 /** ポスター貼りミッションのslug */
 export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
 
 /**
- * 現在の認証ユーザーIDを取得
- */
-export async function getCurrentUserId(): Promise<string | null> {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user?.id ?? null;
-}
-
-/**
  * ポスター貼りミッションのIDを取得
  */
 export async function getPosterMissionId(): Promise<string | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: mission, error } = await supabase
     .from("missions")
@@ -51,7 +49,7 @@ export async function checkBoardMissionCompleted(
   const missionId = await getPosterMissionId();
   if (!missionId) return false;
 
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: activities, error } = await supabase
     .from("poster_activities")
@@ -80,7 +78,7 @@ export async function checkBoardMissionCompleted(
 
 // 最小限のデータのみ取得（マップ表示用）- 区割り対応版
 export async function getPosterBoardsMinimalByDistrict(district: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 全データを取得するためページネーションを使用
   const allBoards: Pick<
@@ -126,7 +124,7 @@ export async function getPosterBoardsMinimalByDistrict(district: string) {
 
 // 最小限のデータのみ取得（マップ表示用）- レガシー都道府県版
 export async function getPosterBoardsMinimal(prefecture?: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 全データを取得するためページネーションを使用
   const allBoards: Pick<
@@ -178,7 +176,7 @@ export async function getPosterBoardsMinimal(prefecture?: string) {
 
 // 全データ取得（既存の関数名を維持）- レガシー都道府県版
 export async function getPosterBoards(prefecture?: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Fetch all boards with pagination to bypass Supabase's default limit
   let allBoards: PosterBoard[] = [];
@@ -226,7 +224,7 @@ export async function getPosterBoards(prefecture?: string) {
 
 // 全データ取得 - 区割り対応版
 export async function getPosterBoardsByDistrict(district: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Fetch all boards with pagination to bypass Supabase's default limit
   let allBoards: PosterBoard[] = [];
@@ -268,7 +266,7 @@ export async function getPosterBoardsByDistrict(district: string) {
 export async function getPosterBoardDetail(
   boardId: string,
 ): Promise<PosterBoard | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
@@ -289,7 +287,7 @@ export async function updateBoardStatus(
   newStatus: BoardStatus,
   note?: string,
 ) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Get current board status
   const { data: currentBoard, error: fetchError } = await supabase
@@ -315,9 +313,10 @@ export async function updateBoardStatus(
   }
 
   // Get current user - required for history tracking
+  const supabaseAuth = createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabaseAuth.auth.getUser();
 
   if (!user) {
     throw new Error("User must be authenticated to update board status");
@@ -344,7 +343,7 @@ export async function updateBoardStatus(
 
 // Get unique prefectures that have poster boards (legacy)
 export async function getPrefecturesWithBoards() {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Fetch all records with pagination to get all prefectures
   let allPrefectures: string[] = [];
@@ -383,14 +382,12 @@ export async function getPrefecturesWithBoards() {
   }
 
   // Get unique prefectures
-  const uniquePrefectures = Array.from(new Set(allPrefectures));
-
-  return uniquePrefectures;
+  return extractUniqueValues(allPrefectures, (p) => p);
 }
 
 // Get unique districts that have poster boards (区割り対応版)
 export async function getDistrictsWithBoards(): Promise<string[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Fetch all records with pagination to get all districts
   let allDistricts: string[] = [];
@@ -433,9 +430,7 @@ export async function getDistrictsWithBoards(): Promise<string[]> {
   }
 
   // Get unique districts
-  const uniqueDistricts = Array.from(new Set(allDistricts));
-
-  return uniqueDistricts;
+  return extractUniqueValues(allDistricts, (d) => d);
 }
 
 // 統計情報を取得（RPC関数を使用して最適化）
@@ -453,7 +448,7 @@ export async function getPosterBoardStats(prefecture: string): Promise<{
 export async function getPosterBoardSummaryByPrefecture(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // RPC関数を使用してデータベース側で集計
   const { data: aggregatedData, error: rpcError } = await supabase.rpc(
@@ -470,40 +465,17 @@ export async function getPosterBoardSummaryByPrefecture(): Promise<
   }
 
   // RPC関数から返されたデータを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  for (const row of aggregatedData) {
-    const prefecture = row.prefecture;
-    if (!summary[prefecture]) {
-      summary[prefecture] = {
-        total: 0,
-        statuses: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
-      };
-    }
-    summary[prefecture].statuses[row.status] = row.count;
-    summary[prefecture].total += row.count;
-  }
-
-  return summary;
+  return buildSummaryFromAggregatedRows(
+    aggregatedData,
+    (row) => row.prefecture,
+  );
 }
 
 // 特定の都道府県の掲示板総数を取得
 export async function getPosterBoardTotalByPrefecture(
   prefecture: string,
 ): Promise<PosterBoardTotal | null> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("poster_board_totals")
@@ -527,7 +499,7 @@ export async function getPosterBoardTotalByPrefecture(
 export async function getPosterBoardSummaryByDistrict(): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 区割りでグループ化して集計
   // archived=false のデータのみを対象
@@ -549,35 +521,7 @@ export async function getPosterBoardSummaryByDistrict(): Promise<
   }
 
   // データを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  for (const row of data) {
-    const district = row.district;
-    if (!district) continue;
-
-    if (!summary[district]) {
-      summary[district] = {
-        total: 0,
-        statuses: {
-          not_yet: 0,
-          not_yet_dangerous: 0,
-          reserved: 0,
-          done: 0,
-          error_wrong_place: 0,
-          error_damaged: 0,
-          error_wrong_poster: 0,
-          other: 0,
-        },
-      };
-    }
-    summary[district].statuses[row.status] += 1;
-    summary[district].total += 1;
-  }
-
-  return summary;
+  return buildSummaryFromIndividualRows(data, (row) => row.district);
 }
 
 // 区割り別の統計情報を取得（特定の区割り）
@@ -585,7 +529,7 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
@@ -600,21 +544,7 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
     throw error;
   }
 
-  const statusCounts: Record<BoardStatus, number> = {
-    not_yet: 0,
-    not_yet_dangerous: 0,
-    reserved: 0,
-    done: 0,
-    error_wrong_place: 0,
-    error_damaged: 0,
-    error_wrong_poster: 0,
-    other: 0,
-  };
-
-  for (const row of data || []) {
-    statusCounts[row.status] += 1;
-  }
-
+  const statusCounts = countBoardsByStatus(data || []);
   const totalCount = data?.length || 0;
 
   return { totalCount, statusCounts };
@@ -624,7 +554,7 @@ export async function getPosterBoardStatsByDistrict(district: string): Promise<{
 
 // Get available archived election terms
 export async function getArchivedElectionTerms(): Promise<string[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
@@ -638,15 +568,7 @@ export async function getArchivedElectionTerms(): Promise<string[]> {
   }
 
   // Get unique election terms
-  const uniqueTerms = Array.from(
-    new Set(
-      data
-        ?.map((item) => item.election_term)
-        .filter((t): t is string => t !== null) || [],
-    ),
-  );
-
-  return uniqueTerms;
+  return extractUniqueValues(data || [], (item) => item.election_term);
 }
 
 // Get archived data summary by prefecture for a specific election term
@@ -655,7 +577,7 @@ export async function getArchivedPosterBoardSummary(
 ): Promise<
   Record<string, { total: number; statuses: Record<BoardStatus, number> }>
 > {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // Use RPC function to avoid 10,000 row limit by doing server-side aggregation
   const { data, error } = await supabase.rpc(
@@ -671,37 +593,11 @@ export async function getArchivedPosterBoardSummary(
   }
 
   // データを整形
-  const summary: Record<
-    string,
-    { total: number; statuses: Record<BoardStatus, number> }
-  > = {};
-
-  if (data && Array.isArray(data)) {
-    for (const row of data) {
-      const prefecture = row.prefecture;
-      if (!prefecture) continue;
-
-      if (!summary[prefecture]) {
-        summary[prefecture] = {
-          total: 0,
-          statuses: {
-            not_yet: 0,
-            not_yet_dangerous: 0,
-            reserved: 0,
-            done: 0,
-            error_wrong_place: 0,
-            error_damaged: 0,
-            error_wrong_poster: 0,
-            other: 0,
-          },
-        };
-      }
-      summary[prefecture].statuses[row.status as BoardStatus] = row.count;
-      summary[prefecture].total += row.count;
-    }
+  if (!data || !Array.isArray(data)) {
+    return {};
   }
 
-  return summary;
+  return buildSummaryFromAggregatedRows(data, (row) => row.prefecture);
 }
 
 // Get archived poster boards minimal data for a specific election term and prefecture
@@ -709,7 +605,7 @@ export async function getArchivedPosterBoardsMinimal(
   electionTerm: string,
   prefecture: string,
 ) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const allBoards: Pick<
     PosterBoard,
@@ -760,7 +656,7 @@ export async function getArchivedPosterBoardStats(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data, error } = await supabase
     .from("poster_boards")
@@ -777,21 +673,7 @@ export async function getArchivedPosterBoardStats(
     throw error;
   }
 
-  const statusCounts: Record<BoardStatus, number> = {
-    not_yet: 0,
-    not_yet_dangerous: 0,
-    reserved: 0,
-    done: 0,
-    error_wrong_place: 0,
-    error_damaged: 0,
-    error_wrong_poster: 0,
-    other: 0,
-  };
-
-  for (const row of data || []) {
-    statusCounts[row.status] += 1;
-  }
-
+  const statusCounts = countBoardsByStatus(data || []);
   const totalCount = data?.length || 0;
 
   return { totalCount, statusCounts };

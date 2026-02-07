@@ -62,3 +62,21 @@ export function createClient(): SupabaseClient<Database> {
   // クライアントサイド: BrowserClient
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 }
+
+/**
+ * cookie-aware な Supabase Auth クライアントを取得
+ * セッション管理（getUser, exchangeCodeForSession, updateUser等）に使用
+ *
+ * 注意: DB操作（from()）には createAdminClient を使用すること
+ */
+export function getAuth() {
+  return createClient().auth;
+}
+
+/**
+ * Supabase Storage クライアントを取得
+ * ファイルアップロードやPublic URL取得に使用
+ */
+export function getStorage() {
+  return createClient().storage;
+}

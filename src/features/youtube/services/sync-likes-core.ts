@@ -6,6 +6,11 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { hasTeamMiraiTag } from "../constants/team-mirai";
 import {
+  buildLikeVideoRecord,
+  filterNewIds,
+  mapLikedVideoItem,
+} from "../utils/sync-helpers";
+import {
   fetchUserLikedVideos as fetchUserLikedVideosRaw,
   fetchVideoDetails,
 } from "./youtube-client";
@@ -33,16 +38,7 @@ export async function fetchUserLikedVideos(
 ): Promise<LikedVideo[]> {
   const rawItems = await fetchUserLikedVideosRaw(accessToken, maxResults);
 
-  return rawItems.map((item) => ({
-    videoId: item.id,
-    title: item.snippet.title,
-    channelId: item.snippet.channelId,
-    channelTitle: item.snippet.channelTitle,
-    thumbnailUrl:
-      item.snippet.thumbnails.medium?.url ||
-      item.snippet.thumbnails.default?.url,
-    publishedAt: item.snippet.publishedAt,
-  }));
+  return rawItems.map(mapLikedVideoItem);
 }
 
 /**
@@ -245,9 +241,7 @@ export async function syncLikesForUser(
     (existingVideos || []).map((v) => v.video_id),
   );
 
-  const newVideoIds = teamMiraiVideoIds.filter(
-    (id) => !existingVideoIds.has(id),
-  );
+  const newVideoIds = filterNewIds(teamMiraiVideoIds, existingVideoIds);
 
   // 5. 新しい動画をyoutube_videosに追加
   let syncedVideoCount = 0;
@@ -257,24 +251,10 @@ export async function syncLikesForUser(
     for (const detail of videoDetails) {
       const { error: insertError } = await adminClient
         .from("youtube_videos")
-        .upsert(
-          {
-            video_id: detail.id,
-            video_url: `https://www.youtube.com/watch?v=${detail.id}`,
-            title: detail.snippet.title,
-            description: detail.snippet.description || null,
-            thumbnail_url:
-              detail.snippet.thumbnails.medium?.url ||
-              detail.snippet.thumbnails.default?.url ||
-              null,
-            channel_id: detail.snippet.channelId,
-            channel_title: detail.snippet.channelTitle,
-            published_at: detail.snippet.publishedAt,
-            tags: detail.snippet.tags || [],
-            is_active: true,
-          },
-          { onConflict: "video_id", ignoreDuplicates: true },
-        );
+        .upsert(buildLikeVideoRecord(detail), {
+          onConflict: "video_id",
+          ignoreDuplicates: true,
+        });
 
       if (!insertError) {
         syncedVideoCount++;

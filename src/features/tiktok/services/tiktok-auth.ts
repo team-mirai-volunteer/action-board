@@ -1,5 +1,7 @@
 "use client";
 
+import { base64UrlEncode } from "../utils/auth-helpers";
+
 /**
  * TikTokアカウント連携開始関数
  * TikTok Display API を使用してTikTok認証ページにリダイレクト
@@ -58,14 +60,6 @@ async function generateCodeChallenge(codeVerifier: string): Promise<string> {
   const data = encoder.encode(codeVerifier);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return base64UrlEncode(new Uint8Array(digest));
-}
-
-/**
- * Base64 URL エンコード
- */
-function base64UrlEncode(buffer: Uint8Array): string {
-  const base64 = btoa(String.fromCharCode.apply(null, Array.from(buffer)));
-  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**

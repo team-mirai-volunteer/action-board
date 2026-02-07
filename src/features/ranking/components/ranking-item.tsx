@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 // TOPページ用のランキングコンポーネント
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
+import { getLevelBadgeColor } from "../utils/level-badge-styles";
 import { getRankIcon } from "./ranking-icon";
 
 interface RankingItemProps {
@@ -14,16 +15,6 @@ interface RankingItemProps {
     name: string;
   };
   badgeText?: string;
-}
-
-function getLevelBadgeColor(level: number | null) {
-  const displayLevel = level ?? 0;
-
-  if (displayLevel >= 40) return "bg-emerald-100 text-emerald-700";
-  if (displayLevel >= 30) return "bg-emerald-100 text-emerald-700";
-  if (displayLevel >= 20) return "bg-emerald-100 text-emerald-700";
-  if (displayLevel >= 10) return "bg-emerald-100 text-emerald-700";
-  return "text-emerald-700 bg-emerald-100";
 }
 
 export function RankingItem({

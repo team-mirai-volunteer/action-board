@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatNumberJaShort } from "@/lib/utils/format-number-ja";
 import type { DailyActiveUsersItem } from "../types";
 
 interface ActiveUsersChartProps {
@@ -20,13 +21,6 @@ const chartConfig = {
     color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
-
-function formatNumberShort(num: number): string {
-  if (num >= 10_000) {
-    return `${Math.round(num / 10_000)}万`;
-  }
-  return num.toLocaleString();
-}
 
 export function ActiveUsersChart({ data }: ActiveUsersChartProps) {
   if (data.length < 2) {
@@ -66,7 +60,7 @@ export function ActiveUsersChart({ data }: ActiveUsersChartProps) {
             axisLine={false}
             tickMargin={8}
             fontSize={10}
-            tickFormatter={formatNumberShort}
+            tickFormatter={formatNumberJaShort}
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Line

@@ -1,27 +1,15 @@
 import { Eye, Heart, MessageCircle, Share2 } from "lucide-react";
 import Link from "next/link";
 import { TikTokIcon } from "@/features/tiktok/components";
+import {
+  formatDateShort,
+  formatSecondsDuration,
+} from "@/lib/utils/date-formatters";
 import type { TikTokVideoWithStats } from "../types";
 import { formatNumberJa } from "../utils/format";
 
 interface TikTokVideoCardProps {
   video: TikTokVideoWithStats;
-}
-
-function formatDuration(seconds: number | null): string {
-  if (!seconds) return "";
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 
 export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
@@ -49,7 +37,7 @@ export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
         {/* 再生時間 */}
         {video.duration && (
           <div className="absolute bottom-0.5 right-0.5 bg-black/80 text-white text-[10px] px-1 rounded">
-            {formatDuration(video.duration)}
+            {formatSecondsDuration(video.duration)}
           </div>
         )}
       </div>
@@ -64,7 +52,7 @@ export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
         {/* クリエイター名・日付 */}
         <p className="text-xs text-gray-500 truncate">
           {video.creator_username ? `@${video.creator_username}` : "TikTok"} •{" "}
-          {formatDate(video.published_at)}
+          {formatDateShort(video.published_at)}
         </p>
 
         {/* 統計 */}

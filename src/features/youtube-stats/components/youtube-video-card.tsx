@@ -1,37 +1,15 @@
 import { Eye, MessageCircle, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  formatDateShort,
+  formatIsoDuration,
+} from "@/lib/utils/date-formatters";
 import type { YouTubeVideoWithStats } from "../types";
 import { formatNumberJa } from "../utils/format";
 
 interface YouTubeVideoCardProps {
   video: YouTubeVideoWithStats;
-}
-
-function formatDuration(duration: string | null): string {
-  if (!duration) return "";
-
-  // ISO 8601 duration format (PT1H2M3S)
-  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return duration;
-
-  const hours = match[1] ? Number.parseInt(match[1], 10) : 0;
-  const minutes = match[2] ? Number.parseInt(match[2], 10) : 0;
-  const seconds = match[3] ? Number.parseInt(match[3], 10) : 0;
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 
 export function YouTubeVideoCard({ video }: YouTubeVideoCardProps) {
@@ -60,7 +38,7 @@ export function YouTubeVideoCard({ video }: YouTubeVideoCardProps) {
         {/* 再生時間 */}
         {video.duration && (
           <div className="absolute bottom-0.5 right-0.5 bg-black/80 text-white text-[10px] px-1 rounded">
-            {formatDuration(video.duration)}
+            {formatIsoDuration(video.duration)}
           </div>
         )}
       </div>
@@ -74,7 +52,7 @@ export function YouTubeVideoCard({ video }: YouTubeVideoCardProps) {
 
         {/* チャンネル名・日付 */}
         <p className="text-xs text-gray-500 truncate">
-          {video.channel_title} • {formatDate(video.published_at)}
+          {video.channel_title} • {formatDateShort(video.published_at)}
         </p>
 
         {/* 統計 */}

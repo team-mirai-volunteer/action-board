@@ -1,4 +1,8 @@
-import { formatNumberJa, formatNumberJaShort } from "./format-number-ja";
+import {
+  formatNumberJa,
+  formatNumberJaShort,
+  formatNumberLocale,
+} from "./format-number-ja";
 
 describe("formatNumberJa", () => {
   describe("null値", () => {
@@ -143,5 +147,27 @@ describe("formatNumberJaShort", () => {
     test("-100000000は-1億と表示する", () => {
       expect(formatNumberJaShort(-100000000)).toBe("-1億");
     });
+  });
+});
+
+describe("formatNumberLocale", () => {
+  test("0をそのまま返す", () => {
+    expect(formatNumberLocale(0)).toBe("0");
+  });
+
+  test("1000をカンマ区切りで返す", () => {
+    expect(formatNumberLocale(1000)).toBe("1,000");
+  });
+
+  test("1234567をカンマ区切りで返す", () => {
+    expect(formatNumberLocale(1234567)).toBe("1,234,567");
+  });
+
+  test("負の数値もカンマ区切りで返す", () => {
+    expect(formatNumberLocale(-5000)).toBe("-5,000");
+  });
+
+  test("小さい数値はそのまま返す", () => {
+    expect(formatNumberLocale(42)).toBe("42");
   });
 });

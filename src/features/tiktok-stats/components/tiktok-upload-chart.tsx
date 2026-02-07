@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatChartDates } from "@/lib/utils/chart-transforms";
 import type { VideoCountByDateItem } from "../types";
 
 interface TikTokUploadChartProps {
@@ -33,13 +34,7 @@ export function TikTokUploadChart({ data }: TikTokUploadChartProps) {
     );
   }
 
-  const formattedData = data.map((item) => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString("ja-JP", {
-      month: "short",
-      day: "numeric",
-    }),
-  }));
+  const formattedData = formatChartDates(data);
 
   return (
     <Card className="p-4">

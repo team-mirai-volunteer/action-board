@@ -7,11 +7,11 @@ const API_PATH = "/api";
 const API_PATH_PREFIX = "/api/";
 const RETRY_AFTER_SECONDS = "3600";
 
-function isApiRequest(pathname: string): boolean {
+export function isApiRequest(pathname: string): boolean {
   return pathname === API_PATH || pathname.startsWith(API_PATH_PREFIX);
 }
 
-function createMaintenanceApiResponse(): NextResponse {
+export function createMaintenanceApiResponse(): NextResponse {
   return NextResponse.json(
     {
       error: "service_unavailable",
@@ -27,13 +27,15 @@ function createMaintenanceApiResponse(): NextResponse {
   );
 }
 
-function createMaintenanceRewriteResponse(request: NextRequest): NextResponse {
+export function createMaintenanceRewriteResponse(
+  request: NextRequest,
+): NextResponse {
   const maintenanceUrl = request.nextUrl.clone();
   maintenanceUrl.pathname = MAINTENANCE_PATH;
   return NextResponse.rewrite(maintenanceUrl);
 }
 
-function createRootRedirectResponse(request: NextRequest): NextResponse {
+export function createRootRedirectResponse(request: NextRequest): NextResponse {
   const rootUrl = request.nextUrl.clone();
   rootUrl.pathname = ROOT_PATH;
   rootUrl.search = "";

@@ -44,3 +44,8 @@ export function formatNumberJaShort(num: number): string {
 
   return num.toLocaleString();
 }
+
+/** 数値をカンマ区切りでフォーマットする (toLocaleString ラッパー) */
+export function formatNumberLocale(num: number): string {
+  return num.toLocaleString();
+}

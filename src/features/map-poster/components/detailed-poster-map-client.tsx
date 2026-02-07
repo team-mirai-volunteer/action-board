@@ -46,8 +46,7 @@ import {
   getPosterBoardsMinimalByDistrict,
   getPosterMissionId,
   POSTER_MISSION_SLUG,
-  updateBoardStatus,
-} from "../services/poster-boards";
+} from "../loaders/poster-boards-loaders";
 import type {
   BoardStats,
   BoardStatus,
@@ -76,6 +75,7 @@ import {
   getPosterBoardStatsByDistrictAction,
   getUserEditedBoardIdsAction,
   getUserEditedBoardIdsByDistrictAction,
+  updateBoardStatusAction,
 } from "../actions/poster-boards";
 
 interface DetailedPosterMapClientProps {
@@ -334,7 +334,7 @@ export default function DetailedPosterMapClient({
 
     setIsUpdating(true);
     try {
-      await updateBoardStatus(selectedBoard.id, updateStatus, updateNote);
+      await updateBoardStatusAction(selectedBoard.id, updateStatus, updateNote);
 
       // ステータスが「完了」に変更された場合のみミッション達成処理
       if (updateStatus === "done") {

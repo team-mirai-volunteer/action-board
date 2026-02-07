@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { filterPosterBoards } from "@/features/map-poster/utils/poster-filter-logic";
 import type { Database } from "@/lib/types/supabase";
 
 type PosterBoard = Database["public"]["Tables"]["poster_boards"]["Row"];
@@ -79,25 +80,13 @@ export function usePosterBoardFilter({
   }, []);
 
   const filteredBoards = useMemo(() => {
-    return boards.filter((board) => {
-      // Check if the board's status is enabled
-      if (!filterState.statuses.has(board.status)) {
-        return false;
-      }
-
-      // If "show only mine" is enabled, filter by edited boards
-      if (filterState.showOnlyMine && currentUserId) {
-        if (!userEditedBoardIds || userEditedBoardIds.size === 0) {
-          return false;
-        }
-        // このボードをユーザーが編集したことがあるかチェック
-        if (!userEditedBoardIds.has(board.id)) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    return filterPosterBoards(
+      boards,
+      filterState.statuses,
+      filterState.showOnlyMine,
+      userEditedBoardIds ?? new Set<string>(),
+      currentUserId,
+    );
   }, [boards, filterState, userEditedBoardIds, currentUserId]);
 
   const activeFilterCount = useMemo(() => {

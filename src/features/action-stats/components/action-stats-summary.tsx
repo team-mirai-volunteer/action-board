@@ -1,13 +1,10 @@
 import { TrendingUp, Users, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { formatNumberLocale } from "@/lib/utils/format-number-ja";
 import type { ActionStatsSummary as ActionStatsSummaryType } from "../types";
 
 interface ActionStatsSummaryProps {
   summary: ActionStatsSummaryType;
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString();
 }
 
 export function ActionStatsSummary({ summary }: ActionStatsSummaryProps) {
@@ -34,13 +31,13 @@ export function ActionStatsSummary({ summary }: ActionStatsSummaryProps) {
             <span className="text-gray-600">{stat.icon}</span>
             <div>
               <div className="text-2xl font-bold text-gray-900">
-                {formatNumber(stat.value)}
+                {formatNumberLocale(stat.value)}
               </div>
               <div className="text-sm text-gray-500">{stat.label}</div>
               {stat.increase !== undefined && stat.increase > 0 && (
                 <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
                   <TrendingUp className="w-3 h-3" />
-                  <span>+{formatNumber(stat.increase)} (24h)</span>
+                  <span>+{formatNumberLocale(stat.increase)} (24h)</span>
                 </div>
               )}
             </div>

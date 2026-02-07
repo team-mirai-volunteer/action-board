@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { grantXpBatch } from "@/features/user-level/services/level";
 import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { normalizeJoinResult } from "@/lib/utils/batch-helpers";
 import { executeChunkedQuery } from "@/lib/utils/supabase-utils";
 
 // 型定義を明示（Supabaseの!innerJOINが配列を返す可能性を考慮）
@@ -174,9 +175,7 @@ export async function POST(request: NextRequest) {
 
     // 各達成のデータを検証してバッチに追加
     for (const achievement of missingXpAchievements) {
-      const mission = Array.isArray(achievement.missions)
-        ? achievement.missions[0]
-        : achievement.missions;
+      const mission = normalizeJoinResult(achievement.missions);
 
       if (!mission) {
         console.warn(

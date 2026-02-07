@@ -1,6 +1,7 @@
 "use server";
 
 import { achieveMissionAction } from "@/features/mission-detail/actions/actions";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import {
   checkTeamMiraiVideosBatch,
@@ -10,6 +11,7 @@ import {
   isTokenExpired,
   type LikedVideo,
 } from "../services/youtube-like-service";
+import { transformValidLikesToRecordedLikes } from "../utils/like-video-transformers";
 import { refreshYouTubeTokenAction } from "./youtube-auth-actions";
 
 /**
@@ -76,11 +78,11 @@ async function getValidAccessToken(
  */
 export async function detectYouTubeLikesAction(): Promise<DetectLikesResult> {
   try {
-    const supabase = await createClient();
+    const supabaseAuth = createClient();
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabaseAuth.auth.getUser();
 
     if (userError || !user) {
       return {
@@ -112,6 +114,7 @@ export async function detectYouTubeLikesAction(): Promise<DetectLikesResult> {
     }
 
     // 既に記録済みのいいねを取得
+    const supabase = await createAdminClient();
     const { data: existingLikes } = await supabase
       .from("youtube_video_likes")
       .select("video_id")
@@ -168,11 +171,11 @@ export async function recordYouTubeLikeAction(
   videoUrl: string,
 ): Promise<{ success: boolean; xpGranted?: number; error?: string }> {
   try {
-    const supabase = await createClient();
+    const supabaseAuth = createClient();
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabaseAuth.auth.getUser();
 
     if (userError || !user) {
       return {
@@ -182,6 +185,7 @@ export async function recordYouTubeLikeAction(
     }
 
     // 既に記録済みか確認
+    const supabase = await createAdminClient();
     const { data: existingLike } = await supabase
       .from("youtube_video_likes")
       .select("id")
@@ -265,11 +269,11 @@ export async function getRecordedLikesAction(): Promise<{
   error?: string;
 }> {
   try {
-    const supabase = await createClient();
+    const supabaseAuth = createClient();
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabaseAuth.auth.getUser();
 
     if (userError || !user) {
       return {
@@ -279,6 +283,7 @@ export async function getRecordedLikesAction(): Promise<{
     }
 
     // いいね記録を取得（youtube_videosとJOINして動画情報も取得）
+    const supabase = await createAdminClient();
     const { data: likes, error: likesError } = await supabase
       .from("youtube_video_likes")
       .select(
@@ -307,20 +312,9 @@ export async function getRecordedLikesAction(): Promise<{
       };
     }
 
-    const recordedLikes: RecordedLike[] = (likes || [])
-      .filter((like) => like.youtube_videos)
-      .map((like) => ({
-        videoId: like.video_id,
-        title: like.youtube_videos?.title || "Unknown",
-        channelTitle: like.youtube_videos?.channel_title || undefined,
-        thumbnailUrl: like.youtube_videos?.thumbnail_url || undefined,
-        videoUrl:
-          like.youtube_videos?.video_url ||
-          `https://www.youtube.com/watch?v=${like.video_id}`,
-        publishedAt: like.youtube_videos?.published_at || undefined,
-        recordedAt:
-          like.detected_at || like.created_at || new Date().toISOString(),
-      }));
+    const recordedLikes = transformValidLikesToRecordedLikes(
+      (likes || []) as Parameters<typeof transformValidLikesToRecordedLikes>[0],
+    );
 
     return {
       success: true,
@@ -429,11 +423,11 @@ export interface SyncLikesResult {
  */
 export async function syncYouTubeLikesAction(): Promise<SyncLikesResult> {
   try {
-    const supabase = await createClient();
+    const supabaseAuth = createClient();
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabaseAuth.auth.getUser();
 
     if (userError || !user) {
       return {

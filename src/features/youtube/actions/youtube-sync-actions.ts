@@ -1,5 +1,6 @@
 "use server";
 
+import { joinNonEmptyStrings } from "@/lib/utils/batch-helpers";
 import { syncYouTubeCommentsAction } from "./youtube-comment-actions";
 import {
   type SyncLikesResult,
@@ -51,6 +52,6 @@ export async function syncAllYouTubeDataAction(): Promise<SyncAllResult> {
     totalXpGranted,
     error: success
       ? undefined
-      : [likesResult.error, commentsResult.error].filter(Boolean).join("; "),
+      : joinNonEmptyStrings("; ", likesResult.error, commentsResult.error),
   };
 }

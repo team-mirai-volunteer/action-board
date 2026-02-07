@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getUser } from "@/features/user-profile/services/profile";
 import { requestEmailChange } from "@/features/user-settings/services/email";
 import { isEmailUser } from "@/lib/utils/auth-utils";
+import { formatZodErrors } from "@/lib/utils/validation-utils";
 
 export type ChangeEmailResult = {
   success: boolean;
@@ -55,9 +56,7 @@ export async function changeEmailAction(
   if (!validatedFields.success) {
     return {
       success: false,
-      error: validatedFields.error.errors
-        .map((error) => error.message)
-        .join("\n"),
+      error: formatZodErrors(validatedFields.error),
     };
   }
 

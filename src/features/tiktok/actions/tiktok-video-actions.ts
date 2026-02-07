@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { logger } from "@/lib/utils/logger";
+import { isTokenExpired } from "@/lib/utils/oauth-utils";
 import {
   getUserTikTokVideos,
   syncUserTikTokVideos,
@@ -42,7 +43,7 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
     }
 
     // トークンの有効期限をチェック
-    if (new Date(connection.tokenExpiresAt) < new Date()) {
+    if (isTokenExpired(connection.tokenExpiresAt)) {
       // トークンが期限切れの場合、リフレッシュを試みる
       logger.debug("TikTok access token expired, attempting refresh...");
       const refreshResult = await refreshTikTokTokenAction();

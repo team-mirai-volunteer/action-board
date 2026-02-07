@@ -8,6 +8,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatChartDates } from "@/lib/utils/chart-transforms";
+import { formatNumberJaShort } from "@/lib/utils/format-number-ja";
 import type { DailyActionItem } from "../types";
 
 interface ActionStatsChartProps {
@@ -21,13 +23,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function formatNumberShort(num: number): string {
-  if (num >= 10_000) {
-    return `${Math.round(num / 10_000)}万`;
-  }
-  return num.toLocaleString();
-}
-
 export function ActionStatsChart({ data }: ActionStatsChartProps) {
   if (data.length < 2) {
     return (
@@ -40,14 +35,7 @@ export function ActionStatsChart({ data }: ActionStatsChartProps) {
     );
   }
 
-  // 日付をフォーマット
-  const formattedData = data.map((item) => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString("ja-JP", {
-      month: "short",
-      day: "numeric",
-    }),
-  }));
+  const formattedData = formatChartDates(data);
 
   return (
     <Card className="p-4 overflow-hidden">
@@ -66,7 +54,7 @@ export function ActionStatsChart({ data }: ActionStatsChartProps) {
             axisLine={false}
             tickMargin={8}
             fontSize={10}
-            tickFormatter={formatNumberShort}
+            tickFormatter={formatNumberJaShort}
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Line

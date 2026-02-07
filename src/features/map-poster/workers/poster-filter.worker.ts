@@ -1,4 +1,7 @@
 // Web Worker for filtering poster boards
+// NOTE: Workers cannot use path aliases (@/), so we use a relative import
+import { filterPosterBoards } from "../utils/poster-filter-logic";
+
 type PosterBoard = {
   id: string;
   status: string;
@@ -34,25 +37,13 @@ self.addEventListener("message", (event: MessageEvent<FilterMessage>) => {
   const statusSet = new Set(selectedStatuses);
   const editedBoardSet = new Set(userEditedBoardIds);
 
-  const filteredBoards = boards.filter((board) => {
-    // Check if the board's status is enabled
-    if (!statusSet.has(board.status)) {
-      return false;
-    }
-
-    // If "show only mine" is enabled, filter by edited boards
-    if (showOnlyMine && currentUserId) {
-      if (editedBoardSet.size === 0) {
-        return false;
-      }
-      // Check if user has edited this board
-      if (!editedBoardSet.has(board.id)) {
-        return false;
-      }
-    }
-
-    return true;
-  });
+  const filteredBoards = filterPosterBoards(
+    boards,
+    statusSet,
+    showOnlyMine,
+    editedBoardSet,
+    currentUserId,
+  );
 
   const response: ResultMessage = {
     type: "result",

@@ -1,44 +1,12 @@
 import { Eye, Heart, MessageCircle, Share2 } from "lucide-react";
 import Link from "next/link";
+import { formatNumberJa } from "@/lib/utils/format-number-ja";
 import type { TikTokVideo, TikTokVideoStats } from "../types";
+import { formatDuration, formatTikTokDate } from "../utils/format-utils";
 import { TikTokIcon } from "./tiktok-icon";
 
 interface TikTokVideoCardProps {
   video: TikTokVideo & { latest_stats?: TikTokVideoStats };
-}
-
-function formatDuration(seconds: number | null): string {
-  if (!seconds) return "";
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function formatNumberJa(num: number | null): string {
-  if (num === null) return "-";
-
-  const absNum = Math.abs(num);
-
-  if (absNum >= 100_000_000) {
-    const value = num / 100_000_000;
-    return value % 1 === 0 ? `${value}億` : `${value.toFixed(1)}億`;
-  }
-
-  if (absNum >= 10_000) {
-    const value = num / 10_000;
-    return value % 1 === 0 ? `${value}万` : `${value.toFixed(1)}万`;
-  }
-
-  return num.toLocaleString();
 }
 
 export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
@@ -83,7 +51,7 @@ export function TikTokVideoCard({ video }: TikTokVideoCardProps) {
         {/* クリエイター名・日付 */}
         <p className="text-xs text-gray-500 truncate">
           {video.creator_username ? `@${video.creator_username}` : "TikTok"} •{" "}
-          {formatDate(video.published_at)}
+          {formatTikTokDate(video.published_at)}
         </p>
 
         {/* 統計 */}

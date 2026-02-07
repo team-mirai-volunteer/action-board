@@ -4,20 +4,14 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import {
+  buildCommentCacheRecord,
+  type CachedComment,
+  groupCommentsByUser,
+} from "../utils/sync-helpers";
 import { type CommentThread, fetchVideoComments } from "./youtube-client";
 
-/**
- * キャッシュされたコメント情報
- */
-export interface CachedComment {
-  commentId: string;
-  videoId: string;
-  authorChannelId: string;
-  authorDisplayName: string | null;
-  textDisplay: string | null;
-  textOriginal: string | null;
-  publishedAt: string;
-}
+export type { CachedComment };
 
 /**
  * 直近1ヶ月以内に公開されたチームみらい動画を取得する
@@ -86,17 +80,7 @@ export async function cacheVideoComments(
 
   const adminClient = await createAdminClient();
 
-  const records = comments.map((comment) => ({
-    video_id: comment.snippet.videoId,
-    comment_id: comment.snippet.topLevelComment.id,
-    author_channel_id:
-      comment.snippet.topLevelComment.snippet.authorChannelId.value,
-    author_display_name:
-      comment.snippet.topLevelComment.snippet.authorDisplayName,
-    text_display: comment.snippet.topLevelComment.snippet.textDisplay,
-    text_original: comment.snippet.topLevelComment.snippet.textOriginal,
-    published_at: comment.snippet.topLevelComment.snippet.publishedAt,
-  }));
+  const records = comments.map(buildCommentCacheRecord);
 
   const { error } = await adminClient
     .from("youtube_video_comments")
@@ -228,28 +212,7 @@ export async function findUserCommentsInCache(
   }
 
   // ユーザーIDごとにコメントをグループ化
-  const result = new Map<string, CachedComment[]>();
-
-  for (const comment of comments || []) {
-    const userId = channelIdToUserId.get(comment.author_channel_id);
-    if (!userId) continue;
-
-    const cachedComment: CachedComment = {
-      commentId: comment.comment_id,
-      videoId: comment.video_id,
-      authorChannelId: comment.author_channel_id,
-      authorDisplayName: comment.author_display_name,
-      textDisplay: comment.text_display,
-      textOriginal: comment.text_original,
-      publishedAt: comment.published_at,
-    };
-
-    const userComments = result.get(userId) || [];
-    userComments.push(cachedComment);
-    result.set(userId, userComments);
-  }
-
-  return result;
+  return groupCommentsByUser(comments || [], channelIdToUserId);
 }
 
 /**

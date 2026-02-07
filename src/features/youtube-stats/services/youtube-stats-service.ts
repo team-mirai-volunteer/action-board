@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
 import {
   calculateDailyViewsIncrease,
@@ -13,6 +13,14 @@ import type {
   VideoCountByDateItem,
   YouTubeVideoWithStats,
 } from "../types";
+import {
+  aggregateDailyStats,
+  aggregateVideosByDate,
+  extractLatestStats,
+  generateDateRange,
+  mapStatisticsResult,
+  sortVideosByMetric,
+} from "../utils/youtube-stats-utils";
 
 /**
  * YouTube動画一覧を最新統計付きで取得する
@@ -30,7 +38,7 @@ export async function getYouTubeVideosWithStats(
   startDate?: Date,
   endDate?: Date,
 ): Promise<YouTubeVideoWithStats[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 動画と最新の統計情報を取得
   let query = supabase
@@ -68,45 +76,12 @@ export async function getYouTubeVideosWithStats(
   }
 
   // 各動画の最新統計を取得して整形
-  const videosWithStats: YouTubeVideoWithStats[] = (videos || []).map(
-    (video) => {
-      const stats = video.youtube_video_stats as Array<{
-        view_count: number | null;
-        like_count: number | null;
-        comment_count: number | null;
-        recorded_at: string;
-      }>;
-
-      // 最新の統計を取得（recorded_atでソート）
-      const latestStats = stats.sort(
-        (a, b) =>
-          new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-      )[0];
-
-      return {
-        ...video,
-        youtube_video_stats: undefined, // 元のリレーションを除去
-        latest_view_count: latestStats?.view_count ?? null,
-        latest_like_count: latestStats?.like_count ?? null,
-        latest_comment_count: latestStats?.comment_count ?? null,
-      } as YouTubeVideoWithStats;
-    },
+  const videosWithStats = extractLatestStats(
+    (videos || []) as Parameters<typeof extractLatestStats>[0],
   );
 
   // ソート
-  const sorted = videosWithStats.sort((a, b) => {
-    switch (sortBy) {
-      case "view_count":
-        return (b.latest_view_count ?? 0) - (a.latest_view_count ?? 0);
-      case "like_count":
-        return (b.latest_like_count ?? 0) - (a.latest_like_count ?? 0);
-      default:
-        return (
-          new Date(b.published_at ?? 0).getTime() -
-          new Date(a.published_at ?? 0).getTime()
-        );
-    }
-  });
+  const sorted = sortVideosByMetric(videosWithStats, sortBy);
 
   // ページネーション
   return sorted.slice(offset, offset + limit);
@@ -122,7 +97,7 @@ export async function getYouTubeVideoCount(
   startDate?: Date,
   endDate?: Date,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase
     .from("youtube_videos")
@@ -158,7 +133,7 @@ export async function getYouTubeStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<StatsSummary> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // 全動画を取得して最新統計をカウント
   let query = supabase
@@ -287,7 +262,7 @@ export async function getOverallStatsHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<OverallStatsHistoryItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // JOINを使って1つのクエリで取得（URI too long エラーを回避）
   let query = supabase
@@ -324,29 +299,11 @@ export async function getOverallStatsHistory(
   }
 
   // 日別に集計
-  const dailyStats = new Map<
-    string,
-    { total_views: number; total_likes: number }
-  >();
-
-  for (const stat of data || []) {
-    const date = stat.recorded_at;
-    const current = dailyStats.get(date) || { total_views: 0, total_likes: 0 };
-    dailyStats.set(date, {
-      total_views: current.total_views + (stat.view_count ?? 0),
-      total_likes: current.total_likes + (stat.like_count ?? 0),
-    });
-  }
+  const dailyStats = aggregateDailyStats(data || []);
 
   // 配列に変換して本日以降のデータを除外
   const { filterBeforeToday } = await import("@/lib/utils/date-utils");
-  const result = Array.from(dailyStats.entries())
-    .map(([date, stats]) => ({
-      date,
-      total_views: stats.total_views,
-      total_likes: stats.total_likes,
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const result = mapStatisticsResult(dailyStats);
 
   return filterBeforeToday(result);
 }
@@ -361,7 +318,7 @@ export async function getVideoCountByDate(
   startDate?: Date,
   endDate?: Date,
 ): Promise<VideoCountByDateItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const effectiveStartDate = startDate || new Date("2026-01-01");
   const effectiveEndDate = endDate || new Date();
@@ -385,27 +342,14 @@ export async function getVideoCountByDate(
   }
 
   // 日別に集計
-  const dailyCount = new Map<string, number>();
-
-  for (const video of data || []) {
-    if (!video.published_at) continue;
-    const date = video.published_at.split("T")[0]; // YYYY-MM-DD
-    dailyCount.set(date, (dailyCount.get(date) || 0) + 1);
-  }
+  const dailyCount = aggregateVideosByDate(data || []);
 
   // startDateからendDateまでの日付を生成（投稿0の日も含める）
-  const result: VideoCountByDateItem[] = [];
-  effectiveEndDate.setHours(0, 0, 0, 0);
-
-  const currentDate = new Date(effectiveStartDate);
-  while (currentDate <= effectiveEndDate) {
-    const dateStr = currentDate.toISOString().split("T")[0];
-    result.push({
-      date: dateStr,
-      count: dailyCount.get(dateStr) || 0,
-    });
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+  const result = generateDateRange(
+    effectiveStartDate,
+    effectiveEndDate,
+    dailyCount,
+  );
 
   // 本日以降のデータを除外
   const { filterBeforeToday } = await import("@/lib/utils/date-utils");

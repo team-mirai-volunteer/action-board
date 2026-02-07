@@ -3,6 +3,15 @@ import * as path from "node:path";
 import { Command } from "commander";
 import * as yaml from "js-yaml";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import {
+  groupLinksByCategory,
+  transformCategoriesToYaml,
+  transformMissionMainLinksToYaml,
+  transformMissionQuizLinksToYaml,
+  transformMissionsToYaml,
+  transformQuizCategoriesToYaml,
+  transformQuizQuestionsToYaml,
+} from "./transforms";
 
 const program = new Command();
 
@@ -28,12 +37,7 @@ async function exportCategories() {
     throw error;
   }
 
-  const categories = data.map((item) => ({
-    slug: item.slug,
-    title: item.category_title,
-    sort_no: item.sort_no,
-    category_kbn: item.category_kbn,
-  }));
+  const categories = transformCategoriesToYaml(data);
 
   const yamlContent = yaml.dump({ categories }, { lineWidth: -1 });
   const filePath = path.join(__dirname, "..", "categories.yaml");
@@ -55,20 +59,7 @@ async function exportMissions() {
     throw error;
   }
 
-  const missions = data.map((item) => ({
-    slug: item.slug,
-    title: item.title,
-    icon_url: item.icon_url,
-    content: item.content,
-    difficulty: item.difficulty,
-    required_artifact_type: item.required_artifact_type,
-    max_achievement_count: item.max_achievement_count,
-    is_featured: item.is_featured,
-    is_hidden: item.is_hidden,
-    artifact_label: item.artifact_label,
-    ogp_image_url: item.ogp_image_url,
-    event_date: item.event_date,
-  }));
+  const missions = transformMissionsToYaml(data);
 
   const yamlContent = yaml.dump({ missions }, { lineWidth: -1 });
   const filePath = path.join(__dirname, "..", "missions.yaml");
@@ -97,28 +88,7 @@ async function exportCategoryLinks() {
     throw error;
   }
 
-  // Group by category
-  const linksByCategory = data.reduce(
-    (acc, item) => {
-      const categorySlug = item.mission_category.slug;
-      if (!acc[categorySlug]) {
-        acc[categorySlug] = [];
-      }
-      acc[categorySlug].push({
-        mission_slug: item.missions.slug,
-        sort_no: item.sort_no,
-      });
-      return acc;
-    },
-    {} as Record<string, Array<{ mission_slug: string; sort_no: number }>>,
-  );
-
-  const categoryLinks = Object.entries(linksByCategory).map(
-    ([category_slug, missions]) => ({
-      category_slug,
-      missions,
-    }),
-  );
+  const categoryLinks = groupLinksByCategory(data as any);
 
   const yamlContent = yaml.dump(
     { category_links: categoryLinks },
@@ -143,13 +113,7 @@ async function exportQuizCategories() {
     throw error;
   }
 
-  const quizCategories = data.map((item) => ({
-    slug: item.slug,
-    name: item.name,
-    description: item.description,
-    display_order: item.display_order,
-    is_active: item.is_active,
-  }));
+  const quizCategories = transformQuizCategoriesToYaml(data);
 
   const yamlContent = yaml.dump(
     { quiz_categories: quizCategories },
@@ -178,20 +142,7 @@ async function exportQuizQuestions() {
     throw error;
   }
 
-  const quizQuestions = data.map((item) => ({
-    id: item.id,
-    category_slug: item.quiz_categories.slug,
-    mission_slug: item.missions?.slug || null,
-    question: item.question,
-    option1: item.option1,
-    option2: item.option2,
-    option3: item.option3,
-    option4: item.option4,
-    correct_answer: item.correct_answer,
-    explanation: item.explanation,
-    question_order: item.question_order,
-    is_active: item.is_active,
-  }));
+  const quizQuestions = transformQuizQuestionsToYaml(data as any);
 
   const yamlContent = yaml.dump(
     { quiz_questions: quizQuestions },
@@ -219,12 +170,7 @@ async function exportMissionQuizLinks() {
     throw error;
   }
 
-  const missionQuizLinks = data.map((item) => ({
-    mission_slug: item.missions.slug,
-    link: item.link,
-    remark: item.remark,
-    display_order: item.display_order,
-  }));
+  const missionQuizLinks = transformMissionQuizLinksToYaml(data as any);
 
   const yamlContent = yaml.dump(
     { mission_quiz_links: missionQuizLinks },
@@ -252,11 +198,7 @@ async function exportMissionMainLinks() {
     throw error;
   }
 
-  const missionMainLinks = data.map((item) => ({
-    mission_slug: item.missions.slug,
-    label: item.label,
-    link: item.link,
-  }));
+  const missionMainLinks = transformMissionMainLinksToYaml(data as any);
 
   const yamlContent = yaml.dump(
     { mission_main_links: missionMainLinks },

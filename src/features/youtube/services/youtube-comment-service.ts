@@ -21,7 +21,7 @@ export {
 // extractVideoIdFromUrl は youtube-like-service.ts から import すること
 export { extractVideoIdFromUrl } from "./youtube-like-service";
 
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 /**
  * 検出されたユーザーコメント（UI表示用に拡張）
@@ -57,7 +57,7 @@ export async function getVideoInfoMap(
     return new Map();
   }
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   const { data: videos, error } = await supabase
     .from("youtube_videos")

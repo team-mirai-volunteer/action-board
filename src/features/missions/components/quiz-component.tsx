@@ -16,6 +16,7 @@ import {
   getMissionLinksAction,
   type MissionLink,
 } from "@/features/mission-detail/actions/quiz-actions";
+import { shuffleArray } from "@/lib/utils/array-utils";
 
 interface QuizQuestion {
   id: string;
@@ -81,16 +82,6 @@ export default function QuizComponent({
   // クライアントサイドかどうかを判定
   const [isClient, setIsClient] = useState(false);
 
-  // 配列をシャッフルする関数
-  const shuffleArray = useCallback(<T,>(array: T[]): T[] => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }, []);
-
   // 選択肢をシャッフルした問題を作成する関数（クライアントサイドでのみシャッフル）
   const createShuffledQuestion = useCallback(
     (question: QuizQuestion, shouldShuffle = true): ShuffledQuizQuestion => {
@@ -124,7 +115,7 @@ export default function QuizComponent({
         shuffledToOriginalMapping,
       };
     },
-    [shuffleArray, isClient],
+    [isClient],
   );
 
   // 初期状態では常にローディング状態にして、クライアントサイドでシャッフル完了後に表示

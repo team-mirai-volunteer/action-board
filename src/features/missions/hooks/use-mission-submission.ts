@@ -1,39 +1,18 @@
 "use client";
 import { useMemo } from "react";
+import { getMissionSubmissionState } from "@/features/missions/utils/mission-submission";
 import type { Tables } from "@/lib/types/supabase";
 
 export function useMissionSubmission(
   mission: Tables<"missions">,
   userAchievementCount: number,
 ) {
-  const buttonLabel = useMemo(() => {
-    if (
-      mission.max_achievement_count !== null &&
-      userAchievementCount >= mission.max_achievement_count
-    ) {
-      return "このミッションは完了済みです";
-    }
-
-    return "ミッション完了を記録する";
-  }, [mission.max_achievement_count, userAchievementCount]);
-
-  const isButtonDisabled = useMemo(() => {
-    return (
-      mission.max_achievement_count !== null &&
-      userAchievementCount >= mission.max_achievement_count
-    );
-  }, [mission.max_achievement_count, userAchievementCount]);
-
-  const hasReachedUserMaxAchievements = useMemo(() => {
-    return (
-      mission.max_achievement_count !== null &&
-      userAchievementCount >= mission.max_achievement_count
-    );
-  }, [mission.max_achievement_count, userAchievementCount]);
-
-  return {
-    buttonLabel,
-    isButtonDisabled,
-    hasReachedUserMaxAchievements,
-  };
+  return useMemo(
+    () =>
+      getMissionSubmissionState(
+        mission.max_achievement_count,
+        userAchievementCount,
+      ),
+    [mission.max_achievement_count, userAchievementCount],
+  );
 }

@@ -4,7 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HEADER_HEIGHT } from "@/lib/constants/layout";
-import { getAllEvents, type PostingEvent } from "../services/posting-events";
+import { getAllEvents } from "../loaders/posting-events-loaders";
+import type { PostingEvent } from "../services/posting-events";
 
 interface PostingControlPanelProps {
   eventId: string;

@@ -105,6 +105,22 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - `src/features/{機能名}/services/` - 機能固有のデータアクセス
 - `src/lib/services/` - 共通のデータアクセス
 
+### Supabaseクライアントの使い分けルール
+
+詳細は [docs/20260206_2220_Supabaseクライアント使い分けガイド.md](docs/20260206_2220_Supabaseクライアント使い分けガイド.md) を参照。
+
+- **`createClient()` / `getAuth()` / `getStorage()`**: 認証操作（`supabase.auth.*`）やStorage操作に使用。cookie連携あり。
+- **`createAdminClient()`**: DB操作（`supabase.from(...)`）に使用。service_roleでRLSバイパス。
+- **`createAdminClient()` で `supabase.auth.*` を呼んではいけない**（cookieが読めずセッション取得失敗）
+- **クライアントコンポーネントからDB操作を呼ぶ場合**: `actions/`（mutation）または `loaders/`（読み取り）経由。`services/` を直接importしない。
+
+### 認可（Authorization）のルール
+
+- **userIdは必ずサーバーサイドでセッションから取得する**。クライアントからuserIdを引数で受け取ってはいけない（改ざん可能なため）。
+- **認可チェックはactions層で行う**。services層はデータ操作に専念し、認可ロジックを混在させない。
+- **リソースの所有者チェックは専用の認可関数に分離する**。サービス関数のクエリに `.eq("user_id", userId)` を埋め込むのではなく、`authorizeXxxOwner()` のような関数で事前に所有権を検証する。
+
+
 ### 主要技術スタック
 - **フレームワーク**: Next.js 15 with App Router
 - **データベース**: Supabase (PostgreSQL with RLS)

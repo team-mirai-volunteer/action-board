@@ -1,13 +1,13 @@
 import "server-only";
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import type { Tables } from "@/lib/types/supabase";
 
 export type PostingEvent = Tables<"posting_events">;
 
 export const getEventBySlug = cache(
   async (slug: string): Promise<PostingEvent | null> => {
-    const supabase = createClient();
+    const supabase = await createAdminClient();
     const { data, error } = await supabase
       .from("posting_events")
       .select("*")
@@ -28,7 +28,7 @@ export const getEventBySlug = cache(
 );
 
 export const getActiveEvent = cache(async (): Promise<PostingEvent | null> => {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_events")
     .select("*")
@@ -48,7 +48,7 @@ export const getActiveEvent = cache(async (): Promise<PostingEvent | null> => {
 });
 
 export const getAllEvents = cache(async (): Promise<PostingEvent[]> => {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from("posting_events")
     .select("*")

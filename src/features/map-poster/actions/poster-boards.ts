@@ -1,15 +1,17 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
+import { updateBoardStatus as updateBoardStatusService } from "../services/poster-boards";
+import type { BoardStatus } from "../types/poster-types";
+import { mapUserToHistory } from "../utils/history-helpers";
 import {
   countBoardsByStatus,
   createEmptyStatusCounts,
 } from "../utils/poster-stats";
 
-type BoardStatus = Database["public"]["Enums"]["poster_board_status"];
 type PrefectureName = NonNullable<
   Database["public"]["Tables"]["poster_boards"]["Row"]["prefecture"]
 >;
@@ -21,7 +23,7 @@ export async function getPosterBoardStatsAction(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   try {
     // 最適化されたRPC関数を使用
@@ -173,7 +175,7 @@ export async function getPosterBoardStatsByDistrictAction(
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   try {
     const { data, error } = await supabase
@@ -271,7 +273,7 @@ export async function getUserEditedBoardIdsByDistrictAction(
 
 // 個別の掲示板の履歴を取得
 export async function getBoardStatusHistoryAction(boardId: string) {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   // まず履歴データを取得
   const { data: historyData, error: historyError } = await supabase
@@ -307,8 +309,13 @@ export async function getBoardStatusHistoryAction(boardId: string) {
   const userMap = new Map(userData?.map((u) => [u.id, u]) || []);
 
   // 履歴データにユーザー情報を追加
-  return historyData.map((h) => ({
-    ...h,
-    user: userMap.get(h.user_id) || null,
-  }));
+  return mapUserToHistory(historyData, userMap);
+}
+
+export async function updateBoardStatusAction(
+  boardId: string,
+  newStatus: BoardStatus,
+  note?: string,
+) {
+  return updateBoardStatusService(boardId, newStatus, note);
 }

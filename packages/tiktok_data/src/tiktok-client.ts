@@ -43,7 +43,7 @@ export class TikTokAPIError extends Error {
   }
 }
 
-function parseApiErrorResponse(errorText: string): {
+export function parseApiErrorResponse(errorText: string): {
   code?: string;
   message?: string;
   logId?: string;
@@ -60,7 +60,7 @@ function parseApiErrorResponse(errorText: string): {
   }
 }
 
-function isRetryableVideoListError(code?: string): boolean {
+export function isRetryableVideoListError(code?: string): boolean {
   if (!code) {
     return false;
   }
