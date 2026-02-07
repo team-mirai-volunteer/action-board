@@ -87,7 +87,7 @@ export default async function Home({
       {/* 都道府県対抗ランキング導線 */}
       {user != null && (
         <section className="py-4 md:py-8">
-          <div className="w-full max-w-lg mx-auto">
+          <div className="w-full max-w-lg mx-auto px-4">
             <PrefectureTeamCard />
           </div>
         </section>
