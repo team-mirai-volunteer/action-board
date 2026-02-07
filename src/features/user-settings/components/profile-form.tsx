@@ -33,10 +33,7 @@ import {
 } from "@/components/ui/select";
 import { updateProfile } from "@/features/user-settings/actions/profile-actions";
 import { PrefectureSelect } from "@/features/user-settings/components/prefecture-select";
-import {
-  AVATAR_MAX_FILE_SIZE,
-  getAvatarUrl,
-} from "@/lib/loaders/avatar-loaders";
+import { AVATAR_MAX_FILE_SIZE, getAvatarUrl } from "@/lib/services/avatar";
 import {
   formatBirthDate,
   generateDaysArray,

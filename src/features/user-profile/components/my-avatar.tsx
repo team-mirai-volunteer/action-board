@@ -1,7 +1,7 @@
 import type { HTMLProps } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
-import { getAvatarUrl } from "@/lib/loaders/avatar-loaders";
+import { getAvatarUrl } from "@/lib/services/avatar";
 
 interface MyAvatarProps {
   className?: HTMLProps<HTMLElement>["className"];
