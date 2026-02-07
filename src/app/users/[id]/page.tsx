@@ -13,12 +13,12 @@
  */
 import { Card } from "@/components/ui/card";
 import { UserMissionAchievements } from "@/features/user-achievements/components/user-mission-achievements";
-import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/services/achievements";
+import { getUserRepeatableMissionAchievements } from "@/features/user-achievements/loaders/achievements-loaders";
 import UserDetailActivities from "@/features/user-activity/components/user-detail-activities";
 import {
   getUserActivityTimeline,
   getUserActivityTimelineCount,
-} from "@/features/user-activity/services/timeline";
+} from "@/features/user-activity/loaders/timeline-loaders";
 import { UserBadges } from "@/features/user-badges/components/user-badges";
 import Levels from "@/features/user-level/components/levels";
 import SocialBadgeSection from "@/features/user-profile/components/social-badge-section";
@@ -27,7 +27,7 @@ import { UserSeasonHistory } from "@/features/user-season/components/user-season
 import {
   getCurrentSeasonId,
   getUserSeasonHistory,
-} from "@/lib/services/seasons";
+} from "@/lib/loaders/seasons-loaders";
 
 /** 活動タイムラインの1ページあたりの表示件数 */
 const PAGE_SIZE = 20;

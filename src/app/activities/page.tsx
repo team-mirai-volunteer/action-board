@@ -4,7 +4,7 @@ import GlobalActivities from "@/features/user-activity/components/global-activit
 import {
   getGlobalActivityTimeline,
   getGlobalActivityTimelineCount,
-} from "@/features/user-activity/services/timeline";
+} from "@/features/user-activity/loaders/timeline-loaders";
 
 export const metadata: Metadata = {
   title: "活動タイムライン | アクションボード",
