@@ -45,6 +45,18 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 ### 要件定義・実装計画
 依頼された場合は、最初に論点を洗い出してユーザーに質問しながらクリアにし、マークダウンでドキュメントを作成すること。
 
+### 自己学習
+セッション中の発見やPRレビューのフィードバックを、プロジェクト設定に自動反映する仕組み。
+
+- **PRレビュー後**: `/retro {PR番号}` でCodeRabbit・レビュアーの指摘を分析し、CLAUDE.md・skills・agents・MEMORYに反映する
+- **セッション終了時**: SessionEndフックがMEMORY.mdの差分を `.claude/tmp/learnings-staging.md` に自動キャプチャする
+- **次セッション開始時**: SessionStartフックが未処理の学びを通知する。`/retro` で反映する
+- **学びの分類先**:
+  - 普遍ルール（フレームワーク制約、ファイル配置等）→ CLAUDE.md
+  - ワークフロー改善 → skills/commands
+  - ワーカー行動指針 → agents
+  - 運用知識・ワークアラウンド → MEMORY.md
+
 ### ドキュメント管理
 設計作業などのドキュメント作成を依頼された場合は、以下のルールに従ってファイルを作成すること：
 

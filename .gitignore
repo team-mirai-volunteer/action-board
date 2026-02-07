@@ -76,3 +76,6 @@ users-prefecture-export.csv
 # serena mcp
 /.serena
 
+# Claude Code temp files
+.claude/tmp/
+
