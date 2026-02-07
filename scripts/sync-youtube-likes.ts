@@ -166,12 +166,17 @@ async function main() {
   console.log(`Achievements: ${summary.totalAchievements}`);
   console.log(`XP granted: ${summary.totalXpGranted}`);
 
-  // 失敗したユーザーがいればエラーとして扱う
+  // 失敗したユーザーがいればログに出力（個別ユーザーの失敗は警告扱い）
   if (summary.failedUsers > 0) {
     console.log("\nFailed users:");
     for (const user of results.filter((r) => !r.success)) {
-      console.error(`  - ${user.displayName || user.userId}: ${user.error}`);
+      console.warn(`  - ${user.displayName || user.userId}: ${user.error}`);
     }
+  }
+
+  // 全ユーザーが失敗した場合のみエラーとして扱う
+  if (summary.successfulUsers === 0 && summary.totalUsers > 0) {
+    console.error("\nAll users failed to sync. Exiting with error.");
     process.exit(1);
   }
 }
