@@ -12,12 +12,25 @@ import {
   getContributorNames,
 } from "@/lib/services/contributors";
 
-const WINTER_LOGO_SRC =
+const LOGO_SRC =
   "/img/mission-icons/actionboard_icon_work_20250713_ol_TeamMirai-logo.svg";
-const INTRO_DURATION_MS = 3000;
-const CREDITS_DELAY_AFTER_OVERLAY_MS = 3000;
 
-type Particle = {
+// --- Phase timing constants (ms) ---
+const PHASE_2_START = 3000;
+const PHASE_3_START = 7000;
+const PHASE_4_START = 10000;
+const CREDITS_START = 11000;
+const SUNRISE_DURATION = 4000;
+const SNOW_FADEOUT_DURATION = 2000;
+const DRAGON_DURATION = 3000;
+const DRAGON_DISSOLVE_DURATION = 1500;
+const LOGO_GATHER_DURATION = 2200;
+
+const SCROLL_SPEED = 80;
+
+// --- Types ---
+
+type SnowParticle = {
   id: number;
   left: number;
   size: number;
@@ -36,6 +49,30 @@ type StarParticle = {
   phase: number;
 };
 
+type PlumPetal = {
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
+  rotationSpeed: number;
+  velocityX: number;
+  velocityY: number;
+  opacity: number;
+  phase: number;
+  colorVariant: 0 | 1 | 2;
+};
+
+type DragonParticle = {
+  x: number;
+  y: number;
+  size: number;
+  alpha: number;
+  life: number;
+  velocityX: number;
+  velocityY: number;
+  color: { r: number; g: number; b: number };
+};
+
 type DronePoint = {
   x: number;
   y: number;
@@ -48,7 +85,19 @@ type DronePoint = {
   color: { r: number; g: number; b: number };
 };
 
-function createSnowflakes(count: number): Particle[] {
+// --- Utility ---
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
+// --- Particle factories ---
+
+function createSnowflakes(count: number): SnowParticle[] {
   return Array.from({ length: count }, (_, index) => ({
     id: index,
     left: Math.random() * 100,
@@ -58,18 +107,6 @@ function createSnowflakes(count: number): Particle[] {
     drift: Math.random() * 80 - 40,
     opacity: Math.random() * 0.28 + 0.16,
     blur: Math.random() * 1.4,
-  }));
-}
-
-function createPetals(count: number): Particle[] {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index,
-    left: Math.random() * 100,
-    size: Math.random() * 10 + 8,
-    duration: Math.random() * 12 + 14,
-    delay: Math.random() * 10,
-    drift: Math.random() * 160 - 80,
-    opacity: Math.random() * 0.4 + 0.25,
   }));
 }
 
@@ -87,6 +124,28 @@ function createStarParticles(
   }));
 }
 
+function createPlumPetals(
+  count: number,
+  width: number,
+  height: number,
+): PlumPetal[] {
+  return Array.from({ length: count }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height * 1.2 - height * 0.1,
+    size: Math.random() * 8 + 4,
+    rotation: Math.random() * Math.PI * 2,
+    rotationSpeed:
+      (Math.random() * 0.0008 + 0.0003) * (Math.random() < 0.5 ? 1 : -1),
+    velocityX: (Math.random() - 0.5) * 0.012,
+    velocityY: Math.random() * 0.015 + 0.008,
+    opacity: Math.random() * 0.4 + 0.25,
+    phase: Math.random() * Math.PI * 2,
+    colorVariant: Math.floor(Math.random() * 3) as 0 | 1 | 2,
+  }));
+}
+
+// --- Logo point functions ---
+
 function normalizeLogoColor(r: number, g: number, b: number) {
   const brightness = (r + g + b) / 3;
   const strongest = Math.max(r, g, b);
@@ -94,15 +153,15 @@ function normalizeLogoColor(r: number, g: number, b: number) {
   const saturation = strongest - weakest;
 
   if (brightness < 95) {
-    return { r: 219, g: 218, b: 187 };
+    return { r: 245, g: 215, b: 160 };
   }
   if (g - Math.max(r, b) > 8) {
-    return { r: 112, g: 229, b: 212 };
+    return { r: 255, g: 183, b: 77 };
   }
   if (brightness < 190 || saturation > 26) {
-    return { r: 187, g: 242, b: 230 };
+    return { r: 255, g: 200, b: 140 };
   }
-  return { r: 170, g: 235, b: 222 };
+  return { r: 250, g: 220, b: 180 };
 }
 
 function shouldUseLogoPixel(r: number, g: number, b: number, alpha: number) {
@@ -115,7 +174,7 @@ function shouldUseLogoPixel(r: number, g: number, b: number, alpha: number) {
   const saturation = strongest - weakest;
   const brightness = (r + g + b) / 3;
 
-  // SVG内の白背景は除外し、文字・枠線・ミント線のみ点群化する。
+  // SVG内の白背景は除外し、文字・枠線のみ点群化する。
   if (brightness > 238 && saturation < 18) {
     return false;
   }
@@ -160,13 +219,11 @@ function createLogoPoints(
     sampleCanvas.height,
   );
   const points: DronePoint[] = [];
-  const step = 1;
 
-  for (let y = 0; y < sampleCanvas.height; y += step) {
-    for (let x = 0; x < sampleCanvas.width; x += step) {
+  for (let y = 0; y < sampleCanvas.height; y++) {
+    for (let x = 0; x < sampleCanvas.width; x++) {
       const index = (y * sampleCanvas.width + x) * 4;
       const alpha = imageData.data[index + 3];
-
       const rawR = imageData.data[index];
       const rawG = imageData.data[index + 1];
       const rawB = imageData.data[index + 2];
@@ -208,28 +265,140 @@ function createLogoPoints(
   return sampled;
 }
 
-function DroneLogoStage() {
+// --- Canvas drawing helpers ---
+
+const PETAL_COLORS = ["#F5A0B8", "#E87DA0", "#FCDCE8"];
+
+function drawPlumBlossom(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  rotation: number,
+  colorIndex: number,
+  alpha: number,
+) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.globalAlpha = alpha;
+
+  const petalCount = 5;
+  const petalDistance = size * 0.2;
+  const petalLength = size * 0.45;
+  const petalWidth = size * 0.28;
+
+  ctx.fillStyle = PETAL_COLORS[colorIndex];
+  for (let i = 0; i < petalCount; i++) {
+    const angle = (i * Math.PI * 2) / petalCount - Math.PI / 2;
+    const px = Math.cos(angle) * petalDistance;
+    const py = Math.sin(angle) * petalDistance;
+    ctx.beginPath();
+    ctx.ellipse(px, py, petalLength, petalWidth, angle, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 雌しべ
+  ctx.fillStyle = "#FFF3B0";
+  for (let i = 0; i < 3; i++) {
+    const angle = (i * Math.PI * 2) / 3;
+    ctx.beginPath();
+    ctx.arc(
+      Math.cos(angle) * size * 0.06,
+      Math.sin(angle) * size * 0.06,
+      size * 0.04,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawSunriseGradient(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  progress: number,
+) {
+  const visibleTop = height * (1 - progress * 0.85);
+  const gradientHeight = height - visibleTop;
+  if (gradientHeight <= 0) return;
+
+  const gradient = ctx.createLinearGradient(0, visibleTop, 0, height);
+  gradient.addColorStop(0.0, "rgba(26, 16, 64, 0.0)");
+  gradient.addColorStop(0.08, "rgba(26, 16, 64, 0.6)");
+  gradient.addColorStop(0.25, "rgba(74, 32, 96, 0.8)");
+  gradient.addColorStop(0.5, "rgba(192, 64, 96, 0.85)");
+  gradient.addColorStop(0.75, "rgba(255, 140, 66, 0.9)");
+  gradient.addColorStop(0.9, "rgba(255, 179, 71, 0.95)");
+  gradient.addColorStop(1.0, "rgba(255, 228, 160, 1.0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, visibleTop, width, gradientHeight);
+
+  // 太陽グロー
+  const sunGlowAlpha = Math.min(0.4, progress * 0.5);
+  const sunGlow = ctx.createRadialGradient(
+    width / 2,
+    height,
+    0,
+    width / 2,
+    height,
+    height * 0.5,
+  );
+  sunGlow.addColorStop(0, `rgba(255, 240, 200, ${sunGlowAlpha})`);
+  sunGlow.addColorStop(1, "rgba(255, 240, 200, 0)");
+  ctx.fillStyle = sunGlow;
+  ctx.fillRect(0, 0, width, height);
+}
+
+function getDragonHeadPosition(
+  progress: number,
+  width: number,
+  height: number,
+): { x: number; y: number } {
+  const startY = height * 1.1;
+  const endY = height * 0.05;
+  const easedProgress = easeInOutCubic(progress);
+  const y = startY + (endY - startY) * easedProgress;
+
+  const amplitudeEnvelope = Math.sin(progress * Math.PI);
+  const amplitude = width * 0.14 * amplitudeEnvelope;
+  const frequency = 3;
+  const x =
+    width / 2 + amplitude * Math.sin(progress * Math.PI * 2 * frequency);
+
+  return { x, y };
+}
+
+// --- Main Canvas component ---
+
+function MainCanvas({
+  startTimeRef,
+}: {
+  startTimeRef: React.RefObject<number>;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
-    }
-
+    if (!canvas) return;
     const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
+    if (!context) return;
 
     let rafId = 0;
     let mounted = true;
     let width = 0;
     let height = 0;
     let stars: StarParticle[] = [];
+    let petals: PlumPetal[] = [];
     let logoPoints: DronePoint[] = [];
     let loadedImage: HTMLImageElement | null = null;
     let logoStartAt = 0;
+    let dragonTrail: DragonParticle[] = [];
+    let prevTime = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -249,24 +418,85 @@ function DroneLogoStage() {
 
       const starCount = Math.max(60, Math.floor((width * height) / 18000));
       stars = createStarParticles(starCount, width, height);
+      petals = createPlumPetals(35, width, height);
 
       if (loadedImage) {
         logoPoints = createLogoPoints(loadedImage, width, height);
       }
 
       if (prefersReducedMotion) {
-        draw(performance.now());
+        drawStatic();
+      }
+    };
+
+    const drawStatic = () => {
+      context.clearRect(0, 0, width, height);
+      drawSunriseGradient(context, width, height, 1);
+
+      for (const star of stars) {
+        context.fillStyle = "rgba(220, 230, 255, 0.15)";
+        context.beginPath();
+        context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      for (const petal of petals) {
+        drawPlumBlossom(
+          context,
+          petal.x,
+          petal.y,
+          petal.size,
+          petal.rotation,
+          petal.colorVariant,
+          petal.opacity * 0.6,
+        );
+      }
+
+      const centerX = width / 2;
+      const centerY = height / 2 - 8;
+      for (const point of logoPoints) {
+        context.fillStyle = `rgba(${point.color.r}, ${point.color.g}, ${point.color.b}, 0.7)`;
+        context.beginPath();
+        context.arc(
+          centerX + point.x,
+          centerY + point.y,
+          point.size,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
       }
     };
 
     const draw = (time: number) => {
+      const startTime = startTimeRef.current ?? time;
+      const elapsed = time - startTime;
+      const deltaMs = prevTime > 0 ? time - prevTime : 16;
+      prevTime = time;
+
       context.clearRect(0, 0, width, height);
 
+      // --- Sunrise gradient ---
+      const sunriseRaw = clamp(
+        (elapsed - PHASE_2_START) / SUNRISE_DURATION,
+        0,
+        1,
+      );
+      const sunriseProgress = easeInOutCubic(sunriseRaw);
+      if (sunriseProgress > 0) {
+        drawSunriseGradient(context, width, height, sunriseProgress);
+      }
+
+      // --- Stars ---
+      const starDimFactor =
+        1 - clamp((elapsed - PHASE_2_START) / 3000, 0, 0.85);
       for (const star of stars) {
         const pulse =
           0.32 + 0.68 * Math.sin(time * star.twinkleSpeed + star.phase) * 0.5;
-        const alpha = 0.2 + Math.max(0, pulse) * 0.7;
+        const alpha = (0.2 + Math.max(0, pulse) * 0.7) * starDimFactor;
         const radius = star.size + Math.max(0, pulse) * 0.65;
+
+        if (alpha < 0.01) continue;
 
         const gradient = context.createRadialGradient(
           star.x,
@@ -276,64 +506,215 @@ function DroneLogoStage() {
           star.y,
           radius * 2.2,
         );
-        gradient.addColorStop(0, `rgba(197, 241, 232, ${alpha})`);
-        gradient.addColorStop(1, "rgba(197, 241, 232, 0)");
+        gradient.addColorStop(0, `rgba(220, 230, 255, ${alpha})`);
+        gradient.addColorStop(1, "rgba(220, 230, 255, 0)");
         context.fillStyle = gradient;
         context.beginPath();
         context.arc(star.x, star.y, radius * 2.2, 0, Math.PI * 2);
         context.fill();
       }
 
-      const centerX = width / 2;
-      const centerY = height / 2 - 8;
-      const gatherDurationMs = 2200;
-      const gatherProgressRaw = prefersReducedMotion
-        ? 1
-        : Math.min(1, Math.max(0, (time - logoStartAt) / gatherDurationMs));
-      const gatherProgress =
-        gatherProgressRaw < 0.5
-          ? 2 * gatherProgressRaw * gatherProgressRaw
-          : 1 - (-2 * gatherProgressRaw + 2) ** 2 / 2;
+      // --- Plum blossom petals ---
+      const petalAlpha = clamp((elapsed - (PHASE_2_START + 1000)) / 2000, 0, 1);
+      if (petalAlpha > 0) {
+        for (const petal of petals) {
+          petal.x +=
+            petal.velocityX * deltaMs +
+            Math.sin(time * 0.001 + petal.phase) * 0.25;
+          petal.y += petal.velocityY * deltaMs;
+          petal.rotation += petal.rotationSpeed * deltaMs;
 
-      for (const point of logoPoints) {
-        const pulse =
-          0.5 + 0.5 * Math.sin(time * point.twinkleSpeed + point.phase);
-        const sparkleBase = Math.max(
+          if (petal.y > height + petal.size * 2) {
+            petal.y = -petal.size * 2;
+            petal.x = Math.random() * width;
+          }
+          if (petal.x < -petal.size * 2) petal.x = width + petal.size;
+          if (petal.x > width + petal.size * 2) petal.x = -petal.size;
+
+          drawPlumBlossom(
+            context,
+            petal.x,
+            petal.y,
+            petal.size,
+            petal.rotation,
+            petal.colorVariant,
+            petal.opacity * petalAlpha,
+          );
+        }
+      }
+
+      // --- Dragon ---
+      const dragonProgressRaw = clamp(
+        (elapsed - PHASE_3_START) / DRAGON_DURATION,
+        0,
+        1,
+      );
+      const dragonFade =
+        elapsed > PHASE_4_START
+          ? 1 -
+            clamp((elapsed - PHASE_4_START) / DRAGON_DISSOLVE_DURATION, 0, 1)
+          : 1;
+
+      if (dragonProgressRaw > 0 && dragonFade > 0) {
+        const head = getDragonHeadPosition(dragonProgressRaw, width, height);
+
+        // パーティクル放出
+        if (dragonFade > 0.3) {
+          const emitCount = 3 + Math.floor(Math.random() * 3);
+          for (let i = 0; i < emitCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 0.02 + 0.005;
+            const colorRoll = Math.random();
+            let color: { r: number; g: number; b: number };
+            if (colorRoll < 0.6) {
+              color = { r: 255, g: 215, b: 0 };
+            } else if (colorRoll < 0.85) {
+              color = { r: 255, g: 140, b: 0 };
+            } else {
+              color = { r: 220, g: 20, b: 60 };
+            }
+
+            dragonTrail.push({
+              x: head.x + (Math.random() - 0.5) * 6,
+              y: head.y + (Math.random() - 0.5) * 6,
+              size: Math.random() * 2.5 + 1.5,
+              alpha: 1.0,
+              life: 0,
+              velocityX: Math.cos(angle) * speed,
+              velocityY: Math.sin(angle) * speed - 0.01,
+              color,
+            });
+          }
+        }
+
+        // パーティクル更新
+        const decayRate = 0.0012;
+        dragonTrail = dragonTrail.filter((p) => {
+          p.life += deltaMs * decayRate;
+          p.alpha = Math.max(0, 1 - p.life);
+          p.x += p.velocityX * deltaMs;
+          p.y += p.velocityY * deltaMs;
+          p.size *= 0.998;
+          return p.life < 1;
+        });
+
+        // パーティクル描画
+        for (const p of dragonTrail) {
+          const a = p.alpha * dragonFade;
+          if (a < 0.01) continue;
+
+          const glowRadius = p.size * 3;
+          const glow = context.createRadialGradient(
+            p.x,
+            p.y,
+            0,
+            p.x,
+            p.y,
+            glowRadius,
+          );
+          glow.addColorStop(
+            0,
+            `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${a * 0.3})`,
+          );
+          glow.addColorStop(
+            1,
+            `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0)`,
+          );
+          context.fillStyle = glow;
+          context.beginPath();
+          context.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = `rgba(${Math.min(255, p.color.r + 30)}, ${Math.min(255, p.color.g + 30)}, ${Math.min(255, p.color.b + 20)}, ${Math.min(1, a * 0.9)})`;
+          context.beginPath();
+          context.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          context.fill();
+        }
+
+        // 龍頭フレームグロー
+        if (dragonFade > 0.1) {
+          const headGlowRadius = 25;
+          const headGlow = context.createRadialGradient(
+            head.x,
+            head.y,
+            0,
+            head.x,
+            head.y,
+            headGlowRadius,
+          );
+          headGlow.addColorStop(0, `rgba(255, 240, 180, ${0.5 * dragonFade})`);
+          headGlow.addColorStop(
+            0.4,
+            `rgba(255, 200, 80, ${0.25 * dragonFade})`,
+          );
+          headGlow.addColorStop(1, "rgba(255, 160, 40, 0)");
+          context.fillStyle = headGlow;
+          context.beginPath();
+          context.arc(head.x, head.y, headGlowRadius, 0, Math.PI * 2);
+          context.fill();
+        }
+      }
+
+      // --- Logo drone points ---
+      if (elapsed > PHASE_4_START && logoPoints.length > 0) {
+        if (logoStartAt === 0) {
+          logoStartAt = time;
+        }
+        const centerX = width / 2;
+        const centerY = height / 2 - 8;
+        const gatherRaw = clamp(
+          (time - logoStartAt) / LOGO_GATHER_DURATION,
           0,
-          Math.sin(time * 0.006 + point.blinkPhase),
-        );
-        const flash = sparkleBase ** 12;
-
-        const x = centerX + point.x + point.startOffsetX * (1 - gatherProgress);
-        const y = centerY + point.y + point.startOffsetY * (1 - gatherProgress);
-        const coreRadius = point.size * (0.9 + pulse * 0.35 + flash * 0.55);
-        const glowRadius = coreRadius * (2 + flash * 0.8);
-        const coreAlpha =
-          (0.32 + pulse * 0.43 + flash * 0.35) * (0.2 + gatherProgress * 0.8);
-
-        const glow = context.createRadialGradient(x, y, 0, x, y, glowRadius);
-        glow.addColorStop(
-          0,
-          `rgba(${point.color.r}, ${point.color.g}, ${point.color.b}, ${coreAlpha * 0.23})`,
-        );
-        glow.addColorStop(
           1,
-          `rgba(${point.color.r}, ${point.color.g}, ${point.color.b}, 0)`,
         );
+        const gatherProgress =
+          gatherRaw < 0.5
+            ? 2 * gatherRaw * gatherRaw
+            : 1 - (-2 * gatherRaw + 2) ** 2 / 2;
 
-        context.fillStyle = glow;
-        context.beginPath();
-        context.arc(x, y, glowRadius, 0, Math.PI * 2);
-        context.fill();
+        for (const point of logoPoints) {
+          const pulse =
+            0.5 + 0.5 * Math.sin(time * point.twinkleSpeed + point.phase);
+          const sparkleBase = Math.max(
+            0,
+            Math.sin(time * 0.006 + point.blinkPhase),
+          );
+          const flash = sparkleBase ** 12;
 
-        context.fillStyle = `rgba(${Math.min(255, point.color.r + 20)}, ${Math.min(255, point.color.g + 20)}, ${Math.min(255, point.color.b + 20)}, ${Math.min(1, coreAlpha)})`;
-        context.beginPath();
-        context.arc(x, y, coreRadius, 0, Math.PI * 2);
-        context.fill();
+          const x =
+            centerX + point.x + point.startOffsetX * (1 - gatherProgress);
+          const y =
+            centerY + point.y + point.startOffsetY * (1 - gatherProgress);
+          const coreRadius = point.size * (0.9 + pulse * 0.35 + flash * 0.55);
+          const glowRadius = coreRadius * (2 + flash * 0.8);
+          const coreAlpha =
+            (0.32 + pulse * 0.43 + flash * 0.35) * (0.2 + gatherProgress * 0.8);
+
+          const glow = context.createRadialGradient(x, y, 0, x, y, glowRadius);
+          glow.addColorStop(
+            0,
+            `rgba(${point.color.r}, ${point.color.g}, ${point.color.b}, ${coreAlpha * 0.23})`,
+          );
+          glow.addColorStop(
+            1,
+            `rgba(${point.color.r}, ${point.color.g}, ${point.color.b}, 0)`,
+          );
+
+          context.fillStyle = glow;
+          context.beginPath();
+          context.arc(x, y, glowRadius, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = `rgba(${Math.min(255, point.color.r + 20)}, ${Math.min(255, point.color.g + 20)}, ${Math.min(255, point.color.b + 20)}, ${Math.min(1, coreAlpha)})`;
+          context.beginPath();
+          context.arc(x, y, coreRadius, 0, Math.PI * 2);
+          context.fill();
+        }
       }
     };
 
     const animate = (time: number) => {
+      if (!mounted) return;
       draw(time);
       rafId = window.requestAnimationFrame(animate);
     };
@@ -341,24 +722,22 @@ function DroneLogoStage() {
     const image = new Image();
     image.decoding = "async";
     image.onload = () => {
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       loadedImage = image;
       logoPoints = createLogoPoints(image, width, height);
-      logoStartAt = performance.now();
 
       if (prefersReducedMotion) {
-        draw(performance.now());
-        return;
+        drawStatic();
       }
-
-      rafId = window.requestAnimationFrame(animate);
     };
-    image.src = WINTER_LOGO_SRC;
+    image.src = LOGO_SRC;
 
     resize();
     window.addEventListener("resize", resize);
+
+    if (!prefersReducedMotion) {
+      rafId = window.requestAnimationFrame(animate);
+    }
 
     return () => {
       mounted = false;
@@ -367,12 +746,14 @@ function DroneLogoStage() {
         window.cancelAnimationFrame(rafId);
       }
     };
-  }, []);
+  }, [startTimeRef]);
 
-  return <canvas ref={canvasRef} className="drone-canvas" />;
+  return <canvas ref={canvasRef} className="spring-canvas" />;
 }
 
-function WinterLogo({
+// --- Logo for EndCredits ---
+
+function SpringLogo({
   sizePx,
   enableGlow = false,
 }: {
@@ -382,18 +763,20 @@ function WinterLogo({
   return (
     // biome-ignore lint/performance/noImgElement: 軽量表示のためimgタグを使用
     <img
-      src={WINTER_LOGO_SRC}
+      src={LOGO_SRC}
       alt="チームみらいロゴ"
       style={{
         width: `${sizePx}px`,
         height: "auto",
         filter: enableGlow
-          ? "drop-shadow(0 0 10px rgba(183, 241, 227, 0.8)) drop-shadow(0 0 24px rgba(148, 228, 209, 0.5))"
+          ? "drop-shadow(0 0 10px rgba(255, 200, 100, 0.8)) drop-shadow(0 0 24px rgba(255, 170, 50, 0.5))"
           : "none",
       }}
     />
   );
 }
+
+// --- End Credits ---
 
 const EndCredits = ({
   contributors,
@@ -410,9 +793,7 @@ const EndCredits = ({
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    if (!wrapper) {
-      return;
-    }
+    if (!wrapper) return;
 
     const measure = () => {
       setTotalHeight(wrapper.scrollHeight);
@@ -480,12 +861,12 @@ const EndCredits = ({
             gap: "3rem",
           }}
         >
-          <WinterLogo sizePx={136} />
+          <SpringLogo sizePx={136} />
           <div
             style={{
               fontSize: "1.8rem",
               fontWeight: "bold",
-              textShadow: "2px 2px 4px rgba(0,0,0,.8)",
+              textShadow: "2px 2px 4px rgba(40, 20, 10, 0.8)",
               fontFamily: "'Noto Sans JP', sans-serif",
             }}
           >
@@ -503,7 +884,7 @@ const EndCredits = ({
                 justifyContent: "center",
                 gap: "1rem",
                 marginBottom: "2rem",
-                textShadow: "1px 1px 2px rgba(0,0,0,.8)",
+                textShadow: "1px 1px 2px rgba(40, 20, 10, 0.8)",
                 fontFamily: "'Noto Sans JP', sans-serif",
               }}
             >
@@ -531,29 +912,44 @@ const EndCredits = ({
   );
 };
 
-export default function MaintenanceWinterEffect() {
-  const snowflakes = useMemo(() => createSnowflakes(120), []);
-  const petals = useMemo(() => createPetals(16), []);
-  const [contributors, setContributors] = useState<ContributorData[]>([]);
-  const [showNightOverlay, setShowNightOverlay] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
+// --- Main exported component ---
 
-  const SCROLL_SPEED = 80;
+export default function MaintenanceWinterEffect() {
+  const snowflakes = useMemo(() => createSnowflakes(80), []);
+  const [contributors, setContributors] = useState<ContributorData[]>([]);
+  const [snowFading, setSnowFading] = useState(false);
+  const [showSnow, setShowSnow] = useState(true);
+  const [showCredits, setShowCredits] = useState(false);
+  const startTimeRef = useRef<number>(performance.now());
 
   useEffect(() => {
-    let creditsTimer: ReturnType<typeof setTimeout> | null = null;
-    const introTimer = setTimeout(() => {
-      setShowNightOverlay(true);
-      creditsTimer = setTimeout(() => {
+    startTimeRef.current = performance.now();
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    timers.push(
+      setTimeout(() => {
+        setSnowFading(true);
+      }, PHASE_2_START),
+    );
+
+    timers.push(
+      setTimeout(
+        () => {
+          setShowSnow(false);
+        },
+        PHASE_2_START + SNOW_FADEOUT_DURATION + 500,
+      ),
+    );
+
+    timers.push(
+      setTimeout(() => {
         setShowCredits(true);
-      }, CREDITS_DELAY_AFTER_OVERLAY_MS);
-    }, INTRO_DURATION_MS);
+      }, CREDITS_START),
+    );
 
     return () => {
-      clearTimeout(introTimer);
-      if (creditsTimer) {
-        clearTimeout(creditsTimer);
-      }
+      for (const t of timers) clearTimeout(t);
     };
   }, []);
 
@@ -574,47 +970,25 @@ export default function MaintenanceWinterEffect() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 overflow-hidden z-10"
     >
-      <div className="absolute inset-0 winter-glow" />
-      {showNightOverlay && <div className="absolute inset-0 night-overlay" />}
-      {showNightOverlay && showCredits && (
-        <div className="night-logo-stage">
-          <DroneLogoStage />
-        </div>
-      )}
+      <div className="spring-canvas-stage">
+        <MainCanvas startTimeRef={startTimeRef} />
+      </div>
 
-      {snowflakes.map((flake) => (
-        <span
-          key={`snow-${flake.id}`}
-          className="snowflake"
-          style={
-            {
-              left: `${flake.left}%`,
-              width: `${flake.size}px`,
-              height: `${flake.size}px`,
-              filter: `blur(${flake.blur}px)`,
-              animationDuration: `${flake.duration}s`,
-              animationDelay: `${flake.delay}s`,
-              "--drift": `${flake.drift}px`,
-              "--flake-opacity": `${flake.opacity}`,
-            } as CSSProperties
-          }
-        />
-      ))}
-
-      {!showNightOverlay &&
-        petals.map((petal) => (
+      {showSnow &&
+        snowflakes.map((flake) => (
           <span
-            key={`petal-${petal.id}`}
-            className="petal"
+            key={`snow-${flake.id}`}
+            className={`snowflake ${snowFading ? "snow-fading" : ""}`}
             style={
               {
-                left: `${petal.left}%`,
-                width: `${petal.size}px`,
-                height: `${petal.size}px`,
-                opacity: petal.opacity,
-                animationDuration: `${petal.duration}s`,
-                animationDelay: `${petal.delay}s`,
-                "--drift": `${petal.drift}px`,
+                left: `${flake.left}%`,
+                width: `${flake.size}px`,
+                height: `${flake.size}px`,
+                filter: `blur(${flake.blur}px)`,
+                animationDuration: `${flake.duration}s`,
+                animationDelay: `${flake.delay}s`,
+                "--drift": `${flake.drift}px`,
+                "--flake-opacity": `${flake.opacity}`,
               } as CSSProperties
             }
           />
@@ -631,36 +1005,17 @@ export default function MaintenanceWinterEffect() {
       )}
 
       <style jsx>{`
-        .winter-glow {
-          background:
-            radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.3), transparent 35%),
-            radial-gradient(circle at 85% 20%, rgba(100, 216, 198, 0.28), transparent 30%),
-            radial-gradient(circle at 50% 78%, rgba(188, 236, 211, 0.25), transparent 38%);
-          z-index: 11;
-        }
-
-        .night-overlay {
-          background:
-            radial-gradient(circle at 50% 8%, rgba(40, 40, 40, 0.26), rgba(0, 0, 0, 0.92)),
-            #000;
-          opacity: 0;
-          animation: nightFadeIn 1.2s ease forwards;
-          z-index: 12;
-        }
-
-        .night-logo-stage {
+        .spring-canvas-stage {
           position: absolute;
           inset: 0;
           z-index: 13;
         }
 
-        .drone-canvas {
+        .spring-canvas {
           display: block;
           width: 100%;
           height: 100%;
           pointer-events: none;
-          opacity: 0;
-          animation: logoReveal 900ms ease forwards;
         }
 
         .snowflake {
@@ -673,37 +1028,11 @@ export default function MaintenanceWinterEffect() {
           animation-timing-function: linear;
           animation-iteration-count: infinite;
           z-index: 14;
+          transition: opacity 2s ease-out;
         }
 
-        .petal {
-          position: absolute;
-          top: -12%;
-          border-radius: 9999px 70% 9999px 80%;
-          background: linear-gradient(135deg, #64d8c6 0%, #bcecd3 100%);
-          box-shadow: 0 0 10px rgba(100, 216, 198, 0.45);
-          transform: rotate(20deg);
-          animation-name: petalDrift;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          z-index: 14;
-        }
-
-        @keyframes nightFadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-
-        @keyframes logoReveal {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
+        .snowflake.snow-fading {
+          opacity: 0 !important;
         }
 
         @keyframes snowFall {
@@ -723,18 +1052,8 @@ export default function MaintenanceWinterEffect() {
           }
         }
 
-        @keyframes petalDrift {
-          0% {
-            transform: translate3d(0, -15vh, 0) rotate(0deg);
-          }
-          100% {
-            transform: translate3d(var(--drift), 115vh, 0) rotate(240deg);
-          }
-        }
-
         @media (prefers-reduced-motion: reduce) {
-          .snowflake,
-          .petal {
+          .snowflake {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
           }
