@@ -1,5 +1,6 @@
 "use server";
 
+import { getAuth } from "@/lib/supabase/client";
 import {
   getMissionData as getMissionDataService,
   getMissionIdBySlug as getMissionIdBySlugService,
@@ -10,10 +11,7 @@ import {
   getSubmissionHistory as getSubmissionHistoryService,
   getTotalAchievementCount as getTotalAchievementCountService,
   getUserAchievements as getUserAchievementsService,
-  isUUID,
 } from "../services/mission-detail";
-
-export { isUUID };
 
 export async function getMissionData(identifier: string) {
   return getMissionDataService(identifier);
@@ -31,22 +29,37 @@ export async function getTotalAchievementCount(missionId: string) {
   return getTotalAchievementCountService(missionId);
 }
 
-export async function getUserAchievements(userId: string, missionId: string) {
-  return getUserAchievementsService(userId, missionId);
+export async function getUserAchievements(missionId: string) {
+  const {
+    data: { user },
+  } = await getAuth().getUser();
+  if (!user) throw new Error("認証が必要です");
+  return getUserAchievementsService(user.id, missionId);
 }
 
-export async function getSubmissionHistory(userId: string, missionId: string) {
-  return getSubmissionHistoryService(userId, missionId);
+export async function getSubmissionHistory(missionId: string) {
+  const {
+    data: { user },
+  } = await getAuth().getUser();
+  if (!user) throw new Error("認証が必要です");
+  return getSubmissionHistoryService(user.id, missionId);
 }
 
 export async function getMissionMainLink(missionId: string) {
   return getMissionMainLinkService(missionId);
 }
 
-export async function getMissionPageData(identifier: string, userId?: string) {
-  return getMissionPageDataService(identifier, userId);
+export async function getMissionPageData(identifier: string) {
+  const {
+    data: { user },
+  } = await getAuth().getUser();
+  return getMissionPageDataService(identifier, user?.id);
 }
 
-export async function getReferralCode(userId: string) {
-  return getReferralCodeService(userId);
+export async function getReferralCode() {
+  const {
+    data: { user },
+  } = await getAuth().getUser();
+  if (!user) throw new Error("認証が必要です");
+  return getReferralCodeService(user.id);
 }

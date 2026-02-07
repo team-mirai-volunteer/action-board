@@ -17,8 +17,8 @@ import { RelatedMissions } from "@/features/mission-detail/components/related-mi
 import {
   getMissionPageData,
   getMissionSlugById,
-  isUUID,
 } from "@/features/mission-detail/loaders/mission-detail-loaders";
+import { isUUID } from "@/features/mission-detail/services/mission-detail";
 import { MissionDetails } from "@/features/missions/components/mission-details";
 import {
   getMissionAchievementCounts,
@@ -141,7 +141,7 @@ export default async function MissionPage({ params, searchParams }: Props) {
   }
 
   const user = await getUser();
-  const pageData = await getMissionPageData(slug, user?.id);
+  const pageData = await getMissionPageData(slug);
 
   if (!pageData) {
     return <div className="p-4">ミッションが見つかりません。</div>;
