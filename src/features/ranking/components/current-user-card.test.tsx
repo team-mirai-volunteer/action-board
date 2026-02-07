@@ -181,14 +181,14 @@ describe("CurrentUserCard", () => {
       const user = { ...mockUser, xp: 123456 };
       render(<CurrentUserCard currentUser={user} />);
 
-      expect(screen.getByText("123,456pt")).toBeInTheDocument();
+      expect(screen.getByText("12.3万pt")).toBeInTheDocument();
     });
 
     it("大きな数値も正しくフォーマットされる", () => {
       const user = { ...mockUser, xp: 1000000 };
       render(<CurrentUserCard currentUser={user} />);
 
-      expect(screen.getByText("1,000,000pt")).toBeInTheDocument();
+      expect(screen.getByText("100万pt")).toBeInTheDocument();
     });
   });
 
