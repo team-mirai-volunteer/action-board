@@ -9,7 +9,7 @@ import {
   getDailyActionHistory,
   getDailyActiveUsersHistory,
   getMissionActionRanking,
-} from "@/features/action-stats/services/action-stats-service";
+} from "@/features/action-stats/loaders/action-stats-loaders";
 import {
   getPeriodEndDate,
   getPeriodStartDate,
