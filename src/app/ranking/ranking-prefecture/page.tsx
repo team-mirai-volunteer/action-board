@@ -3,10 +3,10 @@ import type { RankingPeriod } from "@/features/ranking/components/period-toggle"
 import { PrefectureSelect } from "@/features/ranking/components/prefecture-select";
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
-import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
+import { getUserPrefecturesRanking } from "@/features/ranking/loaders/ranking-loaders";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 
 interface PageProps {
   searchParams: Promise<{
