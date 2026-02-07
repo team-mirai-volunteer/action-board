@@ -50,10 +50,7 @@ export default async function PrefectureTeamPage() {
       userProfile?.address_prefecture &&
       userProfile.address_prefecture !== "海外"
     ) {
-      userContribution = await getUserPrefectureContribution(
-        user.id,
-        currentSeason.id,
-      );
+      userContribution = await getUserPrefectureContribution(currentSeason.id);
       userPrefectureRanking = rankings.find(
         (r) => r.prefecture === userProfile?.address_prefecture,
       );

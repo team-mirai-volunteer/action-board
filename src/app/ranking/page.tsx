@@ -6,7 +6,6 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { getUserPeriodRanking } from "@/features/ranking/loaders/ranking-loaders";
-import { getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 
 interface PageProps {
@@ -22,14 +21,10 @@ export default async function RankingPage({ searchParams }: PageProps) {
   // 現在のシーズンIDを取得
   const currentSeasonId = await getCurrentSeasonId();
 
-  // ユーザー情報取得
-  const user = await getUser();
-
   // ユーザーランキング取得
-  const userRanking =
-    user && currentSeasonId
-      ? await getUserPeriodRanking(user.id, currentSeasonId, period)
-      : null;
+  const userRanking = currentSeasonId
+    ? await getUserPeriodRanking(currentSeasonId, period)
+    : null;
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">
