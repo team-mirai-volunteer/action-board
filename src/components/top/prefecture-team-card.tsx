@@ -32,7 +32,7 @@ export async function PrefectureTeamCard() {
 
   const [rankings, userContribution] = await Promise.all([
     getPrefectureTeamRanking(currentSeason.id),
-    getUserPrefectureContribution(user.id, currentSeason.id),
+    getUserPrefectureContribution(currentSeason.id),
   ]);
 
   const userPrefectureRanking = rankings.find(

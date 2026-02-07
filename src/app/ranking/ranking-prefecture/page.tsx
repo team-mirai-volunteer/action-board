@@ -52,16 +52,11 @@ export default async function RankingPrefecturePage({
     return <div className="p-4">選択された都道府県が見つかりません。</div>;
   }
 
-  let userRanking = null;
-
-  if (user) {
-    // 現在のユーザーの都道府県別ランキングを探す（シーズン対応）
-    userRanking = await getUserPrefecturesRanking(
-      selectedPrefecture,
-      user.id,
-      currentSeasonId,
-    );
-  }
+  // 現在のユーザーの都道府県別ランキングを探す（シーズン対応）
+  const userRanking = await getUserPrefecturesRanking(
+    selectedPrefecture,
+    currentSeasonId,
+  );
 
   return (
     <div className="flex flex-col min-h-screen py-4 w-full">

@@ -1,5 +1,6 @@
 "use server";
 
+import { getUser } from "@/features/user-profile/services/profile";
 import {
   getMissionRanking as getMissionRankingService,
   getTopUsersPostingCountByMission as getTopUsersPostingCountByMissionService,
@@ -19,11 +20,12 @@ import {
 import type { RankingPeriod } from "../types/ranking-types";
 
 export async function getUserPeriodRanking(
-  userId: string,
   seasonId: string,
   period?: RankingPeriod,
 ) {
-  return getUserPeriodRankingService(userId, seasonId, period);
+  const user = await getUser();
+  if (!user) return null;
+  return getUserPeriodRankingService(user.id, seasonId, period);
 }
 
 export async function getRanking(
@@ -45,23 +47,27 @@ export async function getMissionRanking(
 
 export async function getUserMissionRanking(
   missionId: string,
-  userId: string,
   seasonId?: string,
   period?: RankingPeriod,
 ) {
-  return getUserMissionRankingService(missionId, userId, seasonId, period);
+  const user = await getUser();
+  if (!user) return null;
+  return getUserMissionRankingService(missionId, user.id, seasonId, period);
 }
 
-export async function getUserPostingCount(userId: string) {
-  return getUserPostingCountService(userId);
+export async function getUserPostingCount() {
+  const user = await getUser();
+  if (!user) return 0;
+  return getUserPostingCountService(user.id);
 }
 
 export async function getUserPostingCountByMission(
-  userId: string,
   missionId: string,
   seasonId?: string,
 ) {
-  return getUserPostingCountByMissionService(userId, missionId, seasonId);
+  const user = await getUser();
+  if (!user) return 0;
+  return getUserPostingCountByMissionService(user.id, missionId, seasonId);
 }
 
 export async function getTopUsersPostingCount(userIds: string[]) {
@@ -87,9 +93,15 @@ export async function getPrefecturesRanking(
 
 export async function getUserPrefecturesRanking(
   prefecture: string,
-  userId: string,
   seasonId?: string,
   period?: RankingPeriod,
 ) {
-  return getUserPrefecturesRankingService(prefecture, userId, seasonId, period);
+  const user = await getUser();
+  if (!user) return null;
+  return getUserPrefecturesRankingService(
+    prefecture,
+    user.id,
+    seasonId,
+    period,
+  );
 }
