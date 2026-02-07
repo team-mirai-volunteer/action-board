@@ -112,6 +112,14 @@ const { data } = await supabase.from("table").select(); // NG: 直接アクセ�
 - **`createClient()` / `getAuth()` / `getStorage()`**: 認証操作（`supabase.auth.*`）やStorage操作に使用。cookie連携あり。
 - **`createAdminClient()`**: DB操作（`supabase.from(...)`）に使用。service_roleでRLSバイパス。
 - **`createAdminClient()` で `supabase.auth.*` を呼んではいけない**（cookieが読めずセッション取得失敗）
+- **クライアントコンポーネントからDB操作を呼ぶ場合**: `actions/`（mutation）または `loaders/`（読み取り）経由。`services/` を直接importしない。
+
+### 認可（Authorization）のルール
+
+- **userIdは必ずサーバーサイドでセッションから取得する**。クライアントからuserIdを引数で受け取ってはいけない（改ざん可能なため）。
+- **認可チェックはactions層で行う**。services層はデータ操作に専念し、認可ロジックを混在させない。
+- **リソースの所有者チェックは専用の認可関数に分離する**。サービス関数のクエリに `.eq("user_id", userId)` を埋め込むのではなく、`authorizeXxxOwner()` のような関数で事前に所有権を検証する。
+
 
 ### 主要技術スタック
 - **フレームワーク**: Next.js 15 with App Router
@@ -366,6 +374,18 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 - **RLSポリシーは必ずテストを書く**
 - **環境変数の追加時は `.env.example` も更新**
 - **CI/CDではCloud Buildでミッションデータが自動同期される**
+
+## 自己学習ルール
+セッション中の発見やPRレビューのフィードバックを、プロジェクト設定に自動反映する仕組み。
+
+- **PRレビュー後**: `/retro {PR番号}` でCodeRabbit・レビュアーの指摘を分析し、CLAUDE.md・skills・agents・MEMORYに反映する
+- **セッション終了時**: SessionEndフックがMEMORY.mdの差分を `.claude/tmp/learnings-staging.md` に自動キャプチャする
+- **次セッション開始時**: SessionStartフックが未処理の学びを通知する。`/retro` で反映する
+- **学びの分類先**:
+  - 普遍ルール（フレームワーク制約、ファイル配置等）→ CLAUDE.md
+  - ワークフロー改善 → skills/commands
+  - ワーカー行動指針 → agents
+  - 運用知識・ワークアラウンド → MEMORY.md
 
 ## GitHub Issue作成ルール
 GitHub Issueを作成する際は、以下のルールに従うこと：

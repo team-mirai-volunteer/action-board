@@ -10,6 +10,28 @@
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/capture-learnings.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -s .claude/tmp/learnings-staging.md ] && echo '[retro] 未処理の学びが .claude/tmp/learnings-staging.md にあります。/retro で反映してください。' || true"
+          }
+        ]
+      }
     ]
   }
 }
