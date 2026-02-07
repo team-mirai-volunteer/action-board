@@ -56,7 +56,7 @@ export function MissionWithSubmissionHistory({
 
   const refreshSubmissions = async () => {
     try {
-      const data = await getSubmissionHistory(authUser.id, missionId);
+      const data = await getSubmissionHistory(missionId);
       setUserAchievementCount(data.length);
       setSubmissions(data);
     } catch (error) {
