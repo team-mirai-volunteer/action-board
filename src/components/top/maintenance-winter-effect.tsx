@@ -606,12 +606,31 @@ function BgmToggle() {
         type="button"
         onClick={togglePlay}
         aria-label={isPlaying ? "BGMを停止" : "BGMを再生"}
-        className="bgm-toggle"
+        style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          zIndex: 9999,
+          pointerEvents: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "52px",
+          height: "52px",
+          borderRadius: "9999px",
+          border: "1px solid rgba(255, 255, 255, 0.25)",
+          background: "rgba(0, 0, 0, 0.5)",
+          backdropFilter: "blur(8px)",
+          color: "rgba(255, 255, 255, 0.85)",
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+          touchAction: "manipulation",
+        }}
       >
         {isPlaying ? (
           <svg
-            width="20"
-            height="20"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -626,8 +645,8 @@ function BgmToggle() {
           </svg>
         ) : (
           <svg
-            width="20"
-            height="20"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -846,31 +865,6 @@ export default function MaintenanceWinterEffect() {
           100% {
             transform: translate3d(var(--drift), 115vh, 0) rotate(240deg);
           }
-        }
-
-        .bgm-toggle {
-          position: fixed;
-          bottom: 24px;
-          right: 24px;
-          z-index: 50;
-          pointer-events: auto;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 9999px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          background: rgba(0, 0, 0, 0.4);
-          backdrop-filter: blur(8px);
-          color: rgba(255, 255, 255, 0.8);
-          cursor: pointer;
-          transition: background 0.2s, color 0.2s;
-        }
-
-        .bgm-toggle:hover {
-          background: rgba(0, 0, 0, 0.6);
-          color: #fff;
         }
 
         @media (prefers-reduced-motion: reduce) {
