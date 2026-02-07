@@ -287,10 +287,11 @@ async function main() {
   console.log(`XP granted: ${result.totalXpGranted}`);
 
   if (result.errors.length > 0) {
-    console.warn(`\nWarnings (${result.errors.length}):`);
+    console.log(`\nErrors (${result.errors.length}):`);
     for (const error of result.errors) {
-      console.warn(`  - ${error}`);
+      console.error(`  - ${error}`);
     }
+    process.exit(1);
   }
 }
 
