@@ -18,7 +18,7 @@ const MaintenanceWinterEffect = dynamic(
   },
 );
 
-const BACKGROUND_HIDE_DELAY_MS = 10000;
+const BACKGROUND_HIDE_DELAY_MS = 8000;
 
 export default function ServiceStopNotification() {
   const [hideBackground, setHideBackground] = useState(false);

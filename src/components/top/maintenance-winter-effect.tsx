@@ -2,6 +2,7 @@
 
 import {
   type CSSProperties,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -16,11 +17,11 @@ const LOGO_SRC =
   "/img/mission-icons/actionboard_icon_work_20250713_ol_TeamMirai-logo.svg";
 
 // --- Phase timing constants (ms) ---
-const PHASE_2_START = 3000;
-const PHASE_3_START = 7000;
-const PHASE_4_START = 10000;
-const CREDITS_START = 11000;
-const SUNRISE_DURATION = 4000;
+const PHASE_2_START = 2000;
+const PHASE_3_START = 5000;
+const PHASE_4_START = 8000;
+const CREDITS_START = 9000;
+const SUNRISE_DURATION = 2000;
 const SNOW_FADEOUT_DURATION = 2000;
 const DRAGON_DURATION = 3000;
 const DRAGON_DISSOLVE_DURATION = 1500;
@@ -371,6 +372,116 @@ function getDragonHeadPosition(
     width / 2 + amplitude * Math.sin(progress * Math.PI * 2 * frequency);
 
   return { x, y };
+}
+
+// --- Japanese BGM (Web Audio API) ---
+
+class JapaneseBGM {
+  private ctx: AudioContext;
+  private masterGain: GainNode;
+  private timerId: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    this.ctx = new AudioContext();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.masterGain.connect(this.ctx.destination);
+  }
+
+  start() {
+    this.ctx.resume();
+    // Gentle fade-in
+    this.masterGain.gain.linearRampToValueAtTime(
+      0.15,
+      this.ctx.currentTime + 1.5,
+    );
+    this.startDrone();
+    this.schedulePluck();
+  }
+
+  private startDrone() {
+    const gain = this.ctx.createGain();
+    gain.gain.value = 0.04;
+    gain.connect(this.masterGain);
+
+    // Slow LFO for gentle pitch movement
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.frequency.value = 0.08;
+    lfoGain.gain.value = 1.5;
+    lfo.connect(lfoGain);
+
+    // D3 + A3 drone (perfect fifth)
+    for (const freq of [146.83, 220.0]) {
+      const osc = this.ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      lfoGain.connect(osc.frequency);
+      osc.connect(gain);
+      osc.start();
+    }
+
+    lfo.start();
+  }
+
+  private schedulePluck() {
+    // Yo-scale (Japanese pentatonic): D4, E4, G4, A4, B4, D5
+    const notes = [293.66, 329.63, 392.0, 440.0, 493.88, 587.33];
+
+    const pluck = () => {
+      const freq = notes[Math.floor(Math.random() * notes.length)];
+      const now = this.ctx.currentTime;
+
+      // Koto-like plucked string: triangle wave, quick attack, slow decay
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      osc.detune.value = (Math.random() - 0.5) * 6;
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.03, now + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now);
+      osc.stop(now + 3);
+
+      // Occasional octave harmonic for sparkle
+      if (Math.random() < 0.3) {
+        const harm = this.ctx.createOscillator();
+        const harmGain = this.ctx.createGain();
+        harm.type = "sine";
+        harm.frequency.value = freq * 2;
+        harmGain.gain.setValueAtTime(0, now + 0.3);
+        harmGain.gain.linearRampToValueAtTime(0.06, now + 0.32);
+        harmGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+        harm.connect(harmGain);
+        harmGain.connect(this.masterGain);
+        harm.start(now + 0.3);
+        harm.stop(now + 2);
+      }
+
+      this.timerId = setTimeout(pluck, 1500 + Math.random() * 2500);
+    };
+
+    this.timerId = setTimeout(pluck, 800);
+  }
+
+  setMuted(muted: boolean) {
+    this.masterGain.gain.linearRampToValueAtTime(
+      muted ? 0 : 0.15,
+      this.ctx.currentTime + 0.3,
+    );
+  }
+
+  dispose() {
+    if (this.timerId) clearTimeout(this.timerId);
+    this.ctx.close();
+  }
 }
 
 // --- Main Canvas component ---
@@ -922,6 +1033,11 @@ export default function MaintenanceWinterEffect() {
   const [showCredits, setShowCredits] = useState(false);
   const startTimeRef = useRef<number>(performance.now());
 
+  // Audio state
+  const [audioStarted, setAudioStarted] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const bgmRef = useRef<JapaneseBGM | null>(null);
+
   useEffect(() => {
     startTimeRef.current = performance.now();
 
@@ -965,10 +1081,56 @@ export default function MaintenanceWinterEffect() {
     })();
   }, []);
 
+  // BGM cleanup
+  useEffect(() => {
+    return () => {
+      bgmRef.current?.dispose();
+    };
+  }, []);
+
+  // Audio handlers (fireworks.tsx pattern: full-screen tap)
+  const handleClick = useCallback(() => {
+    if (!audioStarted) {
+      const bgm = new JapaneseBGM();
+      bgm.start();
+      bgmRef.current = bgm;
+      setAudioStarted(true);
+    } else {
+      const newMuted = !isMuted;
+      bgmRef.current?.setMuted(newMuted);
+      setIsMuted(newMuted);
+    }
+  }, [audioStarted, isMuted]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick],
+  );
+
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden z-10"
+    // biome-ignore lint/a11y/useButtonType: fireworks.tsx同様のインタラクティブエリア
+    <button
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      aria-label={
+        !audioStarted ? "BGMを再生" : isMuted ? "ミュート解除" : "ミュート"
+      }
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 10,
+        cursor: "pointer",
+        border: "none",
+        background: "transparent",
+        padding: 0,
+      }}
     >
       <div className="spring-canvas-stage">
         <MainCanvas startTimeRef={startTimeRef} />
@@ -1003,6 +1165,14 @@ export default function MaintenanceWinterEffect() {
           }}
         />
       )}
+
+      <div className="audio-indicator">
+        {!audioStarted ? (
+          <span className="tap-prompt">♪ タップして音楽を再生</span>
+        ) : (
+          <span className="mute-status">{isMuted ? "🔇" : "🔊"}</span>
+        )}
+      </div>
 
       <style jsx>{`
         .spring-canvas-stage {
@@ -1058,7 +1228,51 @@ export default function MaintenanceWinterEffect() {
             animation-iteration-count: 1 !important;
           }
         }
+
+        .audio-indicator {
+          position: absolute;
+          bottom: 2rem;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          z-index: 30;
+        }
+
+        .tap-prompt {
+          background: rgba(0, 0, 0, 0.35);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          color: rgba(255, 255, 255, 0.85);
+          padding: 10px 24px;
+          border-radius: 24px;
+          font-size: 14px;
+          font-family: "Noto Sans JP", sans-serif;
+          animation: fadeInPulse 3s ease-in-out infinite;
+          backdrop-filter: blur(4px);
+        }
+
+        .mute-status {
+          background: rgba(0, 0, 0, 0.3);
+          color: rgba(255, 255, 255, 0.7);
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        @keyframes fadeInPulse {
+          0%,
+          100% {
+            opacity: 0.6;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
       `}</style>
-    </div>
+    </button>
   );
 }
