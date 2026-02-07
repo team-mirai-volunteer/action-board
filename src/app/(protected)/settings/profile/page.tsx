@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Message } from "@/components/common/form-message";
 import { PartyBadgeVisibilityToggle } from "@/features/party-membership/components/party-badge-visibility-toggle";
-import { getPartyMembership } from "@/features/party-membership/services/memberships";
+import { getPartyMembership } from "@/features/party-membership/loaders/memberships-loaders";
 import { TikTokIcon } from "@/features/tiktok/components";
 import {
   getMyProfile,

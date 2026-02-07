@@ -1,7 +1,7 @@
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
-import { getPartyMembership } from "@/features/party-membership/services/memberships";
+import { getPartyMembership } from "@/features/party-membership/loaders/memberships-loaders";
 import { UserTopBadge } from "@/features/user-badges/components/user-top-badge";
 import { LevelProgress } from "@/features/user-level/components/level-progress";
 import { getUserLevel } from "@/features/user-level/services/level";
