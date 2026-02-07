@@ -1,5 +1,6 @@
 "use server";
 
+import { getUser } from "@/features/user-profile/services/profile";
 import { getAuth } from "@/lib/supabase/client";
 import {
   getMissionData as getMissionDataService,
@@ -30,9 +31,7 @@ export async function getTotalAchievementCount(missionId: string) {
 }
 
 export async function getUserAchievements(missionId: string) {
-  const {
-    data: { user },
-  } = await getAuth().getUser();
+  const user = await getUser();
   if (!user) throw new Error("認証が必要です");
   return getUserAchievementsService(user.id, missionId);
 }
@@ -50,16 +49,12 @@ export async function getMissionMainLink(missionId: string) {
 }
 
 export async function getMissionPageData(identifier: string) {
-  const {
-    data: { user },
-  } = await getAuth().getUser();
+  const user = await getUser();
   return getMissionPageDataService(identifier, user?.id);
 }
 
 export async function getReferralCode() {
-  const {
-    data: { user },
-  } = await getAuth().getUser();
+  const user = await getUser();
   if (!user) throw new Error("認証が必要です");
   return getReferralCodeService(user.id);
 }
