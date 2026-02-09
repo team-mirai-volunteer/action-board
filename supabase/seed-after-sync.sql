@@ -24,7 +24,7 @@ FROM (VALUES
 ) AS a(id, slug, user_id, created_at)
 JOIN missions m ON m.slug = a.slug
 CROSS JOIN seasons s
-WHERE s.slug = 'season2'
+WHERE s.slug = 'season3'
 ON CONFLICT (id) DO NOTHING;
 
 -- ポスティングのmission_artifactsを作成
