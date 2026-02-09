@@ -58,6 +58,9 @@ jobs:
       - name: Sync posting event data
         run: pnpm run posting:sync
 
+      - name: Sync season data
+        run: pnpm run season:sync
+
       - name: Load poster data
         run: pnpm run poster:load-csv
 

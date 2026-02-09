@@ -23,12 +23,13 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 **UIコンポーネント（`.tsx`ファイル）からSupabaseを直接呼び出してはいけない。** Service層（`services/`）経由でアクセスすること。
 コード例・配置場所の詳細は [アーキテクチャガイドライン](docs/nextjs_architecture_guidelines.md) を参照。
 
-### ミッション・ポスティングイベントのデータ管理
-ミッションと `posting_events` は **YAMLファイルで宣言的に管理** されている。SQLマイグレーションで直接変更しないこと。
+### ミッション・ポスティングイベント・シーズンのデータ管理
+ミッション、`posting_events`、シーズンは **YAMLファイルで宣言的に管理** されている。SQLマイグレーションで直接変更しないこと。
 - `mission_data/missions.yaml` - ミッション定義（`is_featured`, `is_hidden` 等の変更もここ）
 - `mission_data/categories.yaml` - カテゴリ定義
 - `mission_data/category_links.yaml` - カテゴリとミッションの紐付け
-- CI/CDデプロイ時に `npm run mission:sync` で自動同期される
+- `season_data/seasons.yaml` - シーズン定義（`name`, `is_active`, `start_date`, `end_date` の変更もここ）
+- CI/CDデプロイ時に `npm run mission:sync` / `npm run season:sync` で自動同期される
 
 ### Supabaseクライアントの使い分け
 - **`createClient()` / `getAuth()` / `getStorage()`**: 認証操作（`supabase.auth.*`）やStorage操作に使用

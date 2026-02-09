@@ -38,6 +38,8 @@
     "sync-party-memberships": "tsx src/scripts/sync-party-memberships.ts",
     "posting:sync": "tsx posting_data/src/sync.ts",
     "posting:sync:dry": "tsx posting_data/src/sync.ts --dry-run",
+    "season:sync": "tsx season_data/src/sync.ts",
+    "season:sync:dry": "tsx season_data/src/sync.ts --dry-run",
     "posting:backfill-area": "tsx scripts/backfill-posting-shapes-area.ts",
     "posting:backfill-area:dry": "tsx scripts/backfill-posting-shapes-area.ts --dry-run",
     "youtube:sync-videos": "tsx scripts/sync-youtube-videos.ts",
