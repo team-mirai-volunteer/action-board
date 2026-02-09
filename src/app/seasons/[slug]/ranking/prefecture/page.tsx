@@ -85,13 +85,13 @@ export default async function SeasonPrefectureRankingPage({
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen py-4 w-full">
-      <div className="w-full max-w-7xl px-4">
+    <div className="flex flex-col items-center min-h-screen pb-4 w-full">
+      <div className="w-full max-w-7xl px-4 mb-4">
         <PageBreadcrumb
           items={[
             { label: "ホーム", href: "/" },
-            { label: "ランキング", href: "/ranking" },
-            { label: season.name, href: `/seasons/${slug}/ranking` },
+            { label: season.name },
+            { label: "ランキング", href: `/seasons/${slug}/ranking` },
             { label: "都道府県別" },
           ]}
         />
@@ -109,7 +109,7 @@ export default async function SeasonPrefectureRankingPage({
 
       <RankingTabs seasonSlug={season.slug}>
         {/* 都道府県選択 */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           <PrefectureSelect
             prefectures={prefectures}
             selectedPrefecture={selectedPrefecture}
@@ -118,7 +118,7 @@ export default async function SeasonPrefectureRankingPage({
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCardPrefecture
               currentUser={userRanking}
               prefecture={selectedPrefecture}
@@ -126,7 +126,7 @@ export default async function SeasonPrefectureRankingPage({
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* 都道府県別ランキング（シーズン対応） */}
           <RankingPrefecture
             limit={100}

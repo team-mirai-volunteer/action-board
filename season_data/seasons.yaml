@@ -1,0 +1,16 @@
+seasons:
+  - slug: season1
+    name: ~2025参院選
+    start_date: "2025-06-01T00:00:00+09:00"
+    end_date: "2025-07-19T23:59:59+09:00"
+    is_active: false
+  - slug: season2
+    name: ~2026衆院選
+    start_date: "2025-08-13T00:00:00+09:00"
+    end_date: "2026-02-07T23:59:59+09:00"
+    is_active: false
+  - slug: season3
+    name: 2026春~
+    start_date: "2026-02-09T00:00:00+09:00"
+    end_date: null
+    is_active: true

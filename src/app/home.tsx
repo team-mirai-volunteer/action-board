@@ -67,9 +67,6 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen w-full">
-      {/* 注意書き */}
-      <NoticeBoardAlert />
-
       {/* レベルアップ通知 */}
       {levelUpNotification && (
         <LevelUpCheck levelUpData={levelUpNotification} />
@@ -84,6 +81,8 @@ export default async function Home({
       <section className="relative">
         <Hero />
       </section>
+      {/* 注意書き */}
+      <NoticeBoardAlert />
 
       {/* 都道府県対抗ランキング導線 */}
       {user != null && (

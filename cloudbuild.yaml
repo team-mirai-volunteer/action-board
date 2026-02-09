@@ -54,6 +54,21 @@ steps:
     secretEnv:
       - SUPABASE_SERVICE_ROLE_KEY
 
+  # シーズンデータの同期
+  - name: 'node:22'
+    entrypoint: "bash"
+    args:
+      - '-c'
+      - |
+        npm install -g pnpm
+        pnpm install --frozen-lockfile
+        pnpm run season:sync
+    env:
+      - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
+      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
+    secretEnv:
+      - SUPABASE_SERVICE_ROLE_KEY
+
   # ポスターデータの読み込み
   - name: 'node:22'
     entrypoint: "bash"
