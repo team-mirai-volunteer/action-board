@@ -30,4 +30,5 @@ if [ -f "$SNAPSHOT" ]; then
 fi
 
 # 現在のMEMORY.mdをスナップショットとして保存（次回比較用）
+mkdir -p "$(dirname "$SNAPSHOT")"
 cp "$MEMORY_FILE" "$SNAPSHOT"
