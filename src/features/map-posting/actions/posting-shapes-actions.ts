@@ -1,7 +1,7 @@
 "use server";
 
+import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
-import { isAdmin, isPostingAdmin } from "@/lib/utils/admin";
 import type { PostingShapeStatus } from "../config/status-config";
 import {
   authorizeShapeOwnerOrAdmin,
@@ -12,13 +12,13 @@ import {
 } from "../services/posting-shapes";
 import type { MapShape } from "../types/posting-types";
 
-async function requireAuth(): Promise<{ userId: string; admin: boolean }> {
+async function requireAuth(): Promise<User> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("認証が必要です");
-  return { userId: user.id, admin: isAdmin(user) || isPostingAdmin(user) };
+  return user;
 }
 
 export async function saveShape(shape: MapShape) {
@@ -27,14 +27,14 @@ export async function saveShape(shape: MapShape) {
 }
 
 export async function deleteShape(id: string) {
-  const { userId, admin } = await requireAuth();
-  await authorizeShapeOwnerOrAdmin(id, userId, admin);
+  const user = await requireAuth();
+  await authorizeShapeOwnerOrAdmin(id, user);
   return deleteShapeService(id);
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
-  const { userId, admin } = await requireAuth();
-  await authorizeShapeOwnerOrAdmin(id, userId, admin);
+  const user = await requireAuth();
+  await authorizeShapeOwnerOrAdmin(id, user);
   return updateShapeService(id, data);
 }
 
@@ -43,7 +43,7 @@ export async function updateShapeStatus(
   status: PostingShapeStatus,
   memo?: string | null,
 ) {
-  const { userId, admin } = await requireAuth();
-  await authorizeShapeOwnerOrAdmin(id, userId, admin);
+  const user = await requireAuth();
+  await authorizeShapeOwnerOrAdmin(id, user);
   return updateShapeStatusService(id, status, memo);
 }

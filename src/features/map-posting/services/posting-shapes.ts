@@ -1,6 +1,8 @@
 import "server-only";
 
+import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { isAdmin, isPostingAdmin } from "@/lib/utils/admin";
 import { chunk } from "@/lib/utils/array-utils";
 import type { PostingShapeStatus } from "../config/status-config";
 import type { MapShape, ShapeMissionStatus } from "../types/posting-types";
@@ -95,8 +97,7 @@ export async function saveShape(shape: MapShape) {
  */
 export async function authorizeShapeOwnerOrAdmin(
   id: string,
-  userId: string,
-  isAdminUser: boolean,
+  user: User,
 ): Promise<void> {
   const supabase = await createAdminClient();
   const { data, error } = await supabase
@@ -108,7 +109,7 @@ export async function authorizeShapeOwnerOrAdmin(
   if (error || !data) {
     throw new Error("図形が見つかりません");
   }
-  if (data.user_id !== userId && !isAdminUser) {
+  if (data.user_id !== user.id && !isAdmin(user) && !isPostingAdmin(user)) {
     throw new Error("この図形を操作する権限がありません");
   }
 }
