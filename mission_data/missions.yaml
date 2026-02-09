@@ -383,8 +383,8 @@ missions:
     difficulty: 2
     required_artifact_type: POSTING
     max_achievement_count: null
-    is_featured: false
-    is_hidden: true
+    is_featured: true
+    is_hidden: false
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: posting-flyer
