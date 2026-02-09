@@ -4,20 +4,27 @@ import {
   shouldShowMaintenance,
 } from "./maintenance-mode";
 
+const SAMPLE_START_AT = new Date("2026-02-07T14:59:00.000Z");
+
 describe("maintenance-mode", () => {
-  it("JST 23:58:59 ではメンテナンス未開始", () => {
+  it("開始時刻前ではメンテナンス未開始", () => {
     const now = new Date("2026-02-07T14:58:59.000Z");
-    expect(isMaintenanceActive(now)).toBe(false);
+    expect(isMaintenanceActive(now, SAMPLE_START_AT)).toBe(false);
   });
 
-  it("JST 23:59:00 でメンテナンス開始", () => {
+  it("開始時刻でメンテナンス開始", () => {
     const now = new Date("2026-02-07T14:59:00.000Z");
-    expect(isMaintenanceActive(now)).toBe(true);
+    expect(isMaintenanceActive(now, SAMPLE_START_AT)).toBe(true);
   });
 
   it("開始時刻がnullならメンテナンスは無効", () => {
     const now = new Date("2026-02-07T14:59:00.000Z");
     expect(isMaintenanceActive(now, null)).toBe(false);
+  });
+
+  it("デフォルト（MAINTENANCE_START_AT=null）ではメンテナンス無効", () => {
+    const now = new Date();
+    expect(isMaintenanceActive(now)).toBe(false);
   });
 
   it("開始前でも preview=maintenance なら表示する", () => {

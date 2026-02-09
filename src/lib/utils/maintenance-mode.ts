@@ -2,9 +2,7 @@
  * メンテナンスモード判定ユーティリティ
  */
 
-export const MAINTENANCE_START_AT: Date | null = new Date(
-  "2026-02-07T23:59:00+09:00",
-);
+export const MAINTENANCE_START_AT: Date | null = null;
 
 /**
  * メンテナンス開始時刻を過ぎているかを判定する。
