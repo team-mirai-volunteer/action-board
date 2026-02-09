@@ -91,11 +91,12 @@ export async function saveShape(shape: MapShape) {
 }
 
 /**
- * 図形の所有者であることを確認する認可チェック
+ * 図形の所有者または管理者であることを確認する認可チェック
  */
-export async function authorizeShapeOwner(
+export async function authorizeShapeOwnerOrAdmin(
   id: string,
   userId: string,
+  isAdminUser: boolean,
 ): Promise<void> {
   const supabase = await createAdminClient();
   const { data, error } = await supabase
@@ -107,7 +108,7 @@ export async function authorizeShapeOwner(
   if (error || !data) {
     throw new Error("図形が見つかりません");
   }
-  if (data.user_id !== userId) {
+  if (data.user_id !== userId && !isAdminUser) {
     throw new Error("この図形を操作する権限がありません");
   }
 }
