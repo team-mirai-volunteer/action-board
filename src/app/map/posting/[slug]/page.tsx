@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { PageBreadcrumb } from "@/components/common/page-breadcrumb";
 import PostingPageClient from "@/features/map-posting/components/posting-page";
 import { getEventBySlug } from "@/features/map-posting/services/posting-events.server";
 import { getUser } from "@/features/user-profile/services/profile";
@@ -45,23 +44,12 @@ export default async function PostingEventPage({
   }
 
   return (
-    <>
-      <div className="container mx-auto max-w-7xl px-4 pt-4">
-        <PageBreadcrumb
-          items={[
-            { label: "ホーム", href: "/" },
-            { label: "ポスティングマップ", href: "/map/posting" },
-            { label: event.title },
-          ]}
-        />
-      </div>
-      <PostingPageClient
-        userId={user.id}
-        eventId={event.id}
-        eventTitle={event.title}
-        isAdmin={isAdmin(user) || isPostingAdmin(user)}
-        isEventActive={event.is_active}
-      />
-    </>
+    <PostingPageClient
+      userId={user.id}
+      eventId={event.id}
+      eventTitle={event.title}
+      isAdmin={isAdmin(user) || isPostingAdmin(user)}
+      isEventActive={event.is_active}
+    />
   );
 }
