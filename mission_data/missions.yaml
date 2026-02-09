@@ -153,7 +153,7 @@ missions:
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 100
     is_hidden: true
     artifact_label: ショート動画のURL（TikTok）
@@ -168,7 +168,7 @@ missions:
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 20
     is_hidden: false
     artifact_label: 動画のURL（Youtube, TikTokなど）
@@ -323,7 +323,7 @@ missions:
     difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 100
     is_hidden: false
     artifact_label: 参加した街頭演説の場所と日付
@@ -383,7 +383,7 @@ missions:
     difficulty: 2
     required_artifact_type: POSTING
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
@@ -405,7 +405,7 @@ missions:
     difficulty: 2
     required_artifact_type: POSTING
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
@@ -427,7 +427,7 @@ missions:
     difficulty: 1
     required_artifact_type: YOUTUBE
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 11
     is_hidden: false
     artifact_label: あなたが高評価したYouTube動画のURL
@@ -693,7 +693,7 @@ missions:
     difficulty: 5
     required_artifact_type: NONE
     max_achievement_count: 1
-    is_featured: true
+    is_featured: false
     featured_importance: 100
     is_hidden: true
     artifact_label: null
@@ -727,7 +727,7 @@ missions:
     difficulty: 2
     required_artifact_type: YOUTUBE_COMMENT
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 10
     is_hidden: false
     artifact_label: null
@@ -794,7 +794,7 @@ missions:
     difficulty: 5
     required_artifact_type: TEXT
     max_achievement_count: 1
-    is_featured: true
+    is_featured: false
     featured_importance: 110
     is_hidden: true
     artifact_label: 「参加します または 参加しました」のテキスト
@@ -817,9 +817,9 @@ missions:
     difficulty: 5
     required_artifact_type: NONE
     max_achievement_count: 1
-    is_featured: true
+    is_featured: false
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: null
     ogp_image_url: null
   - slug: share-vstudio-video
@@ -838,7 +838,7 @@ missions:
     difficulty: 4
     required_artifact_type: LINK
     max_achievement_count: null
-    is_featured: true
+    is_featured: false
     featured_importance: 100
     is_hidden: false
     artifact_label: 動画や投稿のURL
