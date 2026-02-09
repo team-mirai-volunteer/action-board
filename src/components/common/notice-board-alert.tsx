@@ -36,8 +36,8 @@ export default function NoticeBoardAlert() {
             <span className="wrap-break-word text-sm">
               新シーズンが開始しました！ <br />
               レベルやランキングはシーズンごとにリセットされます。
-              過去のランキングは
-              <Link href="/seasons/season1/ranking" className="underline">
+              前回のランキングは
+              <Link href="/seasons/season2/ranking" className="underline">
                 アーカイブからご覧いただけます。
               </Link>
             </span>

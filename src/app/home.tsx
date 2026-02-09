@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import NoticeBoardAlert from "@/components/common/notice-board-alert";
 import Hero from "@/components/top/hero";
 import { PrefectureTeamCard } from "@/components/top/prefecture-team-card";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
@@ -67,7 +68,7 @@ export default async function Home({
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* 注意書き */}
-      {/* <NoticeBoardAlert /> */}
+      <NoticeBoardAlert />
 
       {/* レベルアップ通知 */}
       {levelUpNotification && (
