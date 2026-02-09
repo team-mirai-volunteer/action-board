@@ -6,4 +6,4 @@ posting_events:
   - slug: 2026-01
     title: 2026年1月~
     description: 2026年1月からのポスティングイベント
-    is_active: false
+    is_active: true
