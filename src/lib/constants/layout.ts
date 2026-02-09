@@ -2,8 +2,8 @@
  * レイアウト関連の定数
  */
 
-/** ヘッダーの高さ（px） - Tailwind の h-16 に対応 */
-export const HEADER_HEIGHT = 64;
+/** ヘッダーの高さ（px） - Tailwind の h-16 + 上下余白 に対応 */
+export const HEADER_HEIGHT = 96;
 
 /** ヘッダーの高さ（CSS用文字列） */
 export const HEADER_HEIGHT_PX = `${HEADER_HEIGHT}px`;
