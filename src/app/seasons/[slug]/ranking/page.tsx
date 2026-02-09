@@ -60,13 +60,13 @@ export default async function SeasonRankingPage({
     : null;
 
   return (
-    <div className="flex flex-col items-center min-h-screen py-4 w-full">
-      <div className="w-full max-w-7xl px-4">
+    <div className="flex flex-col items-center min-h-screen pb-4 w-full">
+      <div className="w-full max-w-7xl px-4 mb-4">
         <PageBreadcrumb
           items={[
             { label: "ホーム", href: "/" },
-            { label: "ランキング", href: "/ranking" },
             { label: season.name },
+            { label: "ランキング" },
           ]}
         />
       </div>
@@ -79,18 +79,18 @@ export default async function SeasonRankingPage({
 
       <RankingTabs seasonSlug={season.slug}>
         {/* 期間選択トグル（過去シーズンでは"all"のみ有効） */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {season.is_active && <PeriodToggle defaultPeriod={period} />}
         </section>
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCard currentUser={userRanking} />
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* ランキング */}
           <RankingTop
             limit={100}

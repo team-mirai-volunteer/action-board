@@ -110,13 +110,13 @@ export default async function SeasonMissionRankingPage({
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen py-4 w-full">
-      <div className="w-full max-w-7xl px-4">
+    <div className="flex flex-col items-center min-h-screen pb-4 w-full">
+      <div className="w-full max-w-7xl px-4 mb-4">
         <PageBreadcrumb
           items={[
             { label: "ホーム", href: "/" },
-            { label: "ランキング", href: "/ranking" },
-            { label: season.name, href: `/seasons/${slug}/ranking` },
+            { label: season.name },
+            { label: "ランキング", href: `/seasons/${slug}/ranking` },
             { label: "ミッション別" },
           ]}
         />
@@ -134,13 +134,13 @@ export default async function SeasonMissionRankingPage({
 
       <RankingTabs seasonSlug={season.slug}>
         {/* ミッション選択 */}
-        <section className="py-4 bg-white">
+        <section className="py-4">
           <MissionSelect missions={missions} />
         </section>
 
         {/* ユーザーのランキングカード */}
         {userRanking && (
-          <section className="py-4 bg-white">
+          <section className="py-4">
             <CurrentUserCardMission
               currentUser={userRanking}
               mission={selectedMission}
@@ -149,7 +149,7 @@ export default async function SeasonMissionRankingPage({
           </section>
         )}
 
-        <section className="py-4 bg-white">
+        <section className="py-4">
           {/* ミッション別ランキング（シーズン対応） */}
           <RankingMission
             limit={100}
