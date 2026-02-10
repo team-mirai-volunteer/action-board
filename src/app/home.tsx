@@ -11,12 +11,12 @@ import Activities from "@/features/user-activity/components/activities";
 import { getUnnotifiedBadges } from "@/features/user-badges/services/get-unnotified-badges";
 import { BadgeNotificationCheck } from "@/features/user-badges-notification/components/badge-notification-check";
 import { LevelUpCheck } from "@/features/user-level/components/level-up-check";
-import { checkLevelUpNotification } from "@/features/user-level/services/level-up-notification";
+import { checkLevelUpNotification } from "@/features/user-level/loaders/level-up-loaders";
 import {
   getUser,
   hasPrivateProfile,
 } from "@/features/user-profile/services/profile";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 import { generateRootMetadata } from "@/lib/utils/metadata";
 
 // メタデータ生成を外部関数に委譲
@@ -47,7 +47,7 @@ export default async function Home({
 
     // レベルアップ通知をチェック
     // 自動ミッション（紹介など）でレベルアップした場合の通知を表示するため有効化
-    const levelUpCheck = await checkLevelUpNotification(user.id);
+    const levelUpCheck = await checkLevelUpNotification();
     if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
       levelUpNotification = levelUpCheck.levelUp;
     }
