@@ -37,7 +37,7 @@ jobs:
       # Supabaseをバックグラウンドで起動し、install/build と並列化
       - name: Start Supabase (background)
         run: |
-          supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector,analytics > /tmp/supabase-start.log 2>&1 &
+          supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector > /tmp/supabase-start.log 2>&1 &
           echo $! > /tmp/supabase-start.pid
         env:
           SMTP_ENABLED: false
@@ -73,14 +73,14 @@ jobs:
       - name: Wait for Supabase
         run: |
           echo "Waiting for Supabase to be ready..."
-          for i in $(seq 1 60); do
+          for i in $(seq 1 90); do
             if curl -s http://localhost:54321/rest/v1/ > /dev/null 2>&1; then
               echo "Supabase is ready! (attempt $i)"
               exit 0
             fi
             sleep 2
           done
-          echo "Supabase failed to start within 120s. Logs:"
+          echo "Supabase failed to start within 180s. Logs:"
           cat /tmp/supabase-start.log
           exit 1
 
