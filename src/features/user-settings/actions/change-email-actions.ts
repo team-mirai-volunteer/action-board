@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { getUser } from "@/features/user-profile/services/profile";
 import { requestEmailChange } from "@/features/user-settings/services/email";
-import { isEmailUser } from "@/lib/utils/auth-utils";
 import { formatZodErrors } from "@/lib/utils/validation-utils";
 
 export type ChangeEmailResult = {
@@ -21,7 +20,6 @@ const changeEmailFormSchema = z.object({
 
 /**
  * メールアドレス変更アクション
- * メールアドレスログインユーザーのみ変更可能
  */
 export async function changeEmailAction(
   _previousState: ChangeEmailResult | null,
@@ -33,15 +31,6 @@ export async function changeEmailAction(
     return {
       success: false,
       error: "ログインが必要です",
-    };
-  }
-
-  // メールアドレスログインユーザーのチェック
-  if (!isEmailUser(user)) {
-    return {
-      success: false,
-      error:
-        "メールアドレスログイン以外のアカウントのメールアドレスは変更できません",
     };
   }
 
