@@ -172,14 +172,14 @@ export default async function MissionPage({ params, searchParams }: Props) {
 
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
-    ? await getUserMissionRanking(mission.id, user.id)
+    ? await getUserMissionRanking(mission.id)
     : null;
 
   // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = mission.required_artifact_type === "POSTING";
   const userPostingCount =
     user && isPostingMission
-      ? await getUserPostingCountByMission(user.id, mission.id)
+      ? await getUserPostingCountByMission(mission.id)
       : 0;
   let badgeText = "";
 
