@@ -393,7 +393,7 @@ export async function getReferralCode(userId: string): Promise<string> {
     throw new Error("紹介コードの取得に失敗しました");
   }
 
-  // データがなければ作成
+  // データがあればそのまま返す
   if (data) {
     return data.referral_code;
   }
@@ -411,6 +411,15 @@ export async function getReferralCode(userId: string): Promise<string> {
     .single();
 
   if (insertError) {
+    // 並行リクエストで既に作成済みの場合は再取得して返す
+    if (insertError.code === "23505") {
+      const { data: existingData } = await supabase
+        .from("user_referral")
+        .select("referral_code")
+        .eq("user_id", userId)
+        .single();
+      if (existingData) return existingData.referral_code;
+    }
     console.error("Referral code insert error:", insertError.message);
     throw new Error("紹介コードの作成に失敗しました");
   }
