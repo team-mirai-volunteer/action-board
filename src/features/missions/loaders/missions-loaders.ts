@@ -11,8 +11,6 @@ import {
   hasFeaturedMissions as hasFeaturedMissionsService,
 } from "../services/missions";
 
-export type { GetMissionsFilterOptions };
-
 export async function getMissionsForRanking() {
   return getMissionsForRankingService();
 }
