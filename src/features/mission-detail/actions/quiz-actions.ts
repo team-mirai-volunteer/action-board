@@ -9,8 +9,6 @@ import {
   transformQuizRow,
 } from "../utils/quiz-grader";
 
-export type { QuizQuestion };
-
 // ミッションリンクの型定義
 export interface MissionLink {
   link: string;

@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { resolveMaintenanceResponse } from "@/lib/middleware/maintenance";
 import { updateSession } from "@/lib/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const maintenanceResponse = resolveMaintenanceResponse(request);
 
   if (maintenanceResponse) {
