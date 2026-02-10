@@ -1,6 +1,11 @@
 import { lineLogin } from "@/features/auth/use-cases/line-login";
 import { FakeLineApiClient } from "./fake-line-api-client";
-import { adminClient, cleanupTestUser, getUserById } from "./utils";
+import {
+  adminClient,
+  cleanupTestUser,
+  findUserByLineId,
+  getUserById,
+} from "./utils";
 
 describe("lineLogin ユースケース", () => {
   const createdUserIds: string[] = [];
@@ -14,11 +19,8 @@ describe("lineLogin ユースケース", () => {
 
   test("新規LINEユーザーが登録される", async () => {
     const lineUserId = `U_test_${Date.now()}`;
-    const fakeClient = new FakeLineApiClient(
-      lineUserId,
-      "テスト太郎",
-      `test-line-${Date.now()}@example.com`,
-    );
+    const email = `test-line-${Date.now()}@example.com`;
+    const fakeClient = new FakeLineApiClient(lineUserId, "テスト太郎", email);
 
     const result = await lineLogin(adminClient, fakeClient, {
       code: "fake-code",
@@ -31,13 +33,21 @@ describe("lineLogin ユースケース", () => {
     createdUserIds.push(result.userId);
 
     expect(result.isNewUser).toBe(true);
+    expect(result.email).toBe(email);
 
     // DBに正しく保存されているか検証
     const user = await getUserById(result.userId);
+    expect(user.email).toBe(email);
     expect(user.user_metadata.provider).toBe("line");
     expect(user.user_metadata.line_user_id).toBe(lineUserId);
     expect(user.user_metadata.date_of_birth).toBe("1990-01-15");
     expect(user.user_metadata.name).toBe("テスト太郎");
+    expect(user.user_metadata.line_linked_at).toBeDefined();
+
+    // get_user_by_line_id RPCでも検索できることを検証
+    const found = await findUserByLineId(lineUserId);
+    expect(found).not.toBeNull();
+    expect(found.id).toBe(result.userId);
   });
 
   test("既存LINEユーザーがログインできる", async () => {
@@ -54,6 +64,13 @@ describe("lineLogin ユースケース", () => {
     if (!first.success) return;
     createdUserIds.push(first.userId);
 
+    // line_linked_at を記録
+    const userAfterFirst = await getUserById(first.userId);
+    const firstLinkedAt = userAfterFirst.user_metadata.line_linked_at;
+
+    // 少し待ってから2回目のログイン（line_linked_atの更新確認のため）
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // 2回目: ログイン
     const second = await lineLogin(adminClient, fakeClient, {
       code: "fake-code-2",
@@ -64,6 +81,12 @@ describe("lineLogin ユースケース", () => {
 
     expect(second.isNewUser).toBe(false);
     expect(second.userId).toBe(first.userId);
+
+    // メタデータが更新されていることを検証
+    const userAfterSecond = await getUserById(second.userId);
+    expect(userAfterSecond.user_metadata.line_linked_at).not.toBe(
+      firstLinkedAt,
+    );
   });
 
   test("メールなしLINEユーザーは合成メールで登録される", async () => {
@@ -81,10 +104,15 @@ describe("lineLogin ユースケース", () => {
     createdUserIds.push(result.userId);
 
     expect(result.email).toBe(`line-${lineUserId}@line.local`);
+
+    // DBでも合成メールが保存されていることを検証
+    const user = await getUserById(result.userId);
+    expect(user.email).toBe(`line-${lineUserId}@line.local`);
   });
 
   test("新規ユーザーでdateOfBirth未指定はエラー", async () => {
-    const fakeClient = new FakeLineApiClient(`U_nodob_${Date.now()}`);
+    const lineUserId = `U_nodob_${Date.now()}`;
+    const fakeClient = new FakeLineApiClient(lineUserId);
 
     const result = await lineLogin(adminClient, fakeClient, {
       code: "fake-code",
@@ -94,6 +122,10 @@ describe("lineLogin ユースケース", () => {
     expect(result.success).toBe(false);
     if (result.success) return;
     expect(result.error).toContain("生年月日");
+
+    // ユーザーが作成されていないことを検証
+    const found = await findUserByLineId(lineUserId);
+    expect(found).toBeNull();
   });
 
   test("email+passwordユーザーと同じメールのLINEログインはエラー", async () => {
@@ -105,11 +137,8 @@ describe("lineLogin ユースケース", () => {
     });
     createdUserIds.push(data.user!.id);
 
-    const fakeClient = new FakeLineApiClient(
-      `U_conflict_${Date.now()}`,
-      "衝突ユーザー",
-      email,
-    );
+    const lineUserId = `U_conflict_${Date.now()}`;
+    const fakeClient = new FakeLineApiClient(lineUserId, "衝突ユーザー", email);
 
     const result = await lineLogin(adminClient, fakeClient, {
       code: "fake-code",
@@ -118,5 +147,9 @@ describe("lineLogin ユースケース", () => {
     });
 
     expect(result.success).toBe(false);
+
+    // LINEユーザーが作成されていないことを検証
+    const found = await findUserByLineId(lineUserId);
+    expect(found).toBeNull();
   });
 });
