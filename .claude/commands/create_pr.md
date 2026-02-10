@@ -10,23 +10,61 @@ $ARGUMENTS
 
 現在の変更から新しいブランチを作成し、develop ブランチに対してPRを作成します。
 
+### 0. リモート環境の検出
+
+フォーク環境か通常環境かを検出し、適切なリモートとリポジトリを設定：
+
+```bash
+# upstreamリモートの存在確認
+if git remote get-url upstream >/dev/null 2>&1; then
+  # フォーク環境: upstreamを使用
+  TARGET_REMOTE="upstream"
+  TARGET_REPO=$(git remote get-url upstream | sed -E 's#.*github.com[:/](.+/.+)\.git$#\1#' | sed 's/\.git$//')
+  echo "✓ フォーク環境を検出: ${TARGET_REPO} を使用"
+else
+  # 通常環境: originを使用
+  TARGET_REMOTE="origin"
+  TARGET_REPO=$(git remote get-url origin | sed -E 's#.*github.com[:/](.+/.+)\.git$#\1#' | sed 's/\.git$//')
+  echo "✓ 通常環境: ${TARGET_REPO} を使用"
+fi
+```
+
+### 0.1 リモート接続の確認
+
+設定されたリモートに到達可能か確認：
+
+```bash
+# リモートの接続確認
+if ! git ls-remote --exit-code ${TARGET_REMOTE} >/dev/null 2>&1; then
+  echo "❌ エラー: ${TARGET_REMOTE} リモートに接続できません"
+  echo "リモートURL: $(git remote get-url ${TARGET_REMOTE})"
+  echo ""
+  echo "以下を確認してください："
+  echo "1. ネットワーク接続"
+  echo "2. リモートURLの正確性"
+  echo "3. リポジトリへのアクセス権限"
+  exit 1
+fi
+echo "✓ ${TARGET_REMOTE} リモートへの接続確認完了"
+```
+
 ### 1. 事前確認
 
 ```bash
 # 最新のdevelopをfetch
-git fetch origin develop
+git fetch ${TARGET_REMOTE} develop
 
 # 現在のブランチ名とワーキングツリーの状態を確認
 git branch --show-current
 git status
 
-# origin/developとの差分コミットを確認
-git log origin/develop..HEAD --oneline
+# ${TARGET_REMOTE}/developとの差分コミットを確認
+git log ${TARGET_REMOTE}/develop..HEAD --oneline
 ```
 
 ### 1.1 マージ済みブランチの扱い（Squash運用）
 
-このリポジトリは **Squashマージ運用** のため、マージ済みブランチの使い回しは行わない。  
+このリポジトリは **Squashマージ運用** のため、マージ済みブランチの使い回しは行わない。
 次の作業は **必ず最新の develop から新規ブランチを作成** する。
 
 現在のブランチに新しい変更がある場合は、以下で新規ブランチへ移す：
@@ -36,13 +74,13 @@ git log origin/develop..HEAD --oneline
 git add -A
 git commit -m "wip: temporary"
 git checkout develop
-git pull --rebase origin develop
+git pull --rebase ${TARGET_REMOTE} develop
 git checkout -b <新しいブランチ名>
 git cherry-pick <wipコミット>
 
 # すでにコミットがある場合
 git checkout develop
-git pull --rebase origin develop
+git pull --rebase ${TARGET_REMOTE} develop
 git checkout -b <新しいブランチ名>
 git cherry-pick <コミット範囲>
 ```
@@ -63,13 +101,13 @@ git checkout -b <新しいブランチ名>
 
 既にfeatureブランチにいる場合はブランチ作成をスキップ。
 
-> 重要: `develop` / `main` 上でコミットしないこと。  
+> 重要: `develop` / `main` 上でコミットしないこと。
 > 未コミットの変更がある場合は **ブランチ作成を先に行う**。
 
 もし `develop` / `main` で **未コミットの変更が無い** 場合は、先に最新化してからブランチを作成する：
 
 ```bash
-git pull --rebase origin <develop または main>
+git pull --rebase ${TARGET_REMOTE} <develop または main>
 git checkout -b <新しいブランチ名>
 ```
 
@@ -104,19 +142,19 @@ git diff --stat
 ### 4. 最新のdevelopにrebase
 
 ```bash
-git rebase origin/develop
+git rebase ${TARGET_REMOTE}/develop
 ```
 
 ### 5. 差分の確認
 
-origin/develop との差分を確認：
+${TARGET_REMOTE}/develop との差分を確認：
 
 ```bash
 # コミット一覧
-git log origin/develop..HEAD --oneline
+git log ${TARGET_REMOTE}/develop..HEAD --oneline
 
 # 変更ファイルの統計
-git diff origin/develop...HEAD --stat
+git diff ${TARGET_REMOTE}/develop...HEAD --stat
 ```
 
 差分コミットが 0 件の場合は PR 作成を中止する。
@@ -155,7 +193,14 @@ git ls-remote --heads origin <ブランチ名> | grep -q <ブランチ名> && \
 - CLAのチェックはユーザーに任せる（チェックを入れない）
 
 ```bash
-gh pr create --base develop --title "<タイトル>" --body "$(cat <<'EOF'
+# リポジトリ指定オプションを動的に設定
+if [ "${TARGET_REMOTE}" = "upstream" ]; then
+  REPO_OPTION="--repo ${TARGET_REPO}"
+else
+  REPO_OPTION=""
+fi
+
+gh pr create ${REPO_OPTION} --base develop --title "<タイトル>" --body "$(cat <<'EOF'
 <テンプレートに従った本文>
 EOF
 )"
@@ -166,5 +211,7 @@ EOF
 PRのURLを表示：
 
 ```
-✅ PR作成完了: <PR URL>
+✅ PR作成完了
+Repository: ${TARGET_REPO}
+PR URL: <PR URL>
 ```
