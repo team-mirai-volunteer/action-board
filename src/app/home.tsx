@@ -46,7 +46,7 @@ export default async function Home({
 
     // レベルアップ通知をチェック
     // 自動ミッション（紹介など）でレベルアップした場合の通知を表示するため有効化
-    const levelUpCheck = await checkLevelUpNotification(user.id);
+    const levelUpCheck = await checkLevelUpNotification();
     if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
       levelUpNotification = levelUpCheck.levelUp;
     }
