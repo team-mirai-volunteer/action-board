@@ -6,10 +6,7 @@ import { FormMessage } from "@/components/common/form-message";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { EmailChangeDialog } from "@/features/user-settings/components/email-change-dialog";
-import {
-  isEmailUser as checkIsEmailUser,
-  getAuthMethodDisplayName,
-} from "@/lib/utils/auth-utils";
+import { getAuthMethodDisplayName } from "@/lib/utils/auth-utils";
 
 interface LoginSectionProps {
   user: User;
@@ -21,7 +18,6 @@ export function LoginSection({
   isEmailChangeSuccessful,
 }: LoginSectionProps) {
   const currentEmail = user.email;
-  const isEmailUser = checkIsEmailUser(user);
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,20 +39,12 @@ export function LoginSection({
         {isEmailChangeSuccessful && (
           <FormMessage
             message={{
-              success:
-                "メールアドレスを変更しました。新しいメールアドレスでログインできます。",
+              success: "メールアドレスを変更しました。",
             }}
           />
         )}
 
-        {isEmailUser ? (
-          <EmailChangeDialog open={open} onOpenChange={setOpen} />
-        ) : (
-          <p className="text-sm text-gray-500">
-            ※
-            メールアドレスログイン以外のアカウントのメールアドレスは変更できません。
-          </p>
-        )}
+        <EmailChangeDialog open={open} onOpenChange={setOpen} />
       </CardContent>
     </Card>
   );
