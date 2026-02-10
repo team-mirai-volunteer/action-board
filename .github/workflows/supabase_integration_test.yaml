@@ -1,10 +1,13 @@
-name: E2E Tests
+name: Supabase & Integration Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    name: E2E Tests
+    name: Supabase & Integration Tests
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -45,39 +48,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> $GITHUB_OUTPUT
+      - name: Run Supabase RLS tests
+        run: pnpm run test:ci:supabase
 
-      - name: Install Playwright OS deps
-        run: pnpm exec playwright install-deps chromium
+      - name: Run Integration tests
+        run: pnpm run test:ci:integration
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-
-      - name: Install Playwright browsers if cache miss
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium
-
-      - name: Build Next.js
-        run: pnpm run build
-
-      - name: Load poster CSV data
-        run: pnpm run poster:load-csv
-
-      - name: Run E2E tests
-        run: pnpm run test:ci:e2e
-        env:
-          CI: 'true'
-
-      - name: Upload Playwright test results
+      - name: Upload Jest test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: jest-supabase-integration-report
+          path: jest-report/
           retention-days: 30

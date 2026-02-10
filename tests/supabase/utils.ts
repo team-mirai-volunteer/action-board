@@ -132,24 +132,11 @@ export async function createTestUser(
  * テストユーザーをクリーンアップ
  */
 export async function cleanupTestUser(authId: string): Promise<void> {
-  // public_user_profilesからユーザーを削除
-  const { data } = await adminClient
-    .from("private_users")
-    .select("id")
-    .eq("id", authId)
-    .single();
-
-  if (!data) {
-    console.error(`ユーザーが見つかりません: authId=${authId}`);
-    return;
-  }
-
-  await adminClient.from("public_user_profiles").delete().eq("id", data?.id);
-
-  // private_usersからユーザーを削除
+  // FKカスケードが設定されていないテーブルを先に削除
+  await adminClient.from("public_user_profiles").delete().eq("id", authId);
   await adminClient.from("private_users").delete().eq("id", authId);
 
-  // Auth ユーザーを削除
+  // Auth ユーザーを削除（他テーブルはFKカスケードで自動削除）
   await adminClient.auth.admin.deleteUser(authId);
 }
 
