@@ -5,13 +5,13 @@ import { PrefectureTeamUserCard } from "@/features/prefecture-team/components/pr
 import {
   getPrefectureTeamRanking,
   getUserPrefectureContribution,
-} from "@/features/prefecture-team/services/get-prefecture-team-ranking";
+} from "@/features/prefecture-team/loaders/prefecture-team-loaders";
 import type {
   PrefectureTeamRanking as PrefectureTeamRankingType,
   UserPrefectureContribution,
 } from "@/features/prefecture-team/types/prefecture-team-types";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
-import { getCurrentSeason } from "@/lib/services/seasons";
+import { getCurrentSeason } from "@/lib/loaders/seasons-loaders";
 import type { Tables } from "@/lib/types/supabase";
 
 export const metadata: Metadata = {
@@ -50,10 +50,7 @@ export default async function PrefectureTeamPage() {
       userProfile?.address_prefecture &&
       userProfile.address_prefecture !== "海外"
     ) {
-      userContribution = await getUserPrefectureContribution(
-        user.id,
-        currentSeason.id,
-      );
+      userContribution = await getUserPrefectureContribution(currentSeason.id);
       userPrefectureRanking = rankings.find(
         (r) => r.prefecture === userProfile?.address_prefecture,
       );

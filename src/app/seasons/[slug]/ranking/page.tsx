@@ -9,9 +9,8 @@ import {
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { RankingTop } from "@/features/ranking/components/ranking-top";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
-import { getUserPeriodRanking } from "@/features/ranking/services/get-ranking";
-import { getUser } from "@/features/user-profile/services/profile";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getUserPeriodRanking } from "@/features/ranking/loaders/ranking-loaders";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{
@@ -51,13 +50,8 @@ export default async function SeasonRankingPage({
     notFound();
   }
 
-  // ユーザー情報取得
-  const user = await getUser();
-
   // ユーザーランキング取得
-  const userRanking = user
-    ? await getUserPeriodRanking(user.id, season.id, period)
-    : null;
+  const userRanking = await getUserPeriodRanking(season.id, period);
 
   return (
     <div className="flex flex-col items-center min-h-screen pb-4 w-full">

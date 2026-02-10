@@ -3,7 +3,7 @@ import type { Tables } from "@/lib/types/supabase";
 import {
   getMissionRanking,
   getTopUsersPostingCountByMission,
-} from "../services/get-missions-ranking";
+} from "../loaders/ranking-loaders";
 import { BaseRanking } from "./base-ranking";
 import { RankingItem } from "./ranking-item";
 

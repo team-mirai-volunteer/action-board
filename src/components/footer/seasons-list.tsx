@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getInactiveSeasons } from "@/lib/services/seasons";
+import { getInactiveSeasons } from "@/lib/loaders/seasons-loaders";
 
 export async function SeasonsList() {
   const seasons = await getInactiveSeasons();
