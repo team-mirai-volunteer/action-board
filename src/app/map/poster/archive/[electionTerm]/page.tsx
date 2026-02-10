@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { statusConfig } from "@/features/map-poster/config/status-config";
 import { JP_TO_EN_PREFECTURE } from "@/features/map-poster/constants/poster-prefectures";
-import { getArchivedPosterBoardSummary } from "@/features/map-poster/services/poster-boards";
+import { getArchivedPosterBoardSummary } from "@/features/map-poster/loaders/poster-boards-loaders";
 import type { BoardStatus } from "@/features/map-poster/types/poster-types";
 import {
   calculateProgressRate,

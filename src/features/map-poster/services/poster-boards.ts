@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
 import { getPosterBoardStatsAction } from "../actions/poster-boards";
+import { POSTER_MISSION_SLUG } from "../constants/poster-mission";
 import type {
   BoardStatus,
   PosterBoard,
@@ -15,9 +16,6 @@ import {
   extractUniqueValues,
 } from "../utils/board-transforms";
 import { countBoardsByStatus } from "../utils/poster-stats";
-
-/** ポスター貼りミッションのslug */
-export const POSTER_MISSION_SLUG = "put-up-poster-on-board";
 
 /**
  * ポスター貼りミッションのIDを取得
