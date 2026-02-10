@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getOrInitializeUserLevel } from "@/features/user-level/services/level";
 import { parseIdTokenPayload } from "@/lib/utils/jwt-utils";
 import type { LineApiClient } from "../types/line-api-client";
 
@@ -8,6 +7,7 @@ export type LineLoginInput = {
   code: string;
   redirectUri: string;
   dateOfBirth?: string;
+  onUserCreated?: (userId: string) => Promise<void>;
 };
 
 export type LineLoginResult =
@@ -125,8 +125,10 @@ export async function lineLogin(
       user_metadata: { ...newUser.user.user_metadata, sub: userId },
     });
 
-    // ユーザーレベル初期化
-    await getOrInitializeUserLevel(userId);
+    // ユーザー作成後のコールバック（レベル初期化等）
+    if (input.onUserCreated) {
+      await input.onUserCreated(userId);
+    }
   }
 
   // 4. 一時パスワードを設定
