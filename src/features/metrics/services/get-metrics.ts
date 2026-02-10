@@ -11,7 +11,7 @@ import {
   validateDonationData,
   validateSupporterData,
 } from "@/features/metrics/utils/metrics-validators";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 /**
  * チームみらいサポーター数データを外部APIから取得
@@ -144,7 +144,7 @@ export async function fetchDonationData(): Promise<DonationData | null> {
 export async function fetchAchievementData(
   startDate?: Date,
 ): Promise<AchievementData> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let totalQuery = supabase
     .from("achievements")
@@ -176,7 +176,7 @@ export async function fetchAchievementData(
  * @returns Promise<RegistrationData> - ユーザー登録数データ
  */
 export async function fetchRegistrationData(): Promise<RegistrationData> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { count: totalCount } = await supabase
     .from("public_user_profiles")

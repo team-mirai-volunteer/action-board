@@ -12,7 +12,7 @@ import {
   mapActivitiesToTimeline,
   mergeAndSortTimeline,
 } from "@/features/user-activity/utils/timeline-transforms";
-import { createClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/adminClient";
 
 /**
  * ユーザーの活動タイムラインを取得する
@@ -29,7 +29,7 @@ export async function getUserActivityTimeline(
   offset = 0,
   seasonId?: string,
 ): Promise<ActivityTimelineItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const [achievementsResult, activitiesResult, userProfileResult] =
     await Promise.all([
@@ -103,7 +103,7 @@ export async function getUserActivityTimelineCount(
   userId: string,
   seasonId?: string,
 ): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const [achievementsCount, activitiesCount] = await Promise.all([
     // Achievement count with optional season filter
@@ -136,7 +136,7 @@ export async function getGlobalActivityTimeline(
   limit: number,
   offset = 0,
 ): Promise<ActivityTimelineItem[]> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { data: activityTimelines } = await supabase
     .from("activity_timeline_view")
@@ -156,7 +156,7 @@ export async function getGlobalActivityTimeline(
  * @returns 活動タイムラインの総数
  */
 export async function getGlobalActivityTimelineCount(): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   const { count } = await supabase
     .from("activity_timeline_view")
