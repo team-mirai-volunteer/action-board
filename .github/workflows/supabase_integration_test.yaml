@@ -2,6 +2,9 @@ name: Supabase & Integration Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Supabase & Integration Tests

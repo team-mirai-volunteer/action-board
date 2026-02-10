@@ -69,8 +69,8 @@ jobs:
       - name: Load poster CSV data
         run: pnpm run poster:load-csv
 
-      - name: Run Playwright tests
-        run: pnpm run test:ci:playwright
+      - name: Run E2E tests
+        run: pnpm run test:ci:e2e
         env:
           CI: 'true'
 
