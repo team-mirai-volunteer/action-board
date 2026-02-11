@@ -103,11 +103,13 @@ describe("lineLogin ユースケース", () => {
     if (!result.success) return;
     createdUserIds.push(result.userId);
 
-    expect(result.email).toBe(`line-${lineUserId}@line.local`);
+    // Supabaseはメールアドレスを小文字に正規化する
+    const expectedEmail = `line-${lineUserId}@line.local`.toLowerCase();
+    expect(result.email).toBe(expectedEmail);
 
     // DBでも合成メールが保存されていることを検証
     const user = await getUserById(result.userId);
-    expect(user.email).toBe(`line-${lineUserId}@line.local`);
+    expect(user.email).toBe(expectedEmail);
   });
 
   test("新規ユーザーでdateOfBirth未指定はエラー", async () => {
