@@ -114,6 +114,12 @@ export async function lineLogin(
       });
 
     if (createError || !newUser.user) {
+      if (createError?.message?.includes("already been registered")) {
+        return {
+          success: false,
+          error: "このメールアドレスは既に登録されています。",
+        };
+      }
       throw new Error(`Failed to create user: ${createError?.message}`);
     }
 
