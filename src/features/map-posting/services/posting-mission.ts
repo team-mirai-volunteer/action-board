@@ -47,9 +47,11 @@ export async function completePostingMission(
 
   const result = await achieveMissionAction(formData);
 
+  if (!result.success) {
+    return { success: false, error: result.error };
+  }
   return {
-    success: result.success,
+    success: true,
     xpGranted: result.xpGranted,
-    error: result.success ? undefined : result.error,
   };
 }
