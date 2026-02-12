@@ -1,10 +1,14 @@
+import { randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 import { PREFECTURES } from "@/lib/constants/prefectures";
 import { formatZodErrors } from "@/lib/utils/validation-utils";
 import type { HubSpotClient } from "../types/hubspot-client";
 import type { MailClient } from "../types/mail-client";
+
+function generateReferralCode(length = 8): string {
+  return randomBytes(length).toString("base64url").slice(0, length);
+}
 
 export type UpdateProfileInput = {
   userId: string;
@@ -244,7 +248,7 @@ export async function updateProfile(
     let lastError = null;
 
     for (let attempt = 0; attempt < MAX_RETRY; attempt++) {
-      const referralCode = nanoid(8);
+      const referralCode = generateReferralCode(8);
 
       const { error: referralInsertError } = await adminSupabase
         .from("user_referral")
