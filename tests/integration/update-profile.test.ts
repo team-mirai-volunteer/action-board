@@ -274,6 +274,78 @@ describe("updateProfile ユースケース", () => {
     expect(privateUser).not.toBeNull();
   });
 
+  test("バリデーションエラー（空のニックネーム）", async () => {
+    const { userId, email } = await createAuthUser();
+    const hubspot = new FakeHubSpotClient();
+    const mail = new FakeMailClient();
+
+    const result = await updateProfile(
+      { adminSupabase: adminClient, hubspot, mail },
+      {
+        ...validInput,
+        userId,
+        email,
+        name: "",
+      },
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.error).toContain("ニックネーム");
+
+    // DBにデータが作成されていないことを検証
+    const { data: privateUser } = await adminClient
+      .from("private_users")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+    expect(privateUser).toBeNull();
+  });
+
+  test("バリデーションエラー（無効な生年月日形式）", async () => {
+    const { userId, email } = await createAuthUser();
+    const hubspot = new FakeHubSpotClient();
+    const mail = new FakeMailClient();
+
+    const result = await updateProfile(
+      { adminSupabase: adminClient, hubspot, mail },
+      {
+        ...validInput,
+        userId,
+        email,
+        dateOfBirth: "1990/01/15", // YYYY-MM-DD形式ではない
+      },
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.error).toContain("生年月日");
+  });
+
+  test("emailなしの新規ユーザー作成（ウェルカムメール未送信）", async () => {
+    const { userId } = await createAuthUser();
+    const hubspot = new FakeHubSpotClient();
+    const mail = new FakeMailClient();
+
+    const result = await updateProfile(
+      { adminSupabase: adminClient, hubspot, mail },
+      { ...validInput, userId, email: undefined },
+    );
+
+    expect(result.success).toBe(true);
+
+    // ウェルカムメールが送信されていないことを検証
+    expect(mail.sentTo.length).toBe(0);
+
+    // プロフィールは作成されていることを検証
+    const { data: privateUser } = await adminClient
+      .from("private_users")
+      .select("id")
+      .eq("id", userId)
+      .single();
+    expect(privateUser).not.toBeNull();
+  });
+
   test("HubSpot成功時にhubspot_contact_idが保存される", async () => {
     const { userId, email } = await createAuthUser();
     const hubspot = new FakeHubSpotClient();

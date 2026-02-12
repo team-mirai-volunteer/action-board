@@ -193,6 +193,24 @@ describe("YouTube OAuth ユースケース", () => {
   });
 
   describe("unlinkYouTubeAccount", () => {
+    test("連携していないユーザーのunlinkも成功する", async () => {
+      const { user } = await createTestUser();
+      createdUserIds.push(user.userId);
+
+      // 連携していない状態でunlinkを呼ぶ（deleteは0件でもエラーにならない）
+      const result = await unlinkYouTubeAccount(adminClient, user.userId);
+      expect(result.success).toBe(true);
+
+      // DBにレコードがないことを確認
+      const { data: connection } = await adminClient
+        .from("youtube_user_connections")
+        .select("*")
+        .eq("user_id", user.userId)
+        .maybeSingle();
+
+      expect(connection).toBeNull();
+    });
+
     test("連携解除でレコードが削除される", async () => {
       const { user } = await createTestUser();
       createdUserIds.push(user.userId);
