@@ -4,8 +4,9 @@ import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/supabase";
-import { updateBoardStatus as updateBoardStatusService } from "../services/poster-boards";
 import type { BoardStatus } from "../types/poster-types";
+import { getPosterBoardStats } from "../use-cases/get-poster-board-stats";
+import { updateBoardStatus } from "../use-cases/update-board-status";
 import { mapUserToHistory } from "../utils/history-helpers";
 import {
   countBoardsByStatus,
@@ -24,98 +25,19 @@ export async function getPosterBoardStatsAction(
   statusCounts: Record<BoardStatus, number>;
 }> {
   const supabase = await createAdminClient();
+  const result = await getPosterBoardStats(supabase, prefecture);
 
-  try {
-    // 最適化されたRPC関数を使用
-    const { data, error } = await supabase.rpc(
-      "get_poster_board_stats_optimized",
-      {
-        target_prefecture: prefecture,
-      },
-    );
-
-    if (error) {
-      console.error("Error fetching stats with RPC:", error);
-
-      // フォールバック: 元の実装を使用
-      const statusTypes: BoardStatus[] = [
-        "not_yet",
-        "not_yet_dangerous",
-        "reserved",
-        "done",
-        "error_wrong_place",
-        "error_damaged",
-        "error_wrong_poster",
-        "other",
-      ];
-
-      const statusCounts = createEmptyStatusCounts();
-
-      // 並列でカウントクエリを実行
-      const countPromises = statusTypes.map(async (status) => {
-        const { count, error } = await supabase
-          .from("poster_boards")
-          .select("*", { count: "exact", head: true })
-          .eq("prefecture", prefecture)
-          .eq("status", status)
-          .eq("archived", false);
-
-        if (error) {
-          console.error(`Error counting ${status}:`, error);
-          return { status, count: 0 };
-        }
-
-        return { status, count: count || 0 };
-      });
-
-      // 全件数のカウント
-      const totalCountPromise = supabase
-        .from("poster_boards")
-        .select("*", { count: "exact", head: true })
-        .eq("prefecture", prefecture)
-        .eq("archived", false);
-
-      // すべてのクエリを並列実行
-      const [statusResults, totalResult] = await Promise.all([
-        Promise.all(countPromises),
-        totalCountPromise,
-      ]);
-
-      // 結果を集計
-      for (const result of statusResults) {
-        statusCounts[result.status] = result.count;
-      }
-
-      const totalCount = totalResult.count || 0;
-
-      return {
-        totalCount,
-        statusCounts,
-      };
-    }
-
-    // RPC成功時はデータを変換して返す
-    if (data && data.length > 0) {
-      const result = data[0];
-      return {
-        totalCount: Number(result.total_count) || 0,
-        statusCounts: result.status_counts as Record<BoardStatus, number>,
-      };
-    }
-
-    // データがない場合のデフォルト値
-    return {
-      totalCount: 0,
-      statusCounts: createEmptyStatusCounts(),
-    };
-  } catch (error) {
-    console.error("Error in getPosterBoardStatsAction:", error);
-    // エラー時のデフォルト値
+  if (!result.success) {
     return {
       totalCount: 0,
       statusCounts: createEmptyStatusCounts(),
     };
   }
+
+  return {
+    totalCount: result.totalCount,
+    statusCounts: result.statusCounts,
+  };
 }
 
 // ユーザーが最後に編集した掲示板IDを取得
@@ -317,5 +239,23 @@ export async function updateBoardStatusAction(
   newStatus: BoardStatus,
   note?: string,
 ) {
-  return updateBoardStatusService(boardId, newStatus, note);
+  const supabase = await createAdminClient();
+
+  // Get current user - required for history tracking
+  const { createClient } = await import("@/lib/supabase/client");
+  const supabaseAuth = createClient();
+  const {
+    data: { user },
+  } = await supabaseAuth.auth.getUser();
+
+  if (!user) {
+    throw new Error("User must be authenticated to update board status");
+  }
+
+  return updateBoardStatus(supabase, {
+    boardId,
+    userId: user.id,
+    newStatus,
+    note,
+  });
 }
