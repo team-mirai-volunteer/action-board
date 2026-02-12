@@ -1,21 +1,23 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/supabase";
-import { getPosterBoardStatsAction } from "../actions/poster-boards";
 import { POSTER_MISSION_SLUG } from "../constants/poster-mission";
 import type {
   BoardStatus,
   PosterBoard,
   PosterBoardTotal,
 } from "../types/poster-types";
+import { getPosterBoardStats as getPosterBoardStatsUseCase } from "../use-cases/get-poster-board-stats";
 import {
   buildSummaryFromAggregatedRows,
   buildSummaryFromIndividualRows,
   extractUniqueValues,
 } from "../utils/board-transforms";
-import { countBoardsByStatus } from "../utils/poster-stats";
+import {
+  countBoardsByStatus,
+  createEmptyStatusCounts,
+} from "../utils/poster-stats";
 
 /**
  * ポスター貼りミッションのIDを取得
@@ -280,65 +282,6 @@ export async function getPosterBoardDetail(
   return data;
 }
 
-export async function updateBoardStatus(
-  boardId: string,
-  newStatus: BoardStatus,
-  note?: string,
-) {
-  const supabase = await createAdminClient();
-
-  // Get current board status
-  const { data: currentBoard, error: fetchError } = await supabase
-    .from("poster_boards")
-    .select("status")
-    .eq("id", boardId)
-    .single();
-
-  if (fetchError) {
-    console.error("Error fetching current board status:", fetchError);
-    throw fetchError;
-  }
-
-  // Update board status
-  const { error: updateError } = await supabase
-    .from("poster_boards")
-    .update({ status: newStatus })
-    .eq("id", boardId);
-
-  if (updateError) {
-    console.error("Error updating board status:", updateError);
-    throw updateError;
-  }
-
-  // Get current user - required for history tracking
-  const supabaseAuth = createClient();
-  const {
-    data: { user },
-  } = await supabaseAuth.auth.getUser();
-
-  if (!user) {
-    throw new Error("User must be authenticated to update board status");
-  }
-
-  // Insert history record
-  const { error: historyError } = await supabase
-    .from("poster_board_status_history")
-    .insert({
-      board_id: boardId,
-      user_id: user.id,
-      previous_status: currentBoard.status,
-      new_status: newStatus,
-      note: note || null,
-    });
-
-  if (historyError) {
-    console.error("Error inserting status history:", historyError);
-    throw historyError;
-  }
-
-  return { success: true };
-}
-
 // Get unique prefectures that have poster boards (legacy)
 export async function getPrefecturesWithBoards() {
   const supabase = await createAdminClient();
@@ -436,10 +379,23 @@ export async function getPosterBoardStats(prefecture: string): Promise<{
   totalCount: number;
   statusCounts: Record<BoardStatus, number>;
 }> {
-  // RPC関数を使用した最適化された実装を呼び出す
-  return getPosterBoardStatsAction(
+  const supabase = await createAdminClient();
+  const result = await getPosterBoardStatsUseCase(
+    supabase,
     prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
   );
+
+  if (!result.success) {
+    return {
+      totalCount: 0,
+      statusCounts: createEmptyStatusCounts(),
+    };
+  }
+
+  return {
+    totalCount: result.totalCount,
+    statusCounts: result.statusCounts,
+  };
 }
 
 // 都道府県別の統計情報のみを取得（集計済みデータ）
