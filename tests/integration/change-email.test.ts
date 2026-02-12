@@ -1,10 +1,26 @@
-import { changeEmail } from "@/features/user-settings/use-cases/change-email";
+import {
+  changeEmail,
+  type UpdateEmailFn,
+} from "@/features/user-settings/use-cases/change-email";
 import {
   adminClient,
   cleanupTestUser,
   createTestUser,
   getUserById,
 } from "./utils";
+
+/**
+ * admin API経由のメール更新関数（CI環境用）
+ * SMTPが無効な環境でもメール変更をテスト可能にする
+ */
+function createAdminUpdateEmail(userId: string): UpdateEmailFn {
+  return async (newEmail) => {
+    const { error } = await adminClient.auth.admin.updateUserById(userId, {
+      email: newEmail,
+    });
+    return { error };
+  };
+}
 
 describe("changeEmail ユースケース", () => {
   let testUser: Awaited<ReturnType<typeof createTestUser>>;
@@ -17,16 +33,16 @@ describe("changeEmail ユースケース", () => {
     await cleanupTestUser(testUser.user.userId);
   });
 
-  test("メールアドレスを変更できる（admin API経由）", async () => {
+  test("メールアドレスを変更できる", async () => {
     const newEmail = `new-${Date.now()}@example.com`;
 
-    // CI環境ではSMTPが無効のため auth.updateUser は確認メール送信でエラーになる
-    // admin APIでメール変更し、DBの状態変更を検証する
-    const { error } = await adminClient.auth.admin.updateUserById(
-      testUser.user.userId,
-      { email: newEmail },
-    );
-    expect(error).toBeNull();
+    // admin API経由のUpdateEmailFnを注入（CI環境ではSMTPが無効のため）
+    const updateEmail = createAdminUpdateEmail(testUser.user.userId);
+    const result = await changeEmail(updateEmail, {
+      currentEmail: testUser.user.email,
+      newEmail,
+    });
+    expect(result).toEqual({ success: true });
 
     // DBからユーザーを取得し、メールアドレスが変更されたことを検証
     const updatedUser = await getUserById(testUser.user.userId);
@@ -34,7 +50,8 @@ describe("changeEmail ユースケース", () => {
   });
 
   test("同じメールアドレスへの変更はエラー", async () => {
-    const result = await changeEmail(testUser.client, {
+    const updateEmail = createAdminUpdateEmail(testUser.user.userId);
+    const result = await changeEmail(updateEmail, {
       currentEmail: testUser.user.email,
       newEmail: testUser.user.email,
     });
