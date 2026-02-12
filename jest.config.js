@@ -17,7 +17,7 @@ const config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   collectCoverage: true,
   collectCoverageFrom: [
-    "<rootDir>/src/features/**/{services,actions,utils}/*.{ts,tsx}",
+    "<rootDir>/src/features/**/{services,actions,utils,use-cases}/*.{ts,tsx}",
     "<rootDir>/src/lib/{services,utils}/*.{ts,tsx}",
   ],
   coverageReporters: ["html", "text", "lcov"],

@@ -61,3 +61,14 @@ jobs:
           name: jest-supabase-integration-report
           path: jest-report/
           retention-days: 30
+
+      - name: Upload integration coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage-integration/lcov.info
+          flags: integrationtests
+          name: codecov-integration-tests
+          fail_ci_if_error: false
+          verbose: true
