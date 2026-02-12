@@ -1,25 +1,20 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { isBonusMission } from "@/features/mission-detail/utils/mission-xp-utils";
-import {
-  getUserXpBonus,
-  grantMissionCompletionXp,
-  grantXp,
-} from "@/features/user-level/services/level";
 import type { UserLevel } from "@/features/user-level/types/level-types";
-import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
+import {
+  calculateLevel,
+  calculateMissionXp,
+} from "@/features/user-level/utils/level-calculator";
 import {
   MAX_POSTER_COUNT,
   POSTER_POINTS_PER_UNIT,
   POSTING_POINTS_PER_UNIT,
 } from "@/lib/constants/mission-config";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
 import type { Database, TablesInsert } from "@/lib/types/supabase";
 import type { AchieveMissionFormData } from "../actions/actions";
 import {
   buildArtifactPayload,
   getArtifactTypeLabel,
-  grantActivityBonusXp,
   savePosterActivity,
   savePostingActivity,
 } from "../actions/artifact-helpers";
@@ -46,6 +41,153 @@ export type AchieveMissionResult =
     }
   | { success: false; error: string };
 
+/**
+ * adminSupabase を使って現在のアクティブシーズンIDを取得する。
+ * サービス層の getCurrentSeasonId() は createAdminClient() に依存するため、
+ * ユースケースでは渡されたクライアントを直接使う。
+ */
+async function fetchCurrentSeasonId(
+  supabase: SupabaseClient<Database>,
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("seasons")
+    .select("id")
+    .eq("is_active", true)
+    .single();
+
+  if (error) {
+    console.error("Error fetching current season:", error);
+    return null;
+  }
+  return data?.id ?? null;
+}
+
+/**
+ * XPトランザクション記録 + ユーザーレベル更新を行う。
+ * サービス層の grantXp/grantMissionCompletionXp は createAdminClient() に依存するため、
+ * ユースケースでは渡されたクライアントを直接使う。
+ */
+async function processXpGrant(
+  supabase: SupabaseClient<Database>,
+  params: {
+    userId: string;
+    seasonId: string;
+    xpAmount: number;
+    sourceType: string;
+    sourceId?: string;
+    description?: string;
+  },
+): Promise<{
+  success: boolean;
+  xpGranted?: number;
+  userLevel?: UserLevel | null;
+  error?: string;
+}> {
+  const { userId, seasonId, xpAmount, sourceType, sourceId, description } =
+    params;
+
+  // XPトランザクションを記録
+  const { error: transactionError } = await supabase
+    .from("xp_transactions")
+    .insert({
+      user_id: userId,
+      season_id: seasonId,
+      xp_amount: xpAmount,
+      source_type: sourceType,
+      source_id: sourceId,
+      description: description || `${sourceType}による経験値調整`,
+    });
+
+  if (transactionError) {
+    console.error("Failed to create XP transaction:", transactionError);
+    return { success: false, error: transactionError.message };
+  }
+
+  // ユーザーレベル情報を取得
+  const { data: currentLevel } = await supabase
+    .from("user_levels")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("season_id", seasonId)
+    .maybeSingle();
+
+  if (!currentLevel) {
+    return {
+      success: false,
+      error: "ユーザーレベル情報の取得に失敗しました",
+    };
+  }
+
+  // 新しいXPとレベルを計算
+  const newXp = currentLevel.xp + xpAmount;
+  const newLevel = calculateLevel(newXp);
+
+  // ユーザーレベルを更新
+  const { data: updatedLevel, error: updateError } = await supabase
+    .from("user_levels")
+    .update({
+      xp: newXp,
+      level: newLevel,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
+    .eq("season_id", seasonId)
+    .select()
+    .single();
+
+  if (updateError) {
+    console.error("Failed to update user level:", updateError);
+    return { success: false, error: "ユーザーレベルの更新に失敗しました" };
+  }
+
+  return { success: true, xpGranted: xpAmount, userLevel: updatedLevel };
+}
+
+/**
+ * ボーナスXPを計算して付与する。
+ * 失敗時は 0 を返す（ボーナス失敗はミッション達成の成功を妨げない）。
+ */
+async function grantBonusXp(
+  supabase: SupabaseClient<Database>,
+  seasonId: string,
+  params: {
+    userId: string;
+    achievementId: string;
+    count: number;
+    pointsPerUnit: number;
+    isFeatured: boolean;
+    descriptionLabel: string;
+  },
+): Promise<number> {
+  const {
+    userId,
+    achievementId,
+    count,
+    pointsPerUnit,
+    isFeatured,
+    descriptionLabel,
+  } = params;
+
+  const basePoints = count * pointsPerUnit;
+  const totalPoints = isFeatured ? basePoints * 2 : basePoints;
+
+  const result = await processXpGrant(supabase, {
+    userId,
+    seasonId,
+    xpAmount: totalPoints,
+    sourceType: "BONUS",
+    sourceId: achievementId,
+    description: `${descriptionLabel}（${count}枚=${totalPoints}ポイント${isFeatured ? "【2倍】" : ""}）`,
+  });
+
+  if (!result.success) {
+    console.error(`${descriptionLabel}XP付与に失敗しました:`, result.error);
+    return 0;
+  }
+
+  return totalPoints;
+}
+
 export async function achieveMission(
   adminSupabase: SupabaseClient<Database>,
   userSupabase: SupabaseClient<Database>,
@@ -58,9 +200,11 @@ export async function achieveMission(
   let createdArtifactId: string | undefined;
 
   // Fetch mission info
-  const { data: missionData, error: missionFetchError } = await userSupabase
+  const { data: missionData, error: missionFetchError } = await adminSupabase
     .from("missions")
-    .select("max_achievement_count, required_artifact_type, is_featured")
+    .select(
+      "max_achievement_count, required_artifact_type, is_featured, difficulty, title",
+    )
     .eq("id", missionId)
     .single();
 
@@ -74,7 +218,7 @@ export async function achieveMission(
   // Check max_achievement_count
   if (missionData?.max_achievement_count !== null) {
     const { data: userAchievements, error: userAchievementError } =
-      await userSupabase
+      await adminSupabase
         .from("achievements")
         .select("id", { count: "exact" })
         .eq("user_id", userId)
@@ -105,7 +249,7 @@ export async function achieveMission(
     artifactData.requiredArtifactType === ARTIFACT_TYPES.LINK.key
   ) {
     const { data: duplicateArtifacts, error: duplicateError } =
-      await userSupabase
+      await adminSupabase
         .from("mission_artifacts")
         .select(`
 				id,
@@ -131,8 +275,8 @@ export async function achieveMission(
     }
   }
 
-  // Get current season
-  const currentSeasonId = await getCurrentSeasonId();
+  // Get current season using adminSupabase
+  const currentSeasonId = await fetchCurrentSeasonId(adminSupabase);
   if (!currentSeasonId) {
     return {
       success: false,
@@ -147,7 +291,7 @@ export async function achieveMission(
     season_id: currentSeasonId,
   };
 
-  const { data: achievement, error: achievementError } = await userSupabase
+  const { data: achievement, error: achievementError } = await adminSupabase
     .from("achievements")
     .insert(achievementPayload)
     .select("id")
@@ -191,7 +335,7 @@ export async function achieveMission(
       };
     }
 
-    const { data: newArtifact, error: artifactError } = await userSupabase
+    const { data: newArtifact, error: artifactError } = await adminSupabase
       .from("mission_artifacts")
       .insert(artifactPayload)
       .select("id")
@@ -214,7 +358,7 @@ export async function achieveMission(
       artifactType === ARTIFACT_TYPES.POSTING.key &&
       artifactData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key
     ) {
-      const postingResult = await savePostingActivity(userSupabase, {
+      const postingResult = await savePostingActivity(adminSupabase, {
         artifactId: newArtifact.id,
         postingCount: artifactData.postingCount,
         locationText: artifactData.locationText ?? "",
@@ -224,7 +368,7 @@ export async function achieveMission(
         return { success: false, error: postingResult.error ?? "unknown" };
       }
 
-      totalXpGranted += await grantActivityBonusXp({
+      totalXpGranted += await grantBonusXp(adminSupabase, currentSeasonId, {
         userId,
         achievementId: achievement.id,
         count: artifactData.postingCount,
@@ -239,7 +383,7 @@ export async function achieveMission(
       artifactType === ARTIFACT_TYPES.POSTER.key &&
       artifactData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
     ) {
-      const posterResult = await savePosterActivity(userSupabase, {
+      const posterResult = await savePosterActivity(adminSupabase, {
         userId,
         artifactId: newArtifact.id,
         prefecture:
@@ -261,7 +405,7 @@ export async function achieveMission(
         return { success: false, error: posterResult.error ?? "unknown" };
       }
 
-      totalXpGranted += await grantActivityBonusXp({
+      totalXpGranted += await grantBonusXp(adminSupabase, currentSeasonId, {
         userId,
         achievementId: achievement.id,
         count: MAX_POSTER_COUNT,
@@ -280,18 +424,28 @@ export async function achieveMission(
     error?: string;
   };
   if (missionData?.required_artifact_type !== "POSTING") {
-    xpResult = await grantMissionCompletionXp(
-      userId,
-      missionId,
-      achievement.id,
+    // Inline grantMissionCompletionXp logic using adminSupabase
+    const xpToGrant = calculateMissionXp(
+      missionData.difficulty,
+      missionData.is_featured,
     );
+    const xpDescription = `ミッション「${missionData.title}」達成による経験値獲得`;
+
+    xpResult = await processXpGrant(adminSupabase, {
+      userId,
+      seasonId: currentSeasonId,
+      xpAmount: xpToGrant,
+      sourceType: "MISSION_COMPLETION",
+      sourceId: achievement.id,
+      description: xpDescription,
+    });
 
     if (!xpResult.success) {
       console.error("XP付与に失敗しました:", xpResult.error);
     }
     totalXpGranted += xpResult?.xpGranted ?? 0;
   } else {
-    const { data: currentUserLevel } = await userSupabase
+    const { data: currentUserLevel } = await adminSupabase
       .from("user_levels")
       .select("*")
       .eq("user_id", userId)
