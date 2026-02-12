@@ -3,16 +3,11 @@
 import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
-import {
-  exchangeCodeForToken,
-  fetchUserInfo,
-  refreshAccessToken,
-} from "../services/tiktok-client";
+import { tiktokClient } from "../services/tiktok-client";
 import type { TikTokLinkResult } from "../types";
-import {
-  buildTikTokConnectionUpsertData,
-  buildTokenUpdateData,
-} from "../utils/data-builders";
+import { linkTikTokAccount } from "../use-cases/link-tiktok-account";
+import { refreshTikTokToken } from "../use-cases/refresh-tiktok-token";
+import { unlinkTikTokAccount } from "../use-cases/unlink-tiktok-account";
 
 /**
  * TikTokアカウント連携処理のServer Action
@@ -23,7 +18,6 @@ export async function handleTikTokLinkAction(
   codeVerifier: string,
 ): Promise<TikTokLinkResult> {
   try {
-    // 現在のユーザーを取得
     const supabase = await createClient();
     const {
       data: { user },
@@ -31,58 +25,20 @@ export async function handleTikTokLinkAction(
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return {
-        success: false,
-        error: "ログインが必要です",
-      };
+      return { success: false, error: "ログインが必要です" };
     }
 
     const headerOrigin = (await headers()).get("origin");
     const origin = headerOrigin || process.env.NEXT_PUBLIC_APP_ORIGIN;
     const redirectUri = `${origin}/auth/tiktok-callback`;
 
-    // TikTok APIでトークンと交換
-    const tokens = await exchangeCodeForToken(code, codeVerifier, redirectUri);
-
-    // TikTokユーザー情報を取得
-    const tiktokUser = await fetchUserInfo(tokens.access_token);
-
     const adminClient = await createAdminClient();
-
-    // 同じTikTokアカウントが他のユーザーに連携されていないかチェック
-    const { data: existingConnection } = await adminClient
-      .from("tiktok_user_connections")
-      .select("user_id")
-      .eq("tiktok_open_id", tiktokUser.open_id)
-      .maybeSingle();
-
-    if (existingConnection && existingConnection.user_id !== user.id) {
-      return {
-        success: false,
-        error:
-          "このTikTokアカウントは既に別のユーザーに連携されています。別のTikTokアカウントをお試しください。",
-      };
-    }
-
-    // tiktok_user_connectionsテーブルに保存
-    const { error: upsertError } = await adminClient
-      .from("tiktok_user_connections")
-      .upsert(buildTikTokConnectionUpsertData(user.id, tokens, tiktokUser), {
-        onConflict: "user_id",
-      });
-
-    if (upsertError) {
-      console.error("Failed to save TikTok connection:", upsertError);
-      return {
-        success: false,
-        error: "TikTok連携情報の保存に失敗しました",
-      };
-    }
-
-    return {
-      success: true,
-      user: tiktokUser,
-    };
+    return await linkTikTokAccount(adminClient, tiktokClient, {
+      userId: user.id,
+      code,
+      codeVerifier,
+      redirectUri,
+    });
   } catch (error) {
     console.error("TikTok link error:", error);
     return {
@@ -107,30 +63,11 @@ export async function unlinkTikTokAccountAction(): Promise<TikTokLinkResult> {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return {
-        success: false,
-        error: "ログインが必要です",
-      };
+      return { success: false, error: "ログインが必要です" };
     }
 
-    // tiktok_user_connectionsテーブルから削除
     const adminClient = await createAdminClient();
-    const { error: deleteError } = await adminClient
-      .from("tiktok_user_connections")
-      .delete()
-      .eq("user_id", user.id);
-
-    if (deleteError) {
-      console.error("Failed to unlink TikTok:", deleteError);
-      return {
-        success: false,
-        error: "TikTok連携解除に失敗しました",
-      };
-    }
-
-    return {
-      success: true,
-    };
+    return await unlinkTikTokAccount(adminClient, user.id);
   } catch (error) {
     console.error("TikTok unlink error:", error);
     return {
@@ -155,47 +92,11 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return {
-        success: false,
-        error: "ログインが必要です",
-      };
+      return { success: false, error: "ログインが必要です" };
     }
 
-    // tiktok_user_connectionsからリフレッシュトークンを取得
     const adminClient = await createAdminClient();
-    const { data: connection, error: fetchError } = await adminClient
-      .from("tiktok_user_connections")
-      .select("refresh_token")
-      .eq("user_id", user.id)
-      .single();
-
-    if (fetchError || !connection?.refresh_token) {
-      return {
-        success: false,
-        error: "TikTokが連携されていません",
-      };
-    }
-
-    // TikTok APIでトークンをリフレッシュ
-    const tokens = await refreshAccessToken(connection.refresh_token);
-
-    // 新しいトークンを保存
-    const { error: updateError } = await adminClient
-      .from("tiktok_user_connections")
-      .update(buildTokenUpdateData(tokens))
-      .eq("user_id", user.id);
-
-    if (updateError) {
-      console.error("Failed to update refreshed token:", updateError);
-      return {
-        success: false,
-        error: "トークンの保存に失敗しました",
-      };
-    }
-
-    return {
-      success: true,
-    };
+    return await refreshTikTokToken(adminClient, tiktokClient, user.id);
   } catch (error) {
     console.error("TikTok token refresh error:", error);
     return {
