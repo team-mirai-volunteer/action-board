@@ -66,11 +66,52 @@ export async function createTestMission(params?: {
  * 関連する achievements, mission_artifacts は CASCADE で削除される。
  */
 export async function cleanupTestMission(missionId: string): Promise<void> {
+  // Get all artifacts for achievements of this mission
+  const { data: achievements } = await adminClient
+    .from("achievements")
+    .select("id")
+    .eq("mission_id", missionId);
+
+  if (achievements && achievements.length > 0) {
+    const achievementIds = achievements.map((a) => a.id);
+    const { data: artifacts } = await adminClient
+      .from("mission_artifacts")
+      .select("id")
+      .in("achievement_id", achievementIds);
+
+    if (artifacts && artifacts.length > 0) {
+      const artifactIds = artifacts.map((a) => a.id);
+      // Delete posting_activities and poster_activities
+      await adminClient
+        .from("posting_activities")
+        .delete()
+        .in("mission_artifact_id", artifactIds);
+      await adminClient
+        .from("poster_activities")
+        .delete()
+        .in("mission_artifact_id", artifactIds);
+    }
+  }
+
   // Delete related xp_transactions first (not cascaded)
   await adminClient
     .from("xp_transactions")
     .delete()
     .eq("source_type", "MISSION_COMPLETION")
+    .filter("description", "ilike", `%テストミッション%`);
+
+  // Delete BONUS xp_transactions
+  await adminClient
+    .from("xp_transactions")
+    .delete()
+    .eq("source_type", "BONUS")
+    .filter("description", "ilike", `%ボーナス%`);
+
+  // Delete MISSION_CANCELLATION xp_transactions
+  await adminClient
+    .from("xp_transactions")
+    .delete()
+    .eq("source_type", "MISSION_CANCELLATION")
     .filter("description", "ilike", `%テストミッション%`);
 
   // Delete achievements (cascades to mission_artifacts)
