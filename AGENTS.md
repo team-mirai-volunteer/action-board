@@ -90,6 +90,7 @@ cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
 - `pnpm run dev` - 開発サーバー起動
 - `pnpm run biome:check:write` - フォーマット + リント
 - `pnpm run test:unit` - ユニットテスト実行
+- `pnpm run test:integration` - 統合テスト実行（ローカルSupabase起動が必要）
 
 全コマンド一覧は [開発コマンドリファレンス](docs/開発コマンドリファレンス.md) を参照。
 
@@ -118,11 +119,18 @@ src/features/{feature-name}/
 ├── services/      # データアクセス・ビジネスロジック
 ├── actions/       # Server Actions（認可・mutation）
 ├── loaders/       # データ読み取り（クライアント向け）
+├── use-cases/     # ユースケース（Next.js非依存のビジネスロジック）
 ├── hooks/         # カスタムフック
 ├── types/         # 型定義
 ├── utils/         # ユーティリティ
 └── constants/     # 定数
 ```
+
+### Use Case層
+- **目的**: Server Actionからビジネスロジックを分離し、統合テストから直接呼び出せるようにする
+- **パターン**: `SupabaseClient` を引数で受け取り、`createClient()`（Next.js cookies依存）を内部で呼ばない
+- **テスト時**: `adminClient`（`tests/supabase/utils.ts`）や `createTestUser` が返す認証済みクライアントを渡す
+- **配置**: `src/features/{feature-name}/use-cases/`
 
 ## プロジェクト概要
 

@@ -25,6 +25,10 @@ flags:
     paths:
       - src/
     carryforward: true
+  integrationtests:
+    paths:
+      - src/
+    carryforward: true
 
 ignore:
   - "**/*.test.ts"
