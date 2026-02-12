@@ -44,7 +44,10 @@ export async function createTestMission(params?: {
       title,
       difficulty: params?.difficulty ?? 1,
       required_artifact_type: params?.requiredArtifactType ?? "NONE",
-      max_achievement_count: params?.maxAchievementCount ?? 1,
+      max_achievement_count:
+        params?.maxAchievementCount !== undefined
+          ? params.maxAchievementCount
+          : 1,
       is_featured: params?.isFeatured ?? false,
       is_hidden: false,
     })

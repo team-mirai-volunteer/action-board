@@ -258,7 +258,7 @@ describe("achieveMission ユースケース", () => {
     const achievementId = achievements![0].id;
 
     // 取り消し
-    const cancelResult = await cancelSubmission(testUserClient, {
+    const cancelResult = await cancelSubmission(adminClient, testUserClient, {
       userId: testUserId,
       achievementId,
       missionId: testMission.id,

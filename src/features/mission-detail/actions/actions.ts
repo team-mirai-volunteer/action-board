@@ -539,7 +539,8 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   }
 
   // ユースケースに委譲
-  return cancelSubmission(supabase, {
+  const adminSupabase = await createAdminClient();
+  return cancelSubmission(adminSupabase, supabase, {
     userId: authUser.id,
     achievementId: validatedAchievementId,
     missionId: validatedMissionId,
