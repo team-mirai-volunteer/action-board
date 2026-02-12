@@ -1,22 +1,19 @@
 "use server";
 
-import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import { recordSignupActivity } from "@/features/user-activity/services/activity";
 import {
   extractAvatarPathFromUrl,
   shouldDeleteOldAvatar,
   validateAvatarFile,
 } from "@/features/user-settings/utils/avatar-helpers";
-import { PREFECTURES } from "@/lib/constants/prefectures";
 import { createOrUpdateHubSpotContact } from "@/lib/services/hubspot";
 import { sendWelcomeMail } from "@/lib/services/mail";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
-import { encodedRedirect } from "@/lib/utils/utils";
-import { formatZodErrors } from "@/lib/utils/validation-utils";
+import type { HubSpotClient } from "../types/hubspot-client";
+import type { MailClient } from "../types/mail-client";
+import { updateProfile as updateProfileUseCase } from "../use-cases/update-profile";
 
 export type UpdateProfileResult = {
   success: boolean;
@@ -29,38 +26,16 @@ export type UploadAvatarResult = {
   error?: string;
 };
 
-const updateProfileFormSchema = z.object({
-  name: z
-    .string()
-    .nonempty({ message: "ニックネームを入力してください" })
-    .max(100, { message: "ニックネームは100文字以内で入力してください" }),
-  address_prefecture: z
-    .string()
-    .nonempty({ message: "都道府県を選択してください" })
-    .refine((val) => PREFECTURES.includes(val), {
-      message: "有効な都道府県を選択してください",
-    }),
-  date_of_birth: z
-    .string()
-    .nonempty({ message: "生年月日を入力してください" })
-    .regex(/^\d{4}-\d{2}-\d{2}$/, {
-      message: "生年月日はYYYY-MM-DD形式で入力してください",
-    }),
-  postcode: z
-    .string()
-    .nonempty({ message: "郵便番号を入力してください" })
-    .regex(/^\d{7}$/, {
-      message: "郵便番号はハイフンなし7桁で入力してください",
-    }),
-  x_username: z
-    .string()
-    .max(50, { message: "Xユーザー名は50文字以内で入力してください" })
-    .optional(),
-  github_username: z
-    .string()
-    .max(39, { message: "GitHubユーザー名は39文字以内で入力してください" })
-    .optional(),
-});
+/** 本番用 HubSpot クライアント */
+const prodHubSpotClient: HubSpotClient = {
+  createOrUpdateContact: (contactData, existingContactId) =>
+    createOrUpdateHubSpotContact(contactData, existingContactId),
+};
+
+/** 本番用メールクライアント */
+const prodMailClient: MailClient = {
+  sendWelcomeMail: (to) => sendWelcomeMail(to),
+};
 
 export async function updateProfile(
   _previousState: UpdateProfileResult | null,
@@ -79,61 +54,26 @@ export async function updateProfile(
   }
 
   // フォームデータの取得
-  const name = formData.get("name")?.toString();
-  const address_prefecture = formData.get("address_prefecture")?.toString();
-  const date_of_birth = formData.get("date_of_birth")?.toString();
-  const postcode = formData.get("postcode")?.toString();
+  const name = formData.get("name")?.toString() ?? "";
+  const address_prefecture =
+    formData.get("address_prefecture")?.toString() ?? "";
+  const date_of_birth = formData.get("date_of_birth")?.toString() ?? "";
+  const postcode = formData.get("postcode")?.toString() ?? "";
   const x_username = formData.get("x_username")?.toString() || "";
   const github_username = formData.get("github_username")?.toString() || "";
 
-  // バリデーション
-  const validatedFields = updateProfileFormSchema.safeParse({
-    name,
-    address_prefecture,
-    date_of_birth,
-    postcode,
-    x_username,
-    github_username,
-  });
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      error: formatZodErrors(validatedFields.error),
-    };
-  }
-
-  // バリデーション済みのデータを使用
-  const validatedData = validatedFields.data;
-
-  // 先にユーザー情報を取得
-  const { data: authUser } = await supabaseClient.auth.getUser();
-  const { data: privateUser } = await supabaseClient
-    .from("private_users")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-  const { data: publicProfile } = await supabaseClient
-    .from("public_user_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (!authUser) {
-    console.error("Public user not found");
-    return encodedRedirect("error", "/sign-in", "ユーザーが見つかりません");
-  }
-
-  // フォームから送信されたavatar_url
+  // アバター処理（Storage操作はアクション層で行う）
   let avatar_path = formData.get("avatar_path") as string | null;
 
-  // 以前の画像URL
-  const previousAvatarUrl = publicProfile?.avatar_url || null;
+  const { data: publicProfile } = await supabaseServiceClient
+    .from("public_user_profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .single();
 
-  // 画像ファイルが送信されているか確認
+  const previousAvatarUrl = publicProfile?.avatar_url || null;
   const avatar_file = formData.get("avatar") as File | null;
 
-  // 画像ファイルのバリデーション
   const avatarValidation = validateAvatarFile(avatar_file);
   if (!avatarValidation.valid) {
     return {
@@ -142,7 +82,6 @@ export async function updateProfile(
     };
   }
 
-  // 古い画像を削除するかチェック
   const needsDeleteOldAvatar = shouldDeleteOldAvatar(
     previousAvatarUrl,
     avatar_path,
@@ -156,37 +95,25 @@ export async function updateProfile(
         : null;
 
       if (filePath) {
-        // 古い画像をストレージから削除
         const { error: deleteError } = await supabaseServiceClient.storage
           .from("avatars")
           .remove([filePath]);
 
         if (deleteError) {
           console.error("Error deleting old avatar:", deleteError);
-        } else {
-          console.log("Successfully deleted old avatar:", filePath);
         }
       }
     } catch (error) {
       console.error("Error deleting old avatar:", error);
-      // 画像削除に失敗しても、更新処理は継続する
     }
   }
 
-  // 新しい画像をアップロード
   if (avatar_file && avatar_file.size > 0) {
     try {
-      // ユーザーIDを取得
-      const userId = privateUser?.id || crypto.randomUUID();
-
-      // ファイル名の生成
       const fileExt = avatar_file.name.split(".").pop();
-      const fileName = `${userId}/${Date.now()}.${fileExt}`;
-
-      // ファイルのバイナリデータを取得
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
       const fileBuffer = await avatar_file.arrayBuffer();
 
-      // Supabase Storageにアップロード
       const { error } = await supabaseServiceClient.storage
         .from("avatars")
         .upload(fileName, fileBuffer, {
@@ -196,192 +123,38 @@ export async function updateProfile(
 
       if (error) {
         console.error("Upload error:", error);
-        // アップロードに失敗しても、他のプロフィール情報は更新を続ける
       }
       avatar_path = fileName;
     } catch (error) {
       console.error("Avatar upload error during profile update:", error);
-      // エラーがあっても他のプロフィール情報の更新は続ける
     }
   }
 
-  const hubspot_contact_id = privateUser?.hubspot_contact_id || null;
+  // ユースケース呼び出し
+  const result = await updateProfileUseCase(
+    {
+      adminSupabase: supabaseServiceClient,
+      hubspot: prodHubSpotClient,
+      mail: prodMailClient,
+    },
+    {
+      userId: user.id,
+      email: user.email,
+      name,
+      addressPrefecture: address_prefecture,
+      dateOfBirth: date_of_birth,
+      postcode,
+      xUsername: x_username,
+      githubUsername: github_username,
+      avatarPath: avatar_path,
+    },
+  );
 
-  // private_users テーブルを更新
-  if (!privateUser) {
-    const { error: privateUserError } = await supabaseClient
-      .from("private_users")
-      .insert({
-        id: user.id,
-        date_of_birth: validatedData.date_of_birth,
-        postcode: validatedData.postcode,
-        hubspot_contact_id: null, // 初期値はnull、HubSpot連携後に更新
-        updated_at: new Date().toISOString(),
-      });
-    if (privateUserError) {
-      console.error("Error updating private_users:", privateUserError);
-      return {
-        success: false,
-        error: "ユーザー情報の登録に失敗しました",
-      };
-    }
-
-    const { error: publicUserError } = await supabaseClient
-      .from("public_user_profiles")
-      .insert({
-        id: user.id,
-        name: validatedData.name,
-        address_prefecture: validatedData.address_prefecture,
-        x_username: validatedData.x_username || null,
-        github_username: validatedData.github_username || null,
-        avatar_url: avatar_path,
-        updated_at: new Date().toISOString(),
-      });
-    if (publicUserError) {
-      console.error("Error updating public_user_profiles:", publicUserError);
-      return {
-        success: false,
-        error: "ユーザー情報の登録に失敗しました",
-      };
-    }
-    try {
-      if (user.email) {
-        await sendWelcomeMail(user.email);
-      }
-    } catch (e) {
-      console.error("案内メール送信失敗:", e);
-    }
-
-    // 新規ユーザーの場合、サインアップアクティビティを記録
-    try {
-      await recordSignupActivity(user.id, validatedData.name);
-    } catch (e) {
-      console.error("サインアップアクティビティ記録失敗:", e);
-      // エラーがあっても処理は継続
-    }
-  } else {
-    const { error: privateUserError } = await supabaseClient
-      .from("private_users")
-      .update({
-        date_of_birth: validatedData.date_of_birth,
-        postcode: validatedData.postcode,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
-    if (privateUserError) {
-      console.error("Error updating private_users:", privateUserError);
-      return {
-        success: false,
-        error: "ユーザー情報の更新に失敗しました",
-      };
-    }
-
-    const { error: publicUserError } = await supabaseClient
-      .from("public_user_profiles")
-      .update({
-        name: validatedData.name,
-        address_prefecture: validatedData.address_prefecture,
-        x_username: validatedData.x_username || null,
-        github_username: validatedData.github_username || null,
-        avatar_url: avatar_path,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
-    if (publicUserError) {
-      console.error("Error updating public_user_profiles:", publicUserError);
-      return {
-        success: false,
-        error: "ユーザー情報の更新に失敗しました",
-      };
-    }
+  if (result.success) {
+    revalidatePath("/settings/profile");
+    revalidatePath("/");
+    revalidatePath(`/users/${user.id}`);
   }
 
-  // HubSpot連携処理（プロフィール更新成功後に実行）
-  try {
-    const hubspotResult = await createOrUpdateHubSpotContact(
-      {
-        email: user.email || "",
-        firstname: user.email || "", // firstnameにもemailを設定
-        state: validatedData.address_prefecture,
-      },
-      hubspot_contact_id,
-    );
-
-    if (hubspotResult.success) {
-      // HubSpot連携成功時、コンタクトIDをデータベースに保存
-      const { error: updateHubSpotIdError } = await supabaseClient
-        .from("private_users")
-        .update({ hubspot_contact_id: hubspotResult.contactId })
-        .eq("id", user.id);
-
-      if (updateHubSpotIdError) {
-        console.error(
-          "Error updating hubspot_contact_id:",
-          updateHubSpotIdError,
-        );
-      } else {
-        console.log(
-          "HubSpot contact ID updated successfully:",
-          hubspotResult.contactId,
-        );
-      }
-    } else {
-      console.error("HubSpot integration failed:", hubspotResult.error);
-      // HubSpot連携に失敗してもプロフィール更新は成功として扱う
-    }
-  } catch (error) {
-    console.error("HubSpot integration error:", error);
-    // HubSpot連携エラーでもプロフィール更新は成功として扱う
-  }
-
-  // ユーザー別紹介コードの登録処理（重複時は最大5回リトライ）
-  const MAX_RETRY = 5;
-
-  const { data: existingReferral } = await supabaseClient
-    .from("user_referral")
-    .select("user_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (!existingReferral) {
-    let success = false;
-    let lastError = null;
-
-    for (let attempt = 0; attempt < MAX_RETRY; attempt++) {
-      const referralCode = nanoid(8); // 8桁ランダムコード
-
-      const { error: referralInsertError } = await supabaseClient
-        .from("user_referral")
-        .insert({
-          user_id: user.id,
-          referral_code: referralCode,
-        });
-
-      if (!referralInsertError) {
-        success = true;
-        break;
-      }
-
-      // 重複ならリトライ、それ以外なら終了
-      if (referralInsertError.code !== "23505") {
-        lastError = referralInsertError;
-        break;
-      }
-    }
-
-    if (!success) {
-      console.error("紹介コード登録に失敗:", lastError);
-      return {
-        success: false,
-        error: "紹介コードの登録に失敗しました。（重複によるリトライ上限）",
-      };
-    }
-  }
-
-  revalidatePath("/settings/profile");
-  revalidatePath("/"); // ホームページの活動タイムラインも更新
-  revalidatePath(`/users/${user.id}`); // マイページのキャッシュも更新
-  return {
-    success: true,
-  };
+  return result;
 }
