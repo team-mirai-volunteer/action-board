@@ -60,6 +60,7 @@ export async function lineLogin(
   const existingUser = userResults?.[0] || null;
   let userId: string;
   let isNewUser = false;
+  let loginEmail = email;
 
   if (existingUser) {
     const metadata = existingUser.user_metadata as {
@@ -70,6 +71,8 @@ export async function lineLogin(
     if (metadata?.provider === "line") {
       // LINEで作成されたユーザー → ログイン（メタデータ更新）
       userId = existingUser.id;
+      // DB上のemailを使う（ユーザーがメール変更済みの場合に対応）
+      loginEmail = (existingUser.email as string) || email;
       await adminSupabase.auth.admin.updateUserById(userId, {
         user_metadata: {
           ...metadata,
@@ -148,5 +151,5 @@ export async function lineLogin(
     console.error("Failed to set temporary password:", passwordError);
   }
 
-  return { success: true, userId, email, isNewUser, tempPassword };
+  return { success: true, userId, email: loginEmail, isNewUser, tempPassword };
 }
