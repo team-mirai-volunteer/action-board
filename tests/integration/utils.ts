@@ -1,4 +1,8 @@
-export { adminClient, cleanupTestUser } from "../supabase/utils";
+export {
+  adminClient,
+  cleanupTestUser,
+  createTestUser,
+} from "../supabase/utils";
 
 import { adminClient } from "../supabase/utils";
 
