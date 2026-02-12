@@ -103,8 +103,8 @@ async function processXpGrant(
     return { success: false, error: transactionError.message };
   }
 
-  // ユーザーレベル情報を取得
-  const { data: currentLevel } = await supabase
+  // ユーザーレベル情報を取得（存在しない場合は初期化）
+  let { data: currentLevel } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
@@ -112,10 +112,25 @@ async function processXpGrant(
     .maybeSingle();
 
   if (!currentLevel) {
-    return {
-      success: false,
-      error: "ユーザーレベル情報の取得に失敗しました",
-    };
+    const { data: newLevel, error: initError } = await supabase
+      .from("user_levels")
+      .insert({
+        user_id: userId,
+        season_id: seasonId,
+        xp: 0,
+        level: 1,
+      })
+      .select()
+      .single();
+
+    if (initError || !newLevel) {
+      console.error("Failed to initialize user level:", initError);
+      return {
+        success: false,
+        error: "ユーザーレベルの初期化に失敗しました",
+      };
+    }
+    currentLevel = newLevel;
   }
 
   // 新しいXPとレベルを計算
