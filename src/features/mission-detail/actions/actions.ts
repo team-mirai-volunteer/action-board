@@ -30,12 +30,11 @@ import {
   savePostingActivity,
 } from "./artifact-helpers";
 
-// Quiz関連のServer ActionsとQuizQuestion型をインポート
+// Quiz関連のServer Actionsをインポート
 import {
   checkQuizAnswersAction,
   getMissionQuizCategoryAction,
   getQuizQuestionsAction,
-  type QuizQuestion,
 } from "./quiz-actions";
 
 // Quiz関連のServer Actionsを再エクスポート
@@ -43,7 +42,6 @@ export {
   getMissionQuizCategoryAction,
   getQuizQuestionsAction,
   checkQuizAnswersAction,
-  type QuizQuestion,
 };
 
 // 基本スキーマ（共通項目）

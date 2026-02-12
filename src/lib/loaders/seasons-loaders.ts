@@ -7,10 +7,7 @@ import {
   getInactiveSeasons as getInactiveSeasonsService,
   getSeasonBySlug as getSeasonBySlugService,
   getUserSeasonHistory as getUserSeasonHistoryService,
-  type Season,
 } from "../services/seasons";
-
-export type { Season };
 
 export async function getCurrentSeason() {
   return getCurrentSeasonService();
