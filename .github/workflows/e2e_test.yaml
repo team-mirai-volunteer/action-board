@@ -28,6 +28,7 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
           echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          echo "SITE_URL=http://localhost:3000" >> $GITHUB_ENV
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -37,7 +38,7 @@ jobs:
       # Supabaseをバックグラウンドで起動し、install/build と並列化
       - name: Start Supabase (background)
         run: |
-          supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector > /tmp/supabase-start.log 2>&1 &
+          supabase start -x studio,postgres-meta,imgproxy,logflare,vector > /tmp/supabase-start.log 2>&1 &
           echo $! > /tmp/supabase-start.pid
         env:
           SMTP_ENABLED: false

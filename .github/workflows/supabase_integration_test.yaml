@@ -31,6 +31,7 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
           echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          echo "SITE_URL=http://localhost:3000" >> $GITHUB_ENV
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -38,7 +39,7 @@ jobs:
           version: latest
 
       - name: Start Supabase
-        run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
+        run: supabase start -x studio,postgres-meta,imgproxy,logflare,vector
         env:
           SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
