@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { execSync } from "child_process";
 import * as dotenv from "dotenv";
 
 if (!process.env.CI) {
@@ -7,7 +8,40 @@ if (!process.env.CI) {
   dotenv.config({ path: ".env.test", override: true });
 }
 
-const PORT = process.env.PORT || 3000;
+/**
+ * 指定ポートが使用中かチェックする
+ */
+function isPortInUse(port: number): boolean {
+  try {
+    execSync(
+      `node -e "const c=require('net').connect(${port},'127.0.0.1');c.on('connect',()=>{c.end();process.exit(0)});c.on('error',()=>process.exit(1))"`,
+      { stdio: "pipe", timeout: 3000 },
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * startPortから順に空きポートを探す
+ */
+function findAvailablePort(startPort: number): number {
+  for (let port = startPort; port < startPort + 100; port++) {
+    if (!isPortInUse(port)) return port;
+  }
+  return startPort;
+}
+
+const PORT = process.env.PORT
+  ? Number(process.env.PORT)
+  : process.env.CI
+    ? 3000
+    : findAvailablePort(3000);
+
+// 子プロセス（webServer）にPORTを継承させる
+process.env.PORT = String(PORT);
+
 const baseURL = `http://localhost:${PORT}`;
 
 /**
