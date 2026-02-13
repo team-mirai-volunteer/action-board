@@ -100,8 +100,26 @@ test.describe("新規登録フロー（メール確認含む）", () => {
       page.getByText("ご登録頂きありがとうございます！"),
     ).toBeVisible();
 
-    // 6. Inbucketでメールを確認
-    const messages = await waitForEmail(mailbox);
+    // 6. Inbucketの状態をデバッグ
+    const healthCheck = await fetch(
+      `${INBUCKET_URL}/api/v1/monitor/health`,
+    ).catch((e) => ({ ok: false, status: 0, statusText: String(e) }));
+    console.log(
+      "Inbucket health check:",
+      "ok" in healthCheck ? healthCheck.status : "error",
+    );
+
+    // ローカルパートとフルメールの両方でメールボックスを確認
+    const localPartMessages = await getInbucketMessages(mailbox);
+    const fullEmailMessages = await getInbucketMessages(testEmail);
+    console.log(`Mailbox "${mailbox}": ${localPartMessages.length} messages`);
+    console.log(`Mailbox "${testEmail}": ${fullEmailMessages.length} messages`);
+
+    // メールが見つかった方を使用
+    const messages = await waitForEmail(
+      fullEmailMessages.length > 0 ? testEmail : mailbox,
+      15000,
+    );
     expect(messages.length).toBeGreaterThan(0);
 
     // 7. メール本文を取得して確認URLを抽出
