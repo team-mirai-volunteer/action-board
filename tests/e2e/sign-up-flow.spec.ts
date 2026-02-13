@@ -1,30 +1,28 @@
 import { expect, test } from "@playwright/test";
 
-const INBUCKET_URL = "http://localhost:54324";
+const MAILPIT_URL = "http://localhost:54324";
 
 /**
- * Inbucketからメールボックスのメッセージ一覧を取得する
+ * Mailpitから特定の宛先へのメッセージを検索する
  */
-async function getInbucketMessages(mailbox: string) {
-  const response = await fetch(`${INBUCKET_URL}/api/v1/mailbox/${mailbox}`);
-  if (response.status === 404) {
-    return [];
-  }
+async function searchMailpitMessages(toEmail: string) {
+  const response = await fetch(
+    `${MAILPIT_URL}/api/v1/search?query=${encodeURIComponent(`to:${toEmail}`)}`,
+  );
   if (!response.ok) {
-    throw new Error(`Inbucket API error: ${response.status}`);
+    throw new Error(`Mailpit API error: ${response.status}`);
   }
-  return response.json();
+  const data = await response.json();
+  return data.messages || [];
 }
 
 /**
- * Inbucketから特定のメッセージを取得する
+ * Mailpitから特定のメッセージを取得する
  */
-async function getInbucketMessage(mailbox: string, messageId: string) {
-  const response = await fetch(
-    `${INBUCKET_URL}/api/v1/mailbox/${mailbox}/${messageId}`,
-  );
+async function getMailpitMessage(messageId: string) {
+  const response = await fetch(`${MAILPIT_URL}/api/v1/message/${messageId}`);
   if (!response.ok) {
-    throw new Error(`Inbucket API error: ${response.status}`);
+    throw new Error(`Mailpit API error: ${response.status}`);
   }
   return response.json();
 }
@@ -33,27 +31,26 @@ async function getInbucketMessage(mailbox: string, messageId: string) {
  * メール本文からリンクURLを抽出する
  */
 function extractConfirmationUrl(htmlBody: string): string | null {
-  // メールテンプレートのボタンリンクからURLを抽出
   const match = htmlBody.match(/href="([^"]+)"/);
   return match ? match[1] : null;
 }
 
 /**
- * Inbucketにメールが届くまで待機する
+ * Mailpitにメールが届くまで待機する
  */
 async function waitForEmail(
-  mailbox: string,
-  timeoutMs = 10000,
-): Promise<{ id: string }[]> {
+  toEmail: string,
+  timeoutMs = 15000,
+): Promise<{ ID: string }[]> {
   const startTime = Date.now();
   while (Date.now() - startTime < timeoutMs) {
-    const messages = await getInbucketMessages(mailbox);
+    const messages = await searchMailpitMessages(toEmail);
     if (messages.length > 0) {
       return messages;
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  throw new Error(`Timed out waiting for email in mailbox: ${mailbox}`);
+  throw new Error(`Timed out waiting for email to: ${toEmail}`);
 }
 
 test.describe("新規登録フロー（メール確認含む）", () => {
@@ -61,7 +58,6 @@ test.describe("新規登録フロー（メール確認含む）", () => {
     // ランダムなメールアドレスを生成
     const randomStr = Math.random().toString(36).substring(2, 10);
     const testEmail = `test-confirm-${randomStr}@example.com`;
-    const mailbox = `test-confirm-${randomStr}`;
 
     // 1. サインアップページに移動
     await page.goto("/sign-up");
@@ -100,31 +96,13 @@ test.describe("新規登録フロー（メール確認含む）", () => {
       page.getByText("ご登録頂きありがとうございます！"),
     ).toBeVisible();
 
-    // 6. Inbucketの状態をデバッグ
-    const healthCheck = await fetch(
-      `${INBUCKET_URL}/api/v1/monitor/health`,
-    ).catch((e) => ({ ok: false, status: 0, statusText: String(e) }));
-    console.log(
-      "Inbucket health check:",
-      "ok" in healthCheck ? healthCheck.status : "error",
-    );
-
-    // ローカルパートとフルメールの両方でメールボックスを確認
-    const localPartMessages = await getInbucketMessages(mailbox);
-    const fullEmailMessages = await getInbucketMessages(testEmail);
-    console.log(`Mailbox "${mailbox}": ${localPartMessages.length} messages`);
-    console.log(`Mailbox "${testEmail}": ${fullEmailMessages.length} messages`);
-
-    // メールが見つかった方を使用
-    const messages = await waitForEmail(
-      fullEmailMessages.length > 0 ? testEmail : mailbox,
-      15000,
-    );
+    // 6. Mailpitでメールを確認
+    const messages = await waitForEmail(testEmail);
     expect(messages.length).toBeGreaterThan(0);
 
     // 7. メール本文を取得して確認URLを抽出
-    const message = await getInbucketMessage(mailbox, messages[0].id);
-    const htmlBody = message.body?.html || "";
+    const message = await getMailpitMessage(messages[0].ID);
+    const htmlBody = message.HTML || "";
     const confirmationUrl = extractConfirmationUrl(htmlBody);
 
     // 8. 確認URLの検証
