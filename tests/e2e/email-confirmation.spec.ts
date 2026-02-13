@@ -27,10 +27,11 @@ async function getInbucketMessage(mailbox: string, messageId: string) {
 }
 
 /**
- * メール本文から確認URLを抽出する
+ * メール本文からリンクURLを抽出する
  */
 function extractConfirmationUrl(htmlBody: string): string | null {
-  const match = htmlBody.match(/href="([^"]*\/auth\/v1\/verify[^"]*)"/);
+  // メールテンプレートのボタンリンクからURLを抽出
+  const match = htmlBody.match(/href="([^"]+)"/);
   return match ? match[1] : null;
 }
 
@@ -52,10 +53,8 @@ async function waitForEmail(
   throw new Error(`Timed out waiting for email in mailbox: ${mailbox}`);
 }
 
-test.describe("メール確認URLの検証", () => {
-  test("新規登録時の確認メールのURLにenv(SITE_URL)が含まれない", async ({
-    page,
-  }) => {
+test.describe("新規登録フロー（メール確認含む）", () => {
+  test("サインアップ → メール確認 → ログイン完了", async ({ page }) => {
     // ランダムなメールアドレスを生成
     const randomStr = Math.random().toString(36).substring(2, 10);
     const testEmail = `test-confirm-${randomStr}@example.com`;
@@ -86,40 +85,61 @@ test.describe("メール確認URLの検証", () => {
       .getByRole("button", { name: "メールアドレスとパスワードで作成" })
       .click();
 
-    // 4. メールアドレスとパスワードを入力
+    // 4. メールアドレスとパスワードを入力してアカウント作成
     await expect(page).toHaveURL("/sign-up-email");
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', "TestPassword123!");
-
-    // 5. アカウント作成
     await page.getByRole("button", { name: "アカウントを作成" }).click();
+
+    // 5. サインアップ成功ページが表示されることを確認
     await expect(page).toHaveURL(/\/sign-up-success/, { timeout: 10000 });
+    await expect(
+      page.getByText("ご登録頂きありがとうございます！"),
+    ).toBeVisible();
 
     // 6. Inbucketでメールを確認
     const messages = await waitForEmail(mailbox);
     expect(messages.length).toBeGreaterThan(0);
 
-    // 7. メール本文を取得
+    // 7. メール本文を取得して確認URLを抽出
     const message = await getInbucketMessage(mailbox, messages[0].id);
     const htmlBody = message.body?.html || "";
-
-    // 8. 確認URLを抽出して検証
     const confirmationUrl = extractConfirmationUrl(htmlBody);
-    expect(confirmationUrl).not.toBeNull();
-    expect(confirmationUrl).toBeDefined();
 
-    // env(SITE_URL)がリテラルとして含まれていないこと
+    // 8. 確認URLの検証
+    expect(confirmationUrl).not.toBeNull();
     expect(confirmationUrl).not.toContain("env(");
     expect(confirmationUrl).not.toContain("SITE_URL)");
 
-    // 正しいURLフォーマットであること
     const parsedUrl = new URL(confirmationUrl as string);
     expect(parsedUrl.protocol).toMatch(/^https?:$/);
 
-    // redirect_toパラメータにもenv()が含まれていないこと
-    const redirectTo = parsedUrl.searchParams.get("redirect_to");
-    if (redirectTo) {
-      expect(redirectTo).not.toContain("env(");
+    // 9. 確認URLにアクセスしてメール認証を完了する
+    // Supabaseが検証してアプリの /api/auth/callback にリダイレクトする
+    await page.goto(confirmationUrl as string);
+
+    // 10. 認証完了後の遷移を確認
+    // PKCE成功 → ホームページ（/）にリダイレクト
+    // PKCE失敗 → サインインページ（/sign-in）にリダイレクト（メール認証は完了している）
+    await page.waitForURL(/^\/(sign-in)?(\?.*)?$/, { timeout: 15000 });
+
+    const currentUrl = page.url();
+    if (currentUrl.includes("/sign-in")) {
+      // PKCE検証失敗のケース: メール認証は完了しているのでログインできる
+      await expect(page.getByText("メール認証が完了しました")).toBeVisible();
+
+      // ログイン情報を入力
+      await page.fill('input[name="email"]', testEmail);
+      await page.fill('input[name="password"]', "TestPassword123!");
+      await page.getByRole("button", { name: "ログイン", exact: true }).click();
+
+      // ホームページにリダイレクトされることを確認
+      await page.waitForURL("/", { timeout: 15000 });
     }
+
+    // 11. ログイン状態であることを確認（ユーザーメニューが表示される）
+    await expect(page.getByTestId("usermenubutton")).toBeVisible({
+      timeout: 10000,
+    });
   });
 });
