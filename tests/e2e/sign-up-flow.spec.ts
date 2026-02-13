@@ -32,7 +32,9 @@ async function getMailpitMessage(messageId: string) {
  */
 function extractConfirmationUrl(htmlBody: string): string | null {
   const match = htmlBody.match(/href="([^"]+)"/);
-  return match ? match[1] : null;
+  if (!match) return null;
+  // HTMLエンティティをデコード（&amp; → &）
+  return match[1].replace(/&amp;/g, "&");
 }
 
 /**
@@ -118,9 +120,9 @@ test.describe("新規登録フロー（メール確認含む）", () => {
     await page.goto(confirmationUrl as string);
 
     // 10. 認証完了後の遷移を確認
-    // PKCE成功 → ホームページ（/）にリダイレクト
+    // PKCE成功 → プロフィール設定ページ（/settings/profile?new=true）またはホームページ（/）にリダイレクト
     // PKCE失敗 → サインインページ（/sign-in）にリダイレクト（メール認証は完了している）
-    await page.waitForURL(/^\/(sign-in)?(\?.*)?$/, { timeout: 15000 });
+    await page.waitForURL(/\/(sign-in|settings\/profile)/, { timeout: 15000 });
 
     const currentUrl = page.url();
     if (currentUrl.includes("/sign-in")) {
@@ -132,11 +134,11 @@ test.describe("新規登録フロー（メール確認含む）", () => {
       await page.fill('input[name="password"]', "TestPassword123!");
       await page.getByRole("button", { name: "ログイン", exact: true }).click();
 
-      // ホームページにリダイレクトされることを確認
-      await page.waitForURL("/", { timeout: 15000 });
+      // プロフィール設定ページにリダイレクトされることを確認
+      await page.waitForURL(/\/settings\/profile/, { timeout: 15000 });
     }
 
-    // 11. ログイン状態であることを確認（ユーザーメニューが表示される）
+    // 11. ログイン状態であることを確認（プロフィール設定ページが表示される）
     await expect(page.getByTestId("usermenubutton")).toBeVisible({
       timeout: 10000,
     });
