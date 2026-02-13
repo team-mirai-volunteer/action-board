@@ -6,7 +6,10 @@ const INBUCKET_URL = "http://localhost:54324";
  * Inbucketからメールボックスのメッセージ一覧を取得する
  */
 async function getInbucketMessages(mailbox: string) {
-  const response = await fetch(`${INBUCKET_URL}/api/v1/mailboxes/${mailbox}`);
+  const response = await fetch(`${INBUCKET_URL}/api/v1/mailbox/${mailbox}`);
+  if (response.status === 404) {
+    return [];
+  }
   if (!response.ok) {
     throw new Error(`Inbucket API error: ${response.status}`);
   }
@@ -18,7 +21,7 @@ async function getInbucketMessages(mailbox: string) {
  */
 async function getInbucketMessage(mailbox: string, messageId: string) {
   const response = await fetch(
-    `${INBUCKET_URL}/api/v1/mailboxes/${mailbox}/${messageId}`,
+    `${INBUCKET_URL}/api/v1/mailbox/${mailbox}/${messageId}`,
   );
   if (!response.ok) {
     throw new Error(`Inbucket API error: ${response.status}`);
