@@ -1,0 +1,74 @@
+name: Supabase & Integration Tests
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Supabase & Integration Tests
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # 環境変数を設定（ローカルSupabaseの接続情報）
+      - name: Set Supabase environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
+          echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
+        env:
+          SMTP_ENABLED: false
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          BQ_USER_PASSWORD: bq_user_password
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Supabase RLS tests
+        run: pnpm run test:ci:supabase
+
+      - name: Run Integration tests
+        run: pnpm run test:ci:integration
+
+      - name: Upload Jest test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-supabase-integration-report
+          path: jest-report/
+          retention-days: 30
+
+      - name: Upload integration coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage-integration/lcov.info
+          flags: integrationtests
+          name: codecov-integration-tests
+          fail_ci_if_error: false
+          verbose: true

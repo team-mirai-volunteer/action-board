@@ -6,10 +6,10 @@ import { PrefectureSelect } from "@/features/ranking/components/prefecture-selec
 import { RankingPrefecture } from "@/features/ranking/components/ranking-prefecture";
 import { RankingTabs } from "@/features/ranking/components/ranking-tabs";
 import { SeasonRankingHeader } from "@/features/ranking/components/season-ranking-header";
-import { getUserPrefecturesRanking } from "@/features/ranking/services/get-prefectures-ranking";
+import { getUserPrefecturesRanking } from "@/features/ranking/loaders/ranking-loaders";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { PREFECTURES } from "@/lib/constants/prefectures";
-import { getSeasonBySlug } from "@/lib/services/seasons";
+import { getSeasonBySlug } from "@/lib/loaders/seasons-loaders";
 
 interface Props {
   params: Promise<{
@@ -73,16 +73,11 @@ export default async function SeasonPrefectureRankingPage({
     return <div className="p-4">選択された都道府県が見つかりません。</div>;
   }
 
-  let userRanking = null;
-
-  if (user) {
-    // 現在のユーザーの都道府県別ランキングを探す（シーズン対応）
-    userRanking = await getUserPrefecturesRanking(
-      selectedPrefecture,
-      user.id,
-      season.id,
-    );
-  }
+  // 現在のユーザーの都道府県別ランキングを探す（シーズン対応）
+  const userRanking = await getUserPrefecturesRanking(
+    selectedPrefecture,
+    season.id,
+  );
 
   return (
     <div className="flex flex-col items-center min-h-screen pb-4 w-full">

@@ -2,14 +2,8 @@
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
-import {
-  gradeQuizAnswers,
-  type QuizAnswer,
-  type QuizQuestion,
-  transformQuizRow,
-} from "../utils/quiz-grader";
-
-export type { QuizQuestion };
+import { checkQuizAnswers } from "../use-cases/check-quiz-answers";
+import { type QuizQuestion, transformQuizRow } from "../utils/quiz-grader";
 
 // ミッションリンクの型定義
 export interface MissionLink {
@@ -191,23 +185,15 @@ export const checkQuizAnswersAction = async (
       return { success: false, error: "認証が必要です" };
     }
 
-    // ミッションに紐づく問題を取得（正解と照合するため）
-    const questions = await getQuestionsByMission(missionId);
-
-    if (!questions || questions.length === 0) {
-      return {
-        success: false,
-        error: "このミッションにはクイズ問題が設定されていません",
-      };
-    }
-
-    // 回答チェック
-    const gradeResult = gradeQuizAnswers(questions, answers as QuizAnswer[]);
-
-    return {
-      success: true,
-      ...gradeResult,
-    };
+    // ユースケースに委譲
+    const adminSupabase = await createAdminClient();
+    return await checkQuizAnswers(adminSupabase, {
+      missionId,
+      answers: answers.map((a) => ({
+        questionId: a.questionId,
+        selectedAnswer: a.selectedAnswer,
+      })),
+    });
   } catch (error) {
     console.error("Error checking quiz answers:", error);
     return { success: false, error: "クイズの採点に失敗しました" };

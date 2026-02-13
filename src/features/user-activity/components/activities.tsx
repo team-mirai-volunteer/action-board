@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
-import { getGlobalActivityTimeline } from "@/features/user-activity/services/timeline";
+import { getGlobalActivityTimeline } from "@/features/user-activity/loaders/timeline-loaders";
 
 export default async function Activities() {
   const timeline = await getGlobalActivityTimeline(3);

@@ -1,10 +1,10 @@
-name: Build & Test E2E/RLS
+name: E2E Tests
 on:
   pull_request:
 
 jobs:
   test:
-    name: Build & Tests
+    name: E2E Tests
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -34,8 +34,11 @@ jobs:
         with:
           version: latest
 
-      - name: Start Supabase
-        run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
+      # Supabaseをバックグラウンドで起動し、install/build と並列化
+      - name: Start Supabase (background)
+        run: |
+          supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector > /tmp/supabase-start.log 2>&1 &
+          echo $! > /tmp/supabase-start.pid
         env:
           SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
@@ -63,24 +66,40 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install chromium
 
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'app/**') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            nextjs-${{ runner.os }}-
+
       - name: Build Next.js
         run: pnpm run build
+
+      # Supabaseの起動完了を待機（build中にバックグラウンドで起動済みのはず）
+      - name: Wait for Supabase
+        run: |
+          echo "Waiting for Supabase to be ready..."
+          for i in $(seq 1 90); do
+            if curl -s http://localhost:54321/rest/v1/ > /dev/null 2>&1; then
+              echo "Supabase is ready! (attempt $i)"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Supabase failed to start within 180s. Logs:"
+          cat /tmp/supabase-start.log
+          exit 1
 
       - name: Load poster CSV data
         run: pnpm run poster:load-csv
 
-      - name: Run CI Tests (Jest + Playwright in parallel)
+      - name: Run E2E tests
         run: pnpm run test:ci:e2e
         env:
           CI: 'true'
-
-      - name: Upload Jest test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: jest-report
-          path: jest-report/
-          retention-days: 30
 
       - name: Upload Playwright test results
         if: always()

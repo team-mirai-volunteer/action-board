@@ -2,10 +2,10 @@ import {
   getMissionAchievementCounts,
   getMissionCategoryView,
   getPostingCountsForMissions,
-} from "@/features/missions/services/missions";
+} from "@/features/missions/loaders/missions-loaders";
 import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
-import { getUserMissionAchievements } from "@/features/user-achievements/services/achievements";
+import { getUserMissionAchievements } from "@/features/user-achievements/loaders/achievements-loaders";
 import { HorizontalScrollContainer } from "./horizontal-scroll-container";
 import Mission from "./mission-card";
 import type { MissionsProps } from "./mission-list";

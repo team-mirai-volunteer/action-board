@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   getActiveEvent,
   getAllEvents,
-} from "@/features/map-posting/services/posting-events.server";
+} from "@/features/map-posting/loaders/posting-events-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {

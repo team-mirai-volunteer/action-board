@@ -1,4 +1,4 @@
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { getCurrentSeasonId } from "@/lib/loaders/seasons-loaders";
 import { getUserTopBadge } from "../services/get-user-top-badges";
 import { BadgeItem } from "./badge-item";
 

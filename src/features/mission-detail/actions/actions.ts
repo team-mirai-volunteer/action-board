@@ -2,40 +2,19 @@
 
 import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
-import { isBonusMission } from "@/features/mission-detail/utils/mission-xp-utils";
-import {
-  getUserXpBonus,
-  grantMissionCompletionXp,
-  grantXp,
-} from "@/features/user-level/services/level";
-import type { UserLevel } from "@/features/user-level/types/level-types";
-import { calculateMissionXp } from "@/features/user-level/utils/level-calculator";
-import {
-  MAX_POSTER_COUNT,
-  MAX_POSTING_COUNT,
-  POSTER_POINTS_PER_UNIT,
-  POSTING_POINTS_PER_UNIT,
-} from "@/lib/constants/mission-config";
-import { getCurrentSeasonId } from "@/lib/services/seasons";
+import { MAX_POSTING_COUNT } from "@/lib/constants/mission-config";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
-import type { Database, TablesInsert } from "@/lib/types/supabase";
 import { formatZodErrors } from "@/lib/utils/validation-utils";
-import {
-  buildArtifactPayload,
-  getArtifactTypeLabel,
-  grantActivityBonusXp,
-  savePosterActivity,
-  savePostingActivity,
-} from "./artifact-helpers";
+import { achieveMission } from "../use-cases/achieve-mission";
+import { cancelSubmission } from "../use-cases/cancel-submission";
 
-// Quiz関連のServer ActionsとQuizQuestion型をインポート
+// Quiz関連のServer Actionsをインポート
 import {
   checkQuizAnswersAction,
   getMissionQuizCategoryAction,
   getQuizQuestionsAction,
-  type QuizQuestion,
 } from "./quiz-actions";
 
 // Quiz関連のServer Actionsを再エクスポート
@@ -43,7 +22,6 @@ export {
   getMissionQuizCategoryAction,
   getQuizQuestionsAction,
   checkQuizAnswersAction,
-  type QuizQuestion,
 };
 
 // 基本スキーマ（共通項目）
@@ -300,14 +278,9 @@ export const achieveMissionAction = async (formData: FormData) => {
     boardLong,
   });
 
-  // ポスティングボーナスXP + ミッション達成XP 用の変数
-  let totalXpGranted = 0;
-  // 作成された成果物のID（ポスティングマップ等で使用）
-  let createdArtifactId: string | undefined;
-
   if (!validatedFields.success) {
     return {
-      success: false,
+      success: false as const,
       error: formatZodErrors(validatedFields.error),
     };
   }
@@ -325,90 +298,12 @@ export const achieveMissionAction = async (formData: FormData) => {
   } = await supabase.auth.getUser();
   if (!authUser) {
     return {
-      success: false,
+      success: false as const,
       error: "認証エラーが発生しました。",
     };
   }
 
-  // ミッション情報を取得して、max_achievement_count と required_artifact_type と is_featured を確認
-  const { data: missionData, error: missionFetchError } = await supabase
-    .from("missions")
-    .select("max_achievement_count, required_artifact_type, is_featured")
-    .eq("id", validatedMissionId)
-    .single();
-
-  if (missionFetchError) {
-    console.error(`Mission fetch error: ${missionFetchError.message}`);
-    return {
-      success: false,
-      error: "ミッション情報の取得に失敗しました。",
-    };
-  }
-
-  if (missionData?.max_achievement_count !== null) {
-    // ユーザーの達成回数を取得
-    const { data: userAchievements, error: userAchievementError } =
-      await supabase
-        .from("achievements")
-        .select("id", { count: "exact" })
-        .eq("user_id", authUser.id)
-        .eq("mission_id", validatedMissionId);
-
-    if (userAchievementError) {
-      console.error(
-        `User achievement count fetch error: ${userAchievementError.message}`,
-      );
-      return {
-        success: false,
-        error: "ユーザーの達成回数の取得に失敗しました。",
-      };
-    }
-
-    // ユーザーの達成回数が最大達成回数に達しているかチェック
-    if (
-      userAchievements &&
-      typeof missionData.max_achievement_count === "number" &&
-      userAchievements.length >= missionData.max_achievement_count
-    ) {
-      return {
-        success: false,
-        error: "あなたはこのミッションの達成回数の上限に達しています。",
-      };
-    }
-  }
-
-  // LINK重複バリデーション
-  if (
-    validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key &&
-    validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key
-  ) {
-    const { data: duplicateArtifacts, error: duplicateError } = await supabase
-      .from("mission_artifacts")
-      .select(`
-      id,
-      achievements!inner(mission_id)
-    `)
-      .eq("user_id", authUser.id)
-      .eq("artifact_type", ARTIFACT_TYPES.LINK.key)
-      .eq("link_url", validatedData.artifactLink)
-      .eq("achievements.mission_id", validatedMissionId);
-
-    if (duplicateError) {
-      return {
-        success: false,
-        error: "重複チェック中にエラーが発生しました。",
-      };
-    }
-
-    if (duplicateArtifacts && duplicateArtifacts.length > 0) {
-      return {
-        success: false,
-        error: "記録に失敗しました。同じURLがすでに登録されています。",
-      };
-    }
-  }
-
-  // YOUTUBE重複バリデーション（同じ動画へのいいねは1回のみ）
+  // YouTube重複バリデーション（同じ動画へのいいねは1回のみ）
   if (
     validatedRequiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key &&
     validatedData.requiredArtifactType === ARTIFACT_TYPES.YOUTUBE.key
@@ -419,7 +314,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     const videoId = extractVideoIdFromUrl(validatedData.artifactLink);
 
     if (videoId) {
-      // youtube_video_likesテーブルで既に記録済みか確認
       const { data: existingLike, error: likeCheckError } = await supabase
         .from("youtube_video_likes")
         .select("id")
@@ -429,14 +323,14 @@ export const achieveMissionAction = async (formData: FormData) => {
 
       if (likeCheckError) {
         return {
-          success: false,
+          success: false as const,
           error: "重複チェック中にエラーが発生しました。",
         };
       }
 
       if (existingLike) {
         return {
-          success: false,
+          success: false as const,
           error: "この動画へのいいねは既に記録されています。",
         };
       }
@@ -461,12 +355,11 @@ export const achieveMissionAction = async (formData: FormData) => {
 
     if (!videoId) {
       return {
-        success: false,
+        success: false as const,
         error: "YouTube動画のURLを正しく入力してください。",
       };
     }
 
-    // チームみらい動画かどうかを確認
     const { data: video, error: videoError } = await supabase
       .from("youtube_videos")
       .select("video_id")
@@ -476,19 +369,18 @@ export const achieveMissionAction = async (formData: FormData) => {
 
     if (videoError) {
       return {
-        success: false,
+        success: false as const,
         error: "動画の確認中にエラーが発生しました。",
       };
     }
 
     if (!video) {
       return {
-        success: false,
+        success: false as const,
         error: "この動画はチームみらいの動画ではありません。",
       };
     }
 
-    // コメントIDがある場合は重複チェック
     if (commentId) {
       const adminClient = await createAdminClient();
       const { data: existingComment, error: commentCheckError } =
@@ -501,14 +393,14 @@ export const achieveMissionAction = async (formData: FormData) => {
 
       if (commentCheckError) {
         return {
-          success: false,
+          success: false as const,
           error: "重複チェック中にエラーが発生しました。",
         };
       }
 
       if (existingComment) {
         return {
-          success: false,
+          success: false as const,
           error: "このコメントは既に記録されています。",
         };
       }
@@ -533,14 +425,14 @@ export const achieveMissionAction = async (formData: FormData) => {
 
     if (!validateResult.success) {
       return {
-        success: false,
+        success: false as const,
         error: validateResult.error || "YouTube動画の検証に失敗しました。",
       };
     }
 
     if (!validateResult.isTeamMirai) {
       return {
-        success: false,
+        success: false as const,
         error:
           validateResult.error ||
           "この動画はチームみらいの動画ではありません。",
@@ -550,297 +442,68 @@ export const achieveMissionAction = async (formData: FormData) => {
     validatedYouTubeVideoId = validateResult.videoId ?? null;
   }
 
-  // 現在のシーズンIDを取得
-  const currentSeasonId = await getCurrentSeasonId();
-  if (!currentSeasonId) {
-    return {
-      success: false,
-      error: "Current season not found",
-    };
+  // ユースケースに委譲（ミッション達成コアロジック）
+  const adminClient = await createAdminClient();
+  const result = await achieveMission(adminClient, supabase, {
+    userId: authUser.id,
+    missionId: validatedMissionId,
+    artifactType: validatedRequiredArtifactType,
+    artifactData: validatedData,
+    artifactDescription: validatedArtifactDescription,
+    shapeId: formData.get("shapeId") as string | null,
+    boardId: boardId || null,
+  });
+
+  if (!result.success) {
+    return result;
   }
 
-  // ミッション達成を記録
-  const achievementPayload = {
-    user_id: authUser.id,
-    mission_id: validatedMissionId,
-    season_id: currentSeasonId,
-  };
-
-  const { data: achievement, error: achievementError } = await supabase
-    .from("achievements")
-    .insert(achievementPayload)
-    .select("id")
-    .single();
-
-  if (achievementError) {
-    console.error(
-      `Achievement Error: ${achievementError.code} ${achievementError.message}`,
-    );
-    return {
-      success: false,
-      error: `ミッション達成の記録に失敗しました: ${achievementError.message}`,
-    };
-  }
-
-  if (!achievement) {
-    return {
-      success: false,
-      error: "達成記録の作成に失敗しました。",
-    };
-  }
-
-  // 成果物がある場合は mission_artifacts に記録
-  // LINK_ACCESSタイプの場合は成果物の保存をスキップ
-  if (
-    validatedRequiredArtifactType &&
-    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key &&
-    validatedRequiredArtifactType !== ARTIFACT_TYPES.LINK_ACCESS.key
-  ) {
-    // artifact type に基づいてペイロードフィールドをビルド
-    const artifactFields = buildArtifactPayload(
-      validatedRequiredArtifactType,
-      validatedData,
-    );
-    const artifactTypeLabel = getArtifactTypeLabel(
-      validatedRequiredArtifactType,
+  // YouTube固有の後処理（ユースケース外）
+  if (validatedYouTubeVideoId && result.artifactId) {
+    const { createYouTubeLikeRecord } = await import(
+      "@/features/youtube/services/youtube-like-service"
     );
 
-    const artifactPayload: TablesInsert<"mission_artifacts"> = {
-      achievement_id: achievement.id,
-      user_id: authUser.id,
-      artifact_type: validatedRequiredArtifactType,
-      description: validatedArtifactDescription || null,
-      ...artifactFields,
-    };
-
-    let validationError = null;
-
-    // formDataの内容を全てログ出力
-    const formDataObj: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      formDataObj[key] = String(value);
-    });
-
-    // CHECK制約: QUIZタイプ以外はlink_url、text_content、image_storage_pathのいずれか一つは必須
-    if (
-      validatedRequiredArtifactType !== ARTIFACT_TYPES.QUIZ.key &&
-      !artifactPayload.link_url &&
-      !artifactPayload.image_storage_path &&
-      !artifactPayload.text_content
-    ) {
-      validationError =
-        validationError ||
-        "リンク、テキスト、または画像のいずれかは必須です（CHECK制約違反防止）";
-    }
-
-    // バリデーションエラー時は詳細ログとともにリダイレクト
-    if (validationError) {
-      console.error(
-        `[Artifact Validation Error] type=${artifactTypeLabel} payload=`,
-        artifactPayload,
-        "formData:",
-        formDataObj,
-        "error:",
-        validationError,
-      );
-      return {
-        success: false,
-        error: validationError,
-      };
-    }
-
-    const { data: newArtifact, error: artifactError } = await supabase
-      .from("mission_artifacts")
-      .insert(artifactPayload)
-      .select("id") // 作成された artifact の ID を取得
-      .single();
-
-    if (artifactError) {
-      console.error(
-        `[Artifact Error] type=${artifactTypeLabel} payload=`,
-        artifactPayload,
-        "formData:",
-        formDataObj,
-        `error= ${artifactError.code} ${artifactError.message}`,
-      );
-      return {
-        success: false,
-        error: `成果物の保存に失敗しました: ${artifactError.message}`,
-      };
-    }
-
-    if (!newArtifact) {
-      return {
-        success: false,
-        error: "成果物レコードの作成に失敗しました。",
-      };
-    }
-
-    // 作成された成果物IDを保持（戻り値で使用）
-    createdArtifactId = newArtifact.id;
-
-    // ポスティング活動の詳細情報を保存
-    if (
-      validatedRequiredArtifactType === ARTIFACT_TYPES.POSTING.key &&
-      validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTING.key
-    ) {
-      const shapeId = formData.get("shapeId") as string | null;
-
-      const postingResult = await savePostingActivity(supabase, {
-        artifactId: newArtifact.id,
-        postingCount: validatedData.postingCount,
-        locationText: validatedData.locationText ?? "",
-        shapeId: shapeId || null,
-      });
-      if (!postingResult.success) {
-        return { success: false, error: postingResult.error };
-      }
-
-      totalXpGranted += await grantActivityBonusXp({
-        userId: authUser.id,
-        achievementId: achievement.id,
-        count: validatedData.postingCount,
-        pointsPerUnit: POSTING_POINTS_PER_UNIT,
-        isFeatured: missionData?.is_featured ?? false,
-        descriptionLabel: "ポスティング活動ボーナス",
-      });
-    }
-
-    // ポスター活動の詳細情報を保存
-    if (
-      validatedRequiredArtifactType === ARTIFACT_TYPES.POSTER.key &&
-      validatedData.requiredArtifactType === ARTIFACT_TYPES.POSTER.key
-    ) {
-      const posterResult = await savePosterActivity(supabase, {
-        userId: authUser.id,
-        artifactId: newArtifact.id,
-        prefecture:
-          validatedData.prefecture as Database["public"]["Enums"]["poster_prefecture_enum"],
-        city: validatedData.city,
-        boardNumber: validatedData.boardNumber,
-        boardName: validatedData.boardName || null,
-        boardNote: validatedData.boardNote || null,
-        boardAddress: validatedData.boardAddress || null,
-        boardLat: validatedData.boardLat
-          ? Number.parseFloat(validatedData.boardLat)
-          : null,
-        boardLong: validatedData.boardLong
-          ? Number.parseFloat(validatedData.boardLong)
-          : null,
-        boardId: boardId || null,
-      });
-      if (!posterResult.success) {
-        return { success: false, error: posterResult.error };
-      }
-
-      totalXpGranted += await grantActivityBonusXp({
-        userId: authUser.id,
-        achievementId: achievement.id,
-        count: MAX_POSTER_COUNT,
-        pointsPerUnit: POSTER_POINTS_PER_UNIT,
-        isFeatured: missionData?.is_featured ?? false,
-        descriptionLabel: "ポスターボーナス",
-      });
-    }
-
-    // YouTubeいいね記録をyoutube_video_likesテーブルに保存
-    // 検証は既にDB書き込み前に完了済み（validatedYouTubeVideoIdに格納）
-    if (validatedYouTubeVideoId) {
-      const { createYouTubeLikeRecord } = await import(
-        "@/features/youtube/services/youtube-like-service"
-      );
-
-      const likeResult = await createYouTubeLikeRecord(
-        authUser.id,
-        validatedYouTubeVideoId,
-        newArtifact.id,
-      );
-
-      if (!likeResult.success) {
-        return {
-          success: false,
-          error: likeResult.error || "YouTubeいいね記録の保存に失敗しました。",
-        };
-      }
-    }
-
-    // YouTubeコメント記録をyoutube_user_commentsテーブルに保存
-    // 検証は既にDB書き込み前に完了済み（validatedYouTubeCommentInfoに格納）
-    // コメントIDがキャッシュに存在する場合のみ記録（外部キー制約のため）
-    if (validatedYouTubeCommentInfo?.commentId) {
-      // コメントがキャッシュに存在するか確認
-      const { data: cachedComment } = await supabase
-        .from("youtube_video_comments")
-        .select("comment_id")
-        .eq("comment_id", validatedYouTubeCommentInfo.commentId)
-        .maybeSingle();
-
-      if (cachedComment) {
-        const { createYouTubeCommentRecord } = await import(
-          "@/features/youtube/services/youtube-comment-service"
-        );
-
-        const commentResult = await createYouTubeCommentRecord(
-          authUser.id,
-          validatedYouTubeCommentInfo.videoId,
-          validatedYouTubeCommentInfo.commentId,
-          newArtifact.id,
-        );
-
-        if (!commentResult.success) {
-          // youtube_user_commentsへの記録失敗はミッション達成を妨げない
-          console.error(
-            "YouTubeコメント記録の保存に失敗:",
-            commentResult.error,
-          );
-        }
-      }
-      // キャッシュにない場合はyoutube_user_commentsへの記録をスキップ
-      // （mission_artifactsには記録されるのでミッション達成は有効）
-    }
-  }
-
-  // ポスティングミッション以外の場合のみ、ミッション達成時にXPを付与
-  let xpResult: {
-    success: boolean;
-    xpGranted?: number;
-    userLevel?: UserLevel | null;
-    error?: string;
-  };
-  if (missionData?.required_artifact_type !== "POSTING") {
-    xpResult = await grantMissionCompletionXp(
+    const likeResult = await createYouTubeLikeRecord(
       authUser.id,
-      validatedMissionId,
-      achievement.id,
+      validatedYouTubeVideoId,
+      result.artifactId,
     );
 
-    if (!xpResult.success) {
-      console.error("XP付与に失敗しました:", xpResult.error);
-      // XP付与の失敗はミッション達成の成功を妨げない
+    if (!likeResult.success) {
+      return {
+        success: false as const,
+        error: likeResult.error || "YouTubeいいね記録の保存に失敗しました。",
+      };
     }
-    totalXpGranted += xpResult?.xpGranted ?? 0;
-  } else {
-    // ポスティングミッションの場合は現在のユーザーレベルを取得（シーズン対応）
-    const { data: currentUserLevel } = await supabase
-      .from("user_levels")
-      .select("*")
-      .eq("user_id", authUser.id)
-      .eq("season_id", currentSeasonId)
-      .single();
-
-    xpResult = {
-      success: true,
-      xpGranted: 0,
-      userLevel: currentUserLevel,
-    };
   }
-  return {
-    success: true,
-    message: "ミッションを達成しました！",
-    xpGranted: totalXpGranted,
-    userLevel: xpResult.userLevel,
-    artifactId: createdArtifactId,
-  };
+
+  if (validatedYouTubeCommentInfo?.commentId && result.artifactId) {
+    const { data: cachedComment } = await supabase
+      .from("youtube_video_comments")
+      .select("comment_id")
+      .eq("comment_id", validatedYouTubeCommentInfo.commentId)
+      .maybeSingle();
+
+    if (cachedComment) {
+      const { createYouTubeCommentRecord } = await import(
+        "@/features/youtube/services/youtube-comment-service"
+      );
+
+      const commentResult = await createYouTubeCommentRecord(
+        authUser.id,
+        validatedYouTubeCommentInfo.videoId,
+        validatedYouTubeCommentInfo.commentId,
+        result.artifactId,
+      );
+
+      if (!commentResult.success) {
+        console.error("YouTubeコメント記録の保存に失敗:", commentResult.error);
+      }
+    }
+  }
+
+  return result;
 };
 
 export const cancelSubmissionAction = async (formData: FormData) => {
@@ -855,14 +518,14 @@ export const cancelSubmissionAction = async (formData: FormData) => {
 
   if (!validatedFields.success) {
     return {
-      success: false,
+      success: false as const,
       error: formatZodErrors(validatedFields.error),
     };
   }
 
   const {
     achievementId: validatedAchievementId,
-    missionId: _validatedMissionId,
+    missionId: validatedMissionId,
   } = validatedFields.data;
 
   const supabase = createClient();
@@ -872,93 +535,14 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) {
-    return { success: false, error: "認証エラーが発生しました。" };
+    return { success: false as const, error: "認証エラーが発生しました。" };
   }
 
-  // 達成記録が存在し、ユーザーのものかチェック
-  const { data: achievement, error: achievementFetchError } = await supabase
-    .from("achievements")
-    .select("id, user_id, mission_id, season_id")
-    .eq("id", validatedAchievementId)
-    .eq("user_id", authUser.id)
-    .single();
-
-  if (achievementFetchError || !achievement) {
-    console.error("Achievement fetch error:", achievementFetchError);
-    return {
-      success: false,
-      error: "達成記録が見つからないか、アクセス権限がありません。",
-    };
-  }
-
-  // mission_idがnullでないことを確認
-  if (!achievement.mission_id) {
-    return {
-      success: false,
-      error: "ミッションIDが見つかりません。",
-    };
-  }
-
-  // ミッション情報を取得してXP計算のための難易度とis_featuredを確認
-  const { data: missionData, error: missionFetchError } = await supabase
-    .from("missions")
-    .select("difficulty, title, slug, is_featured")
-    .eq("id", achievement.mission_id)
-    .single();
-
-  if (missionFetchError || !missionData) {
-    console.error("Mission fetch error:", missionFetchError);
-    return {
-      success: false,
-      error: "ミッション情報の取得に失敗しました。",
-    };
-  }
-
-  // 達成記録を削除（CASCADE により関連する mission_artifacts も削除される）
-  const { error: deleteError } = await supabase
-    .from("achievements")
-    .delete()
-    .eq("id", validatedAchievementId);
-
-  if (deleteError) {
-    console.error(`Delete Error: ${deleteError.code} ${deleteError.message}`);
-    return {
-      success: false,
-      error: `達成の取り消しに失敗しました: ${deleteError.message}`,
-    };
-  }
-
-  // XPを減算する（ミッション達成時に付与されたXPを取り消し、注目ミッションは2倍）
-  const xpToRevoke = calculateMissionXp(
-    missionData.difficulty,
-    missionData.is_featured,
-  );
-  const bonusXp = isBonusMission(missionData.slug)
-    ? await getUserXpBonus(authUser.id, validatedAchievementId)
-    : 0;
-  const totalXpToRevoke = xpToRevoke + bonusXp;
-
-  const xpResult = await grantXp(
-    authUser.id,
-    -totalXpToRevoke, // 負の値でXPを減算
-    "MISSION_CANCELLATION",
-    validatedAchievementId,
-    `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,
-  );
-
-  if (!xpResult.success) {
-    console.error("XP減算に失敗しました:", xpResult.error);
-    // XP減算の失敗はエラーとして扱うが、達成記録は既に削除済み
-    return {
-      success: false,
-      error: `達成の取り消しは完了しましたが、経験値の減算に失敗しました: ${xpResult.error}`,
-    };
-  }
-
-  return {
-    success: true,
-    message: "達成を取り消しました。",
-    xpRevoked: xpToRevoke,
-    userLevel: xpResult.userLevel,
-  };
+  // ユースケースに委譲
+  const adminSupabase = await createAdminClient();
+  return cancelSubmission(adminSupabase, supabase, {
+    userId: authUser.id,
+    achievementId: validatedAchievementId,
+    missionId: validatedMissionId,
+  });
 };

@@ -2,10 +2,10 @@ import { Separator } from "@/components/ui/separator";
 import {
   fetchAchievementData,
   fetchSupporterData,
-} from "@/features/metrics/services/get-metrics";
+} from "@/features/metrics/loaders/metrics-loaders";
 import type { AchievementData } from "@/features/metrics/types/metrics-types";
-import { getTikTokStatsSummary } from "@/features/tiktok-stats/services/tiktok-stats-service";
-import { getYouTubeStatsSummary } from "@/features/youtube-stats/services/youtube-stats-service";
+import { getTikTokStatsSummary } from "@/features/tiktok-stats/loaders/tiktok-stats-loaders";
+import { getYouTubeStatsSummary } from "@/features/youtube-stats/loaders/youtube-stats-loaders";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { AchievementMetric } from "./achievement-metric";
 import { MetricsLayout } from "./metrics-layout";
