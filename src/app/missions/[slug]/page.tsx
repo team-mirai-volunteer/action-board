@@ -15,6 +15,7 @@ import { getQuizQuestionsAction } from "@/features/mission-detail/actions/quiz-a
 import { MissionWithSubmissionHistory } from "@/features/mission-detail/components/mission-with-submission-history";
 import { RelatedMissions } from "@/features/mission-detail/components/related-missions";
 import {
+  getMissionData,
   getMissionPageData,
   getMissionSlugById,
 } from "@/features/mission-detail/loaders/mission-detail-loaders";
@@ -44,68 +45,19 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({
-  searchParams,
-  params,
-}: Props): Promise<Metadata> {
-  const { slug } = await params;
-
-  // UUIDの場合はslugを取得してリダイレクト用のメタデータを返す
-  if (isUUID(slug)) {
-    const missionSlug = await getMissionSlugById(slug);
-    if (missionSlug) {
-      // リダイレクト先のメタデータを生成
-      const pageData = await getMissionPageData(missionSlug);
-      if (!pageData) {
-        return createDefaultMetadata();
-      }
-      const { mission } = pageData;
-      let ogpImageUrl = `${defaultUrl}/api/missions/${missionSlug}/og`;
-      const searchParamsResolved = await searchParams;
-      ogpImageUrl =
-        searchParamsResolved.type === "complete"
-          ? `${ogpImageUrl}?type=complete`
-          : ogpImageUrl;
-
-      return {
-        title: `${mission.title} | ${config.title}`,
-        description: config.description,
-        openGraph: {
-          title: config.title,
-          description: config.description,
-          images: [ogpImageUrl],
-        },
-        twitter: {
-          card: "summary_large_image",
-          title: config.title,
-          description: config.description,
-          images: [ogpImageUrl],
-        },
-        icons: config.icons,
-        other: {
-          "font-family": notoSansJP.style.fontFamily,
-        },
-      };
-    }
-    return createDefaultMetadata();
-  }
-
-  const pageData = await getMissionPageData(slug);
-  if (!pageData) {
-    return createDefaultMetadata();
-  }
-  const { mission } = pageData;
+function buildMissionMetadata(
+  missionTitle: string,
+  slug: string,
+  searchParamsResolved: { [key: string]: string | string[] | undefined },
+): Metadata {
   let ogpImageUrl = `${defaultUrl}/api/missions/${slug}/og`;
-
-  // searchParamsをogpImageUrlに追加
-  const searchParamsResolved = await searchParams;
   ogpImageUrl =
     searchParamsResolved.type === "complete"
       ? `${ogpImageUrl}?type=complete`
       : ogpImageUrl;
 
   return {
-    title: `${mission.title} | ${config.title}`,
+    title: `${missionTitle} | ${config.title}`,
     description: config.description,
     openGraph: {
       title: config.title,
@@ -123,6 +75,39 @@ export async function generateMetadata({
       "font-family": notoSansJP.style.fontFamily,
     },
   };
+}
+
+export async function generateMetadata({
+  searchParams,
+  params,
+}: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  // UUIDの場合はslugを取得してリダイレクト用のメタデータを返す
+  if (isUUID(slug)) {
+    const missionSlug = await getMissionSlugById(slug);
+    if (missionSlug) {
+      const mission = await getMissionData(missionSlug);
+      if (!mission || mission.is_hidden) {
+        return createDefaultMetadata();
+      }
+      const searchParamsResolved = await searchParams;
+      return buildMissionMetadata(
+        mission.title,
+        missionSlug,
+        searchParamsResolved,
+      );
+    }
+    return createDefaultMetadata();
+  }
+
+  // getMissionDataのみ呼び出し（cache()で重複排除済み、submissions等は不要）
+  const mission = await getMissionData(slug);
+  if (!mission || mission.is_hidden) {
+    return createDefaultMetadata();
+  }
+  const searchParamsResolved = await searchParams;
+  return buildMissionMetadata(mission.title, slug, searchParamsResolved);
 }
 
 export default async function MissionPage({ params, searchParams }: Props) {
@@ -170,19 +155,27 @@ export default async function MissionPage({ params, searchParams }: Props) {
     }
   }
 
-  // ユーザーのミッション別ランキング情報を取得
-  const userWithMissionRanking = user
-    ? await getUserMissionRanking(mission.id)
-    : null;
-
-  // ミッションタイプに応じてbadgeTextを生成、ポスティングミッションの場合はポスティング枚数を取得
   const isPostingMission = mission.required_artifact_type === "POSTING";
-  const userPostingCount =
-    user && isPostingMission
-      ? await getUserPostingCountByMission(mission.id)
-      : 0;
-  let badgeText = "";
 
+  // 追加クエリを並列実行
+  const [
+    userWithMissionRanking,
+    userPostingCount,
+    achievementCountMap,
+    postingCountMap,
+  ] = await Promise.all([
+    user ? getUserMissionRanking(mission.id) : Promise.resolve(null),
+    user && isPostingMission
+      ? getUserPostingCountByMission(mission.id)
+      : Promise.resolve(0),
+    getMissionAchievementCounts(),
+    getPostingCountsForMissions([
+      mission,
+      ...allCategoryMissions.flatMap((c) => c.missions),
+    ]),
+  ]);
+
+  let badgeText = "";
   if (userWithMissionRanking) {
     if (isPostingMission) {
       badgeText = `${userPostingCount.toLocaleString()}枚`;
@@ -190,16 +183,6 @@ export default async function MissionPage({ params, searchParams }: Props) {
       badgeText = `${(userWithMissionRanking.user_achievement_count ?? 0).toLocaleString()}回`;
     }
   }
-
-  // 全体の達成数取得
-  const achievementCountMap = await getMissionAchievementCounts();
-
-  // ポスティングミッションの合計枚数を取得
-  const allMissions = allCategoryMissions.flatMap((c) => c.missions);
-  const postingCountMap = await getPostingCountsForMissions([
-    mission,
-    ...allMissions,
-  ]);
 
   return (
     <div className="container mx-auto max-w-4xl p-4">

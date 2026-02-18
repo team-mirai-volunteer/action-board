@@ -36,12 +36,12 @@ export async function getUserAchievements(missionId: string) {
   return getUserAchievementsService(user.id, missionId);
 }
 
-export async function getSubmissionHistory(missionId: string) {
+export async function getSubmissionHistory(missionId: string, limit?: number) {
   const {
     data: { user },
   } = await getAuth().getUser();
   if (!user) throw new Error("認証が必要です");
-  return getSubmissionHistoryService(user.id, missionId);
+  return getSubmissionHistoryService(user.id, missionId, limit);
 }
 
 export async function getMissionMainLink(missionId: string) {

@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { cache } from "react";
 import type {
   Achievement,
   MissionArtifact,
@@ -8,6 +9,8 @@ import type {
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
+
+const SUBMISSION_DISPLAY_LIMIT = 20;
 
 /**
  * UUIDv4の形式かどうかを検証する
@@ -50,31 +53,31 @@ async function getUserMissionAchievements(
 }
 
 /**
- * ミッションデータをIDまたはslugで取得する
+ * ミッションデータをIDまたはslugで取得する（cache()でリクエスト内重複排除）
  * @param identifier - ミッションIDまたはslug
  * @returns ミッションデータ
  */
-export async function getMissionData(
-  identifier: string,
-): Promise<Tables<"missions"> | null> {
-  const supabase = createClient();
+export const getMissionData = cache(
+  async (identifier: string): Promise<Tables<"missions"> | null> => {
+    const supabase = createClient();
 
-  // UUIDの場合はIDで検索、それ以外はslugで検索
-  const column = isUUID(identifier) ? "id" : "slug";
+    // UUIDの場合はIDで検索、それ以外はslugで検索
+    const column = isUUID(identifier) ? "id" : "slug";
 
-  const { data: missionData, error } = await supabase
-    .from("missions")
-    .select("*, required_artifact_type, max_achievement_count")
-    .eq(column, identifier)
-    .single();
+    const { data: missionData, error } = await supabase
+      .from("missions")
+      .select("*, required_artifact_type, max_achievement_count")
+      .eq(column, identifier)
+      .single();
 
-  if (error) {
-    console.error("Mission fetch error:", error);
-    return null;
-  }
+    if (error) {
+      console.error("Mission fetch error:", error);
+      return null;
+    }
 
-  return missionData;
-}
+    return missionData;
+  },
+);
 
 /**
  * slugからミッションのIDを取得する
@@ -139,6 +142,26 @@ export async function getTotalAchievementCount(
   return countData?.achievement_count || 0;
 }
 
+export async function getUserAchievementCount(
+  userId: string,
+  missionId: string,
+): Promise<number> {
+  const supabase = createClient();
+
+  const { count, error } = await supabase
+    .from("achievements")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("mission_id", missionId);
+
+  if (error) {
+    console.error("Achievement count fetch error:", error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
 export async function getUserAchievements(
   userId: string,
   missionId: string,
@@ -163,90 +186,94 @@ export async function getUserAchievements(
   };
 }
 
+/**
+ * ユーザーの達成履歴を取得する（ネストselectでN+1解消）
+ * @param limit - 取得件数（省略時は全件）
+ */
 export async function getSubmissionHistory(
   userId: string,
   missionId: string,
+  limit?: number,
 ): Promise<SubmissionData[]> {
   const supabase = createClient();
 
-  // ユーザーの達成履歴を取得
-  const { data: achievementsData, error: achievementsError } = await supabase
+  // ネストselectでachievements + mission_artifactsを1クエリで取得
+  let query = supabase
     .from("achievements")
-    .select("id, created_at, mission_id, user_id")
+    .select(
+      "id, created_at, mission_id, user_id, season_id, mission_artifacts(*)",
+    )
     .eq("user_id", userId)
     .eq("mission_id", missionId)
     .order("created_at", { ascending: false });
 
-  if (achievementsError) {
-    console.error("Achievements fetch error:", achievementsError);
+  if (limit !== undefined) {
+    query = query.limit(limit);
+  }
+
+  const { data: achievementsWithArtifacts, error } = await query;
+
+  if (error) {
+    console.error("Submissions fetch error:", error);
     return [];
   }
 
-  if (!achievementsData || achievementsData.length === 0) {
+  if (!achievementsWithArtifacts || achievementsWithArtifacts.length === 0) {
     return [];
   }
 
-  // 各達成に対応する成果物を取得
-  const submissionsWithArtifacts = await Promise.all(
-    achievementsData.map(async (achievement: Achievement) => {
-      const { data: artifactsData, error: artifactsError } = await supabase
-        .from("mission_artifacts")
-        .select("*")
-        .eq("achievement_id", achievement.id);
+  // mission_artifactsを正規化（1対1リレーションの場合オブジェクトが返るため配列に統一）
+  const normalizeArtifacts = (
+    artifacts: (typeof achievementsWithArtifacts)[number]["mission_artifacts"],
+  ) => {
+    if (!artifacts) return [];
+    return Array.isArray(artifacts) ? artifacts : [artifacts];
+  };
 
-      if (artifactsError) {
-        console.error("Artifacts fetch error:", artifactsError);
-        return {
-          ...achievement,
-          artifacts: [],
-        };
+  // 画像パスを収集してバッチで署名付きURL生成
+  const allImagePaths: string[] = [];
+  for (const achievement of achievementsWithArtifacts) {
+    for (const artifact of normalizeArtifacts(achievement.mission_artifacts)) {
+      if (artifact.image_storage_path) {
+        allImagePaths.push(artifact.image_storage_path);
       }
+    }
+  }
 
-      // 成果物に画像がある場合は署名付きURLを取得
-      const artifactsWithSignedUrls = await Promise.all(
-        (artifactsData || []).map(
-          async (artifact: Tables<"mission_artifacts">) => {
-            if (artifact.image_storage_path) {
-              const { data: signedUrlData } = await supabase.storage
-                .from("mission_artifact_files")
-                .createSignedUrl(artifact.image_storage_path, 60);
+  const signedUrlMap = new Map<string, string>();
+  if (allImagePaths.length > 0) {
+    const { data: signedUrls } = await supabase.storage
+      .from("mission_artifact_files")
+      .createSignedUrls(allImagePaths, 60);
 
-              if (signedUrlData) {
-                return {
-                  ...artifact,
-                  image_storage_path: signedUrlData.signedUrl,
-                };
-              }
-            }
-            return artifact;
-          },
-        ),
-      );
-
-      return {
-        ...achievement,
-        artifacts: artifactsWithSignedUrls as MissionArtifact[],
-      } as SubmissionData;
-    }),
-  );
-
-  // null値をフィルタリングして型安全にする
-  const validSubmissions = submissionsWithArtifacts.filter(
-    (submission: unknown): submission is SubmissionData => {
-      if (typeof submission !== "object" || submission === null) {
-        return false;
+    if (signedUrls) {
+      for (const item of signedUrls) {
+        if (item.path && item.signedUrl) {
+          signedUrlMap.set(item.path, item.signedUrl);
+        }
       }
-      const sub = submission as Record<string, unknown>;
-      return (
-        "mission_id" in sub &&
-        "user_id" in sub &&
-        sub.mission_id !== null &&
-        sub.user_id !== null
-      );
-    },
-  );
+    }
+  }
 
-  return validSubmissions;
+  // SubmissionData形式にマッピング
+  return achievementsWithArtifacts
+    .filter((a) => a.mission_id && a.user_id)
+    .map((achievement) => ({
+      id: achievement.id,
+      mission_id: achievement.mission_id as string,
+      user_id: achievement.user_id as string,
+      season_id: achievement.season_id ?? "",
+      created_at: achievement.created_at,
+      artifacts: normalizeArtifacts(achievement.mission_artifacts).map(
+        (artifact) => ({
+          ...artifact,
+          image_storage_path: artifact.image_storage_path
+            ? (signedUrlMap.get(artifact.image_storage_path) ??
+              artifact.image_storage_path)
+            : artifact.image_storage_path,
+        }),
+      ) as MissionArtifact[],
+    }));
 }
 
 export async function getMissionMainLink(
@@ -324,38 +351,30 @@ export async function getMissionPageData(
   if (!mission) return null;
   if (mission.is_hidden) return null;
 
-  // missionIdパラメータはslugの場合があるため、以降のクエリではmission.id（UUID）を使用
   const missionUUID = mission.id;
 
-  let userAchievements: Achievement[] = [];
-  let userAchievementCount = 0;
-  let submissions: SubmissionData[] = [];
-  let referralCode: string | null = null;
-
-  // ユーザーの各ミッションに対する達成回数のマップ
-  const userAchievementCountMap = userId
-    ? await getUserMissionAchievements(userId)
-    : new Map<string, number>();
-
-  if (userId) {
-    const { achievements, count } = await getUserAchievements(
-      userId,
-      missionUUID,
-    );
-    userAchievements = achievements;
-    userAchievementCount = count;
-    submissions = await getSubmissionHistory(userId, missionUUID);
-    referralCode = await getReferralCode(userId);
-  }
-
-  // 総達成回数の取得
-  const totalAchievementCount = await getTotalAchievementCount(missionUUID);
-
-  // メインリンクの取得
-  const mainLink = await getMissionMainLink(missionUUID);
-
-  // 全カテゴリのミッションを取得し、グループ化・ソート・変換
-  const rawMissions = await getRelatedCategoryMissionsRaw(missionUUID);
+  // 独立したクエリを並列実行
+  const [
+    userAchievementCountMap,
+    userAchievementCount,
+    submissions,
+    referralCode,
+    totalAchievementCount,
+    mainLink,
+    rawMissions,
+  ] = await Promise.all([
+    userId
+      ? getUserMissionAchievements(userId)
+      : Promise.resolve(new Map<string, number>()),
+    userId ? getUserAchievementCount(userId, missionUUID) : Promise.resolve(0),
+    userId
+      ? getSubmissionHistory(userId, missionUUID, SUBMISSION_DISPLAY_LIMIT)
+      : Promise.resolve([]),
+    userId ? getReferralCode(userId) : Promise.resolve(null),
+    getTotalAchievementCount(missionUUID),
+    getMissionMainLink(missionUUID),
+    getRelatedCategoryMissionsRaw(missionUUID),
+  ]);
   const allCategoryMissions = groupMissionsByCategory(
     rawMissions,
     userAchievementCountMap,
@@ -367,7 +386,7 @@ export async function getMissionPageData(
 
   return {
     mission,
-    userAchievements,
+    userAchievements: [],
     submissions,
     userAchievementCount,
     userAchievementCountMap,
