@@ -8,6 +8,7 @@ import QRCodeDisplay from "@/features/mission-detail/components/qr-code-display"
 import { SubmissionHistoryWrapper } from "@/features/mission-detail/components/submission-history-wrapper";
 import { getSubmissionHistory } from "@/features/mission-detail/loaders/mission-detail-loaders";
 import type { SubmissionData } from "@/features/mission-detail/types/detail-types";
+
 import { MissionGuidanceArrow } from "@/features/missions/components/mission-guidance-arrow";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
@@ -56,9 +57,10 @@ export function MissionWithSubmissionHistory({
 
   const refreshSubmissions = async () => {
     try {
-      const data = await getSubmissionHistory(missionId);
-      setUserAchievementCount(data.length);
+      // 新しい記録後は最新20件を再取得
+      const data = await getSubmissionHistory(missionId, 20);
       setSubmissions(data);
+      setUserAchievementCount((prev) => prev + 1);
     } catch (error) {
       console.error("Failed to refresh submissions:", error);
     }

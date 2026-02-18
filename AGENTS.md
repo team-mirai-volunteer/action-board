@@ -14,6 +14,9 @@ git worktree add ../action-board-<branch-name> -b <branch-name>
 # 2. settings.local.jsonをコピー（権限設定のため必須）
 mkdir -p ../action-board-<branch-name>/.claude
 cp .claude/settings.local.json ../action-board-<branch-name>/.claude/
+
+# 3. 環境変数ファイルをコピー（dev server起動に必須）
+cp .env ../action-board-<branch-name>/
 ```
 
 - **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
