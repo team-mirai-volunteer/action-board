@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -43,7 +42,8 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           <DialogDescription className="text-center">
             {message}
           </DialogDescription>
-          <Image
+          {/* OG画像はAPIルートで動的生成されるため、Next.js Image Optimizationを使わない */}
+          <img
             src={
               mission.ogp_image_url
                 ? mission.ogp_image_url
