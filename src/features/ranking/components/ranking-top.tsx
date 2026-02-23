@@ -28,6 +28,7 @@ export async function RankingTop({
       title={title ?? `🏅${periodLabel}トップ${limit}`}
       detailsHref="/ranking"
       showDetailedInfo={showDetailedInfo}
+      columns={3}
     >
       {rankings.map((user) => (
         <RankingItem key={user.user_id} user={user} />

@@ -34,6 +34,7 @@ export async function RankingPrefecture({
       title={title}
       detailsHref={`/ranking/ranking-prefecture?prefecture=${prefecture}`}
       showDetailedInfo={showDetailedInfo}
+      columns={3}
     >
       {rankings.map((user) => (
         <RankingItem key={user.user_id} user={user} />

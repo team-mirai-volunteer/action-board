@@ -17,12 +17,14 @@ interface BaseCurrentUserCardProps {
     party_membership?: PartyMembership | null;
   } | null;
   title?: string;
+  level?: number;
   children: React.ReactNode;
 }
 
 export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
   currentUser,
   title = "あなたのランク",
+  level,
   children,
 }) => {
   if (!currentUser) {
@@ -58,8 +60,15 @@ export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
                   nameClassName="font-semibold text-gray-900"
                   badgeSize={18}
                 />
-                <div className="text-sm text-gray-600">
-                  {displayUser.address_prefecture}
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                    {displayUser.address_prefecture}
+                  </span>
+                  {level != null && (
+                    <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                      Lv.{level}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
