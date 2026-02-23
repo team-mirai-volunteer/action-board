@@ -37,8 +37,13 @@ export function RankingItem({
           nameClassName="font-bold text-lg"
           badgeSize={20}
         />
-        <div className="text-sm text-gray-600">
-          {user.address_prefecture} Lv.{user.level}
+        <div className="flex items-center gap-1 mt-0.5">
+          <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+            {user.address_prefecture}
+          </span>
+          <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+            Lv.{user.level}
+          </span>
         </div>
         {showDetailedInfo && (
           <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>

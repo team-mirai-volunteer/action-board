@@ -121,7 +121,8 @@ describe("RankingItem", () => {
       render(<RankingItem user={mockUserRanking} />);
 
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
-      expect(screen.getByText("東京都 Lv.15")).toBeInTheDocument();
+      expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("Lv.15")).toBeInTheDocument();
       expect(screen.getByText("1,500pt")).toBeInTheDocument();
       expect(mockUserNameWithBadge).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -207,7 +208,8 @@ describe("RankingItem", () => {
         />,
       );
 
-      expect(screen.getByText("東京都 Lv.15")).toBeInTheDocument();
+      expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("Lv.15")).toBeInTheDocument();
     });
 
     it("userWithMissionがnullの場合は0ptが表示される", () => {
@@ -256,7 +258,8 @@ describe("RankingItem", () => {
       const user = { ...mockUserRanking, level: null };
       render(<RankingItem user={user} />);
 
-      expect(screen.getByText("東京都 Lv.")).toBeInTheDocument();
+      expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("Lv.")).toBeInTheDocument();
     });
   });
 
