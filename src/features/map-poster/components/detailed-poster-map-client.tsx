@@ -527,6 +527,18 @@ export default function DetailedPosterMapClient({
             })}
           </div>
         </div>
+
+        {/* 予約/完了一覧リンク */}
+        {isDistrict && !isArchive && (
+          <div className="mt-3 pt-3 border-t">
+            <Link
+              href={`/map/poster/${JP_TO_EN_DISTRICT[prefectureName] || prefectureName.toLowerCase().replace(/[^a-z0-9]/g, "-")}/reservations`}
+              className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+            >
+              予約/完了一覧を見る
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* ミッション「選挙区ポスターを貼ろう」への誘導 */}
