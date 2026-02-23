@@ -128,10 +128,9 @@ describe("CurrentUserCard", () => {
       expect(screen.getByTestId("user-icon")).toBeInTheDocument();
     });
 
-    it("レベルバッジが表示される", () => {
+    it("レベルが都道府県の横に表示される", () => {
       render(<CurrentUserCard currentUser={mockUser} />);
 
-      expect(screen.getByTestId("level-badge")).toBeInTheDocument();
       expect(screen.getByText("Lv.25")).toBeInTheDocument();
     });
   });

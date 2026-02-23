@@ -267,30 +267,26 @@ describe("RankingItem", () => {
 
     it("level>=40 の分岐を通る", () => {
       renderWithLevel(40);
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
-      expect(screen.getByText("Lv.40")).toBeInTheDocument();
+      const levelSpan = screen.getByText("Lv.40");
+      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
     });
 
     it("level>=30 の分岐を通る", () => {
       renderWithLevel(30);
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
-      expect(screen.getByText("Lv.30")).toBeInTheDocument();
+      const levelSpan = screen.getByText("Lv.30");
+      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
     });
 
     it("level>=20 の分岐を通る", () => {
       renderWithLevel(20);
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
-      expect(screen.getByText("Lv.20")).toBeInTheDocument();
+      const levelSpan = screen.getByText("Lv.20");
+      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
     });
 
     it("level<10 の分岐を通る", () => {
       renderWithLevel(5);
-      const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("text-emerald-700 bg-emerald-100");
-      expect(screen.getByText("Lv.5")).toBeInTheDocument();
+      const levelSpan = screen.getByText("Lv.5");
+      expect(levelSpan).toHaveClass("text-emerald-700 bg-emerald-100");
     });
   });
 });

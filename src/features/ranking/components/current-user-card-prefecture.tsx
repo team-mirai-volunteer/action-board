@@ -1,6 +1,5 @@
 import type { UserRanking } from "../types/ranking-types";
 import { BaseCurrentUserCard } from "./base-current-user-card";
-import { LevelBadge } from "./ranking-level-badge";
 
 interface CurrentUserCardProps {
   currentUser: UserRanking | null;
@@ -30,12 +29,9 @@ export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
   };
 
   return (
-    <BaseCurrentUserCard currentUser={userForCard}>
-      <div className="flex items-center gap-2 mb-1">
-        <LevelBadge level={displayUser.level} />
-        <div className="text-lg font-bold">
-          {displayUser.xp.toLocaleString()}pt
-        </div>
+    <BaseCurrentUserCard currentUser={userForCard} level={displayUser.level}>
+      <div className="text-lg font-bold">
+        {displayUser.xp.toLocaleString()}pt
       </div>
     </BaseCurrentUserCard>
   );

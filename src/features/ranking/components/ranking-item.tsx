@@ -38,7 +38,16 @@ export function RankingItem({
           nameClassName="font-bold text-lg"
           badgeSize={20}
         />
-        <div className="text-sm text-gray-600">{user.address_prefecture}</div>
+        <div className="text-sm text-gray-600">
+          {user.address_prefecture}
+          {!mission && (
+            <span
+              className={`ml-1.5 ${getLevelBadgeColor(user.level)} px-1.5 py-0.5 rounded text-xs font-medium`}
+            >
+              Lv.{user.level}
+            </span>
+          )}
+        </div>
         {showDetailedInfo && (
           <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>
         )}
@@ -58,16 +67,9 @@ export function RankingItem({
           </span>
         </>
       ) : (
-        <>
-          <Badge
-            className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full w-fit justify-self-end`}
-          >
-            Lv.{user.level}
-          </Badge>
-          <div className="font-bold text-lg justify-self-end">
-            {formatNumberJa(user.xp ?? 0)}pt
-          </div>
-        </>
+        <div className="font-bold text-lg justify-self-end">
+          {formatNumberJa(user.xp ?? 0)}pt
+        </div>
       )}
     </Link>
   );

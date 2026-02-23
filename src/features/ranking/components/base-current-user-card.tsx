@@ -3,6 +3,7 @@ import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import type { PartyMembership } from "@/features/party-membership/types";
+import { getLevelBadgeColor } from "../utils/level-badge-styles";
 import {
   formatUserDisplayName,
   formatUserPrefecture,
@@ -17,12 +18,14 @@ interface BaseCurrentUserCardProps {
     party_membership?: PartyMembership | null;
   } | null;
   title?: string;
+  level?: number;
   children: React.ReactNode;
 }
 
 export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
   currentUser,
   title = "あなたのランク",
+  level,
   children,
 }) => {
   if (!currentUser) {
@@ -60,6 +63,13 @@ export const BaseCurrentUserCard: React.FC<BaseCurrentUserCardProps> = ({
                 />
                 <div className="text-sm text-gray-600">
                   {displayUser.address_prefecture}
+                  {level != null && (
+                    <span
+                      className={`ml-1.5 ${getLevelBadgeColor(level)} px-1.5 py-0.5 rounded text-xs font-medium`}
+                    >
+                      Lv.{level}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
