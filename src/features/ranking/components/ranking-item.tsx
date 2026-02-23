@@ -52,7 +52,7 @@ export function RankingItem({
       {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
       {mission ? (
         <>
-          <span className="text-sm text-gray-600 justify-self-end">
+          <span className="text-sm text-gray-600 font-bold justify-self-end">
             {badgeText}
           </span>
           <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
