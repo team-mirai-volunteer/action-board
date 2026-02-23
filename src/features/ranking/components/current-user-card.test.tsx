@@ -110,7 +110,7 @@ describe("CurrentUserCard", () => {
       render(<CurrentUserCard currentUser={mockUser} />);
 
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
-      expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.25")).toBeInTheDocument();
       expect(screen.getByText("2,500pt")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
       expect(mockUserNameWithBadge).toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe("CurrentUserCard", () => {
     it("レベルが都道府県の横に表示される", () => {
       render(<CurrentUserCard currentUser={mockUser} />);
 
-      expect(screen.getByText("Lv.25")).toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.25")).toBeInTheDocument();
     });
   });
 
@@ -154,7 +154,7 @@ describe("CurrentUserCard", () => {
       const user = { ...mockUser, level: null };
       render(<CurrentUserCard currentUser={user} />);
 
-      expect(screen.getByText("Lv.0")).toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.0")).toBeInTheDocument();
     });
 
     it("xpがnullの場合は0ptが表示される", () => {
@@ -203,7 +203,7 @@ describe("CurrentUserCard", () => {
       const user = { ...mockUser, address_prefecture: "" };
       render(<CurrentUserCard currentUser={user} />);
 
-      expect(screen.getByText("未設定")).toBeInTheDocument();
+      expect(screen.getByText("未設定 Lv.25")).toBeInTheDocument();
     });
 
     it("負の値のランクが処理される", () => {

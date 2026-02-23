@@ -121,9 +121,8 @@ describe("RankingItem", () => {
       render(<RankingItem user={mockUserRanking} />);
 
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
-      expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.15")).toBeInTheDocument();
       expect(screen.getByText("1,500pt")).toBeInTheDocument();
-      expect(screen.getByText("Lv.15")).toBeInTheDocument();
       expect(mockUserNameWithBadge).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "テストユーザー",
@@ -198,7 +197,7 @@ describe("RankingItem", () => {
       expect(screen.getByText("5回達成")).toBeInTheDocument();
     });
 
-    it("ミッション別ランキングの場合はレベル表示されない", () => {
+    it("ミッション別ランキングの場合もレベルが表示される", () => {
       render(
         <RankingItem
           user={mockUserRanking}
@@ -208,7 +207,7 @@ describe("RankingItem", () => {
         />,
       );
 
-      expect(screen.queryByText("Lv.15")).not.toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.15")).toBeInTheDocument();
     });
 
     it("userWithMissionがnullの場合は0ptが表示される", () => {
@@ -253,40 +252,33 @@ describe("RankingItem", () => {
       expect(screen.getByText("0pt")).toBeInTheDocument();
     });
 
-    it("レベルがnullの場合はLv.nullが表示される", () => {
+    it("レベルがnullの場合はLv.が表示される", () => {
       const user = { ...mockUserRanking, level: null };
       render(<RankingItem user={user} />);
 
-      expect(screen.getByText("Lv.")).toBeInTheDocument();
+      expect(screen.getByText("東京都 Lv.")).toBeInTheDocument();
     });
   });
 
-  describe("レベルバッジの色分岐", () => {
-    const renderWithLevel = (level: number | null) =>
-      render(<RankingItem user={{ ...mockUserRanking, level }} />);
-
-    it("level>=40 の分岐を通る", () => {
-      renderWithLevel(40);
-      const levelSpan = screen.getByText("Lv.40");
-      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
+  describe("ポイント表示のスタイル", () => {
+    it("一般ランキングではemeraldバッジでptが表示される", () => {
+      render(<RankingItem user={mockUserRanking} />);
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("1,500pt")).toBeInTheDocument();
     });
 
-    it("level>=30 の分岐を通る", () => {
-      renderWithLevel(30);
-      const levelSpan = screen.getByText("Lv.30");
-      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
-    });
-
-    it("level>=20 の分岐を通る", () => {
-      renderWithLevel(20);
-      const levelSpan = screen.getByText("Lv.20");
-      expect(levelSpan).toHaveClass("bg-emerald-100 text-emerald-700");
-    });
-
-    it("level<10 の分岐を通る", () => {
-      renderWithLevel(5);
-      const levelSpan = screen.getByText("Lv.5");
-      expect(levelSpan).toHaveClass("text-emerald-700 bg-emerald-100");
+    it("ミッションランキングではgrayバッジで回数が表示される", () => {
+      render(
+        <RankingItem
+          user={mockUserRanking}
+          userWithMission={mockUserMissionRanking}
+          mission={{ id: "test", name: "test" }}
+          badgeText="5回"
+        />,
+      );
+      const badge = screen.getByTestId("badge");
+      expect(badge).toHaveClass("bg-gray-100 text-gray-700");
     });
   });
 });
