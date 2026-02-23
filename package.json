@@ -39,6 +39,7 @@
     "poster:clear": "./poster_data/clear.sh",
     "poster:mask-names": "tsx poster_data/mask-names.ts",
     "calculate-badges": "tsx scripts/calculate-badges.ts",
+    "send-push-notification": "tsx scripts/send-push-notification.ts",
     "export-users-prefecture": "tsx scripts/export-users-prefecture.ts",
     "sync-party-memberships": "tsx src/scripts/sync-party-memberships.ts",
     "posting:sync": "tsx posting_data/src/sync.ts",
@@ -109,6 +110,7 @@
     "sonner": "^2.0.4",
     "tsparticles-engine": "^2.12.0",
     "tsparticles-preset-fireworks": "^2.12.0",
+    "web-push": "^3.6.7",
     "zod": "^3.25.23"
   },
   "devDependencies": {
@@ -130,6 +132,7 @@
     "@types/pg-copy-streams": "^1.2.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/web-push": "^3.6.4",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^11.0.0",
     "glob": "^10.4.5",
