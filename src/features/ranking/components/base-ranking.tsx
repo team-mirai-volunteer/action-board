@@ -9,6 +9,7 @@ interface BaseRankingProps {
   detailsHref?: string;
   showDetailedInfo?: boolean;
   detailsLinkText?: string;
+  columns?: 3 | 4;
 }
 
 export const BaseRanking: React.FC<BaseRankingProps> = ({
@@ -17,6 +18,7 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
   detailsHref,
   showDetailedInfo = false,
   detailsLinkText = "トップ100を見る",
+  columns = 4,
 }) => {
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +27,13 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
           {title}
         </h2>
         {children.length > 0 ? (
-          <div className="grid grid-cols-[auto_1fr_auto_auto] gap-x-3">
+          <div
+            className={
+              columns === 3
+                ? "grid grid-cols-[auto_1fr_auto] gap-x-3"
+                : "grid grid-cols-[auto_1fr_auto_auto] gap-x-3"
+            }
+          >
             {children}
           </div>
         ) : (

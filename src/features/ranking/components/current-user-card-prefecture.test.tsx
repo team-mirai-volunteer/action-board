@@ -14,9 +14,11 @@ jest.mock("./ranking-level-badge", () => ({
 jest.mock("./base-current-user-card", () => ({
   BaseCurrentUserCard: ({
     currentUser,
+    level,
     children,
   }: {
     currentUser: any;
+    level?: number;
     children: React.ReactNode;
   }) => {
     if (!currentUser) return null;
@@ -44,6 +46,7 @@ jest.mock("./base-current-user-card", () => ({
                   </div>
                   <div className="text-sm text-gray-600">
                     {currentUser.address_prefecture || "未設定"}
+                    {level != null && <span> Lv.{level}</span>}
                   </div>
                 </div>
               </div>
@@ -105,7 +108,7 @@ describe("CurrentUserCardPrefecture", () => {
       expect(screen.getByTestId("user-icon")).toBeInTheDocument();
     });
 
-    it("レベルバッジが表示される", () => {
+    it("レベルが都道府県の横に表示される", () => {
       render(
         <CurrentUserCardPrefecture
           currentUser={mockUser}
@@ -113,7 +116,6 @@ describe("CurrentUserCardPrefecture", () => {
         />,
       );
 
-      expect(screen.getByTestId("level-badge")).toBeInTheDocument();
       expect(screen.getByText("Lv.30")).toBeInTheDocument();
     });
   });
@@ -177,7 +179,7 @@ describe("CurrentUserCardPrefecture", () => {
         <CurrentUserCardPrefecture currentUser={user} prefecture="東京都" />,
       );
 
-      expect(screen.getByText("123,456pt")).toBeInTheDocument();
+      expect(screen.getByText("12.3万pt")).toBeInTheDocument();
     });
 
     it("大きな数値も正しくフォーマットされる", () => {
@@ -186,7 +188,7 @@ describe("CurrentUserCardPrefecture", () => {
         <CurrentUserCardPrefecture currentUser={user} prefecture="東京都" />,
       );
 
-      expect(screen.getByText("1,000,000pt")).toBeInTheDocument();
+      expect(screen.getByText("100万pt")).toBeInTheDocument();
     });
   });
 

@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { UserNameWithBadge } from "@/features/party-membership/components/user-name-with-badge";
 import { formatNumberJa } from "@/lib/utils/format-number-ja";
 import type { UserMissionRanking, UserRanking } from "../types/ranking-types";
-import { getLevelBadgeColor } from "../utils/level-badge-styles";
 import { getRankIcon } from "./ranking-icon";
 
 interface RankingItemProps {
@@ -38,7 +37,14 @@ export function RankingItem({
           nameClassName="font-bold text-lg"
           badgeSize={20}
         />
-        <div className="text-sm text-gray-600">{user.address_prefecture}</div>
+        <div className="flex items-center gap-1 mt-0.5">
+          <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+            {user.address_prefecture}
+          </span>
+          <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+            Lv.{user.level}
+          </span>
+        </div>
         {showDetailedInfo && (
           <div className="text-xs text-gray-500 mt-1">ID: {user.user_id}</div>
         )}
@@ -46,28 +52,17 @@ export function RankingItem({
       {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
       {mission ? (
         <>
-          <Badge
-            className={
-              "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end"
-            }
-          >
+          <span className="text-sm text-gray-600 font-bold justify-self-end">
             {badgeText}
-          </Badge>
-          <span className="font-bold text-lg justify-self-end">
-            {(userWithMission?.total_points ?? 0).toLocaleString()}pt
           </span>
+          <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
+            {(userWithMission?.total_points ?? 0).toLocaleString()}pt
+          </Badge>
         </>
       ) : (
-        <>
-          <Badge
-            className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full w-fit justify-self-end`}
-          >
-            Lv.{user.level}
-          </Badge>
-          <div className="font-bold text-lg justify-self-end">
-            {formatNumberJa(user.xp ?? 0)}pt
-          </div>
-        </>
+        <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
+          {formatNumberJa(user.xp ?? 0)}pt
+        </Badge>
       )}
     </Link>
   );

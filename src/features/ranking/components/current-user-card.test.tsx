@@ -111,6 +111,7 @@ describe("CurrentUserCard", () => {
 
       expect(screen.getByText("テストユーザー")).toBeInTheDocument();
       expect(screen.getByText("東京都")).toBeInTheDocument();
+      expect(screen.getByText("Lv.25")).toBeInTheDocument();
       expect(screen.getByText("2,500pt")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
       expect(mockUserNameWithBadge).toHaveBeenCalledWith(
@@ -128,10 +129,9 @@ describe("CurrentUserCard", () => {
       expect(screen.getByTestId("user-icon")).toBeInTheDocument();
     });
 
-    it("レベルバッジが表示される", () => {
+    it("レベルが都道府県の横に表示される", () => {
       render(<CurrentUserCard currentUser={mockUser} />);
 
-      expect(screen.getByTestId("level-badge")).toBeInTheDocument();
       expect(screen.getByText("Lv.25")).toBeInTheDocument();
     });
   });
