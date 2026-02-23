@@ -1,3 +1,4 @@
+import { formatNumberJa } from "@/lib/utils/format-number-ja";
 import type { UserRanking } from "../types/ranking-types";
 import { BaseCurrentUserCard } from "./base-current-user-card";
 
@@ -31,7 +32,7 @@ export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
   return (
     <BaseCurrentUserCard currentUser={userForCard} level={displayUser.level}>
       <div className="text-lg font-bold">
-        {displayUser.xp.toLocaleString()}pt
+        {formatNumberJa(displayUser.xp)}pt
       </div>
     </BaseCurrentUserCard>
   );

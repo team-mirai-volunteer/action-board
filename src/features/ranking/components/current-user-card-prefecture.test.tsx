@@ -179,7 +179,7 @@ describe("CurrentUserCardPrefecture", () => {
         <CurrentUserCardPrefecture currentUser={user} prefecture="東京都" />,
       );
 
-      expect(screen.getByText("123,456pt")).toBeInTheDocument();
+      expect(screen.getByText("12.3万pt")).toBeInTheDocument();
     });
 
     it("大きな数値も正しくフォーマットされる", () => {
@@ -188,7 +188,7 @@ describe("CurrentUserCardPrefecture", () => {
         <CurrentUserCardPrefecture currentUser={user} prefecture="東京都" />,
       );
 
-      expect(screen.getByText("1,000,000pt")).toBeInTheDocument();
+      expect(screen.getByText("100万pt")).toBeInTheDocument();
     });
   });
 
