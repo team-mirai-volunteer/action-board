@@ -271,7 +271,7 @@ describe("RankingItem", () => {
       expect(screen.getByText("1,500pt")).toBeInTheDocument();
     });
 
-    it("ミッションランキングではgrayバッジで回数が表示される", () => {
+    it("ミッションランキングではemeraldバッジでptが表示され回数はプレーンテキスト", () => {
       render(
         <RankingItem
           user={mockUserRanking}
@@ -281,7 +281,9 @@ describe("RankingItem", () => {
         />,
       );
       const badge = screen.getByTestId("badge");
-      expect(badge).toHaveClass("bg-gray-100 text-gray-700");
+      expect(badge).toHaveClass("bg-emerald-100 text-emerald-700");
+      expect(screen.getByText("2,500pt")).toBeInTheDocument();
+      expect(screen.getByText("5回")).toBeInTheDocument();
     });
   });
 });

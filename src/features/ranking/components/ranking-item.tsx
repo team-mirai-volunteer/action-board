@@ -52,16 +52,12 @@ export function RankingItem({
       {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
       {mission ? (
         <>
-          <Badge
-            className={
-              "bg-gray-100 text-gray-700 px-3 py-1 rounded-full w-fit justify-self-end"
-            }
-          >
+          <span className="text-sm text-gray-600 justify-self-end">
             {badgeText}
-          </Badge>
-          <span className="font-bold text-lg justify-self-end">
-            {(userWithMission?.total_points ?? 0).toLocaleString()}pt
           </span>
+          <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
+            {(userWithMission?.total_points ?? 0).toLocaleString()}pt
+          </Badge>
         </>
       ) : (
         <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
