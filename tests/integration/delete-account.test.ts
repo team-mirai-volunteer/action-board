@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/types/supabase";
 import {
   adminClient,
   cleanupTestUser,
@@ -171,7 +173,7 @@ describe("delete_user_account RPC（退会機能）", () => {
       await adminClient.from("poster_board_status_history").insert({
         board_id: board.id,
         user_id: testUserId,
-        new_status: "completed",
+        new_status: "done",
       });
     }
 
