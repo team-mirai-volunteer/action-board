@@ -4,6 +4,7 @@ import {
   adminClient,
   cleanupTestUser,
   createTestUser,
+  getAnonClient,
 } from "../supabase/utils";
 import {
   cleanupTestMission,
@@ -167,9 +168,13 @@ describe("delete_user_account RPC（退会機能）", () => {
       .from("poster_boards")
       .select("id")
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (board) {
+    if (!board) {
+      console.warn(
+        "poster_boardsが存在しないため、status_historyの削除テストをスキップします",
+      );
+    } else {
       await adminClient.from("poster_board_status_history").insert({
         board_id: board.id,
         user_id: testUserId,
@@ -271,7 +276,6 @@ describe("delete_user_account RPC（退会機能）", () => {
 
   test("未認証ユーザーはRPCを呼び出せない", async () => {
     // 匿名クライアント（未認証）
-    const { getAnonClient } = await import("../supabase/utils");
     const anonClient = getAnonClient();
 
     const { error } = await anonClient.rpc("delete_user_account", {
@@ -332,10 +336,10 @@ describe("delete_user_account RPC（退会機能）", () => {
     expect(getUserError).not.toBeNull();
   });
 
-  test("存在しないユーザーIDを指定してもエラーにならない（冪等性）", async () => {
+  test("自分以外のユーザーIDを指定すると認可エラーになる", async () => {
     const nonExistentId = "00000000-0000-0000-0000-000000000000";
 
-    // 自分のIDと異なるため認可エラーになる
+    // 自分のID以外を指定すると認可エラーになる
     const { error } = await testUserClient.rpc("delete_user_account", {
       target_user_id: nonExistentId,
     });
