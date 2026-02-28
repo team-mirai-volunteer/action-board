@@ -86,6 +86,7 @@ cp .env ../action-board-<branch-name>/
   - 例: `Resolves #123`
   - 複数のissueをクローズする場合は、それぞれ別の行に記載する
     - 例: `Resolves #123`、`Resolves #456`
+- **PR作成後のCodeRabbitレビュー確認（必須）**: PR作成後、CodeRabbitのレビューが届くまで待ってからコメントを確認すること。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。重要な指摘（Major/Critical）があれば修正してpushすること。軽微な指摘（Minor）や既存コードとの一貫性を優先すべきものはスキップ可。
 
 ## 開発コマンド
 
