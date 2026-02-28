@@ -159,9 +159,22 @@ git diff ${TARGET_REMOTE}/develop...HEAD --stat
 
 差分コミットが 0 件の場合は PR 作成を中止する。
 
-### 6. PR作成
+### 6. Push前の必須チェック
 
-#### 6.1 リモートにpush
+pushする前に以下の3つを実行し、全てパスすることを確認する。失敗した場合は修正してからpushに進む。
+
+```bash
+pnpm run biome:check:write
+pnpm run typecheck
+pnpm run test:unit
+```
+
+- `biome:check:write` で自動修正された場合は、変更を追加コミットする
+- `typecheck` や `test:unit` が失敗した場合は修正してコミットする
+
+### 7. PR作成
+
+#### 7.1 リモートにpush
 
 リモートブランチの存在を確認し、適切なpushコマンドを実行：
 
@@ -172,7 +185,7 @@ git ls-remote --heads origin <ブランチ名> | grep -q <ブランチ名> && \
   git push -u origin <ブランチ名>
 ```
 
-#### 6.2 PRタイトルと本文の生成
+#### 7.2 PRタイトルと本文の生成
 
 まず `.github/PULL_REQUEST_TEMPLATE.md` を読み込み、テンプレートに従ってPR本文を生成する。
 
@@ -185,7 +198,7 @@ git ls-remote --heads origin <ブランチ名> | grep -q <ブランチ名> && \
   - `# スクリーンショット`: フロントエンドの変更がない場合はチェックを入れる
   - `# CLAへの同意`: チェックを入れない（ユーザーが確認して入れる）
 
-#### 6.3 gh pr create の実行
+#### 7.3 gh pr create の実行
 
 `.github/PULL_REQUEST_TEMPLATE.md` を読み込み、各セクションを適切に埋めてPRを作成する。
 
@@ -206,7 +219,7 @@ EOF
 )"
 ```
 
-### 7. PR差分の検証
+### 8. PR差分の検証
 
 PR作成後、意図した変更のみが含まれているか必ず確認する：
 
@@ -220,7 +233,7 @@ gh pr diff <PR番号> --name-only
   - `git rebase --onto develop <元のブランチ> <現在のブランチ>` で修正し、force push する
 - 問題がなければ次のステップへ進む
 
-### 8. 完了報告
+### 9. 完了報告
 
 PRのURLを表示：
 

@@ -81,6 +81,15 @@ cp .env ../action-board-<branch-name>/
 - コード例、SQL、型定義などの詳細な実装内容を含める
 - 検証方法を具体的に記載する
 
+### Push前の必須チェック
+`git push` する前に、以下の3つを必ず実行し、全てパスすることを確認する：
+
+1. `pnpm run biome:check:write` - フォーマット + リント
+2. `pnpm run typecheck` - 型チェック（`tsc --noEmit`）
+3. `pnpm run test:unit` - ユニットテスト
+
+いずれかが失敗した場合は修正してからpushすること。
+
 ### Pull Request作成
 - PRの説明文に `Resolves #issue番号` を必ず記載し、マージ時に対応するissueが自動的にクローズされるようにする
   - 例: `Resolves #123`
