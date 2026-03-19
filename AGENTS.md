@@ -20,7 +20,7 @@ cp .env ../action-board-<branch-name>/
 ```
 
 - **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
-- **例外**: ドキュメント作成のみの作業、CLAUDE.mdの更新など、コードに影響しない変更
+- **例外なし**: CLAUDE.mdの更新やドキュメントのみの変更も含め、すべてのコミットでworktreeを使用すること
 
 ### データアクセス
 **UIコンポーネント（`.tsx`ファイル）からSupabaseを直接呼び出してはいけない。** Service層（`services/`）経由でアクセスすること。
@@ -81,11 +81,21 @@ cp .env ../action-board-<branch-name>/
 - コード例、SQL、型定義などの詳細な実装内容を含める
 - 検証方法を具体的に記載する
 
+### Push前の必須チェック
+`git push` する前に、以下の3つを必ず実行し、全てパスすることを確認する：
+
+1. `pnpm run biome:check:write` - フォーマット + リント
+2. `pnpm run typecheck` - 型チェック（`tsc --noEmit`）
+3. `pnpm run test:unit` - ユニットテスト
+
+いずれかが失敗した場合は修正してからpushすること。
+
 ### Pull Request作成
 - PRの説明文に `Resolves #issue番号` を必ず記載し、マージ時に対応するissueが自動的にクローズされるようにする
   - 例: `Resolves #123`
   - 複数のissueをクローズする場合は、それぞれ別の行に記載する
     - 例: `Resolves #123`、`Resolves #456`
+- **PR作成後のCodeRabbitレビュー確認（必須）**: PR作成後、CodeRabbitのレビューが届くまで待ってからコメントを確認すること。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。重要な指摘（Major/Critical）があれば修正してpushすること。軽微な指摘（Minor）や既存コードとの一貫性を優先すべきものはスキップ可。
 
 ## 開発コマンド
 
