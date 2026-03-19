@@ -8,6 +8,7 @@ import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
+import { ServiceWorkerRegister } from "@/components/common/service-worker-register";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -62,6 +63,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <Toaster />
+          <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
     </html>
