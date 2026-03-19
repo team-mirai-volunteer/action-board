@@ -807,7 +807,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: SNS名と候補者名
     ogp_image_url: null
   - slug: early-vote-2026-shugiin
