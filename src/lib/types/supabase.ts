@@ -1822,6 +1822,8 @@ export type Database = {
       };
       poster_placement_city_stats: {
         Row: {
+          avg_lat: number | null;
+          avg_lng: number | null;
           city: string | null;
           placement_count: number | null;
           prefecture: string | null;
