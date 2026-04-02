@@ -6,7 +6,21 @@
       "goal": "poster_placements テーブル・RLS ポリシー・poster_placement_city_stats 集計ビューのマイグレーションが適用され、service 層（CRUD + 集計クエリ）が実装されて typecheck を通過する",
       "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
       "done": false,
-      "tasks": []
+      "plan_doc": "docs/tasks/20260402_1719_milestone-1.md",
+      "tasks": [
+        {
+          "id": "db-migration-and-types",
+          "description": "ドキュメント milestone-1 のステップ A（マイグレーション SQL + 型再生成 + feature 型定義）を実装する",
+          "wave": 1,
+          "done": false
+        },
+        {
+          "id": "poster-placement-services",
+          "description": "ドキュメント milestone-1 のステップ B（CRUD サービス + 集計クエリサービス）を実装する",
+          "wave": 2,
+          "done": false
+        }
+      ]
     },
     {
       "milestone": 2,
