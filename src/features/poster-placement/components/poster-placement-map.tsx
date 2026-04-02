@@ -7,21 +7,26 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useCurrentLocation } from "@/features/map-posting/hooks/use-current-location";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
+import type { PosterPlacementCityStats } from "../types/poster-placement-types";
+import { createCityStatsMarkerIcon } from "../utils/city-stats-marker";
 
 type PosterPlacementMapProps = {
   onMapReady?: (map: LeafletMap) => void;
   onPinPlaced?: (lat: number, lng: number) => void;
   pinPosition?: { lat: number; lng: number } | null;
+  cityStats?: PosterPlacementCityStats[];
 };
 
 export default function PosterPlacementMap({
   onMapReady,
   onPinPlaced,
   pinPosition,
+  cityStats,
 }: PosterPlacementMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
   const pinMarkerRef = useRef<Marker | null>(null);
+  const cityStatsMarkersRef = useRef<Marker[]>([]);
   const isMountedRef = useRef<boolean>(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -153,6 +158,45 @@ export default function PosterPlacementMap({
       );
     }
   }, [pinPosition]);
+
+  // 市区町村集計マーカーの描画・更新
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
+    const L = (window as any).L;
+    if (!L) return;
+
+    // 既存の集計マーカーを全て除去
+    for (const marker of cityStatsMarkersRef.current) {
+      marker.remove();
+    }
+    cityStatsMarkersRef.current = [];
+
+    if (!cityStats) return;
+
+    for (const stat of cityStats) {
+      // avg_lat / avg_lng が null の場合はスキップ
+      if (stat.avg_lat == null || stat.avg_lng == null) continue;
+
+      const totalCount = Number(stat.total_count) || 0;
+      if (totalCount === 0) continue;
+
+      const marker = L.marker([Number(stat.avg_lat), Number(stat.avg_lng)], {
+        icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
+        // 集計マーカーは zIndexOffset を低くしてピンマーカーの下に表示
+        zIndexOffset: -1000,
+      }).addTo(mapInstanceRef.current);
+
+      // ツールチップで市区町村名と枚数を表示
+      marker.bindTooltip(
+        `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`,
+        { direction: "top", offset: [0, -20] },
+      );
+
+      cityStatsMarkersRef.current.push(marker);
+    }
+  }, [cityStats]);
 
   return (
     <>

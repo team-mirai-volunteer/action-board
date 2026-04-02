@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PosterPlacementPageClient from "@/features/poster-placement/components/poster-placement-page-client";
+import { fetchCityStats } from "@/features/poster-placement/loaders/poster-placement-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {
@@ -13,5 +14,9 @@ export default async function PosterPlacementPage() {
   if (!user) {
     return redirect("/sign-in");
   }
-  return <PosterPlacementPageClient userId={user.id} />;
+  // サーバーサイドで集計データをフェッチし、初期データとして渡す
+  const cityStats = await fetchCityStats();
+  return (
+    <PosterPlacementPageClient userId={user.id} initialCityStats={cityStats} />
+  );
 }

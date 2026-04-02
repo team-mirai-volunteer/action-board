@@ -4,6 +4,11 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { submitPosterPlacement } from "../actions/poster-placement-actions";
 
+// オプション型（ファイル内定義）
+type UsePosterPlacementMapOptions = {
+  onSubmitSuccess?: () => void | Promise<void>;
+};
+
 type UsePosterPlacementMapReturn = {
   selectedPosition: { lat: number; lng: number } | null;
   isFormOpen: boolean;
@@ -13,7 +18,9 @@ type UsePosterPlacementMapReturn = {
   handleCancel: () => void;
 };
 
-export function usePosterPlacementMap(): UsePosterPlacementMapReturn {
+export function usePosterPlacementMap(
+  options?: UsePosterPlacementMapOptions,
+): UsePosterPlacementMapReturn {
   const [selectedPosition, setSelectedPosition] = useState<{
     lat: number;
     lng: number;
@@ -40,6 +47,8 @@ export function usePosterPlacementMap(): UsePosterPlacementMapReturn {
           toast.success("ポスター掲示を登録しました");
           setSelectedPosition(null);
           setIsFormOpen(false);
+          // 登録成功後のコールバック（集計データ再フェッチ等）
+          await options?.onSubmitSuccess?.();
         } else {
           toast.error(result.error);
         }
@@ -49,7 +58,7 @@ export function usePosterPlacementMap(): UsePosterPlacementMapReturn {
         setIsSubmitting(false);
       }
     },
-    [selectedPosition],
+    [selectedPosition, options],
   );
 
   const handleCancel = useCallback(() => {
