@@ -68,14 +68,14 @@
       "milestone": 4,
       "goal": "missions.yaml に新規ポスター掲示ミッションが追加され、ポスター掲示を報告すると achievements・mission_artifacts にレコードが作成されて XP が付与される",
       "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
-      "done": false,
+      "done": true,
       "plan_doc": "docs/tasks/20260402_1936_milestone-4.md",
       "tasks": [
         {
           "id": "mission-yaml-and-achieve-usecase",
           "description": "ドキュメント milestone-4 のステップ A（ミッション YAML 追加 + 達成ユースケース + サービス拡張 + アクション統合）を実装する",
           "wave": 1,
-          "done": false
+          "done": true
         }
       ]
     }
