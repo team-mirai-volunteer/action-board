@@ -1,0 +1,88 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "logo アクションボード" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "logo" [ref=e6]
+        - generic [ref=e7]: アクションボード
+      - generic [ref=e8]:
+        - link "ホーム" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e10]:
+          - link "ログイン" [ref=e11] [cursor=pointer]:
+            - /url: /sign-in
+          - link "新規登録" [ref=e12] [cursor=pointer]:
+            - /url: /sign-up
+  - main [ref=e13]:
+    - generic [ref=e15]:
+      - img "logo" [ref=e17]
+      - heading "ログイン" [level=1] [ref=e18]
+      - paragraph [ref=e19]:
+        - text: まだ登録していない方は
+        - link "こちら" [ref=e20] [cursor=pointer]:
+          - /url: /sign-up
+      - generic [ref=e21]:
+        - button "LINEでログイン" [ref=e22] [cursor=pointer]
+        - generic [ref=e27]: または
+        - generic [ref=e28]:
+          - generic [ref=e29]: メールアドレス
+          - textbox "you@example.com" [ref=e30]
+          - generic [ref=e31]:
+            - generic [ref=e32]: パスワード
+            - link "パスワードを忘れた方" [ref=e33] [cursor=pointer]:
+              - /url: /forgot-password
+          - textbox "パスワード" [ref=e34]
+          - button "ログイン" [ref=e35] [cursor=pointer]
+  - contentinfo [ref=e36]:
+    - generic [ref=e39]:
+      - heading "ご意見箱" [level=2] [ref=e40]
+      - paragraph [ref=e41]:
+        - text: チームみらいアクションボードを より良いサービスにするため、
+        - text: 皆様のご意見・ご要望をお聞かせください。
+        - text: いただいたフィードバックは 今後の改善に活用させていただきます。
+      - link "ポスターマップへのご意見フォーム（新しいタブで開きます）" [ref=e42] [cursor=pointer]:
+        - /url: https://forms.gle/vyVkGb4CbNahggfW8
+        - img [ref=e43]
+        - text: ポスターマップへのご意見
+      - link "アクションボードへのご意見フォーム（新しいタブで開きます）" [ref=e45] [cursor=pointer]:
+        - /url: https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105
+        - img [ref=e46]
+        - text: アクションボードへのご意見
+    - generic [ref=e48]:
+      - generic [ref=e50]:
+        - link "チームみらい" [ref=e51] [cursor=pointer]:
+          - /url: /
+          - img "チームみらい" [ref=e52]
+        - generic [ref=e54]: アクションボード
+      - generic [ref=e55]:
+        - img "街並みと雲のイラスト" [ref=e58]
+        - img "チームみらいの仲間たち" [ref=e61]
+      - generic [ref=e62]:
+        - generic [ref=e64]:
+          - heading "過去シーズン" [level=3] [ref=e65]
+          - generic [ref=e66]:
+            - link "2025夏~" [ref=e67] [cursor=pointer]:
+              - /url: /seasons/season2/ranking
+            - link "~2025参院選" [ref=e68] [cursor=pointer]:
+              - /url: /seasons/season1/ranking
+        - generic [ref=e70]:
+          - generic [ref=e72]:
+            - link "運営組織" [ref=e73] [cursor=pointer]:
+              - /url: https://team-mir.ai/
+            - generic [ref=e74]: "|"
+            - link "利用規約" [ref=e75] [cursor=pointer]:
+              - /url: /terms
+            - generic [ref=e76]: "|"
+            - link "プライバシーポリシー" [ref=e77] [cursor=pointer]:
+              - /url: /privacy
+            - generic [ref=e78]: "|"
+            - link "ご意見箱" [ref=e79] [cursor=pointer]:
+              - /url: https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105
+            - generic [ref=e80]: "|"
+            - link "よくあるご質問" [ref=e81] [cursor=pointer]:
+              - /url: https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f
+          - paragraph [ref=e82]: © 2025 Team Mirai. All rights reserved.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e88] [cursor=pointer]:
+    - img [ref=e89]
+  - alert [ref=e92]

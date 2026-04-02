@@ -62,7 +62,7 @@ export default function PosterPlacementMap({
 
       // Fix Leaflet default markers in Next.js
       // @ts-expect-error - Leaflet internals
-      L.Icon.Default.prototype._getIconUrl = undefined;
+      delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet/dist/images/marker-icon-2x.png",

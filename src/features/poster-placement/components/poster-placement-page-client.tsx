@@ -24,7 +24,7 @@ export default function PosterPlacementPageClient({
   } = usePosterPlacementMap();
 
   return (
-    <div className="relative" style={{ height: CONTENT_HEIGHT }}>
+    <div className="relative w-full" style={{ height: CONTENT_HEIGHT }}>
       <PosterPlacementMap
         onPinPlaced={handlePinPlaced}
         pinPosition={selectedPosition}

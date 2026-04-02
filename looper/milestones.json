@@ -26,7 +26,7 @@
       "milestone": 2,
       "goal": "/map/poster-placement ページで Leaflet 地図が表示され、ピンを配置して枚数を入力・送信するとポスター掲示が DB に保存され、逆ジオコーディングで住所が自動取得される。右上ドロップダウンから遷移でき、未ログイン時はログインにリダイレクトされる",
       "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
-      "done": false,
+      "done": true,
       "plan_doc": "docs/tasks/20260402_1842_milestone-2.md",
       "tasks": [
         {
@@ -39,7 +39,7 @@
           "id": "map-page-and-components",
           "description": "ドキュメント milestone-2 のステップ B（ページ・地図コンポーネント・登録フォーム・フック）を実装する",
           "wave": 2,
-          "done": false
+          "done": true
         }
       ]
     },
