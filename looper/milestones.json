@@ -47,7 +47,7 @@
       "milestone": 3,
       "goal": "/map/poster-placement の地図上に市区町村レベルの集計マーカー（合計枚数ラベル付き）が表示され、個別のピン位置や報告者名は他ユーザーに表示されない",
       "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
-      "done": false,
+      "done": true,
       "plan_doc": "docs/tasks/20260402_1903_milestone-3.md",
       "tasks": [
         {
@@ -60,7 +60,7 @@
           "id": "city-stats-markers-ui",
           "description": "ドキュメント milestone-3 のステップ B（ページ・クライアント・地図コンポーネント・フック・マーカーユーティリティ）を実装する",
           "wave": 2,
-          "done": false
+          "done": true
         }
       ]
     },
