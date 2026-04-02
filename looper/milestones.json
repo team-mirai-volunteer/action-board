@@ -1,0 +1,83 @@
+{
+  "source": "docs/tasks/20260402_1632_ポスター掲示アクションボード設計.md",
+  "milestones": [
+    {
+      "milestone": 1,
+      "goal": "poster_placements テーブル・RLS ポリシー・poster_placement_city_stats 集計ビューのマイグレーションが適用され、service 層（CRUD + 集計クエリ）が実装されて typecheck を通過する",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": true,
+      "plan_doc": "docs/tasks/20260402_1719_milestone-1.md",
+      "tasks": [
+        {
+          "id": "db-migration-and-types",
+          "description": "ドキュメント milestone-1 のステップ A（マイグレーション SQL + 型再生成 + feature 型定義）を実装する",
+          "wave": 1,
+          "done": true
+        },
+        {
+          "id": "poster-placement-services",
+          "description": "ドキュメント milestone-1 のステップ B（CRUD サービス + 集計クエリサービス）を実装する",
+          "wave": 2,
+          "done": true
+        }
+      ]
+    },
+    {
+      "milestone": 2,
+      "goal": "/map/poster-placement ページで Leaflet 地図が表示され、ピンを配置して枚数を入力・送信するとポスター掲示が DB に保存され、逆ジオコーディングで住所が自動取得される。右上ドロップダウンから遷移でき、未ログイン時はログインにリダイレクトされる",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": true,
+      "plan_doc": "docs/tasks/20260402_1842_milestone-2.md",
+      "tasks": [
+        {
+          "id": "server-action-and-nav",
+          "description": "ドキュメント milestone-2 のステップ A（Server Action + ナビゲーションリンク追加）を実装する",
+          "wave": 1,
+          "done": true
+        },
+        {
+          "id": "map-page-and-components",
+          "description": "ドキュメント milestone-2 のステップ B（ページ・地図コンポーネント・登録フォーム・フック）を実装する",
+          "wave": 2,
+          "done": true
+        }
+      ]
+    },
+    {
+      "milestone": 3,
+      "goal": "/map/poster-placement の地図上に市区町村レベルの集計マーカー（合計枚数ラベル付き）が表示され、個別のピン位置や報告者名は他ユーザーに表示されない",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": true,
+      "plan_doc": "docs/tasks/20260402_1903_milestone-3.md",
+      "tasks": [
+        {
+          "id": "city-stats-view-and-loader",
+          "description": "ドキュメント milestone-3 のステップ A（集計ビュー更新 + 型再生成 + loader 作成）を実装する",
+          "wave": 1,
+          "done": true
+        },
+        {
+          "id": "city-stats-markers-ui",
+          "description": "ドキュメント milestone-3 のステップ B（ページ・クライアント・地図コンポーネント・フック・マーカーユーティリティ）を実装する",
+          "wave": 2,
+          "done": true
+        }
+      ]
+    },
+    {
+      "milestone": 4,
+      "goal": "missions.yaml に新規ポスター掲示ミッションが追加され、ポスター掲示を報告すると achievements・mission_artifacts にレコードが作成されて XP が付与される",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": true,
+      "plan_doc": "docs/tasks/20260402_1936_milestone-4.md",
+      "tasks": [
+        {
+          "id": "mission-yaml-and-achieve-usecase",
+          "description": "ドキュメント milestone-4 のステップ A（ミッション YAML 追加 + 達成ユースケース + サービス拡張 + アクション統合）を実装する",
+          "wave": 1,
+          "done": true
+        }
+      ]
+    }
+  ]
+}

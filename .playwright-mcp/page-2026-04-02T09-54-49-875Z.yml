@@ -1,0 +1,292 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "logo アクションボード" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "logo" [ref=e6]
+        - generic [ref=e7]: アクションボード
+      - generic [ref=e8]:
+        - link "ホーム" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e10]:
+          - link "ログイン" [ref=e11] [cursor=pointer]:
+            - /url: /sign-in
+          - link "新規登録" [ref=e12] [cursor=pointer]:
+            - /url: /sign-up
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - img "街並みと雲のイラスト" [ref=e19]
+        - generic [ref=e21]:
+          - img "チームみらい" [ref=e23]
+          - heading "アクションボード" [level=1] [ref=e24]
+          - paragraph [ref=e25]: テクノロジーで政治をかえる。あなたと一緒に未来をつくる。
+          - generic [ref=e26]:
+            - link "アクションボードに登録する" [ref=e27] [cursor=pointer]:
+              - /url: /sign-up
+              - button "アクションボードに登録する" [ref=e28]
+            - button "アクションボードとは？" [ref=e29]
+        - img "チームみらいの仲間たち" [ref=e32]
+      - alert [ref=e34]:
+        - generic [ref=e35]:
+          - img "お知らせ" [ref=e36]
+          - generic [ref=e40]:
+            - text: 新シーズンが開始しました！
+            - text: レベルやランキングはシーズンごとにリセットされます。 前回のランキングは
+            - link "アーカイブからご覧いただけます。" [ref=e41] [cursor=pointer]:
+              - /url: /seasons/season2/ranking
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - heading "チームみらいの活動状況🚀" [level=2] [ref=e45]
+          - paragraph [ref=e46]: 2026/04/02 18:38 更新
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - paragraph [ref=e50]: サポーター数
+            - generic [ref=e51]:
+              - paragraph [ref=e52]: 33,101人
+              - paragraph [ref=e53]:
+                - text: 1日で
+                - generic [ref=e54]: +5人
+          - link "詳しく見る 詳しく見る" [ref=e56] [cursor=pointer]:
+            - /url: https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd
+            - generic [ref=e57]: 詳しく見る
+            - img "詳しく見る" [ref=e58]
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - paragraph [ref=e63]: 達成アクション数
+              - paragraph [ref=e64]: 2026.01.01-
+            - generic [ref=e65]:
+              - paragraph [ref=e66]: 1,350件
+              - paragraph [ref=e67]:
+                - text: 1日で
+                - generic [ref=e68]: +28件
+          - link "詳しく見る 詳しく見る" [ref=e70] [cursor=pointer]:
+            - /url: /stats
+            - generic [ref=e71]: 詳しく見る
+            - img "詳しく見る" [ref=e72]
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - paragraph [ref=e77]: 動画再生回数
+              - paragraph [ref=e78]: 2026.01.01-
+            - generic [ref=e79]:
+              - paragraph [ref=e80]: 0回
+              - paragraph [ref=e81]:
+                - text: 1日で
+                - generic [ref=e82]: +0回
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - paragraph [ref=e85]: 動画本数
+              - paragraph [ref=e86]: 2026.01.01-
+            - generic [ref=e87]:
+              - paragraph [ref=e88]: 0本
+              - paragraph [ref=e89]:
+                - text: 1日で
+                - generic [ref=e90]: +0本
+          - generic [ref=e91]:
+            - link "YouTubeダッシュボード YouTube詳細" [ref=e92] [cursor=pointer]:
+              - /url: /youtube_stats
+              - generic [ref=e93]: YouTubeダッシュボード
+              - img "YouTube詳細" [ref=e94]
+            - link "TikTokダッシュボード TikTok詳細" [ref=e96] [cursor=pointer]:
+              - /url: /tiktok_stats
+              - generic [ref=e97]: TikTokダッシュボード
+              - img "TikTok詳細" [ref=e98]
+      - generic [ref=e102]:
+        - generic [ref=e103]:
+          - heading "⏰ 活動タイムライン" [level=2] [ref=e104]
+          - paragraph [ref=e105]: リアルタイムで更新される活動記録
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - link "松" [ref=e111] [cursor=pointer]:
+              - /url: /users/6ba7b818-9dad-11d1-80b4-00c04fd430c8
+              - generic [ref=e113]: 松
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: 沖縄県の
+                - generic [ref=e118]: 松本かなさん
+                - generic [ref=e119]:
+                  - text: が「
+                  - link "(seed) 活動ブログを書こう (リンク提出)" [ref=e120] [cursor=pointer]:
+                    - /url: /missions/seed-activity-blog
+                  - text: 」を達成しました！
+              - generic [ref=e121]: 2026/04/03 05:17
+          - generic [ref=e122]:
+            - link "渡" [ref=e123] [cursor=pointer]:
+              - /url: /users/6ba7b817-9dad-11d1-80b4-00c04fd430c8
+              - generic [ref=e125]: 渡
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - generic [ref=e128]: 広島県の
+                - generic [ref=e130]: 渡辺雄一さん
+                - generic [ref=e131]:
+                  - text: が「
+                  - link "(seed) ゴミ拾いをしよう (成果物不要)" [ref=e132] [cursor=pointer]:
+                    - /url: /missions/seed-cleanup
+                  - text: 」を達成しました！
+              - generic [ref=e133]: 2026/04/03 04:10
+          - generic [ref=e134]:
+            - link "加" [ref=e135] [cursor=pointer]:
+              - /url: /users/6ba7b816-9dad-11d1-80b4-00c04fd430c8
+              - generic [ref=e137]: 加
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]: 宮城県の
+                - generic [ref=e142]: 加藤みゆきさん
+                - generic [ref=e143]:
+                  - text: が「
+                  - link "(seed) Xのニックネームを入力しよう(テキスト提出)" [ref=e144] [cursor=pointer]:
+                    - /url: /missions/seed-x-nickname
+                  - text: 」を達成しました！
+              - generic [ref=e145]: 2026/04/03 03:03
+        - link "もっと見る" [ref=e147] [cursor=pointer]:
+          - /url: /activities
+          - text: もっと見る
+          - img [ref=e148]
+      - generic [ref=e151]:
+        - heading "🏅アクションリーダー" [level=2] [ref=e152]
+        - region [ref=e153]:
+          - generic [ref=e155]:
+            - group [ref=e156]:
+              - generic [ref=e158]:
+                - heading "今日のトップ3" [level=2] [ref=e159]
+                - generic [ref=e160]: まだ達成者がいません
+            - group [ref=e161]:
+              - generic [ref=e163]:
+                - heading "全期間トップ3" [level=2] [ref=e164]
+                - generic [ref=e165]:
+                  - link "安野たかひろ 東京都 Lv.20 3,325pt" [ref=e166] [cursor=pointer]:
+                    - /url: /users/622d6984-2f8a-41df-9ac3-cd4dcceb8d19
+                    - img [ref=e167]
+                    - generic [ref=e169]:
+                      - generic [ref=e171]: 安野たかひろ
+                      - generic [ref=e172]:
+                        - generic [ref=e173]: 東京都
+                        - generic [ref=e174]: Lv.20
+                    - generic [ref=e175]: 3,325pt
+                  - link "佐藤太郎 東京都 Lv.10 900pt" [ref=e176] [cursor=pointer]:
+                    - /url: /users/f47ac10b-58cc-4372-a567-0e02b2c3d479
+                    - img [ref=e177]
+                    - generic [ref=e183]:
+                      - generic [ref=e185]: 佐藤太郎
+                      - generic [ref=e186]:
+                        - generic [ref=e187]: 東京都
+                        - generic [ref=e188]: Lv.10
+                    - generic [ref=e189]: 900pt
+                  - link "鈴木美咲 神奈川県 Lv.9 740pt" [ref=e190] [cursor=pointer]:
+                    - /url: /users/6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    - img [ref=e191]
+                    - generic [ref=e197]:
+                      - generic [ref=e199]: 鈴木美咲
+                      - generic [ref=e200]:
+                        - generic [ref=e201]: 神奈川県
+                        - generic [ref=e202]: Lv.9
+                    - generic [ref=e203]: 740pt
+        - link "トップ100を見る" [ref=e205] [cursor=pointer]:
+          - /url: /ranking
+          - text: トップ100を見る
+          - img [ref=e206]
+      - generic [ref=e210]:
+        - generic [ref=e211]:
+          - heading "🔥 注目ミッション" [level=2] [ref=e212]
+          - paragraph [ref=e213]: 注目ミッションは獲得ポイントが2倍となります
+        - generic [ref=e214]:
+          - article [ref=e215]:
+            - generic [ref=e216]:
+              - generic [ref=e218]:
+                - generic [ref=e219]:
+                  - img "(seed) ゴミ拾いをしよう (成果物不要)" [ref=e222]
+                  - generic [ref=e223]:
+                    - img [ref=e225]
+                    - text: 0回達成
+                - generic [ref=e235]: (seed) ゴミ拾いをしよう (成果物不要)
+              - generic [ref=e236]:
+                - generic [ref=e237]:
+                  - generic [ref=e238]:
+                    - img [ref=e239]
+                    - generic [ref=e243]: みんなで275回達成
+                  - generic [ref=e244]:
+                    - generic [ref=e245]:
+                      - generic [ref=e246]: 難易度
+                      - generic [ref=e247]: ⭐⭐⭐⭐
+                    - generic [ref=e249]: 400Px 2
+                - link "今すぐチャレンジ🔥" [ref=e250] [cursor=pointer]:
+                  - /url: /missions/seed-cleanup
+                  - button "今すぐチャレンジ🔥" [ref=e252]
+          - article [ref=e253]:
+            - generic [ref=e254]:
+              - generic [ref=e256]:
+                - generic [ref=e257]:
+                  - img "(seed) 発見！地域の宝 (位置情報付き画像)" [ref=e260]
+                  - generic [ref=e261]:
+                    - img [ref=e262]
+                    - text: 0/5回達成
+                - generic [ref=e272]: (seed) 発見！地域の宝 (位置情報付き画像)
+              - generic [ref=e273]:
+                - generic [ref=e274]:
+                  - generic [ref=e275]:
+                    - img [ref=e276]
+                    - generic [ref=e280]: みんなで270回達成
+                  - generic [ref=e281]:
+                    - generic [ref=e282]:
+                      - generic [ref=e283]: 難易度
+                      - generic [ref=e284]: ⭐⭐⭐⭐
+                    - generic [ref=e286]: 400Px 2
+                - link "今すぐチャレンジ🔥" [ref=e287] [cursor=pointer]:
+                  - /url: /missions/seed-local-treasure
+                  - button "今すぐチャレンジ🔥" [ref=e289]
+      - paragraph [ref=e292]: ミッションが見つかりませんでした
+  - contentinfo [ref=e293]:
+    - generic [ref=e296]:
+      - heading "ご意見箱" [level=2] [ref=e297]
+      - paragraph [ref=e298]:
+        - text: チームみらいアクションボードを より良いサービスにするため、
+        - text: 皆様のご意見・ご要望をお聞かせください。
+        - text: いただいたフィードバックは 今後の改善に活用させていただきます。
+      - link "ポスターマップへのご意見フォーム（新しいタブで開きます）" [ref=e299] [cursor=pointer]:
+        - /url: https://forms.gle/vyVkGb4CbNahggfW8
+        - img [ref=e300]
+        - text: ポスターマップへのご意見
+      - link "アクションボードへのご意見フォーム（新しいタブで開きます）" [ref=e302] [cursor=pointer]:
+        - /url: https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105
+        - img [ref=e303]
+        - text: アクションボードへのご意見
+    - generic [ref=e305]:
+      - generic [ref=e307]:
+        - link "チームみらい" [ref=e308] [cursor=pointer]:
+          - /url: /
+          - img "チームみらい" [ref=e309]
+        - generic [ref=e311]: アクションボード
+      - generic [ref=e312]:
+        - img "街並みと雲のイラスト" [ref=e315]
+        - img "チームみらいの仲間たち" [ref=e318]
+      - generic [ref=e319]:
+        - generic [ref=e321]:
+          - heading "過去シーズン" [level=3] [ref=e322]
+          - generic [ref=e323]:
+            - link "2025夏~" [ref=e324] [cursor=pointer]:
+              - /url: /seasons/season2/ranking
+            - link "~2025参院選" [ref=e325] [cursor=pointer]:
+              - /url: /seasons/season1/ranking
+        - generic [ref=e327]:
+          - generic [ref=e329]:
+            - link "運営組織" [ref=e330] [cursor=pointer]:
+              - /url: https://team-mir.ai/
+            - generic [ref=e331]: "|"
+            - link "利用規約" [ref=e332] [cursor=pointer]:
+              - /url: /terms
+            - generic [ref=e333]: "|"
+            - link "プライバシーポリシー" [ref=e334] [cursor=pointer]:
+              - /url: /privacy
+            - generic [ref=e335]: "|"
+            - link "ご意見箱" [ref=e336] [cursor=pointer]:
+              - /url: https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105
+            - generic [ref=e337]: "|"
+            - link "よくあるご質問" [ref=e338] [cursor=pointer]:
+              - /url: https://team-mirai.notion.site/228f6f56bae18037957dd5f108d00e2f
+          - paragraph [ref=e339]: © 2025 Team Mirai. All rights reserved.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e345] [cursor=pointer]:
+    - img [ref=e346]
+  - alert [ref=e349]
