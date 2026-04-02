@@ -54,7 +54,7 @@
           "id": "city-stats-view-and-loader",
           "description": "ドキュメント milestone-3 のステップ A（集計ビュー更新 + 型再生成 + loader 作成）を実装する",
           "wave": 1,
-          "done": false
+          "done": true
         },
         {
           "id": "city-stats-markers-ui",
