@@ -1,5 +1,5 @@
+import { execSync } from "node:child_process";
 import { defineConfig, devices } from "@playwright/test";
-import { execSync } from "child_process";
 import * as dotenv from "dotenv";
 
 if (!process.env.CI) {
