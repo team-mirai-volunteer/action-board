@@ -106,6 +106,29 @@ export async function deletePosterPlacement(id: string): Promise<void> {
 }
 
 /**
+ * ポスター掲示レコードの mission_artifact_id を更新する
+ *
+ * @param id - ポスター掲示レコードの ID
+ * @param missionArtifactId - 紐付ける mission_artifact の ID
+ */
+export async function updatePosterPlacementArtifactId(
+  id: string,
+  missionArtifactId: string,
+): Promise<void> {
+  const supabase = await createAdminClient();
+
+  const { error } = await supabase
+    .from("poster_placements")
+    .update({ mission_artifact_id: missionArtifactId })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating poster placement artifact id:", error);
+    throw error;
+  }
+}
+
+/**
  * 指定ユーザーのポスター掲示合計枚数を取得する
  *
  * @param userId - ユーザーID
