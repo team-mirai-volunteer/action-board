@@ -1,0 +1,33 @@
+{
+  "source": "docs/tasks/20260402_1632_ポスター掲示アクションボード設計.md",
+  "milestones": [
+    {
+      "milestone": 1,
+      "goal": "poster_placements テーブル・RLS ポリシー・poster_placement_city_stats 集計ビューのマイグレーションが適用され、service 層（CRUD + 集計クエリ）が実装されて typecheck を通過する",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": false,
+      "tasks": []
+    },
+    {
+      "milestone": 2,
+      "goal": "/map/poster-placement ページで Leaflet 地図が表示され、ピンを配置して枚数を入力・送信するとポスター掲示が DB に保存され、逆ジオコーディングで住所が自動取得される。右上ドロップダウンから遷移でき、未ログイン時はログインにリダイレクトされる",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": false,
+      "tasks": []
+    },
+    {
+      "milestone": 3,
+      "goal": "/map/poster-placement の地図上に市区町村レベルの集計マーカー（合計枚数ラベル付き）が表示され、個別のピン位置や報告者名は他ユーザーに表示されない",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": false,
+      "tasks": []
+    },
+    {
+      "milestone": 4,
+      "goal": "missions.yaml に新規ポスター掲示ミッションが追加され、ポスター掲示を報告すると achievements・mission_artifacts にレコードが作成されて XP が付与される",
+      "verification": "pnpm run biome:check:write && pnpm run typecheck && pnpm run test:unit",
+      "done": false,
+      "tasks": []
+    }
+  ]
+}
