@@ -33,7 +33,7 @@
           "id": "server-action-and-nav",
           "description": "ドキュメント milestone-2 のステップ A（Server Action + ナビゲーションリンク追加）を実装する",
           "wave": 1,
-          "done": false
+          "done": true
         },
         {
           "id": "map-page-and-components",
