@@ -12,7 +12,7 @@
           "id": "db-migration-and-types",
           "description": "ドキュメント milestone-1 のステップ A（マイグレーション SQL + 型再生成 + feature 型定義）を実装する",
           "wave": 1,
-          "done": false
+          "done": true
         },
         {
           "id": "poster-placement-services",
