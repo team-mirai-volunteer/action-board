@@ -6,7 +6,7 @@ import {
 import type { Database } from "@/lib/types/supabase";
 
 /** ポスター掲示ミッションの slug */
-const POSTER_PLACEMENT_MISSION_SLUG = "poster-placement";
+const POSTER_PLACEMENT_MISSION_SLUG = "residential-poster";
 
 export type AchievePosterPlacementResult =
   | {

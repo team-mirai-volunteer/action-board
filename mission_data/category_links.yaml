@@ -95,7 +95,7 @@ category_links:
         sort_no: 100
       - mission_slug: posting-flyer
         sort_no: 150
-      - mission_slug: poster-placement
+      - mission_slug: residential-poster
         sort_no: 160
       - mission_slug: join-street-speech
         sort_no: 200
