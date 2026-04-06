@@ -229,6 +229,8 @@ export default function PosterPlacementMap({
           height: CONTENT_HEIGHT,
           margin: 0,
           padding: 0,
+          position: "relative",
+          zIndex: 0,
         }}
       />
     </>
