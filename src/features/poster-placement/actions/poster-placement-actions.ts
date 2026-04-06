@@ -28,6 +28,7 @@ export async function submitPosterPlacement(params: {
   lat: number;
   lng: number;
   count: number;
+  address: string | null;
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
@@ -40,7 +41,7 @@ export async function submitPosterPlacement(params: {
       count: params.count,
       prefecture: geo.prefecture,
       city: geo.city,
-      address: geo.address,
+      address: params.address ?? geo.address,
       postcode: geo.postcode,
     });
 
