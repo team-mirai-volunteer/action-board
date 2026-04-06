@@ -12,7 +12,12 @@ import type { PosterPlacementCityStats } from "../types/poster-placement-types";
  * @returns 市区町村ごとの集計データ配列（prefecture, city, total_count, placement_count, avg_lat, avg_lng）
  */
 export async function fetchCityStats(): Promise<PosterPlacementCityStats[]> {
-  return getCityStats();
+  try {
+    return await getCityStats();
+  } catch (error) {
+    console.error("Failed to fetch city stats:", error);
+    return [];
+  }
 }
 
 /**

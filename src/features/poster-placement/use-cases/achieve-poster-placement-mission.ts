@@ -116,6 +116,8 @@ export async function achievePosterPlacementMission(
 
   if (artifactError || !artifact) {
     console.error("Failed to create mission artifact:", artifactError);
+    // 補償処理: achievement を削除して部分書き込みを防ぐ
+    await adminSupabase.from("achievements").delete().eq("id", achievement.id);
     return {
       success: false,
       error: `成果物の保存に失敗しました: ${artifactError?.message ?? "unknown"}`,

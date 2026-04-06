@@ -15,7 +15,12 @@ export default async function PosterPlacementPage() {
     return redirect("/sign-in");
   }
   // サーバーサイドで集計データをフェッチし、初期データとして渡す
-  const cityStats = await fetchCityStats();
+  let cityStats: Awaited<ReturnType<typeof fetchCityStats>> = [];
+  try {
+    cityStats = await fetchCityStats();
+  } catch (error) {
+    console.error("Failed to load poster placement city stats:", error);
+  }
   return (
     <PosterPlacementPageClient userId={user.id} initialCityStats={cityStats} />
   );

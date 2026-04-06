@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type AddressInfo = {
   prefecture: string | null;
@@ -77,13 +79,12 @@ export function PlacementForm({
               <span className="text-gray-400 text-sm">住所を取得中...</span>
             </div>
           ) : (
-            <input
+            <Input
               id="placement-address"
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="住所を入力"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           )}
         </div>
@@ -95,13 +96,12 @@ export function PlacementForm({
           >
             掲示枚数
           </label>
-          <input
+          <Input
             ref={countRef}
             id="placement-count"
             type="number"
             min={1}
             defaultValue={1}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
@@ -112,13 +112,12 @@ export function PlacementForm({
           >
             メモ
           </label>
-          <textarea
+          <Textarea
             id="placement-memo"
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             placeholder="自由記入欄"
             rows={2}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
         <div className="flex gap-2">
