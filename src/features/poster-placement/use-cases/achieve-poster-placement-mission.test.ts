@@ -9,7 +9,10 @@ import { achievePosterPlacementMission } from "./achieve-poster-placement-missio
 type MockResult = { data: unknown; error: unknown };
 
 function createChain(result: MockResult) {
-  const chain: Record<string, jest.Mock> = {};
+  const chain: Record<string, jest.Mock> & PromiseLike<MockResult> = {
+    // thenable: await chain で result を返す（.single() を呼ばないケース用）
+    then: jest.fn((resolve) => resolve(result)),
+  } as any;
   chain.select = jest.fn().mockReturnValue(chain);
   chain.insert = jest.fn().mockReturnValue(chain);
   chain.update = jest.fn().mockReturnValue(chain);

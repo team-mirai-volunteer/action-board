@@ -141,7 +141,7 @@ export default function PosterPlacementMap({
 
   // Update pin marker when pinPosition changes
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstance) return;
 
     // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
     const L = (window as any).L;
@@ -154,10 +154,10 @@ export default function PosterPlacementMap({
 
     if (pinPosition) {
       pinMarkerRef.current = L.marker([pinPosition.lat, pinPosition.lng]).addTo(
-        mapInstanceRef.current,
+        mapInstance,
       );
     }
-  }, [pinPosition]);
+  }, [pinPosition, mapInstance]);
 
   // 市区町村集計マーカーの描画・更新
   useEffect(() => {
@@ -199,7 +199,7 @@ export default function PosterPlacementMap({
   }, [cityStats, mapInstance]);
 
   return (
-    <>
+    <div className="relative" style={{ width: "100%", height: CONTENT_HEIGHT }}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
           <div className="text-center">
@@ -226,13 +226,13 @@ export default function PosterPlacementMap({
         ref={mapRef}
         style={{
           width: "100%",
-          height: CONTENT_HEIGHT,
+          height: "100%",
           margin: 0,
           padding: 0,
           position: "relative",
           zIndex: 0,
         }}
       />
-    </>
+    </div>
   );
 }
