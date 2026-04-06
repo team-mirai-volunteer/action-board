@@ -16,7 +16,11 @@ type PlacementFormProps = {
   isSubmitting: boolean;
   addressInfo: AddressInfo | null;
   isLoadingAddress: boolean;
-  onSubmit: (count: number, address: string | null) => void;
+  onSubmit: (
+    count: number,
+    address: string | null,
+    memo: string | null,
+  ) => void;
   onCancel: () => void;
 };
 
@@ -35,6 +39,7 @@ export function PlacementForm({
 }: PlacementFormProps) {
   const countRef = useRef<HTMLInputElement>(null);
   const [address, setAddress] = useState("");
+  const [memo, setMemo] = useState("");
 
   // 逆ジオコーディング結果が届いたら住所欄を自動入力
   useEffect(() => {
@@ -46,7 +51,7 @@ export function PlacementForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const count = Number(countRef.current?.value ?? 1);
-    onSubmit(count, address || null);
+    onSubmit(count, address || null, memo || null);
   };
 
   return (
@@ -65,7 +70,7 @@ export function PlacementForm({
             htmlFor="placement-address"
             className="mb-1 block font-medium text-sm"
           >
-            住所
+            住所（詳細は<span className="font-bold">公開されません</span>）
           </label>
           {isLoadingAddress ? (
             <div className="flex h-10 items-center rounded-md border border-gray-300 px-3">
@@ -81,9 +86,6 @@ export function PlacementForm({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           )}
-          <p className="mt-1 text-gray-400 text-xs">
-            住所の詳細は公開されません
-          </p>
         </div>
 
         <div className="mb-4">
@@ -99,6 +101,23 @@ export function PlacementForm({
             type="number"
             min={1}
             defaultValue={1}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="placement-memo"
+            className="mb-1 block font-medium text-sm"
+          >
+            メモ
+          </label>
+          <textarea
+            id="placement-memo"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            placeholder="自由記入欄"
+            rows={2}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>

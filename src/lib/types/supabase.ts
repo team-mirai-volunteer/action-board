@@ -641,6 +641,7 @@ export type Database = {
           id: string;
           lat: number;
           lng: number;
+          memo: string | null;
           mission_artifact_id: string | null;
           postcode: string | null;
           prefecture: string | null;
@@ -655,6 +656,7 @@ export type Database = {
           id?: string;
           lat: number;
           lng: number;
+          memo?: string | null;
           mission_artifact_id?: string | null;
           postcode?: string | null;
           prefecture?: string | null;
@@ -669,6 +671,7 @@ export type Database = {
           id?: string;
           lat?: number;
           lng?: number;
+          memo?: string | null;
           mission_artifact_id?: string | null;
           postcode?: string | null;
           prefecture?: string | null;

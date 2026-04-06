@@ -24,7 +24,11 @@ type UsePosterPlacementMapReturn = {
   addressInfo: AddressInfo | null;
   isLoadingAddress: boolean;
   handlePinPlaced: (lat: number, lng: number) => void;
-  handleSubmit: (count: number, address: string | null) => Promise<void>;
+  handleSubmit: (
+    count: number,
+    address: string | null,
+    memo: string | null,
+  ) => Promise<void>;
   handleCancel: () => void;
 };
 
@@ -60,7 +64,7 @@ export function usePosterPlacementMap(
   }, []);
 
   const handleSubmit = useCallback(
-    async (count: number, address: string | null) => {
+    async (count: number, address: string | null, memo: string | null) => {
       if (!selectedPosition) return;
       setIsSubmitting(true);
       try {
@@ -69,6 +73,7 @@ export function usePosterPlacementMap(
           lng: selectedPosition.lng,
           count,
           address,
+          memo,
         });
         if (result.success) {
           toast.success("ポスター掲示を登録しました");

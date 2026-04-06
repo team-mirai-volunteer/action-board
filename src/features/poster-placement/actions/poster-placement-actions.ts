@@ -29,6 +29,7 @@ export async function submitPosterPlacement(params: {
   lng: number;
   count: number;
   address: string | null;
+  memo: string | null;
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
@@ -43,6 +44,7 @@ export async function submitPosterPlacement(params: {
       city: geo.city,
       address: params.address ?? geo.address,
       postcode: geo.postcode,
+      memo: params.memo,
     });
 
     // 2. ミッション達成処理（achievement + mission_artifact + XP 付与）
