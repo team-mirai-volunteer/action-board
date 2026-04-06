@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import { usePosterPlacementMap } from "../hooks/use-poster-placement-map";
 import { fetchCityStats } from "../loaders/poster-placement-loaders";
@@ -26,8 +27,13 @@ export default function PosterPlacementPageClient({
 
   // 登録成功後に集計データを再フェッチする
   const refreshCityStats = useCallback(async () => {
-    const updated = await fetchCityStats();
-    setCityStats(updated);
+    try {
+      const updated = await fetchCityStats();
+      setCityStats(updated);
+    } catch (error) {
+      console.error("Failed to refresh city stats:", error);
+      toast.warning("集計データの更新に失敗しました");
+    }
   }, []);
 
   const {

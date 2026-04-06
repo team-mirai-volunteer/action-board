@@ -161,7 +161,7 @@ export default function PosterPlacementMap({
 
   // 市区町村集計マーカーの描画・更新
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstance) return;
 
     // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
     const L = (window as any).L;
@@ -186,7 +186,7 @@ export default function PosterPlacementMap({
         icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
         // 集計マーカーは zIndexOffset を低くしてピンマーカーの下に表示
         zIndexOffset: -1000,
-      }).addTo(mapInstanceRef.current);
+      }).addTo(mapInstance);
 
       // ツールチップで市区町村名と枚数を表示
       marker.bindTooltip(
@@ -196,7 +196,7 @@ export default function PosterPlacementMap({
 
       cityStatsMarkersRef.current.push(marker);
     }
-  }, [cityStats]);
+  }, [cityStats, mapInstance]);
 
   return (
     <>
