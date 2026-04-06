@@ -849,7 +849,7 @@ missions:
     content: |-
       ポスターを掲示して、掲示マップから報告しましょう。
       掲示した場所と枚数を地図上のピンで報告するとXPが獲得できます。
-      メニューの「私有地ポスター」から報告できます。
+      メニューの「私有地ポスターマップ」から報告できます。
     difficulty: 2
     required_artifact_type: TEXT
     max_achievement_count: null
