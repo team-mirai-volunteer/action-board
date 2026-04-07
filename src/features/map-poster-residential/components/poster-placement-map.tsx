@@ -37,7 +37,8 @@ export default function PosterPlacementMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
   const pinMarkerRef = useRef<Marker | null>(null);
-  const cityStatsMarkersRef = useRef<Marker[]>([]);
+  // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type conflicts with Leaflet Layer type
+  const cityStatsClusterRef = useRef<any>(null);
   // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type conflicts with Leaflet Layer type
   const clusterGroupRef = useRef<any>(null);
   const isMountedRef = useRef<boolean>(true);
@@ -108,7 +109,7 @@ export default function PosterPlacementMap({
           maxZoom: 19,
         }).addTo(map);
 
-        // Initialize cluster group
+        // Initialize cluster group for user's own pins
         clusterGroupRef.current = L.markerClusterGroup({
           maxClusterRadius: 50,
           showCoverageOnHover: false,
@@ -118,6 +119,23 @@ export default function PosterPlacementMap({
           spiderfyOnMaxZoom: true,
         });
         map.addLayer(clusterGroupRef.current);
+
+        // Initialize cluster group for city stats markers
+        cityStatsClusterRef.current = L.markerClusterGroup({
+          maxClusterRadius: 80,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          chunkedLoading: true,
+          iconCreateFunction: (cluster: any) => {
+            const childMarkers = cluster.getAllChildMarkers();
+            let totalCount = 0;
+            for (const m of childMarkers) {
+              totalCount += m.options.totalCount ?? 0;
+            }
+            return createCityStatsMarkerIcon(L, totalCount, "");
+          },
+        });
+        map.addLayer(cityStatsClusterRef.current);
 
         map.on("click", (e) => {
           onPinPlaced?.(e.latlng.lat, e.latlng.lng);
@@ -226,18 +244,15 @@ export default function PosterPlacementMap({
     }
   }, [showMyPins, mapInstance]);
 
-  // 市区町村集計マーカーの描画・更新
+  // 市区町村集計マーカーの描画・更新（クラスタに追加）
   useEffect(() => {
-    if (!mapInstance) return;
+    if (!mapInstance || !cityStatsClusterRef.current) return;
 
     // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
     const L = (window as any).L;
     if (!L) return;
 
-    for (const marker of cityStatsMarkersRef.current) {
-      marker.remove();
-    }
-    cityStatsMarkersRef.current = [];
+    cityStatsClusterRef.current.clearLayers();
 
     if (!cityStats) return;
 
@@ -249,8 +264,8 @@ export default function PosterPlacementMap({
 
       const marker = L.marker([Number(stat.avg_lat), Number(stat.avg_lng)], {
         icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
-        zIndexOffset: -1000,
-      }).addTo(mapInstance);
+        totalCount,
+      });
 
       const tooltipEl = document.createElement("span");
       tooltipEl.textContent = `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`;
@@ -259,7 +274,7 @@ export default function PosterPlacementMap({
         offset: [0, -20],
       });
 
-      cityStatsMarkersRef.current.push(marker);
+      cityStatsClusterRef.current.addLayer(marker);
     }
   }, [cityStats, mapInstance]);
 
