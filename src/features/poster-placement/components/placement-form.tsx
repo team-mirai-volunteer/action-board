@@ -1,59 +1,41 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-type AddressInfo = {
-  prefecture: string | null;
-  city: string | null;
-  address: string | null;
-  postcode: string | null;
-};
 
 type PlacementFormProps = {
   lat: number;
   lng: number;
   isSubmitting: boolean;
-  addressInfo: AddressInfo | null;
   isLoadingAddress: boolean;
-  onSubmit: (
-    count: number,
-    address: string | null,
-    memo: string | null,
-  ) => void;
+  address: string;
+  memo: string;
+  onAddressChange: (value: string) => void;
+  onMemoChange: (value: string) => void;
+  onSubmit: (count: number) => void;
   onCancel: () => void;
 };
-
-function formatAddress(info: AddressInfo): string {
-  return [info.prefecture, info.city, info.address].filter(Boolean).join(" ");
-}
 
 export function PlacementForm({
   lat,
   lng,
   isSubmitting,
-  addressInfo,
   isLoadingAddress,
+  address,
+  memo,
+  onAddressChange,
+  onMemoChange,
   onSubmit,
   onCancel,
 }: PlacementFormProps) {
   const countRef = useRef<HTMLInputElement>(null);
-  const [address, setAddress] = useState("");
-  const [memo, setMemo] = useState("");
-
-  // 逆ジオコーディング結果が届いたら住所欄を自動入力
-  useEffect(() => {
-    if (addressInfo) {
-      setAddress(formatAddress(addressInfo));
-    }
-  }, [addressInfo]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const count = Number(countRef.current?.value ?? 1);
-    onSubmit(count, address || null, memo || null);
+    onSubmit(count);
   };
 
   return (
@@ -83,7 +65,7 @@ export function PlacementForm({
               id="placement-address"
               type="text"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => onAddressChange(e.target.value)}
               placeholder="住所を入力"
             />
           )}
@@ -115,7 +97,7 @@ export function PlacementForm({
           <Textarea
             id="placement-memo"
             value={memo}
-            onChange={(e) => setMemo(e.target.value)}
+            onChange={(e) => onMemoChange(e.target.value)}
             placeholder="自由記入欄"
             rows={2}
           />

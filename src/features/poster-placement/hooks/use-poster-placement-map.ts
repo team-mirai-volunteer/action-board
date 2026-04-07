@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { submitPosterPlacement } from "../actions/poster-placement-actions";
 import { fetchReverseGeocode } from "../loaders/poster-placement-loaders";
@@ -17,18 +17,21 @@ type AddressInfo = {
   postcode: string | null;
 };
 
+function formatAddress(info: AddressInfo): string {
+  return [info.prefecture, info.city, info.address].filter(Boolean).join(" ");
+}
+
 type UsePosterPlacementMapReturn = {
   selectedPosition: { lat: number; lng: number } | null;
   isFormOpen: boolean;
   isSubmitting: boolean;
-  addressInfo: AddressInfo | null;
   isLoadingAddress: boolean;
+  address: string;
+  memo: string;
+  setAddress: (value: string) => void;
+  setMemo: (value: string) => void;
   handlePinPlaced: (lat: number, lng: number) => void;
-  handleSubmit: (
-    count: number,
-    address: string | null,
-    memo: string | null,
-  ) => Promise<void>;
+  handleSubmit: (count: number) => Promise<void>;
   handleCancel: () => void;
 };
 
@@ -43,11 +46,22 @@ export function usePosterPlacementMap(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressInfo, setAddressInfo] = useState<AddressInfo | null>(null);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+  const [address, setAddress] = useState("");
+  const [memo, setMemo] = useState("");
+
+  // 逆ジオコーディング結果が届いたら住所欄を自動入力
+  useEffect(() => {
+    if (addressInfo) {
+      setAddress(formatAddress(addressInfo));
+    }
+  }, [addressInfo]);
 
   const handlePinPlaced = useCallback((lat: number, lng: number) => {
     setSelectedPosition({ lat, lng });
     setIsFormOpen(true);
     setAddressInfo(null);
+    setAddress("");
+    setMemo("");
     setIsLoadingAddress(true);
 
     fetchReverseGeocode(lat, lng)
@@ -64,7 +78,7 @@ export function usePosterPlacementMap(
   }, []);
 
   const handleSubmit = useCallback(
-    async (count: number, address: string | null, memo: string | null) => {
+    async (count: number) => {
       if (!selectedPosition) return;
       setIsSubmitting(true);
       try {
@@ -72,15 +86,16 @@ export function usePosterPlacementMap(
           lat: selectedPosition.lat,
           lng: selectedPosition.lng,
           count,
-          address,
-          memo,
+          address: address || null,
+          memo: memo || null,
         });
         if (result.success) {
           toast.success("ポスター掲示を登録しました");
           setSelectedPosition(null);
           setIsFormOpen(false);
           setAddressInfo(null);
-          // 登録成功後のコールバック（集計データ再フェッチ等）
+          setAddress("");
+          setMemo("");
           await options?.onSubmitSuccess?.();
         } else {
           toast.error(result.error);
@@ -91,21 +106,26 @@ export function usePosterPlacementMap(
         setIsSubmitting(false);
       }
     },
-    [selectedPosition, options],
+    [selectedPosition, address, memo, options],
   );
 
   const handleCancel = useCallback(() => {
     setSelectedPosition(null);
     setIsFormOpen(false);
     setAddressInfo(null);
+    setAddress("");
+    setMemo("");
   }, []);
 
   return {
     selectedPosition,
     isFormOpen,
     isSubmitting,
-    addressInfo,
     isLoadingAddress,
+    address,
+    memo,
+    setAddress,
+    setMemo,
     handlePinPlaced,
     handleSubmit,
     handleCancel,

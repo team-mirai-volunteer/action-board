@@ -40,8 +40,11 @@ export default function PosterPlacementPageClient({
     selectedPosition,
     isFormOpen,
     isSubmitting,
-    addressInfo,
     isLoadingAddress,
+    address,
+    memo,
+    setAddress,
+    setMemo,
     handlePinPlaced,
     handleSubmit,
     handleCancel,
@@ -59,8 +62,11 @@ export default function PosterPlacementPageClient({
           lat={selectedPosition.lat}
           lng={selectedPosition.lng}
           isSubmitting={isSubmitting}
-          addressInfo={addressInfo}
           isLoadingAddress={isLoadingAddress}
+          address={address}
+          memo={memo}
+          onAddressChange={setAddress}
+          onMemoChange={setMemo}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
         />
