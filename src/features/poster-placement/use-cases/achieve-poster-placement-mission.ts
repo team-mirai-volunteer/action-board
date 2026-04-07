@@ -145,14 +145,21 @@ export async function achievePosterPlacementMission(
   }
 
   // 6. user_levels を更新
-  let { data: currentLevel } = await adminSupabase
+  const { data: currentLevel, error: levelQueryError } = await adminSupabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
     .eq("season_id", season.id)
     .maybeSingle();
 
-  if (!currentLevel) {
+  if (levelQueryError) {
+    console.error("Failed to fetch user level:", levelQueryError);
+    // レベル更新失敗はミッション達成自体の失敗にはしない
+  }
+
+  let effectiveLevel = currentLevel;
+
+  if (!effectiveLevel && !levelQueryError) {
     const { data: newLevel, error: initError } = await adminSupabase
       .from("user_levels")
       .insert({
@@ -167,15 +174,15 @@ export async function achievePosterPlacementMission(
     if (initError || !newLevel) {
       console.error("Failed to initialize user level:", initError);
     } else {
-      currentLevel = newLevel;
+      effectiveLevel = newLevel;
     }
   }
 
-  if (currentLevel) {
-    const newXp = currentLevel.xp + xpToGrant;
+  if (effectiveLevel) {
+    const newXp = effectiveLevel.xp + xpToGrant;
     const newLevel = calculateLevel(newXp);
 
-    await adminSupabase
+    const { error: updateError } = await adminSupabase
       .from("user_levels")
       .update({
         xp: newXp,
@@ -184,6 +191,10 @@ export async function achievePosterPlacementMission(
       })
       .eq("user_id", userId)
       .eq("season_id", season.id);
+
+    if (updateError) {
+      console.error("Failed to update user level:", updateError);
+    }
   }
 
   return {

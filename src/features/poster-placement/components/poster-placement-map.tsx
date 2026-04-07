@@ -188,11 +188,13 @@ export default function PosterPlacementMap({
         zIndexOffset: -1000,
       }).addTo(mapInstance);
 
-      // ツールチップで市区町村名と枚数を表示
-      marker.bindTooltip(
-        `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`,
-        { direction: "top", offset: [0, -20] },
-      );
+      // ツールチップで市区町村名と枚数を表示（XSS防止のため textContent を使用）
+      const tooltipEl = document.createElement("span");
+      tooltipEl.textContent = `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`;
+      marker.bindTooltip(tooltipEl, {
+        direction: "top",
+        offset: [0, -20],
+      });
 
       cityStatsMarkersRef.current.push(marker);
     }
