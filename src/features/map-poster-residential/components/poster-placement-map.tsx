@@ -5,8 +5,8 @@ import "leaflet/dist/leaflet.css";
 import type { Map as LeafletMap, Marker } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useCurrentLocation } from "@/features/map-posting/hooks/use-current-location";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
+import { useCurrentLocation } from "@/lib/hooks/use-current-location";
 import type { PosterPlacementCityStats } from "../types/poster-placement-types";
 import { createCityStatsMarkerIcon } from "../utils/city-stats-marker";
 

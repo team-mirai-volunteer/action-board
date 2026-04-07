@@ -1,7 +1,7 @@
 "use server";
 
-import type { ReverseGeocodingResult } from "@/features/map-posting/services/reverse-geocoding";
-import { reverseGeocode } from "@/features/map-posting/services/reverse-geocoding";
+import type { ReverseGeocodingResult } from "@/lib/services/reverse-geocoding";
+import { reverseGeocode } from "@/lib/services/reverse-geocoding";
 import { getCityStats } from "../services/poster-placement-stats";
 import type { PosterPlacementCityStats } from "../types/poster-placement-types";
 

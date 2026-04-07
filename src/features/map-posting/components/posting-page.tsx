@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { HEADER_HEIGHT } from "@/lib/constants/layout";
+import { useCurrentLocation } from "@/lib/hooks/use-current-location";
 import type { Json } from "@/lib/types/supabase";
 import { logger } from "@/lib/utils/logger";
 import {
@@ -24,7 +25,6 @@ import {
   postingStatusConfig,
   postingStatusLabels,
 } from "../config/status-config";
-import { useCurrentLocation } from "../hooks/use-current-location";
 import {
   getShapeMissionStatus,
   loadShapes as loadMapShapes,

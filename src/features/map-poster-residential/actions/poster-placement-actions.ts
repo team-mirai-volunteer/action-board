@@ -1,7 +1,7 @@
 "use server";
 
 import type { User } from "@supabase/supabase-js";
-import { reverseGeocode } from "@/features/map-posting/services/reverse-geocoding";
+import { reverseGeocode } from "@/lib/services/reverse-geocoding";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import PosterPlacementPageClient from "@/features/poster-placement/components/poster-placement-page-client";
-import { fetchCityStats } from "@/features/poster-placement/loaders/poster-placement-loaders";
+import PosterPlacementPageClient from "@/features/map-poster-residential/components/poster-placement-page-client";
+import { fetchCityStats } from "@/features/map-poster-residential/loaders/poster-placement-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {

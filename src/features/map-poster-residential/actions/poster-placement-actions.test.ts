@@ -19,7 +19,7 @@ jest.mock("@/lib/supabase/adminClient", () => ({
   createAdminClient: (...args: unknown[]) => mockCreateAdminClient(...args),
 }));
 
-jest.mock("@/features/map-posting/services/reverse-geocoding", () => ({
+jest.mock("@/lib/services/reverse-geocoding", () => ({
   reverseGeocode: (...args: unknown[]) => mockReverseGeocode(...args),
 }));
 
