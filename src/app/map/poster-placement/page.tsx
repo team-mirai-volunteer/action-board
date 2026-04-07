@@ -5,7 +5,7 @@ import { fetchCityStats } from "@/features/poster-placement/loaders/poster-place
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {
-  title: "ポスター掲示マップ",
+  title: "私有地ポスターマップ",
   description: "ポスターの掲示場所を地図上で報告できます",
 };
 
