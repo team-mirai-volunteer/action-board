@@ -32,13 +32,11 @@ export default function PosterPlacementMap({
   pinPosition,
   cityStats,
   myPlacements,
-  showMyPins = true,
+  showMyPins = false,
 }: PosterPlacementMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
   const pinMarkerRef = useRef<Marker | null>(null);
-  // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type conflicts with Leaflet Layer type
-  const cityStatsClusterRef = useRef<any>(null);
   // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type conflicts with Leaflet Layer type
   const clusterGroupRef = useRef<any>(null);
   const isMountedRef = useRef<boolean>(true);
@@ -109,33 +107,24 @@ export default function PosterPlacementMap({
           maxZoom: 19,
         }).addTo(map);
 
-        // Initialize cluster group for user's own pins
+        // 単一クラスタグループ（city stats / my pins 共用）
         clusterGroupRef.current = L.markerClusterGroup({
-          maxClusterRadius: 50,
+          maxClusterRadius: 60,
           showCoverageOnHover: false,
           zoomToBoundsOnClick: true,
           chunkedLoading: true,
           removeOutsideVisibleBounds: true,
           spiderfyOnMaxZoom: true,
-        });
-        map.addLayer(clusterGroupRef.current);
-
-        // Initialize cluster group for city stats markers
-        cityStatsClusterRef.current = L.markerClusterGroup({
-          maxClusterRadius: 80,
-          showCoverageOnHover: false,
-          zoomToBoundsOnClick: true,
-          chunkedLoading: true,
           iconCreateFunction: (cluster: any) => {
             const childMarkers = cluster.getAllChildMarkers();
-            let totalCount = 0;
+            let total = 0;
             for (const m of childMarkers) {
-              totalCount += m.options.totalCount ?? 0;
+              total += m.options.totalCount ?? 1;
             }
-            return createCityStatsMarkerIcon(L, totalCount, "");
+            return createCityStatsMarkerIcon(L, total, "");
           },
         });
-        map.addLayer(cityStatsClusterRef.current);
+        map.addLayer(clusterGroupRef.current);
 
         map.on("click", (e) => {
           onPinPlaced?.(e.latlng.lat, e.latlng.lng);
@@ -201,7 +190,7 @@ export default function PosterPlacementMap({
     }
   }, [pinPosition, mapInstance]);
 
-  // ユーザーのピンをクラスタに描画
+  // クラスタの中身を切り替え: showMyPins ON → 自分のピン / OFF → city stats
   useEffect(() => {
     if (!mapInstance || !clusterGroupRef.current) return;
 
@@ -211,72 +200,51 @@ export default function PosterPlacementMap({
 
     clusterGroupRef.current.clearLayers();
 
-    if (!showMyPins || !myPlacements) return;
-
-    for (const placement of myPlacements) {
-      const marker = L.marker([Number(placement.lat), Number(placement.lng)]);
-
-      const tooltipEl = document.createElement("span");
-      tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)`;
-      marker.bindTooltip(tooltipEl, { direction: "top" });
-
-      marker.on("click", (e: L.LeafletMouseEvent) => {
-        e.originalEvent.stopPropagation();
-        onPlacementClick?.(placement);
-      });
-
-      clusterGroupRef.current?.addLayer(marker);
-    }
-  }, [myPlacements, showMyPins, mapInstance, onPlacementClick]);
-
-  // showMyPins トグルでクラスタの表示/非表示
-  useEffect(() => {
-    if (!mapInstance || !clusterGroupRef.current) return;
-
     if (showMyPins) {
-      if (!mapInstance.hasLayer(clusterGroupRef.current)) {
-        mapInstance.addLayer(clusterGroupRef.current);
+      // 自分のピンを表示
+      if (!myPlacements) return;
+      for (const placement of myPlacements) {
+        const marker = L.marker(
+          [Number(placement.lat), Number(placement.lng)],
+          { totalCount: placement.count },
+        );
+
+        const tooltipEl = document.createElement("span");
+        tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)`;
+        marker.bindTooltip(tooltipEl, { direction: "top" });
+
+        marker.on("click", (e: L.LeafletMouseEvent) => {
+          e.originalEvent.stopPropagation();
+          onPlacementClick?.(placement);
+        });
+
+        clusterGroupRef.current.addLayer(marker);
       }
     } else {
-      if (mapInstance.hasLayer(clusterGroupRef.current)) {
-        mapInstance.removeLayer(clusterGroupRef.current);
+      // 市区町村集計マーカーを表示
+      if (!cityStats) return;
+      for (const stat of cityStats) {
+        if (stat.avg_lat == null || stat.avg_lng == null) continue;
+
+        const totalCount = Number(stat.total_count) || 0;
+        if (totalCount === 0) continue;
+
+        const marker = L.marker([Number(stat.avg_lat), Number(stat.avg_lng)], {
+          icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
+          totalCount,
+        });
+
+        const tooltipEl = document.createElement("span");
+        tooltipEl.textContent = `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`;
+        marker.bindTooltip(tooltipEl, {
+          direction: "top",
+          offset: [0, -20],
+        });
+
+        clusterGroupRef.current.addLayer(marker);
       }
     }
-  }, [showMyPins, mapInstance]);
-
-  // 市区町村集計マーカーの描画・更新（クラスタに追加）
-  useEffect(() => {
-    if (!mapInstance || !cityStatsClusterRef.current) return;
-
-    // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
-    const L = (window as any).L;
-    if (!L) return;
-
-    cityStatsClusterRef.current.clearLayers();
-
-    if (!cityStats) return;
-
-    for (const stat of cityStats) {
-      if (stat.avg_lat == null || stat.avg_lng == null) continue;
-
-      const totalCount = Number(stat.total_count) || 0;
-      if (totalCount === 0) continue;
-
-      const marker = L.marker([Number(stat.avg_lat), Number(stat.avg_lng)], {
-        icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
-        totalCount,
-      });
-
-      const tooltipEl = document.createElement("span");
-      tooltipEl.textContent = `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`;
-      marker.bindTooltip(tooltipEl, {
-        direction: "top",
-        offset: [0, -20],
-      });
-
-      cityStatsClusterRef.current.addLayer(marker);
-    }
-  }, [cityStats, mapInstance]);
+  }, [showMyPins, cityStats, myPlacements, mapInstance, onPlacementClick]);
 
   return (
     <div className="relative" style={{ width: "100%", height: CONTENT_HEIGHT }}>

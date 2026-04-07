@@ -62,7 +62,7 @@ export function usePosterPlacementMap(
   const [count, setCount] = useState(1);
   const [editingPlacement, setEditingPlacement] =
     useState<PosterPlacement | null>(null);
-  const [showMyPins, setShowMyPins] = useState(true);
+  const [showMyPins, setShowMyPins] = useState(false);
 
   // 逆ジオコーディング結果が届いたら住所欄を自動入力
   useEffect(() => {
