@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PosterPlacementPageClient from "@/features/map-poster-residential/components/poster-placement-page-client";
-import { fetchCityStats } from "@/features/map-poster-residential/loaders/poster-placement-loaders";
+import {
+  fetchCityStats,
+  fetchMyPlacements,
+} from "@/features/map-poster-residential/loaders/poster-placement-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {
@@ -14,14 +17,21 @@ export default async function PosterPlacementPage() {
   if (!user) {
     return redirect("/sign-in");
   }
-  // サーバーサイドで集計データをフェッチし、初期データとして渡す
   let cityStats: Awaited<ReturnType<typeof fetchCityStats>> = [];
+  let myPlacements: Awaited<ReturnType<typeof fetchMyPlacements>> = [];
   try {
-    cityStats = await fetchCityStats();
+    [cityStats, myPlacements] = await Promise.all([
+      fetchCityStats(),
+      fetchMyPlacements(),
+    ]);
   } catch (error) {
-    console.error("Failed to load poster placement city stats:", error);
+    console.error("Failed to load initial data:", error);
   }
   return (
-    <PosterPlacementPageClient userId={user.id} initialCityStats={cityStats} />
+    <PosterPlacementPageClient
+      userId={user.id}
+      initialCityStats={cityStats}
+      initialMyPlacements={myPlacements}
+    />
   );
 }

@@ -1,32 +1,45 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 import type { Map as LeafletMap, Marker } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import { useCurrentLocation } from "@/lib/hooks/use-current-location";
-import type { PosterPlacementCityStats } from "../types/poster-placement-types";
+import type {
+  PosterPlacement,
+  PosterPlacementCityStats,
+} from "../types/poster-placement-types";
 import { createCityStatsMarkerIcon } from "../utils/city-stats-marker";
 
 type PosterPlacementMapProps = {
   onMapReady?: (map: LeafletMap) => void;
   onPinPlaced?: (lat: number, lng: number) => void;
+  onPlacementClick?: (placement: PosterPlacement) => void;
   pinPosition?: { lat: number; lng: number } | null;
   cityStats?: PosterPlacementCityStats[];
+  myPlacements?: PosterPlacement[];
+  showMyPins?: boolean;
 };
 
 export default function PosterPlacementMap({
   onMapReady,
   onPinPlaced,
+  onPlacementClick,
   pinPosition,
   cityStats,
+  myPlacements,
+  showMyPins = true,
 }: PosterPlacementMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
   const pinMarkerRef = useRef<Marker | null>(null);
   const cityStatsMarkersRef = useRef<Marker[]>([]);
+  // biome-ignore lint/suspicious/noExplicitAny: MarkerClusterGroup type conflicts with Leaflet Layer type
+  const clusterGroupRef = useRef<any>(null);
   const isMountedRef = useRef<boolean>(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +62,7 @@ export default function PosterPlacementMap({
 
       try {
         L = (await import("leaflet")).default;
+        await import("leaflet.markercluster");
       } catch (err) {
         console.error("Failed to load Leaflet:", err);
         if (isMountedRef.current) {
@@ -61,7 +75,6 @@ export default function PosterPlacementMap({
         return;
       }
 
-      // Set window.L for useCurrentLocation hook
       // biome-ignore lint/suspicious/noExplicitAny: Leaflet requires window.L for hooks
       (window as any).L = L;
 
@@ -94,6 +107,17 @@ export default function PosterPlacementMap({
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
           maxZoom: 19,
         }).addTo(map);
+
+        // Initialize cluster group
+        clusterGroupRef.current = L.markerClusterGroup({
+          maxClusterRadius: 50,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          chunkedLoading: true,
+          removeOutsideVisibleBounds: true,
+          spiderfyOnMaxZoom: true,
+        });
+        map.addLayer(clusterGroupRef.current);
 
         map.on("click", (e) => {
           onPinPlaced?.(e.latlng.lat, e.latlng.lng);
@@ -159,6 +183,49 @@ export default function PosterPlacementMap({
     }
   }, [pinPosition, mapInstance]);
 
+  // ユーザーのピンをクラスタに描画
+  useEffect(() => {
+    if (!mapInstance || !clusterGroupRef.current) return;
+
+    // biome-ignore lint/suspicious/noExplicitAny: window.L for Leaflet
+    const L = (window as any).L;
+    if (!L) return;
+
+    clusterGroupRef.current.clearLayers();
+
+    if (!showMyPins || !myPlacements) return;
+
+    for (const placement of myPlacements) {
+      const marker = L.marker([Number(placement.lat), Number(placement.lng)]);
+
+      const tooltipEl = document.createElement("span");
+      tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)`;
+      marker.bindTooltip(tooltipEl, { direction: "top" });
+
+      marker.on("click", (e: L.LeafletMouseEvent) => {
+        e.originalEvent.stopPropagation();
+        onPlacementClick?.(placement);
+      });
+
+      clusterGroupRef.current?.addLayer(marker);
+    }
+  }, [myPlacements, showMyPins, mapInstance, onPlacementClick]);
+
+  // showMyPins トグルでクラスタの表示/非表示
+  useEffect(() => {
+    if (!mapInstance || !clusterGroupRef.current) return;
+
+    if (showMyPins) {
+      if (!mapInstance.hasLayer(clusterGroupRef.current)) {
+        mapInstance.addLayer(clusterGroupRef.current);
+      }
+    } else {
+      if (mapInstance.hasLayer(clusterGroupRef.current)) {
+        mapInstance.removeLayer(clusterGroupRef.current);
+      }
+    }
+  }, [showMyPins, mapInstance]);
+
   // 市区町村集計マーカーの描画・更新
   useEffect(() => {
     if (!mapInstance) return;
@@ -167,7 +234,6 @@ export default function PosterPlacementMap({
     const L = (window as any).L;
     if (!L) return;
 
-    // 既存の集計マーカーを全て除去
     for (const marker of cityStatsMarkersRef.current) {
       marker.remove();
     }
@@ -176,7 +242,6 @@ export default function PosterPlacementMap({
     if (!cityStats) return;
 
     for (const stat of cityStats) {
-      // avg_lat / avg_lng が null の場合はスキップ
       if (stat.avg_lat == null || stat.avg_lng == null) continue;
 
       const totalCount = Number(stat.total_count) || 0;
@@ -184,11 +249,9 @@ export default function PosterPlacementMap({
 
       const marker = L.marker([Number(stat.avg_lat), Number(stat.avg_lng)], {
         icon: createCityStatsMarkerIcon(L, totalCount, stat.city ?? ""),
-        // 集計マーカーは zIndexOffset を低くしてピンマーカーの下に表示
         zIndexOffset: -1000,
       }).addTo(mapInstance);
 
-      // ツールチップで市区町村名と枚数を表示（XSS防止のため textContent を使用）
       const tooltipEl = document.createElement("span");
       tooltipEl.textContent = `${stat.prefecture ?? ""}${stat.city ?? ""}: ${totalCount}枚`;
       marker.bindTooltip(tooltipEl, {

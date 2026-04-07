@@ -9,6 +9,7 @@ import {
   deletePosterPlacement,
   getPosterPlacementById,
   updatePosterPlacementArtifactId,
+  updatePosterPlacementFields,
 } from "../services/poster-placements";
 import { achievePosterPlacementMission } from "../use-cases/achieve-poster-placement-mission";
 
@@ -82,6 +83,35 @@ export async function submitPosterPlacement(params: {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "登録に失敗しました";
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * ポスター掲示を更新する Server Action
+ */
+export async function updatePosterPlacement(
+  id: string,
+  params: { count: number; address: string | null; memo: string | null },
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const user = await requireAuth();
+    const record = await getPosterPlacementById(id);
+    if (!record) {
+      return { success: false, error: "レコードが見つかりません" };
+    }
+    if (record.user_id !== user.id) {
+      return { success: false, error: "更新する権限がありません" };
+    }
+    await updatePosterPlacementFields(id, {
+      count: params.count,
+      address: params.address,
+      memo: params.memo,
+    });
+    return { success: true };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "更新に失敗しました";
     return { success: false, error: message };
   }
 }

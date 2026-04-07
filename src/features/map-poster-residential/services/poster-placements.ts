@@ -151,3 +151,26 @@ export async function getUserPosterPlacementCount(
 
   return data.reduce((sum, row) => sum + (row.count ?? 0), 0);
 }
+
+/**
+ * ポスター掲示レコードのフィールドを更新する
+ *
+ * @param id - ポスター掲示レコードの ID
+ * @param fields - 更新するフィールド
+ */
+export async function updatePosterPlacementFields(
+  id: string,
+  fields: { address?: string | null; count?: number; memo?: string | null },
+): Promise<void> {
+  const supabase = await createAdminClient();
+
+  const { error } = await supabase
+    .from("poster_placements")
+    .update(fields)
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating poster placement fields:", error);
+    throw error;
+  }
+}

@@ -2,8 +2,13 @@
 
 import type { ReverseGeocodingResult } from "@/lib/services/reverse-geocoding";
 import { reverseGeocode } from "@/lib/services/reverse-geocoding";
+import { createClient } from "@/lib/supabase/client";
 import { getCityStats } from "../services/poster-placement-stats";
-import type { PosterPlacementCityStats } from "../types/poster-placement-types";
+import { getPosterPlacementsByUserId } from "../services/poster-placements";
+import type {
+  PosterPlacement,
+  PosterPlacementCityStats,
+} from "../types/poster-placement-types";
 
 /**
  * 市区町村レベルの集計データを取得する
@@ -28,4 +33,22 @@ export async function fetchReverseGeocode(
   lng: number,
 ): Promise<ReverseGeocodingResult> {
   return reverseGeocode(lat, lng);
+}
+
+/**
+ * ログインユーザー自身のポスター掲示一覧を取得する
+ * 他ユーザーの個別位置情報は一切取得しない
+ */
+export async function fetchMyPlacements(): Promise<PosterPlacement[]> {
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
+    return await getPosterPlacementsByUserId(user.id);
+  } catch (error) {
+    console.error("Failed to fetch my placements:", error);
+    return [];
+  }
 }

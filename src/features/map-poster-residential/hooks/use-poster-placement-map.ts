@@ -2,10 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { submitPosterPlacement } from "../actions/poster-placement-actions";
+import {
+  removePosterPlacement,
+  submitPosterPlacement,
+  updatePosterPlacement,
+} from "../actions/poster-placement-actions";
 import { fetchReverseGeocode } from "../loaders/poster-placement-loaders";
+import type { PosterPlacement } from "../types/poster-placement-types";
 
-// オプション型（ファイル内定義）
 type UsePosterPlacementMapOptions = {
   onSubmitSuccess?: () => void | Promise<void>;
 };
@@ -28,10 +32,17 @@ type UsePosterPlacementMapReturn = {
   isLoadingAddress: boolean;
   address: string;
   memo: string;
+  count: number;
+  mode: "create" | "edit";
+  showMyPins: boolean;
   setAddress: (value: string) => void;
   setMemo: (value: string) => void;
+  setCount: (value: number) => void;
+  setShowMyPins: (value: boolean) => void;
   handlePinPlaced: (lat: number, lng: number) => void;
-  handleSubmit: (count: number) => Promise<void>;
+  handlePlacementClick: (placement: PosterPlacement) => void;
+  handleSubmit: () => Promise<void>;
+  handleDelete: () => Promise<void>;
   handleCancel: () => void;
 };
 
@@ -48,6 +59,10 @@ export function usePosterPlacementMap(
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const [address, setAddress] = useState("");
   const [memo, setMemo] = useState("");
+  const [count, setCount] = useState(1);
+  const [editingPlacement, setEditingPlacement] =
+    useState<PosterPlacement | null>(null);
+  const [showMyPins, setShowMyPins] = useState(true);
 
   // 逆ジオコーディング結果が届いたら住所欄を自動入力
   useEffect(() => {
@@ -56,12 +71,24 @@ export function usePosterPlacementMap(
     }
   }, [addressInfo]);
 
+  const resetForm = useCallback(() => {
+    setSelectedPosition(null);
+    setIsFormOpen(false);
+    setAddressInfo(null);
+    setAddress("");
+    setMemo("");
+    setCount(1);
+    setEditingPlacement(null);
+  }, []);
+
   const handlePinPlaced = useCallback((lat: number, lng: number) => {
+    setEditingPlacement(null);
     setSelectedPosition({ lat, lng });
     setIsFormOpen(true);
     setAddressInfo(null);
     setAddress("");
     setMemo("");
+    setCount(1);
     setIsLoadingAddress(true);
 
     fetchReverseGeocode(lat, lng)
@@ -77,11 +104,38 @@ export function usePosterPlacementMap(
       });
   }, []);
 
-  const handleSubmit = useCallback(
-    async (count: number) => {
-      if (!selectedPosition) return;
-      setIsSubmitting(true);
-      try {
+  const handlePlacementClick = useCallback((placement: PosterPlacement) => {
+    setEditingPlacement(placement);
+    setSelectedPosition({
+      lat: Number(placement.lat),
+      lng: Number(placement.lng),
+    });
+    setAddress(placement.address ?? "");
+    setMemo(placement.memo ?? "");
+    setCount(placement.count);
+    setIsLoadingAddress(false);
+    setAddressInfo(null);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    setIsSubmitting(true);
+    try {
+      if (editingPlacement) {
+        const result = await updatePosterPlacement(editingPlacement.id, {
+          count,
+          address: address || null,
+          memo: memo || null,
+        });
+        if (result.success) {
+          toast.success("掲示情報を更新しました");
+          resetForm();
+          await options?.onSubmitSuccess?.();
+        } else {
+          toast.error(result.error);
+        }
+      } else {
+        if (!selectedPosition) return;
         const result = await submitPosterPlacement({
           lat: selectedPosition.lat,
           lng: selectedPosition.lng,
@@ -91,31 +145,50 @@ export function usePosterPlacementMap(
         });
         if (result.success) {
           toast.success("ポスター掲示を登録しました");
-          setSelectedPosition(null);
-          setIsFormOpen(false);
-          setAddressInfo(null);
-          setAddress("");
-          setMemo("");
+          resetForm();
           await options?.onSubmitSuccess?.();
         } else {
           toast.error(result.error);
         }
-      } catch {
-        toast.error("登録に失敗しました");
-      } finally {
-        setIsSubmitting(false);
       }
-    },
-    [selectedPosition, address, memo, options],
-  );
+    } catch {
+      toast.error(
+        editingPlacement ? "更新に失敗しました" : "登録に失敗しました",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    editingPlacement,
+    selectedPosition,
+    count,
+    address,
+    memo,
+    options,
+    resetForm,
+  ]);
 
-  const handleCancel = useCallback(() => {
-    setSelectedPosition(null);
-    setIsFormOpen(false);
-    setAddressInfo(null);
-    setAddress("");
-    setMemo("");
-  }, []);
+  const handleDelete = useCallback(async () => {
+    if (!editingPlacement) return;
+    const confirmed = window.confirm("この掲示情報を削除しますか？");
+    if (!confirmed) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = await removePosterPlacement(editingPlacement.id);
+      if (result.success) {
+        toast.success("掲示情報を削除しました");
+        resetForm();
+        await options?.onSubmitSuccess?.();
+      } else {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error("削除に失敗しました");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [editingPlacement, options, resetForm]);
 
   return {
     selectedPosition,
@@ -124,10 +197,17 @@ export function usePosterPlacementMap(
     isLoadingAddress,
     address,
     memo,
+    count,
+    mode: editingPlacement ? "edit" : "create",
+    showMyPins,
     setAddress,
     setMemo,
+    setCount,
+    setShowMyPins,
     handlePinPlaced,
+    handlePlacementClick,
     handleSubmit,
-    handleCancel,
+    handleDelete,
+    handleCancel: resetForm,
   };
 }

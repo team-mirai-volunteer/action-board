@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,34 +7,39 @@ import { Textarea } from "@/components/ui/textarea";
 type PlacementFormProps = {
   lat: number;
   lng: number;
+  mode: "create" | "edit";
   isSubmitting: boolean;
   isLoadingAddress: boolean;
   address: string;
   memo: string;
+  count: number;
   onAddressChange: (value: string) => void;
   onMemoChange: (value: string) => void;
-  onSubmit: (count: number) => void;
+  onCountChange: (value: number) => void;
+  onSubmit: () => void;
   onCancel: () => void;
+  onDelete?: () => void;
 };
 
 export function PlacementForm({
   lat,
   lng,
+  mode,
   isSubmitting,
   isLoadingAddress,
   address,
   memo,
+  count,
   onAddressChange,
   onMemoChange,
+  onCountChange,
   onSubmit,
   onCancel,
+  onDelete,
 }: PlacementFormProps) {
-  const countRef = useRef<HTMLInputElement>(null);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const count = Number(countRef.current?.value ?? 1);
-    onSubmit(count);
+    onSubmit();
   };
 
   return (
@@ -44,7 +48,9 @@ export function PlacementForm({
         onSubmit={handleSubmit}
         className="rounded-lg bg-white p-4 shadow-lg"
       >
-        <h3 className="mb-3 font-semibold text-lg">ポスター掲示を登録</h3>
+        <h3 className="mb-3 font-semibold text-lg">
+          {mode === "edit" ? "掲示情報を編集" : "ポスター掲示を登録"}
+        </h3>
         <p className="mb-3 text-gray-600 text-sm">
           選択された位置: {lat.toFixed(6)}, {lng.toFixed(6)}
         </p>
@@ -79,11 +85,11 @@ export function PlacementForm({
             掲示枚数
           </label>
           <Input
-            ref={countRef}
             id="placement-count"
             type="number"
             min={1}
-            defaultValue={1}
+            value={count}
+            onChange={(e) => onCountChange(Number(e.target.value) || 1)}
           />
         </div>
 
@@ -107,18 +113,29 @@ export function PlacementForm({
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                登録中...
+                {mode === "edit" ? "更新中..." : "登録中..."}
               </span>
+            ) : mode === "edit" ? (
+              "更新する"
             ) : (
               "登録する"
             )}
           </Button>
+          {mode === "edit" && onDelete && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={onDelete}
+              disabled={isSubmitting}
+            >
+              削除
+            </Button>
+          )}
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="flex-1"
           >
             キャンセル
           </Button>
