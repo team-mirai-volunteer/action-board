@@ -10,7 +10,7 @@ import {
   getPosterPlacementsByUserId,
   getUserPosterPlacementCount,
   updatePosterPlacementArtifactId,
-} from "./poster-placements";
+} from "./residential-posters";
 
 const mockCreateAdminClient = createAdminClient as jest.MockedFunction<
   typeof createAdminClient

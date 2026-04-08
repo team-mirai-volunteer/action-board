@@ -6,9 +6,9 @@ import {
   removePosterPlacement,
   submitPosterPlacement,
   updatePosterPlacement,
-} from "../actions/poster-placement-actions";
-import { fetchReverseGeocode } from "../loaders/poster-placement-loaders";
-import type { PosterPlacement } from "../types/poster-placement-types";
+} from "../actions/residential-poster-actions";
+import { fetchReverseGeocode } from "../loaders/residential-poster-loaders";
+import type { ResidentialPosterPlacement } from "../types/residential-poster-types";
 
 type UsePosterPlacementMapOptions = {
   onSubmitSuccess?: () => void | Promise<void>;
@@ -40,7 +40,7 @@ type UsePosterPlacementMapReturn = {
   setCount: (value: number) => void;
   setShowMyPins: (value: boolean) => void;
   handlePinPlaced: (lat: number, lng: number) => void;
-  handlePlacementClick: (placement: PosterPlacement) => void;
+  handlePlacementClick: (placement: ResidentialPosterPlacement) => void;
   handleSubmit: () => Promise<void>;
   handleDelete: () => Promise<void>;
   handleCancel: () => void;
@@ -61,7 +61,7 @@ export function usePosterPlacementMap(
   const [memo, setMemo] = useState("");
   const [count, setCount] = useState(1);
   const [editingPlacement, setEditingPlacement] =
-    useState<PosterPlacement | null>(null);
+    useState<ResidentialPosterPlacement | null>(null);
   const [showMyPins, setShowMyPins] = useState(false);
 
   // 逆ジオコーディング結果が届いたら住所欄を自動入力
@@ -104,19 +104,22 @@ export function usePosterPlacementMap(
       });
   }, []);
 
-  const handlePlacementClick = useCallback((placement: PosterPlacement) => {
-    setEditingPlacement(placement);
-    setSelectedPosition({
-      lat: Number(placement.lat),
-      lng: Number(placement.lng),
-    });
-    setAddress(placement.address ?? "");
-    setMemo(placement.memo ?? "");
-    setCount(placement.count);
-    setIsLoadingAddress(false);
-    setAddressInfo(null);
-    setIsFormOpen(true);
-  }, []);
+  const handlePlacementClick = useCallback(
+    (placement: ResidentialPosterPlacement) => {
+      setEditingPlacement(placement);
+      setSelectedPosition({
+        lat: Number(placement.lat),
+        lng: Number(placement.lng),
+      });
+      setAddress(placement.address ?? "");
+      setMemo(placement.memo ?? "");
+      setCount(placement.count);
+      setIsLoadingAddress(false);
+      setAddressInfo(null);
+      setIsFormOpen(true);
+    },
+    [],
+  );
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);

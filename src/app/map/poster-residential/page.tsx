@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import PosterPlacementPageClient from "@/features/map-poster-residential/components/poster-placement-page-client";
+import PosterPlacementPageClient from "@/features/map-poster-residential/components/residential-poster-page-client";
 import {
   fetchCityStats,
   fetchMyPlacements,
-} from "@/features/map-poster-residential/loaders/poster-placement-loaders";
+} from "@/features/map-poster-residential/loaders/residential-poster-loaders";
 import { getUser } from "@/features/user-profile/services/profile";
 
 export const metadata: Metadata = {

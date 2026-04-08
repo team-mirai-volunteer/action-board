@@ -3,7 +3,7 @@ jest.mock("@/features/user-level/utils/level-calculator", () => ({
   calculateLevel: jest.fn().mockReturnValue(2),
 }));
 
-import { achievePosterPlacementMission } from "./achieve-poster-placement-mission";
+import { achievePosterPlacementMission } from "./achieve-residential-poster-mission";
 
 // Supabase query builder チェーンのモック生成ヘルパー
 type MockResult = { data: unknown; error: unknown };

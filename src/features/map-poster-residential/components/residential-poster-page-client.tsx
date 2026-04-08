@@ -4,25 +4,25 @@ import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
-import { usePosterPlacementMap } from "../hooks/use-poster-placement-map";
+import { usePosterPlacementMap } from "../hooks/use-residential-poster-map";
 import {
   fetchCityStats,
   fetchMyPlacements,
-} from "../loaders/poster-placement-loaders";
+} from "../loaders/residential-poster-loaders";
 import type {
-  PosterPlacement,
-  PosterPlacementCityStats,
-} from "../types/poster-placement-types";
-import { PlacementForm } from "./placement-form";
+  ResidentialPosterCityStats,
+  ResidentialPosterPlacement,
+} from "../types/residential-poster-types";
+import { PlacementForm } from "./residential-poster-form";
 
-const PosterPlacementMap = dynamic(() => import("./poster-placement-map"), {
+const PosterPlacementMap = dynamic(() => import("./residential-poster-map"), {
   ssr: false,
 });
 
 type PosterPlacementPageClientProps = {
   userId: string;
-  initialCityStats: PosterPlacementCityStats[];
-  initialMyPlacements: PosterPlacement[];
+  initialCityStats: ResidentialPosterCityStats[];
+  initialMyPlacements: ResidentialPosterPlacement[];
 };
 
 export default function PosterPlacementPageClient({

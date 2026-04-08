@@ -7,7 +7,7 @@ import {
   getCityStats,
   getCityStatsByPrefecture,
   getTotalStats,
-} from "./poster-placement-stats";
+} from "./residential-poster-stats";
 
 const mockCreateAdminClient = createAdminClient as jest.MockedFunction<
   typeof createAdminClient

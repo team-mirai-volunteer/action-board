@@ -10,18 +10,18 @@ import { toast } from "sonner";
 import { CONTENT_HEIGHT } from "@/lib/constants/layout";
 import { useCurrentLocation } from "@/lib/hooks/use-current-location";
 import type {
-  PosterPlacement,
-  PosterPlacementCityStats,
-} from "../types/poster-placement-types";
+  ResidentialPosterCityStats,
+  ResidentialPosterPlacement,
+} from "../types/residential-poster-types";
 import { createCityStatsMarkerIcon } from "../utils/city-stats-marker";
 
 type PosterPlacementMapProps = {
   onMapReady?: (map: LeafletMap) => void;
   onPinPlaced?: (lat: number, lng: number) => void;
-  onPlacementClick?: (placement: PosterPlacement) => void;
+  onPlacementClick?: (placement: ResidentialPosterPlacement) => void;
   pinPosition?: { lat: number; lng: number } | null;
-  cityStats?: PosterPlacementCityStats[];
-  myPlacements?: PosterPlacement[];
+  cityStats?: ResidentialPosterCityStats[];
+  myPlacements?: ResidentialPosterPlacement[];
   showMyPins?: boolean;
 };
 

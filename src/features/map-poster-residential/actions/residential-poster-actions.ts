@@ -10,8 +10,8 @@ import {
   getPosterPlacementById,
   updatePosterPlacementArtifactId,
   updatePosterPlacementFields,
-} from "../services/poster-placements";
-import { achievePosterPlacementMission } from "../use-cases/achieve-poster-placement-mission";
+} from "../services/residential-posters";
+import { achievePosterPlacementMission } from "../use-cases/achieve-residential-poster-mission";
 
 async function requireAuth(): Promise<User> {
   const supabase = createClient();

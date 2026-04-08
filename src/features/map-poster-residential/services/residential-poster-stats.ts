@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import type { PosterPlacementCityStats } from "../types/poster-placement-types";
+import type { ResidentialPosterCityStats } from "../types/residential-poster-types";
 
 /**
  * 市区町村レベルのポスター掲示集計を取得する
@@ -9,7 +9,7 @@ import type { PosterPlacementCityStats } from "../types/poster-placement-types";
  *
  * @returns 市区町村ごとの集計データ配列
  */
-export async function getCityStats(): Promise<PosterPlacementCityStats[]> {
+export async function getCityStats(): Promise<ResidentialPosterCityStats[]> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
@@ -32,7 +32,7 @@ export async function getCityStats(): Promise<PosterPlacementCityStats[]> {
  */
 export async function getCityStatsByPrefecture(
   prefecture: string,
-): Promise<PosterPlacementCityStats[]> {
+): Promise<ResidentialPosterCityStats[]> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase

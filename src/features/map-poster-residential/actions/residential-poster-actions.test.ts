@@ -23,7 +23,7 @@ jest.mock("@/lib/services/reverse-geocoding", () => ({
   reverseGeocode: (...args: unknown[]) => mockReverseGeocode(...args),
 }));
 
-jest.mock("../services/poster-placements", () => ({
+jest.mock("../services/residential-posters", () => ({
   createPosterPlacement: (...args: unknown[]) =>
     mockCreatePosterPlacement(...args),
   deletePosterPlacement: (...args: unknown[]) =>
@@ -34,7 +34,7 @@ jest.mock("../services/poster-placements", () => ({
     mockUpdatePosterPlacementArtifactId(...args),
 }));
 
-jest.mock("../use-cases/achieve-poster-placement-mission", () => ({
+jest.mock("../use-cases/achieve-residential-poster-mission", () => ({
   achievePosterPlacementMission: (...args: unknown[]) =>
     mockAchievePosterPlacementMission(...args),
 }));
@@ -42,7 +42,7 @@ jest.mock("../use-cases/achieve-poster-placement-mission", () => ({
 import {
   removePosterPlacement,
   submitPosterPlacement,
-} from "./poster-placement-actions";
+} from "./residential-poster-actions";
 
 const mockUser = { id: "user-1", email: "test@example.com" };
 

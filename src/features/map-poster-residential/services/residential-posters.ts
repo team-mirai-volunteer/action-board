@@ -2,9 +2,9 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import type {
-  PosterPlacement,
-  PosterPlacementInsert,
-} from "../types/poster-placement-types";
+  ResidentialPosterPlacement,
+  ResidentialPosterPlacementInsert,
+} from "../types/residential-poster-types";
 
 /**
  * ポスター掲示を作成する
@@ -14,8 +14,8 @@ import type {
  * @returns 作成されたレコード
  */
 export async function createPosterPlacement(
-  placement: PosterPlacementInsert,
-): Promise<PosterPlacement> {
+  placement: ResidentialPosterPlacementInsert,
+): Promise<ResidentialPosterPlacement> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
@@ -40,7 +40,7 @@ export async function createPosterPlacement(
  */
 export async function getPosterPlacementsByUserId(
   userId: string,
-): Promise<PosterPlacement[]> {
+): Promise<ResidentialPosterPlacement[]> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
@@ -65,7 +65,7 @@ export async function getPosterPlacementsByUserId(
  */
 export async function getPosterPlacementById(
   id: string,
-): Promise<PosterPlacement | null> {
+): Promise<ResidentialPosterPlacement | null> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
