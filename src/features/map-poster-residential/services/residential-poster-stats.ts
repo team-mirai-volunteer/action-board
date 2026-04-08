@@ -13,7 +13,7 @@ export async function getCityStats(): Promise<ResidentialPosterCityStats[]> {
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placement_city_stats")
+    .from("residential_poster_city_stats")
     .select("*");
 
   if (error) {
@@ -36,7 +36,7 @@ export async function getCityStatsByPrefecture(
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placement_city_stats")
+    .from("residential_poster_city_stats")
     .select("*")
     .eq("prefecture", prefecture);
 
@@ -60,7 +60,7 @@ export async function getTotalStats(): Promise<{
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placement_city_stats")
+    .from("residential_poster_city_stats")
     .select("total_count, placement_count");
 
   if (error) {

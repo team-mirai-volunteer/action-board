@@ -632,7 +632,7 @@ export type Database = {
         };
         Relationships: [];
       };
-      poster_placements: {
+      residential_poster_placements: {
         Row: {
           address: string | null;
           city: string | null;
@@ -680,7 +680,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "poster_placements_mission_artifact_id_fkey";
+            foreignKeyName: "residential_poster_placements_mission_artifact_id_fkey";
             columns: ["mission_artifact_id"];
             isOneToOne: false;
             referencedRelation: "mission_artifacts";
@@ -1823,7 +1823,7 @@ export type Database = {
         };
         Relationships: [];
       };
-      poster_placement_city_stats: {
+      residential_poster_city_stats: {
         Row: {
           avg_lat: number | null;
           avg_lng: number | null;

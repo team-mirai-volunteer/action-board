@@ -61,7 +61,7 @@ describe("getCityStatsByPrefecture", () => {
 
     const result = await getCityStatsByPrefecture("東京都");
     expect(result).toEqual(data);
-    expect(supabase.from).toHaveBeenCalledWith("poster_placement_city_stats");
+    expect(supabase.from).toHaveBeenCalledWith("residential_poster_city_stats");
   });
 
   it("エラー時にthrowする", async () => {

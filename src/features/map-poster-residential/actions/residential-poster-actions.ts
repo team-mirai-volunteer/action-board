@@ -57,7 +57,7 @@ export async function submitPosterPlacement(params: {
       count: params.count,
     });
 
-    // 3. poster_placements.mission_artifact_id を更新して紐付け
+    // 3. residential_poster_placements.mission_artifact_id を更新して紐付け
     if (missionResult.success) {
       try {
         await updatePosterPlacementArtifactId(

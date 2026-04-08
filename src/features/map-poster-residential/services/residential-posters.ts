@@ -19,7 +19,7 @@ export async function createPosterPlacement(
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .insert(placement)
     .select()
     .single();
@@ -44,7 +44,7 @@ export async function getPosterPlacementsByUserId(
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -69,7 +69,7 @@ export async function getPosterPlacementById(
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .select("*")
     .eq("id", id)
     .single();
@@ -95,7 +95,7 @@ export async function deletePosterPlacement(id: string): Promise<void> {
   const supabase = await createAdminClient();
 
   const { error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .delete()
     .eq("id", id);
 
@@ -118,7 +118,7 @@ export async function updatePosterPlacementArtifactId(
   const supabase = await createAdminClient();
 
   const { error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .update({ mission_artifact_id: missionArtifactId })
     .eq("id", id);
 
@@ -140,7 +140,7 @@ export async function getUserPosterPlacementCount(
   const supabase = await createAdminClient();
 
   const { data, error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .select("count")
     .eq("user_id", userId);
 
@@ -165,7 +165,7 @@ export async function updatePosterPlacementFields(
   const supabase = await createAdminClient();
 
   const { error } = await supabase
-    .from("poster_placements")
+    .from("residential_poster_placements")
     .update(fields)
     .eq("id", id);
 
