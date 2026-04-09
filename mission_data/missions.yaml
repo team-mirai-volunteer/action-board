@@ -854,6 +854,6 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: true
+    is_hidden: false
     artifact_label: ポスター掲示情報
     ogp_image_url: null
