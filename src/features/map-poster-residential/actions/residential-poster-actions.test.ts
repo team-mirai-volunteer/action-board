@@ -74,6 +74,9 @@ describe("submitPosterPlacement", () => {
       count: 2,
       address: null,
       memo: "テスト",
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
     });
 
     expect(result).toEqual({ success: true, id: "placement-1" });
@@ -97,6 +100,9 @@ describe("submitPosterPlacement", () => {
       count: 1,
       address: "カスタム住所",
       memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
     });
 
     expect(mockCreatePosterPlacement).toHaveBeenCalledWith(
@@ -113,6 +119,9 @@ describe("submitPosterPlacement", () => {
       count: 1,
       address: null,
       memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
     });
 
     expect(result).toEqual({ success: false, error: "認証が必要です" });
@@ -131,6 +140,9 @@ describe("submitPosterPlacement", () => {
       count: 1,
       address: null,
       memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
     });
 
     expect(result).toEqual({ success: true, id: "placement-1" });

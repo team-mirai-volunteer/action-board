@@ -33,11 +33,21 @@ type UsePosterPlacementMapReturn = {
   address: string;
   memo: string;
   count: number;
+  placedDate: string;
+  locationType: string;
+  isRemoved: boolean;
+  confirmedOrdinance: boolean;
+  confirmedLandowner: boolean;
   mode: "create" | "edit";
   showMyPins: boolean;
   setAddress: (value: string) => void;
   setMemo: (value: string) => void;
   setCount: (value: number) => void;
+  setPlacedDate: (value: string) => void;
+  setLocationType: (value: string) => void;
+  setIsRemoved: (value: boolean) => void;
+  setConfirmedOrdinance: (value: boolean) => void;
+  setConfirmedLandowner: (value: boolean) => void;
   setShowMyPins: (value: boolean) => void;
   handlePinPlaced: (lat: number, lng: number) => void;
   handlePlacementClick: (placement: ResidentialPosterPlacement) => void;
@@ -60,6 +70,11 @@ export function usePosterPlacementMap(
   const [address, setAddress] = useState("");
   const [memo, setMemo] = useState("");
   const [count, setCount] = useState(1);
+  const [placedDate, setPlacedDate] = useState("");
+  const [locationType, setLocationType] = useState("");
+  const [isRemoved, setIsRemoved] = useState(false);
+  const [confirmedOrdinance, setConfirmedOrdinance] = useState(false);
+  const [confirmedLandowner, setConfirmedLandowner] = useState(false);
   const [editingPlacement, setEditingPlacement] =
     useState<ResidentialPosterPlacement | null>(null);
   const [showMyPins, setShowMyPins] = useState(false);
@@ -78,6 +93,11 @@ export function usePosterPlacementMap(
     setAddress("");
     setMemo("");
     setCount(1);
+    setPlacedDate("");
+    setLocationType("");
+    setIsRemoved(false);
+    setConfirmedOrdinance(false);
+    setConfirmedLandowner(false);
     setEditingPlacement(null);
   }, []);
 
@@ -89,6 +109,11 @@ export function usePosterPlacementMap(
     setAddress("");
     setMemo("");
     setCount(1);
+    setPlacedDate("");
+    setLocationType("");
+    setIsRemoved(false);
+    setConfirmedOrdinance(false);
+    setConfirmedLandowner(false);
     setIsLoadingAddress(true);
 
     fetchReverseGeocode(lat, lng)
@@ -114,6 +139,11 @@ export function usePosterPlacementMap(
       setAddress(placement.address ?? "");
       setMemo(placement.memo ?? "");
       setCount(placement.count);
+      setPlacedDate(placement.placed_date ?? "");
+      setLocationType(placement.location_type ?? "");
+      setIsRemoved(placement.is_removed ?? false);
+      setConfirmedOrdinance(true);
+      setConfirmedLandowner(true);
       setIsLoadingAddress(false);
       setAddressInfo(null);
       setIsFormOpen(true);
@@ -129,6 +159,9 @@ export function usePosterPlacementMap(
           count,
           address: address || null,
           memo: memo || null,
+          placed_date: placedDate || null,
+          location_type: locationType || null,
+          is_removed: isRemoved,
         });
         if (result.success) {
           toast.success("掲示情報を更新しました");
@@ -145,6 +178,9 @@ export function usePosterPlacementMap(
           count,
           address: address || null,
           memo: memo || null,
+          placed_date: placedDate || null,
+          location_type: locationType || null,
+          is_removed: isRemoved,
         });
         if (result.success) {
           toast.success("ポスター掲示を登録しました");
@@ -167,6 +203,9 @@ export function usePosterPlacementMap(
     count,
     address,
     memo,
+    placedDate,
+    locationType,
+    isRemoved,
     options,
     resetForm,
   ]);
@@ -201,11 +240,21 @@ export function usePosterPlacementMap(
     address,
     memo,
     count,
+    placedDate,
+    locationType,
+    isRemoved,
+    confirmedOrdinance,
+    confirmedLandowner,
     mode: editingPlacement ? "edit" : "create",
     showMyPins,
     setAddress,
     setMemo,
     setCount,
+    setPlacedDate,
+    setLocationType,
+    setIsRemoved,
+    setConfirmedOrdinance,
+    setConfirmedLandowner,
     setShowMyPins,
     handlePinPlaced,
     handlePlacementClick,

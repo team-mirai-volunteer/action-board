@@ -31,6 +31,9 @@ export async function submitPosterPlacement(params: {
   count: number;
   address: string | null;
   memo: string | null;
+  placed_date: string | null;
+  location_type: string | null;
+  is_removed: boolean;
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
@@ -46,6 +49,9 @@ export async function submitPosterPlacement(params: {
       address: params.address ?? geo.address,
       postcode: geo.postcode,
       memo: params.memo,
+      placed_date: params.placed_date,
+      location_type: params.location_type,
+      is_removed: params.is_removed,
     });
 
     // 2. ミッション達成処理（achievement + mission_artifact + XP 付与）
@@ -92,7 +98,14 @@ export async function submitPosterPlacement(params: {
  */
 export async function updatePosterPlacement(
   id: string,
-  params: { count: number; address: string | null; memo: string | null },
+  params: {
+    count: number;
+    address: string | null;
+    memo: string | null;
+    placed_date: string | null;
+    location_type: string | null;
+    is_removed: boolean;
+  },
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
@@ -107,6 +120,9 @@ export async function updatePosterPlacement(
       count: params.count,
       address: params.address,
       memo: params.memo,
+      placed_date: params.placed_date,
+      location_type: params.location_type,
+      is_removed: params.is_removed,
     });
     return { success: true };
   } catch (error) {

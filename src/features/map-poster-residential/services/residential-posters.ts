@@ -160,7 +160,14 @@ export async function getUserPosterPlacementCount(
  */
 export async function updatePosterPlacementFields(
   id: string,
-  fields: { address?: string | null; count?: number; memo?: string | null },
+  fields: {
+    address?: string | null;
+    count?: number;
+    memo?: string | null;
+    placed_date?: string | null;
+    location_type?: string | null;
+    is_removed?: boolean;
+  },
 ): Promise<void> {
   const supabase = await createAdminClient();
 
