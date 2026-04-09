@@ -632,6 +632,62 @@ export type Database = {
         };
         Relationships: [];
       };
+      residential_poster_placements: {
+        Row: {
+          address: string | null;
+          city: string | null;
+          count: number;
+          created_at: string;
+          id: string;
+          lat: number;
+          lng: number;
+          memo: string | null;
+          mission_artifact_id: string | null;
+          postcode: string | null;
+          prefecture: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          city?: string | null;
+          count?: number;
+          created_at?: string;
+          id?: string;
+          lat: number;
+          lng: number;
+          memo?: string | null;
+          mission_artifact_id?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          address?: string | null;
+          city?: string | null;
+          count?: number;
+          created_at?: string;
+          id?: string;
+          lat?: number;
+          lng?: number;
+          memo?: string | null;
+          mission_artifact_id?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "residential_poster_placements_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       posting_activities: {
         Row: {
           created_at: string;
@@ -1764,6 +1820,17 @@ export type Database = {
             | Database["public"]["Enums"]["poster_board_status"]
             | null;
           status: Database["public"]["Enums"]["poster_board_status"] | null;
+        };
+        Relationships: [];
+      };
+      residential_poster_city_stats: {
+        Row: {
+          avg_lat: number | null;
+          avg_lng: number | null;
+          city: string | null;
+          placement_count: number | null;
+          prefecture: string | null;
+          total_count: number | null;
         };
         Relationships: [];
       };
