@@ -2,7 +2,10 @@
 
 import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
-import { MAX_POSTING_COUNT } from "@/lib/constants/mission-config";
+import {
+  MAX_POSTING_COUNT,
+  MAX_RESIDENTIAL_POSTER_COUNT,
+} from "@/lib/constants/mission-config";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
@@ -179,7 +182,10 @@ const residentialPosterArtifactSchema = baseMissionFormSchema.extend({
   residentialPosterCount: z.coerce
     .number()
     .int({ message: "掲示枚数は整数で入力してください" })
-    .min(1, { message: "掲示枚数は1枚以上で入力してください" }),
+    .min(1, { message: "掲示枚数は1枚以上で入力してください" })
+    .max(MAX_RESIDENTIAL_POSTER_COUNT, {
+      message: `掲示枚数は${MAX_RESIDENTIAL_POSTER_COUNT}枚以下で入力してください`,
+    }),
   locationText: z
     .string()
     .optional()

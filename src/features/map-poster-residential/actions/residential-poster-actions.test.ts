@@ -4,6 +4,7 @@ const mockCreatePosterPlacement = jest.fn();
 const mockDeletePosterPlacement = jest.fn();
 const mockGetPosterPlacementById = jest.fn();
 const mockUpdatePosterPlacementArtifactId = jest.fn();
+const mockUpdatePosterPlacementFields = jest.fn();
 const mockAchievePosterPlacementMission = jest.fn();
 const mockCreateAdminClient = jest.fn();
 
@@ -32,6 +33,8 @@ jest.mock("../services/residential-posters", () => ({
     mockGetPosterPlacementById(...args),
   updatePosterPlacementArtifactId: (...args: unknown[]) =>
     mockUpdatePosterPlacementArtifactId(...args),
+  updatePosterPlacementFields: (...args: unknown[]) =>
+    mockUpdatePosterPlacementFields(...args),
 }));
 
 jest.mock("../use-cases/achieve-residential-poster-mission", () => ({
@@ -42,6 +45,7 @@ jest.mock("../use-cases/achieve-residential-poster-mission", () => ({
 import {
   removePosterPlacement,
   submitPosterPlacement,
+  updatePosterPlacement,
 } from "./residential-poster-actions";
 
 const mockUser = { id: "user-1", email: "test@example.com" };
@@ -216,6 +220,92 @@ describe("removePosterPlacement", () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
     const result = await removePosterPlacement("placement-1");
+    expect(result).toEqual({ success: false, error: "認証が必要です" });
+  });
+});
+
+describe("updatePosterPlacement", () => {
+  it("正常に更新できる", async () => {
+    mockGetPosterPlacementById.mockResolvedValue({
+      id: "placement-1",
+      user_id: "user-1",
+    });
+    mockUpdatePosterPlacementFields.mockResolvedValue(undefined);
+
+    const result = await updatePosterPlacement("placement-1", {
+      count: 3,
+      address: "新しい住所",
+      memo: "メモ更新",
+      placed_date: "2026-04-10",
+      location_type: "store_office",
+      is_removed: false,
+    });
+
+    expect(result).toEqual({ success: true });
+    expect(mockUpdatePosterPlacementFields).toHaveBeenCalledWith(
+      "placement-1",
+      {
+        count: 3,
+        address: "新しい住所",
+        memo: "メモ更新",
+        placed_date: "2026-04-10",
+        location_type: "store_office",
+        is_removed: false,
+      },
+    );
+  });
+
+  it("他ユーザーのレコードは更新できない", async () => {
+    mockGetPosterPlacementById.mockResolvedValue({
+      id: "placement-1",
+      user_id: "other-user",
+    });
+
+    const result = await updatePosterPlacement("placement-1", {
+      count: 1,
+      address: null,
+      memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: "更新する権限がありません",
+    });
+  });
+
+  it("レコードが見つからない場合は失敗", async () => {
+    mockGetPosterPlacementById.mockResolvedValue(null);
+
+    const result = await updatePosterPlacement("missing", {
+      count: 1,
+      address: null,
+      memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: "レコードが見つかりません",
+    });
+  });
+
+  it("未認証の場合は失敗", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+
+    const result = await updatePosterPlacement("placement-1", {
+      count: 1,
+      address: null,
+      memo: null,
+      placed_date: null,
+      location_type: null,
+      is_removed: false,
+    });
+
     expect(result).toEqual({ success: false, error: "認証が必要です" });
   });
 });
