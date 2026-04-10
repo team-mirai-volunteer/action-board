@@ -20,8 +20,10 @@ export function ResidentialPosterMissionForm({
           ポスター掲示マップ上で報告をすることで、自動的にミッションクリアとなります。
         </p>
         <Button
+          type="button"
           size={"lg"}
           className="w-full my-4"
+          disabled={disabled}
           onClick={() =>
             window.open(
               "/map/poster-residential",

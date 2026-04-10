@@ -87,6 +87,34 @@ describe("submitPosterPlacement", () => {
         lng: 139.6503,
         count: 2,
         memo: "テスト",
+        placed_date: null,
+        location_type: null,
+        is_removed: false,
+      }),
+    );
+  });
+
+  it("新しいフィールドが正しく渡される", async () => {
+    mockCreatePosterPlacement.mockResolvedValue({ id: "placement-2" });
+    mockUpdatePosterPlacementArtifactId.mockResolvedValue(undefined);
+
+    const result = await submitPosterPlacement({
+      lat: 35.6762,
+      lng: 139.6503,
+      count: 1,
+      address: null,
+      memo: null,
+      placed_date: "2026-04-10",
+      location_type: "home",
+      is_removed: true,
+    });
+
+    expect(result).toEqual({ success: true, id: "placement-2" });
+    expect(mockCreatePosterPlacement).toHaveBeenCalledWith(
+      expect.objectContaining({
+        placed_date: "2026-04-10",
+        location_type: "home",
+        is_removed: true,
       }),
     );
   });

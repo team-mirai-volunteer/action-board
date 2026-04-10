@@ -7,6 +7,7 @@ import {
   submitPosterPlacement,
   updatePosterPlacement,
 } from "../actions/residential-poster-actions";
+import type { LocationTypeValue } from "../constants/location-types";
 import { fetchReverseGeocode } from "../loaders/residential-poster-loaders";
 import type { ResidentialPosterPlacement } from "../types/residential-poster-types";
 
@@ -34,7 +35,7 @@ type UsePosterPlacementMapReturn = {
   memo: string;
   count: number;
   placedDate: string;
-  locationType: string;
+  locationType: LocationTypeValue | "";
   isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
@@ -44,7 +45,7 @@ type UsePosterPlacementMapReturn = {
   setMemo: (value: string) => void;
   setCount: (value: number) => void;
   setPlacedDate: (value: string) => void;
-  setLocationType: (value: string) => void;
+  setLocationType: (value: LocationTypeValue | "") => void;
   setIsRemoved: (value: boolean) => void;
   setConfirmedOrdinance: (value: boolean) => void;
   setConfirmedLandowner: (value: boolean) => void;
@@ -71,7 +72,7 @@ export function usePosterPlacementMap(
   const [memo, setMemo] = useState("");
   const [count, setCount] = useState(1);
   const [placedDate, setPlacedDate] = useState("");
-  const [locationType, setLocationType] = useState("");
+  const [locationType, setLocationType] = useState<LocationTypeValue | "">("");
   const [isRemoved, setIsRemoved] = useState(false);
   const [confirmedOrdinance, setConfirmedOrdinance] = useState(false);
   const [confirmedLandowner, setConfirmedLandowner] = useState(false);
@@ -140,7 +141,7 @@ export function usePosterPlacementMap(
       setMemo(placement.memo ?? "");
       setCount(placement.count);
       setPlacedDate(placement.placed_date ?? "");
-      setLocationType(placement.location_type ?? "");
+      setLocationType((placement.location_type as LocationTypeValue) ?? "");
       setIsRemoved(placement.is_removed ?? false);
       setConfirmedOrdinance(true);
       setConfirmedLandowner(true);
@@ -172,6 +173,10 @@ export function usePosterPlacementMap(
         }
       } else {
         if (!selectedPosition) return;
+        if (!confirmedOrdinance || !confirmedLandowner) {
+          toast.error("確認チェックボックスをすべてチェックしてください");
+          return;
+        }
         const result = await submitPosterPlacement({
           lat: selectedPosition.lat,
           lng: selectedPosition.lng,
@@ -206,6 +211,8 @@ export function usePosterPlacementMap(
     placedDate,
     locationType,
     isRemoved,
+    confirmedOrdinance,
+    confirmedLandowner,
     options,
     resetForm,
   ]);

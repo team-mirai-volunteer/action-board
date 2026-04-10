@@ -12,7 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { LOCATION_TYPES } from "../constants/location-types";
+import {
+  LOCATION_TYPES,
+  type LocationTypeValue,
+} from "../constants/location-types";
 
 type PlacementFormProps = {
   lat: number;
@@ -24,7 +27,7 @@ type PlacementFormProps = {
   memo: string;
   count: number;
   placedDate: string;
-  locationType: string;
+  locationType: LocationTypeValue | "";
   isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
@@ -32,7 +35,7 @@ type PlacementFormProps = {
   onMemoChange: (value: string) => void;
   onCountChange: (value: number) => void;
   onPlacedDateChange: (value: string) => void;
-  onLocationTypeChange: (value: string) => void;
+  onLocationTypeChange: (value: LocationTypeValue | "") => void;
   onIsRemovedChange: (value: boolean) => void;
   onConfirmedOrdinanceChange: (value: boolean) => void;
   onConfirmedLandownerChange: (value: boolean) => void;
@@ -67,13 +70,14 @@ export function PlacementForm({
   onCancel,
   onDelete,
 }: PlacementFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
   const canSubmit =
     mode === "edit" || (confirmedOrdinance && confirmedLandowner);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    onSubmit();
+  };
 
   return (
     <div className="absolute bottom-4 left-4 right-4 z-20 mx-auto max-w-md">
@@ -148,7 +152,12 @@ export function PlacementForm({
           >
             種別
           </Label>
-          <Select value={locationType} onValueChange={onLocationTypeChange}>
+          <Select
+            value={locationType}
+            onValueChange={(v) =>
+              onLocationTypeChange(v as LocationTypeValue | "")
+            }
+          >
             <SelectTrigger id="placement-location-type">
               <SelectValue placeholder="種別を選択" />
             </SelectTrigger>

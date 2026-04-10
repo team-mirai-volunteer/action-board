@@ -178,8 +178,14 @@ const residentialPosterArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.RESIDENTIAL_POSTER.key),
   residentialPosterCount: z.coerce
     .number()
+    .int({ message: "掲示枚数は整数で入力してください" })
     .min(1, { message: "掲示枚数は1枚以上で入力してください" }),
-  locationText: z.string().optional(),
+  locationText: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\d{7}$/.test(val), {
+      message: "郵便番号は7桁の数字で入力してください",
+    }),
 });
 
 // QUIZタイプ用スキーマ（sessionIdは不要）
