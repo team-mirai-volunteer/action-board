@@ -19,7 +19,7 @@ export const MAX_POSTING_COUNT = 100000;
 export const MAX_POSTER_COUNT = 1;
 
 // 私有地ポスターミッションでの最大枚数
-export const MAX_RESIDENTIAL_POSTER_COUNT = 100;
+export const MAX_RESIDENTIAL_POSTER_COUNT = 1000;
 
 // ポスターマップの最大ズーム値
 export const MAX_ZOOM = 18;
