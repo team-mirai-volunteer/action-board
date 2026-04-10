@@ -2,7 +2,10 @@
 
 import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
-import { MAX_POSTING_COUNT } from "@/lib/constants/mission-config";
+import {
+  MAX_POSTING_COUNT,
+  MAX_RESIDENTIAL_POSTER_COUNT,
+} from "@/lib/constants/mission-config";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import { ARTIFACT_TYPES } from "@/lib/types/artifact-types";
@@ -173,6 +176,24 @@ const posterArtifactSchema = baseMissionFormSchema.extend({
     ),
 });
 
+// RESIDENTIAL_POSTERタイプ用スキーマ
+const residentialPosterArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.RESIDENTIAL_POSTER.key),
+  residentialPosterCount: z.coerce
+    .number()
+    .int({ message: "掲示枚数は整数で入力してください" })
+    .min(1, { message: "掲示枚数は1枚以上で入力してください" })
+    .max(MAX_RESIDENTIAL_POSTER_COUNT, {
+      message: `掲示枚数は${MAX_RESIDENTIAL_POSTER_COUNT}枚以下で入力してください`,
+    }),
+  locationText: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\d{7}$/.test(val), {
+      message: "郵便番号は7桁の数字で入力してください",
+    }),
+});
+
 // QUIZタイプ用スキーマ（sessionIdは不要）
 const quizArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.QUIZ.key),
@@ -212,6 +233,7 @@ const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   noneArtifactSchema,
   postingArtifactSchema,
   posterArtifactSchema,
+  residentialPosterArtifactSchema,
   quizArtifactSchema,
   linkAccessArtifactSchema,
   youtubeArtifactSchema,
@@ -243,6 +265,10 @@ export const achieveMissionAction = async (formData: FormData) => {
   // ポスティング用データの取得
   const postingCount = formData.get("postingCount")?.toString();
   const locationText = formData.get("locationText")?.toString();
+  // 私有地ポスター用データの取得
+  const residentialPosterCount = formData
+    .get("residentialPosterCount")
+    ?.toString();
   // ポスター用データの取得
   const prefecture = formData.get("prefecture")?.toString();
   const city = formData.get("city")?.toString();
@@ -268,6 +294,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     altitude,
     postingCount,
     locationText,
+    residentialPosterCount,
     prefecture,
     city,
     boardNumber,

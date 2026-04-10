@@ -55,11 +55,21 @@ export default function PosterPlacementPageClient({
     address,
     memo,
     count,
+    placedDate,
+    locationType,
+    isRemoved,
+    confirmedOrdinance,
+    confirmedLandowner,
     mode,
     showMyPins,
     setAddress,
     setMemo,
     setCount,
+    setPlacedDate,
+    setLocationType,
+    setIsRemoved,
+    setConfirmedOrdinance,
+    setConfirmedLandowner,
     setShowMyPins,
     handlePinPlaced,
     handlePlacementClick,
@@ -102,9 +112,19 @@ export default function PosterPlacementPageClient({
           address={address}
           memo={memo}
           count={count}
+          placedDate={placedDate}
+          locationType={locationType}
+          isRemoved={isRemoved}
+          confirmedOrdinance={confirmedOrdinance}
+          confirmedLandowner={confirmedLandowner}
           onAddressChange={setAddress}
           onMemoChange={setMemo}
           onCountChange={setCount}
+          onPlacedDateChange={setPlacedDate}
+          onLocationTypeChange={setLocationType}
+          onIsRemovedChange={setIsRemoved}
+          onConfirmedOrdinanceChange={setConfirmedOrdinance}
+          onConfirmedLandownerChange={setConfirmedLandowner}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           onDelete={mode === "edit" ? handleDelete : undefined}

@@ -851,7 +851,7 @@ missions:
       掲示した場所と枚数を地図上のピンで報告するとXPが獲得できます。
       メニューの「私有地ポスターマップ」から報告できます。
     difficulty: 2
-    required_artifact_type: TEXT
+    required_artifact_type: RESIDENTIAL_POSTER
     max_achievement_count: null
     is_featured: false
     is_hidden: false
