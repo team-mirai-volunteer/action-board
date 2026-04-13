@@ -36,7 +36,6 @@ type UsePosterPlacementMapReturn = {
   count: number;
   placedDate: string;
   locationType: LocationTypeValue | "";
-  isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
   mode: "create" | "edit";
@@ -46,7 +45,6 @@ type UsePosterPlacementMapReturn = {
   setCount: (value: number) => void;
   setPlacedDate: (value: string) => void;
   setLocationType: (value: LocationTypeValue | "") => void;
-  setIsRemoved: (value: boolean) => void;
   setConfirmedOrdinance: (value: boolean) => void;
   setConfirmedLandowner: (value: boolean) => void;
   setShowMyPins: (value: boolean) => void;
@@ -73,7 +71,6 @@ export function usePosterPlacementMap(
   const [count, setCount] = useState(1);
   const [placedDate, setPlacedDate] = useState("");
   const [locationType, setLocationType] = useState<LocationTypeValue | "">("");
-  const [isRemoved, setIsRemoved] = useState(false);
   const [confirmedOrdinance, setConfirmedOrdinance] = useState(false);
   const [confirmedLandowner, setConfirmedLandowner] = useState(false);
   const [editingPlacement, setEditingPlacement] =
@@ -96,7 +93,6 @@ export function usePosterPlacementMap(
     setCount(1);
     setPlacedDate("");
     setLocationType("");
-    setIsRemoved(false);
     setConfirmedOrdinance(false);
     setConfirmedLandowner(false);
     setEditingPlacement(null);
@@ -112,7 +108,6 @@ export function usePosterPlacementMap(
     setCount(1);
     setPlacedDate("");
     setLocationType("");
-    setIsRemoved(false);
     setConfirmedOrdinance(false);
     setConfirmedLandowner(false);
     setIsLoadingAddress(true);
@@ -142,7 +137,6 @@ export function usePosterPlacementMap(
       setCount(placement.count);
       setPlacedDate(placement.placed_date ?? "");
       setLocationType((placement.location_type as LocationTypeValue) ?? "");
-      setIsRemoved(placement.is_removed ?? false);
       setConfirmedOrdinance(true);
       setConfirmedLandowner(true);
       setIsLoadingAddress(false);
@@ -162,7 +156,7 @@ export function usePosterPlacementMap(
           memo: memo || null,
           placed_date: placedDate || null,
           location_type: locationType || null,
-          is_removed: isRemoved,
+          is_removed: false,
         });
         if (result.success) {
           toast.success("掲示情報を更新しました");
@@ -185,7 +179,7 @@ export function usePosterPlacementMap(
           memo: memo || null,
           placed_date: placedDate || null,
           location_type: locationType || null,
-          is_removed: isRemoved,
+          is_removed: false,
         });
         if (result.success) {
           toast.success("ポスター掲示を登録しました");
@@ -210,7 +204,6 @@ export function usePosterPlacementMap(
     memo,
     placedDate,
     locationType,
-    isRemoved,
     confirmedOrdinance,
     confirmedLandowner,
     options,
@@ -249,7 +242,6 @@ export function usePosterPlacementMap(
     count,
     placedDate,
     locationType,
-    isRemoved,
     confirmedOrdinance,
     confirmedLandowner,
     mode: editingPlacement ? "edit" : "create",
@@ -259,7 +251,6 @@ export function usePosterPlacementMap(
     setCount,
     setPlacedDate,
     setLocationType,
-    setIsRemoved,
     setConfirmedOrdinance,
     setConfirmedLandowner,
     setShowMyPins,
