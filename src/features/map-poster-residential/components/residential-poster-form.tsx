@@ -187,16 +187,18 @@ export function PlacementForm({
           />
         </div>
 
-        <div className="mb-4 flex items-center gap-2">
-          <Checkbox
-            id="placement-removed"
-            checked={isRemoved}
-            onCheckedChange={(checked) => onIsRemovedChange(checked === true)}
-          />
-          <Label htmlFor="placement-removed" className="text-sm">
-            剥がしました
-          </Label>
-        </div>
+        {mode === "edit" && (
+          <div className="mb-4 flex items-center gap-2">
+            <Checkbox
+              id="placement-removed"
+              checked={isRemoved}
+              onCheckedChange={(checked) => onIsRemovedChange(checked === true)}
+            />
+            <Label htmlFor="placement-removed" className="text-sm">
+              剥がしました
+            </Label>
+          </div>
+        )}
 
         {mode === "create" && (
           <div className="mb-4 rounded-md border border-gray-200 bg-gray-50 p-3">
