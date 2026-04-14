@@ -28,6 +28,7 @@ type PlacementFormProps = {
   count: number;
   placedDate: string;
   locationType: LocationTypeValue | "";
+  isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
   onAddressChange: (value: string) => void;
@@ -35,6 +36,7 @@ type PlacementFormProps = {
   onCountChange: (value: number) => void;
   onPlacedDateChange: (value: string) => void;
   onLocationTypeChange: (value: LocationTypeValue | "") => void;
+  onIsRemovedChange: (value: boolean) => void;
   onConfirmedOrdinanceChange: (value: boolean) => void;
   onConfirmedLandownerChange: (value: boolean) => void;
   onSubmit: () => void;
@@ -53,6 +55,7 @@ export function PlacementForm({
   count,
   placedDate,
   locationType,
+  isRemoved,
   confirmedOrdinance,
   confirmedLandowner,
   onAddressChange,
@@ -60,6 +63,7 @@ export function PlacementForm({
   onCountChange,
   onPlacedDateChange,
   onLocationTypeChange,
+  onIsRemovedChange,
   onConfirmedOrdinanceChange,
   onConfirmedLandownerChange,
   onSubmit,
@@ -182,6 +186,19 @@ export function PlacementForm({
             rows={2}
           />
         </div>
+
+        {mode === "edit" && (
+          <div className="mb-4 flex items-center gap-2">
+            <Checkbox
+              id="placement-removed"
+              checked={isRemoved}
+              onCheckedChange={(checked) => onIsRemovedChange(checked === true)}
+            />
+            <Label htmlFor="placement-removed" className="text-sm">
+              剥がしました
+            </Label>
+          </div>
+        )}
 
         {mode === "create" && (
           <div className="mb-4 rounded-md border border-gray-200 bg-gray-50 p-3">

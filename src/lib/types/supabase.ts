@@ -639,6 +639,7 @@ export type Database = {
           count: number;
           created_at: string;
           id: string;
+          is_deleted: boolean;
           is_removed: boolean;
           lat: number;
           lng: number;
@@ -657,6 +658,7 @@ export type Database = {
           count?: number;
           created_at?: string;
           id?: string;
+          is_deleted?: boolean;
           is_removed?: boolean;
           lat: number;
           lng: number;
@@ -675,6 +677,7 @@ export type Database = {
           count?: number;
           created_at?: string;
           id?: string;
+          is_deleted?: boolean;
           is_removed?: boolean;
           lat?: number;
           lng?: number;

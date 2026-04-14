@@ -78,11 +78,15 @@ describe("getPosterPlacementsByUserId", () => {
   it("ユーザーのレコード一覧を返す", async () => {
     const data = [mockPlacement];
     const { chain } = mockSupabase({ data, error: null });
-    // order() の後は thenable で解決される
-    chain.order.mockReturnValue({
+    // 3つの.eq()呼び出し + order()に対応
+    const orderResult = {
       ...chain,
       then: jest.fn((r: any) => r({ data, error: null })),
-    });
+    };
+    const thirdEq = { ...chain, order: jest.fn().mockReturnValue(orderResult) };
+    const secondEq = { ...chain, eq: jest.fn().mockReturnValue(thirdEq) };
+    const firstEq = { ...chain, eq: jest.fn().mockReturnValue(secondEq) };
+    chain.eq.mockReturnValue(firstEq);
 
     const result = await getPosterPlacementsByUserId("user-1");
     expect(result).toEqual(data);
@@ -93,12 +97,16 @@ describe("getPosterPlacementsByUserId", () => {
       data: null,
       error: { message: "select error" },
     });
-    chain.order.mockReturnValue({
+    const orderResult = {
       ...chain,
       then: jest.fn((r: any) =>
         r({ data: null, error: { message: "select error" } }),
       ),
-    });
+    };
+    const thirdEq = { ...chain, order: jest.fn().mockReturnValue(orderResult) };
+    const secondEq = { ...chain, eq: jest.fn().mockReturnValue(thirdEq) };
+    const firstEq = { ...chain, eq: jest.fn().mockReturnValue(secondEq) };
+    chain.eq.mockReturnValue(firstEq);
 
     await expect(getPosterPlacementsByUserId("user-1")).rejects.toEqual({
       message: "select error",
@@ -188,9 +196,13 @@ describe("getUserPosterPlacementCount", () => {
   it("合計枚数を返す", async () => {
     const data = [{ count: 3 }, { count: 5 }, { count: 2 }];
     const { chain } = mockSupabase({ data, error: null });
-    chain.eq.mockReturnValue({
+    // 3つの.eq()呼び出しに対応: user_id, is_deleted, is_removed
+    const terminal = {
       then: jest.fn((r: any) => r({ data, error: null })),
-    });
+    };
+    const second = { ...chain, eq: jest.fn().mockReturnValue(terminal) };
+    const first = { ...chain, eq: jest.fn().mockReturnValue(second) };
+    chain.eq.mockReturnValue(first);
 
     const result = await getUserPosterPlacementCount("user-1");
     expect(result).toBe(10);
@@ -198,11 +210,14 @@ describe("getUserPosterPlacementCount", () => {
 
   it("エラー時にthrowする", async () => {
     const { chain } = mockSupabase({ data: null, error: null });
-    chain.eq.mockReturnValue({
+    const terminal = {
       then: jest.fn((r: any) =>
         r({ data: null, error: { message: "count error" } }),
       ),
-    });
+    };
+    const second = { ...chain, eq: jest.fn().mockReturnValue(terminal) };
+    const first = { ...chain, eq: jest.fn().mockReturnValue(second) };
+    chain.eq.mockReturnValue(first);
 
     await expect(getUserPosterPlacementCount("user-1")).rejects.toEqual({
       message: "count error",
