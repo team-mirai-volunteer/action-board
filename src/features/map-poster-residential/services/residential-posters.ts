@@ -48,7 +48,6 @@ export async function getPosterPlacementsByUserId(
     .select("*")
     .eq("user_id", userId)
     .eq("is_deleted", false)
-    .eq("is_removed", false)
     .order("created_at", { ascending: false });
 
   if (error) {

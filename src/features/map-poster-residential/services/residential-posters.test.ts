@@ -75,16 +75,18 @@ describe("createPosterPlacement", () => {
 });
 
 describe("getPosterPlacementsByUserId", () => {
-  it("ユーザーのレコード一覧を返す", async () => {
+  it("ユーザーのレコード一覧を返す（is_removedも含む）", async () => {
     const data = [mockPlacement];
     const { chain } = mockSupabase({ data, error: null });
-    // 3つの.eq()呼び出し + order()に対応
+    // 2つの.eq()呼び出し(user_id, is_deleted) + order()に対応
     const orderResult = {
       ...chain,
       then: jest.fn((r: any) => r({ data, error: null })),
     };
-    const thirdEq = { ...chain, order: jest.fn().mockReturnValue(orderResult) };
-    const secondEq = { ...chain, eq: jest.fn().mockReturnValue(thirdEq) };
+    const secondEq = {
+      ...chain,
+      order: jest.fn().mockReturnValue(orderResult),
+    };
     const firstEq = { ...chain, eq: jest.fn().mockReturnValue(secondEq) };
     chain.eq.mockReturnValue(firstEq);
 
@@ -103,8 +105,10 @@ describe("getPosterPlacementsByUserId", () => {
         r({ data: null, error: { message: "select error" } }),
       ),
     };
-    const thirdEq = { ...chain, order: jest.fn().mockReturnValue(orderResult) };
-    const secondEq = { ...chain, eq: jest.fn().mockReturnValue(thirdEq) };
+    const secondEq = {
+      ...chain,
+      order: jest.fn().mockReturnValue(orderResult),
+    };
     const firstEq = { ...chain, eq: jest.fn().mockReturnValue(secondEq) };
     chain.eq.mockReturnValue(firstEq);
 

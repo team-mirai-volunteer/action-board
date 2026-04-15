@@ -204,13 +204,33 @@ export default function PosterPlacementMap({
       // 自分のピンを表示
       if (!myPlacements) return;
       for (const placement of myPlacements) {
+        const isRemoved = placement.is_removed ?? false;
+        const markerOptions: Record<string, unknown> = {
+          totalCount: placement.count,
+        };
+        if (isRemoved) {
+          markerOptions.icon = L.divIcon({
+            html: `<div style="
+              background-color: #93C5FD;
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              border: 2px solid white;
+              box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            "></div>`,
+            className: "removed-pin-marker",
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          });
+        }
         const marker = L.marker(
           [Number(placement.lat), Number(placement.lng)],
-          { totalCount: placement.count },
+          markerOptions,
         );
 
         const tooltipEl = document.createElement("span");
-        tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)`;
+        const label = isRemoved ? "（剥がし済み）" : "";
+        tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)${label}`;
         marker.bindTooltip(tooltipEl, { direction: "top" });
 
         marker.on("click", (e: L.LeafletMouseEvent) => {
