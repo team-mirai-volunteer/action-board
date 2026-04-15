@@ -9,6 +9,7 @@ import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { PosterForm } from "./poster-form";
 import { PostingForm } from "./posting-form";
+import { ResidentialPosterMissionForm } from "./residential-poster-form";
 import { YouTubeCommentForm } from "./youtube-comment-form";
 import { YouTubeForm } from "./youtube-form";
 
@@ -117,6 +118,11 @@ export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
         {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
           <PosterForm disabled={disabled} />
+        )}
+
+        {/* 私有地ポスター入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.RESIDENTIAL_POSTER.key && (
+          <ResidentialPosterMissionForm disabled={disabled} />
         )}
 
         {/* YouTube入力フォーム */}

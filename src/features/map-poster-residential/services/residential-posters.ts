@@ -47,6 +47,7 @@ export async function getPosterPlacementsByUserId(
     .from("residential_poster_placements")
     .select("*")
     .eq("user_id", userId)
+    .eq("is_deleted", false)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -87,7 +88,7 @@ export async function getPosterPlacementById(
 }
 
 /**
- * ポスター掲示を削除する
+ * ポスター掲示を論理削除する
  *
  * @param id - 削除するポスター掲示のID
  */
@@ -96,7 +97,7 @@ export async function deletePosterPlacement(id: string): Promise<void> {
 
   const { error } = await supabase
     .from("residential_poster_placements")
-    .delete()
+    .update({ is_deleted: true })
     .eq("id", id);
 
   if (error) {
@@ -142,7 +143,9 @@ export async function getUserPosterPlacementCount(
   const { data, error } = await supabase
     .from("residential_poster_placements")
     .select("count")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .eq("is_deleted", false)
+    .eq("is_removed", false);
 
   if (error) {
     console.error("Error fetching user poster placement count:", error);
@@ -160,7 +163,15 @@ export async function getUserPosterPlacementCount(
  */
 export async function updatePosterPlacementFields(
   id: string,
-  fields: { address?: string | null; count?: number; memo?: string | null },
+  fields: Pick<
+    ResidentialPosterPlacementInsert,
+    | "address"
+    | "count"
+    | "memo"
+    | "placed_date"
+    | "location_type"
+    | "is_removed"
+  >,
 ): Promise<void> {
   const supabase = await createAdminClient();
 

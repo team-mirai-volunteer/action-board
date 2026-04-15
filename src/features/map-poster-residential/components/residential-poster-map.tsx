@@ -204,13 +204,31 @@ export default function PosterPlacementMap({
       // 自分のピンを表示
       if (!myPlacements) return;
       for (const placement of myPlacements) {
+        const isRemoved = placement.is_removed ?? false;
+        const markerOptions: Record<string, unknown> = {
+          totalCount: placement.count,
+        };
+        if (isRemoved) {
+          const defaultIcon = new L.Icon.Default();
+          markerOptions.icon = L.icon({
+            iconUrl: defaultIcon.options.iconUrl,
+            iconRetinaUrl: defaultIcon.options.iconRetinaUrl,
+            shadowUrl: defaultIcon.options.shadowUrl,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+            className: "removed-pin-marker",
+          });
+        }
         const marker = L.marker(
           [Number(placement.lat), Number(placement.lng)],
-          { totalCount: placement.count },
+          markerOptions,
         );
 
         const tooltipEl = document.createElement("span");
-        tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)`;
+        const label = isRemoved ? "（剥がし済み）" : "";
+        tooltipEl.textContent = `${placement.address ?? "住所不明"} (${placement.count}枚)${label}`;
         marker.bindTooltip(tooltipEl, { direction: "top" });
 
         marker.on("click", (e: L.LeafletMouseEvent) => {
@@ -247,40 +265,46 @@ export default function PosterPlacementMap({
   }, [showMyPins, cityStats, myPlacements, mapInstance, onPlacementClick]);
 
   return (
-    <div className="relative" style={{ width: "100%", height: CONTENT_HEIGHT }}>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-          <div className="text-center">
-            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-gray-900 border-b-2" />
-            <p className="text-gray-600">地図を読み込み中...</p>
-          </div>
-        </div>
-      )}
-      {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-          <div className="text-center p-4">
-            <p className="mb-4 text-red-600">{error}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-            >
-              ページを再読み込み
-            </button>
-          </div>
-        </div>
-      )}
+    <>
+      <style>{`.removed-pin-marker { filter: hue-rotate(30deg) saturate(0.4) brightness(1.3); opacity: 0.7; }`}</style>
       <div
-        ref={mapRef}
-        style={{
-          width: "100%",
-          height: "100%",
-          margin: 0,
-          padding: 0,
-          position: "relative",
-          zIndex: 0,
-        }}
-      />
-    </div>
+        className="relative"
+        style={{ width: "100%", height: CONTENT_HEIGHT }}
+      >
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+            <div className="text-center">
+              <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-gray-900 border-b-2" />
+              <p className="text-gray-600">地図を読み込み中...</p>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+            <div className="text-center p-4">
+              <p className="mb-4 text-red-600">{error}</p>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+              >
+                ページを再読み込み
+              </button>
+            </div>
+          </div>
+        )}
+        <div
+          ref={mapRef}
+          style={{
+            width: "100%",
+            height: "100%",
+            margin: 0,
+            padding: 0,
+            position: "relative",
+            zIndex: 0,
+          }}
+        />
+      </div>
+    </>
   );
 }
