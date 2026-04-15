@@ -53,9 +53,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate types
-        run: |
-          supabase gen types typescript --local > src/lib/types/supabase.ts
-          pnpm biome check --write src/lib/types/supabase.ts
+        run: pnpm run types
 
       - name: Check for diff
         run: |
