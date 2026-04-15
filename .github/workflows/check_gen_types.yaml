@@ -1,0 +1,64 @@
+name: Check generated types are up-to-date
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-gen-types:
+    name: Check Supabase generated types
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
+        env:
+          SMTP_ENABLED: false
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          BQ_USER_PASSWORD: bq_user_password
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate types and check for diff
+        run: |
+          npx supabase gen types typescript --local > src/lib/types/supabase.ts
+          pnpm biome check --write src/lib/types/supabase.ts
+
+          if git diff --exit-code src/lib/types/supabase.ts; then
+            echo "Generated types are up-to-date."
+          else
+            echo ""
+            echo "============================================"
+            echo "ERROR: Generated types are out of date!"
+            echo "============================================"
+            echo ""
+            echo "The committed src/lib/types/supabase.ts does not match"
+            echo "what 'supabase gen types' produces from the current schema."
+            echo ""
+            echo "Run the following command locally and commit the result:"
+            echo ""
+            echo "  pnpm run types"
+            echo ""
+            exit 1
+          fi
