@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -70,11 +71,15 @@ export function PlacementForm({
   onCancel,
   onDelete,
 }: PlacementFormProps) {
+  const [attempted, setAttempted] = useState(false);
+
   const canSubmit =
     mode === "edit" || (confirmedOrdinance && confirmedLandowner);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setAttempted(true);
+    if (!address || !placedDate || !locationType) return;
     if (!canSubmit) return;
     onSubmit();
   };
@@ -112,6 +117,9 @@ export function PlacementForm({
               placeholder="住所を入力"
             />
           )}
+          {attempted && !isLoadingAddress && !address && (
+            <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -143,6 +151,9 @@ export function PlacementForm({
             value={placedDate}
             onChange={(e) => onPlacedDateChange(e.target.value)}
           />
+          {attempted && !placedDate && (
+            <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -169,6 +180,9 @@ export function PlacementForm({
               ))}
             </SelectContent>
           </Select>
+          {attempted && !locationType && (
+            <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
+          )}
         </div>
 
         <div className="mb-4">
