@@ -32,6 +32,9 @@ jobs:
       - name: Start Supabase
         run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
         env:
+          SITE_URL: http://localhost:3000
+          ADDITIONAL_REDIRECT_URLS: http://localhost:3000/auth/callback
+          ENABLE_CONFIRMATIONS: false
           SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
@@ -42,8 +45,7 @@ jobs:
 
       - name: Generate types and check for diff
         run: |
-          npx supabase gen types typescript --local > src/lib/types/supabase.ts
-          pnpm biome check --write src/lib/types/supabase.ts
+          pnpm run types
 
           if git diff --exit-code src/lib/types/supabase.ts; then
             echo "Generated types are up-to-date."
