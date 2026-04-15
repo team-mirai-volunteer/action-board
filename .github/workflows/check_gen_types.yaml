@@ -24,6 +24,16 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      # 環境変数を設定（ローカルSupabaseの接続情報）
+      - name: Set Supabase environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
+          echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          echo "SITE_URL=http://localhost:3000" >> $GITHUB_ENV
+
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
@@ -32,9 +42,6 @@ jobs:
       - name: Start Supabase
         run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
         env:
-          SITE_URL: http://localhost:3000
-          ADDITIONAL_REDIRECT_URLS: http://localhost:3000/auth/callback
-          ENABLE_CONFIRMATIONS: false
           SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
@@ -42,9 +49,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Verify Supabase is running
-        run: supabase status
 
       - name: Generate types
         run: pnpm run types
