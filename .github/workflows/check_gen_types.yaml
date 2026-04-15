@@ -43,10 +43,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate types and check for diff
-        run: |
-          pnpm run types
+      - name: Verify Supabase is running
+        run: supabase status
 
+      - name: Generate types
+        run: pnpm run types
+
+      - name: Check for diff
+        run: |
           if git diff --exit-code src/lib/types/supabase.ts; then
             echo "Generated types are up-to-date."
           else
@@ -62,5 +66,7 @@ jobs:
             echo ""
             echo "  pnpm run types"
             echo ""
+            echo "--- Diff ---"
+            git diff src/lib/types/supabase.ts
             exit 1
           fi
