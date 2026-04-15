@@ -73,8 +73,10 @@ export function PlacementForm({
 }: PlacementFormProps) {
   const [attempted, setAttempted] = useState(false);
 
+  const hasRequiredFields = !!(address && placedDate && locationType);
   const canSubmit =
     mode === "edit" || (confirmedOrdinance && confirmedLandowner);
+  const isFormReady = hasRequiredFields && canSubmit;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,7 +253,7 @@ export function PlacementForm({
         <div className="flex gap-2">
           <Button
             type="submit"
-            disabled={isSubmitting || !canSubmit}
+            disabled={isSubmitting || !isFormReady}
             className="flex-1"
           >
             {isSubmitting ? (
