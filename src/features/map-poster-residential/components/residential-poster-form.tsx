@@ -79,7 +79,7 @@ export function PlacementForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAttempted(true);
-    if (!placedDate || !locationType) return;
+    if (!address || !placedDate || !locationType) return;
     if (!canSubmit) return;
     onSubmit();
   };
@@ -116,6 +116,9 @@ export function PlacementForm({
               onChange={(e) => onAddressChange(e.target.value)}
               placeholder="住所を入力"
             />
+          )}
+          {attempted && !isLoadingAddress && !address && (
+            <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
           )}
         </div>
 
