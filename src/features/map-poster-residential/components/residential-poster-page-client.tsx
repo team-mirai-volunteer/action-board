@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from "@/lib/constants/layout";
 import { usePosterPlacementMap } from "../hooks/use-residential-poster-map";
 import {
@@ -86,12 +87,14 @@ export default function PosterPlacementPageClient({
         style={{ top: `${HEADER_HEIGHT}px`, height: 0 }}
       >
         <div className="flex justify-end pr-4 pt-4">
-          <label className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-lg text-sm cursor-pointer">
-            <input
-              type="checkbox"
+          <label
+            htmlFor="show-my-pins"
+            className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-lg text-sm cursor-pointer"
+          >
+            <Checkbox
+              id="show-my-pins"
               checked={showMyPins}
-              onChange={(e) => setShowMyPins(e.target.checked)}
-              className="rounded"
+              onCheckedChange={(checked) => setShowMyPins(checked === true)}
             />
             自分のピンを表示
           </label>
