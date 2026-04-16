@@ -106,7 +106,7 @@ const ARTIFACT_PAYLOAD_BUILDERS: Record<
     return {
       link_url: null,
       text_content:
-        `私有地ポスター掲示: ${data.residentialPosterCount}枚 ${data.locationText ?? ""}`.trim(),
+        `私有地ポスター掲示: ${data.residentialPosterCount}枚 ${data.locationType} ${data.placedDate} ${data.locationText}`.trim(),
       image_storage_path: null,
     };
   },

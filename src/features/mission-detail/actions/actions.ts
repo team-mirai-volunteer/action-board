@@ -186,11 +186,13 @@ const residentialPosterArtifactSchema = baseMissionFormSchema.extend({
     .max(MAX_RESIDENTIAL_POSTER_COUNT, {
       message: `掲示枚数は${MAX_RESIDENTIAL_POSTER_COUNT}枚以下で入力してください`,
     }),
+  locationType: z.string().nonempty({ message: "種別を選択してください" }),
+  placedDate: z.string().nonempty({ message: "日付を入力してください" }),
   locationText: z
     .string()
-    .optional()
-    .refine((val) => !val || /^\d{7}$/.test(val), {
-      message: "郵便番号は7桁の数字で入力してください",
+    .nonempty({ message: "郵便番号を入力してください" })
+    .refine((val) => /^\d{7}$/.test(val), {
+      message: "郵便番号はハイフンなし7桁で入力をお願いします",
     }),
 });
 
@@ -269,6 +271,8 @@ export const achieveMissionAction = async (formData: FormData) => {
   const residentialPosterCount = formData
     .get("residentialPosterCount")
     ?.toString();
+  const locationType = formData.get("locationType")?.toString();
+  const placedDate = formData.get("placedDate")?.toString();
   // ポスター用データの取得
   const prefecture = formData.get("prefecture")?.toString();
   const city = formData.get("city")?.toString();
@@ -295,6 +299,8 @@ export const achieveMissionAction = async (formData: FormData) => {
     postingCount,
     locationText,
     residentialPosterCount,
+    locationType,
+    placedDate,
     prefecture,
     city,
     boardNumber,
