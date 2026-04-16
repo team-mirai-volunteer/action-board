@@ -12,7 +12,6 @@ import { MainLinkButton } from "@/features/mission-detail/components/main-link-b
 import { MissionCompleteDialog } from "@/features/mission-detail/components/mission-complete-dialog";
 import { ArtifactForm } from "@/features/missions/components/artifact-form";
 import QuizComponent from "@/features/missions/components/quiz-component";
-import { ResidentialPosterMissionForm } from "@/features/missions/components/residential-poster-form";
 import { useMissionSubmission } from "@/features/missions/hooks/use-mission-submission";
 import { useQuizMission } from "@/features/missions/hooks/use-quiz-mission";
 import { XpProgressToastContent } from "@/features/user-level/components/xp-progress-toast-content";
@@ -50,6 +49,7 @@ export function MissionFormWrapper({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [isArtifactFormValid, setIsArtifactFormValid] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
 
   // XPアニメーション関連の状態
@@ -239,24 +239,6 @@ export function MissionFormWrapper({
       );
     }
 
-    // 私有地ポスターミッションの場合（専用バリデーション付きフォーム）
-    if (
-      mission.required_artifact_type === ARTIFACT_TYPES.RESIDENTIAL_POSTER.key
-    ) {
-      return (
-        <ResidentialPosterMissionForm
-          key={formKey}
-          mission={mission}
-          buttonLabel={buttonLabel}
-          isButtonDisabled={isButtonDisabled}
-          isSubmitting={isSubmitting}
-          errorMessage={errorMessage}
-          onSubmit={handleSubmit}
-          formRef={formRef}
-        />
-      );
-    }
-
     // 通常のアーティファクト提出ミッションの場合（YouTube含む）
     return (
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
@@ -271,11 +253,12 @@ export function MissionFormWrapper({
           key={formKey}
           mission={mission}
           disabled={isButtonDisabled || isSubmitting}
+          onValidityChange={setIsArtifactFormValid}
         />
         <SubmitButton
           pendingText="登録中..."
           size="lg"
-          disabled={isButtonDisabled || isSubmitting}
+          disabled={isButtonDisabled || isSubmitting || !isArtifactFormValid}
         >
           {buttonLabel}
         </SubmitButton>

@@ -9,12 +9,14 @@ import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/types/artifact-types";
 import type { Tables } from "@/lib/types/supabase";
 import { PosterForm } from "./poster-form";
 import { PostingForm } from "./posting-form";
+import { ResidentialPosterMissionForm } from "./residential-poster-form";
 import { YouTubeCommentForm } from "./youtube-comment-form";
 import { YouTubeForm } from "./youtube-form";
 
 type ArtifactFormProps = {
   mission: Tables<"missions">;
   disabled: boolean;
+  onValidityChange?: (isValid: boolean) => void;
 };
 
 type GeolocationData = {
@@ -24,7 +26,11 @@ type GeolocationData = {
   altitude?: number;
 };
 
-export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
+export function ArtifactForm({
+  mission,
+  disabled,
+  onValidityChange,
+}: ArtifactFormProps) {
   const [_artifactImagePath, _setArtifactImagePath] = useState<
     string | undefined
   >(undefined);
@@ -117,6 +123,14 @@ export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
         {/* ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.POSTER.key && (
           <PosterForm disabled={disabled} />
+        )}
+
+        {/* 私有地ポスター入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.RESIDENTIAL_POSTER.key && (
+          <ResidentialPosterMissionForm
+            disabled={disabled}
+            onValidityChange={onValidityChange}
+          />
         )}
 
         {/* YouTube入力フォーム */}
