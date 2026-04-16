@@ -5,8 +5,8 @@ import { Metrics } from "./metrics-index";
 
 function MetricsSkeleton() {
   return (
-    <section className="bg-gradient-hero flex justify-center py-6">
-      <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
+    <section className="flex justify-center py-10 px-4">
+      <div className="w-full max-w-lg bg-white rounded-md shadow-custom p-6 py-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-black mb-1">
             チームみらいの活動状況🚀
@@ -17,7 +17,7 @@ function MetricsSkeleton() {
           </output>
         </div>
         <div className="space-y-6">
-          <div className="p-4 text-center bg-gray-50 rounded">
+          <div className="p-4 text-center bg-muted rounded">
             <Skeleton className="h-4 w-24 mx-auto mb-2" />
             <Skeleton className="h-8 w-32 mx-auto mb-1" />
             <Skeleton className="h-4 w-20 mx-auto" />
