@@ -68,6 +68,11 @@ export default async function Navbar() {
                       <Link href="/map/poster">ポスター掲示板マップ</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
+                      <Link href="/map/poster-residential">
+                        私有地ポスターマップ
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <OnboardingButton
                         variant="link"
                         className="w-full justify-start p-0 h-auto text-sm"

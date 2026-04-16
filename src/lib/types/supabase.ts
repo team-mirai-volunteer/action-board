@@ -951,6 +951,74 @@ export type Database = {
           },
         ];
       };
+      residential_poster_placements: {
+        Row: {
+          address: string | null;
+          city: string | null;
+          count: number;
+          created_at: string;
+          id: string;
+          is_deleted: boolean;
+          is_removed: boolean;
+          lat: number;
+          lng: number;
+          location_type: string | null;
+          memo: string | null;
+          mission_artifact_id: string | null;
+          placed_date: string | null;
+          postcode: string | null;
+          prefecture: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          city?: string | null;
+          count?: number;
+          created_at?: string;
+          id?: string;
+          is_deleted?: boolean;
+          is_removed?: boolean;
+          lat: number;
+          lng: number;
+          location_type?: string | null;
+          memo?: string | null;
+          mission_artifact_id?: string | null;
+          placed_date?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          address?: string | null;
+          city?: string | null;
+          count?: number;
+          created_at?: string;
+          id?: string;
+          is_deleted?: boolean;
+          is_removed?: boolean;
+          lat?: number;
+          lng?: number;
+          location_type?: string | null;
+          memo?: string | null;
+          mission_artifact_id?: string | null;
+          placed_date?: string | null;
+          postcode?: string | null;
+          prefecture?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "residential_poster_placements_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       seasons: {
         Row: {
           created_at: string | null;
@@ -1817,6 +1885,17 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      residential_poster_city_stats: {
+        Row: {
+          avg_lat: number | null;
+          avg_lng: number | null;
+          city: string | null;
+          placement_count: number | null;
+          prefecture: string | null;
+          total_count: number | null;
+        };
+        Relationships: [];
       };
       user_ranking_view: {
         Row: {

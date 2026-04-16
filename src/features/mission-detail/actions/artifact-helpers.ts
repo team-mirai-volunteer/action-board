@@ -100,6 +100,16 @@ const ARTIFACT_PAYLOAD_BUILDERS: Record<
       image_storage_path: null,
     };
   },
+  [ARTIFACT_TYPES.RESIDENTIAL_POSTER.key]: (data) => {
+    if (data.requiredArtifactType !== ARTIFACT_TYPES.RESIDENTIAL_POSTER.key)
+      return nullFields();
+    return {
+      link_url: null,
+      text_content:
+        `私有地ポスター掲示: ${data.residentialPosterCount}枚 ${data.locationText ?? ""}`.trim(),
+      image_storage_path: null,
+    };
+  },
   [ARTIFACT_TYPES.QUIZ.key]: () => nullFields(),
   [ARTIFACT_TYPES.YOUTUBE.key]: (data) => {
     if (data.requiredArtifactType !== ARTIFACT_TYPES.YOUTUBE.key)

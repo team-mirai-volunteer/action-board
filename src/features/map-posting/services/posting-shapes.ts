@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { User } from "@supabase/supabase-js";
+import { reverseGeocode } from "@/lib/services/reverse-geocoding";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { isAdmin, isPostingAdmin } from "@/lib/utils/admin";
 import { chunk } from "@/lib/utils/array-utils";
@@ -10,7 +11,6 @@ import {
   calculatePolygonArea,
   calculatePolygonCentroid,
 } from "../utils/polygon-utils";
-import { reverseGeocode } from "./reverse-geocoding";
 
 /**
  * 図形の座標から住所情報と中心座標を取得

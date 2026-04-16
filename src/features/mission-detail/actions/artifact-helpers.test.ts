@@ -163,6 +163,39 @@ describe("buildArtifactPayload", () => {
       });
     });
 
+    test("RESIDENTIAL_POSTER type → text_contentに「私有地ポスター掲示: X枚 郵便番号」形式の文字列を設定", () => {
+      const data = baseFormData({
+        requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+        residentialPosterCount: 3,
+        locationText: "1540017",
+      });
+      const result = buildArtifactPayload(
+        ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+        data,
+      );
+      expect(result).toEqual({
+        link_url: null,
+        text_content: "私有地ポスター掲示: 3枚 1540017",
+        image_storage_path: null,
+      });
+    });
+
+    test("RESIDENTIAL_POSTER type → locationText未指定の場合", () => {
+      const data = baseFormData({
+        requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+        residentialPosterCount: 1,
+      });
+      const result = buildArtifactPayload(
+        ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+        data,
+      );
+      expect(result).toEqual({
+        link_url: null,
+        text_content: "私有地ポスター掲示: 1枚",
+        image_storage_path: null,
+      });
+    });
+
     test("QUIZ type → 全フィールドnull", () => {
       const data = baseFormData({
         requiredArtifactType: ARTIFACT_TYPES.QUIZ.key,
@@ -287,6 +320,18 @@ describe("buildArtifactPayload", () => {
       expect(result).toEqual(NULL_FIELDS);
     });
 
+    test("RESIDENTIAL_POSTER builderにTEXT dataを渡す → 全フィールドnull", () => {
+      const data = baseFormData({
+        requiredArtifactType: ARTIFACT_TYPES.TEXT.key,
+        artifactText: "テキスト",
+      });
+      const result = buildArtifactPayload(
+        ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+        data,
+      );
+      expect(result).toEqual(NULL_FIELDS);
+    });
+
     test("IMAGE_WITH_GEOLOCATION builderにPOSTING dataを渡す → 全フィールドnull", () => {
       const data = baseFormData({
         requiredArtifactType: ARTIFACT_TYPES.POSTING.key,
@@ -316,6 +361,7 @@ describe("getArtifactTypeLabel", () => {
       ["REFERRAL"],
       ["POSTING"],
       ["POSTER"],
+      ["RESIDENTIAL_POSTER"],
       ["QUIZ"],
       ["LINK_ACCESS"],
       ["YOUTUBE"],
