@@ -86,6 +86,27 @@ describe("ResidentialPosterMissionForm", () => {
     expect(mapButton).not.toBeDisabled();
   });
 
+  it("マップボタンをクリックすると新規タブで私有地ポスターマップが開く", () => {
+    const windowOpenSpy = jest
+      .spyOn(window, "open")
+      .mockImplementation(() => null);
+
+    render(<ResidentialPosterMissionForm disabled={false} />);
+
+    const mapButton = screen.getByRole("button", {
+      name: /私有地ポスターマップを開く/,
+    });
+    fireEvent.click(mapButton);
+
+    expect(windowOpenSpy).toHaveBeenCalledWith(
+      "/map/poster-residential",
+      "_blank",
+      "noopener,noreferrer",
+    );
+
+    windowOpenSpy.mockRestore();
+  });
+
   it("disabled=trueの場合はすべての入力フィールドが無効化される", () => {
     render(<ResidentialPosterMissionForm disabled={true} />);
 
