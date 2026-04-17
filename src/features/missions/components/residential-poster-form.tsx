@@ -113,6 +113,7 @@ export function ResidentialPosterMissionForm({
           type="date"
           name="placedDate"
           id="placedDate"
+          max={new Date().toISOString().split("T")[0]}
           value={placedDate}
           onChange={(e) => setPlacedDate(e.target.value)}
           disabled={disabled}

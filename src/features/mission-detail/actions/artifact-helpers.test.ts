@@ -177,7 +177,7 @@ describe("buildArtifactPayload", () => {
       );
       expect(result).toEqual({
         link_url: null,
-        text_content: "私有地ポスター掲示: 3枚 home 2026-04-16 1540017",
+        text_content: "私有地ポスター掲示: 3枚 自宅 2026-04-16 1540017",
         image_storage_path: null,
       });
     });

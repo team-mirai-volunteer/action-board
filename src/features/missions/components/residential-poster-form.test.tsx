@@ -289,4 +289,35 @@ describe("ResidentialPosterMissionForm", () => {
 
     expect(onValidityChange).toHaveBeenLastCalledWith(false);
   });
+
+  it("郵便番号が不正な桁数の場合はonValidityChangeにfalseが渡される", () => {
+    const onValidityChange = jest.fn();
+
+    render(
+      <ResidentialPosterMissionForm
+        disabled={false}
+        onValidityChange={onValidityChange}
+      />,
+    );
+
+    // 種別を選択
+    fireEvent.click(screen.getByText("Select Type"));
+
+    // 日付を入力
+    fireEvent.change(screen.getByLabelText(/貼った日付/), {
+      target: { value: "2026-04-16" },
+    });
+
+    // 枚数を入力
+    fireEvent.change(screen.getByLabelText(/掲示枚数/), {
+      target: { value: "3" },
+    });
+
+    // 郵便番号を不正な桁数で入力
+    fireEvent.change(screen.getByLabelText(/掲示場所の郵便番号/), {
+      target: { value: "123" },
+    });
+
+    expect(onValidityChange).toHaveBeenLastCalledWith(false);
+  });
 });
