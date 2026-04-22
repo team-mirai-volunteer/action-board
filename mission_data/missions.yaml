@@ -845,7 +845,7 @@ missions:
     ogp_image_url: null
   - slug: residential-poster
     title: 私有地ポスターを掲示しよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_mission_fallback.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20260422_ol_residential-poster.png
     content: |-
       ポスターを掲示して、掲示マップから報告しましょう。
       掲示した場所と枚数を地図上のピンで報告するとXPが獲得できます。
