@@ -1,4 +1,4 @@
-import { getLabelIconWidth } from "./posting-label";
+import { createPostingLabelIcon, getLabelIconWidth } from "./posting-label";
 
 describe("getLabelIconWidth", () => {
   it("returns minimum width of 50 for single digit numbers", () => {
@@ -38,5 +38,35 @@ describe("getLabelIconWidth", () => {
     const width3 = getLabelIconWidth(100); // 3 digits
     const width4 = getLabelIconWidth(1000); // 4 digits
     expect(width4 - width3).toBe(10);
+  });
+});
+
+describe("createPostingLabelIcon", () => {
+  it("divIconをHTML・className・iconSize・iconAnchor付きで生成する", () => {
+    const mockDivIcon = jest.fn((opts) => ({ __kind: "divIcon", ...opts }));
+    const L = { divIcon: mockDivIcon } as unknown as typeof import("leaflet");
+
+    const icon = createPostingLabelIcon(L, 42);
+
+    expect(mockDivIcon).toHaveBeenCalledTimes(1);
+    const opts = mockDivIcon.mock.calls[0][0];
+    expect(opts.html).toBe('<div class="posting-count-label">42枚</div>');
+    expect(opts.className).toBe("posting-count-marker");
+    expect(opts.iconSize).toEqual([50, 20]);
+    expect(opts.iconAnchor).toEqual([25, 10]);
+    // biome-ignore lint/suspicious/noExplicitAny: test object carries mock marker
+    expect((icon as any).__kind).toBe("divIcon");
+  });
+
+  it("大きな枚数では幅が広がる", () => {
+    const mockDivIcon = jest.fn((opts) => opts);
+    const L = { divIcon: mockDivIcon } as unknown as typeof import("leaflet");
+
+    createPostingLabelIcon(L, 12345);
+
+    const opts = mockDivIcon.mock.calls[0][0];
+    expect(opts.iconSize).toEqual([80, 20]);
+    expect(opts.iconAnchor).toEqual([40, 10]);
+    expect(opts.html).toContain("12345枚");
   });
 });
