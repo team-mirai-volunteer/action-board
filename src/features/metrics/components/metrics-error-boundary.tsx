@@ -30,8 +30,8 @@ export class MetricsErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <section className="bg-gradient-hero flex justify-center py-6 px-4">
-          <div className="w-full max-w-xl bg-white rounded-md shadow-custom p-6">
+        <section className="flex justify-center py-10 px-4">
+          <div className="w-full max-w-lg bg-white rounded-md shadow-custom p-6 py-8">
             <div className="text-center">
               <h2 className="text-xl font-bold text-black mb-2">
                 チームみらいの活動状況🚀

@@ -1,0 +1,78 @@
+name: Check generated types are up-to-date
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-gen-types:
+    name: Check Supabase generated types
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # 環境変数を設定（ローカルSupabaseの接続情報）
+      # supabase start と supabase gen types の両方が config.toml の env() を参照するため
+      # GITHUB_ENV で全ステップに公開する
+      - name: Set Supabase environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
+          echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          echo "SITE_URL=http://localhost:3000" >> $GITHUB_ENV
+          echo "SMTP_ENABLED=false" >> $GITHUB_ENV
+          echo "BQ_USER_PASSWORD=bq_user_password" >> $GITHUB_ENV
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
+        env:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate types
+        run: pnpm run types
+
+      - name: Check for diff
+        run: |
+          if git diff --exit-code src/lib/types/supabase.ts; then
+            echo "Generated types are up-to-date."
+          else
+            echo ""
+            echo "============================================"
+            echo "ERROR: Generated types are out of date!"
+            echo "============================================"
+            echo ""
+            echo "The committed src/lib/types/supabase.ts does not match"
+            echo "what 'supabase gen types' produces from the current schema."
+            echo ""
+            echo "Run the following command locally and commit the result:"
+            echo ""
+            echo "  pnpm run types"
+            echo ""
+            echo "--- Diff ---"
+            git diff src/lib/types/supabase.ts
+            exit 1
+          fi

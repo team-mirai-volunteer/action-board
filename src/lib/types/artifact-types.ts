@@ -68,6 +68,11 @@ export const ARTIFACT_TYPES = {
     displayName: "YouTubeコメント",
     prompt: "YouTubeでチームみらい動画にコメントして、自動で記録しましょう。",
   },
+  RESIDENTIAL_POSTER: {
+    key: "RESIDENTIAL_POSTER",
+    displayName: "私有地ポスター",
+    prompt: "私有地ポスターを掲示した枚数と郵便番号を入力してください。",
+  },
   NONE: {
     key: "NONE",
     displayName: "添付データ不要",
@@ -103,4 +108,5 @@ export type MissionRequiredArtifactType =
   | "POSTER"
   | "YOUTUBE"
   | "YOUTUBE_COMMENT"
+  | "RESIDENTIAL_POSTER"
   | "NONE";
