@@ -86,7 +86,18 @@ export default function PosterPlacementPageClient({
         className="sticky z-20 pointer-events-none"
         style={{ top: `${HEADER_HEIGHT}px`, height: 0 }}
       >
-        <div className="flex justify-end pr-4 pt-4">
+        <div className="flex justify-between items-start gap-2 px-4 pt-4">
+          <div className="pointer-events-auto rounded-lg bg-white px-3 py-2 shadow-lg">
+            <div className="font-bold text-sm">私有地ポスターマップ</div>
+            <a
+              href="https://docs.google.com/document/d/1Wru0CkA_c3YDhYV3S8pXZnl0EnBZ16smpc60ulSPi9E/edit?tab=t.0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-600 underline"
+            >
+              ガイドラインはこちら
+            </a>
+          </div>
           <label
             htmlFor="show-my-pins"
             className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-lg text-sm cursor-pointer"
