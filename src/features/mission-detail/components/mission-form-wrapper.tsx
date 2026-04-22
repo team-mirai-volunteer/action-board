@@ -49,6 +49,7 @@ export function MissionFormWrapper({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [isArtifactFormValid, setIsArtifactFormValid] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
 
   // XPアニメーション関連の状態
@@ -252,11 +253,12 @@ export function MissionFormWrapper({
           key={formKey}
           mission={mission}
           disabled={isButtonDisabled || isSubmitting}
+          onValidityChange={setIsArtifactFormValid}
         />
         <SubmitButton
           pendingText="登録中..."
           size="lg"
-          disabled={isButtonDisabled || isSubmitting}
+          disabled={isButtonDisabled || isSubmitting || !isArtifactFormValid}
         >
           {buttonLabel}
         </SubmitButton>

@@ -1,10 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/types/supabase";
 import type { BoardStatus } from "../types/poster-types";
-import {
-  countBoardsByStatus,
-  createEmptyStatusCounts,
-} from "../utils/poster-stats";
+import { createEmptyStatusCounts } from "../utils/poster-stats";
 
 type PrefectureName = NonNullable<
   Database["public"]["Tables"]["poster_boards"]["Row"]["prefecture"]

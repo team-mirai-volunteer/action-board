@@ -16,6 +16,7 @@ import { YouTubeForm } from "./youtube-form";
 type ArtifactFormProps = {
   mission: Tables<"missions">;
   disabled: boolean;
+  onValidityChange?: (isValid: boolean) => void;
 };
 
 type GeolocationData = {
@@ -25,7 +26,11 @@ type GeolocationData = {
   altitude?: number;
 };
 
-export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
+export function ArtifactForm({
+  mission,
+  disabled,
+  onValidityChange,
+}: ArtifactFormProps) {
   const [_artifactImagePath, _setArtifactImagePath] = useState<
     string | undefined
   >(undefined);
@@ -122,7 +127,10 @@ export function ArtifactForm({ mission, disabled }: ArtifactFormProps) {
 
         {/* 私有地ポスター入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.RESIDENTIAL_POSTER.key && (
-          <ResidentialPosterMissionForm disabled={disabled} />
+          <ResidentialPosterMissionForm
+            disabled={disabled}
+            onValidityChange={onValidityChange}
+          />
         )}
 
         {/* YouTube入力フォーム */}

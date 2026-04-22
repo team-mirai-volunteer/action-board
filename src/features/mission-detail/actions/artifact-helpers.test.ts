@@ -163,10 +163,12 @@ describe("buildArtifactPayload", () => {
       });
     });
 
-    test("RESIDENTIAL_POSTER type → text_contentに「私有地ポスター掲示: X枚 郵便番号」形式の文字列を設定", () => {
+    test("RESIDENTIAL_POSTER type → text_contentに「私有地ポスター掲示: X枚 種別 日付 郵便番号」形式の文字列を設定", () => {
       const data = baseFormData({
         requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
         residentialPosterCount: 3,
+        locationType: "home",
+        placedDate: "2026-04-16",
         locationText: "1540017",
       });
       const result = buildArtifactPayload(
@@ -175,15 +177,18 @@ describe("buildArtifactPayload", () => {
       );
       expect(result).toEqual({
         link_url: null,
-        text_content: "私有地ポスター掲示: 3枚 1540017",
+        text_content: "私有地ポスター掲示: 3枚 自宅 2026-04-16 1540017",
         image_storage_path: null,
       });
     });
 
-    test("RESIDENTIAL_POSTER type → locationText未指定の場合", () => {
+    test("RESIDENTIAL_POSTER type → 未知のlocationTypeはそのまま文字列として使われる", () => {
       const data = baseFormData({
         requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
         residentialPosterCount: 1,
+        locationType: "unknown_type",
+        placedDate: "2026-04-16",
+        locationText: "1540017",
       });
       const result = buildArtifactPayload(
         ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
@@ -191,7 +196,7 @@ describe("buildArtifactPayload", () => {
       );
       expect(result).toEqual({
         link_url: null,
-        text_content: "私有地ポスター掲示: 1枚",
+        text_content: "私有地ポスター掲示: 1枚 unknown_type 2026-04-16 1540017",
         image_storage_path: null,
       });
     });
