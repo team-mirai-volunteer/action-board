@@ -9,7 +9,25 @@ jest.mock("lucide-react", () => ({
 
 // Mock UI components
 jest.mock("@/components/ui/select", () => {
-  const { useState } = require("react");
+  const React = require("react");
+  const { useState } = React;
+
+  const getFirstSelectItemValue = (children: unknown): string => {
+    let value = "";
+    React.Children.forEach(children, (child: unknown) => {
+      if (value || !React.isValidElement(child)) return;
+      const props = (
+        child as { props: { value?: unknown; children?: unknown } }
+      ).props;
+      if (typeof props.value === "string") {
+        value = props.value;
+        return;
+      }
+      value = getFirstSelectItemValue(props.children);
+    });
+    return value;
+  };
+
   return {
     Select: ({ children, value, onValueChange, disabled }: any) => {
       const [internalValue, setInternalValue] = useState(value || "");
@@ -23,7 +41,8 @@ jest.mock("@/components/ui/select", () => {
             type="button"
             onClick={() => {
               if (onValueChange && !disabled) {
-                const newValue = "個人宅";
+                const newValue = getFirstSelectItemValue(children);
+                if (!newValue) return;
                 setInternalValue(newValue);
                 onValueChange(newValue);
               }

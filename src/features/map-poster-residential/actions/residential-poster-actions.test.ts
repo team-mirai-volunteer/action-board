@@ -72,7 +72,7 @@ function buildPlacementInput(
     memo: null as string | null,
     placed_date: null as string | null,
     location_type: null as string | null,
-    poster_type: null as string | null,
+    poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -96,7 +96,7 @@ function buildUpdateInput(
     memo: null as string | null,
     placed_date: null as string | null,
     location_type: null as string | null,
-    poster_type: null as string | null,
+    poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -143,7 +143,7 @@ describe("submitPosterPlacement", () => {
         memo: "テスト",
         placed_date: null,
         location_type: null,
-        poster_type: null,
+        poster_type: "leader_face_a1",
         is_removed: false,
       }),
     );
@@ -193,6 +193,30 @@ describe("submitPosterPlacement", () => {
     const result = await submitPosterPlacement(buildPlacementInput());
 
     expect(result).toEqual({ success: false, error: "認証が必要です" });
+  });
+
+  it("poster_typeがnullなら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ poster_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("poster_typeが許可値以外なら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ poster_type: "unknown_poster" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
   });
 
   it("ミッション達成失敗でもポスター掲示は成功する", async () => {
@@ -284,6 +308,32 @@ describe("updatePosterPlacement", () => {
         is_removed: false,
       },
     );
+  });
+
+  it("poster_typeがnullなら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ poster_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("poster_typeが許可値以外なら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ poster_type: "unknown_poster" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
   });
 
   it("他ユーザーのレコードは更新できない", async () => {

@@ -63,6 +63,44 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
     }
   });
 
+  it("posterTypeが許可値以外なら『有効なポスターの種類を選択してください』エラーを返す", async () => {
+    const fd = buildFormData({
+      missionId: "mission-1",
+      requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+      residentialPosterCount: "3",
+      locationType: "home",
+      posterType: "unknown_poster",
+      placedDate: "2026-04-16",
+      locationText: "1540017",
+    });
+
+    const result = await achieveMissionAction(fd);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain("有効なポスターの種類を選択してください");
+    }
+  });
+
+  it("locationTypeが許可値以外なら『有効な種別を選択してください』エラーを返す", async () => {
+    const fd = buildFormData({
+      missionId: "mission-1",
+      requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+      residentialPosterCount: "3",
+      locationType: "unknown_location",
+      posterType: "leader_face_a1",
+      placedDate: "2026-04-16",
+      locationText: "1540017",
+    });
+
+    const result = await achieveMissionAction(fd);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain("有効な種別を選択してください");
+    }
+  });
+
   it("placedDateが空なら『日付を入力してください』エラーを返す", async () => {
     const fd = buildFormData({
       missionId: "mission-1",
