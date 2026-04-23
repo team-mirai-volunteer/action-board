@@ -71,7 +71,7 @@ function buildPlacementInput(
     address: null as string | null,
     memo: null as string | null,
     placed_date: null as string | null,
-    location_type: null as string | null,
+    location_type: "home" as string | null,
     poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
@@ -95,7 +95,7 @@ function buildUpdateInput(
     address: null as string | null,
     memo: null as string | null,
     placed_date: null as string | null,
-    location_type: null as string | null,
+    location_type: "home" as string | null,
     poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
@@ -142,7 +142,7 @@ describe("submitPosterPlacement", () => {
         count: 2,
         memo: "テスト",
         placed_date: null,
-        location_type: null,
+        location_type: "home",
         poster_type: "leader_face_a1",
         is_removed: false,
       }),
@@ -215,6 +215,30 @@ describe("submitPosterPlacement", () => {
     expect(result).toEqual({
       success: false,
       error: "ポスターの種類を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("location_typeがnullなら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ location_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("location_typeが許可値以外なら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ location_type: "unknown_location" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
     });
     expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
   });
@@ -332,6 +356,32 @@ describe("updatePosterPlacement", () => {
     expect(result).toEqual({
       success: false,
       error: "ポスターの種類を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("location_typeがnullなら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ location_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("location_typeが許可値以外なら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ location_type: "unknown_location" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
     });
     expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
   });

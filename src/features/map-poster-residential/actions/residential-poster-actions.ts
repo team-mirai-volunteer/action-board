@@ -4,6 +4,7 @@ import type { User } from "@supabase/supabase-js";
 import { reverseGeocode } from "@/lib/services/reverse-geocoding";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { LOCATION_TYPES } from "../constants/location-types";
 import { POSTER_TYPES } from "../constants/poster-types";
 import {
   createPosterPlacement,
@@ -17,9 +18,16 @@ import { achievePosterPlacementMission } from "../use-cases/achieve-residential-
 const POSTER_TYPE_VALUES = new Set<string>(
   POSTER_TYPES.map((type) => type.value),
 );
+const LOCATION_TYPE_VALUES = new Set<string>(
+  LOCATION_TYPES.map((type) => type.value),
+);
 
 function isValidPosterType(value: string | null): boolean {
   return value !== null && POSTER_TYPE_VALUES.has(value);
+}
+
+function isValidLocationType(value: string | null): boolean {
+  return value !== null && LOCATION_TYPE_VALUES.has(value);
 }
 
 async function requireAuth(): Promise<User> {
@@ -49,6 +57,9 @@ export async function submitPosterPlacement(params: {
     const user = await requireAuth();
     if (!isValidPosterType(params.poster_type)) {
       return { success: false, error: "ポスターの種類を選択してください" };
+    }
+    if (!isValidLocationType(params.location_type)) {
+      return { success: false, error: "種別を選択してください" };
     }
     const geo = await reverseGeocode(params.lat, params.lng);
     // 1. ポスター掲示レコードを作成（既存処理）
@@ -126,6 +137,9 @@ export async function updatePosterPlacement(
     const user = await requireAuth();
     if (!isValidPosterType(params.poster_type)) {
       return { success: false, error: "ポスターの種類を選択してください" };
+    }
+    if (!isValidLocationType(params.location_type)) {
+      return { success: false, error: "種別を選択してください" };
     }
     const record = await getPosterPlacementById(id);
     if (!record) {
