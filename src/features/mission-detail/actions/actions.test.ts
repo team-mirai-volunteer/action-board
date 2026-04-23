@@ -31,6 +31,7 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
       requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
       residentialPosterCount: "3",
       locationType: "",
+      posterType: "leader_face_a1",
       placedDate: "2026-04-16",
       locationText: "1540017",
     });
@@ -43,12 +44,32 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
     }
   });
 
+  it("posterTypeが空なら『ポスターの種類を選択してください』エラーを返す", async () => {
+    const fd = buildFormData({
+      missionId: "mission-1",
+      requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
+      residentialPosterCount: "3",
+      locationType: "home",
+      posterType: "",
+      placedDate: "2026-04-16",
+      locationText: "1540017",
+    });
+
+    const result = await achieveMissionAction(fd);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain("ポスターの種類を選択してください");
+    }
+  });
+
   it("placedDateが空なら『日付を入力してください』エラーを返す", async () => {
     const fd = buildFormData({
       missionId: "mission-1",
       requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
       residentialPosterCount: "3",
       locationType: "home",
+      posterType: "leader_face_a1",
       placedDate: "",
       locationText: "1540017",
     });
@@ -67,6 +88,7 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
       requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
       residentialPosterCount: "3",
       locationType: "home",
+      posterType: "leader_face_a1",
       placedDate: "2026-04-16",
       locationText: "",
     });
@@ -85,6 +107,7 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
       requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
       residentialPosterCount: "3",
       locationType: "home",
+      posterType: "leader_face_a1",
       placedDate: "2026-04-16",
       locationText: "154-0017",
     });
@@ -106,6 +129,7 @@ describe("achieveMissionAction — RESIDENTIAL_POSTER バリデーション", ()
       requiredArtifactType: ARTIFACT_TYPES.RESIDENTIAL_POSTER.key,
       residentialPosterCount: "3",
       locationType: "home",
+      posterType: "leader_face_a1",
       placedDate: "2026-04-16",
       locationText: "1540017",
     });

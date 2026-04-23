@@ -16,6 +16,10 @@ import {
   LOCATION_TYPES,
   type LocationTypeValue,
 } from "@/features/map-poster-residential/constants/location-types";
+import {
+  POSTER_TYPES,
+  type PosterTypeValue,
+} from "@/features/map-poster-residential/constants/poster-types";
 
 type ResidentialPosterMissionFormProps = {
   disabled: boolean;
@@ -29,6 +33,7 @@ export function ResidentialPosterMissionForm({
   onValidityChange,
 }: ResidentialPosterMissionFormProps) {
   const [locationType, setLocationType] = useState<LocationTypeValue | "">("");
+  const [posterType, setPosterType] = useState<PosterTypeValue | "">("");
   const [placedDate, setPlacedDate] = useState("");
   const [posterCount, setPosterCount] = useState("");
   const [locationText, setLocationText] = useState("");
@@ -42,6 +47,7 @@ export function ResidentialPosterMissionForm({
   const isFormValid =
     Number(posterCount) >= 1 &&
     locationType !== "" &&
+    posterType !== "" &&
     placedDate !== "" &&
     isPostalCodeValid;
 
@@ -80,6 +86,7 @@ export function ResidentialPosterMissionForm({
 
       {/* hidden input for Select value (Radix Select doesn't natively submit via FormData) */}
       <input type="hidden" name="locationType" value={locationType} />
+      <input type="hidden" name="posterType" value={posterType} />
 
       {/* 種別 */}
       <div className="space-y-2">
@@ -96,6 +103,29 @@ export function ResidentialPosterMissionForm({
           </SelectTrigger>
           <SelectContent>
             {LOCATION_TYPES.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* ポスターの種類 */}
+      <div className="space-y-2">
+        <Label htmlFor="posterType">
+          ポスターの種類 <span className="text-red-500">*</span>
+        </Label>
+        <Select
+          value={posterType}
+          onValueChange={(v) => setPosterType(v as PosterTypeValue | "")}
+          disabled={disabled}
+        >
+          <SelectTrigger id="posterType">
+            <SelectValue placeholder="ポスターの種類を選択" />
+          </SelectTrigger>
+          <SelectContent>
+            {POSTER_TYPES.map((type) => (
               <SelectItem key={type.value} value={type.value}>
                 {type.label}
               </SelectItem>

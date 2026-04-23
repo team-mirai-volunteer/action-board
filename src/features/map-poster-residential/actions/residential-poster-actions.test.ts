@@ -60,6 +60,7 @@ function buildPlacementInput(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   }> = {},
 ) {
@@ -71,6 +72,7 @@ function buildPlacementInput(
     memo: null as string | null,
     placed_date: null as string | null,
     location_type: null as string | null,
+    poster_type: null as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -84,6 +86,7 @@ function buildUpdateInput(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   }> = {},
 ) {
@@ -93,6 +96,7 @@ function buildUpdateInput(
     memo: null as string | null,
     placed_date: null as string | null,
     location_type: null as string | null,
+    poster_type: null as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -139,6 +143,7 @@ describe("submitPosterPlacement", () => {
         memo: "テスト",
         placed_date: null,
         location_type: null,
+        poster_type: null,
         is_removed: false,
       }),
     );
@@ -154,6 +159,7 @@ describe("submitPosterPlacement", () => {
         lng: 139.6503,
         placed_date: "2026-04-10",
         location_type: "home",
+        poster_type: "leader_face_a1",
         is_removed: true,
       }),
     );
@@ -163,6 +169,7 @@ describe("submitPosterPlacement", () => {
       expect.objectContaining({
         placed_date: "2026-04-10",
         location_type: "home",
+        poster_type: "leader_face_a1",
         is_removed: true,
       }),
     );
@@ -260,6 +267,7 @@ describe("updatePosterPlacement", () => {
         memo: "メモ更新",
         placed_date: "2026-04-10",
         location_type: "store_office",
+        poster_type: "logo_a2",
       }),
     );
 
@@ -272,6 +280,7 @@ describe("updatePosterPlacement", () => {
         memo: "メモ更新",
         placed_date: "2026-04-10",
         location_type: "store_office",
+        poster_type: "logo_a2",
         is_removed: false,
       },
     );

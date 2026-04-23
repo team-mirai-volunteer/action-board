@@ -17,6 +17,7 @@ import {
   LOCATION_TYPES,
   type LocationTypeValue,
 } from "../constants/location-types";
+import { POSTER_TYPES, type PosterTypeValue } from "../constants/poster-types";
 
 type PlacementFormProps = {
   lat: number;
@@ -29,6 +30,7 @@ type PlacementFormProps = {
   count: number;
   placedDate: string;
   locationType: LocationTypeValue | "";
+  posterType: PosterTypeValue | "";
   isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
@@ -37,6 +39,7 @@ type PlacementFormProps = {
   onCountChange: (value: number) => void;
   onPlacedDateChange: (value: string) => void;
   onLocationTypeChange: (value: LocationTypeValue | "") => void;
+  onPosterTypeChange: (value: PosterTypeValue | "") => void;
   onIsRemovedChange: (value: boolean) => void;
   onConfirmedOrdinanceChange: (value: boolean) => void;
   onConfirmedLandownerChange: (value: boolean) => void;
@@ -56,6 +59,7 @@ export function PlacementForm({
   count,
   placedDate,
   locationType,
+  posterType,
   isRemoved,
   confirmedOrdinance,
   confirmedLandowner,
@@ -64,6 +68,7 @@ export function PlacementForm({
   onCountChange,
   onPlacedDateChange,
   onLocationTypeChange,
+  onPosterTypeChange,
   onIsRemovedChange,
   onConfirmedOrdinanceChange,
   onConfirmedLandownerChange,
@@ -79,7 +84,7 @@ export function PlacementForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAttempted(true);
-    if (!address || !placedDate || !locationType) return;
+    if (!address || !placedDate || !locationType || !posterType) return;
     if (!canSubmit) return;
     onSubmit();
   };
@@ -181,6 +186,33 @@ export function PlacementForm({
             </SelectContent>
           </Select>
           {attempted && !locationType && (
+            <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <Label
+            htmlFor="placement-poster-type"
+            className="mb-1 block font-medium text-sm"
+          >
+            ポスターの種類
+          </Label>
+          <Select
+            value={posterType}
+            onValueChange={(v) => onPosterTypeChange(v as PosterTypeValue | "")}
+          >
+            <SelectTrigger id="placement-poster-type">
+              <SelectValue placeholder="ポスターの種類を選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {POSTER_TYPES.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {attempted && !posterType && (
             <p className="mt-1 text-red-600 text-xs">必須入力欄です</p>
           )}
         </div>

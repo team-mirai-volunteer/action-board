@@ -33,6 +33,7 @@ export async function submitPosterPlacement(params: {
   memo: string | null;
   placed_date: string | null;
   location_type: string | null;
+  poster_type: string | null;
   is_removed: boolean;
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
@@ -51,6 +52,7 @@ export async function submitPosterPlacement(params: {
       memo: params.memo,
       placed_date: params.placed_date,
       location_type: params.location_type,
+      poster_type: params.poster_type,
       is_removed: params.is_removed,
     });
 
@@ -104,6 +106,7 @@ export async function updatePosterPlacement(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   },
 ): Promise<{ success: true } | { success: false; error: string }> {
@@ -122,6 +125,7 @@ export async function updatePosterPlacement(
       memo: params.memo,
       placed_date: params.placed_date,
       location_type: params.location_type,
+      poster_type: params.poster_type,
       is_removed: params.is_removed,
     });
     return { success: true };
