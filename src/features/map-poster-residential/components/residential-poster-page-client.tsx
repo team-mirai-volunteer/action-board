@@ -58,6 +58,7 @@ export default function PosterPlacementPageClient({
     count,
     placedDate,
     locationType,
+    posterType,
     isRemoved,
     confirmedOrdinance,
     confirmedLandowner,
@@ -68,6 +69,7 @@ export default function PosterPlacementPageClient({
     setCount,
     setPlacedDate,
     setLocationType,
+    setPosterType,
     setIsRemoved,
     setConfirmedOrdinance,
     setConfirmedLandowner,
@@ -134,6 +136,7 @@ export default function PosterPlacementPageClient({
             count={count}
             placedDate={placedDate}
             locationType={locationType}
+            posterType={posterType}
             isRemoved={isRemoved}
             confirmedOrdinance={confirmedOrdinance}
             confirmedLandowner={confirmedLandowner}
@@ -142,6 +145,7 @@ export default function PosterPlacementPageClient({
             onCountChange={setCount}
             onPlacedDateChange={setPlacedDate}
             onLocationTypeChange={setLocationType}
+            onPosterTypeChange={setPosterType}
             onIsRemovedChange={setIsRemoved}
             onConfirmedOrdinanceChange={setConfirmedOrdinance}
             onConfirmedLandownerChange={setConfirmedLandowner}

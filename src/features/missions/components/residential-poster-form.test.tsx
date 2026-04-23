@@ -9,7 +9,25 @@ jest.mock("lucide-react", () => ({
 
 // Mock UI components
 jest.mock("@/components/ui/select", () => {
-  const { useState } = require("react");
+  const React = require("react");
+  const { useState } = React;
+
+  const getFirstSelectItemValue = (children: unknown): string => {
+    let value = "";
+    React.Children.forEach(children, (child: unknown) => {
+      if (value || !React.isValidElement(child)) return;
+      const props = (
+        child as { props: { value?: unknown; children?: unknown } }
+      ).props;
+      if (typeof props.value === "string") {
+        value = props.value;
+        return;
+      }
+      value = getFirstSelectItemValue(props.children);
+    });
+    return value;
+  };
+
   return {
     Select: ({ children, value, onValueChange, disabled }: any) => {
       const [internalValue, setInternalValue] = useState(value || "");
@@ -23,7 +41,8 @@ jest.mock("@/components/ui/select", () => {
             type="button"
             onClick={() => {
               if (onValueChange && !disabled) {
-                const newValue = "個人宅";
+                const newValue = getFirstSelectItemValue(children);
+                if (!newValue) return;
                 setInternalValue(newValue);
                 onValueChange(newValue);
               }
@@ -54,13 +73,14 @@ describe("ResidentialPosterMissionForm", () => {
   it("必須フィールドがすべて表示される", () => {
     render(<ResidentialPosterMissionForm disabled={false} />);
 
-    expect(screen.getByTestId("select")).toBeInTheDocument();
+    // 種別 + ポスターの種類 の 2 つの Select
+    expect(screen.getAllByTestId("select")).toHaveLength(2);
     expect(screen.getByLabelText(/貼った日付/)).toBeInTheDocument();
     expect(screen.getByLabelText(/掲示枚数/)).toBeInTheDocument();
     expect(screen.getByLabelText(/掲示場所の郵便番号/)).toBeInTheDocument();
 
     // 必須マーク（*）の確認
-    expect(screen.getAllByText("*")).toHaveLength(4);
+    expect(screen.getAllByText("*")).toHaveLength(5);
   });
 
   it("説明テキストが表示される", () => {
@@ -110,10 +130,9 @@ describe("ResidentialPosterMissionForm", () => {
   it("disabled=trueの場合はすべての入力フィールドが無効化される", () => {
     render(<ResidentialPosterMissionForm disabled={true} />);
 
-    expect(screen.getByTestId("select")).toHaveAttribute(
-      "data-disabled",
-      "true",
-    );
+    for (const select of screen.getAllByTestId("select")) {
+      expect(select).toHaveAttribute("data-disabled", "true");
+    }
     expect(screen.getByLabelText(/貼った日付/)).toBeDisabled();
     expect(screen.getByLabelText(/掲示枚数/)).toBeDisabled();
     expect(screen.getByLabelText(/掲示場所の郵便番号/)).toBeDisabled();
@@ -125,10 +144,9 @@ describe("ResidentialPosterMissionForm", () => {
   it("disabled=falseの場合はすべての入力フィールドが有効化される", () => {
     render(<ResidentialPosterMissionForm disabled={false} />);
 
-    expect(screen.getByTestId("select")).toHaveAttribute(
-      "data-disabled",
-      "false",
-    );
+    for (const select of screen.getAllByTestId("select")) {
+      expect(select).toHaveAttribute("data-disabled", "false");
+    }
     expect(screen.getByLabelText(/貼った日付/)).not.toBeDisabled();
     expect(screen.getByLabelText(/掲示枚数/)).not.toBeDisabled();
     expect(screen.getByLabelText(/掲示場所の郵便番号/)).not.toBeDisabled();
@@ -157,14 +175,20 @@ describe("ResidentialPosterMissionForm", () => {
     expect(postalInput).toHaveAttribute("maxLength", "7");
   });
 
-  it("hidden inputにlocationType名が設定される", () => {
+  it("hidden inputにlocationType名とposterType名が設定される", () => {
     render(<ResidentialPosterMissionForm disabled={false} />);
 
-    const hiddenInput = document.querySelector(
+    const locationTypeInput = document.querySelector(
       'input[name="locationType"][type="hidden"]',
     );
-    expect(hiddenInput).toBeInTheDocument();
-    expect(hiddenInput).toHaveAttribute("value", "");
+    expect(locationTypeInput).toBeInTheDocument();
+    expect(locationTypeInput).toHaveAttribute("value", "");
+
+    const posterTypeInput = document.querySelector(
+      'input[name="posterType"][type="hidden"]',
+    );
+    expect(posterTypeInput).toBeInTheDocument();
+    expect(posterTypeInput).toHaveAttribute("value", "");
   });
 
   it("ヘルプテキストが表示される", () => {
@@ -238,8 +262,10 @@ describe("ResidentialPosterMissionForm", () => {
       />,
     );
 
-    // 種別を選択
-    fireEvent.click(screen.getByText("Select Type"));
+    // 種別 + ポスターの種類 を選択
+    for (const btn of screen.getAllByText("Select Type")) {
+      fireEvent.click(btn);
+    }
 
     // 日付を入力
     fireEvent.change(screen.getByLabelText(/貼った日付/), {
@@ -269,8 +295,10 @@ describe("ResidentialPosterMissionForm", () => {
       />,
     );
 
-    // 種別を選択
-    fireEvent.click(screen.getByText("Select Type"));
+    // 種別 + ポスターの種類 を選択
+    for (const btn of screen.getAllByText("Select Type")) {
+      fireEvent.click(btn);
+    }
 
     // 日付を入力
     fireEvent.change(screen.getByLabelText(/貼った日付/), {
@@ -300,8 +328,10 @@ describe("ResidentialPosterMissionForm", () => {
       />,
     );
 
-    // 種別を選択
-    fireEvent.click(screen.getByText("Select Type"));
+    // 種別 + ポスターの種類 を選択
+    for (const btn of screen.getAllByText("Select Type")) {
+      fireEvent.click(btn);
+    }
 
     // 日付を入力
     fireEvent.change(screen.getByLabelText(/貼った日付/), {

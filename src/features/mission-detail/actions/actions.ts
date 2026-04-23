@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 import { VALID_JP_PREFECTURES } from "@/features/map-poster/constants/poster-prefectures";
+import { LOCATION_TYPES } from "@/features/map-poster-residential/constants/location-types";
+import { POSTER_TYPES } from "@/features/map-poster-residential/constants/poster-types";
 import {
   MAX_POSTING_COUNT,
   MAX_RESIDENTIAL_POSTER_COUNT,
@@ -186,7 +188,18 @@ const residentialPosterArtifactSchema = baseMissionFormSchema.extend({
     .max(MAX_RESIDENTIAL_POSTER_COUNT, {
       message: `掲示枚数は${MAX_RESIDENTIAL_POSTER_COUNT}枚以下で入力してください`,
     }),
-  locationType: z.string().nonempty({ message: "種別を選択してください" }),
+  locationType: z
+    .string()
+    .nonempty({ message: "種別を選択してください" })
+    .refine((val) => LOCATION_TYPES.some((type) => type.value === val), {
+      message: "有効な種別を選択してください",
+    }),
+  posterType: z
+    .string()
+    .nonempty({ message: "ポスターの種類を選択してください" })
+    .refine((val) => POSTER_TYPES.some((type) => type.value === val), {
+      message: "有効なポスターの種類を選択してください",
+    }),
   placedDate: z.string().nonempty({ message: "日付を入力してください" }),
   locationText: z
     .string()
@@ -272,6 +285,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     .get("residentialPosterCount")
     ?.toString();
   const locationType = formData.get("locationType")?.toString();
+  const posterType = formData.get("posterType")?.toString();
   const placedDate = formData.get("placedDate")?.toString();
   // ポスター用データの取得
   const prefecture = formData.get("prefecture")?.toString();
@@ -300,6 +314,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     locationText,
     residentialPosterCount,
     locationType,
+    posterType,
     placedDate,
     prefecture,
     city,

@@ -60,6 +60,7 @@ function buildPlacementInput(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   }> = {},
 ) {
@@ -70,7 +71,8 @@ function buildPlacementInput(
     address: null as string | null,
     memo: null as string | null,
     placed_date: null as string | null,
-    location_type: null as string | null,
+    location_type: "home" as string | null,
+    poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -84,6 +86,7 @@ function buildUpdateInput(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   }> = {},
 ) {
@@ -92,7 +95,8 @@ function buildUpdateInput(
     address: null as string | null,
     memo: null as string | null,
     placed_date: null as string | null,
-    location_type: null as string | null,
+    location_type: "home" as string | null,
+    poster_type: "leader_face_a1" as string | null,
     is_removed: false,
     ...overrides,
   };
@@ -138,7 +142,8 @@ describe("submitPosterPlacement", () => {
         count: 2,
         memo: "テスト",
         placed_date: null,
-        location_type: null,
+        location_type: "home",
+        poster_type: "leader_face_a1",
         is_removed: false,
       }),
     );
@@ -154,6 +159,7 @@ describe("submitPosterPlacement", () => {
         lng: 139.6503,
         placed_date: "2026-04-10",
         location_type: "home",
+        poster_type: "leader_face_a1",
         is_removed: true,
       }),
     );
@@ -163,6 +169,7 @@ describe("submitPosterPlacement", () => {
       expect.objectContaining({
         placed_date: "2026-04-10",
         location_type: "home",
+        poster_type: "leader_face_a1",
         is_removed: true,
       }),
     );
@@ -186,6 +193,54 @@ describe("submitPosterPlacement", () => {
     const result = await submitPosterPlacement(buildPlacementInput());
 
     expect(result).toEqual({ success: false, error: "認証が必要です" });
+  });
+
+  it("poster_typeがnullなら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ poster_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("poster_typeが許可値以外なら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ poster_type: "unknown_poster" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("location_typeがnullなら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ location_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
+  });
+
+  it("location_typeが許可値以外なら失敗", async () => {
+    const result = await submitPosterPlacement(
+      buildPlacementInput({ location_type: "unknown_location" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockCreatePosterPlacement).not.toHaveBeenCalled();
   });
 
   it("ミッション達成失敗でもポスター掲示は成功する", async () => {
@@ -260,6 +315,7 @@ describe("updatePosterPlacement", () => {
         memo: "メモ更新",
         placed_date: "2026-04-10",
         location_type: "store_office",
+        poster_type: "logo_a2",
       }),
     );
 
@@ -272,9 +328,62 @@ describe("updatePosterPlacement", () => {
         memo: "メモ更新",
         placed_date: "2026-04-10",
         location_type: "store_office",
+        poster_type: "logo_a2",
         is_removed: false,
       },
     );
+  });
+
+  it("poster_typeがnullなら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ poster_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("poster_typeが許可値以外なら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ poster_type: "unknown_poster" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "ポスターの種類を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("location_typeがnullなら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ location_type: null }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
+  });
+
+  it("location_typeが許可値以外なら失敗", async () => {
+    const result = await updatePosterPlacement(
+      "placement-1",
+      buildUpdateInput({ location_type: "unknown_location" }),
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: "種別を選択してください",
+    });
+    expect(mockUpdatePosterPlacementFields).not.toHaveBeenCalled();
   });
 
   it("他ユーザーのレコードは更新できない", async () => {
