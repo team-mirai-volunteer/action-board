@@ -1,5 +1,4 @@
 jest.mock("@/features/user-level/utils/level-calculator", () => ({
-  calculateMissionXp: jest.fn().mockReturnValue(100),
   calculateLevel: jest.fn().mockReturnValue(2),
 }));
 
@@ -28,8 +27,6 @@ function createMockSupabase(overrides: Record<string, MockResult> = {}) {
     missions: {
       data: {
         id: "mission-1",
-        difficulty: 2,
-        is_featured: false,
         title: "テストミッション",
       },
       error: null,
@@ -81,7 +78,7 @@ describe("achievePosterPlacementMission", () => {
     expect(result).toEqual({
       success: true,
       artifactId: "artifact-1",
-      xpGranted: 100,
+      xpGranted: 1000,
     });
   });
 
@@ -165,7 +162,7 @@ describe("achievePosterPlacementMission", () => {
     expect(result).toEqual({
       success: true,
       artifactId: "artifact-1",
-      xpGranted: 100,
+      xpGranted: 1000,
     });
   });
 
