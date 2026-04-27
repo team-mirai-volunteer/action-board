@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { calculateLevel } from "@/features/user-level/utils/level-calculator";
-import { RESIDENTIAL_POSTER_XP } from "@/lib/constants/mission-config";
+import {
+  calculateLevel,
+  calculateMissionXp,
+} from "@/features/user-level/utils/level-calculator";
 import type { Database } from "@/lib/types/supabase";
 
 /** ポスター掲示ミッションの slug */
@@ -49,7 +51,7 @@ export async function achievePosterPlacementMission(
   // 1. ミッションを slug で検索
   const { data: mission, error: missionError } = await adminSupabase
     .from("missions")
-    .select("id, title")
+    .select("id, difficulty, is_featured, title")
     .eq("slug", POSTER_PLACEMENT_MISSION_SLUG)
     .single();
 
@@ -123,7 +125,7 @@ export async function achievePosterPlacementMission(
   }
 
   // 5. XP を付与
-  const xpToGrant = RESIDENTIAL_POSTER_XP;
+  const xpToGrant = calculateMissionXp(mission.difficulty, mission.is_featured);
   const xpDescription = `ミッション「${mission.title}」達成による経験値獲得`;
 
   const { error: xpTransactionError } = await adminSupabase

@@ -21,8 +21,5 @@ export const MAX_POSTER_COUNT = 1;
 // 私有地ポスターミッションでの最大枚数
 export const MAX_RESIDENTIAL_POSTER_COUNT = 1000;
 
-// 私有地ポスターミッション1回の達成で付与するXP
-export const RESIDENTIAL_POSTER_XP = 1000;
-
 // ポスターマップの最大ズーム値
 export const MAX_ZOOM = 18;
