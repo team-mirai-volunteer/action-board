@@ -103,6 +103,25 @@ describe("ArtifactForm", () => {
     // 詳細はPosterForm.test.tsxで確認
   });
 
+  it("RESIDENTIAL_POSTERタイプの場合は私有地ポスター入力フォームが表示される", () => {
+    const mission = {
+      ...baseMission,
+      required_artifact_type: "RESIDENTIAL_POSTER" as const,
+    };
+
+    render(<ArtifactForm mission={mission} disabled={false} />);
+
+    expect(
+      screen.getByText("原則ポスター掲示マップ上での報告をお願いします。"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "ポスター掲示マップで報告できない場合は以下のフォームに入力してください。",
+      ),
+    ).toBeInTheDocument();
+    // 詳細はresidential-poster-form.test.tsxで確認
+  });
+
   it("disabledがtrueの場合は入力フィールドが無効化される", () => {
     const mission = { ...baseMission, required_artifact_type: "LINK" as const };
 

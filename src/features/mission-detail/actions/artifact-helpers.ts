@@ -1,4 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { LOCATION_TYPES } from "@/features/map-poster-residential/constants/location-types";
+import { POSTER_TYPES } from "@/features/map-poster-residential/constants/poster-types";
 import {
   buildPosterActivityText,
   buildPostingActivityText,
@@ -103,10 +105,16 @@ const ARTIFACT_PAYLOAD_BUILDERS: Record<
   [ARTIFACT_TYPES.RESIDENTIAL_POSTER.key]: (data) => {
     if (data.requiredArtifactType !== ARTIFACT_TYPES.RESIDENTIAL_POSTER.key)
       return nullFields();
+    const locationTypeLabel =
+      LOCATION_TYPES.find((t) => t.value === data.locationType)?.label ??
+      data.locationType;
+    const posterTypeLabel =
+      POSTER_TYPES.find((t) => t.value === data.posterType)?.label ??
+      data.posterType;
     return {
       link_url: null,
       text_content:
-        `私有地ポスター掲示: ${data.residentialPosterCount}枚 ${data.locationText ?? ""}`.trim(),
+        `私有地ポスター掲示: ${data.residentialPosterCount}枚 ${locationTypeLabel} ${posterTypeLabel} ${data.placedDate} ${data.locationText}`.trim(),
       image_storage_path: null,
     };
   },

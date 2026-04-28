@@ -8,6 +8,7 @@ import {
   updatePosterPlacement,
 } from "../actions/residential-poster-actions";
 import type { LocationTypeValue } from "../constants/location-types";
+import type { PosterTypeValue } from "../constants/poster-types";
 import { fetchReverseGeocode } from "../loaders/residential-poster-loaders";
 import type { ResidentialPosterPlacement } from "../types/residential-poster-types";
 
@@ -36,6 +37,7 @@ type UsePosterPlacementMapReturn = {
   count: number;
   placedDate: string;
   locationType: LocationTypeValue | "";
+  posterType: PosterTypeValue | "";
   isRemoved: boolean;
   confirmedOrdinance: boolean;
   confirmedLandowner: boolean;
@@ -46,6 +48,7 @@ type UsePosterPlacementMapReturn = {
   setCount: (value: number) => void;
   setPlacedDate: (value: string) => void;
   setLocationType: (value: LocationTypeValue | "") => void;
+  setPosterType: (value: PosterTypeValue | "") => void;
   setIsRemoved: (value: boolean) => void;
   setConfirmedOrdinance: (value: boolean) => void;
   setConfirmedLandowner: (value: boolean) => void;
@@ -73,6 +76,7 @@ export function usePosterPlacementMap(
   const [count, setCount] = useState(1);
   const [placedDate, setPlacedDate] = useState("");
   const [locationType, setLocationType] = useState<LocationTypeValue | "">("");
+  const [posterType, setPosterType] = useState<PosterTypeValue | "">("");
   const [isRemoved, setIsRemoved] = useState(false);
   const [confirmedOrdinance, setConfirmedOrdinance] = useState(false);
   const [confirmedLandowner, setConfirmedLandowner] = useState(false);
@@ -96,6 +100,7 @@ export function usePosterPlacementMap(
     setCount(1);
     setPlacedDate("");
     setLocationType("");
+    setPosterType("");
     setIsRemoved(false);
     setConfirmedOrdinance(false);
     setConfirmedLandowner(false);
@@ -112,6 +117,7 @@ export function usePosterPlacementMap(
     setCount(1);
     setPlacedDate("");
     setLocationType("");
+    setPosterType("");
     setIsRemoved(false);
     setConfirmedOrdinance(false);
     setConfirmedLandowner(false);
@@ -142,6 +148,7 @@ export function usePosterPlacementMap(
       setCount(placement.count);
       setPlacedDate(placement.placed_date ?? "");
       setLocationType((placement.location_type as LocationTypeValue) ?? "");
+      setPosterType((placement.poster_type as PosterTypeValue) ?? "");
       setIsRemoved(placement.is_removed ?? false);
       setConfirmedOrdinance(true);
       setConfirmedLandowner(true);
@@ -162,6 +169,7 @@ export function usePosterPlacementMap(
           memo: memo || null,
           placed_date: placedDate || null,
           location_type: locationType || null,
+          poster_type: posterType || null,
           is_removed: isRemoved,
         });
         if (result.success) {
@@ -185,6 +193,7 @@ export function usePosterPlacementMap(
           memo: memo || null,
           placed_date: placedDate || null,
           location_type: locationType || null,
+          poster_type: posterType || null,
           is_removed: false,
         });
         if (result.success) {
@@ -210,6 +219,7 @@ export function usePosterPlacementMap(
     memo,
     placedDate,
     locationType,
+    posterType,
     isRemoved,
     confirmedOrdinance,
     confirmedLandowner,
@@ -249,6 +259,7 @@ export function usePosterPlacementMap(
     count,
     placedDate,
     locationType,
+    posterType,
     isRemoved,
     confirmedOrdinance,
     confirmedLandowner,
@@ -259,6 +270,7 @@ export function usePosterPlacementMap(
     setCount,
     setPlacedDate,
     setLocationType,
+    setPosterType,
     setIsRemoved,
     setConfirmedOrdinance,
     setConfirmedLandowner,

@@ -4,6 +4,8 @@ import type { User } from "@supabase/supabase-js";
 import { reverseGeocode } from "@/lib/services/reverse-geocoding";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
+import { LOCATION_TYPES } from "../constants/location-types";
+import { POSTER_TYPES } from "../constants/poster-types";
 import {
   createPosterPlacement,
   deletePosterPlacement,
@@ -12,6 +14,21 @@ import {
   updatePosterPlacementFields,
 } from "../services/residential-posters";
 import { achievePosterPlacementMission } from "../use-cases/achieve-residential-poster-mission";
+
+const POSTER_TYPE_VALUES = new Set<string>(
+  POSTER_TYPES.map((type) => type.value),
+);
+const LOCATION_TYPE_VALUES = new Set<string>(
+  LOCATION_TYPES.map((type) => type.value),
+);
+
+function isValidPosterType(value: string | null): boolean {
+  return value !== null && POSTER_TYPE_VALUES.has(value);
+}
+
+function isValidLocationType(value: string | null): boolean {
+  return value !== null && LOCATION_TYPE_VALUES.has(value);
+}
 
 async function requireAuth(): Promise<User> {
   const supabase = createClient();
@@ -33,10 +50,17 @@ export async function submitPosterPlacement(params: {
   memo: string | null;
   placed_date: string | null;
   location_type: string | null;
+  poster_type: string | null;
   is_removed: boolean;
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
+    if (!isValidPosterType(params.poster_type)) {
+      return { success: false, error: "ポスターの種類を選択してください" };
+    }
+    if (!isValidLocationType(params.location_type)) {
+      return { success: false, error: "種別を選択してください" };
+    }
     const geo = await reverseGeocode(params.lat, params.lng);
     // 1. ポスター掲示レコードを作成（既存処理）
     const record = await createPosterPlacement({
@@ -51,6 +75,7 @@ export async function submitPosterPlacement(params: {
       memo: params.memo,
       placed_date: params.placed_date,
       location_type: params.location_type,
+      poster_type: params.poster_type,
       is_removed: params.is_removed,
     });
 
@@ -104,11 +129,18 @@ export async function updatePosterPlacement(
     memo: string | null;
     placed_date: string | null;
     location_type: string | null;
+    poster_type: string | null;
     is_removed: boolean;
   },
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const user = await requireAuth();
+    if (!isValidPosterType(params.poster_type)) {
+      return { success: false, error: "ポスターの種類を選択してください" };
+    }
+    if (!isValidLocationType(params.location_type)) {
+      return { success: false, error: "種別を選択してください" };
+    }
     const record = await getPosterPlacementById(id);
     if (!record) {
       return { success: false, error: "レコードが見つかりません" };
@@ -122,6 +154,7 @@ export async function updatePosterPlacement(
       memo: params.memo,
       placed_date: params.placed_date,
       location_type: params.location_type,
+      poster_type: params.poster_type,
       is_removed: params.is_removed,
     });
     return { success: true };

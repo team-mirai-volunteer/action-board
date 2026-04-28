@@ -170,6 +170,7 @@ export async function updatePosterPlacementFields(
     | "memo"
     | "placed_date"
     | "location_type"
+    | "poster_type"
     | "is_removed"
   >,
 ): Promise<void> {

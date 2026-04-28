@@ -967,6 +967,7 @@ export type Database = {
           mission_artifact_id: string | null;
           placed_date: string | null;
           postcode: string | null;
+          poster_type: string | null;
           prefecture: string | null;
           updated_at: string;
           user_id: string;
@@ -986,6 +987,7 @@ export type Database = {
           mission_artifact_id?: string | null;
           placed_date?: string | null;
           postcode?: string | null;
+          poster_type?: string | null;
           prefecture?: string | null;
           updated_at?: string;
           user_id: string;
@@ -1005,6 +1007,7 @@ export type Database = {
           mission_artifact_id?: string | null;
           placed_date?: string | null;
           postcode?: string | null;
+          poster_type?: string | null;
           prefecture?: string | null;
           updated_at?: string;
           user_id?: string;
