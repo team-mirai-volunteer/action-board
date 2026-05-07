@@ -86,9 +86,20 @@ export function PlacementForm({
   const canSubmit =
     mode === "edit" || (confirmedOrdinance && confirmedLandowner);
 
+  const normalizeCount = () => {
+    const num = Number(countInput);
+    if (Number.isNaN(num) || num < 1) {
+      setCountInput("1");
+      onCountChange(1);
+    } else {
+      onCountChange(num);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAttempted(true);
+    normalizeCount();
     if (!address || !placedDate || !locationType || !posterType) return;
     if (!canSubmit) return;
     onSubmit();
@@ -151,13 +162,7 @@ export function PlacementForm({
                 onCountChange(num);
               }
             }}
-            onBlur={() => {
-              const num = Number(countInput);
-              if (Number.isNaN(num) || num < 1) {
-                setCountInput("1");
-                onCountChange(1);
-              }
-            }}
+            onBlur={normalizeCount}
           />
         </div>
 
