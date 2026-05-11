@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -77,13 +77,29 @@ export function PlacementForm({
   onDelete,
 }: PlacementFormProps) {
   const [attempted, setAttempted] = useState(false);
+  const [countInput, setCountInput] = useState(count > 0 ? String(count) : "");
+
+  useEffect(() => {
+    setCountInput(count > 0 ? String(count) : "");
+  }, [count]);
 
   const canSubmit =
     mode === "edit" || (confirmedOrdinance && confirmedLandowner);
 
+  const normalizeCount = () => {
+    const num = Number(countInput);
+    if (Number.isNaN(num) || num < 1) {
+      setCountInput("1");
+      onCountChange(1);
+    } else {
+      onCountChange(num);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAttempted(true);
+    normalizeCount();
     if (!address || !placedDate || !locationType || !posterType) return;
     if (!canSubmit) return;
     onSubmit();
@@ -138,8 +154,15 @@ export function PlacementForm({
             id="placement-count"
             type="number"
             min={1}
-            value={count}
-            onChange={(e) => onCountChange(Number(e.target.value) || 1)}
+            value={countInput}
+            onChange={(e) => {
+              setCountInput(e.target.value);
+              const num = Number(e.target.value);
+              if (!Number.isNaN(num) && num >= 1) {
+                onCountChange(num);
+              }
+            }}
+            onBlur={normalizeCount}
           />
         </div>
 
