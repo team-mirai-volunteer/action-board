@@ -114,6 +114,7 @@ export const signUpActionWithState = async (
         formData: currentFormData,
       };
     }
+    console.error("サインアップに失敗しました:", error);
     return {
       error: "ユーザー登録に失敗しました",
       formData: currentFormData,
