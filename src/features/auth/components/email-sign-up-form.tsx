@@ -34,11 +34,20 @@ function EmailSignUpFormContent({
 
   return (
     <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+      <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-2">
+        <p className="text-sm font-medium text-amber-800">
+          ⚠️
+          現在、システムの不具合により、メールアドレスでの新規登録が正常に行えない場合があります。
+        </p>
+        <p className="text-sm text-amber-800 mt-1">
+          お手数ですが、
+          <Link href="/sign-up" className="underline font-medium">
+            LINEでのご登録
+          </Link>
+          をご利用いただけますようお願いいたします。ご不便をおかけし申し訳ございません。
+        </p>
+      </div>
       <Label htmlFor="email">メールアドレス</Label>
-      <p className="text-xs text-muted-foreground mb-2">
-        ※一部のメールアドレスに認証メールが届かない事象が確認されています。Gmail
-        などのメールアドレスをご利用いただくと、より確実にご登録いただけます。
-      </p>
       <Input
         name="email"
         placeholder="you@example.com"

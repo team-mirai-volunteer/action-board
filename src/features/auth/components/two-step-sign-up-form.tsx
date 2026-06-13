@@ -246,6 +246,17 @@ function LoginSelectionPhase({
         </div>
       )}
 
+      {/* 不具合に関するお知らせ */}
+      <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+        <p className="text-sm font-medium text-amber-800">
+          ⚠️
+          現在、システムの不具合により、メールアドレスでの新規登録が正常に行えない場合があります。
+        </p>
+        <p className="text-sm text-amber-800 mt-1">
+          お手数ですが、LINEでのご登録をご利用いただけますようお願いいたします。ご不便をおかけし申し訳ございません。
+        </p>
+      </div>
+
       {/* LINEログインボタン */}
       <Button
         type="button"
