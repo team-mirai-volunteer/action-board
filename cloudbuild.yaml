@@ -6,8 +6,8 @@ steps:
       - |
         npx supabase link --project-ref ${_SUPABASE_PROJECT_ID} -p $$SUPABASE_DB_PASSWORD
 
-        npx supabase db push --include-all
-        npx supabase config push
+        npx supabase db push --include-all --yes
+        npx supabase config push --yes
     env:
       - 'CI=true'
       - 'SMTP_ENABLED=true'
