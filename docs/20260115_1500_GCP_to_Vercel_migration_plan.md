@@ -143,8 +143,8 @@ Your understanding is correct. The action-board codebase is **completely cloud-a
 
          - name: Apply migrations
            run: |
-             supabase db push --include-all
-             supabase config push
+             supabase db push --include-all --yes
+             supabase config push --yes
            env:
              SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
