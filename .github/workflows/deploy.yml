@@ -41,8 +41,8 @@ jobs:
       - name: Apply migrations
         timeout-minutes: 10
         run: |
-          yes | supabase db push --include-all
-          yes | supabase config push
+          supabase db push --include-all --yes
+          supabase config push --yes
 
       - uses: pnpm/action-setup@v4
 
