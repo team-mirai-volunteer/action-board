@@ -41,7 +41,9 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # 2.106.0 introduced a regression where `gen types --local`
+          # requires SUPABASE_ACCESS_TOKEN. Pin to the last good release.
+          version: 2.105.0
 
       - name: Start Supabase
         run: supabase start -x studio,postgres-meta,imgproxy,mailpit,logflare,vector
