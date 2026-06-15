@@ -33,7 +33,10 @@ export type TestUser = {
  * テストユーザーを作成し、認証情報を持つクライアントを返す
  */
 export async function createTestUser(
-  email = `test-${Date.now()}@example.com`,
+  // Date.now() だけだと、Jest が複数ワーカーでテストファイルを並列実行した際に
+  // 同一ミリ秒で衝突してメールが重複し、GoTrue が "Database error creating new user"
+  // を返してフレーキーになる。crypto.randomUUID() を付与して一意性を担保する。
+  email = `test-${Date.now()}-${crypto.randomUUID()}@example.com`,
   password = "password123",
 ): Promise<{
   user: TestUser;
