@@ -7,6 +7,7 @@ on:
 jobs:
   migrate-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     env:
       # Config parsing env vars (needed for supabase config.toml)
@@ -38,6 +39,7 @@ jobs:
         run: supabase link --project-ref $SUPABASE_PROJECT_REF --password $SUPABASE_DB_PASSWORD
 
       - name: Apply migrations
+        timeout-minutes: 10
         run: |
           supabase db push --include-all --yes
           supabase config push --yes
