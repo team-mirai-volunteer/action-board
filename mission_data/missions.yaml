@@ -409,6 +409,18 @@ missions:
     is_hidden: true
     artifact_label: ポスティング情報
     ogp_image_url: null
+  - slug: street-flyer
+    title: 街頭でチームみらいのチラシを配布しよう！
+    icon_url: /img/mission-icons/actionboard_icon_work_20260616_ol_street-flyer.png
+    content: |-
+      街頭でチームみらいのチラシを配布しよう！配布した枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
+    difficulty: 2
+    required_artifact_type: POSTING
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 配布情報
+    ogp_image_url: null
   - slug: youtube-watch
     title: YouTube動画を視聴しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_youtube-watch.svg
