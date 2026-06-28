@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import type { PosterBoard } from "../types/poster-types";
 import {
@@ -26,6 +26,7 @@ export function PosterBoardSearch({
 }: PosterBoardSearchProps) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(
     () => searchPosterBoards(boards, query),
@@ -35,13 +36,42 @@ export function PosterBoardSearch({
   const showDropdown =
     isOpen && query.trim().length >= POSTER_SEARCH_MIN_QUERY_LENGTH;
 
+  // 外側クリック・Escape キーでドロップダウンを閉じる
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const handlePointerDown = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
   const handleSelect = (board: PosterBoard) => {
     onSelect(board);
     setIsOpen(false);
   };
 
   return (
-    <div className="absolute left-4 top-4 z-1000 w-64 max-w-[calc(100%-2rem)]">
+    <div
+      ref={containerRef}
+      className="absolute left-4 top-4 z-1000 w-64 max-w-[calc(100%-2rem)]"
+    >
       <div className="relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
         <Input

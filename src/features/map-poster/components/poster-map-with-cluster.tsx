@@ -554,7 +554,10 @@ export default function PosterMapWithCluster({
         activeFilterCount={activeFilterCount}
       />
 
-      <PosterBoardSearch boards={boards} onSelect={handleSearchSelect} />
+      <PosterBoardSearch
+        boards={filteredBoards}
+        onSelect={handleSearchSelect}
+      />
 
       {/* フルスクリーンボタン */}
       {!isFullscreen && (
