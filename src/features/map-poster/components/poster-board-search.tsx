@@ -70,7 +70,7 @@ export function PosterBoardSearch({
   return (
     <div
       ref={containerRef}
-      className="absolute left-4 top-4 z-1000 w-64 max-w-[calc(100%-2rem)]"
+      className="absolute left-1/2 top-4 z-1000 w-64 max-w-[calc(100%-2rem)] -translate-x-1/2"
     >
       <div className="relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
