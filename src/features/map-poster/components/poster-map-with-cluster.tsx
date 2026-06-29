@@ -23,6 +23,7 @@ import {
   statusColors,
 } from "../utils/marker-icons";
 import { PosterBoardFilter } from "./poster-board-filter";
+import { PosterBoardSearch } from "./poster-board-search";
 
 // Fix Leaflet default marker icon issue with Next.js
 // biome-ignore lint/suspicious/noExplicitAny: Leaflet internal API
@@ -476,6 +477,16 @@ export default function PosterMapWithCluster({
     }
   };
 
+  // 検索結果の掲示板へ地図を移動する
+  const handleSearchSelect = (board: PosterBoard) => {
+    if (board.lat && board.long && mapRef.current) {
+      mapRef.current.flyTo([board.lat, board.long], MAX_ZOOM, {
+        animate: true,
+        duration: 1,
+      });
+    }
+  };
+
   // フルスクリーンモードの切り替え
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -541,6 +552,11 @@ export default function PosterMapWithCluster({
         onSelectAll={selectAll}
         onDeselectAll={deselectAll}
         activeFilterCount={activeFilterCount}
+      />
+
+      <PosterBoardSearch
+        boards={filteredBoards}
+        onSelect={handleSearchSelect}
       />
 
       {/* フルスクリーンボタン */}
