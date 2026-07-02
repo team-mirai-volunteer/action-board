@@ -1,8 +1,8 @@
-import { createHash, timingSafeEqual } from "node:crypto";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { getPartyMembershipByEmail } from "@/features/party-membership/services/memberships";
 import { buildMembershipLookupResponse } from "@/features/party-membership/utils/membership-lookup";
+import { verifyBearerToken } from "@/lib/utils/bearer-token";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -44,7 +44,7 @@ const handler = createMcpHandler(
 );
 
 /**
- * Bearerトークンを環境変数 MCP_API_KEY と照合する（タイミング攻撃対策済み）
+ * Bearerトークンを環境変数 MCP_API_KEY と照合する
  */
 function isAuthorized(request: Request): boolean {
   const expectedToken = process.env.MCP_API_KEY;
@@ -53,15 +53,7 @@ function isAuthorized(request: Request): boolean {
     return false;
   }
 
-  const authHeader = request.headers.get("authorization") ?? "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!token) {
-    return false;
-  }
-
-  const tokenHash = createHash("sha256").update(token).digest();
-  const expectedHash = createHash("sha256").update(expectedToken).digest();
-  return timingSafeEqual(tokenHash, expectedHash);
+  return verifyBearerToken(request.headers.get("authorization"), expectedToken);
 }
 
 async function authenticatedHandler(request: Request): Promise<Response> {
