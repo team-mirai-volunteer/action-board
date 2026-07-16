@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS public.user_emails (
 COMMENT ON TABLE public.user_emails IS 'auth.users.email のミラー。データ分析基盤(BigQuery)連携専用。アプリからは参照しない';
 COMMENT ON COLUMN public.user_emails.id IS 'ユーザーのUUID。auth.users.id を参照';
 COMMENT ON COLUMN public.user_emails.email IS 'メールアドレス。トリガーで auth.users.email と同期される';
+COMMENT ON COLUMN public.user_emails.created_at IS 'auth.users.created_at のミラー（ユーザー登録日時）';
+COMMENT ON COLUMN public.user_emails.updated_at IS 'このミラー行が最後に同期された日時';
 
 -- 2. アプリからのアクセスを遮断（RLS有効・ポリシーなし + 明示的REVOKE）
 ALTER TABLE public.user_emails ENABLE ROW LEVEL SECURITY;
@@ -45,8 +47,8 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 BEGIN
-  INSERT INTO public.user_emails (id, email)
-  VALUES (NEW.id, NEW.email)
+  INSERT INTO public.user_emails (id, email, created_at)
+  VALUES (NEW.id, NEW.email, COALESCE(NEW.created_at, now()))
   ON CONFLICT (id) DO UPDATE
     SET email = EXCLUDED.email,
         updated_at = now();
@@ -67,8 +69,9 @@ CREATE TRIGGER trg_sync_user_email
   FOR EACH ROW EXECUTE FUNCTION public.sync_user_email();
 
 -- 4. 既存ユーザーのバックフィル
-INSERT INTO public.user_emails (id, email)
-SELECT id, email FROM auth.users
+--    created_at は auth.users.created_at（登録日時）を引き継ぐ（分析での登録日時の正確性のため）
+INSERT INTO public.user_emails (id, email, created_at)
+SELECT id, email, COALESCE(created_at, now()) FROM auth.users
 ON CONFLICT (id) DO UPDATE
   SET email = EXCLUDED.email,
       updated_at = now();
