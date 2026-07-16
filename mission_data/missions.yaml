@@ -312,6 +312,17 @@ missions:
     is_hidden: false
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
+  - slug: join-planning-team
+    title: 企画チームのメンバーになろう
+    icon_url: /img/mission-icons/actionboard_icon_work_20260715_ol_join-planning-team.png
+    content: テーマベースのコミュニティを、みんなで企画・実現していく「企画チーム」を立ち上げます！<br>地域の枠を越えて、横断で動く新しいかたちのサポーターチームです。<br><br>いまは立ち上げ準備中です。まずは<a href="https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b" target="_blank" rel="noopener noreferrer">サポーターSlack</a>の <b>#1_サポーター全体_テーマ別企画チーム</b> に入ってお待ちください！<br>具体的な活動内容と次のご案内は、チャンネル内でお届けします（8月末までにご案内予定）。
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    artifact_label: あなたのSlackアカウント名
+    ogp_image_url: null
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg
