@@ -410,7 +410,7 @@ missions:
     artifact_label: ポスティング情報
     ogp_image_url: null
   - slug: street-flyer
-    title: 街頭でチームみらいのチラシを配布しよう！
+    title: 街頭でチームみらいのチラシを配布しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20260616_ol_street-flyer.png
     content: |-
       街頭でチームみらいのチラシを配布しよう！配布した枚数と場所を報告してください。配布1枚につき50ポイントを獲得できます。
