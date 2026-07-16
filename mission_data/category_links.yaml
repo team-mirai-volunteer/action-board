@@ -49,6 +49,8 @@ category_links:
         sort_no: 500
   - category_slug: join-community
     missions:
+      - mission_slug: join-planning-team
+        sort_no: 50
       - mission_slug: join-slack
         sort_no: 100
       - mission_slug: join-prefecture-openchat
