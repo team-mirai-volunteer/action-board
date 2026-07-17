@@ -1331,6 +1331,27 @@ export type Database = {
           },
         ];
       };
+      user_emails: {
+        Row: {
+          created_at: string;
+          email: string | null;
+          id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          email?: string | null;
+          id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          email?: string | null;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       user_levels: {
         Row: {
           last_notified_level: number | null;
