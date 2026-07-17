@@ -240,7 +240,9 @@ export default async function MissionPage({ params, searchParams }: Props) {
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Link href="/sign-in">
+              <Link
+                href={`/sign-in?returnUrl=${encodeURIComponent(`/missions/${slug}`)}`}
+              >
                 <Button className="w-full sm:w-auto">
                   <LogIn className="mr-2 h-4 w-4" />
                   ログインする
@@ -248,7 +250,10 @@ export default async function MissionPage({ params, searchParams }: Props) {
               </Link>
               <p className="mt-4 text-sm text-muted-foreground">
                 アカウントをお持ちでない方は{" "}
-                <Link href="/sign-up" className="text-primary hover:underline">
+                <Link
+                  href={`/sign-up?returnUrl=${encodeURIComponent(`/missions/${slug}`)}`}
+                  className="text-primary hover:underline"
+                >
                   こちらから登録
                 </Link>
               </p>
