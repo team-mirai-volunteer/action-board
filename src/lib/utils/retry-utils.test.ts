@@ -187,6 +187,20 @@ describe("fetchWithRetry", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("label がデフォルトのリトライログに使われる", async () => {
+    fetchMock
+      .mockResolvedValueOnce(makeResponse(500))
+      .mockResolvedValue(makeResponse(200));
+    await fetchWithRetry("https://example.com", undefined, {
+      ...fastRetry,
+      label: "MyAPI fetch",
+    });
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("MyAPI fetch failed (attempt 1)"),
+      expect.anything(),
+    );
+  });
+
   it("リトライ時に onRetry が呼ばれる", async () => {
     const onRetry = jest.fn();
     fetchMock

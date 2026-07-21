@@ -132,25 +132,31 @@ export async function withRetry<T>(
   }
 }
 
+/** fetchWithRetry のオプション（リトライ条件は一時的エラー固定のため shouldRetry は受け取らない） */
+export interface FetchRetryOptions extends Omit<RetryOptions, "shouldRetry"> {
+  /** リトライログに出す呼び出し元ラベル。URL は API キーを含みうるためログに出さない */
+  label?: string;
+}
+
 /**
  * fetch を一時的な障害に対する再試行付きで実行する
  * - ネットワークエラー: 一時的なら再試行し、最終試行のエラーはそのまま throw
  * - 一時的な HTTP ステータス（408/429/5xx）: 再試行し、最終試行のレスポンスはそのまま返す
  *   （呼び出し側の response.ok 判定・エラーハンドリングを変えないため）
- * URL に API キーが含まれることがあるため、このユーティリティは URL をログに出さない
  */
 export async function fetchWithRetry(
   input: string | URL,
   init?: RequestInit,
-  options: RetryOptions = {},
+  options: FetchRetryOptions = {},
 ): Promise<Response> {
   const {
     maxAttempts = 3,
     initialDelayMs = 1000,
     backoffMultiplier = 2,
+    label = "Fetch",
     onRetry = (error, attempt, delayMs) =>
       console.warn(
-        `Fetch failed (attempt ${attempt}), retrying in ${delayMs}ms:`,
+        `${label} failed (attempt ${attempt}), retrying in ${delayMs}ms:`,
         error instanceof Error ? error.message : error,
       ),
   } = options;
