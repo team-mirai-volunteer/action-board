@@ -1,3 +1,4 @@
+import { fetchWithRetry } from "@/lib/utils/retry-utils";
 import type {
   GoogleTokenResponse,
   YouTubeChannel,
@@ -167,7 +168,7 @@ export async function fetchChannelInfo(
   url.searchParams.set("part", "snippet,contentDetails");
   url.searchParams.set("mine", "true");
 
-  const response = await fetch(url.toString(), {
+  const response = await fetchWithRetry(url.toString(), {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -268,7 +269,7 @@ export async function fetchUserUploadedVideos(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -327,7 +328,7 @@ export async function fetchVideoDetails(
     url.searchParams.set("part", "snippet,statistics,contentDetails");
     url.searchParams.set("id", chunk.join(","));
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -391,7 +392,7 @@ export async function fetchUserLikedVideos(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -478,7 +479,7 @@ export async function fetchVideoComments(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: "GET",
     });
 
@@ -564,7 +565,7 @@ export async function fetchVideoDetailsByApiKey(
     url.searchParams.set("id", chunk.join(","));
     url.searchParams.set("key", apiKey);
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: "GET",
     });
 
