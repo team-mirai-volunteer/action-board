@@ -1,4 +1,13 @@
-import { parseIdToken, YouTubeAPIError } from "./youtube-client";
+import {
+  fetchChannelInfo,
+  fetchUserLikedVideos,
+  fetchUserUploadedVideos,
+  fetchVideoComments,
+  fetchVideoDetails,
+  fetchVideoDetailsByApiKey,
+  parseIdToken,
+  YouTubeAPIError,
+} from "./youtube-client";
 
 describe("parseIdToken", () => {
   // Helper to create a valid JWT-like token
@@ -82,5 +91,88 @@ describe("parseIdToken", () => {
   it("should throw YouTubeAPIError for malformed base64 payload", () => {
     const token = "header.!!!invalid-base64!!!.signature";
     expect(() => parseIdToken(token)).toThrow(YouTubeAPIError);
+  });
+});
+
+describe("YouTube Data API fetchers", () => {
+  let fetchMock: jest.Mock;
+  const originalApiKey = process.env.YOUTUBE_API_KEY;
+
+  beforeEach(() => {
+    process.env.YOUTUBE_API_KEY = "test-api-key";
+    fetchMock = jest.fn();
+    global.fetch = fetchMock as unknown as typeof fetch;
+  });
+
+  afterAll(() => {
+    process.env.YOUTUBE_API_KEY = originalApiKey;
+  });
+
+  function jsonResponse(status: number, body: unknown) {
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      json: async () => body,
+      text: async () => JSON.stringify(body),
+    };
+  }
+
+  it("fetchChannelInfo はチャンネル情報を返す", async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(200, {
+        items: [
+          {
+            id: "ch1",
+            snippet: {
+              title: "t",
+              description: "d",
+              customUrl: "@c",
+              thumbnails: { medium: { url: "https://example.com/m.jpg" } },
+            },
+            contentDetails: { relatedPlaylists: { uploads: "UU1" } },
+          },
+        ],
+      }),
+    );
+    const channel = await fetchChannelInfo("token");
+    expect(channel.id).toBe("ch1");
+    expect(channel.uploadsPlaylistId).toBe("UU1");
+  });
+
+  it("fetchUserUploadedVideos はアップロード動画IDを返す", async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(200, {
+        items: [{ snippet: { resourceId: { videoId: "v1" } } }],
+      }),
+    );
+    await expect(fetchUserUploadedVideos("token", "UU1", 1)).resolves.toEqual([
+      "v1",
+    ]);
+  });
+
+  it("fetchVideoDetails は動画詳細を返す", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { items: [{ id: "v1" }] }));
+    await expect(fetchVideoDetails("token", ["v1"])).resolves.toEqual([
+      { id: "v1" },
+    ]);
+  });
+
+  it("fetchUserLikedVideos はいいねした動画を返す", async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(200, { items: [{ id: "v1", snippet: {} }] }),
+    );
+    await expect(fetchUserLikedVideos("token", 1)).resolves.toHaveLength(1);
+  });
+
+  it("fetchVideoComments はコメント無効動画(403)で空配列を返す", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(403, { error: {} }));
+    await expect(fetchVideoComments("v1", 10)).resolves.toEqual([]);
+  });
+
+  it("fetchVideoDetailsByApiKey は公開動画の詳細を返す", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { items: [{ id: "v1" }] }));
+    await expect(fetchVideoDetailsByApiKey(["v1"])).resolves.toEqual([
+      { id: "v1" },
+    ]);
   });
 });

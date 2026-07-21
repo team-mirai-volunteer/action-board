@@ -29,6 +29,7 @@ const TRANSIENT_ERROR_PATTERNS: readonly RegExp[] = [
   /EAI_AGAIN/, // DNS の一時的な失敗
   /ENETUNREACH/,
   /EPIPE/,
+  /timeout/i, // gaxios の "timeout of 30000ms exceeded" 等
 ];
 
 export interface RetryOptions {
@@ -72,6 +73,11 @@ function extractHttpStatus(error: object): number | undefined {
 export function isTransientError(error: unknown, depth = 0): boolean {
   if (depth > 3 || typeof error !== "object" || error === null) {
     return false;
+  }
+
+  // AbortSignal.timeout 等によるタイムアウトは一時的エラーとして扱う
+  if ((error as { name?: unknown }).name === "TimeoutError") {
+    return true;
   }
 
   const status = extractHttpStatus(error);
@@ -136,6 +142,8 @@ export async function withRetry<T>(
 export interface FetchRetryOptions extends Omit<RetryOptions, "shouldRetry"> {
   /** リトライログに出す呼び出し元ラベル。URL は API キーを含みうるためログに出さない */
   label?: string;
+  /** 1回の fetch 試行あたりのタイムアウト（ミリ秒）。デフォルト 30000。init.signal 指定時は無効 */
+  timeoutMs?: number;
 }
 
 /**
@@ -154,6 +162,7 @@ export async function fetchWithRetry(
     initialDelayMs = 1000,
     backoffMultiplier = 2,
     label = "Fetch",
+    timeoutMs = 30_000,
     onRetry = (error, attempt, delayMs) =>
       console.warn(
         `${label} failed (attempt ${attempt}), retrying in ${delayMs}ms:`,
@@ -164,8 +173,16 @@ export async function fetchWithRetry(
   let delayMs = initialDelayMs;
   for (let attempt = 1; ; attempt++) {
     let retryReason: unknown;
+    // 呼び出し側が signal を渡していない場合のみ、試行ごとにタイムアウト用の AbortController を用意する
+    const controller = init?.signal ? undefined : new AbortController();
+    const timer = controller
+      ? setTimeout(() => controller.abort(), timeoutMs)
+      : undefined;
     try {
-      const response = await fetch(input, init);
+      const response = await fetch(
+        input,
+        controller ? { ...init, signal: controller.signal } : init,
+      );
       if (
         !TRANSIENT_HTTP_STATUSES.has(response.status) ||
         attempt >= maxAttempts
@@ -180,10 +197,18 @@ export async function fetchWithRetry(
       }
       retryReason = new Error(`HTTP ${response.status}`);
     } catch (error) {
-      if (attempt >= maxAttempts || !isTransientError(error)) {
-        throw error;
+      const timedOut = controller?.signal.aborted === true;
+      const reason = timedOut
+        ? new Error(`Fetch aborted after ${timeoutMs}ms timeout`)
+        : error;
+      if (attempt >= maxAttempts || !(timedOut || isTransientError(error))) {
+        throw reason;
       }
-      retryReason = error;
+      retryReason = reason;
+    } finally {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
     }
     onRetry(retryReason, attempt, delayMs);
     await sleep(delayMs);

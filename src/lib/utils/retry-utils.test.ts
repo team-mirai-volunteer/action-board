@@ -21,6 +21,15 @@ describe("isTransientError", () => {
     expect(isTransientError({ status: 404 })).toBe(false);
   });
 
+  it("TimeoutError / timeout メッセージを一時的エラーと判定する", () => {
+    const timeoutError = new Error("The operation was aborted");
+    timeoutError.name = "TimeoutError";
+    expect(isTransientError(timeoutError)).toBe(true);
+    expect(isTransientError(new Error("timeout of 30000ms exceeded"))).toBe(
+      true,
+    );
+  });
+
   it("ネットワークレベルのエラーメッセージを一時的エラーと判定する", () => {
     expect(
       isTransientError(
@@ -199,6 +208,25 @@ describe("fetchWithRetry", () => {
       expect.stringContaining("MyAPI fetch failed (attempt 1)"),
       expect.anything(),
     );
+  });
+
+  it("タイムアウトした試行は中断され、リトライされる", async () => {
+    fetchMock
+      .mockImplementationOnce(
+        (_input: unknown, init: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init.signal?.addEventListener("abort", () =>
+              reject(new Error("The operation was aborted")),
+            );
+          }),
+      )
+      .mockResolvedValue(makeResponse(200));
+    const response = await fetchWithRetry("https://example.com", undefined, {
+      ...fastRetry,
+      timeoutMs: 20,
+    });
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("リトライ時に onRetry が呼ばれる", async () => {

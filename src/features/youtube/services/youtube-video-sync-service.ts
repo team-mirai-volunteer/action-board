@@ -15,6 +15,9 @@ import {
 
 const HASHTAG = "#チームみらい";
 
+// 1リクエストあたりのタイムアウト（ミリ秒）。応答が返らないハングでバッチが止まらないようにする
+const REQUEST_TIMEOUT_MS = 30_000;
+
 // YouTube API クライアントを初期化
 function getYouTubeClient() {
   const apiKey = process.env.YOUTUBE_API_KEY;
@@ -129,17 +132,20 @@ export async function searchVideosByHashtag(
   while (videoIds.length < maxResults) {
     const response = await withRetry(
       () =>
-        youtube.search.list({
-          part: ["snippet"],
-          q: HASHTAG,
-          type: ["video"],
-          maxResults: Math.min(50, maxResults - videoIds.length),
-          order: "date",
-          regionCode: "JP",
-          pageToken,
-          publishedAfter,
-          publishedBefore,
-        }),
+        youtube.search.list(
+          {
+            part: ["snippet"],
+            q: HASHTAG,
+            type: ["video"],
+            maxResults: Math.min(50, maxResults - videoIds.length),
+            order: "date",
+            regionCode: "JP",
+            pageToken,
+            publishedAfter,
+            publishedBefore,
+          },
+          { timeout: REQUEST_TIMEOUT_MS },
+        ),
       {
         onRetry: (error, attempt, delayMs) =>
           console.warn(
@@ -191,10 +197,13 @@ export async function getVideoDetails(
 
     const response = await withRetry(
       () =>
-        youtube.videos.list({
-          part: ["snippet", "statistics", "contentDetails"],
-          id: chunk,
-        }),
+        youtube.videos.list(
+          {
+            part: ["snippet", "statistics", "contentDetails"],
+            id: chunk,
+          },
+          { timeout: REQUEST_TIMEOUT_MS },
+        ),
       {
         onRetry: (error, attempt, delayMs) =>
           console.warn(
