@@ -1331,6 +1331,24 @@ export type Database = {
           },
         ];
       };
+      user_campaign_attribution: {
+        Row: {
+          campaign_code: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          campaign_code: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          campaign_code?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_emails: {
         Row: {
           created_at: string;
@@ -1408,24 +1426,6 @@ export type Database = {
           referral_code?: string;
           updated_at?: string | null;
           user_id?: string;
-        };
-        Relationships: [];
-      };
-      user_venue_attribution: {
-        Row: {
-          created_at: string;
-          user_id: string;
-          venue_code: string;
-        };
-        Insert: {
-          created_at?: string;
-          user_id: string;
-          venue_code: string;
-        };
-        Update: {
-          created_at?: string;
-          user_id?: string;
-          venue_code?: string;
         };
         Relationships: [];
       };

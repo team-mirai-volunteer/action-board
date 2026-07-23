@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/types/supabase";
-import { saveVenueAttribution } from "./venue-attribution";
+import { saveCampaignAttribution } from "./campaign-attribution";
 
 const createMockClient = (insertResult: { error: { code: string } | null }) => {
   const insert = jest.fn().mockResolvedValue(insertResult);
@@ -12,27 +12,27 @@ const createMockClient = (insertResult: { error: { code: string } | null }) => {
   };
 };
 
-describe("saveVenueAttribution", () => {
+describe("saveCampaignAttribution", () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  test("有効な会場コードをuser_venue_attributionに保存する", async () => {
+  test("有効なキャンペーンコードをuser_campaign_attributionに保存する", async () => {
     const { client, from, insert } = createMockClient({ error: null });
 
-    await saveVenueAttribution(client, "user-1", "sapporo-0730");
+    await saveCampaignAttribution(client, "user-1", "sapporo-0730");
 
-    expect(from).toHaveBeenCalledWith("user_venue_attribution");
+    expect(from).toHaveBeenCalledWith("user_campaign_attribution");
     expect(insert).toHaveBeenCalledWith({
       user_id: "user-1",
-      venue_code: "sapporo-0730",
+      campaign_code: "sapporo-0730",
     });
   });
 
-  test("形式が不正な会場コードは保存しない", async () => {
+  test("形式が不正なキャンペーンコードは保存しない", async () => {
     const { client, from } = createMockClient({ error: null });
 
-    await saveVenueAttribution(client, "user-1", "会場コード!");
+    await saveCampaignAttribution(client, "user-1", "キャンペーンコード!");
 
     expect(from).not.toHaveBeenCalled();
   });
@@ -41,7 +41,7 @@ describe("saveVenueAttribution", () => {
     const { client } = createMockClient({ error: { code: "23505" } });
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
-    await saveVenueAttribution(client, "user-1", "sapporo-0730");
+    await saveCampaignAttribution(client, "user-1", "sapporo-0730");
 
     expect(warnSpy).not.toHaveBeenCalled();
   });
@@ -51,7 +51,7 @@ describe("saveVenueAttribution", () => {
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     await expect(
-      saveVenueAttribution(client, "user-1", "sapporo-0730"),
+      saveCampaignAttribution(client, "user-1", "sapporo-0730"),
     ).resolves.toBeUndefined();
     expect(warnSpy).toHaveBeenCalled();
   });
@@ -63,7 +63,7 @@ describe("saveVenueAttribution", () => {
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     await expect(
-      saveVenueAttribution(client, "user-1", "sapporo-0730"),
+      saveCampaignAttribution(client, "user-1", "sapporo-0730"),
     ).resolves.toBeUndefined();
     expect(warnSpy).toHaveBeenCalled();
   });
