@@ -8,6 +8,7 @@ import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
+import { VenueCodeHandlerWrapper } from "@/features/venue-attribution/components/venue-code-handler-wrapper";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -57,6 +58,9 @@ export default function RootLayout({
           <main className="flex flex-col items-center mt-8">
             <Suspense>
               <ReferralCodeHandlerWrapper />
+            </Suspense>
+            <Suspense>
+              <VenueCodeHandlerWrapper />
             </Suspense>
             {children}
           </main>

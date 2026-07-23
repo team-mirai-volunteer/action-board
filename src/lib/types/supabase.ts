@@ -1411,6 +1411,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_venue_attribution: {
+        Row: {
+          created_at: string;
+          user_id: string;
+          venue_code: string;
+        };
+        Insert: {
+          created_at?: string;
+          user_id: string;
+          venue_code: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+          venue_code?: string;
+        };
+        Relationships: [];
+      };
       xp_transactions: {
         Row: {
           created_at: string;

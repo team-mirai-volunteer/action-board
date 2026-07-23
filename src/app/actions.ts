@@ -9,6 +9,7 @@ import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
 } from "@/features/user-level/services/level";
+import { saveVenueAttribution } from "@/features/venue-attribution/services/venue-attribution";
 import { getCurrentSeasonId } from "@/lib/services/seasons";
 import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
@@ -57,6 +58,9 @@ export const signUpActionWithState = async (
   if (!referralCode) {
     referralCode = (await getCookie("referral_code")) || null;
   }
+
+  // 会場コード（キャラバン等の会場別QRコード ?cv= 経由）をcookieから取得
+  const venueCode = (await getCookie("venue_code")) || null;
 
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
@@ -204,6 +208,13 @@ export const signUpActionWithState = async (
 
     // 紹介コード処理完了後、cookieを削除
     await deleteCookie("referral_code");
+  }
+
+  // 会場別QRコード経由で遷移した場合、登録者本人に会場コードを紐づけて保存
+  if (venueCode) {
+    const serviceSupabase = await createAdminClient();
+    await saveVenueAttribution(serviceSupabase, userId, venueCode);
+    await deleteCookie("venue_code");
   }
 
   if (data.user?.id) {
@@ -535,6 +546,15 @@ export async function handleLineAuthAction(
     if (result.isNewUser && finalReferralCode && result.email) {
       await handleReferralCode(finalReferralCode, result.email);
       await deleteCookie("referral_code");
+    }
+
+    // 会場コード処理（新規ユーザーのみ・キャラバン等の会場別計測）
+    if (result.isNewUser) {
+      const venueCode = await getCookie("venue_code");
+      if (venueCode) {
+        await saveVenueAttribution(adminSupabase, result.userId, venueCode);
+        await deleteCookie("venue_code");
+      }
     }
 
     // 6. Supabaseセッション作成
