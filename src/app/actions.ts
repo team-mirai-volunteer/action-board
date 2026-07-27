@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { LineApiClientImpl } from "@/features/auth/services/line-api-client";
 import { lineLogin } from "@/features/auth/use-cases/line-login";
+import { saveCampaignAttribution } from "@/features/campaign-attribution/services/campaign-attribution";
 import {
   getOrInitializeUserLevel,
   grantMissionCompletionXp,
@@ -57,6 +58,9 @@ export const signUpActionWithState = async (
   if (!referralCode) {
     referralCode = (await getCookie("referral_code")) || null;
   }
+
+  // キャンペーンコード（キャラバン会場QR等の ?cv= 経由）をcookieから取得
+  const campaignCode = (await getCookie("campaign_code")) || null;
 
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
@@ -204,6 +208,13 @@ export const signUpActionWithState = async (
 
     // 紹介コード処理完了後、cookieを削除
     await deleteCookie("referral_code");
+  }
+
+  // キャンペーンコード付きURL経由で遷移した場合、登録者本人に紐づけて保存
+  if (campaignCode) {
+    const serviceSupabase = await createAdminClient();
+    await saveCampaignAttribution(serviceSupabase, userId, campaignCode);
+    await deleteCookie("campaign_code");
   }
 
   if (data.user?.id) {
@@ -535,6 +546,19 @@ export async function handleLineAuthAction(
     if (result.isNewUser && finalReferralCode && result.email) {
       await handleReferralCode(finalReferralCode, result.email);
       await deleteCookie("referral_code");
+    }
+
+    // キャンペーンコード処理（新規ユーザーのみ・キャラバン会場QR等の流入元計測）
+    if (result.isNewUser) {
+      const campaignCode = await getCookie("campaign_code");
+      if (campaignCode) {
+        await saveCampaignAttribution(
+          adminSupabase,
+          result.userId,
+          campaignCode,
+        );
+        await deleteCookie("campaign_code");
+      }
     }
 
     // 6. Supabaseセッション作成
