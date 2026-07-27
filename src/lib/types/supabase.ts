@@ -1331,6 +1331,24 @@ export type Database = {
           },
         ];
       };
+      user_campaign_attribution: {
+        Row: {
+          campaign_code: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          campaign_code: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          campaign_code?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_emails: {
         Row: {
           created_at: string;
