@@ -1,7 +1,7 @@
 import { assertAuthState, expect, test } from "../e2e-test-helpers";
 
 test.describe("アクションボード（Web版）のe2eテスト", () => {
-  test("ログイン済み状態からトップページ確認", async ({ signedInPage }) => {
+  test("ログイン済み状態からトップヘージ確認", async ({ signedInPage }) => {
     await assertAuthState(signedInPage, true);
 
     // 自身のステータス表示を確認
@@ -24,9 +24,9 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     ).toBeVisible();
     await expect(signedInPage.getByText("サポーター数")).toBeVisible();
 
-    // 注目ミッションの表示を確認
+    // はじめのミッションの表示を確認
     await expect(
-      signedInPage.getByRole("heading", { name: /注目ミッション/ }),
+      signedInPage.getByRole("heading", { name: /はじめのミッション/ }),
     ).toBeVisible();
 
     // 活動タイムラインの表示を確認
@@ -34,7 +34,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       signedInPage.getByRole("heading", { name: /活動タイムライン/ }),
     ).toBeVisible();
 
-    // 問い合わせフォームの表示を確認
+    // 問い合るせフォームの表示を確認
     await expect(
       signedInPage.getByRole("heading", { name: "ご意見箱" }),
     ).toBeVisible();
@@ -64,17 +64,17 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     ).toBeVisible();
   });
 
-  test("アカウントページ遷移が正常に動作する", async ({ signedInPage }) => {
+  test("アカウントヘージ遷移が正常に動作する", async ({ signedInPage }) => {
     await assertAuthState(signedInPage, true);
 
-    // アカウントページに遷移
+    // アカウントヘージに遷移
     await signedInPage.getByTestId("usermenubutton").click();
     await signedInPage.getByRole("menuitem", { name: "アカウント" }).click();
     await expect(signedInPage).toHaveURL(/\/settings\/profile/, {
       timeout: 10000,
     });
 
-    // アカウントページの表示内容を確認
+    // アカウントヘージの表示内容を確認
     await expect(signedInPage.getByText("プロフィール設定")).toBeVisible();
     await expect(signedInPage.getByText("ニックネーム")).toBeVisible();
     // 生年月日
@@ -113,10 +113,10 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     ).toBeVisible();
   });
 
-  test("ユーザーページ遷移が正常に動作する", async ({ signedInPage }) => {
+  test("ユーザーヘージ遷移が正常に動作する", async ({ signedInPage }) => {
     await assertAuthState(signedInPage, true);
 
-    // 自身のユーザーページに遷移
+    // 自身のユーザーヘージに遷移
     await signedInPage
       .getByRole("link", { name: "テストユーザーさんのプロフィールへ" })
       .click();
@@ -124,14 +124,14 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       timeout: 10000,
     });
 
-    // 自身のユーザーページの表示内容を確認
+    // 自身のユーザーヘージの表示内容を確認
     await expect(signedInPage.getByText("テストユーザー")).toBeVisible();
   });
 
-  test("任意のユーザーページ遷移が正常に動作する", async ({ signedInPage }) => {
+  test("任意のユーザーヘージ遷移が正常に動作する", async ({ signedInPage }) => {
     await assertAuthState(signedInPage, true);
 
-    // 任意のユーザーページに遷移（ランキングから佐藤太郎のページへ）
+    // 任意のユーザーヘージに遷移（ランキングから佐藤太郎のヘージへ）
     await signedInPage
       .getByRole("link")
       .filter({ hasText: "佐藤太郎" })
@@ -141,16 +141,16 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       timeout: 10000,
     });
 
-    // 任意のユーザーページの表示内容を確認
+    // 任意のユーザーヘージの表示内容を確認
     await expect(signedInPage.getByText("佐藤太郎").first()).toBeVisible();
   });
 
-  test("ミッションページ遷移 → ミッション完了 → ミッション取消が正常に動作する", async ({
+  test("ミッションヘージ遷移 → ミッション完了 → ミッション取消が正常に動作する", async ({
     signedInPage,
   }) => {
     await assertAuthState(signedInPage, true);
 
-    // ミッションページに遷移（ゴミ拾いミッションをクリック）
+    // ミッションヘージに遷移（ゴミ拾いミッションをクリック）
     await signedInPage
       .getByRole("article")
       .filter({ hasText: "(seed) ゴミ拾いをしよう (成果物不要)" })
@@ -160,7 +160,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       timeout: 10000,
     });
 
-    // ミッションページの表示内容を確認
+    // ミッションヘージの表示内容を確認
     await expect(
       signedInPage.getByRole("button", { name: "ミッション完了を記録する" }),
     ).toBeVisible();
@@ -170,11 +170,11 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       ),
     ).toBeVisible();
 
-    // ミッション完了ページに遷移
+    // ミッション完了ヘージに遷移
     await signedInPage
       .getByRole("button", { name: "ミッション完了を記録する" })
       .click();
-    await expect(signedInPage.getByText("おめでとうございます！")).toBeVisible({
+    await expect(signedInPage.getByText("おめでとうごごいます！")).toBeVisible({
       timeout: 10000,
     });
     await signedInPage.getByRole("button", { name: "このまま閉じる" }).click();
@@ -250,7 +250,7 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
   }) => {
     await assertAuthState(signedInPage, true);
 
-    // ランキングページに遷移
+    // ランキングヘージに遷移
     await signedInPage.getByRole("link", { name: "トップ100を見る" }).click();
     await expect(signedInPage).toHaveURL("/ranking", { timeout: 10000 });
 
