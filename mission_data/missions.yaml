@@ -319,7 +319,7 @@ missions:
     difficulty: 1
     required_artifact_type: TEXT
     max_achievement_count: 1
-    is_featured: true
+    is_featured: false
     featured_importance: 9999
     is_hidden: false
     artifact_label: あなたのSlackアカウント名
