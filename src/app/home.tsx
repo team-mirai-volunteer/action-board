@@ -4,6 +4,7 @@ import Hero from "@/components/top/hero";
 import { PrefectureTeamCard } from "@/components/top/prefecture-team-card";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
+import FirstMissions from "@/features/missions/components/first-missions";
 import MissionsByCategory from "@/features/missions/components/missions-by-category";
 import { hasFeaturedMissions } from "@/features/missions/services/missions";
 import RankingSection from "@/features/ranking/components/ranking-section";
@@ -106,6 +107,9 @@ export default async function Home({
         <RankingSection />
       </section>
       <div className="w-full md:container md:mx-auto">
+        {/* はじめのミッションセクション（すべて達成済みならセクションごと非表示） */}
+        <FirstMissions userId={user?.id} />
+
         {/* フューチャードミッションセクション */}
         {showFeatured && (
           <section className="py-12 md:py-16 bg-background">
