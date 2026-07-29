@@ -12,8 +12,7 @@ export const FIRST_MISSION_SLUGS = [
 // 見出し下の説明文。スマホで折り返さず1行に収めるため 20 文字以内に保つ
 // （text-sm = 14px の全角 1 文字 ≒ 14px、コンテナ幅は viewport - 32px の
 //  `px-4` 分なので、320px 端末で 288px / 20文字が上限）
-export const FIRST_MISSIONS_SUB_TITLE =
-  "まずはここから。仲間とつながる第一歩です";
+export const FIRST_MISSIONS_SUB_TITLE = "まずはここから始めてみましょう";
 export const FIRST_MISSIONS_SUB_TITLE_MAX_LENGTH = 20;
 
 type FirstMissionsProps = {
