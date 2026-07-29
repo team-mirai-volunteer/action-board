@@ -139,6 +139,8 @@ export async function getPostingCountsForMissions(
 
 export interface GetMissionsFilterOptions {
   filterFeatured?: boolean;
+  /** 指定した slug のミッションのみを、この配列の並び順で返す */
+  filterSlugs?: readonly string[];
   excludeMissionIds?: string[];
   maxSize?: number;
 }
@@ -149,7 +151,12 @@ export interface GetMissionsFilterOptions {
 export async function getMissionsWithFilter(
   options: GetMissionsFilterOptions = {},
 ): Promise<Tables<"missions">[]> {
-  const { filterFeatured = false, excludeMissionIds = [], maxSize } = options;
+  const {
+    filterFeatured = false,
+    filterSlugs,
+    excludeMissionIds = [],
+    maxSize,
+  } = options;
 
   const supabase = createClient();
 
@@ -159,6 +166,10 @@ export async function getMissionsWithFilter(
     query = query
       .eq("is_featured", true)
       .order("featured_importance", { ascending: false, nullsFirst: false });
+  }
+
+  if (filterSlugs) {
+    query = query.in("slug", [...filterSlugs]);
   }
 
   query = query
@@ -178,6 +189,15 @@ export async function getMissionsWithFilter(
   if (error) {
     console.error("Error fetching missions:", error);
     throw error;
+  }
+
+  if (filterSlugs) {
+    const slugOrder = new Map(filterSlugs.map((slug, index) => [slug, index]));
+    return [...(missions ?? [])].sort(
+      (a, b) =>
+        (slugOrder.get(a.slug) ?? Number.MAX_SAFE_INTEGER) -
+        (slugOrder.get(b.slug) ?? Number.MAX_SAFE_INTEGER),
+    );
   }
 
   return missions ?? [];
