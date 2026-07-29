@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 
@@ -158,7 +159,7 @@ export async function getMissionsWithFilter(
     maxSize,
   } = options;
 
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase.from("missions").select().eq("is_hidden", false);
 
@@ -180,7 +181,9 @@ export async function getMissionsWithFilter(
     query = query.not("id", "in", `("${excludeMissionIds.join('","')}")`);
   }
 
-  if (maxSize) {
+  // filterSlugs 指定時は取得後に指定順へ並べ替えるため、DB側で limit すると
+  // 並べ替え前に上位のミッションが切り落とされてしまう。並べ替えた後に絞り込む
+  if (maxSize && !filterSlugs) {
     query = query.limit(maxSize);
   }
 
@@ -193,11 +196,12 @@ export async function getMissionsWithFilter(
 
   if (filterSlugs) {
     const slugOrder = new Map(filterSlugs.map((slug, index) => [slug, index]));
-    return [...(missions ?? [])].sort(
+    const sorted = [...(missions ?? [])].sort(
       (a, b) =>
         (slugOrder.get(a.slug) ?? Number.MAX_SAFE_INTEGER) -
         (slugOrder.get(b.slug) ?? Number.MAX_SAFE_INTEGER),
     );
+    return maxSize ? sorted.slice(0, maxSize) : sorted;
   }
 
   return missions ?? [];
