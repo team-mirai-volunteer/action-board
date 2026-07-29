@@ -9,6 +9,12 @@ export const FIRST_MISSION_SLUGS = [
   "join-slack",
 ] as const;
 
+// 見出し下の説明文。スマホで折り返さず1行に収めるため 20 文字以内に保つ
+// （text-sm = 14px の全角 1 文字 ≒ 14px、コンテナ幅は viewport - 32px の
+//  `px-4` 分なので、320px 端末で 288px / 20文字が上限）
+export const FIRST_MISSIONS_SUB_TITLE = "まずはここから始めてみましょう";
+export const FIRST_MISSIONS_SUB_TITLE_MAX_LENGTH = 20;
+
 type FirstMissionsProps = {
   userId?: string;
 };
@@ -36,7 +42,7 @@ export default async function FirstMissions({ userId }: FirstMissionsProps) {
         showAchievedMissions={false}
         filterSlugs={FIRST_MISSION_SLUGS}
         title="🚩 はじめのミッション"
-        subTitle="まずはここから。チームみらいの活動に参加するための最初のステップです"
+        subTitle={FIRST_MISSIONS_SUB_TITLE}
         id="first-missions"
       />
     </section>
