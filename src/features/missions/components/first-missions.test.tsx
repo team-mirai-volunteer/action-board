@@ -17,6 +17,7 @@ jest.mock("./mission-list", () => {
       <div data-testid="missions-component">
         <div data-testid="filter-slugs">{props.filterSlugs?.join(",")}</div>
         <div data-testid="title">{props.title}</div>
+        <div data-testid="sub-title">{props.subTitle}</div>
         <div data-testid="id">{props.id}</div>
         <div data-testid="user-id">{props.userId}</div>
         <div data-testid="show-achieved">
@@ -47,6 +48,9 @@ describe("FirstMissions", () => {
     const { getByTestId } = render(component);
 
     expect(getByTestId("title")).toHaveTextContent("🚩 はじめのミッション");
+    expect(getByTestId("sub-title")).toHaveTextContent(
+      "まずはここから。チームみらいの活動に参加するための最初のステップです",
+    );
     expect(getByTestId("id")).toHaveTextContent("first-missions");
     expect(getByTestId("user-id")).toHaveTextContent("test-user-id");
   });

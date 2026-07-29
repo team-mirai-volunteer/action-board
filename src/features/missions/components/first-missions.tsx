@@ -36,6 +36,7 @@ export default async function FirstMissions({ userId }: FirstMissionsProps) {
         showAchievedMissions={false}
         filterSlugs={FIRST_MISSION_SLUGS}
         title="🚩 はじめのミッション"
+        subTitle="まずはここから。チームみらいの活動に参加するための最初のステップです"
         id="first-missions"
       />
     </section>
