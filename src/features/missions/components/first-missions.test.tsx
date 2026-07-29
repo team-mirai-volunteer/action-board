@@ -1,7 +1,11 @@
 import { render } from "@testing-library/react";
 import { getMissionsWithFilter } from "@/features/missions/loaders/missions-loaders";
 import { getUserMissionAchievements } from "@/features/user-achievements/loaders/achievements-loaders";
-import FirstMissions, { FIRST_MISSION_SLUGS } from "./first-missions";
+import FirstMissions, {
+  FIRST_MISSION_SLUGS,
+  FIRST_MISSIONS_SUB_TITLE,
+  FIRST_MISSIONS_SUB_TITLE_MAX_LENGTH,
+} from "./first-missions";
 
 jest.mock("@/features/missions/loaders/missions-loaders", () => ({
   getMissionsWithFilter: jest.fn(),
@@ -49,7 +53,7 @@ describe("FirstMissions", () => {
 
     expect(getByTestId("title")).toHaveTextContent("🚩 はじめのミッション");
     expect(getByTestId("sub-title")).toHaveTextContent(
-      "まずはここから。チームみらいの活動に参加するための最初のステップです",
+      FIRST_MISSIONS_SUB_TITLE,
     );
     expect(getByTestId("id")).toHaveTextContent("first-missions");
     expect(getByTestId("user-id")).toHaveTextContent("test-user-id");
@@ -114,6 +118,14 @@ describe("FirstMissions", () => {
       filterSlugs: FIRST_MISSION_SLUGS,
       excludeMissionIds: [],
     });
+  });
+
+  // スマホで折り返すと見出しとカードの間が詰まって窮屈になるため、
+  // 文言を編集したときに1行に収まらなくなったことを気づけるようにしている
+  it("説明文はスマホで1行に収まる長さである", () => {
+    expect(Array.from(FIRST_MISSIONS_SUB_TITLE).length).toBeLessThanOrEqual(
+      FIRST_MISSIONS_SUB_TITLE_MAX_LENGTH,
+    );
   });
 
   it("FIRST_MISSION_SLUGSの並び順が仕様どおりである", () => {
