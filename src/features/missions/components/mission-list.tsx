@@ -12,6 +12,7 @@ export type MissionsProps = {
   maxSize?: number;
   showAchievedMissions: boolean;
   filterFeatured?: boolean;
+  filterSlugs?: readonly string[];
   title?: string;
   subTitle?: string;
   id?: string;
@@ -22,6 +23,7 @@ export default async function Missions({
   maxSize,
   showAchievedMissions,
   filterFeatured,
+  filterSlugs,
   title = "📈 ミッション",
   subTitle,
   id,
@@ -40,6 +42,7 @@ export default async function Missions({
   // ミッション一覧を取得
   const missions = await getMissionsWithFilter({
     filterFeatured,
+    filterSlugs,
     excludeMissionIds: showAchievedMissions ? [] : achievedMissionIds,
     maxSize,
   });
