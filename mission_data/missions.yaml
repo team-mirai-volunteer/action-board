@@ -27,6 +27,16 @@ missions:
     is_hidden: true
     artifact_label: 説明会で共有されたコード
     ogp_image_url: null
+  - slug: watch-anno-welcome-message
+    title: 安野たかひろからのウェルカムメッセージを視聴しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20260730_ol_watch-anno-welcome-message.png
+    content: チームみらい党首・安野たかひろからのウェルカムメッセージです。サポーター活動のはじめの一歩として、ぜひご覧ください。
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: link-official-site
     title: チームみらい公式サイトを見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
