@@ -59,13 +59,13 @@ describe("FirstMissions", () => {
     expect(getByTestId("user-id")).toHaveTextContent("test-user-id");
   });
 
-  it("指定した3ミッションが指定の並び順で渡される", async () => {
+  it("指定したミッションが指定の並び順で渡される", async () => {
     const component = await FirstMissions({});
 
     const { getByTestId } = render(component);
 
     expect(getByTestId("filter-slugs")).toHaveTextContent(
-      "add-supporter-line-friend,join-prefecture-openchat,join-slack",
+      "watch-anno-welcome-message,add-supporter-line-friend,join-prefecture-openchat,join-slack",
     );
   });
 
@@ -130,6 +130,7 @@ describe("FirstMissions", () => {
 
   it("FIRST_MISSION_SLUGSの並び順が仕様どおりである", () => {
     expect([...FIRST_MISSION_SLUGS]).toEqual([
+      "watch-anno-welcome-message",
       "add-supporter-line-friend",
       "join-prefecture-openchat",
       "join-slack",
