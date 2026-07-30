@@ -4,6 +4,7 @@ import Missions from "./mission-list";
 
 // はじめのミッションに表示するミッション（この配列の並び順で表示される）
 export const FIRST_MISSION_SLUGS = [
+  "watch-anno-welcome-message",
   "add-supporter-line-friend",
   "join-prefecture-openchat",
   "join-slack",
@@ -21,7 +22,7 @@ type FirstMissionsProps = {
 
 //コードの2重管理回避のためmission-list.tsxを参照する
 export default async function FirstMissions({ userId }: FirstMissionsProps) {
-  // 達成済みは非表示なので、3件すべて達成するとこのセクションは空になる。
+  // 達成済みは非表示なので、掲載ミッションをすべて達成するとこのセクションは空になる。
   // 空のセクションだけが余白付きで残らないよう、その場合はセクションごと描画しない
   const achievedMissionIds = userId
     ? Array.from((await getUserMissionAchievements(userId)).keys())
