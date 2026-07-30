@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createAdminClient } from "@/lib/supabase/adminClient";
 import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 
@@ -139,6 +140,8 @@ export async function getPostingCountsForMissions(
 
 export interface GetMissionsFilterOptions {
   filterFeatured?: boolean;
+  /** 指定した slug のミッションのみを、この配列の並び順で返す */
+  filterSlugs?: readonly string[];
   excludeMissionIds?: string[];
   maxSize?: number;
 }
@@ -149,9 +152,14 @@ export interface GetMissionsFilterOptions {
 export async function getMissionsWithFilter(
   options: GetMissionsFilterOptions = {},
 ): Promise<Tables<"missions">[]> {
-  const { filterFeatured = false, excludeMissionIds = [], maxSize } = options;
+  const {
+    filterFeatured = false,
+    filterSlugs,
+    excludeMissionIds = [],
+    maxSize,
+  } = options;
 
-  const supabase = createClient();
+  const supabase = await createAdminClient();
 
   let query = supabase.from("missions").select().eq("is_hidden", false);
 
@@ -159,6 +167,10 @@ export async function getMissionsWithFilter(
     query = query
       .eq("is_featured", true)
       .order("featured_importance", { ascending: false, nullsFirst: false });
+  }
+
+  if (filterSlugs) {
+    query = query.in("slug", [...filterSlugs]);
   }
 
   query = query
@@ -169,7 +181,9 @@ export async function getMissionsWithFilter(
     query = query.not("id", "in", `("${excludeMissionIds.join('","')}")`);
   }
 
-  if (maxSize) {
+  // filterSlugs 指定時は取得後に指定順へ並べ替えるため、DB側で limit すると
+  // 並べ替え前に上位のミッションが切り落とされてしまう。並べ替えた後に絞り込む
+  if (maxSize && !filterSlugs) {
     query = query.limit(maxSize);
   }
 
@@ -178,6 +192,16 @@ export async function getMissionsWithFilter(
   if (error) {
     console.error("Error fetching missions:", error);
     throw error;
+  }
+
+  if (filterSlugs) {
+    const slugOrder = new Map(filterSlugs.map((slug, index) => [slug, index]));
+    const sorted = [...(missions ?? [])].sort(
+      (a, b) =>
+        (slugOrder.get(a.slug) ?? Number.MAX_SAFE_INTEGER) -
+        (slugOrder.get(b.slug) ?? Number.MAX_SAFE_INTEGER),
+    );
+    return maxSize ? sorted.slice(0, maxSize) : sorted;
   }
 
   return missions ?? [];
