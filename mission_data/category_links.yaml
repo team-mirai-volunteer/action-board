@@ -47,6 +47,8 @@ category_links:
         sort_no: 400
       - mission_slug: read-manifest
         sort_no: 500
+      - mission_slug: watch-anno-welcome-message
+        sort_no: 600
   - category_slug: join-community
     missions:
       - mission_slug: join-planning-team
