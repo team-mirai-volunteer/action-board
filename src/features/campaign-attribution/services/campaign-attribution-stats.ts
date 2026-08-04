@@ -22,28 +22,43 @@ export type CampaignAttributionStat = {
   lastRegisteredAt: string | null;
 };
 
+const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
 /**
- * JSTの日付（YYYY-MM-DD）を、その日の開始/終了時点のタイムスタンプに変換する
+ * JSTの日付（YYYY-MM-DD）を、集計に渡すタイムスタンプに変換する
  *
- * start: 00:00:00.000+09:00 / end: 23:59:59.999+09:00（どちらも境界を含む）
+ * - start: その日の 00:00:00 JST（下限・含む）
+ * - endExclusive: 翌日の 00:00:00 JST（上限・含まない）
+ *
+ * 上限を「その日の 23:59:59.999」にせず翌日0時の排他境界にするのは、created_at が
+ * マイクロ秒精度で、23:59:59.999001〜.999999 の登録を取りこぼさないため。
+ * 呼び出し側から見た契約は「to に指定した日を含む」で変わらない。
  */
 export function toJstRangeBoundary(
   date: string,
-  boundary: "start" | "end",
+  boundary: "start" | "endExclusive",
 ): string {
   if (!JST_DATE_REGEX.test(date)) {
     throw new Error(`日付は YYYY-MM-DD 形式で指定してください: ${date}`);
   }
 
-  const suffix =
-    boundary === "start" ? "T00:00:00.000+09:00" : "T23:59:59.999+09:00";
-  const timestamp = new Date(`${date}${suffix}`);
-
-  if (Number.isNaN(timestamp.getTime())) {
+  // 2026-02-30 のような存在しない日は Date が翌月に繰り上げてしまい NaN にならないため、
+  // 暦日として実在するかを年月日の一致で確かめる（別日の統計を返さないため）
+  const [year, month, day] = date.split("-").map(Number);
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  if (
+    probe.getUTCFullYear() !== year ||
+    probe.getUTCMonth() + 1 !== month ||
+    probe.getUTCDate() !== day
+  ) {
     throw new Error(`存在しない日付です: ${date}`);
   }
 
-  return timestamp.toISOString();
+  const dayOffset = boundary === "start" ? 0 : 1;
+
+  return new Date(
+    Date.UTC(year, month - 1, day + dayOffset) - JST_OFFSET_MS,
+  ).toISOString();
 }
 
 /**
@@ -65,25 +80,25 @@ export async function getCampaignAttributionStats({
     );
   }
 
-  // DB関数側の引数はいずれも省略可（未指定なら絞り込まない）。
-  // undefined はJSON化時に落ちるため、null ではなく undefined を渡す
-  const registeredFrom = from ? toJstRangeBoundary(from, "start") : undefined;
-  const registeredTo = to ? toJstRangeBoundary(to, "end") : undefined;
-
   // 期間が逆順のときは常に0件になってしまうため、無言で空を返さずエラーにする
-  if (registeredFrom && registeredTo && registeredFrom > registeredTo) {
+  // （YYYY-MM-DD は辞書順比較で日付順と一致する）
+  if (from && to && from > to) {
     throw new Error(
       `期間の指定が逆になっています（from: ${from} / to: ${to}）`,
     );
   }
 
+  // DB関数側の引数はいずれも省略可（未指定なら絞り込まない）。
+  // undefined はJSON化時に落ちるため、null ではなく undefined を渡す
   const supabaseAdmin = await createAdminClient();
   const { data, error } = await supabaseAdmin.rpc(
     "get_campaign_attribution_stats",
     {
       campaign_code_prefix: prefix || undefined,
-      registered_from: registeredFrom,
-      registered_to: registeredTo,
+      registered_from: from ? toJstRangeBoundary(from, "start") : undefined,
+      registered_before: to
+        ? toJstRangeBoundary(to, "endExclusive")
+        : undefined,
     },
   );
 

@@ -6,10 +6,13 @@
 -- service_role で呼ばれる。集計値のみを返し、個人（user_id）は返さない。
 --
 -- 集計はDB側でGROUP BYする（全行をアプリに転送しないため）。
+-- 期間は半開区間 [registered_from, registered_before) で受ける。
+-- created_at はマイクロ秒精度なので「その日の 23:59:59.999 まで」と包含比較すると
+-- 23:59:59.999001〜.999999 の登録を取りこぼすため、上限は翌日 0 時の排他境界にする。
 CREATE OR REPLACE FUNCTION public.get_campaign_attribution_stats(
   campaign_code_prefix text DEFAULT NULL,
   registered_from timestamptz DEFAULT NULL,
-  registered_to timestamptz DEFAULT NULL
+  registered_before timestamptz DEFAULT NULL
 )
 RETURNS TABLE (
   campaign_code text,
@@ -35,7 +38,7 @@ AS $$
       OR starts_with(lower(uca.campaign_code), lower(campaign_code_prefix))
     )
     AND (registered_from IS NULL OR uca.created_at >= registered_from)
-    AND (registered_to IS NULL OR uca.created_at <= registered_to)
+    AND (registered_before IS NULL OR uca.created_at < registered_before)
   GROUP BY uca.campaign_code
   ORDER BY count(*) DESC, uca.campaign_code ASC;
 $$;
@@ -46,4 +49,4 @@ REVOKE ALL ON FUNCTION public.get_campaign_attribution_stats(text, timestamptz, 
 GRANT EXECUTE ON FUNCTION public.get_campaign_attribution_stats(text, timestamptz, timestamptz) TO service_role;
 
 COMMENT ON FUNCTION public.get_campaign_attribution_stats(text, timestamptz, timestamptz) IS
-'キャンペーンコード（?cv=）別の新規登録数・初回/最終登録日時を集計する。会場別アトリビューション計測のMCPツールから service_role で呼ばれる。';
+'キャンペーンコード（?cv=）別の新規登録数・初回/最終登録日時を集計する。期間は半開区間 [registered_from, registered_before)。会場別アトリビューション計測のMCPツールから service_role で呼ばれる。';

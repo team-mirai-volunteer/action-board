@@ -29,9 +29,11 @@ describe("get_campaign_attribution_stats 関数のテスト", () => {
           created_at: "2026-07-30T03:00:00+09:00",
         },
         {
+          // created_at はマイクロ秒精度。「その日の 23:59:59.999 まで」と包含比較すると
+          // 取りこぼす時刻をあえて置き、半開区間で拾えることを確かめる
           user_id: user2.user.userId,
           campaign_code: SAPPORO,
-          created_at: "2026-07-31T10:00:00+09:00",
+          created_at: "2026-07-30T23:59:59.999500+09:00",
         },
         {
           user_id: user3.user.userId,
@@ -70,9 +72,8 @@ describe("get_campaign_attribution_stats 関数のテスト", () => {
     expect(new Date(sapporo?.first_registered_at ?? "").toISOString()).toBe(
       "2026-07-29T18:00:00.000Z",
     );
-    expect(new Date(sapporo?.last_registered_at ?? "").toISOString()).toBe(
-      "2026-07-31T01:00:00.000Z",
-    );
+    // マイクロ秒はJSのDateで丸めずに文字列で確認する
+    expect(sapporo?.last_registered_at).toContain("2026-07-30T14:59:59.9995");
   });
 
   test("前方一致フィルタは大文字小文字を区別しない", async () => {
@@ -99,21 +100,36 @@ describe("get_campaign_attribution_stats 関数のテスト", () => {
     expect(Number(data?.[0].registrations)).toBe(1);
   });
 
-  test("期間フィルタは境界を含めて絞り込める", async () => {
-    // 7/30 のみ（JST）→ sapporo の1件だけ
+  test("期間フィルタは半開区間で、その日の終わり際（サブミリ秒）も取りこぼさない", async () => {
+    // 7/30 のみ（JST）→ 03:00 と 23:59:59.9995 の2件
     const { data, error } = await adminClient.rpc(
       "get_campaign_attribution_stats",
       {
         campaign_code_prefix: PREFIX,
         registered_from: "2026-07-30T00:00:00+09:00",
-        registered_to: "2026-07-30T23:59:59.999+09:00",
+        registered_before: "2026-07-31T00:00:00+09:00",
       },
     );
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
     expect(data?.[0].campaign_code).toBe(SAPPORO);
-    expect(Number(data?.[0].registrations)).toBe(1);
+    expect(Number(data?.[0].registrations)).toBe(2);
+  });
+
+  test("上限は排他境界（指定時刻ぴったりの登録は含まない）", async () => {
+    // 8/1 0時 JST より前 → 7/30 の2件だけ（8/1 12:00 の aomori は入らない）
+    const { data, error } = await adminClient.rpc(
+      "get_campaign_attribution_stats",
+      {
+        campaign_code_prefix: PREFIX,
+        registered_before: "2026-08-01T00:00:00+09:00",
+      },
+    );
+
+    expect(error).toBeNull();
+    expect(data?.map((row) => row.campaign_code)).toEqual([SAPPORO]);
+    expect(Number(data?.[0].registrations)).toBe(2);
   });
 
   test("該当がない期間では空配列を返す", async () => {

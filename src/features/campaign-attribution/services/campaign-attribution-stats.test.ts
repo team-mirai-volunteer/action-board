@@ -33,9 +33,18 @@ describe("toJstRangeBoundary", () => {
     );
   });
 
-  it("endはJSTのその日の終わり（23:59:59.999）に変換する", () => {
-    expect(toJstRangeBoundary("2026-07-30", "end")).toBe(
-      "2026-07-30T14:59:59.999Z",
+  it("endExclusiveは翌日JSTの0時（排他境界）に変換する", () => {
+    expect(toJstRangeBoundary("2026-07-30", "endExclusive")).toBe(
+      "2026-07-30T15:00:00.000Z",
+    );
+  });
+
+  it("月末・年末をまたぐ排他境界も繰り上がる", () => {
+    expect(toJstRangeBoundary("2026-07-31", "endExclusive")).toBe(
+      "2026-07-31T15:00:00.000Z",
+    );
+    expect(toJstRangeBoundary("2026-12-31", "endExclusive")).toBe(
+      "2026-12-31T15:00:00.000Z",
     );
   });
 
@@ -45,9 +54,25 @@ describe("toJstRangeBoundary", () => {
     );
   });
 
-  it("存在しない日付はエラーにする", () => {
-    expect(() => toJstRangeBoundary("2026-02-30", "start")).toThrow(
-      "存在しない日付",
+  it("存在しない日付はエラーにする（Dateの繰り上げで別日にならない）", () => {
+    // 2026 は平年
+    for (const date of [
+      "2026-02-30",
+      "2026-02-29",
+      "2026-04-31",
+      "2026-13-01",
+      "2026-00-10",
+    ]) {
+      expect(() => toJstRangeBoundary(date, "start")).toThrow("存在しない日付");
+      expect(() => toJstRangeBoundary(date, "endExclusive")).toThrow(
+        "存在しない日付",
+      );
+    }
+  });
+
+  it("うるう日は通す", () => {
+    expect(toJstRangeBoundary("2028-02-29", "start")).toBe(
+      "2028-02-28T15:00:00.000Z",
     );
   });
 });
@@ -65,7 +90,7 @@ describe("getCampaignAttributionStats", () => {
     expect(rpc).toHaveBeenCalledWith("get_campaign_attribution_stats", {
       campaign_code_prefix: undefined,
       registered_from: undefined,
-      registered_to: undefined,
+      registered_before: undefined,
     });
   });
 
@@ -81,7 +106,8 @@ describe("getCampaignAttributionStats", () => {
     expect(rpc).toHaveBeenCalledWith("get_campaign_attribution_stats", {
       campaign_code_prefix: "sapporo",
       registered_from: "2026-07-29T15:00:00.000Z",
-      registered_to: "2026-08-05T14:59:59.999Z",
+      // to に指定した 8/5 を含むため、上限は 8/6 0時 JST（排他）
+      registered_before: "2026-08-05T15:00:00.000Z",
     });
   });
 

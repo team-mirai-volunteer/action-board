@@ -1977,8 +1977,8 @@ export type Database = {
       get_campaign_attribution_stats: {
         Args: {
           campaign_code_prefix?: string;
+          registered_before?: string;
           registered_from?: string;
-          registered_to?: string;
         };
         Returns: {
           campaign_code: string;
