@@ -1331,6 +1331,24 @@ export type Database = {
           },
         ];
       };
+      user_campaign_attribution: {
+        Row: {
+          campaign_code: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          campaign_code: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          campaign_code?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_emails: {
         Row: {
           created_at: string;
@@ -1954,6 +1972,19 @@ export type Database = {
           count: number;
           prefecture: string;
           status: Database["public"]["Enums"]["poster_board_status"];
+        }[];
+      };
+      get_campaign_attribution_stats: {
+        Args: {
+          campaign_code_prefix?: string;
+          registered_before?: string;
+          registered_from?: string;
+        };
+        Returns: {
+          campaign_code: string;
+          first_registered_at: string;
+          last_registered_at: string;
+          registrations: number;
         }[];
       };
       get_daily_action_history: {

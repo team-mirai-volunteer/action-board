@@ -7,6 +7,7 @@ import Script from "next/script";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { CampaignCodeHandlerWrapper } from "@/features/campaign-attribution/components/campaign-code-handler-wrapper";
 import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -57,6 +58,9 @@ export default function RootLayout({
           <main className="flex flex-col items-center mt-8">
             <Suspense>
               <ReferralCodeHandlerWrapper />
+            </Suspense>
+            <Suspense>
+              <CampaignCodeHandlerWrapper />
             </Suspense>
             {children}
           </main>

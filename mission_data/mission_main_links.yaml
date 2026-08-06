@@ -32,3 +32,6 @@ mission_main_links:
   - mission_slug: join-planning-team
     label: チームみらいサポーターSlackはこちら
     link: https://team-mirai.notion.site/Slack-25bf6f56bae1807582edde6f29562d0b
+  - mission_slug: watch-anno-welcome-message
+    label: ウェルカムメッセージを見る
+    link: https://youtu.be/3PFAAYKz_70
