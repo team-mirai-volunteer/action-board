@@ -105,7 +105,12 @@ describe("YouTube Data API fetchers", () => {
   });
 
   afterAll(() => {
-    process.env.YOUTUBE_API_KEY = originalApiKey;
+    // 代入だと未設定だった場合に文字列 "undefined" が残るため、削除で復元する
+    if (originalApiKey === undefined) {
+      delete process.env.YOUTUBE_API_KEY;
+    } else {
+      process.env.YOUTUBE_API_KEY = originalApiKey;
+    }
   });
 
   function jsonResponse(status: number, body: unknown) {

@@ -38,7 +38,12 @@ describe("searchVideosByHashtag", () => {
   });
 
   afterAll(() => {
-    process.env.YOUTUBE_API_KEY = originalApiKey;
+    // 代入だと未設定だった場合に文字列 "undefined" が残るため、削除で復元する
+    if (originalApiKey === undefined) {
+      delete process.env.YOUTUBE_API_KEY;
+    } else {
+      process.env.YOUTUBE_API_KEY = originalApiKey;
+    }
   });
 
   it("検索結果の動画IDを返す", async () => {
@@ -81,7 +86,12 @@ describe("getVideoDetails", () => {
   });
 
   afterAll(() => {
-    process.env.YOUTUBE_API_KEY = originalApiKey;
+    // 代入だと未設定だった場合に文字列 "undefined" が残るため、削除で復元する
+    if (originalApiKey === undefined) {
+      delete process.env.YOUTUBE_API_KEY;
+    } else {
+      process.env.YOUTUBE_API_KEY = originalApiKey;
+    }
   });
 
   it("空配列のときは API を呼ばない", async () => {
