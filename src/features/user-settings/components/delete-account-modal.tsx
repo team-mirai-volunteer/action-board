@@ -75,6 +75,14 @@ export function DeleteAccountModal({
               <li>その他のアカウントに関連するすべてのデータ</li>
             </ul>
           </div>
+          <div className="text-left space-y-2 text-sm">
+            <p>
+              アクションボードから退会すると、サポーターも自動的に退会となります。
+            </p>
+            <p>
+              ただし、2026年8月5日以前にサポーター登録フォームから登録された方は、お問い合わせフォームより退会の旨をお申し出ください。
+            </p>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-text">
               続行するには「退会する」と入力してください

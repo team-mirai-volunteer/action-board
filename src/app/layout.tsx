@@ -11,6 +11,7 @@ import { CampaignCodeHandlerWrapper } from "@/features/campaign-attribution/comp
 import { ReferralCodeHandlerWrapper } from "@/features/referral/components/referral-code-handler-wrapper";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
 //metadata.tsxでmetadataを管理
 export const generateMetadata = generateRootMetadata;
@@ -31,6 +32,28 @@ export default function RootLayout({
   return (
     <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground">
+        {GTM_ID && (
+          <>
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+                height="0"
+                width="0"
+                style={{ display: "none", visibility: "hidden" }}
+                title="Google Tag Manager"
+              />
+            </noscript>
+            <Script id="gtm-init" strategy="afterInteractive">
+              {`
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${GTM_ID}');
+            `}
+            </Script>
+          </>
+        )}
         <NextTopLoader showSpinner={false} color="#2aa693" />
         {GA_ID && (
           <>
