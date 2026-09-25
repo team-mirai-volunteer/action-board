@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI ファシリテーター</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      body {
+        padding: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"><p class="muted">読み込み中…</p></div>
+    <script type="module">
+      import {
+        api,
+        escapeHtml,
+        initMeet,
+        list,
+        phaseBar,
+        resolveSessionId,
+        sideTag,
+        watchSession,
+      } from "/app.js";
+
+      const root = document.getElementById("app");
+      const state = {
+        meet: null,
+        sessionId: null,
+        view: null,
+        me: null,
+        error: null,
+        busy: false,
+      };
+
+      function storageKey() {
+        return `meet-facilitator:${state.sessionId}:me`;
+      }
+
+      function loadMe() {
+        try {
+          const raw = localStorage.getItem(storageKey());
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function saveMe(me) {
+        try {
+          localStorage.setItem(storageKey(), JSON.stringify(me));
+        } catch {
+          // localStorage が使えない環境でも動作させる
+        }
+      }
+
+      async function run(action) {
+        state.error = null;
+        state.busy = true;
+        render();
+        try {
+          await action();
+        } catch (error) {
+          state.error = error.message;
+        } finally {
+          state.busy = false;
+          render();
+        }
+      }
+
+      function render() {
+        if (!state.sessionId) {
+          return renderCreate();
+        }
+        if (!state.view) {
+          root.innerHTML = `<p class="muted">セッション ${escapeHtml(state.sessionId)} を読み込み中…</p>${errorHtml()}`;
+          return;
+        }
+        const { session } = state.view;
+        const parts = [];
+        parts.push(`<div class="panel stack">
+          <h1>${escapeHtml(session.question.title)}</h1>
+          <div class="row"><span class="tag a">A</span> ${escapeHtml(session.question.optionA)}</div>
+          <div class="row"><span class="tag b">B</span> ${escapeHtml(session.question.optionB)}</div>
+          ${phaseBar(state.view)}
+        </div>`);
+        parts.push(renderMe());
+        parts.push(renderPhase());
+        parts.push(renderControls());
+        parts.push(errorHtml());
+        root.innerHTML = parts.join("");
+        bind();
+      }
+
+      function errorHtml() {
+        return state.error ? `<p class="error">${escapeHtml(state.error)}</p>` : "";
+      }
+
+      function renderCreate() {
+        root.innerHTML = `<div class="panel stack">
+          <h1>対話セッションを作る</h1>
+          <p class="muted">意見が分かれる問いと、A・B の選択肢を入力してください。</p>
+          <input id="q-title" placeholder="問い（例: 中学校にスマホの持ち込みを認めるべきか）" />
+          <input id="q-a" placeholder="A の選択肢（例: 認める）" />
+          <input id="q-b" placeholder="B の選択肢（例: 認めない）" />
+          <div class="row">
+            <button class="primary" id="create">セッションを作成</button>
+            <button id="create-demo">デモの問いで作成</button>
+          </div>
+          <p class="muted">既存のセッションに参加する: <input id="join-id" placeholder="セッションID" /> <button id="join-existing">開く</button></p>
+          ${errorHtml()}
+        </div>`;
+        document.getElementById("create").onclick = () =>
+          run(async () => {
+            const question = {
+              title: document.getElementById("q-title").value,
+              optionA: document.getElementById("q-a").value,
+              optionB: document.getElementById("q-b").value,
+            };
+            await createAndOpen(question);
+          });
+        document.getElementById("create-demo").onclick = () =>
+          run(() =>
+            createAndOpen({
+              title: "中学校にスマートフォンの持ち込みを認めるべきか",
+              optionA: "持ち込みを認める",
+              optionB: "持ち込みを認めない",
+            }),
+          );
+        document.getElementById("join-existing").onclick = () =>
+          run(async () => {
+            const id = document.getElementById("join-id").value.trim();
+            if (!id) throw new Error("セッションIDを入力してください");
+            await api.getSession(id);
+            open(id);
+          });
+      }
+
+      async function createAndOpen(question) {
+        const preferredId = state.meet?.meetingInfo?.meetingCode;
+        const created = await api.createSession(question, preferredId);
+        open(created.session.id);
+      }
+
+      function open(id) {
+        state.sessionId = id;
+        state.me = loadMe();
+        const url = new URL(location.href);
+        url.searchParams.set("session", id);
+        history.replaceState(null, "", url);
+        watchSession(id, (view, error) => {
+          if (error) {
+            state.error = error.message;
+          } else {
+            state.view = view;
+          }
+          render();
+        });
+      }
+
+      function renderMe() {
+        if (state.me) {
+          const side = state.view.tally.byParticipant.find(
+            (v) => v.participant.id === state.me.id,
+          )?.side;
+          return `<div class="panel row"><strong>${escapeHtml(state.me.name)}</strong> ${sideTag(side)} <button id="leave" class="muted">名前を変える</button></div>`;
+        }
+        return `<div class="panel stack">
+          <h2>あなたの名前</h2>
+          <p class="muted">Meet の表示名と同じにすると、発言の文字起こしがあなたに紐づきます。</p>
+          <div class="row"><input id="my-name" placeholder="例: 田中" /><button class="primary" id="join">参加する</button></div>
+        </div>`;
+      }
+
+      function renderPhase() {
+        const { session, latest, groups } = state.view;
+        const me = state.me;
+        switch (session.phase) {
+          case "lobby":
+            return `<div class="panel stack"><h2>参加者（${session.participants.length}人）</h2>${list(session.participants.map((p) => p.name), "まだ誰も参加していません")}</div>`;
+          case "vote": {
+            const mySide = me && state.view.tally.byParticipant.find((v) => v.participant.id === me.id)?.side;
+            return `<div class="panel stack">
+              <h2>あなたはどちらに近いですか？</h2>
+              <button class="side-a ${mySide === "A" ? "selected" : ""}" data-vote="A" ${me ? "" : "disabled"}>A: ${escapeHtml(session.question.optionA)}</button>
+              <button class="side-b ${mySide === "B" ? "selected" : ""}" data-vote="B" ${me ? "" : "disabled"}>B: ${escapeHtml(session.question.optionB)}</button>
+              <p class="muted">投票済み ${session.votes.length} / ${session.participants.length}</p>
+            </div>`;
+          }
+          case "interview":
+            return renderInterview();
+          case "share": {
+            const mySide = me && state.view.tally.byParticipant.find((v) => v.participant.id === me.id)?.side;
+            const group = mySide ? groups.sameSide[mySide] : [];
+            return `<div class="panel stack">
+              <h2>同じ意見の人と共有する</h2>
+              <p>あなたのグループ: ${group.map((p) => escapeHtml(p.name)).join("、") || "（未投票）"}</p>
+              <p>${escapeHtml(latest?.output.nextQuestion ?? "インタビューで答えた「一番の理由」を共有してください。")}</p>
+            </div>`;
+          }
+          case "cross": {
+            const myGroup = me
+              ? groups.mixed.find((g) => g.some((p) => p.id === me.id))
+              : null;
+            return `<div class="panel stack">
+              <h2>違う意見の人と対話する</h2>
+              <p>あなたのグループ: ${(myGroup ?? []).map((p) => escapeHtml(p.name)).join("、") || "（未投票）"}</p>
+              <p><strong>AIからの問い:</strong> ${escapeHtml(latest?.output.nextQuestion ?? "相手の意見の中で「それは自分も大事だと思う」と感じた部分を一つ挙げてください。")}</p>
+              ${latest?.output.commonGround?.length ? `<h2>見えてきた共通点</h2>${list(latest.output.commonGround)}` : ""}
+            </div>`;
+          }
+          case "plan_c":
+            return `<div class="panel stack plan-c">
+              <span class="status">プランC ${escapeHtml(latest?.output.planC.status ?? "not_yet")}</span>
+              <p>${escapeHtml(latest?.output.planC.text || "まだ材料が足りません。対話を続けてください。")}</p>
+              <h2>残っている論点</h2>${list(latest?.output.planC.openIssues)}
+            </div>`;
+          case "closed":
+            return `<div class="panel"><h2>終了しました</h2><p>${escapeHtml(latest?.output.planC.text ?? "")}</p></div>`;
+          default:
+            return "";
+        }
+      }
+
+      function renderInterview() {
+        if (!state.me) {
+          return `<div class="panel"><p class="muted">名前を入力して参加すると AI インタビューが始まります。</p></div>`;
+        }
+        const interview = state.view.session.interviews.find((i) => i.participantId === state.me.id);
+        const turns = interview?.turns ?? [];
+        return `<div class="panel stack">
+          <h2>AI インタビュー</h2>
+          <div class="chat">${turns.map((t) => `<div class="msg ${t.role}">${escapeHtml(t.text)}</div>`).join("")}</div>
+          ${
+            interview?.done
+              ? `<p class="muted">インタビューは終了しました。ありがとうございました。</p>`
+              : turns.length === 0
+                ? `<button class="primary" id="interview-start">インタビューを始める</button>`
+                : `<textarea id="interview-answer" rows="3" placeholder="テキストで答えてください"></textarea><button class="primary" id="interview-send">送信</button>`
+          }
+        </div>`;
+      }
+
+      function renderControls() {
+        const { session, facilitating, modelName } = state.view;
+        const inMeet = Boolean(state.meet?.client);
+        return `<div class="panel stack">
+          <h2>進行（ファシリテーター用）</h2>
+          <div class="row">
+            <button id="advance" ${session.phase === "closed" ? "disabled" : ""}>次のフェーズへ</button>
+            <button id="facilitate" ${facilitating ? "disabled" : ""}>${facilitating ? "AI が考え中…" : "AI ファシリテーションを更新"}</button>
+          </div>
+          <div class="row">
+            <button id="open-stage" ${inMeet ? "" : "disabled"}>メインステージに表示</button>
+            <a href="/mainstage.html?session=${encodeURIComponent(session.id)}" target="_blank">別タブでメインステージを開く</a>
+          </div>
+          <div class="row">
+            <button id="replay">デモの会話を流す</button>
+            <button id="bot">Meet にボットを参加させる</button>
+          </div>
+          <p class="muted">セッションID: ${escapeHtml(session.id)} / モデル: ${escapeHtml(modelName)}</p>
+        </div>`;
+      }
+
+      function bind() {
+        const id = state.sessionId;
+        document.getElementById("join")?.addEventListener("click", () =>
+          run(async () => {
+            const name = document.getElementById("my-name").value.trim();
+            if (!name) throw new Error("名前を入力してください");
+            state.me = await api.join(id, name);
+            saveMe(state.me);
+          }),
+        );
+        document.getElementById("leave")?.addEventListener("click", () => {
+          state.me = null;
+          render();
+        });
+        for (const button of document.querySelectorAll("[data-vote]")) {
+          button.addEventListener("click", () =>
+            run(() => api.vote(id, state.me.id, button.dataset.vote)),
+          );
+        }
+        document.getElementById("interview-start")?.addEventListener("click", () =>
+          run(() => api.interview(id, state.me.id)),
+        );
+        document.getElementById("interview-send")?.addEventListener("click", () =>
+          run(async () => {
+            const answer = document.getElementById("interview-answer").value.trim();
+            if (!answer) throw new Error("回答を入力してください");
+            await api.interview(id, state.me.id, answer);
+          }),
+        );
+        document.getElementById("advance")?.addEventListener("click", () =>
+          run(() => api.setPhase(id)),
+        );
+        document.getElementById("facilitate")?.addEventListener("click", () =>
+          run(() => api.facilitate(id)),
+        );
+        document.getElementById("replay")?.addEventListener("click", () =>
+          run(() => api.replay(id, 20)),
+        );
+        document.getElementById("bot")?.addEventListener("click", () =>
+          run(async () => {
+            const meetingUrl = prompt("Google Meet の URL を入力してください");
+            if (!meetingUrl) return;
+            await api.bot(id, meetingUrl);
+          }),
+        );
+        document.getElementById("open-stage")?.addEventListener("click", () =>
+          run(async () => {
+            const mainStageUrl = `${location.origin}/mainstage.html?session=${encodeURIComponent(id)}`;
+            await state.meet.client.startActivity({
+              mainStageUrl,
+              additionalData: JSON.stringify({ sessionId: id }),
+            });
+          }),
+        );
+      }
+
+      async function main() {
+        try {
+          const config = await api.config();
+          state.meet = await initMeet("SIDE_PANEL", config.cloudProjectNumber);
+          const sessionId = await resolveSessionId(state.meet);
+          if (sessionId) {
+            try {
+              await api.getSession(sessionId);
+              open(sessionId);
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+          }
+          render();
+        } catch (error) {
+          state.error = error.message;
+          render();
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

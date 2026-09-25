@@ -1,0 +1,24 @@
+{
+  "name": "@action-board/meet-facilitator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Google Meet 上で意見が分かれた参加者をプランCへ導く AI ファシリテーター（プロトタイプ）",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server/index.ts",
+    "start": "tsx src/server/index.ts",
+    "demo": "tsx src/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@googleworkspace/meet-addons": "^1.2.0",
+    "@hono/node-server": "1.19.14",
+    "hono": "4.12.27",
+    "zod": "^3.25.23"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,286 @@
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --a: #2563eb;
+  --a-soft: #dbeafe;
+  --b: #d97706;
+  --b-soft: #fef3c7;
+  --c: #059669;
+  --c-soft: #d1fae5;
+  --danger: #dc2626;
+  --radius: 12px;
+  font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+h2 {
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+button.side-a {
+  background: var(--a-soft);
+  border-color: var(--a);
+  color: var(--a);
+}
+
+button.side-b {
+  background: var(--b-soft);
+  border-color: var(--b);
+  color: var(--b);
+}
+
+button.side-a.selected,
+button.side-b.selected {
+  outline: 3px solid currentColor;
+}
+
+input,
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stack > * + * {
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tag.a {
+  background: var(--a-soft);
+  color: var(--a);
+}
+
+.tag.b {
+  background: var(--b-soft);
+  color: var(--b);
+}
+
+.tag.none {
+  background: var(--line);
+  color: var(--muted);
+}
+
+.phase-bar {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.phase-bar .step {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--line);
+  color: var(--muted);
+}
+
+.phase-bar .step.current {
+  background: var(--ink);
+  color: #fff;
+}
+
+.phase-bar .step.done {
+  background: var(--c-soft);
+  color: var(--c);
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.chat .msg {
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 90%;
+}
+
+.chat .msg.ai {
+  background: var(--bg);
+  align-self: flex-start;
+}
+
+.chat .msg.participant {
+  background: var(--a-soft);
+  align-self: flex-end;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* main stage */
+.stage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.stage h1 {
+  font-size: 28px;
+}
+
+.stage .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stage .grid .wide {
+  grid-column: 1 / -1;
+}
+
+.stage .big-question {
+  font-size: 24px;
+  font-weight: 700;
+  padding: 20px 24px;
+  border-left: 6px solid var(--c);
+  background: var(--c-soft);
+  border-radius: var(--radius);
+}
+
+.stage ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.stage .side-a-title {
+  color: var(--a);
+}
+
+.stage .side-b-title {
+  color: var(--b);
+}
+
+.tally {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.tally .bar {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.tally .bar.a {
+  background: var(--a-soft);
+  color: var(--a);
+}
+
+.tally .bar.b {
+  background: var(--b-soft);
+  color: var(--b);
+}
+
+.tally .count {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.plan-c {
+  border: 2px solid var(--c);
+  background: #fff;
+}
+
+.plan-c .status {
+  font-size: 12px;
+  color: var(--c);
+  font-weight: 700;
+}
+
+.disagreement {
+  border-top: 1px dashed var(--line);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 800px) {
+  .stage .grid {
+    grid-template-columns: 1fr;
+  }
+}

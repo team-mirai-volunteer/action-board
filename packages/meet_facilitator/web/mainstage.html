@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI ファシリテーター - メインステージ</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="stage"><p class="muted">読み込み中…</p></div>
+    <script type="module">
+      import {
+        api,
+        escapeHtml,
+        initMeet,
+        list,
+        phaseBar,
+        resolveSessionId,
+        sideTag,watchSession 
+      } from "/app.js";
+
+      const root = document.getElementById("app");
+
+      function render(view) {
+        const { session, tally, latest, groups, facilitating } = view;
+        const out = latest?.output;
+        root.innerHTML = `
+          <div class="panel stack">
+            <div class="row" style="justify-content: space-between">
+              <h1>${escapeHtml(session.question.title)}</h1>
+              <span class="muted">${facilitating ? "AI が考え中…" : latest ? `AI 更新: ${new Date(latest.createdAt).toLocaleTimeString("ja-JP")}` : ""}</span>
+            </div>
+            ${phaseBar(view)}
+          </div>
+
+          <div class="grid">
+            <div class="panel">
+              <div class="tally">
+                <div class="bar a"><div class="count">${tally.A}</div>A: ${escapeHtml(session.question.optionA)}</div>
+                <div class="bar b"><div class="count">${tally.B}</div>B: ${escapeHtml(session.question.optionB)}</div>
+              </div>
+              <p class="muted" style="margin-top: 8px">${tally.byParticipant
+                .map((v) => `${escapeHtml(v.participant.name)} ${sideTag(v.side)}`)
+                .join("　")}</p>
+            </div>
+
+            <div class="panel">
+              <h2>${session.phase === "share" ? "同じ意見のグループ" : "対話グループ"}</h2>
+              ${
+                session.phase === "share"
+                  ? `<p><span class="tag a">A</span> ${groups.sameSide.A.map((p) => escapeHtml(p.name)).join("、") || "—"}</p>
+                     <p><span class="tag b">B</span> ${groups.sameSide.B.map((p) => escapeHtml(p.name)).join("、") || "—"}</p>`
+                  : groups.mixed
+                      .map((g, i) => `<p>グループ${i + 1}: ${g.map((p) => escapeHtml(p.name)).join("、")}</p>`)
+                      .join("") || `<p class="muted">投票後に表示されます</p>`
+              }
+            </div>
+
+            <div class="wide big-question">
+              ${escapeHtml(out?.nextQuestion ?? "AI ファシリテーターの問いは、対話が始まるとここに表示されます。")}
+              ${out?.inviteToSpeak?.length ? `<div class="muted" style="font-size: 14px; margin-top: 6px">発言を聞きたい: ${out.inviteToSpeak.map(escapeHtml).join("、")} さん</div>` : ""}
+            </div>
+
+            <div class="panel">
+              <h2 class="side-a-title">A 側の主張</h2>
+              ${list(out?.claimsA, "まだ発言がありません")}
+            </div>
+            <div class="panel">
+              <h2 class="side-b-title">B 側の主張</h2>
+              ${list(out?.claimsB, "まだ発言がありません")}
+            </div>
+
+            <div class="panel">
+              <h2>共通点</h2>
+              ${list(out?.commonGround, "まだ見つかっていません")}
+            </div>
+            <div class="panel">
+              <h2>相違点とその裏にあるニーズ</h2>
+              ${
+                out?.disagreements?.length
+                  ? out.disagreements
+                      .map(
+                        (d) => `<div class="disagreement">
+                          <strong>${escapeHtml(d.topic)}</strong>
+                          <p><span class="tag a">A</span> ${escapeHtml(d.sideA)}</p>
+                          <p><span class="tag b">B</span> ${escapeHtml(d.sideB)}</p>
+                          <p class="muted">${escapeHtml(d.underlyingNeeds)}</p>
+                        </div>`,
+                      )
+                      .join("")
+                  : `<p class="muted">まだ整理されていません</p>`
+              }
+            </div>
+
+            <div class="panel wide plan-c">
+              <span class="status">プランC（${escapeHtml(planCLabel(out?.planC.status))}）</span>
+              <p style="font-size: 18px">${escapeHtml(out?.planC.text || "双方の関心が見えてくると、AI が叩き台を提案します。")}</p>
+              ${
+                out?.planC.text
+                  ? `<div class="grid">
+                      <div><h2 class="side-a-title">A 側の関心を満たす点</h2>${list(out.planC.satisfiesA)}</div>
+                      <div><h2 class="side-b-title">B 側の関心を満たす点</h2>${list(out.planC.satisfiesB)}</div>
+                      <div class="wide"><h2>残論点</h2>${list(out.planC.openIssues, "なし")}</div>
+                    </div>`
+                  : ""
+              }
+            </div>
+
+            <div class="panel wide">
+              <h2>直近の発言</h2>
+              ${list(
+                session.transcript.slice(-6).map((t) => `${t.speakerName}: ${t.text}`),
+                "まだ発言はありません",
+              )}
+              <p class="muted">${out?.summary ? escapeHtml(out.summary) : ""}</p>
+            </div>
+          </div>`;
+      }
+
+      function planCLabel(status) {
+        return { not_yet: "まだ材料不足", draft: "叩き台", ready: "提案" }[status] ?? "—";
+      }
+
+      async function main() {
+        try {
+          const config = await api.config();
+          const meet = await initMeet("MAIN_STAGE", config.cloudProjectNumber);
+          const sessionId = await resolveSessionId(meet);
+          if (!sessionId) {
+            root.innerHTML = `<p class="error">セッションが指定されていません。サイドパネルから開いてください。</p>`;
+            return;
+          }
+          watchSession(sessionId, (view, error) => {
+            if (error) {
+              root.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
+              return;
+            }
+            render(view);
+          });
+        } catch (error) {
+          root.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

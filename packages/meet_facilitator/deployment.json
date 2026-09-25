@@ -1,0 +1,16 @@
+{
+  "addOns": {
+    "common": {
+      "name": "AI ファシリテーター",
+      "logoUrl": "https://YOUR_HOST/logo.png"
+    },
+    "meet": {
+      "web": {
+        "sidePanelUri": "https://YOUR_HOST/sidepanel.html",
+        "mainStageUri": "https://YOUR_HOST/mainstage.html",
+        "addOnOrigins": ["https://YOUR_HOST"],
+        "supportsCollaboration": true
+      }
+    }
+  }
+}
