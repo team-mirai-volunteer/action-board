@@ -17,10 +17,30 @@ jest.mock(
   }),
 );
 
+jest.mock("@/features/mission-detail/components/x-follow-button", () => ({
+  XFollowButton: function MockXFollowButton({
+    screenName,
+  }: {
+    screenName: string;
+  }) {
+    return <div data-testid="x-follow-button">X Button: {screenName}</div>;
+  },
+}));
+
 jest.mock("@/lib/constants/mission-config", () => ({
   YOUTUBE_MISSION_CONFIG: {
     SLUG: "youtube-subscribe",
     CHANNEL_ID: "test-channel-id",
+  },
+  X_FOLLOW_MISSION_CONFIG: {
+    TEAM_MIRAI: {
+      SLUG: "follow-teammirai-x",
+      SCREEN_NAME: "team_mirai_jp",
+    },
+    TAKAHIRO_ANNO: {
+      SLUG: "follow-anno-x",
+      SCREEN_NAME: "takahiroanno",
+    },
   },
 }));
 
@@ -117,5 +137,27 @@ describe("MissionDetails", () => {
     const contentElement = document.querySelector(".mission-content");
     expect(contentElement).toBeInTheDocument();
     expect(contentElement?.innerHTML).toBe("");
+  });
+
+  it("Xフォローミッションの場合はXフォローボタンが表示される", () => {
+    render(
+      <MissionDetails
+        mission={{ ...mockMission, slug: "follow-teammirai-x" }}
+      />,
+    );
+
+    expect(screen.getByTestId("x-follow-button")).toHaveTextContent(
+      "X Button: team_mirai_jp",
+    );
+  });
+
+  it("安野たかひろのXフォローミッションの場合はXフォローボタンが表示される", () => {
+    render(
+      <MissionDetails mission={{ ...mockMission, slug: "follow-anno-x" }} />,
+    );
+
+    expect(screen.getByTestId("x-follow-button")).toHaveTextContent(
+      "X Button: takahiroanno",
+    );
   });
 });
