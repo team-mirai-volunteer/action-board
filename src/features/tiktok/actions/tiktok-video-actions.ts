@@ -33,7 +33,7 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
     }
 
     // TikTok連携情報をテーブルから取得
-    let connection = await getTikTokConnectionForUser(user.id);
+    let connection = await getTikTokConnectionForUser();
 
     if (!connection) {
       return {
@@ -57,7 +57,7 @@ export async function syncMyTikTokVideosAction(): Promise<TikTokSyncResult> {
       }
 
       // リフレッシュ成功後、最新の接続情報を再取得
-      connection = await getTikTokConnectionForUser(user.id);
+      connection = await getTikTokConnectionForUser();
 
       if (!connection) {
         return {
