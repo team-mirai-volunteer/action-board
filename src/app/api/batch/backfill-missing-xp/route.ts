@@ -25,6 +25,23 @@ type AchievementWithMission = {
 };
 
 /**
+ * 管理者キーを検証する。
+ *
+ * BATCH_ADMIN_KEY が未設定/空のときは fail-closed（不許可）にする。
+ * 以前は `adminKey !== process.env.BATCH_ADMIN_KEY` で比較していたため、
+ * 環境変数が未設定だと `undefined !== undefined` が false となり、キーを
+ * 持たないリクエストでも認証を通してしまっていた。
+ */
+function isBatchAuthorized(adminKey: unknown): boolean {
+  const expected = process.env.BATCH_ADMIN_KEY;
+  if (!expected) {
+    console.error("BATCH_ADMIN_KEY が設定されていません");
+    return false;
+  }
+  return typeof adminKey === "string" && adminKey === expected;
+}
+
+/**
  * ポイントが加算されていないミッション達成にポイントを付与するバッチ処理
  *
  * 本APIは管理者が実行する想定で、以下の処理を行います：
@@ -34,19 +51,19 @@ type AchievementWithMission = {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabaseAdmin = await createAdminClient();
-
     // リクエストボディから認証情報を確認（簡易的な認証）
     const body = await request.json();
     const { adminKey } = body;
 
-    // 環境変数で設定した管理者キーで認証
-    if (adminKey !== process.env.BATCH_ADMIN_KEY) {
+    // 環境変数で設定した管理者キーで認証（未設定時は fail-closed）
+    if (!isBatchAuthorized(adminKey)) {
       return NextResponse.json(
         { error: "認証に失敗しました" },
         { status: 401 },
       );
     }
+
+    const supabaseAdmin = await createAdminClient();
 
     console.log("=== XP付与バッチ処理を開始します ===");
 
@@ -299,8 +316,17 @@ export async function POST(request: NextRequest) {
 /**
  * バッチ処理の状況確認用GETエンドポイント
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // 集計統計も管理者キーで保護する（未設定時は fail-closed）
+    const adminKey = request.headers.get("x-admin-key");
+    if (!isBatchAuthorized(adminKey)) {
+      return NextResponse.json(
+        { error: "認証に失敗しました" },
+        { status: 401 },
+      );
+    }
+
     const supabaseAdmin = await createAdminClient();
 
     // XP未付与の達成数を確認（IN句を使用してN+1クエリを回避）
