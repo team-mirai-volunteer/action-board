@@ -41,7 +41,10 @@ export const updateSession = async (request: NextRequest) => {
     const user = await supabase.auth.getUser();
 
     // protected routes
-    if (request.nextUrl.pathname.startsWith("/protected") && user.error) {
+    // 認証が必要なページ群。ルートグループ (protected) は URL から除去されるため
+    // 実際のパス（/settings/*）で判定する。/reset-password は未ログインで踏む
+    // パスワードリセット導線のため、ここでは保護対象に含めない。
+    if (request.nextUrl.pathname.startsWith("/settings") && user.error) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
