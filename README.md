@@ -483,37 +483,14 @@ HUBSPOT_CONTACT_LIST_ID=123456
 
 ## デプロイ
 
-## 環境変数のデプロイ
-1. Terraform Cloudへの招待をもらう
+本番・ステージングは **Vercel** にデプロイされる（旧 GCP / Cloud Run からの移行済み）。
 
-   * [Terraform Cloud Workspaces](https://app.terraform.io/app/gamification/workspaces)
+- デプロイは GitHub Actions（[.github/workflows/deploy.yml](.github/workflows/deploy.yml)）が `main` / `develop` への push で実行する。Supabase のマイグレーション（`supabase db push` / `config push`）と各種データ同期を行ったあと、`VERCEL_DEPLOY_HOOK_URL` を叩いて Vercel デプロイをトリガーする。
+- `vercel.json` では Vercel の Git 連携による自動デプロイを無効化している（マイグレーションを先に流すため、上記ワークフローのフック経由でのみデプロイする）。
 
-2. 環境ごとの管理状況：
+### 環境変数のデプロイ
 
-   * **action-board-staging** → `release/infra/develop`
-   * **action-board-production** → `release/infra/production`
-
-3. トリガー時の挙動：
-
-   * 現状、Terraform Cloud側で自動で`plan`を実行し、`apply`はUIから手動確認後の実行となります。
-
-4. 環境変数追加手順：
-
-   * 通常の環境変数：
-
-     * `terraform/variables.tf`に追加
-     * `nextjs-app/variables.tf`に追加
-     * `nextjs-app/cloud_build.tf`の`substitutions`に追加
-     * `cloudbuild.yaml`の`arg`経由でDockerビルド時に渡す
-   * 秘匿情報の場合：
-
-     * `nextjs-app/secrets.tf`にSecret定義追加
-     * `nextjs-app/cloud_build.tf`でSecretへのアクセス権限設定
-
-5. Terraform変数（秘匿情報は`sensitive`チェック）の登録先：
-
-   * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
-   * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
+環境変数・シークレットは **Vercel のプロジェクト設定（Environment Variables）** で環境（Production / Preview）ごとに管理する。追加時は Vercel 側に登録するだけでよい（旧 Terraform / Secret Manager 管理は廃止）。
 
 ## 開発時の留意事項
 
