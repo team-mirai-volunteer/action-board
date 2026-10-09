@@ -12,6 +12,21 @@ export const YOUTUBE_MISSION_CONFIG = {
   CHANNEL_ID: "UC72A_x2FKHkJ8Nc2eIzqj8Q",
 } as const;
 
+export const X_FOLLOW_MISSION_CONFIG = {
+  TEAM_MIRAI: {
+    // チームみらい公式Xフォローミッションslug
+    SLUG: "follow-teammirai-x",
+    // チームみらい公式Xのスクリーンネーム
+    SCREEN_NAME: "team_mirai_jp",
+  },
+  TAKAHIRO_ANNO: {
+    // 安野たかひろ公式Xフォローミッションslug
+    SLUG: "follow-anno-x",
+    // 安野たかひろ公式Xのスクリーンネーム
+    SCREEN_NAME: "takahiroanno",
+  },
+} as const;
+
 // ポスティングミッションでの最大枚数
 export const MAX_POSTING_COUNT = 100000;
 

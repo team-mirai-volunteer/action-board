@@ -2,10 +2,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { XFollowButton } from "@/features/mission-detail/components/x-follow-button";
 import { YouTubeSubscribeButton } from "@/features/mission-detail/components/youtube-subscribe-button";
 import { DifficultyBadge } from "@/features/missions/components/difficulty-badge";
 import { MissionIcon } from "@/features/missions/components/mission-icon";
-import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants/mission-config";
+import {
+  X_FOLLOW_MISSION_CONFIG,
+  YOUTUBE_MISSION_CONFIG,
+} from "@/lib/constants/mission-config";
 import type { Tables } from "@/lib/types/supabase";
 import { dateFormatter } from "@/lib/utils/date-formatters";
 
@@ -14,6 +18,10 @@ type MissionDetailsProps = {
 };
 
 export function MissionDetails({ mission }: MissionDetailsProps) {
+  const xFollowMission = Object.values(X_FOLLOW_MISSION_CONFIG).find(
+    (config) => mission.slug === config.SLUG,
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -43,6 +51,13 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
             }
           }}
         />
+
+        {/* Xフォローミッションの場合のみ、Xフォローボタンを表示 */}
+        {xFollowMission && (
+          <div className="flex justify-center mt-6">
+            <XFollowButton screenName={xFollowMission.SCREEN_NAME} />
+          </div>
+        )}
 
         {/* YouTubeチャンネル登録ミッションの場合のみ、YouTube登録ボタンを表示 */}
         {mission.slug === YOUTUBE_MISSION_CONFIG.SLUG && (
