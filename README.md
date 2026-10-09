@@ -483,14 +483,20 @@ HUBSPOT_CONTACT_LIST_ID=123456
 
 ## デプロイ
 
-本番・ステージングは **Vercel** にデプロイされる（旧 GCP / Cloud Run からの移行済み）。
+本番・ステージングは **Vercel** にデプロイされる（旧 GCP / Cloud Run からの移行済み。経緯は [docs/20260115_1500_GCP_to_Vercel_migration_plan.md](docs/20260115_1500_GCP_to_Vercel_migration_plan.md)）。
 
 - デプロイは GitHub Actions（[.github/workflows/deploy.yml](.github/workflows/deploy.yml)）が `main` / `develop` への push で実行する。Supabase のマイグレーション（`supabase db push` / `config push`）と各種データ同期を行ったあと、`VERCEL_DEPLOY_HOOK_URL` を叩いて Vercel デプロイをトリガーする。
-- `vercel.json` では Vercel の Git 連携による自動デプロイを無効化している（マイグレーションを先に流すため、上記ワークフローのフック経由でのみデプロイする）。
+- ワークフローは push 先ブランチで GitHub Environment を選ぶ（`main`→`production` / `develop`→`staging`）。
+- `vercel.json` は `main` / `develop` に対する Vercel の Git 自動デプロイを無効化している（マイグレーションを先に流すため、上記ワークフローのフック経由でのみデプロイする）。
 
-### 環境変数のデプロイ
+### 環境変数・シークレットの登録先
 
-環境変数・シークレットは **Vercel のプロジェクト設定（Environment Variables）** で環境（Production / Preview）ごとに管理する。追加時は Vercel 側に登録するだけでよい（旧 Terraform / Secret Manager 管理は廃止）。
+登録先は 2 つあり、役割が異なる。
+
+- **GitHub Actions（デプロイワークフロー用）**: `deploy.yml` が使う値。GitHub の **Environment（`production` / `develop`＝`staging`）ごと**の secrets / variables に登録する。
+  - `VERCEL_DEPLOY_HOOK_URL` は **Environment ごとに対応する Vercel の Deploy Hook URL** を設定する（`production` には本番、`staging` には develop 用の Hook URL）。同じ URL を両方に設定すると意図しないブランチがデプロイされるので注意。
+  - その他ワークフローが参照する `SUPABASE_*` / `SMTP_*` / `SITE_URL` などもここに登録する。
+- **Vercel（アプリ実行時用）**: アプリがランタイムで参照する環境変数。Vercel のプロジェクト設定（Environment Variables）で Production / Preview ごとに登録する（旧 Terraform / Secret Manager 管理は廃止）。
 
 ## 開発時の留意事項
 
