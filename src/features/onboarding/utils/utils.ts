@@ -2,19 +2,8 @@
  * オンボーディング機能で使用するユーティリティ関数（期日前投票専用）
  */
 
-/**
- * HTMLコンテンツをサニタイズする関数（wbr、br、a、svg、path、polyline、lineタグを許可）
- */
-export const sanitizeHtml = (html: string): string => {
-  return html
-    .replace(/\n/g, "<br>")
-    .replace(
-      /<(?!\/?(wbr|br|a|svg|path|polyline|line)(?:\s[^>]*)?\/?>)[^>]*>/g,
-      "",
-    ) // 許可されたタグ以外を除去
-    .replace(/javascript:/gi, "") // JavaScriptスキームを除去
-    .replace(/on\w+\s*=/gi, ""); // イベントハンドラ属性を除去
-};
+// 汎用サニタイザは共有ユーティリティに移動（ミッション本文の表示でも使うため）
+export { sanitizeHtml } from "@/lib/utils/sanitize-html";
 
 /**
  * 現在のダイアログが最終画面かどうかを判定
