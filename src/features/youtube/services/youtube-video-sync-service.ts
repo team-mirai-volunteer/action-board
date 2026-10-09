@@ -5,6 +5,7 @@
 
 import { google } from "googleapis";
 import { createAdminClient } from "@/lib/supabase/adminClient";
+import { withRetry } from "@/lib/utils/retry-utils";
 import {
   getLatestPublishedAfter,
   getOldestPublishedBefore,
@@ -13,6 +14,9 @@ import {
 } from "../utils/video-record-utils";
 
 const HASHTAG = "#チームみらい";
+
+// 1リクエストあたりのタイムアウト（ミリ秒）。応答が返らないハングでバッチが止まらないようにする
+const REQUEST_TIMEOUT_MS = 30_000;
 
 // YouTube API クライアントを初期化
 function getYouTubeClient() {
@@ -126,17 +130,30 @@ export async function searchVideosByHashtag(
   let pageToken: string | undefined;
 
   while (videoIds.length < maxResults) {
-    const response = await youtube.search.list({
-      part: ["snippet"],
-      q: HASHTAG,
-      type: ["video"],
-      maxResults: Math.min(50, maxResults - videoIds.length),
-      order: "date",
-      regionCode: "JP",
-      pageToken,
-      publishedAfter,
-      publishedBefore,
-    });
+    const response = await withRetry(
+      () =>
+        youtube.search.list(
+          {
+            part: ["snippet"],
+            q: HASHTAG,
+            type: ["video"],
+            maxResults: Math.min(50, maxResults - videoIds.length),
+            order: "date",
+            regionCode: "JP",
+            pageToken,
+            publishedAfter,
+            publishedBefore,
+          },
+          { timeout: REQUEST_TIMEOUT_MS },
+        ),
+      {
+        onRetry: (error, attempt, delayMs) =>
+          console.warn(
+            `YouTube search.list failed (attempt ${attempt}), retrying in ${delayMs}ms:`,
+            error instanceof Error ? error.message : error,
+          ),
+      },
+    );
 
     const items = response.data.items as YouTubeSearchResult[] | undefined;
     if (!items || items.length === 0) {
@@ -178,10 +195,23 @@ export async function getVideoDetails(
   for (let i = 0; i < videoIds.length; i += chunkSize) {
     const chunk = videoIds.slice(i, i + chunkSize);
 
-    const response = await youtube.videos.list({
-      part: ["snippet", "statistics", "contentDetails"],
-      id: chunk,
-    });
+    const response = await withRetry(
+      () =>
+        youtube.videos.list(
+          {
+            part: ["snippet", "statistics", "contentDetails"],
+            id: chunk,
+          },
+          { timeout: REQUEST_TIMEOUT_MS },
+        ),
+      {
+        onRetry: (error, attempt, delayMs) =>
+          console.warn(
+            `YouTube videos.list failed (attempt ${attempt}), retrying in ${delayMs}ms:`,
+            error instanceof Error ? error.message : error,
+          ),
+      },
+    );
 
     const items = response.data.items as YouTubeVideoDetails[] | undefined;
     if (items) {

@@ -1,3 +1,4 @@
+import { fetchWithRetry } from "@/lib/utils/retry-utils";
 import type {
   GoogleTokenResponse,
   YouTubeChannel,
@@ -167,12 +168,16 @@ export async function fetchChannelInfo(
   url.searchParams.set("part", "snippet,contentDetails");
   url.searchParams.set("mine", "true");
 
-  const response = await fetch(url.toString(), {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const response = await fetchWithRetry(
+    url.toString(),
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-  });
+    { label: "YouTube channels fetch" },
+  );
 
   if (!response.ok) {
     const errorBody = await response.text();
@@ -268,12 +273,16 @@ export async function fetchUserUploadedVideos(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetchWithRetry(
+      url.toString(),
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+      { label: "YouTube playlist items fetch" },
+    );
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -327,12 +336,16 @@ export async function fetchVideoDetails(
     url.searchParams.set("part", "snippet,statistics,contentDetails");
     url.searchParams.set("id", chunk.join(","));
 
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetchWithRetry(
+      url.toString(),
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+      { label: "YouTube video details fetch" },
+    );
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -391,12 +404,16 @@ export async function fetchUserLikedVideos(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetchWithRetry(
+      url.toString(),
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+      { label: "YouTube liked videos fetch" },
+    );
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -478,9 +495,13 @@ export async function fetchVideoComments(
       url.searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(url.toString(), {
-      method: "GET",
-    });
+    const response = await fetchWithRetry(
+      url.toString(),
+      {
+        method: "GET",
+      },
+      { label: "YouTube comments fetch" },
+    );
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -564,9 +585,13 @@ export async function fetchVideoDetailsByApiKey(
     url.searchParams.set("id", chunk.join(","));
     url.searchParams.set("key", apiKey);
 
-    const response = await fetch(url.toString(), {
-      method: "GET",
-    });
+    const response = await fetchWithRetry(
+      url.toString(),
+      {
+        method: "GET",
+      },
+      { label: "YouTube video details fetch (API key)" },
+    );
 
     if (!response.ok) {
       const errorBody = await response.text();
