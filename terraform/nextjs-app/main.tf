@@ -10,11 +10,6 @@ resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_ac
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
-resource "google_secret_manager_secret_iam_member" "supabase_access_token_access" {
-  secret_id = google_secret_manager_secret.supabase_access_token.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.cloud_run.email}"
-}
 resource "google_secret_manager_secret_iam_member" "batch_admin_key_access" {
   secret_id = google_secret_manager_secret.batch_admin_key.secret_id
   role      = "roles/secretmanager.secretAccessor"
@@ -32,6 +27,21 @@ resource "google_secret_manager_secret_iam_member" "google_client_secret_access"
 }
 resource "google_secret_manager_secret_iam_member" "youtube_api_key_access" {
   secret_id = google_secret_manager_secret.youtube_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
+resource "google_secret_manager_secret_iam_member" "line_client_secret_access" {
+  secret_id = google_secret_manager_secret.line_client_secret.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
+resource "google_secret_manager_secret_iam_member" "mailgun_api_key_access" {
+  secret_id = google_secret_manager_secret.mailgun_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
+resource "google_secret_manager_secret_iam_member" "hubspot_api_key_access" {
+  secret_id = google_secret_manager_secret.hubspot_api_key.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
@@ -189,15 +199,6 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
       env {
-        name = "SUPABASE_ACCESS_TOKEN"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.supabase_access_token.id
-            version = "latest"
-          }
-        }
-      }
-      env {
         name = "BATCH_ADMIN_KEY"
         value_source {
           secret_key_ref {
@@ -238,12 +239,9 @@ resource "google_cloud_run_service_iam_member" "public_access" {
   member   = "allUsers"
 }
 
-# Grant Secret Manager access to the Cloud Run service account
-resource "google_project_iam_member" "secret_manager_access" {
-  project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.cloud_run.email}"
-}
+# Secret Manager アクセスは上記の per-secret な secretAccessor 付与で賄う。
+# 以前はここで project 全体に secretAccessor を付与していたが、公開 Web の
+# サービスアカウントがプロジェクト内の全 secret を読めてしまい爆風が大きいため削除した。
 
 # Output values
 output "service_name" {
