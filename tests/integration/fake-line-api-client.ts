@@ -1,5 +1,6 @@
 import type {
   LineApiClient,
+  LineIdTokenPayload,
   LineTokenResponse,
 } from "@/features/auth/types/line-api-client";
 
@@ -39,6 +40,28 @@ export class FakeLineApiClient implements LineApiClient {
       access_token: `fake-access-token-${this.lineUserId}`,
       token_type: "Bearer",
       id_token: idToken,
+    };
+  }
+
+  async verifyIdToken(idToken: string): Promise<LineIdTokenPayload> {
+    // 実 API を呼ばず、exchangeCodeForTokens が作った偽JWTの payload をデコードして返す。
+    const body = idToken.split(".")[1];
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString()) as {
+      sub: string;
+      name?: string;
+      email?: string;
+      picture?: string;
+    };
+    const now = Math.floor(Date.now() / 1000);
+    return {
+      iss: "https://access.line.me",
+      sub: payload.sub,
+      aud: "fake-channel-id",
+      exp: now + 3600,
+      iat: now,
+      name: payload.name,
+      email: payload.email,
+      picture: payload.picture,
     };
   }
 }
