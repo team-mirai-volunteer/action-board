@@ -1,18 +1,12 @@
+import DOMPurify from "isomorphic-dompurify";
+
 /**
- * HTMLコンテンツをサニタイズする関数（wbr、br、a、svg、path、polyline、line タグを許可）
+ * HTMLコンテンツをサニタイズして innerHTML 表示に安全な文字列を返す。
  *
- * 注意: regex ベースの軽量サニタイザで、属性のスクラブは限定的（イベントハンドラと
- * javascript: スキームの除去のみ）。ミッション本文・オンボーディング本文のような
- * 信頼済みデータを innerHTML で表示する際の防御層として用いる。より強固な
- * サニタイズが必要になったら DOMPurify 等への置き換えを検討する。
+ * DOMPurify のデフォルト設定で、p / strong / em / ul / li / a / svg などの一般的な
+ * 整形タグは保持しつつ、script タグ・イベントハンドラ属性・javascript:/data: 等の
+ * 危険な入力を除去する。ミッション本文のようなリッチテキストを innerHTML で
+ * 描画する前に通すことで、将来 content が下位権限で書込可能になっても
+ * stored XSS を防ぐ。
  */
-export const sanitizeHtml = (html: string): string => {
-  return html
-    .replace(/\n/g, "<br>")
-    .replace(
-      /<(?!\/?(wbr|br|a|svg|path|polyline|line)(?:\s[^>]*)?\/?>)[^>]*>/g,
-      "",
-    ) // 許可されたタグ以外を除去
-    .replace(/javascript:/gi, "") // JavaScriptスキームを除去
-    .replace(/on\w+\s*=/gi, ""); // イベントハンドラ属性を除去
-};
+export const sanitizeHtml = (html: string): string => DOMPurify.sanitize(html);
