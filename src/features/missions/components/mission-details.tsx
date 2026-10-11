@@ -8,6 +8,7 @@ import { MissionIcon } from "@/features/missions/components/mission-icon";
 import { YOUTUBE_MISSION_CONFIG } from "@/lib/constants/mission-config";
 import type { Tables } from "@/lib/types/supabase";
 import { dateFormatter } from "@/lib/utils/date-formatters";
+import { sanitizeHtml } from "@/lib/utils/sanitize-html";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;
@@ -39,7 +40,7 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
           className="text-gray-700 leading-relaxed whitespace-pre-wrap mission-content"
           ref={(el) => {
             if (el && mission.content) {
-              el.innerHTML = mission.content;
+              el.innerHTML = sanitizeHtml(mission.content);
             }
           }}
         />

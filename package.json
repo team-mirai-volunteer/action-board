@@ -91,6 +91,7 @@
     "form-data": "^4.0.3",
     "framer-motion": "^12.22.0",
     "googleapis": "^144.0.0",
+    "isomorphic-dompurify": "^4.5.0",
     "js-yaml": "^4.1.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
