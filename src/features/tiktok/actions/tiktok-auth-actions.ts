@@ -110,20 +110,32 @@ export async function refreshTikTokTokenAction(): Promise<TikTokLinkResult> {
 }
 
 /**
- * TikTok連携情報を取得する（内部用）
+ * 現在のログインユーザーのTikTok連携情報を取得する（内部用）
+ *
+ * Server Action は公開エンドポイントとして到達しうるため、対象ユーザーは
+ * 引数で受け取らず必ずセッションから導出する（他ユーザーの access_token を
+ * 取得されないようにするため）。
  */
-export async function getTikTokConnectionForUser(userId: string): Promise<{
+export async function getTikTokConnectionForUser(): Promise<{
   tiktokOpenId: string;
   accessToken: string;
   displayName?: string;
   tokenExpiresAt: string;
 } | null> {
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return null;
+    }
+
     const adminClient = await createAdminClient();
     const { data: connection, error } = await adminClient
       .from("tiktok_user_connections")
       .select("tiktok_open_id, access_token, display_name, token_expires_at")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .single();
 
     if (error || !connection) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/client";
+import { validateReturnUrl } from "@/lib/validation/url";
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -34,8 +35,11 @@ export async function GET(request: Request) {
     }
   }
 
-  if (redirectTo) {
-    return NextResponse.redirect(`${origin}${redirectTo}`);
+  // オープンリダイレクト防止: 相対パス（/始まり）のみ許可する。
+  // @evil.com や //evil.com のような外部ホストへの誘導を弾く。
+  const safeRedirectTo = validateReturnUrl(redirectTo);
+  if (safeRedirectTo) {
+    return NextResponse.redirect(`${origin}${safeRedirectTo}`);
   }
 
   // URL to redirect to after sign up process completes
