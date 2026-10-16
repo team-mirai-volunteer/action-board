@@ -10,9 +10,9 @@ export type MessageType =
   | "login-error";
 
 export type Message =
-  | { success: string; html?: boolean }
-  | { error: string; html?: boolean }
-  | { message: string; html?: boolean }
+  | { success: string }
+  | { error: string }
+  | { message: string }
   | { type: MessageType };
 
 const getMessageContent = (type: MessageType) => {
@@ -139,45 +139,21 @@ export function FormMessage({
       {"success" in message && (
         <div className="flex-1">
           <div className="text-sm text-green-700 whitespace-pre-wrap leading-relaxed space-y-1">
-            {message.html ? (
-              <div
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
-                dangerouslySetInnerHTML={{ __html: message.success }}
-                className="[&_a]:inline-block [&_a]:wrap-break-word"
-              />
-            ) : (
-              message.success
-            )}
+            {message.success}
           </div>
         </div>
       )}
       {"error" in message && (
         <div className="flex-1">
           <div className="text-sm text-red-700 whitespace-pre-wrap leading-relaxed space-y-1">
-            {message.html ? (
-              <div
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
-                dangerouslySetInnerHTML={{ __html: message.error }}
-                className="[&_a]:inline-block [&_a]:wrap-break-word"
-              />
-            ) : (
-              message.error
-            )}
+            {message.error}
           </div>
         </div>
       )}
       {"message" in message && (
         <div className="flex-1">
           <div className="text-sm text-blue-700 whitespace-pre-wrap leading-relaxed space-y-1">
-            {message.html ? (
-              <div
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled HTML content for FAQ links
-                dangerouslySetInnerHTML={{ __html: message.message }}
-                className="[&_a]:inline-block [&_a]:wrap-break-word"
-              />
-            ) : (
-              message.message
-            )}
+            {message.message}
           </div>
         </div>
       )}

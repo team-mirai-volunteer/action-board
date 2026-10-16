@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { parseIdTokenPayload } from "@/lib/utils/jwt-utils";
 import type { LineApiClient } from "../types/line-api-client";
 
 export type LineLoginInput = {
@@ -35,15 +34,18 @@ export async function lineLogin(
   if (!tokens.id_token) {
     return { success: false, error: "IDトークンが取得できませんでした" };
   }
-  const userInfo = parseIdTokenPayload(tokens.id_token);
-  const lineUserId = userInfo.sub as string;
+  // IDトークンは LINE の verify エンドポイントで検証する（署名・aud・iss・exp）。
+  // 検証せず base64 デコードするだけだと、将来クライアント由来のトークンを
+  // 受け付ける経路が増えたときに成りすましを許してしまう。
+  const userInfo = await lineApiClient.verifyIdToken(tokens.id_token);
+  const lineUserId = userInfo.sub;
   if (!lineUserId) {
     return { success: false, error: "LINEユーザーIDが取得できませんでした" };
   }
 
-  const email = (userInfo.email as string) || `line-${lineUserId}@line.local`;
-  const name = (userInfo.name as string) || "LINEユーザー";
-  const image = userInfo.picture as string | undefined;
+  const email = userInfo.email || `line-${lineUserId}@line.local`;
+  const name = userInfo.name || "LINEユーザー";
+  const image = userInfo.picture;
 
   // 3. 既存ユーザーチェック
   const { data: userResults, error: userFetchError } = await adminSupabase.rpc(

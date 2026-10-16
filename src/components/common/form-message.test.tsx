@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { FormMessage } from "./form-message";
+import { FormMessage, type Message } from "./form-message";
 
 describe("FormMessage", () => {
   describe("基本的な表示", () => {
@@ -42,6 +42,18 @@ describe("FormMessage", () => {
       render(<FormMessage message={{ message: messageWithEntities }} />);
 
       expect(screen.getByText(messageWithEntities)).toBeInTheDocument();
+    });
+
+    it("クエリパラメータ由来の値にhtmlが含まれてもHTMLとして解釈しない", () => {
+      const markup = '<img src="x" data-testid="injected">';
+      const { container } = render(
+        <FormMessage
+          message={{ error: markup, html: "1" } as unknown as Message}
+        />,
+      );
+
+      expect(container.querySelector("img")).toBeNull();
+      expect(screen.getByText(markup)).toBeInTheDocument();
     });
 
     it("空白文字を含むメッセージ", () => {

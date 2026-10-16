@@ -22,8 +22,10 @@ async function requireAuth(): Promise<User> {
 }
 
 export async function saveShape(shape: MapShape) {
-  await requireAuth();
-  return saveShapeService(shape);
+  const user = await requireAuth();
+  // オーナーは必ずセッションから設定する。クライアントが指定した user_id は
+  // 信頼せず上書きする（他ユーザー名義でのシェイプ作成を防ぐ）。
+  return saveShapeService({ ...shape, user_id: user.id });
 }
 
 export async function deleteShape(id: string) {
