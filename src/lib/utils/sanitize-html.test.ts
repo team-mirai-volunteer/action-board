@@ -35,6 +35,60 @@ describe("sanitizeHtml", () => {
     test("イベントハンドラ属性が除去される", () => {
       const out = sanitizeHtml('<img src="x" onerror="alert(1)">');
       expect(out).not.toContain("onerror");
+      expect(out).not.toContain("alert(1)");
+    });
+
+    test("onclick と javascript: を同時に除去し、本文は残す", () => {
+      const out = sanitizeHtml(
+        '<a href="javascript:void(0)" onclick="alert(1)">コピー</a>',
+      );
+      expect(out).not.toContain("javascript:");
+      expect(out).not.toContain("onclick");
+      expect(out).not.toContain("alert(1)");
+      expect(out).toContain("コピー");
+    });
+
+    test("data: URL を除去する", () => {
+      const out = sanitizeHtml(
+        '<a href="data:text/html,<script>alert(1)</script>">リンク</a>',
+      );
+      expect(out).not.toContain("data:");
+      expect(out).not.toContain("<script");
+      expect(out).toContain("リンク");
+    });
+  });
+
+  describe("ミッション本文で使う整形", () => {
+    test("br / b を保持する", () => {
+      expect(sanitizeHtml("一行目<br>二行目")).toBe("一行目<br>二行目");
+      expect(sanitizeHtml("<b>強調</b>")).toBe("<b>強調</b>");
+    });
+
+    test("https リンクの target と rel を保持する", () => {
+      expect(
+        sanitizeHtml(
+          '<a href="https://example.com" target="_blank" rel="noopener noreferrer">リンク</a>',
+        ),
+      ).toBe(
+        '<a href="https://example.com" target="_blank" rel="noopener noreferrer">リンク</a>',
+      );
+    });
+
+    test("target=_blank には noopener noreferrer を付与する", () => {
+      expect(
+        sanitizeHtml(
+          '<a href="https://example.com" target="_blank">リンク</a>',
+        ),
+      ).toBe(
+        '<a href="https://example.com" target="_blank" rel="noopener noreferrer">リンク</a>',
+      );
+    });
+
+    test("アンカー以外の target は除去する", () => {
+      const out = sanitizeHtml(
+        '<form action="https://example.com" target="_blank"><input></form>',
+      );
+      expect(out).not.toContain("target");
     });
   });
 
