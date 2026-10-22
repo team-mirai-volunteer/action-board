@@ -2143,6 +2143,63 @@ export type Database = {
           user_count: number;
         }[];
       };
+      get_tiktok_overall_stats_history: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          date: string;
+          total_likes: number;
+          total_views: number;
+        }[];
+      };
+      get_tiktok_stats_summary: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          daily_videos_increase: number;
+          daily_views_increase: number;
+          total_comments: number;
+          total_likes: number;
+          total_shares: number;
+          total_videos: number;
+          total_views: number;
+        }[];
+      };
+      get_tiktok_video_count_by_date: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
+      get_tiktok_videos_with_latest_stats: {
+        Args: {
+          published_from?: string;
+          published_to?: string;
+          result_limit?: number;
+          result_offset?: number;
+          sort_by?: string;
+        };
+        Returns: {
+          created_at: string;
+          creator_id: string;
+          creator_username: string;
+          description: string;
+          duration: number;
+          id: string;
+          is_active: boolean;
+          latest_comment_count: number;
+          latest_like_count: number;
+          latest_share_count: number;
+          latest_view_count: number;
+          published_at: string;
+          tags: string[];
+          thumbnail_url: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+          video_id: string;
+          video_url: string;
+        }[];
+      };
       get_top_users_posting_count: {
         Args: { user_ids: string[] };
         Returns: {
@@ -2308,6 +2365,60 @@ export type Database = {
         Returns: {
           email: string;
           id: string;
+        }[];
+      };
+      get_youtube_overall_stats_history: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          date: string;
+          total_likes: number;
+          total_views: number;
+        }[];
+      };
+      get_youtube_stats_summary: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          daily_videos_increase: number;
+          daily_views_increase: number;
+          total_comments: number;
+          total_likes: number;
+          total_videos: number;
+          total_views: number;
+        }[];
+      };
+      get_youtube_video_count_by_date: {
+        Args: { published_from?: string; published_to?: string };
+        Returns: {
+          count: number;
+          date: string;
+        }[];
+      };
+      get_youtube_videos_with_latest_stats: {
+        Args: {
+          published_from?: string;
+          published_to?: string;
+          result_limit?: number;
+          result_offset?: number;
+          sort_by?: string;
+        };
+        Returns: {
+          channel_id: string;
+          channel_title: string;
+          comments_synced_at: string;
+          created_at: string;
+          description: string;
+          duration: string;
+          is_active: boolean;
+          latest_comment_count: number;
+          latest_like_count: number;
+          latest_view_count: number;
+          published_at: string;
+          tags: string[];
+          thumbnail_url: string;
+          title: string;
+          updated_at: string;
+          video_id: string;
+          video_url: string;
         }[];
       };
       is_admin: { Args: never; Returns: boolean };
