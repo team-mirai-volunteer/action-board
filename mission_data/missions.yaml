@@ -324,10 +324,10 @@ missions:
     artifact_label: 登録したメールアドレス
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//16_slack_join.png
   - slug: join-planning-team
-    title: テーマ別コミュニティ企画チームのメンバーになろう
+    title: テーマ別コミュニティを立ち上げよう
     icon_url: /img/mission-icons/actionboard_icon_work_20260715_ol_join-planning-team.png
-    content: テーマベースのコミュニティを、みんなで企画・実現していく「テーマ別コミュニティ企画チーム」を立ち上げます！<br>地域の枠を越えて、横断で動く新しいかたちのサポーターチームです。<br><br>いまは立ち上げ準備中です。まずはサポーターSlackの <b>#1_サポーター全体_テーマ別企画チーム</b> に入ってお待ちください！<br>具体的な活動内容と次のご案内は、チャンネル内でお届けします（8月末までにご案内予定）。
-    difficulty: 1
+    content: 「こんなテーマで語り合える場がほしい！」を、あなたの手でかたちにしよう。<br>テーマ別コミュニティは、チームみらいの5つのバリューに共感したサポーターが、テーマごとに自分たちで運営するコミュニティです。コミュニティホストとサブホストの2名で立ち上げられます。<br><br>ご興味のある方は、サポーターSlackの <b>#テーマ別コミュニティ</b> に入って、情報収集・交換から始めて下さい。
+    difficulty: 3
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
@@ -886,7 +886,7 @@ missions:
       掲示した場所と枚数を地図上のピンで報告するとXPが獲得できます。
       メニューの「私有地ポスターマップ」から報告できます。<br><a href="https://docs.google.com/document/d/1Wru0CkA_c3YDhYV3S8pXZnl0EnBZ16smpc60ulSPi9E/edit?tab=t.0" target="_blank" rel="noopener noreferrer">ガイドラインはこちら</a>
     difficulty: 5
-    required_artifact_type: RESIDENTIAL_POSTER
+    required_artifact_type: NONE
     max_achievement_count: null
     is_featured: false
     is_hidden: true
