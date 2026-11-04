@@ -65,7 +65,7 @@ describe("FirstMissions", () => {
     const { getByTestId } = render(component);
 
     expect(getByTestId("filter-slugs")).toHaveTextContent(
-      "watch-anno-welcome-message,add-supporter-line-friend,join-prefecture-openchat,join-slack",
+      "watch-anno-welcome-message,join-orientation,add-supporter-line-friend,join-prefecture-openchat",
     );
   });
 
@@ -131,9 +131,9 @@ describe("FirstMissions", () => {
   it("FIRST_MISSION_SLUGSの並び順が仕様どおりである", () => {
     expect([...FIRST_MISSION_SLUGS]).toEqual([
       "watch-anno-welcome-message",
+      "join-orientation",
       "add-supporter-line-friend",
       "join-prefecture-openchat",
-      "join-slack",
     ]);
   });
 });

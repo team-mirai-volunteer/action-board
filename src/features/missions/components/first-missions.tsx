@@ -5,9 +5,9 @@ import Missions from "./mission-list";
 // はじめのミッションに表示するミッション（この配列の並び順で表示される）
 export const FIRST_MISSION_SLUGS = [
   "watch-anno-welcome-message",
+  "join-orientation",
   "add-supporter-line-friend",
   "join-prefecture-openchat",
-  "join-slack",
 ] as const;
 
 // 見出し下の説明文。スマホで折り返さず1行に収めるため 20 文字以内に保つ
