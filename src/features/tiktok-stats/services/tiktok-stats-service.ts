@@ -1,11 +1,9 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/adminClient";
-import { getJstRecentDates, toJstDateString } from "@/lib/utils/date-utils";
-import {
-  calculateDailyViewsIncrease,
-  type VideoStatsRecord,
-} from "@/lib/utils/stats-calculator";
+import type { Database } from "@/lib/types/supabase";
+import { fromCacheDate, toPublishedRange } from "@/lib/utils/published-range";
+import { cacheVideoStatsQuery, toCount } from "@/lib/utils/video-stats-cache";
 import type {
   OverallStatsHistoryItem,
   SortType,
@@ -13,22 +11,67 @@ import type {
   TikTokVideoWithStats,
   VideoCountByDateItem,
 } from "../types";
-import {
-  aggregateDailyStats,
-  countVideosByDate,
-  generateDateRange,
-  getLatestStats,
-  mapVideoToWithStats,
-} from "../utils/stats-utils";
+import { generateDateRange } from "../utils/stats-utils";
+
+type TikTokSummaryRow =
+  Database["public"]["Functions"]["get_tiktok_stats_summary"]["Returns"][number];
+type TikTokHistoryRow =
+  Database["public"]["Functions"]["get_tiktok_overall_stats_history"]["Returns"][number];
+type TikTokCountByDateRow =
+  Database["public"]["Functions"]["get_tiktok_video_count_by_date"]["Returns"][number];
+
+const EMPTY_SUMMARY: StatsSummary = {
+  totalVideos: 0,
+  totalViews: 0,
+  totalLikes: 0,
+  totalComments: 0,
+  totalShares: 0,
+};
+
+function mapSummary(row: TikTokSummaryRow | undefined): StatsSummary {
+  if (!row) return EMPTY_SUMMARY;
+  return {
+    totalVideos: toCount(row.total_videos),
+    totalViews: toCount(row.total_views),
+    totalLikes: toCount(row.total_likes),
+    totalComments: toCount(row.total_comments),
+    totalShares: toCount(row.total_shares),
+    dailyViewsIncrease: toCount(row.daily_views_increase),
+    dailyVideosIncrease: toCount(row.daily_videos_increase),
+  };
+}
+
+async function fetchTikTokVideosWithStats(
+  publishedFrom: string,
+  publishedTo: string,
+  sortBy: SortType,
+  limit: number,
+  offset: number,
+): Promise<TikTokVideoWithStats[]> {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.rpc(
+    "get_tiktok_videos_with_latest_stats",
+    {
+      published_from: fromCacheDate(publishedFrom),
+      published_to: fromCacheDate(publishedTo),
+      sort_by: sortBy,
+      result_limit: limit,
+      result_offset: offset,
+    },
+  );
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+const fetchTikTokVideosWithStatsCached = cacheVideoStatsQuery(
+  "tiktok-videos-with-latest-stats",
+  fetchTikTokVideosWithStats,
+);
 
 /**
- * TikTok動画一覧を最新統計付きで取得する
- * @param limit - 取得件数
- * @param offset - オフセット
- * @param sortBy - ソート順
- * @param startDate - 開始日（オプション）
- * @param endDate - 終了日（オプション）
- * @returns 動画一覧
+ * TikTok動画一覧を最新統計付きで取得する。
+ * 統計履歴は埋め込まず、各動画の最新行だけを RPC で受け取る。
  */
 export async function getTikTokVideosWithStats(
   limit: number,
@@ -37,343 +80,199 @@ export async function getTikTokVideosWithStats(
   startDate?: Date,
   endDate?: Date,
 ): Promise<TikTokVideoWithStats[]> {
-  const supabase = await createAdminClient();
-
-  let query = supabase
-    .from("tiktok_videos")
-    .select(
-      `
-      *,
-      tiktok_video_stats(
-        view_count,
-        like_count,
-        comment_count,
-        share_count,
-        recorded_at
-      )
-    `,
-    )
-    .eq("is_active", true);
-
-  if (startDate) {
-    query = query.gte("published_at", startDate.toISOString());
-  }
-  if (endDate) {
-    const endOfDay = new Date(endDate);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-    query = query.lt("published_at", endOfDay.toISOString());
-  }
-
-  const { data: videos, error } = await query.order("published_at", {
-    ascending: false,
-  });
-
-  if (error) {
+  const { publishedFrom, publishedTo } = toPublishedRange(startDate, endDate);
+  try {
+    return await fetchTikTokVideosWithStatsCached(
+      publishedFrom,
+      publishedTo,
+      sortBy,
+      limit,
+      offset,
+    );
+  } catch (error) {
     console.error("Failed to fetch TikTok videos:", error);
     return [];
   }
-
-  const videosWithStats: TikTokVideoWithStats[] = (videos || []).map((video) =>
-    mapVideoToWithStats(
-      video as unknown as Record<string, unknown> & {
-        tiktok_video_stats: Array<{
-          view_count: number | null;
-          like_count: number | null;
-          comment_count: number | null;
-          share_count: number | null;
-          recorded_at: string;
-        }>;
-      },
-    ),
-  );
-
-  const sorted = videosWithStats.sort((a, b) => {
-    switch (sortBy) {
-      case "view_count":
-        return (b.latest_view_count ?? 0) - (a.latest_view_count ?? 0);
-      case "like_count":
-        return (b.latest_like_count ?? 0) - (a.latest_like_count ?? 0);
-      default:
-        return (
-          new Date(b.published_at ?? 0).getTime() -
-          new Date(a.published_at ?? 0).getTime()
-        );
-    }
-  });
-
-  return sorted.slice(offset, offset + limit);
 }
 
-/**
- * TikTok動画の総数を取得する
- * @param startDate - 開始日（オプション）
- * @param endDate - 終了日（オプション）
- * @returns 総動画数
- */
-export async function getTikTokVideoCount(
-  startDate?: Date,
-  endDate?: Date,
+async function fetchTikTokVideoCount(
+  publishedFrom: string,
+  publishedTo: string,
 ): Promise<number> {
   const supabase = await createAdminClient();
-
   let query = supabase
     .from("tiktok_videos")
     .select("*", { count: "exact", head: true })
     .eq("is_active", true);
 
-  if (startDate) {
-    query = query.gte("published_at", startDate.toISOString());
-  }
-  if (endDate) {
-    const endOfDay = new Date(endDate);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-    query = query.lt("published_at", endOfDay.toISOString());
-  }
+  const from = fromCacheDate(publishedFrom);
+  const to = fromCacheDate(publishedTo);
+  if (from) query = query.gte("published_at", from);
+  if (to) query = query.lt("published_at", to);
 
   const { count, error } = await query;
+  if (error) throw error;
+  return count ?? 0;
+}
 
-  if (error) {
+const fetchTikTokVideoCountCached = cacheVideoStatsQuery(
+  "tiktok-video-count",
+  fetchTikTokVideoCount,
+);
+
+/**
+ * TikTok動画の総数を取得する
+ */
+export async function getTikTokVideoCount(
+  startDate?: Date,
+  endDate?: Date,
+): Promise<number> {
+  const { publishedFrom, publishedTo } = toPublishedRange(startDate, endDate);
+  try {
+    return await fetchTikTokVideoCountCached(publishedFrom, publishedTo);
+  } catch (error) {
     console.error("Failed to fetch TikTok video count:", error);
     return 0;
   }
-
-  return count || 0;
 }
 
+async function fetchTikTokStatsSummary(
+  publishedFrom: string,
+  publishedTo: string,
+): Promise<StatsSummary> {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.rpc("get_tiktok_stats_summary", {
+    published_from: fromCacheDate(publishedFrom),
+    published_to: fromCacheDate(publishedTo),
+  });
+
+  if (error) throw error;
+  return mapSummary(data?.[0]);
+}
+
+const fetchTikTokStatsSummaryCached = cacheVideoStatsQuery(
+  "tiktok-stats-summary",
+  fetchTikTokStatsSummary,
+);
+
 /**
- * TikTok動画のサマリー統計を取得する
- * @param startDate - 開始日（オプション）
- * @param endDate - 終了日（オプション）
- * @returns サマリー統計
+ * TikTok動画のサマリー統計を取得する。
+ * 合計と日次増加は get_tiktok_stats_summary が DB 側で計算する。
+ * 結果は 1 時間キャッシュする（get-metrics.ts の revalidate: 3600 と同じ間隔）。
  */
 export async function getTikTokStatsSummary(
   startDate?: Date,
   endDate?: Date,
 ): Promise<StatsSummary> {
-  const supabase = await createAdminClient();
-
-  let query = supabase
-    .from("tiktok_videos")
-    .select(
-      `
-      id,
-      published_at,
-      tiktok_video_stats(
-        view_count,
-        like_count,
-        comment_count,
-        share_count,
-        recorded_at
-      )
-    `,
-    )
-    .eq("is_active", true);
-
-  if (startDate) {
-    query = query.gte("published_at", startDate.toISOString());
-  }
-  if (endDate) {
-    const endOfDay = new Date(endDate);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-    query = query.lt("published_at", endOfDay.toISOString());
-  }
-
-  const { data: videos, error } = await query;
-
-  if (error) {
+  const { publishedFrom, publishedTo } = toPublishedRange(startDate, endDate);
+  try {
+    return await fetchTikTokStatsSummaryCached(publishedFrom, publishedTo);
+  } catch (error) {
     console.error("Failed to fetch TikTok stats summary:", error);
-    return {
-      totalVideos: 0,
-      totalViews: 0,
-      totalLikes: 0,
-      totalComments: 0,
-      totalShares: 0,
-    };
+    return EMPTY_SUMMARY;
   }
-
-  let totalLikes = 0;
-  let totalComments = 0;
-  let totalShares = 0;
-  let recentVideosCount = 0;
-
-  const { today, yesterday, dayBeforeYesterday } = getJstRecentDates();
-
-  let hasTodayVideos = false;
-  for (const video of videos || []) {
-    const publishedAt = video.published_at as string | null;
-    if (publishedAt && toJstDateString(new Date(publishedAt)) === today) {
-      hasTodayVideos = true;
-      break;
-    }
-  }
-
-  // 各動画の統計データを収集
-  const allVideoStats: VideoStatsRecord[][] = [];
-
-  for (const video of videos || []) {
-    const publishedAt = video.published_at as string | null;
-    const publishedDateJst = publishedAt
-      ? toJstDateString(new Date(publishedAt))
-      : null;
-    if (
-      publishedDateJst === today ||
-      (!hasTodayVideos && publishedDateJst === yesterday)
-    ) {
-      recentVideosCount++;
-    }
-
-    const stats = video.tiktok_video_stats as Array<{
-      view_count: number | null;
-      like_count: number | null;
-      comment_count: number | null;
-      share_count: number | null;
-      recorded_at: string;
-    }>;
-
-    const sortedStats = [...stats].sort(
-      (a, b) =>
-        new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime(),
-    );
-
-    const latestStats = getLatestStats(stats);
-    if (latestStats) {
-      totalLikes += latestStats.like_count ?? 0;
-      totalComments += latestStats.comment_count ?? 0;
-      totalShares += latestStats.share_count ?? 0;
-    }
-
-    // 日次増加計算用にrecorded_atをJST日付文字列に変換
-    const videoStatsRecords: VideoStatsRecord[] = sortedStats.map((s) => ({
-      recorded_at: toJstDateString(new Date(s.recorded_at)),
-      view_count: s.view_count,
-    }));
-    allVideoStats.push(videoStatsRecords);
-  }
-
-  // 日次増加数を計算
-  const { totalViews, dailyViewsIncrease } = calculateDailyViewsIncrease(
-    allVideoStats,
-    today,
-    yesterday,
-    dayBeforeYesterday,
-  );
-
-  return {
-    totalVideos: videos?.length ?? 0,
-    totalViews,
-    totalLikes,
-    totalComments,
-    totalShares,
-    dailyViewsIncrease,
-    dailyVideosIncrease: recentVideosCount,
-  };
 }
 
+async function fetchOverallStatsHistory(
+  publishedFrom: string,
+  publishedTo: string,
+): Promise<OverallStatsHistoryItem[]> {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.rpc(
+    "get_tiktok_overall_stats_history",
+    {
+      published_from: fromCacheDate(publishedFrom),
+      published_to: fromCacheDate(publishedTo),
+    },
+  );
+
+  if (error) throw error;
+
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  const items = ((data ?? []) as TikTokHistoryRow[]).map((row) => ({
+    date: row.date,
+    total_views: toCount(row.total_views),
+    total_likes: toCount(row.total_likes),
+  }));
+  return filterBeforeToday(items);
+}
+
+const fetchOverallStatsHistoryCached = cacheVideoStatsQuery(
+  "tiktok-overall-stats-history",
+  fetchOverallStatsHistory,
+);
+
 /**
- * 全体の日別統計推移を取得する（期間内に公開された動画のみ）
- * @param startDate - 開始日（オプション）
- * @param endDate - 終了日（オプション）
- * @returns 日別の合計統計
+ * 全体の日別統計推移を取得する（期間内に公開された動画のみ）。
+ * 日別合計は DB 側で作る。本日以降は除外する。
  */
 export async function getOverallStatsHistory(
   startDate?: Date,
   endDate?: Date,
 ): Promise<OverallStatsHistoryItem[]> {
-  const supabase = await createAdminClient();
-
-  // JOINを使って1つのクエリで取得（URI too long エラーを回避）
-  let query = supabase
-    .from("tiktok_video_stats")
-    .select(
-      `
-      recorded_at,
-      view_count,
-      like_count,
-      tiktok_videos!inner(
-        published_at,
-        is_active
-      )
-    `,
-    )
-    .eq("tiktok_videos.is_active", true)
-    .order("recorded_at", { ascending: true });
-
-  // 動画の公開日でフィルター
-  if (startDate) {
-    query = query.gte("tiktok_videos.published_at", startDate.toISOString());
-  }
-  if (endDate) {
-    const endOfDay = new Date(endDate);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-    query = query.lt("tiktok_videos.published_at", endOfDay.toISOString());
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
+  const { publishedFrom, publishedTo } = toPublishedRange(startDate, endDate);
+  try {
+    return await fetchOverallStatsHistoryCached(publishedFrom, publishedTo);
+  } catch (error) {
     console.error("Failed to fetch overall stats history:", error);
     return [];
   }
-
-  const dailyStats = aggregateDailyStats(data || []);
-
-  // 配列に変換して本日以降のデータを除外
-  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
-  const result = Array.from(dailyStats.entries())
-    .map(([date, stats]) => ({
-      date,
-      total_views: stats.total_views,
-      total_likes: stats.total_likes,
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
-
-  return filterBeforeToday(result);
 }
 
+async function fetchVideoCountByDate(
+  publishedFrom: string,
+  publishedTo: string,
+  startIso: string,
+  endIso: string,
+): Promise<VideoCountByDateItem[]> {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.rpc("get_tiktok_video_count_by_date", {
+    published_from: fromCacheDate(publishedFrom),
+    published_to: fromCacheDate(publishedTo),
+  });
+
+  if (error) throw error;
+
+  const dailyCount = new Map<string, number>();
+  for (const row of (data ?? []) as TikTokCountByDateRow[]) {
+    dailyCount.set(row.date, toCount(row.count));
+  }
+
+  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
+  return filterBeforeToday(
+    generateDateRange(new Date(startIso), new Date(endIso), dailyCount),
+  );
+}
+
+const fetchVideoCountByDateCached = cacheVideoStatsQuery(
+  "tiktok-video-count-by-date",
+  fetchVideoCountByDate,
+);
+
 /**
- * 日別の動画投稿数を取得する
- * @param startDate - 開始日（オプション、デフォルトは2026年1月1日）
- * @param endDate - 終了日（オプション、デフォルトは今日）
- * @returns 日別の動画投稿数
+ * 日別の動画投稿数を取得する。
+ * 件数は DB で日別に集計し、0 件の日は従来どおりアプリ側で埋める。
  */
 export async function getVideoCountByDate(
   startDate?: Date,
   endDate?: Date,
 ): Promise<VideoCountByDateItem[]> {
-  const supabase = await createAdminClient();
-
   const effectiveStartDate = startDate || new Date("2026-01-01");
   const effectiveEndDate = endDate || new Date();
+  const { publishedFrom, publishedTo } = toPublishedRange(
+    effectiveStartDate,
+    effectiveEndDate,
+  );
 
-  let query = supabase
-    .from("tiktok_videos")
-    .select("published_at")
-    .eq("is_active", true)
-    .order("published_at", { ascending: true });
-
-  query = query.gte("published_at", effectiveStartDate.toISOString());
-  const endOfDay = new Date(effectiveEndDate);
-  endOfDay.setDate(endOfDay.getDate() + 1);
-  query = query.lt("published_at", endOfDay.toISOString());
-
-  const { data, error } = await query;
-
-  if (error) {
+  try {
+    return await fetchVideoCountByDateCached(
+      publishedFrom,
+      publishedTo,
+      effectiveStartDate.toISOString(),
+      effectiveEndDate.toISOString(),
+    );
+  } catch (error) {
     console.error("Failed to fetch video count by date:", error);
     return [];
   }
-
-  const dailyCount = countVideosByDate(
-    (data || []).map((video) => video.published_at),
-  );
-
-  const result = generateDateRange(
-    effectiveStartDate,
-    effectiveEndDate,
-    dailyCount,
-  );
-
-  // 本日以降のデータを除外
-  const { filterBeforeToday } = await import("@/lib/utils/date-utils");
-  return filterBeforeToday(result);
 }
