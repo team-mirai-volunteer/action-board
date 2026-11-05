@@ -875,7 +875,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: 動画や投稿のURL
     ogp_image_url: null
   - slug: residential-poster
