@@ -191,7 +191,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: 1
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたのXアカウント名
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//5_follow_anno_x.png
   - slug: youtube-subscribe
@@ -246,7 +246,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: threads-post
@@ -348,7 +348,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     featured_importance: 100
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png
   - slug: join-73-mirai-kaigi
@@ -441,7 +441,7 @@ missions:
     required_artifact_type: POSTING
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 配布情報
     ogp_image_url: null
   - slug: youtube-watch
@@ -464,7 +464,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     featured_importance: 11
-    is_hidden: false
+    is_hidden: true
     artifact_label: あなたが高評価したYouTube動画のURL
     ogp_image_url: null
   - slug: x-post
@@ -489,7 +489,7 @@ missions:
     required_artifact_type: TEXT
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 参加した街頭演説の場所と日付
     ogp_image_url: https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//13_event_support.png
   - slug: help-event-operation
@@ -514,7 +514,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: x-like
@@ -525,7 +525,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: note-like
@@ -536,7 +536,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: スキを押した記事のURL
     ogp_image_url: null
   - slug: put-up-poster
@@ -707,7 +707,7 @@ missions:
     required_artifact_type: LINK
     max_achievement_count: null
     is_featured: false
-    is_hidden: false
+    is_hidden: true
     artifact_label: 投稿のURL
     ogp_image_url: null
   - slug: design-create
