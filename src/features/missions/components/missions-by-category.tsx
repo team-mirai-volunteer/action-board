@@ -3,11 +3,9 @@ import {
   getMissionCategoryView,
   getPostingCountsForMissions,
 } from "@/features/missions/loaders/missions-loaders";
-import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { groupMissionsByCategory } from "@/features/missions/utils/group-missions-by-category";
 import { getUserMissionAchievements } from "@/features/user-achievements/loaders/achievements-loaders";
-import { HorizontalScrollContainer } from "./horizontal-scroll-container";
-import Mission from "./mission-card";
+import { MissionCardScrollList } from "./mission-card-scroll-list";
 import type { MissionsProps } from "./mission-list";
 
 export default async function MissionsByCategory({
@@ -74,25 +72,12 @@ export default async function MissionsByCategory({
           </h3>
 
           {/* 横スクロール領域 */}
-          <HorizontalScrollContainer>
-            <div className="flex w-fit gap-4 pl-4 md:pl-0 pr-4 pb-2 pt-4">
-              {category.missions.map((mission) => (
-                <div key={mission.id} className="shrink-0 w-[300px]">
-                  <Mission
-                    mission={mission}
-                    achievementsCount={getMissionDisplayCount(
-                      mission.id,
-                      achievementCountMap,
-                      postingCountMap,
-                    )}
-                    userAchievementCount={
-                      userAchievementCountMap.get(mission.id) ?? 0
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </HorizontalScrollContainer>
+          <MissionCardScrollList
+            missions={category.missions}
+            achievementCountMap={achievementCountMap}
+            postingCountMap={postingCountMap}
+            userAchievementCountMap={userAchievementCountMap}
+          />
         </section>
       ))}
     </div>
