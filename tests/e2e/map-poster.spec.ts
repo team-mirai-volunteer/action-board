@@ -4,9 +4,8 @@ test.describe("ポスター掲示板マップのe2eテスト", () => {
   test("ポスター掲示板マップ遷移が正常に動作する", async ({ signedInPage }) => {
     await assertAuthState(signedInPage, true);
 
-    // ポスター掲示板マップに遷移
-    await signedInPage.getByTestId("usermenubutton").click();
-    await signedInPage.getByText("ポスター掲示板マップ").click();
+    // ポスター掲示板マップに遷移（ヘッダーメニューのリンクは非表示のためURLで直接アクセス）
+    await signedInPage.goto("/map/poster");
     await expect(signedInPage).toHaveURL(/\/map\/poster/, { timeout: 10000 });
     await expect(
       signedInPage.locator("h1").getByText("ポスター掲示板マップ"),
