@@ -22,18 +22,6 @@ function MetricsSkeleton() {
             <Skeleton className="h-8 w-32 mx-auto mb-1" />
             <Skeleton className="h-4 w-20 mx-auto" />
           </div>
-          <div className="flex items-stretch gap-4">
-            <div className="flex-1 text-center">
-              <Skeleton className="h-4 w-20 mx-auto mb-2" />
-              <Skeleton className="h-6 w-16 mx-auto mb-1" />
-              <Skeleton className="h-4 w-12 mx-auto" />
-            </div>
-            <div className="flex-1 text-center">
-              <Skeleton className="h-4 w-20 mx-auto mb-2" />
-              <Skeleton className="h-6 w-16 mx-auto mb-1" />
-              <Skeleton className="h-4 w-12 mx-auto" />
-            </div>
-          </div>
         </div>
       </div>
     </section>
