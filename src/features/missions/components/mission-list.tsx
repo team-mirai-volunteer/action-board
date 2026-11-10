@@ -3,9 +3,8 @@ import {
   getMissionsWithFilter,
   getPostingCountsForMissions,
 } from "@/features/missions/loaders/missions-loaders";
-import { getMissionDisplayCount } from "@/features/missions/utils/get-mission-display-count";
 import { getUserMissionAchievements } from "@/features/user-achievements/loaders/achievements-loaders";
-import Mission from "./mission-card";
+import { MissionCardScrollList } from "./mission-card-scroll-list";
 
 export type MissionsProps = {
   userId?: string;
@@ -51,8 +50,8 @@ export default async function Missions({
   const postingCountMap = await getPostingCountsForMissions(missions);
 
   return (
-    <div className="flex flex-col gap-6 px-4 md:px-0">
-      <div className="text-center">
+    <div className="flex flex-col gap-6">
+      <div className="text-center px-4 md:px-0">
         <h2 id={id} className="text-2xl md:text-3xl">
           {title}
         </h2>
@@ -60,24 +59,17 @@ export default async function Missions({
       </div>
 
       {missions && missions.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {missions.map((mission) => (
-            <Mission
-              key={mission.id}
-              mission={mission}
-              achievementsCount={getMissionDisplayCount(
-                mission.id,
-                achievementCountMap,
-                postingCountMap,
-              )}
-              userAchievementCount={
-                userAchievementCountMap.get(mission.id) ?? 0
-              }
-            />
-          ))}
+        // カテゴリ別一覧（missions-by-category.tsx）と同じ横スクロール・同じ左余白で並べる
+        <div className="relative w-screen md:pl-10">
+          <MissionCardScrollList
+            missions={missions}
+            achievementCountMap={achievementCountMap}
+            postingCountMap={postingCountMap}
+            userAchievementCountMap={userAchievementCountMap}
+          />
         </div>
       ) : (
-        <div className="text-center py-12">
+        <div className="text-center py-12 px-4 md:px-0">
           <p className="text-gray-500 text-lg">
             未達成のミッションはありません
           </p>

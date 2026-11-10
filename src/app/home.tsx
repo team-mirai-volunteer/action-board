@@ -106,19 +106,17 @@ export default async function Home({
       <section className="md:py-16 bg-background">
         <RankingSection />
       </section>
-      <div className="w-full md:container md:mx-auto">
-        {/* はじめのミッションセクション（すべて達成済みならセクションごと非表示） */}
-        <FirstMissions userId={user?.id} />
+      {/* はじめのミッションセクション（すべて達成済みならセクションごと非表示） */}
+      <FirstMissions userId={user?.id} />
 
-        {/* フューチャードミッションセクション */}
-        {showFeatured && (
-          <section className="py-12 md:py-16 bg-background">
-            <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
-          </section>
-        )}
+      {/* フューチャードミッションセクション */}
+      {showFeatured && (
+        <section className="py-12 md:py-16 bg-background">
+          <FeaturedMissions userId={user?.id} showAchievedMissions={true} />
+        </section>
+      )}
 
-        {/* ミッションセクション */}
-      </div>
+      {/* ミッションセクション */}
       <section className="py-12 md:py-16 bg-background">
         <MissionsByCategory
           userId={user?.id}
