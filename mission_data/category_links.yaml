@@ -45,8 +45,6 @@ category_links:
     missions:
       - mission_slug: join-planning-team
         sort_no: 50
-      - mission_slug: join-slack
-        sort_no: 100
       - mission_slug: join-street-speech
         sort_no: 210
       - mission_slug: help-street-speech
