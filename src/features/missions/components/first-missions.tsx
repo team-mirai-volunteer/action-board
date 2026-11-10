@@ -8,6 +8,7 @@ export const FIRST_MISSION_SLUGS = [
   "join-orientation",
   "add-supporter-line-friend",
   "join-prefecture-openchat",
+  "join-slack",
 ] as const;
 
 // 見出し下の説明文。スマホで折り返さず1行に収めるため 20 文字以内に保つ
