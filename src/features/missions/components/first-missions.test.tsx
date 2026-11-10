@@ -65,7 +65,7 @@ describe("FirstMissions", () => {
     const { getByTestId } = render(component);
 
     expect(getByTestId("filter-slugs")).toHaveTextContent(
-      "watch-anno-welcome-message,join-orientation,add-supporter-line-friend,join-prefecture-openchat",
+      "watch-anno-welcome-message,join-orientation,add-supporter-line-friend,join-prefecture-openchat,join-slack",
     );
   });
 
@@ -134,6 +134,7 @@ describe("FirstMissions", () => {
       "join-orientation",
       "add-supporter-line-friend",
       "join-prefecture-openchat",
+      "join-slack",
     ]);
   });
 });
