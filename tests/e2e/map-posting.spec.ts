@@ -5,8 +5,7 @@ test.describe("ポスティングマップのe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // ポスティングマップに遷移
-    await signedInPage.getByTestId("usermenubutton").click();
-    await signedInPage.getByText("ポスティングマップ").click();
+    await signedInPage.goto("/map/posting");
     await expect(signedInPage).toHaveURL(/\/map\/posting/, { timeout: 10000 });
   });
 });

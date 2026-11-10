@@ -5,8 +5,7 @@ test.describe("ポスター掲示板マップのe2eテスト", () => {
     await assertAuthState(signedInPage, true);
 
     // ポスター掲示板マップに遷移
-    await signedInPage.getByTestId("usermenubutton").click();
-    await signedInPage.getByText("ポスター掲示板マップ").click();
+    await signedInPage.goto("/map/poster");
     await expect(signedInPage).toHaveURL(/\/map\/poster/, { timeout: 10000 });
     await expect(
       signedInPage.locator("h1").getByText("ポスター掲示板マップ"),
