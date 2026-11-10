@@ -96,24 +96,24 @@ describe("Metrics", () => {
       render(await Metrics());
 
       expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("動画再生回数")).toBeInTheDocument();
-      expect(screen.getByText("動画本数")).toBeInTheDocument();
       expect(screen.getByText("サポーター数")).toBeInTheDocument();
     });
 
-    it("メトリクス数値が正しく表示される（YouTube + TikTok合算）", async () => {
+    it("サポーター数の数値が正しく表示される", async () => {
       render(await Metrics());
 
       await waitFor(() => {
-        // サポーター数の確認
         expect(screen.getByText("75,982")).toBeInTheDocument();
-
-        // 動画再生回数の確認（250,000 + 100,000 = 350,000）
-        expect(screen.getByText("350,000")).toBeInTheDocument();
-
-        // 動画本数の確認（150 + 50 = 200）
-        expect(screen.getByText("200")).toBeInTheDocument();
       });
+    });
+
+    it("達成アクション数・動画統計のブロックは表示されない", async () => {
+      render(await Metrics());
+
+      expect(screen.queryByText("達成アクション数")).not.toBeInTheDocument();
+      expect(screen.queryByText("動画再生回数")).not.toBeInTheDocument();
+      expect(screen.queryByText("動画本数")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("separator")).not.toBeInTheDocument();
     });
 
     it("更新時刻が表示される", async () => {
@@ -127,11 +127,13 @@ describe("Metrics", () => {
   });
 
   describe("データ取得", () => {
-    it("fetchSupporterDataとfetchAchievementDataが正しく呼び出される", async () => {
+    it("fetchSupporterDataのみが呼び出され、非表示ブロックのデータは取得しない", async () => {
       await Metrics();
 
       expect(mockFetchSupporterData).toHaveBeenCalledTimes(1);
-      expect(mockFetchAchievementData).toHaveBeenCalledTimes(1);
+      expect(mockFetchAchievementData).not.toHaveBeenCalled();
+      expect(mockGetYouTubeStatsSummary).not.toHaveBeenCalled();
+      expect(mockGetTikTokStatsSummary).not.toHaveBeenCalled();
     });
 
     it("異なるデータでも正しく表示される", async () => {
@@ -180,19 +182,25 @@ describe("Metrics", () => {
     it("詳しく見るリンクが正しく表示される", async () => {
       render(await Metrics());
 
-      // 詳しく見るリンクが2つ（サポーター用 + アクション数用）
+      // 詳しく見るリンクはサポーター用の1つだけ
       const detailLinks = screen.getAllByText("詳しく見る", {
         selector: "span",
       });
-      expect(detailLinks).toHaveLength(2); // サポーター + アクション数
+      expect(detailLinks).toHaveLength(1);
     });
 
-    it("アクション数ダッシュボードへの内部リンクが存在する", async () => {
+    it("非表示ブロックのダッシュボードへのリンクは存在しない", async () => {
       render(await Metrics());
 
-      // アクション数セクションの/statsリンク
-      const statsLink = document.querySelector('a[href="/stats"]');
-      expect(statsLink).toBeInTheDocument();
+      expect(
+        document.querySelector('a[href="/stats"]'),
+      ).not.toBeInTheDocument();
+      expect(
+        document.querySelector('a[href="/youtube_stats"]'),
+      ).not.toBeInTheDocument();
+      expect(
+        document.querySelector('a[href="/tiktok_stats"]'),
+      ).not.toBeInTheDocument();
     });
 
     it("Looker Studioへの外部リンクが存在する", async () => {
@@ -203,16 +211,6 @@ describe("Metrics", () => {
         'a[href*="lookerstudio.google.com"]',
       );
       expect(externalLink).toBeInTheDocument();
-    });
-
-    it("メトリクスの順序が正しい", async () => {
-      render(await Metrics());
-
-      const metrics = screen.getAllByText(/動画再生回数|サポーター数/);
-
-      // 期待される順序: サポーター数 → 動画再生回数
-      expect(metrics[0]).toHaveTextContent("サポーター数");
-      expect(metrics[1]).toHaveTextContent("動画再生回数");
     });
   });
 
@@ -226,19 +224,6 @@ describe("Metrics", () => {
       );
       expect(externalLink).toHaveAttribute("target", "_blank");
       expect(externalLink).toHaveAttribute("rel", "noopener noreferrer");
-    });
-
-    it("内部リンクには適切な属性が設定されていない", async () => {
-      render(await Metrics());
-
-      // 内部リンク（/youtube_stats, /tiktok_stats）はtarget="_blank"を持たない
-      const youtubeLink = document.querySelector('a[href="/youtube_stats"]');
-      expect(youtubeLink).toBeInTheDocument();
-      expect(youtubeLink).not.toHaveAttribute("target", "_blank");
-
-      const tiktokLink = document.querySelector('a[href="/tiktok_stats"]');
-      expect(tiktokLink).toBeInTheDocument();
-      expect(tiktokLink).not.toHaveAttribute("target", "_blank");
     });
   });
 });
