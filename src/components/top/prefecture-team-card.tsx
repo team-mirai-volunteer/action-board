@@ -1,6 +1,7 @@
 import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TOP_SECTION_CARD_CLASS_NAME } from "@/components/top/top-section-layout";
+import { Card } from "@/components/ui/card";
 import { PrefectureTeamUserCardContent } from "@/features/prefecture-team/components/prefecture-team-user-card-content";
 import {
   getPrefectureTeamRanking,
@@ -8,6 +9,7 @@ import {
 } from "@/features/prefecture-team/loaders/prefecture-team-loaders";
 import { getProfile, getUser } from "@/features/user-profile/services/profile";
 import { getCurrentSeason } from "@/lib/loaders/seasons-loaders";
+import { cn } from "@/lib/utils";
 
 export async function PrefectureTeamCard() {
   const [user, currentSeason] = await Promise.all([
@@ -45,23 +47,13 @@ export async function PrefectureTeamCard() {
   }
 
   return (
-    <Link href="/prefecture-team">
-      <Card className="">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              都道府県チームパワー
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-400" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PrefectureTeamUserCardContent
-            prefectureRanking={userPrefectureRanking}
-            userContribution={userContribution}
-          />
-        </CardContent>
+    <Link href="/prefecture-team" className="block">
+      {/* 見出しはセクション側（TopSectionLayout）に出すため、カード内のタイトル行は置かない */}
+      <Card className={TOP_SECTION_CARD_CLASS_NAME}>
+        <PrefectureTeamUserCardContent
+          prefectureRanking={userPrefectureRanking}
+          userContribution={userContribution}
+        />
       </Card>
     </Link>
   );
@@ -69,24 +61,23 @@ export async function PrefectureTeamCard() {
 
 function SimplePrefectureTeamCard() {
   return (
-    <Link href="/prefecture-team">
-      <Card className="hover:shadow-md transition-shadow cursor-pointer border-2 border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
-        <CardContent className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-emerald-100 rounded-full p-2">
-              <MapPin className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <div className="font-bold text-gray-900">
-                都道府県チームパワー
-              </div>
-              <div className="text-xs text-gray-500">
-                あなたの都道府県のチームパワーを確認
-              </div>
-            </div>
+    <Link href="/prefecture-team" className="block">
+      {/* 見出しはセクション側に出すため、カード内は導線の説明文だけにする */}
+      <Card
+        className={cn(
+          TOP_SECTION_CARD_CLASS_NAME,
+          "hover:shadow-md cursor-pointer flex items-center justify-between",
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div className="bg-emerald-100 rounded-full p-2">
+            <MapPin className="w-5 h-5 text-emerald-600" />
           </div>
-          <ChevronRight className="w-5 h-5 text-gray-400" />
-        </CardContent>
+          <div className="text-sm text-gray-600">
+            あなたの都道府県のチームパワーを確認
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-400" />
       </Card>
     </Link>
   );

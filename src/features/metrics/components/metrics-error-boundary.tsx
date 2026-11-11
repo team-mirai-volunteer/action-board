@@ -1,6 +1,12 @@
 "use client";
 
 import React from "react";
+import {
+  TOP_SECTION_CARD_CLASS_NAME,
+  TopSectionLayout,
+} from "@/components/top/top-section-layout";
+import { Card } from "@/components/ui/card";
+import { METRICS_SECTION_TITLE } from "./metrics-constants";
 
 interface MetricsErrorBoundaryProps {
   children: React.ReactNode;
@@ -30,17 +36,14 @@ export class MetricsErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <section className="flex justify-center py-10 px-4">
-          <div className="w-full max-w-lg bg-white rounded-md shadow-custom p-6 py-8">
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-black mb-2">
-                チームみらいの活動状況🚀
-              </h2>
-              <div role="alert" className="text-red-600 text-sm">
+        <section className="py-12 md:py-16 bg-background">
+          <TopSectionLayout title={METRICS_SECTION_TITLE}>
+            <Card className={TOP_SECTION_CARD_CLASS_NAME}>
+              <div role="alert" className="text-center text-red-600 text-sm">
                 メトリクスの読み込みに失敗しました
               </div>
-            </div>
-          </div>
+            </Card>
+          </TopSectionLayout>
         </section>
       );
     }

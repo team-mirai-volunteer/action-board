@@ -18,21 +18,18 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       }),
     ).toBeVisible();
 
-    // 活動状況の表示を確認
-    await expect(
-      signedInPage.getByRole("heading", { name: /チームみらいの活動状況/ }),
-    ).toBeVisible();
-    await expect(signedInPage.getByText("サポーター数")).toBeVisible();
-
     // 注目ミッションの表示を確認
     await expect(
       signedInPage.getByRole("heading", { name: /注目ミッション/ }),
     ).toBeVisible();
 
-    // 活動タイムラインの表示を確認
+    // 統計系セクション（サポーター数・活動タイムライン）はトップでは非表示
+    await expect(
+      signedInPage.getByRole("heading", { name: /サポーター数/ }),
+    ).not.toBeVisible();
     await expect(
       signedInPage.getByRole("heading", { name: /活動タイムライン/ }),
-    ).toBeVisible();
+    ).not.toBeVisible();
 
     // 問い合わせフォームの表示を確認
     await expect(
@@ -62,6 +59,41 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
     await expect(
       signedInPage.getByRole("link", { name: "ご意見箱" }),
     ).toBeVisible();
+  });
+
+  test("ユーザーメニューから都道府県チームパワー・活動タイムラインに遷移できる", async ({
+    signedInPage,
+  }) => {
+    await assertAuthState(signedInPage, true);
+
+    // 都道府県チームパワー
+    await signedInPage.getByTestId("usermenubutton").click();
+    await signedInPage
+      .getByRole("menuitem", { name: "都道府県チームパワー" })
+      .click();
+    await expect(signedInPage).toHaveURL(/\/prefecture-team/, {
+      timeout: 10000,
+    });
+
+    // 活動タイムライン
+    await signedInPage.goto("/");
+    await signedInPage.getByTestId("usermenubutton").click();
+    await signedInPage
+      .getByRole("menuitem", { name: "活動タイムライン" })
+      .click();
+    await expect(signedInPage).toHaveURL(/\/activities/, { timeout: 10000 });
+
+    // ダッシュボードは外部リンク（新しいタブ）
+    await signedInPage.goto("/");
+    await signedInPage.getByTestId("usermenubutton").click();
+    const dashboard = signedInPage.getByRole("menuitem", {
+      name: "ダッシュボード",
+    });
+    await expect(dashboard).toHaveAttribute("target", "_blank");
+    await expect(dashboard).toHaveAttribute(
+      "href",
+      /lookerstudio\.google\.com/,
+    );
   });
 
   test("アカウントページ遷移が正常に動作する", async ({ signedInPage }) => {

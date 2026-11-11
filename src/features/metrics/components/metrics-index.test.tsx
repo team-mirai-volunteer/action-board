@@ -95,8 +95,13 @@ describe("Metrics", () => {
     it("メトリクスが正しくレンダリングされる", async () => {
       render(await Metrics());
 
-      expect(screen.getByText("チームみらいの活動状況🚀")).toBeInTheDocument();
-      expect(screen.getByText("サポーター数")).toBeInTheDocument();
+      // 見出しはカードの外のセクション見出しとして表示される
+      expect(screen.getByText("👥 サポーター数")).toBeInTheDocument();
+      // 旧タイトルとカード内の「サポーター数」ラベルは表示しない
+      expect(
+        screen.queryByText("チームみらいの活動状況🚀"),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText("サポーター数")).not.toBeInTheDocument();
     });
 
     it("サポーター数の数値が正しく表示される", async () => {
