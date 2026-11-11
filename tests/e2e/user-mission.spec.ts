@@ -18,11 +18,10 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       }),
     ).toBeVisible();
 
-    // 活動状況の表示を確認
+    // 活動状況(サポーター数)の表示を確認
     await expect(
-      signedInPage.getByRole("heading", { name: /チームみらいの活動状況/ }),
+      signedInPage.getByRole("heading", { name: /サポーター数/ }),
     ).toBeVisible();
-    await expect(signedInPage.getByText("サポーター数")).toBeVisible();
 
     // 注目ミッションの表示を確認
     await expect(

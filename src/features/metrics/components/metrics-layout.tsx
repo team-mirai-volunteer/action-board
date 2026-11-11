@@ -1,4 +1,8 @@
 import type React from "react";
+import {
+  TOP_SECTION_CARD_CLASS_NAME,
+  TopSectionLayout,
+} from "@/components/top/top-section-layout";
 import { Card } from "@/components/ui/card";
 
 interface MetricsLayoutProps {
@@ -11,7 +15,8 @@ interface MetricsLayoutProps {
  * メトリクス表示レイアウトコンポーネント
  *
  * メトリクス表示の共通レイアウトを提供します。
- * ヘッダー、タイトル、更新日時の表示を統一します。
+ * タイトルと更新日時はカードの外にセクション見出しとして出し、
+ * カードの幅・余白はトップページの活動タイムラインに揃えます。
  */
 export function MetricsLayout({
   children,
@@ -19,17 +24,11 @@ export function MetricsLayout({
   lastUpdated,
 }: MetricsLayoutProps) {
   return (
-    <section className="flex justify-center py-10 px-4">
-      <Card className="w-full max-w-lg bg-white rounded-md p-6 py-8">
-        {/* ヘッダー部分：タイトルと最終更新日時 */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-black mb-1">{title}</h2>
-          <p className="text-xs text-black">{lastUpdated} 更新</p>
-        </div>
-
+    <section className="py-12 md:py-16 bg-background">
+      <TopSectionLayout title={title} subtitle={`${lastUpdated} 更新`}>
         {/* メトリクス表示エリア */}
-        {children}
-      </Card>
+        <Card className={TOP_SECTION_CARD_CLASS_NAME}>{children}</Card>
+      </TopSectionLayout>
     </section>
   );
 }

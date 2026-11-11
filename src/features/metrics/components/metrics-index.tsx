@@ -8,6 +8,7 @@ import { getTikTokStatsSummary } from "@/features/tiktok-stats/loaders/tiktok-st
 import { getYouTubeStatsSummary } from "@/features/youtube-stats/loaders/youtube-stats-loaders";
 import { formatUpdateTime } from "@/lib/utils/metrics-formatter";
 import { AchievementMetric } from "./achievement-metric";
+import { METRICS_SECTION_TITLE } from "./metrics-constants";
 import { MetricsLayout } from "./metrics-layout";
 import { SupporterMetric } from "./supporter-metric";
 import { VideoMetric } from "./video-metric";
@@ -89,7 +90,7 @@ export async function Metrics() {
     : process.env.FALLBACK_UPDATE_DATE || "2025.07.03 02:20";
 
   return (
-    <MetricsLayout title="チームみらいの活動状況🚀" lastUpdated={lastUpdated}>
+    <MetricsLayout title={METRICS_SECTION_TITLE} lastUpdated={lastUpdated}>
       {/* サポーター数 */}
       <SupporterMetric
         data={supporterData}
