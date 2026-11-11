@@ -24,6 +24,14 @@ import { generateRootMetadata } from "@/lib/utils/metadata";
 // メタデータ生成を外部関数に委譲
 export const generateMetadata = generateRootMetadata;
 
+/**
+ * トップページ下部の統計系セクション（都道府県チームパワー・サポーター数・活動タイムライン）の表示フラグ
+ *
+ * これらはユーザーメニュー（ダッシュボード / 都道府県チームパワー / 活動タイムライン）から
+ * 各ページへ遷移できるため、トップでは非表示にしている。true に戻せば従来どおり表示される。
+ */
+const SHOW_STATS_SECTIONS = false;
+
 export default async function Home({
   searchParams,
 }: {
@@ -109,22 +117,28 @@ export default async function Home({
         />
       </section>
 
-      {/* 都道府県対抗ランキング導線（ログイン時のみ） */}
-      {user != null && (
-        <section className="py-12 md:py-16 bg-background">
-          <TopSectionLayout title="📍 都道府県チームパワー">
-            <PrefectureTeamCard />
-          </TopSectionLayout>
-        </section>
+      {/* 統計系セクション（都道府県チームパワー・サポーター数・活動タイムライン）
+          現在はユーザーメニューからの導線に集約しているためトップでは非表示 */}
+      {SHOW_STATS_SECTIONS && (
+        <>
+          {/* 都道府県対抗ランキング導線（ログイン時のみ） */}
+          {user != null && (
+            <section className="py-12 md:py-16 bg-background">
+              <TopSectionLayout title="📍 都道府県チームパワー">
+                <PrefectureTeamCard />
+              </TopSectionLayout>
+            </section>
+          )}
+
+          {/* メトリクスセクション */}
+          <MetricsWithSuspense />
+
+          {/* アクティビティセクション */}
+          <section className="py-12 md:py-16 bg-background">
+            <Activities />
+          </section>
+        </>
       )}
-
-      {/* メトリクスセクション */}
-      <MetricsWithSuspense />
-
-      {/* アクティビティセクション */}
-      <section className="py-12 md:py-16 bg-background">
-        <Activities />
-      </section>
     </div>
   );
 }
