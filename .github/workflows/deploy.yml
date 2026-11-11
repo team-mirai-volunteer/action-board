@@ -3,6 +3,9 @@ name: Migrate DB then Deploy
 on:
   push:
     branches: [main, develop]
+  # push イベントが取りこぼされた場合などに手動で再実行できるようにする
+  # （main で実行すれば production、develop で実行すれば staging にデプロイされる）
+  workflow_dispatch:
 
 jobs:
   migrate-and-deploy:
