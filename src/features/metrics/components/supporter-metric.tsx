@@ -22,25 +22,21 @@ export function SupporterMetric({
   const supporterIncrease = data?.last24hCount ?? fallbackIncrease;
 
   return (
-    <div className="py-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-base text-black">サポーター数</p>
-        </div>
-        <div className="text-right">
-          {/* 総サポーター数（大きく表示） */}
-          <p className="text-2xl font-black text-gray-800">
-            {formatNumber(supporterCount)}
-            <span className="text-lg">人</span>
-          </p>
-          {/* 24時間の増加数 */}
-          <p className="text-xs text-gray-600">
-            1日で{" "}
-            <span className="font-bold text-teal-700">
-              +{formatNumber(supporterIncrease)}人
-            </span>
-          </p>
-        </div>
+    <div>
+      {/* 「サポーター数」のラベルはセクション見出しと重複するため置かず、数値を中央寄せにする */}
+      <div className="text-center">
+        {/* 総サポーター数（大きく表示） */}
+        <p className="text-2xl font-black text-gray-800">
+          {formatNumber(supporterCount)}
+          <span className="text-lg">人</span>
+        </p>
+        {/* 24時間の増加数 */}
+        <p className="text-xs text-gray-600">
+          1日で{" "}
+          <span className="font-bold text-teal-700">
+            +{formatNumber(supporterIncrease)}人
+          </span>
+        </p>
       </div>
       <div className="mt-3 text-end">
         <a

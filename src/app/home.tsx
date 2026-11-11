@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import NoticeBoardAlert from "@/components/common/notice-board-alert";
 import Hero from "@/components/top/hero";
 import { PrefectureTeamCard } from "@/components/top/prefecture-team-card";
+import { TopSectionLayout } from "@/components/top/top-section-layout";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
 import FirstMissions from "@/features/missions/components/first-missions";
@@ -85,23 +86,6 @@ export default async function Home({
       {/* 注意書き */}
       <NoticeBoardAlert />
 
-      {/* 都道府県対抗ランキング導線 */}
-      {user != null && (
-        <section className="py-4 md:py-8">
-          <div className="w-full max-w-lg mx-auto px-4">
-            <PrefectureTeamCard />
-          </div>
-        </section>
-      )}
-
-      {/* メトリクスセクション */}
-      <MetricsWithSuspense />
-
-      {/* アクティビティセクション */}
-      <section className="py-12 md:py-16 bg-background">
-        <Activities />
-      </section>
-
       {/* ランキングセクション */}
       <section className="md:py-16 bg-background">
         <RankingSection />
@@ -123,6 +107,23 @@ export default async function Home({
           showAchievedMissions={true}
           id="missions"
         />
+      </section>
+
+      {/* 都道府県対抗ランキング導線（ログイン時のみ） */}
+      {user != null && (
+        <section className="py-12 md:py-16 bg-background">
+          <TopSectionLayout title="📍 都道府県チームパワー">
+            <PrefectureTeamCard />
+          </TopSectionLayout>
+        </section>
+      )}
+
+      {/* メトリクスセクション */}
+      <MetricsWithSuspense />
+
+      {/* アクティビティセクション */}
+      <section className="py-12 md:py-16 bg-background">
+        <Activities />
       </section>
     </div>
   );

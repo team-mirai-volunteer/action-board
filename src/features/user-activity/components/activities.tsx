@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { TOP_SECTION_CARD_CLASS_NAME } from "@/components/top/top-section-layout";
 import { Card } from "@/components/ui/card";
 import { ActivityTimeline } from "@/features/user-activity/components/activity-timeline";
 import { getGlobalActivityTimeline } from "@/features/user-activity/loaders/timeline-loaders";
@@ -18,7 +19,7 @@ export default async function Activities() {
             リアルタイムで更新される活動記録
           </p>
         </div>
-        <Card className="max-w-lg rounded-xl shadow-sm transition-all duration-300 p-8 bg-white">
+        <Card className={TOP_SECTION_CARD_CLASS_NAME}>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <ActivityTimeline timeline={timeline} hasNext={false} />
