@@ -11,6 +11,10 @@ categories:
     title: チームみらいのことを知ろう
     sort_no: 200
     category_kbn: DEFAULT
+  - slug: digital-democracy
+    title: デジタル民主主義について知る・意見を寄せる
+    sort_no: 250
+    category_kbn: DEFAULT
   - slug: join-community
     title: コミュニティに参加しよう
     sort_no: 300
