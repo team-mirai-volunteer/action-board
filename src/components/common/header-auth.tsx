@@ -13,6 +13,10 @@ import { OnboardingButton } from "@/features/onboarding/components/onboarding-bu
 import MyAvatar from "@/features/user-profile/components/my-avatar";
 import { getUser } from "@/features/user-profile/services/profile";
 
+/** ユーザーメニューの「ダッシュボード」の遷移先（Looker Studio） */
+const DASHBOARD_URL =
+  "https://lookerstudio.google.com/u/0/reporting/e4efc74f-051c-4815-87f1-e4b5e93a3a8c/page/p_p5421pqhtd";
+
 export default async function AuthButton() {
   const user = await getUser();
 
@@ -36,6 +40,17 @@ export default async function AuthButton() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/users/${user.id}`}>マイページ</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
+              ダッシュボード
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/prefecture-team">都道府県チームパワー</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/activities">活動タイムライン</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <OnboardingButton
