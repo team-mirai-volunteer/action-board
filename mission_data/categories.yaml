@@ -3,6 +3,10 @@ categories:
     title: デジタル民主主義について知る・意見を寄せる
     sort_no: 10
     category_kbn: DEFAULT
+  - slug: digital-democracy-participate
+    title: デジタル民主主義の場に参加する
+    sort_no: 20
+    category_kbn: DEFAULT
   - slug: learn-teammirai-supporter
     title: サポーター活動について知ろう
     sort_no: 50
