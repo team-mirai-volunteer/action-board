@@ -118,6 +118,19 @@ describe("BaseRanking", () => {
       expect(screen.queryByTestId("link")).not.toBeInTheDocument();
     });
 
+    it("compactがtrueの場合、カードが親の高さに合わせて伸び、空状態は中央寄せになる", () => {
+      render(
+        <BaseRanking title="テストランキング" compact>
+          {[]}
+        </BaseRanking>,
+      );
+
+      expect(screen.getByTestId("card")).toHaveClass("h-full");
+      expect(screen.getByText("まだ達成者がいません")).toHaveClass(
+        "justify-center",
+      );
+    });
+
     it("showDetailedInfoのデフォルト値はfalse", () => {
       render(
         <BaseRanking title="テストランキング" detailsHref="/test-details">

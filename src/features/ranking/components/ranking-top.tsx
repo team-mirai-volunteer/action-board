@@ -10,6 +10,7 @@ interface RankingTopProps {
   showDetailedInfo?: boolean; // 詳細情報を表示するかどうか
   period?: RankingPeriod;
   seasonId?: string; // シーズン指定
+  compact?: boolean; // トップページ用のコンパクト表示
 }
 
 export async function RankingTop({
@@ -18,6 +19,7 @@ export async function RankingTop({
   showDetailedInfo = false,
   period = "all",
   seasonId,
+  compact = false,
 }: RankingTopProps) {
   const rankings = await getRanking(limit, period, seasonId);
 
@@ -29,9 +31,10 @@ export async function RankingTop({
       detailsHref="/ranking"
       showDetailedInfo={showDetailedInfo}
       columns={3}
+      compact={compact}
     >
       {rankings.map((user) => (
-        <RankingItem key={user.user_id} user={user} />
+        <RankingItem key={user.user_id} user={user} compact={compact} />
       ))}
     </BaseRanking>
   );

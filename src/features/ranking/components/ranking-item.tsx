@@ -15,6 +15,8 @@ interface RankingItemProps {
     name: string;
   };
   badgeText?: string;
+  /** トップページ用のコンパクト表示（行の上下余白を詰める） */
+  compact?: boolean;
 }
 
 export function RankingItem({
@@ -23,17 +25,23 @@ export function RankingItem({
   showDetailedInfo = false,
   mission,
   badgeText,
+  compact = false,
 }: RankingItemProps) {
   return (
     <Link
       href={`/users/${user.user_id}`}
-      className="grid grid-cols-subgrid col-span-full items-center gap-4 py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
+      className={
+        compact
+          ? "grid grid-cols-subgrid col-span-full items-center gap-3 py-2 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
+          : "grid grid-cols-subgrid col-span-full items-center gap-4 py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
+      }
     >
       {getRankIcon(user.rank ?? 0)}
-      <div className="min-w-0 pl-1">
+      <div className="min-w-0 pl-1 overflow-hidden">
         <UserNameWithBadge
           name={user.name ?? ""}
           membership={user.party_membership ?? null}
+          className="max-w-full"
           nameClassName="font-bold text-lg"
           badgeSize={20}
         />
@@ -60,7 +68,7 @@ export function RankingItem({
           </Badge>
         </>
       ) : (
-        <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold">
+        <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full w-fit justify-self-end font-bold whitespace-nowrap">
           {formatNumberJa(user.xp ?? 0)}pt
         </Badge>
       )}
