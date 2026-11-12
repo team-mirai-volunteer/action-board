@@ -68,6 +68,20 @@ missions:
     is_featured: false
     is_hidden: false
     ogp_image_url: null
+  - slug: answer-ai-interview
+    title: AIインタビューに回答しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_answer-ai-interview.png
+    content: |-
+      気になるテーマを選んで、AIインタビューに回答してみましょう。AIからの質問に沿って、普段の生活で感じていることや、ご自身の経験をもとに考えたことを、ぜひご自身の言葉で聞かせてください。
+
+      <a target="_blank" rel="noopener noreferrer" href="https://interview.team-mir.ai/">募集中のAIインタビューを見る</a>
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 回答したテーマ名
+    ogp_image_url: null
   - slug: check-mirai-gikai
     title: みらい議会を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
