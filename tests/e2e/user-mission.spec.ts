@@ -18,6 +18,14 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       }),
     ).toBeVisible();
 
+    // サポーター向けリンク（ログイン時のみ）の表示を確認
+    await expect(
+      signedInPage.getByRole("link", { name: /サポーターポータル/ }),
+    ).toBeVisible();
+    await expect(
+      signedInPage.getByRole("link", { name: /イベントカレンダー/ }),
+    ).toBeVisible();
+
     // 注目ミッションの表示を確認
     await expect(
       signedInPage.getByRole("heading", { name: /注目ミッション/ }),
