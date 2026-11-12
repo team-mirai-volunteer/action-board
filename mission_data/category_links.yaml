@@ -37,14 +37,14 @@ category_links:
         sort_no: 400
   - category_slug: digital-democracy
     missions:
+      - mission_slug: answer-ai-interview
+        sort_no: 50
       - mission_slug: check-mirai-gikai
         sort_no: 100
       - mission_slug: check-mirai-marumie-seijishikin
         sort_no: 200
       - mission_slug: read-manifest
         sort_no: 300
-      - mission_slug: answer-ai-interview
-        sort_no: 400
   - category_slug: digital-democracy-participate
     missions:
       - mission_slug: join-event
