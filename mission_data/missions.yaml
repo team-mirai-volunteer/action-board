@@ -82,6 +82,20 @@ missions:
     is_hidden: false
     artifact_label: 回答したテーマ名
     ogp_image_url: null
+  - slug: give-event-feedback
+    title: 参加者アンケートに回答しよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_give-event-feedback.png
+    content: |-
+      参加したイベントのアンケートに回答して、感想や改善してほしい点を主催者に伝えてみましょう。
+
+      <a target="_blank" rel="noopener noreferrer" href="https://docs.google.com/forms/d/e/1FAIpQLSfy1FuvufdJZL6AHqfx4ts5NIRgiJFmUFvgEoSwC_XSkGFsSQ/viewform">参加後アンケートを開く</a>
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 回答したイベントID（不明な場合はイベント名と開催日）
+    ogp_image_url: null
   - slug: check-mirai-gikai
     title: みらい議会を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg

@@ -51,6 +51,8 @@ category_links:
         sort_no: 100
       - mission_slug: help-event-operation
         sort_no: 200
+      - mission_slug: give-event-feedback
+        sort_no: 300
   - category_slug: join-community
     missions:
       - mission_slug: join-planning-team
