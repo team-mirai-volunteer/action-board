@@ -99,7 +99,7 @@ export default async function Home({
       {user != null && <SupporterQuickLinks />}
 
       {/* ランキングセクション */}
-      <section className="md:py-16 bg-background">
+      <section className="md:py-8 bg-background">
         <RankingSection />
       </section>
       {/* はじめのミッションセクション（すべて達成済みならセクションごと非表示） */}
