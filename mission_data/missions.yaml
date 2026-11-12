@@ -83,7 +83,7 @@ missions:
     artifact_label: 回答したテーマ名
     ogp_image_url: null
   - slug: give-event-feedback
-    title: デジタル民主主義の場参加者アンケートに回答しよう
+    title: 参加者アンケートに回答しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_give-event-feedback.png
     content: |-
       参加したイベントのアンケートに回答して、感想や改善してほしい点を主催者に伝えてみましょう。
