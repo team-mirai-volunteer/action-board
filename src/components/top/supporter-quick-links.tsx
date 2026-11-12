@@ -23,7 +23,8 @@ export const SUPPORTER_QUICK_LINKS = [
 export function SupporterQuickLinks() {
   return (
     <section className="py-6 md:py-10 bg-background">
-      <div className="w-full max-w-2xl mx-auto px-4">
+      {/* 横幅はトップのランキング（RankingSection）と揃える */}
+      <div className="w-full max-w-4xl mx-auto px-4">
         <div className="grid grid-cols-2 gap-3 md:gap-4">
           {SUPPORTER_QUICK_LINKS.map((link) => (
             <a

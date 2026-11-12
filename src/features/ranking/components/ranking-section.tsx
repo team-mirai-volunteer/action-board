@@ -11,8 +11,8 @@ import { RankingTop } from "@/features/ranking/components/ranking-top";
 
 export default async function RankingSection() {
   return (
-    // 横幅・左右位置・カード間隔は上部のサポーター向けリンクカード（SupporterQuickLinks）に揃える
-    <div className="w-full max-w-2xl mx-auto px-4">
+    // 横幅・左右位置・カード間隔は上部のサポーター向けリンクカード（SupporterQuickLinks）と揃える（max-w-4xl）
+    <div className="w-full max-w-4xl mx-auto px-4">
       <h2 className="text-2xl md:text-3xl text-gray-900 mb-4 text-center">
         🏅アクションリーダー
       </h2>
