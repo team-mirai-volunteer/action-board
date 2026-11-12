@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import NoticeBoardAlert from "@/components/common/notice-board-alert";
 import Hero from "@/components/top/hero";
 import { PrefectureTeamCard } from "@/components/top/prefecture-team-card";
+import { SupporterQuickLinks } from "@/components/top/supporter-quick-links";
 import { TopSectionLayout } from "@/components/top/top-section-layout";
 import { MetricsWithSuspense } from "@/features/metrics/components/metrics-with-suspense";
 import FeaturedMissions from "@/features/missions/components/featured-missions";
@@ -93,6 +94,9 @@ export default async function Home({
       </section>
       {/* 注意書き */}
       <NoticeBoardAlert />
+
+      {/* サポーター向けリンク（サポーターポータル / イベントカレンダー、ログイン時のみ） */}
+      {user != null && <SupporterQuickLinks />}
 
       {/* ランキングセクション */}
       <section className="md:py-16 bg-background">
