@@ -10,6 +10,8 @@ interface BaseRankingProps {
   showDetailedInfo?: boolean;
   detailsLinkText?: string;
   columns?: 3 | 4;
+  /** トップページ用のコンパクト表示（余白を詰め、カードの高さを親に合わせる） */
+  compact?: boolean;
 }
 
 export const BaseRanking: React.FC<BaseRankingProps> = ({
@@ -19,11 +21,26 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
   showDetailedInfo = false,
   detailsLinkText = "トップ100を見る",
   columns = 4,
+  compact = false,
 }) => {
   return (
-    <div className="flex flex-col gap-6">
-      <Card className="rounded-xl transition-all duration-300 p-8">
-        <h2 className="text-xl md:text-2xl text-gray-900 mb-4 text-center">
+    <div
+      className={compact ? "flex flex-col gap-4 h-full" : "flex flex-col gap-6"}
+    >
+      <Card
+        className={
+          compact
+            ? "rounded-xl transition-all duration-300 p-5 md:p-6 h-full flex flex-col"
+            : "rounded-xl transition-all duration-300 p-8"
+        }
+      >
+        <h2
+          className={
+            compact
+              ? "text-xl md:text-2xl text-gray-900 mb-2 text-center"
+              : "text-xl md:text-2xl text-gray-900 mb-4 text-center"
+          }
+        >
           {title}
         </h2>
         {children.length > 0 ? (
@@ -37,7 +54,15 @@ export const BaseRanking: React.FC<BaseRankingProps> = ({
             {children}
           </div>
         ) : (
-          <div className="text-gray-500 text-center">まだ達成者がいません</div>
+          <div
+            className={
+              compact
+                ? "text-gray-500 text-center flex-1 flex items-center justify-center min-h-24"
+                : "text-gray-500 text-center"
+            }
+          >
+            まだ達成者がいません
+          </div>
         )}
       </Card>
 
