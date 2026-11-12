@@ -94,7 +94,7 @@ missions:
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: 回答したイベントID
+    artifact_label: 回答したイベントID（不明な場合はイベント名と開催日）
     ogp_image_url: null
   - slug: check-mirai-gikai
     title: みらい議会を見てみよう
