@@ -86,7 +86,7 @@ missions:
     title: 「みんなのRCV」で投票しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261117_ol_try-rcv.png
     content: |-
-      イベント中やSNSなどで共有された「みんなのRCV」のリンクから、自分の考えに近い順に選択肢を並べて投票してみましょう。
+      「みんなのRCV」は、選択肢を自分の希望する順番に並べて投票できるツールです。気になるテーマの投票に参加してみましょう。
 
       <a target="_blank" rel="noopener noreferrer" href="https://rcv.team-mir.ai/">「みんなのRCV」を開く</a>
     difficulty: 2
