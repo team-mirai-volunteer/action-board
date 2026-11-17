@@ -146,6 +146,19 @@ missions:
     is_featured: false
     is_hidden: false
     ogp_image_url: null
+  - slug: feedback-mirai-marumie-seijishikin
+    title: まるみえ政治資金を見て気づいたことや意見を伝えよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
+    content: |-
+      <a target="_blank" rel="noopener noreferrer" href="https://marumie.team-mir.ai/o/team-mirai">「みらいまる見え政治資金」</a>で、政治資金がどのように使われているのかを見てみましょう。
+
+      実際に使ってみて気づいたことや、わかりにくかった点、「もっとこんな情報が見たい！」といった改善アイデアをぜひ教えてください。
+    difficulty: 3
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_propose-manifest-idobata.svg
