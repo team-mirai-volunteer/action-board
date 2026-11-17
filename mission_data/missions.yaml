@@ -98,7 +98,7 @@ missions:
     ogp_image_url: null
   - slug: read-interview-findings
     title: AIインタビューに寄せられた意見を読んでみよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_answer-ai-interview.png
+    icon_url: /img/mission-icons/actionboard_icon_work_20261117_ol_read-interview-findings.png
     content: |-
       気になるテーマを選んで、AIインタビューに寄せられたさまざまな意見を読んでみましょう。
 
