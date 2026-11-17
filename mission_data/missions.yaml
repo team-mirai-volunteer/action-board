@@ -96,6 +96,22 @@ missions:
     is_hidden: false
     artifact_label: 投票したお題
     ogp_image_url: null
+  - slug: read-interview-findings
+    title: AIインタビューに寄せられた意見を読んでみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_answer-ai-interview.png
+    content: |-
+      気になるテーマを選んで、AIインタビューに寄せられたさまざまな意見を読んでみましょう。
+
+      自分と近い考え方だけでなく、異なる意見や新しい視点にも触れながら、ほかの人がどのように考えているのかを知ってみましょう。
+
+      <a target="_blank" rel="noopener noreferrer" href="https://interview.team-mir.ai/">公開された結果を見る</a>
+    difficulty: 1
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 回答を見たテーマ名
+    ogp_image_url: null
   - slug: give-event-feedback
     title: 参加者アンケートに回答しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_give-event-feedback.png
