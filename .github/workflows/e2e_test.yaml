@@ -6,7 +6,8 @@ jobs:
   test:
     name: E2E Tests
     timeout-minutes: 20
-    runs-on: ubuntu-latest
+    # ubuntu-latest が Ubuntu 26.04 に切り替わり Playwright がブラウザを入れられなくなったため 24.04 に固定
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
