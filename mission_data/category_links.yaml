@@ -39,6 +39,8 @@ category_links:
     missions:
       - mission_slug: answer-ai-interview
         sort_no: 50
+      - mission_slug: try-rcv
+        sort_no: 60
       - mission_slug: check-mirai-gikai
         sort_no: 100
       - mission_slug: check-mirai-marumie-seijishikin
