@@ -11,6 +11,9 @@ mission_main_links:
   - mission_slug: check-mirai-marumie-seijishikin
     label: みらいまる見え政治資金を見る
     link: https://marumie.team-mir.ai/o/team-mirai
+  - mission_slug: feedback-mirai-marumie-seijishikin
+    label: ご意見フォームに回答する（1分ほど・匿名）
+    link: https://docs.google.com/forms/d/e/1FAIpQLSc88y4T4a3fXjKCmetspAQeYAumQgR6SnB9BvLF3dLFvDBIAA/viewform
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
