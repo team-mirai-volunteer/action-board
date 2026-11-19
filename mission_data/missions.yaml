@@ -172,7 +172,7 @@ missions:
     ogp_image_url: null
   - slug: view-event-template
     title: デジタル民主主義の場で使えるスライドのひな形を見てみよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_help-event-operation.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_view-event-template.png
     content: スライドのひな形を開いて、当日の進め方や参加者への問いかけを見てみましょう。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
