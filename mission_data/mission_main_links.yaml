@@ -14,6 +14,9 @@ mission_main_links:
   - mission_slug: feedback-mirai-marumie-seijishikin
     label: ご意見フォームに回答する（1分ほど・匿名）
     link: https://docs.google.com/forms/d/e/1FAIpQLSc88y4T4a3fXjKCmetspAQeYAumQgR6SnB9BvLF3dLFvDBIAA/viewform
+  - mission_slug: feedback-mirai-okr
+    label: チームみらいのOKRを見る
+    link: https://okr.team-mir.ai/
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
