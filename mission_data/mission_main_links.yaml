@@ -18,11 +18,14 @@ mission_main_links:
     label: ご意見フォームに回答する
     link: https://docs.google.com/forms/d/e/1FAIpQLSdn5HLDaFBB3E3oKKTBBH_D661Tf-Dx2KqbNa3szywhPM1dsg/viewform
   - mission_slug: watch-host-guidance
-    label: ガイダンス①の録画を見る
+    label: ガイダンスの録画を見る
     link: https://us06web.zoom.us/rec/component-page?accessLevel=meeting&action=viewdetailpage&sharelevel=meeting&useWhichPasswd=meeting&requestFrom=pwdCheck&clusterId=us06&componentName=need-password&meetingId=yP7WrAygsJsn-M_BNhTf0aeUvi_a3wdfoYcvr33cQqniSFcDqU430VfgonTxnwEv.LvsdlnOktKEpfT3e&originRequestUrl=https%3A%2F%2Fus06web.zoom.us%2Frec%2Fshare%2FuKg7wofHWBW6d6QXqCiZQdx8aUJRc9NVBHUXDpfkREw6VP3eMGoB10IYRdY64_LB.cwQQ5eN9WA0J-9Jx
   - mission_slug: view-event-template
     label: 体験会のひな形を開く
     link: https://docs.google.com/presentation/d/18mxRMo5K7KUsV9MR5qrZVRsnR8q0gIdt_syPAZtqjJk/edit?slide=id.p1#slide=id.p1
+  - mission_slug: host-digital-democracy-event
+    label: 開催報告フォームを開く
+    link: https://forms.gle/jpmhDXN4J4TL3WmT8
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
