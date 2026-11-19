@@ -17,6 +17,9 @@ mission_main_links:
   - mission_slug: feedback-mirai-okr
     label: ご意見フォームに回答する
     link: https://docs.google.com/forms/d/e/1FAIpQLSdn5HLDaFBB3E3oKKTBBH_D661Tf-Dx2KqbNa3szywhPM1dsg/viewform
+  - mission_slug: view-event-template
+    label: 体験会のひな形を開く
+    link: https://docs.google.com/presentation/d/18mxRMo5K7KUsV9MR5qrZVRsnR8q0gIdt_syPAZtqjJk/edit?slide=id.p1#slide=id.p1
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
