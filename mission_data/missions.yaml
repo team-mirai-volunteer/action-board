@@ -195,7 +195,7 @@ missions:
     ogp_image_url: null
   - slug: host-digital-democracy-event
     title: デジタル民主主義の場を開こう
-    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-event.svg
+    icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_host-digital-democracy-event.png
     content: AIインタビューや「みんなのRCV」などのデジタル民主主義のツールを使う体験会、イベントを開いてみましょう。終了後に開催報告を提出してください。
     difficulty: 5
     required_artifact_type: TEXT
