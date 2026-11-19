@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function NoticeBoardAlert() {
   return (
     <div className="flex justify-center w-full">
@@ -34,12 +32,11 @@ export default function NoticeBoardAlert() {
           </svg>
           <div className="flex-1 min-w-0">
             <span className="wrap-break-word text-sm">
-              新シーズンが開始しました！ <br />
-              レベルやランキングはシーズンごとにリセットされます。
-              前回のランキングは
-              <Link href="/seasons/season2/ranking" className="underline">
-                アーカイブからご覧いただけます。
-              </Link>
+              <strong>
+                デジタル民主主義に参加できるミッションが増えました！
+              </strong>
+              <br />
+              AIインタビューに答える、イベントに参加する、自分で場を開く。自分に合ったミッションから始めてみましょう。
             </span>
           </div>
         </div>
