@@ -63,6 +63,8 @@ category_links:
         sort_no: 300
   - category_slug: digital-democracy-host
     missions:
+      - mission_slug: watch-host-guidance
+        sort_no: 50
       - mission_slug: view-event-template
         sort_no: 100
   - category_slug: join-community
