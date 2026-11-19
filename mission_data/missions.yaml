@@ -170,6 +170,28 @@ missions:
     is_featured: false
     is_hidden: false
     ogp_image_url: null
+  - slug: watch-host-guidance
+    title: 「デジタル民主主義の場を開く」ガイダンス動画を見よう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_watch-host-guidance.png
+    content: |-
+      ガイダンス①の動画で、AIインタビューや「みんなのRCV」を使った体験会の開き方を確認しましょう。資料は<a target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1bAzXijPLmTZbXZ3yO5_HhtM8fkqDbAso/view">こちら</a>
+      ※録画の視聴パスワード: Txe7$nq#
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
+  - slug: view-event-template
+    title: デジタル民主主義の場で使えるスライドのひな形を見てみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_view-event-template.png
+    content: スライドのひな形を開いて、当日の進め方や参加者への問いかけを見てみましょう。
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_propose-manifest-idobata.svg
