@@ -147,7 +147,7 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: feedback-mirai-marumie-seijishikin
-    title: OKRを見て気づいたことや意見を伝えよう
+    title: みらい まる見え政治資金を見て意見を伝えよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261117_ol_feedback-mirai-marumie-seijishikin.png
     content: |-
       <a target="_blank" rel="noopener noreferrer" href="https://marumie.team-mir.ai/o/team-mirai">「みらい まる見え政治資金」</a>で、政治資金がどのように使われているのかを見てみましょう。
@@ -160,18 +160,15 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: feedback-mirai-okr
-    title: チームみらいのOKRを見て気づいたことや意見を伝えよう
+    title: OKRを見て気づいたことや意見を伝えよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_feedback-mirai-okr.png
     content: |-
       チームみらいが何を目指し、どこまで進んでいるかをまとめた<a target="_blank" rel="noopener noreferrer" href="https://okr.team-mir.ai/">OKR</a>を見てみて、気づいたことや「ここがわかりにくい」「もっとこうしてほしい」という意見を伝えましょう。
-
-      ページ下部の「フィードバックを送る」ボタンから送れます。
     difficulty: 3
-    required_artifact_type: TEXT
+    required_artifact_type: LINK_ACCESS
     max_achievement_count: null
     is_featured: false
     is_hidden: false
-    artifact_label: 送ったフィードバックの内容
     ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
