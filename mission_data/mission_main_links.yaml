@@ -9,7 +9,7 @@ mission_main_links:
     label: みらい議会を見る
     link: https://gikai.team-mir.ai
   - mission_slug: check-mirai-marumie-seijishikin
-    label: みらいまる見え政治資金を見る
+    label: みらい まる見え政治資金を見る
     link: https://marumie.team-mir.ai/o/team-mirai
   - mission_slug: feedback-mirai-marumie-seijishikin
     label: ご意見フォームに回答する（1分ほど・匿名）

@@ -137,9 +137,9 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: check-mirai-marumie-seijishikin
-    title: みらいまる見え政治資金を見てみよう
+    title: みらい まる見え政治資金を見てみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_link-official-site.svg
-    content: みらいまる見え政治資金は、政治のお金の入りと出を、図や一覧でわかりやすく見られるサービスです。どこから入り、何に使われたかをひと目で確認できます。気になる月を開いて、実際の使い道を見てみよう。
+    content: みらい まる見え政治資金は、政治のお金の入りと出を、図や一覧でわかりやすく見られるサービスです。どこから入り、何に使われたかをひと目で確認できます。気になる月を開いて、実際の使い道を見てみよう。
     difficulty: 1
     required_artifact_type: LINK_ACCESS
     max_achievement_count: 1
@@ -147,10 +147,10 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: feedback-mirai-marumie-seijishikin
-    title: まるみえ政治資金を見て意見を伝えよう
+    title: みらい まる見え政治資金を見て意見を伝えよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261117_ol_feedback-mirai-marumie-seijishikin.png
     content: |-
-      <a target="_blank" rel="noopener noreferrer" href="https://marumie.team-mir.ai/o/team-mirai">「みらいまる見え政治資金」</a>で、政治資金がどのように使われているのかを見てみましょう。
+      <a target="_blank" rel="noopener noreferrer" href="https://marumie.team-mir.ai/o/team-mirai">「みらい まる見え政治資金」</a>で、政治資金がどのように使われているのかを見てみましょう。
 
       実際に使ってみて気づいたことや、わかりにくかった点、「もっとこんな情報が見たい！」といった改善アイデアをぜひ教えてください。
     difficulty: 3
