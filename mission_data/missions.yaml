@@ -170,6 +170,16 @@ missions:
     is_featured: false
     is_hidden: false
     ogp_image_url: null
+  - slug: view-event-template
+    title: デジタル民主主義の場で使えるスライドのひな形を見てみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_help-event-operation.svg
+    content: スライドのひな形を開いて、当日の進め方や参加者への問いかけを見てみましょう。
+    difficulty: 1
+    required_artifact_type: LINK_ACCESS
+    max_achievement_count: 1
+    is_featured: false
+    is_hidden: false
+    ogp_image_url: null
   - slug: propose-manifest-idobata
     title: チームみらいマニフェストに提案をしてみよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_propose-manifest-idobata.svg
