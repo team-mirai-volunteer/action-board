@@ -68,7 +68,7 @@ category_links:
       - mission_slug: view-event-template
         sort_no: 100
       - mission_slug: host-digital-democracy-event
-        sort_no: 200
+        sort_no: 10
   - category_slug: join-community
     missions:
       - mission_slug: join-planning-team
