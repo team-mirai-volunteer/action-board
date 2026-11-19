@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { CopyrightSection } from "@/components/footer/copyright-section";
-import { FeedbackSection } from "@/components/footer/feedback-section";
 import { LogoSection } from "@/components/footer/logo-section";
 import { SeasonsList } from "@/components/footer/seasons-list";
 
@@ -8,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="w-full mt-16 pt-16">
       <div className="">
-        <FeedbackSection />
+        {/* ご意見箱セクションは一時的に非表示（@/components/footer/feedback-section） */}
       </div>
 
       <div className="relative w-full bg-linear-to-b from-[#64d8c6] to-[#bcecd3] overflow-hidden">

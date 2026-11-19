@@ -39,20 +39,10 @@ test.describe("アクションボード（Web版）のe2eテスト", () => {
       signedInPage.getByRole("heading", { name: /活動タイムライン/ }),
     ).not.toBeVisible();
 
-    // 問い合わせフォームの表示を確認
+    // ご意見箱セクションは非表示
     await expect(
       signedInPage.getByRole("heading", { name: "ご意見箱" }),
-    ).toBeVisible();
-    await expect(
-      signedInPage.getByRole("link", {
-        name: "ポスターマップへのご意見フォーム",
-      }),
-    ).toBeVisible();
-    await expect(
-      signedInPage.getByRole("link", {
-        name: "アクションボードへのご意見フォーム",
-      }),
-    ).toBeVisible();
+    ).not.toBeVisible();
 
     // フッターの表示を確認
     await expect(
