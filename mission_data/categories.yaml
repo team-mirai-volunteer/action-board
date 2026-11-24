@@ -11,6 +11,10 @@ categories:
     title: デジタル民主主義の場を開く
     sort_no: 30
     category_kbn: DEFAULT
+  - slug: gather-by-area-theme
+    title: 地域・テーマで集まる
+    sort_no: 40
+    category_kbn: DEFAULT
   - slug: learn-teammirai-supporter
     title: サポーター活動について知ろう
     sort_no: 50
