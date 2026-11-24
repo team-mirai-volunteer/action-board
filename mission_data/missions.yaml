@@ -451,6 +451,22 @@ missions:
     is_hidden: false
     artifact_label: あなたのSlackアカウント名
     ogp_image_url: null
+  - slug: join-theme-community
+    title: テーマ別コミュニティに入ろう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261124_ol_join-theme-community.png
+    content: |-
+      チームみらいのテーマ別コミュニティに参加して、同じテーマに関心のある仲間と気軽に語り合おう！教育、子育て、仕事、地域の活動など、住んでいる場所に関係なく、テーマでつながれます。情報をシェアしたり話し合ったりする場として、サポーターが運営しています。
+
+      <a target="_blank" rel="noopener noreferrer" href="https://team-mirai.notion.site/40cf6f56bae181208355c6344f53fa31">テーマ一覧を見る</a>
+
+      <a target="_blank" rel="noopener noreferrer" href="https://docs.google.com/forms/d/e/1FAIpQLSeziaVuFsyyEtAhFowKsZ8iY11SMoSYPsm5IB6DHqMLGkQ-fA/viewform">参加申請フォームを開く</a>
+    difficulty: 2
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 参加したコミュニティ名
+    ogp_image_url: null
   - slug: join-street-speech
     title: 街頭演説に参加しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20250713_ol_join-street-speech.svg

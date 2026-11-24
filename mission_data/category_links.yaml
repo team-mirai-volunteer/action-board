@@ -73,6 +73,8 @@ category_links:
     missions:
       - mission_slug: join-planning-team
         sort_no: 100
+      - mission_slug: join-theme-community
+        sort_no: 200
   - category_slug: join-community
     missions:
       - mission_slug: join-street-speech
