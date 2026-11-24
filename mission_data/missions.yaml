@@ -462,7 +462,7 @@ missions:
       <a target="_blank" rel="noopener noreferrer" href="https://docs.google.com/forms/d/e/1FAIpQLSeziaVuFsyyEtAhFowKsZ8iY11SMoSYPsm5IB6DHqMLGkQ-fA/viewform">参加申請フォームを開く</a>
     difficulty: 2
     required_artifact_type: TEXT
-    max_achievement_count: 1
+    max_achievement_count: null
     is_featured: false
     is_hidden: false
     artifact_label: 参加したコミュニティ名
