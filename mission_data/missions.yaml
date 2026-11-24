@@ -112,6 +112,20 @@ missions:
     is_hidden: false
     artifact_label: 回答を見たテーマ名
     ogp_image_url: null
+  - slug: feedback-ai-interview
+    title: AIインタビューの機能フィードバックをしよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261124_ol_feedback-ai-interview.png
+    content: |-
+      AIインタビューに回答してみて、使いにくかったところや「こんな機能があったらいいのに」と感じたことを伝えましょう。画面の見づらさや質問の流れなど、気づいたことは何でも歓迎です。
+
+      <a target="_blank" rel="noopener noreferrer" href="https://interview.team-mir.ai/interview/ai-interview-feedback">AIインタビューへのフィードバック</a>
+    difficulty: 3
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 送ったフィードバックの内容（一言でOK）
+    ogp_image_url: null
   - slug: give-event-feedback
     title: 参加者アンケートに回答しよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_give-event-feedback.png
