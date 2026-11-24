@@ -43,6 +43,8 @@ category_links:
         sort_no: 60
       - mission_slug: read-interview-findings
         sort_no: 70
+      - mission_slug: feedback-ai-interview
+        sort_no: 80
       - mission_slug: feedback-mirai-okr
         sort_no: 80
       - mission_slug: check-mirai-gikai
