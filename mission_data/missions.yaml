@@ -208,7 +208,7 @@ missions:
     is_hidden: false
     ogp_image_url: null
   - slug: request-ai-interview-account
-    title: AIインタビューの作成用アカウントの発行を申請しよう
+    title: AIインタビューを作る準備をしよう
     icon_url: /img/mission-icons/actionboard_icon_work_20261126_ol_request-ai-interview-account.png
     content: AIインタビューを自分で作成したい方は、利用規約を確認して同意し、アカウント申請フォームを送信しましょう。作成したいテーマは、別のテーマ申請フォームから申請できます。
     difficulty: 1
