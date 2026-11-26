@@ -218,6 +218,17 @@ missions:
     is_hidden: false
     artifact_label: アカウント申請フォームを送信した日（例：11/26）
     ogp_image_url: null
+  - slug: create-own-ai-interview
+    title: AIインタビューを作成してみよう
+    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_answer-ai-interview.png
+    content: 必要な申請と権限付与が済んだら、聞きたいテーマに合わせてAIインタビューを設定し、実際に回答できる状態まで作成しよう。
+    difficulty: 3
+    required_artifact_type: TEXT
+    max_achievement_count: null
+    is_featured: false
+    is_hidden: false
+    artifact_label: 作成したAIインタビューのタイトル
+    ogp_image_url: null
   - slug: host-digital-democracy-event
     title: デジタル民主主義の場を開こう
     icon_url: /img/mission-icons/actionboard_icon_work_20261119_ol_host-digital-democracy-event.png

@@ -73,6 +73,8 @@ category_links:
         sort_no: 10
       - mission_slug: request-ai-interview-account
         sort_no: 200
+      - mission_slug: create-own-ai-interview
+        sort_no: 300
   - category_slug: gather-by-area-theme
     missions:
       - mission_slug: join-planning-team
