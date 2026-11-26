@@ -220,7 +220,7 @@ missions:
     ogp_image_url: null
   - slug: create-own-ai-interview
     title: AIインタビューを作成してみよう
-    icon_url: /img/mission-icons/actionboard_icon_work_20261112_ol_answer-ai-interview.png
+    icon_url: /img/mission-icons/actionboard_icon_work_20261126_ol_create-own-ai-interview.png
     content: 必要な申請と権限付与が済んだら、聞きたいテーマに合わせてAIインタビューを設定し、実際に回答できる状態まで作成しよう。
     difficulty: 3
     required_artifact_type: TEXT
