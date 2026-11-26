@@ -26,6 +26,9 @@ mission_main_links:
   - mission_slug: host-digital-democracy-event
     label: 開催報告フォームを開く
     link: https://forms.gle/jpmhDXN4J4TL3WmT8
+  - mission_slug: request-ai-interview-account
+    label: アカウント申請方法を見る
+    link: https://app.notion.com/p/team-mirai/AI-416f6f56bae1804d9ad1f74e71d86dfb
   - mission_slug: add-supporter-line-friend
     label: サポーター公式LINEアカウントはこちら
     link: https://lin.ee/Qy6BukX
